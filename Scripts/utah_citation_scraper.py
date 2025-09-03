@@ -25,8 +25,8 @@ FACILITY_IDS = [96697, 93201, 93220, 93242, 93243, 93266,
     93702, 93241, 105000, 93262, 93264, 93261, 93263, 93704, 93708,
     95883, 93715, 93940, 111725, 93717,
     93721, 104399, 93762, 93724, 93728, 93727, 93725, 93726, 93763]  
-OUTPUT_FILE = "utah_citations_{datetime.now().strftime('%Y-%m')}.csv"
-REQUEST_DELAY = 1  # Seconds between requests
+
+OUTPUT_FILE = f"\middle\utah_citations_{datetime.now().strftime('%m-%d-%Y')}.csv"REQUEST_DELAY = 1  # Seconds between requests
 MAX_INSPECTIONS = 20  # Maximum number of inspections per facility to include
 
 def fetch_facility_data(facility_id):

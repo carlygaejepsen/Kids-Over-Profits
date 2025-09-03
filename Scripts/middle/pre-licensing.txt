@@ -1,0 +1,130 @@
+PS C:\WINDOWS\system32> $response.Content
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>107207223-6-22-2022-24-CR-LSLR-CFMMES-20220622093313</title>
+<script language="JavaScript" type="text/javascript">
+<!--
+document._domino_target = "_self";
+function _doClick(v, o, t) {
+  var returnValue = false;
+  var url="/WebReports/FASWebReportDisplay.nsf/0/de00d20031ae68d48825886e006e8bc4?OpenDocument&Click=" + v;
+  if (o.href != null) {
+    o.href = url;
+    returnValue = true;
+  } else {
+    if (t == null)
+      t = document._domino_target;
+    window.open(url, t);
+  }
+  return returnValue;
+}
+// -->
+</script>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<form action=""><font size="2" color="#104160" face="Arial">&lt;meta name=&quot;robots&quot; content=&quot;noindex&quot;&gt;</font><br />
+<b><font size="4" color="#104160" face="Arial">Department of</font></b><br />
+<b><font size="6" color="#104160" face="Arial">SOCIAL SERVICES</font></b>
+<p><b><i><font size="4" color="#1D3052" face="Times New Roman">Community Care Licensing</font></i></b></p>
+<br />
+<b><i><font size="6" color="#104160" face="Times New Roman">FACILITY EVALUATION REPORT</font></i></b><br />
+<br />
+<b><font color="#1D3052" face="Arial">Facility Number:  </font></b><font color="#104160" face="Arial">107207223</font><br />
+<b><font color="#1D3052" face="Arial">Report Date:</font></b><font color="#1D3052" face="Arial">                </font><font color="#104160" face="Arial">06/09/2022</font><br />
+<b><font color="#1D3052" face="Arial">Date Signed:              </font></b><font color="#104160" face="Arial">06/22/2022 09:33:16 AM</font><br />
+<b><font color="#1D3052" face="Arial">                  </font></b><br />
+<b><font color="#1D3052" face="Arial">                  </font></b><b><font size="5" color="#800000" face="Arial"></font></b><br />
+<b><font size="2" color="#800000" face="Arial">Document Has Been Signed on </font></b>06/22/2022 09:33 AM<b><font size="2" color="#800000" face="Arial"> - It Cannot Be Edited</font></b>
+<p></p>
+
+<table border="1">
+<tr valign="top"><td width="384"><b><font size="1" face="Arial">STATE OF CALIFORNIA - HEALTH AND HUMAN SERVICES AGENCY</font></b><br />
+<br />
+<b><font size="4" face="Arial">FACILITY EVALUATION REPORT</font></b></td><td width="240"><b><font size="1" face="Arial">CALIFORNIA DEPARTMENT OF SOCIAL SERVICES</font></b><br />
+<b><font size="1" face="Arial">COMMUNITY CARE LICENSING DIVISION</font></b><br />
+<b><font size="1" face="Arial">CCLD Regional Office</font></b><b><font size="1" face="Arial">, </font></b><b><font size="1" face="Arial">1314 E SHAW AVE</font></b><br />
+<b><font size="1" face="Arial">FRESNO</font></b><b><font size="1" face="Arial">, </font></b><b><font size="1" face="Arial">CA</font></b><b><font size="1" face="Arial"> </font></b><b><font size="1" face="Arial">93710</font></b></td></tr>
+</table>
+<br />
+<br />
+<br />
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">FACILITY NAME:</font></b></td><td width="298" colspan="2"><font size="2">2ND HOME INC-SAMPLE</font></td><td width="115"><b><font size="2" face="Arial">FACILITY NUMBER:</font></b></td><td width="106"><div align="right"><font size="2">107207223</font></div></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">ADMINISTRATOR:</font></b></td><td width="298" colspan="2"><font size="2">JENNIFER FISH</font></td><td width="115"><b><font size="2" face="Arial">FACILITY TYPE: </font></b></td><td width="106"><div align="right"><font size="2">733</font></div></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">ADDRESS:</font></b></td><td width="298" colspan="2"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt="" /></td><td width="115"><b><font size="2" face="Arial">TELEPHONE: </font></b></td><td width="106"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt="" /></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">CITY:</font></b></td><td width="202"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt="" /></td><td width="96"><b><font size="2" face="Arial">STATE:</font></b><font size="2" face="Arial"> </font></td><td width="115"><b><font size="2" face="Arial">ZIP CODE:</font></b></td><td width="106"><img width="1" height="1" src="/icons/ecblank.gif" border="0" alt="" /></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">CAPACITY:</font></b></td><td width="202"><font size="2">6</font></td><td width="96"><b><font size="2" face="Arial">CENSUS: </font></b><font size="2" face="Arial">0</font></td><td width="115" valign="middle"><b><font size="2" face="Arial">DATE:</font></b></td><td width="106" valign="middle"><div align="right"><font size="2" face="Arial">           </font><font size="2" face="Arial">06/09/2022</font></div></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">TYPE OF VISIT:</font></b></td><td width="202"><font size="2" face="Arial">Prelicensing</font></td><td width="96"><font size="2" face="Arial">UNANNOUNCED</font></td><td width="115" valign="middle"><b><font size="2" face="Arial">TIME BEGAN:</font></b></td><td width="106" valign="middle"><div align="right"><font size="2" face="Arial">           </font><font size="2" face="Arial">09:00 AM</font></div></td></tr>
+
+<tr valign="top"><td width="106"><b><font size="2" face="Arial">MET WITH:</font></b></td><td width="298" colspan="2"><font size="2" face="Arial">Jennifer Fish</font></td><td width="115" valign="middle"><b><font size="2" face="Arial">TIME COMPLETED:</font></b></td><td width="106" valign="middle"><div align="right"><font size="2" face="Arial">10:30 AM</font></div></td></tr>
+</table>
+
+<table border="1">
+<tr valign="top"><td width="624" colspan="3"><div align="center"><b><font size="2" face="Arial">NARRATIVE</font></b></div></td></tr>
+
+<tr valign="top"><td width="24"><div align="center"><font size="2" face="Arial">1</font><br />
+<font size="2" face="Arial">2</font><br />
+<font size="2" face="Arial">3</font><br />
+<font size="2" face="Arial">4</font><br />
+<font size="2" face="Arial">5</font><br />
+<font size="2" face="Arial">6</font><br />
+<font size="2" face="Arial">7</font><br />
+<font size="2" face="Arial">8</font><br />
+<font size="2" face="Arial">9</font><br />
+<font size="2" face="Arial">10</font><br />
+<font size="2" face="Arial">11</font><br />
+<font size="2" face="Arial">12</font><br />
+<font size="2" face="Arial">13</font><br />
+<font size="2" face="Arial">14</font><br />
+<font size="2" face="Arial">15</font><br />
+<font size="2" face="Arial">16</font><br />
+<font size="2" face="Arial">17</font><br />
+<font size="2" face="Arial">18</font><br />
+<font size="2" face="Arial">19</font><br />
+<font size="2" face="Arial">20</font><br />
+<font size="2" face="Arial">21</font><br />
+<font size="2" face="Arial">22</font><br />
+<font size="2" face="Arial">23</font><br />
+<font size="2" face="Arial">24</font><br />
+<font size="2" face="Arial">25</font></div></td><td width="600" colspan="2"><font size="4" face="Arial">On the date above a pre licensing visit was conducted at Sample House by Licensing Program analyst (LPA) Les Inouye.  Sample House is currently operating Group Home facility transitioning to a Short Term Residential Treatment Program (STRTP) facility.  I was met by Administrator Jennifer Fish and Emily Logan.  A review of the Physical Plant was conducted including the Indoor Activity Space, Fixtures Furniture Equipment and Supplies and Outdoor Activity Space. Kitchen was clean and non-perishable and perishable  items were observed in the kitchen.   Bedrooms were observed, 3 single occupancy for a capacity of 3. The house currently preparing to convert to a STRTP and additional furnishings are being stored at the facility.  All rooms were appropriately furnished with storage area was observed.  All chemicals and cleaning supplies were locked and secured.  Smoke Alarms and Carbon Monoxide detectors  were  observed and operating.  Hot water temperature was measured at 119 degrees.  Back yard, there is no pool or hot tub, yard consisted of a lawn area with covered patio area.  The physical plant review  was observed to be clean, safe, and free of hazards.  A review of the Program Statement and Plan Of Operation is ongoing by CCL and updates will reviewed.  At this time, it is recommended that the facility be licensed as an STRTP.</font><br />
+</td></tr>
+</table>
+
+<table border="1">
+<tr valign="top"><td width="624">
+<table border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="442"><b><font size="2" face="Arial">SUPERVISOR'S NAME: </font></b><font size="2">Lourey Bartolome</font></td><td width="182"><b><font size="2" face="Arial">TELEPHONE: </font></b><font size="1">(559) 243-8080</font></td></tr>
+
+<tr valign="top"><td width="442"><b><font size="2" face="Arial">LICENSING EVALUATOR NAME:</font></b><font size="2" face="Arial"> </font><font size="2">Lisa Slusher</font></td><td width="182"><b><font size="2" face="Arial">TELEPHONE:</font></b><font size="2" face="Arial"> </font><font size="2">(559) 417-5193</font></td></tr>
+
+<tr valign="top"><td width="442"><b><font size="2" face="Arial">LICENSING EVALUATOR SIGNATURE:</font></b><br />
+<img src="/WebReports/FASWebReportDisplay.nsf/0/de00d20031ae68d48825886e006e8bc4/FAS_Report/0.4D44?OpenElement&amp;FieldElemFormat=gif" width="435" height="51" /></td><td width="182" valign="middle"><b><font size="2" face="Arial">DATE:</font></b><font size="2" face="Arial"> </font><font size="2" face="Arial">06/22/2022</font></td></tr>
+</table>
+</td></tr>
+
+<tr valign="top"><td width="624"><b><font size="2" face="Arial">I acknowledge receipt of this form and understand my</font></b><b><font size="2" face="Arial"> licensing</font></b><b><font size="2" face="Arial"> appeal rights as</font></b><font size="2" face="Arial"> </font><b><font size="2" face="Arial">explained and received.</font></b></td></tr>
+
+<tr valign="top"><td width="624">
+<table border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="442"><b><font size="2" face="Arial">FACILITY REPRESENTATIVE SIGNATURE:</font></b><br />
+<img src="/WebReports/FASWebReportDisplay.nsf/0/de00d20031ae68d48825886e006e8bc4/FAS_Report/0.5F82?OpenElement&amp;FieldElemFormat=gif" width="434" height="51" /></td><td width="182" valign="middle"><b><font size="2" face="Arial">DATE:</font></b><font size="2" face="Arial"> </font><font size="2" face="Arial">06/22/2022</font></td></tr>
+</table>
+</td></tr>
+</table>
+<b><font size="2" face="Arial">This report must be available at Child Care and Group Home facilities for public review for 3 years.</font></b>
+<p></p>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr valign="top"><td width="312"><b><font size="1" face="Arial">LIC809</font></b><b><font size="1" face="Arial"> (FAS) - (06/04)</font></b></td><td width="312"><div align="right"><b><font size="1" face="Arial">Page: </font></b><b><font size="1" face="Arial">1</font></b><font size="1" face="Arial"> </font><b><font size="1" face="Arial">of</font></b><font size="1" face="Arial"> </font><b><font size="1" face="Arial">1</font></b></div></td></tr>                                   </table>
+<br />
+</form>
+</body>
+</html>
