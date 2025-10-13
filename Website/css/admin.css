@@ -1,0 +1,386 @@
+/* ========== ADMIN & NOTIFICATION STYLES (from wordpress.css) ========== */
+.status-message { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 500; position: relative; animation: slideIn 0.3s ease-out; }
+.status-message.success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+.status-message.error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.status-message.warning { background: #fffbeb; border: 1px solid #fed7aa; color: #92400e; }
+.status-message.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+.message-icon { font-size: 1.2rem; flex-shrink: 0; }
+.message-text { flex: 1; }
+.close-message { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: currentColor; opacity: 0.7; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; }
+.close-message:hover { opacity: 1; background: rgba(0, 0, 0, 0.1); }
+/* Admin-specific overrides and custom styles for admin.html */
+/* Admin Header */
+.admin-header {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 32px;
+}
+
+.admin-header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* Admin Warning */
+.admin-warning {
+    background: #fffbeb;
+    border: 1px solid #fed7aa;
+    color: #92400e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+/* Upload Status */
+.upload-status {
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.upload-status.success {
+    background-color: #dcfce7;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.upload-status.error {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.upload-status.info {
+    background-color: #dbeafe;
+    color: #2563eb;
+    border: 1px solid #93c5fd;
+}/* ========================================
+   ADMIN DATA CUSTOM STYLES
+   Only truly unique styles for admin-data.html
+   Duplicates removed - use modular CSS files
+   ======================================== */
+
+/* Facility List Actions - UNIQUE TO ADMIN */
+.facility-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.facility-item:hover {
+    background: #f1f5f9;
+    border-color: #7c3aed;
+}
+
+.facility-item.active {
+    background: #dbeafe;
+    border-color: #7c3aed;
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.1);
+}
+
+.facility-name {
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
+    font-size: 14px;
+}
+
+.facility-name.empty {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.facility-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.facility-item:hover .facility-actions {
+    opacity: 1;
+}
+
+/* Facility Delete Button - UNIQUE */
+.facility-delete-btn {
+    background: #ef4444;
+    color: white !important;
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.facility-delete-btn:hover {
+    background: #dc2626;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+.facility-delete-btn:active {
+    transform: scale(0.95);
+    color: white !important;
+}
+
+/* Facility Duplicate Button - UNIQUE */
+.facility-duplicate-btn {
+    background: #3b82f6;
+    color: white !important;
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.facility-duplicate-btn:hover {
+    background: #2563eb;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+.facility-index {
+    font-size: 11px;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* TOC Stats - UNIQUE */
+.toc-stats {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+/* Facility Controls - UNIQUE */
+.facility-controls {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.facility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.facility-header > div:first-child {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+@media (min-width: 769px) {
+    .facility-controls {
+        padding: 20px;
+    }
+    .facility-header > div:first-child {
+        flex-direction: row;
+        align-items: center;
+    }
+    .controls {
+        width: auto;
+    }
+}
+
+/* Category Navigation - UNIQUE TO ADMIN */
+.category-navigation {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.category-tab {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.category-tab.active {
+    border-color: #7c3aed;
+    background: #7c3aed;
+    color: white;
+}
+
+.category-tab:hover:not(.active) {
+    border-color: #a855f7;
+    background: #f3f4f6;
+}
+
+.category-content {
+    display: none;
+}
+
+.category-content.active {
+    display: block;
+}
+
+.category-description {
+    background: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #475569;
+    border-left: 4px solid #7c3aed;
+}
+
+@media (max-width: 768px) {
+    .category-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .category-tab {
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Private Ownership Toggle - UNIQUE TO ADMIN */
+.private-ownership-section {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toggle-label {
+    font-weight: 600;
+    color: #78350f;
+    font-size: 14px;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-track {
+    width: 48px;
+    height: 24px;
+    background-color: #e5e7eb;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider-knob {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .toggle-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 768px) {
+    .output-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .output-header > div {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    h4 {
+        font-size: 14px;
+    }
+}
