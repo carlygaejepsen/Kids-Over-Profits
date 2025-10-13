@@ -390,12 +390,105 @@ function initializeFieldNotes() {
         return uniqueId;
     }
 
-    function addNoteButtonsToArrayItems(group) {
+    function runWithFacilityObserverPaused(work) {
+        const pause = window.pauseFacilityFormObserver;
+        const resume = window.resumeFacilityFormObserver;
+        let paused = false;
+
+        if (typeof pause === 'function' && typeof resume === 'function') {
+            pause();
+            paused = true;
+        }
+
         try {
-            group.querySelectorAll('.array-item').forEach(arrayItem => {
-                if (arrayItem.querySelector('.field-note-btn') || arrayItem.children.length === 0) return;
-                const field = arrayItem.querySelector('input, textarea, select');
+            return work();
+        } finally {
+            if (paused) {
+                resume();
+            }
+        }
+    }
+
+    function addNoteButtonsToArrayItems(group) {
+        runWithFacilityObserverPaused(() => {
+            try {
+                group.querySelectorAll('.array-item').forEach(arrayItem => {
+                    if (arrayItem.querySelector('.field-note-btn') || arrayItem.children.length === 0) return;
+                    const field = arrayItem.querySelector('input, textarea, select');
+                    if (!field || field.type === 'hidden' || field.style.display === 'none') return;
+
+                    const noteBtn = document.createElement('button');
+                    noteBtn.type = 'button';
+                    noteBtn.className = 'field-note-btn';
+                    noteBtn.innerHTML = '+';
+                    noteBtn.title = 'Add note for this field';
+
+                    const fieldIdentifier = getFieldIdentifier(field);
+                    const currentNotes = getCurrentFacilityNotes();
+                    if (currentNotes[fieldIdentifier]) {
+                        noteBtn.classList.add('has-note');
+                        noteBtn.title = 'Edit note for this field';
+                    }
+
+                    noteBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        addInlineNote(field, group);
+                    });
+
+                    restructureArrayItem(arrayItem, field, noteBtn);
+                });
+            } catch (error) {
+                console.warn('Error adding note buttons to array items:', error);
+            }
+        });
+    }
+
+    function restructureArrayItem(arrayItem, field, noteBtn) {
+        runWithFacilityObserverPaused(() => {
+            try {
+                if (arrayItem.querySelector('.array-item-top')) {
+                    arrayItem.querySelector('.array-item-top').appendChild(noteBtn);
+                    return;
+                }
+
+                const removeBtn = arrayItem.querySelector('.btn, button[type="button"]:not(.field-note-btn)');
+                const topSection = document.createElement('div');
+                topSection.className = 'array-item-top';
+                const bottomSection = document.createElement('div');
+                bottomSection.className = 'array-item-bottom';
+
+                Array.from(arrayItem.children).forEach(child => {
+                    if (child === removeBtn) bottomSection.appendChild(child);
+                    else topSection.appendChild(child);
+                });
+
+                topSection.appendChild(noteBtn);
+                arrayItem.innerHTML = '';
+                arrayItem.appendChild(topSection);
+                if (removeBtn) arrayItem.appendChild(bottomSection);
+            } catch (error) {
+                console.warn('Error restructuring array item:', error);
+                arrayItem.appendChild(noteBtn);
+            }
+        });
+    }
+
+    function addNoteButtons() {
+        runWithFacilityObserverPaused(() => {
+            document.querySelectorAll('.form-group').forEach(group => {
+                if (group.querySelector('.field-note-btn')) return;
+
+                addNoteButtonsToArrayItems(group);
+
+                let field = group.querySelector('input:not([type="hidden"]):not([style*="display: none"]), textarea:not([style*="display: none"]), select:not([style*="display: none"])');
+                if (field && field.closest('.array-item')) return;
+                if (!field) field = group.querySelector('input, textarea, select');
                 if (!field || field.type === 'hidden' || field.style.display === 'none') return;
+
+                const skipFieldIds = ['project-name', 'organize-by', 'organize-value'];
+                if (skipFieldIds.includes(field.id || '')) return;
+                if (field.closest('.project-management') || field.closest('#data-organizer-section')) return;
 
                 const noteBtn = document.createElement('button');
                 noteBtn.type = 'button';
@@ -416,202 +509,142 @@ function initializeFieldNotes() {
                     addInlineNote(field, group);
                 });
 
-                restructureArrayItem(arrayItem, field, noteBtn);
-            });
-        } catch (error) {
-            console.warn('Error adding note buttons to array items:', error);
-        }
-    }
-
-    function restructureArrayItem(arrayItem, field, noteBtn) {
-        try {
-            if (arrayItem.querySelector('.array-item-top')) {
-                arrayItem.querySelector('.array-item-top').appendChild(noteBtn);
-                return;
-            }
-
-            const removeBtn = arrayItem.querySelector('.btn, button[type="button"]:not(.field-note-btn)');
-            const topSection = document.createElement('div');
-            topSection.className = 'array-item-top';
-            const bottomSection = document.createElement('div');
-            bottomSection.className = 'array-item-bottom';
-
-            Array.from(arrayItem.children).forEach(child => {
-                if (child === removeBtn) bottomSection.appendChild(child);
-                else topSection.appendChild(child);
-            });
-
-            topSection.appendChild(noteBtn);
-            arrayItem.innerHTML = '';
-            arrayItem.appendChild(topSection);
-            if (removeBtn) arrayItem.appendChild(bottomSection);
-        } catch (error) {
-            console.warn('Error restructuring array item:', error);
-            arrayItem.appendChild(noteBtn);
-        }
-    }
-
-    function addNoteButtons() {
-        document.querySelectorAll('.form-group').forEach(group => {
-            if (group.querySelector('.field-note-btn')) return;
-
-            addNoteButtonsToArrayItems(group);
-
-            let field = group.querySelector('input:not([type="hidden"]):not([style*="display: none"]), textarea:not([style*="display: none"]), select:not([style*="display: none"])');
-            if (field && field.closest('.array-item')) return;
-            if (!field) field = group.querySelector('input, textarea, select');
-            if (!field || field.type === 'hidden' || field.style.display === 'none') return;
-
-            const skipFieldIds = ['project-name', 'organize-by', 'organize-value'];
-            if (skipFieldIds.includes(field.id || '')) return;
-            if (field.closest('.project-management') || field.closest('#data-organizer-section')) return;
-
-            const noteBtn = document.createElement('button');
-            noteBtn.type = 'button';
-            noteBtn.className = 'field-note-btn';
-            noteBtn.innerHTML = '+';
-            noteBtn.title = 'Add note for this field';
-
-            const fieldIdentifier = getFieldIdentifier(field);
-            const currentNotes = getCurrentFacilityNotes();
-            if (currentNotes[fieldIdentifier]) {
-                noteBtn.classList.add('has-note');
-                noteBtn.title = 'Edit note for this field';
-            }
-
-            noteBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                addInlineNote(field, group);
-            });
-
-            const arrayItem = field.closest('.array-item');
-            if (arrayItem) {
-                arrayItem.appendChild(noteBtn);
-            } else {
-                const innerContainer = field.closest('.autocomplete-wrapper');
-                if (innerContainer) {
-                    innerContainer.style.display = 'flex';
-                    innerContainer.style.alignItems = 'flex-start';
-                    field.style.flex = '1';
-                    innerContainer.appendChild(noteBtn);
+                const arrayItem = field.closest('.array-item');
+                if (arrayItem) {
+                    arrayItem.appendChild(noteBtn);
                 } else {
-                    let fieldContent = group.querySelector('.field-content');
-                    if (!fieldContent) {
-                        fieldContent = document.createElement('div');
-                        fieldContent.className = 'field-content';
-                        const label = group.querySelector('label');
-                        Array.from(group.children).forEach(child => {
-                            if (child !== label) fieldContent.appendChild(child);
-                        });
-                        group.appendChild(fieldContent);
+                    const innerContainer = field.closest('.autocomplete-wrapper');
+                    if (innerContainer) {
+                        innerContainer.style.display = 'flex';
+                        innerContainer.style.alignItems = 'flex-start';
+                        field.style.flex = '1';
+                        innerContainer.appendChild(noteBtn);
+                    } else {
+                        let fieldContent = group.querySelector('.field-content');
+                        if (!fieldContent) {
+                            fieldContent = document.createElement('div');
+                            fieldContent.className = 'field-content';
+                            const label = group.querySelector('label');
+                            Array.from(group.children).forEach(child => {
+                                if (child !== label) fieldContent.appendChild(child);
+                            });
+                            group.appendChild(fieldContent);
+                        }
+                        fieldContent.appendChild(noteBtn);
                     }
-                    fieldContent.appendChild(noteBtn);
                 }
-            }
-            group.classList.add('has-note-button');
+                group.classList.add('has-note-button');
+            });
         });
     }
 
     function addInlineNote(field, group) {
-        const fieldId = getFieldIdentifier(field);
-        const label = group.querySelector('label');
-        const fieldName = label ? label.textContent.trim() : 'Field';
+        runWithFacilityObserverPaused(() => {
+            const fieldId = getFieldIdentifier(field);
+            const label = group.querySelector('label');
+            const fieldName = label ? label.textContent.trim() : 'Field';
 
-        const noteContainer = document.createElement('div');
-        noteContainer.className = 'note-container';
-        noteContainer.style.cssText = 'margin-top: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; background-color: #f9fafb;';
+            const noteContainer = document.createElement('div');
+            noteContainer.className = 'note-container';
+            noteContainer.style.cssText = 'margin-top: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; background-color: #f9fafb;';
 
-        const noteHeader = document.createElement('div');
-        noteHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;';
+            const noteHeader = document.createElement('div');
+            noteHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;';
 
-        const noteLabel = document.createElement('label');
-        noteLabel.textContent = `${fieldName} Note`;
-        noteLabel.style.cssText = 'font-size: 13px; color: #6b7280; margin: 0;';
+            const noteLabel = document.createElement('label');
+            noteLabel.textContent = `${fieldName} Note`;
+            noteLabel.style.cssText = 'font-size: 13px; color: #6b7280; margin: 0;';
 
-        const removeNoteBtn = document.createElement('button');
-        removeNoteBtn.type = 'button';
-        removeNoteBtn.innerHTML = '×';
-        removeNoteBtn.title = 'Remove this note';
-        removeNoteBtn.style.cssText = 'background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 16px; padding: 0; width: 20px; height: 20px;';
+            const removeNoteBtn = document.createElement('button');
+            removeNoteBtn.type = 'button';
+            removeNoteBtn.innerHTML = '×';
+            removeNoteBtn.title = 'Remove this note';
+            removeNoteBtn.style.cssText = 'background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 16px; padding: 0; width: 20px; height: 20px;';
 
-        const noteInput = document.createElement('input');
-        noteInput.type = 'text';
-        noteInput.className = 'note-input';
-        noteInput.placeholder = 'Add notes or context...';
-        noteInput.style.cssText = 'font-size: 14px; padding: 8px 12px; width: 100%; border: 1px solid #d1d5db; border-radius: 4px;';
+            const noteInput = document.createElement('input');
+            noteInput.type = 'text';
+            noteInput.className = 'note-input';
+            noteInput.placeholder = 'Add notes or context...';
+            noteInput.style.cssText = 'font-size: 14px; padding: 8px 12px; width: 100%; border: 1px solid #d1d5db; border-radius: 4px;';
 
-        const noteId = `${fieldId}_note_${Date.now()}`;
+            const noteId = `${fieldId}_note_${Date.now()}`;
 
-        noteInput.addEventListener('input', () => {
-            const noteText = noteInput.value.trim();
-            const currentNotes = getCurrentFacilityNotes();
+            noteInput.addEventListener('input', () => {
+                runWithFacilityObserverPaused(() => {
+                    const noteText = noteInput.value.trim();
+                    const currentNotes = getCurrentFacilityNotes();
 
-            if (!Array.isArray(currentNotes[fieldId])) {
-                currentNotes[fieldId] = currentNotes[fieldId] ? [{ id: `${fieldId}_note_legacy`, text: currentNotes[fieldId], timestamp: new Date().toISOString() }] : [];
+                    if (!Array.isArray(currentNotes[fieldId])) {
+                        currentNotes[fieldId] = currentNotes[fieldId] ? [{ id: `${fieldId}_note_legacy`, text: currentNotes[fieldId], timestamp: new Date().toISOString() }] : [];
+                    }
+
+                    const existingNoteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
+                    if (noteText) {
+                        const noteData = { id: noteId, text: noteText, timestamp: new Date().toISOString() };
+                        if (existingNoteIndex >= 0) currentNotes[fieldId][existingNoteIndex] = noteData;
+                        else currentNotes[fieldId].push(noteData);
+                    } else if (existingNoteIndex >= 0) {
+                        currentNotes[fieldId].splice(existingNoteIndex, 1);
+                        if (currentNotes[fieldId].length === 0) delete currentNotes[fieldId];
+                    }
+
+                    saveFieldNotes();
+                    updateNoteButton(field);
+                    document.dispatchEvent(new CustomEvent('facilityDataChanged', { detail: { type: 'fieldNote', fieldId, value: currentNotes[fieldId] } }));
+                });
+            });
+
+            removeNoteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                runWithFacilityObserverPaused(() => {
+                    const currentNotes = getCurrentFacilityNotes();
+                    if (currentNotes[fieldId]) {
+                        if (Array.isArray(currentNotes[fieldId])) {
+                            const noteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
+                            if (noteIndex >= 0) currentNotes[fieldId].splice(noteIndex, 1);
+                            if (currentNotes[fieldId].length === 0) delete currentNotes[fieldId];
+                        } else {
+                            delete currentNotes[fieldId];
+                        }
+                    }
+                    saveFieldNotes();
+                    updateNoteButton(field);
+                    noteContainer.remove();
+                });
+            });
+
+            noteHeader.appendChild(noteLabel);
+            noteHeader.appendChild(removeNoteBtn);
+            noteContainer.appendChild(noteHeader);
+            noteContainer.appendChild(noteInput);
+
+            const fieldParent = field.closest('.array-item') || field.parentElement;
+            const existingNotes = fieldParent.querySelectorAll('.note-container');
+            if (existingNotes.length > 0) {
+                existingNotes[existingNotes.length - 1].insertAdjacentElement('afterend', noteContainer);
+            } else {
+                field.insertAdjacentElement('afterend', noteContainer);
             }
 
-            const existingNoteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
-            if (noteText) {
-                const noteData = { id: noteId, text: noteText, timestamp: new Date().toISOString() };
-                if (existingNoteIndex >= 0) currentNotes[fieldId][existingNoteIndex] = noteData;
-                else currentNotes[fieldId].push(noteData);
-            } else if (existingNoteIndex >= 0) {
-                currentNotes[fieldId].splice(existingNoteIndex, 1);
-                if (currentNotes[fieldId].length === 0) delete currentNotes[fieldId];
-            }
-
-            saveFieldNotes();
+            noteInput.focus();
             updateNoteButton(field);
-            document.dispatchEvent(new CustomEvent('facilityDataChanged', { detail: { type: 'fieldNote', fieldId, value: currentNotes[fieldId] } }));
         });
-
-        removeNoteBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const currentNotes = getCurrentFacilityNotes();
-            if (currentNotes[fieldId]) {
-                if (Array.isArray(currentNotes[fieldId])) {
-                    const noteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
-                    if (noteIndex >= 0) currentNotes[fieldId].splice(noteIndex, 1);
-                    if (currentNotes[fieldId].length === 0) delete currentNotes[fieldId];
-                } else {
-                    delete currentNotes[fieldId];
-                }
-            }
-            saveFieldNotes();
-            updateNoteButton(field);
-            noteContainer.remove();
-        });
-
-        noteHeader.appendChild(noteLabel);
-        noteHeader.appendChild(removeNoteBtn);
-        noteContainer.appendChild(noteHeader);
-        noteContainer.appendChild(noteInput);
-
-        const fieldParent = field.closest('.array-item') || field.parentElement;
-        const existingNotes = fieldParent.querySelectorAll('.note-container');
-        if (existingNotes.length > 0) {
-            existingNotes[existingNotes.length - 1].insertAdjacentElement('afterend', noteContainer);
-        } else {
-            field.insertAdjacentElement('afterend', noteContainer);
-        }
-
-        noteInput.focus();
-        updateNoteButton(field);
     }
 
     function updateNoteButton(field) {
-        const fieldId = getFieldIdentifier(field);
-        const formGroup = field.closest('.form-group');
-        const noteBtn = formGroup?.querySelector('.field-note-btn');
+        runWithFacilityObserverPaused(() => {
+            const fieldId = getFieldIdentifier(field);
+            const formGroup = field.closest('.form-group');
+            const noteBtn = formGroup?.querySelector('.field-note-btn');
 
-        if (noteBtn) {
-            const currentNotes = getCurrentFacilityNotes();
-            const notes = currentNotes[fieldId];
-            const hasNotes = notes && ( (Array.isArray(notes) && notes.length > 0) || (typeof notes === 'string' && notes.trim() !== '') );
-            noteBtn.classList.toggle('has-note', hasNotes);
-            noteBtn.title = hasNotes ? 'Has notes - Click to add another' : 'Add note for this field';
-        }
+            if (noteBtn) {
+                const currentNotes = getCurrentFacilityNotes();
+                const notes = currentNotes[fieldId];
+                const hasNotes = notes && ( (Array.isArray(notes) && notes.length > 0) || (typeof notes === 'string' && notes.trim() !== '') );
+                noteBtn.classList.toggle('has-note', hasNotes);
+                noteBtn.title = hasNotes ? 'Has notes - Click to add another' : 'Add note for this field';
+            }
+        });
     }
 
     loadFieldNotes();
@@ -630,8 +663,22 @@ function initializeFieldNotes() {
         });
     }, 500);
 
-    const observer = new MutationObserver(() => setTimeout(addNoteButtons, 100));
-    observer.observe(document.body, { childList: true, subtree: true });
+    const observerTarget = document.getElementById('facility-form-app') ||
+        document.querySelector('[data-facility-form-root]') ||
+        document.body;
+
+    const observer = new MutationObserver((mutations) => {
+        const hasMeaningfulChange = mutations.some((mutation) => {
+            if (mutation.type === 'attributes') return true;
+            return (mutation.addedNodes && mutation.addedNodes.length > 0) ||
+                (mutation.removedNodes && mutation.removedNodes.length > 0);
+        });
+
+        if (hasMeaningfulChange) {
+            setTimeout(addNoteButtons, 100);
+        }
+    });
+    observer.observe(observerTarget, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 
     window.syncFieldNotes = function(facilityData) {
         if (facilityData && facilityData.fieldNotes) {

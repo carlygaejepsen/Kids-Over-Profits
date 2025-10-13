@@ -22,6 +22,38 @@ function kadence_child_enqueue_styles() {
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
+/**
+ * Force any lingering Kadence parent CSS handles to load from the child theme.
+ * Some plugins or cached settings still enqueue assets with the parent path,
+ * which results in 404s after renaming the theme directory. This filter rewrites
+ * those URLs on the fly so they resolve correctly.
+ */
+function kop_rewrite_kadence_asset_urls($src) {
+    if (empty($src)) {
+        return $src;
+    }
+
+    $needles = array(
+        '/wp-content/themes/kadence/css/' => 'css/',
+        '/wp-content/themes/kadence/js/' => 'js/',
+        '/wp-content/themes/kadence-child/css/' => 'css/',
+        '/wp-content/themes/kadence-child/js/' => 'js/'
+    );
+
+    foreach ($needles as $needle => $subdir) {
+        $pos = strpos($src, $needle);
+        if ($pos !== false) {
+            $relative = substr($src, $pos + strlen($needle));
+            $src = trailingslashit(get_stylesheet_directory_uri()) . $subdir . ltrim($relative, '/');
+            break;
+        }
+    }
+
+    return $src;
+}
+add_filter('style_loader_src', 'kop_rewrite_kadence_asset_urls', 20, 1);
+add_filter('script_loader_src', 'kop_rewrite_kadence_asset_urls', 20, 1);
+
 // =================================================================
 // CUSTOM FUNCTIONS
 // =================================================================

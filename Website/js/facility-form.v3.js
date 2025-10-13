@@ -1042,6 +1042,9 @@ function renderArray(container, path, items) {
 }
 
 function loadOperatorData() {
+    if (!window.formData) {
+        window.formData = createNewProjectData();
+    }
     if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
     const operator = window.formData.operator;
 
@@ -1079,6 +1082,9 @@ function loadOperatorData() {
 }
 
 function loadFacilityData() {
+    if (!window.formData) {
+        window.formData = createNewProjectData();
+    }
     if (!window.formData.facilities || window.formData.facilities.length === 0) {
         window.formData.facilities = createNewProjectData().facilities;
     }
@@ -1609,10 +1615,150 @@ window.addEventListener('load', () => {
     setTimeout(tryInit, 200);
 
     // Watch for DOM changes that may affect array rendering or inputs
+    const observerRoot = document.getElementById('facility-form-app') ||
+        document.querySelector('[data-facility-form-root]') ||
+        document.querySelector('.container') ||
+        document.body;
+
+    const observerConfig = {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['data-path', 'class']
+    };
+    const ENABLE_AUTOMATIC_OBSERVER = false;
+
+    let observer;
+    let observerUpdateScheduled = false;
+    let isUpdatingUI = false;
+    let rerunRequested = false;
+    let observerConnected = false;
+    let manualPauseCount = 0;
+
+    function disconnectObserver() {
+        if (!ENABLE_AUTOMATIC_OBSERVER || !observer || !observerConnected) return;
+        try {
+            observer.disconnect();
+        } catch (disconnectError) {
+            console.warn('facility-form.v3.js: failed to disconnect MutationObserver', disconnectError);
+        }
+        observerConnected = false;
+    }
+
+    function resumeObserverIfAllowed() {
+        if (!ENABLE_AUTOMATIC_OBSERVER || !observerRoot || !observer || observerConnected || manualPauseCount > 0) {
+            return;
+        }
+        try {
+            observer.observe(observerRoot, observerConfig);
+            observerConnected = true;
+        } catch (observeError) {
+            console.warn('facility-form.v3.js: failed to resume MutationObserver', observeError);
+        }
+    }
+
+    window.pauseFacilityFormObserver = function pauseFacilityFormObserver() {
+        manualPauseCount++;
+        if (ENABLE_AUTOMATIC_OBSERVER) {
+            disconnectObserver();
+        }
+    };
+
+    window.resumeFacilityFormObserver = function resumeFacilityFormObserver() {
+        if (manualPauseCount > 0) {
+            manualPauseCount--;
+        }
+        if (!ENABLE_AUTOMATIC_OBSERVER) {
+            return;
+        }
+        if (manualPauseCount === 0) {
+            resumeObserverIfAllowed();
+        }
+    };
+
+    function safelyRunUIUpdate(trigger = 'MutationObserver') {
+        if (typeof window.updateAllUI !== 'function') return;
+
+        if (!ENABLE_AUTOMATIC_OBSERVER) {
+            try {
+                window.updateAllUI();
+                if (typeof window.addNoteButtons === 'function') window.addNoteButtons();
+                console.log(`facility-form.v3.js: ${trigger} requested manual updateAllUI while observer disabled`);
+            } catch (e) {
+                console.warn('facility-form.v3.js: manual updateAllUI error', e);
+            }
+            return;
+        }
+
+        if (isUpdatingUI) {
+            rerunRequested = true;
+            return;
+        }
+
+        try {
+            disconnectObserver();
+            isUpdatingUI = true;
+            window.updateAllUI();
+            if (typeof window.addNoteButtons === 'function') window.addNoteButtons();
+            console.log(`facility-form.v3.js: ${trigger} triggered updateAllUI`);
+        } catch (e) {
+            console.warn('facility-form.v3.js: MutationObserver updateAllUI error', e);
+        } finally {
+            isUpdatingUI = false;
+            resumeObserverIfAllowed();
+
+            if (rerunRequested) {
+                rerunRequested = false;
+                setTimeout(() => safelyRunUIUpdate('post-update flush'), 60);
+            }
+        }
+    }
+
+    if (!ENABLE_AUTOMATIC_OBSERVER) {
+        console.info('facility-form.v3.js: automatic MutationObserver disabled to avoid DOM thrash');
+        return;
+    }
+
     try {
-        const observer = new MutationObserver((mutations) => {
+        observer = new MutationObserver((mutations) => {
             let shouldRerender = false;
+
+            const isIgnorableMutation = (mutation) => {
+                const shouldIgnoreNode = (node) => {
+                    if (!(node instanceof Element)) return true;
+                    if (node.closest('.autocomplete-wrapper') || node.closest('.autocomplete-dropdown')) return true;
+                    if (node.closest('.note-container') || node.closest('.field-note-btn')) return true;
+                    if (node.closest('.array-item-top') || node.closest('.array-item-bottom')) return true;
+                    if (node.closest('.field-content')) return true;
+                    return false;
+                };
+
+                const { target, type, addedNodes, removedNodes } = mutation;
+                const targetElement = target instanceof Element ? target : null;
+
+                if (targetElement && shouldIgnoreNode(targetElement)) {
+                    return true;
+                }
+
+                if (type === 'childList') {
+                    const added = addedNodes ? Array.from(addedNodes) : [];
+                    const removed = removedNodes ? Array.from(removedNodes) : [];
+                    const nodes = added.concat(removed);
+                    if (nodes.length > 0 && nodes.every(shouldIgnoreNode)) {
+                        return true;
+                    }
+                }
+
+                if (type === 'attributes' && targetElement && shouldIgnoreNode(targetElement)) {
+                    return true;
+                }
+
+                return false;
+            };
+
             for (const m of mutations) {
+                if (isIgnorableMutation(m)) continue;
+
                 if (m.type === 'childList' && m.addedNodes && m.addedNodes.length > 0) {
                     shouldRerender = true;
                     break;
@@ -1622,21 +1768,24 @@ window.addEventListener('load', () => {
                     break;
                 }
             }
-            if (shouldRerender) {
-                try {
-                    if (typeof window.updateAllUI === 'function') {
-                        window.updateAllUI();
-                        // Also call addNoteButtons if available
-                        if (typeof window.addNoteButtons === 'function') window.addNoteButtons();
-                        console.log('facility-form.v3.js: MutationObserver triggered updateAllUI');
+
+            if (shouldRerender && !observerUpdateScheduled) {
+                observerUpdateScheduled = true;
+                setTimeout(() => {
+                    observerUpdateScheduled = false;
+                    if (isUpdatingUI) {
+                        rerunRequested = true;
+                        return;
                     }
-                } catch (e) {
-                    console.warn('facility-form.v3.js: MutationObserver updateAllUI error', e);
-                }
+                    safelyRunUIUpdate();
+                }, 120);
             }
         });
 
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-path', 'class'] });
+        if (observerRoot) {
+            observer.observe(observerRoot, observerConfig);
+            observerConnected = true;
+        }
     } catch (e) {
         console.warn('facility-form.v3.js: failed to attach MutationObserver', e);
     }
