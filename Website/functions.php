@@ -267,8 +267,8 @@ function kidsoverprofits_enqueue_state_report_assets() {
         true,
         array(
             array(
-                'name' => 'myThemeData',
-                'data' => array('jsonFileUrls' => $json_urls),
+                'name' => 'myThemeData', // This name is used by the script to access the JSON URLs
+                'data' => array('jsonFileUrls' => $json_urls)
             ),
         )
     );
