@@ -11,6 +11,69 @@ if (!defined('ABSPATH')) {
 require_once get_stylesheet_directory() . '/inc/template-helpers.php';
 
 /**
+ * Enqueue a theme JavaScript asset with an inline fallback.
+ *
+ * Some hosting environments block direct requests to theme JavaScript files,
+ * which results in 404/403 responses for assets served from
+ * `/wp-content/themes/child/js/*.js`. To guarantee the scripts still load, we
+ * attempt to read the file contents and print them inline. If the file cannot
+ * be read, the function falls back to WordPress' standard file-based enqueue.
+ *
+ * @param string $handle         Script handle.
+ * @param string $relative_path  Relative path from the child theme directory
+ *                               (e.g. `js/ca-reports.js`).
+ * @param array  $dependencies   Optional script dependencies.
+ * @param bool   $in_footer      Whether to load in the footer.
+ * @param array  $localizations  Optional array of localization definitions.
+ *                               Each definition should contain `name` and
+ *                               `data` keys for `wp_localize_script()`.
+ *
+ * @return string|false Returns 'inline' when the script was printed inline,
+ *                      'file' when the standard enqueue path was used, or
+ *                      false when the file could not be found.
+ */
+function kidsoverprofits_enqueue_theme_script($handle, $relative_path, $dependencies = array(), $in_footer = true, $localizations = array()) {
+    $file_path = get_theme_file_path($relative_path);
+
+    if (!$file_path || !file_exists($file_path)) {
+        error_log(sprintf('[Kids Over Profits] Script not found: %s', $relative_path));
+        return false;
+    }
+
+    $version         = filemtime($file_path) ?: wp_get_theme()->get('Version');
+    $script_contents = file_get_contents($file_path);
+
+    if ($script_contents !== false) {
+        wp_register_script($handle, '', $dependencies, $version, $in_footer);
+
+        foreach ($localizations as $localization) {
+            if (!empty($localization['name']) && array_key_exists('data', $localization)) {
+                wp_localize_script($handle, $localization['name'], $localization['data']);
+            }
+        }
+
+        wp_enqueue_script($handle);
+        wp_add_inline_script($handle, $script_contents);
+
+        return 'inline';
+    }
+
+    $script_uri = get_theme_file_uri($relative_path);
+
+    wp_register_script($handle, $script_uri, $dependencies, $version, $in_footer);
+
+    foreach ($localizations as $localization) {
+        if (!empty($localization['name']) && array_key_exists('data', $localization)) {
+            wp_localize_script($handle, $localization['name'], $localization['data']);
+        }
+    }
+
+    wp_enqueue_script($handle);
+
+    return 'file';
+}
+
+/**
  * Enqueue parent theme styles
  */
 function kadence_child_enqueue_styles() {
@@ -35,20 +98,18 @@ function load_facilities_data() {
     // Only load on the TTI program index page
     if (is_page() && get_post_field('post_name') === 'tti-program-index') {
         $facilities_json_url = get_stylesheet_directory_uri() . '/js/data/facilities_data.json';
-        $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
-        
-        wp_enqueue_script(
+
+        kidsoverprofits_enqueue_theme_script(
             'facilities-display',
-            get_stylesheet_directory_uri() . '/js/facilities-display.js',
+            'js/facilities-display.js',
             array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'facilities-display',
-            'facilitiesConfig',
-            array('jsonDataUrl' => esc_url($facilities_json_url))
+            true,
+            array(
+                array(
+                    'name' => 'facilitiesConfig',
+                    'data' => array('jsonDataUrl' => esc_url($facilities_json_url)),
+                ),
+            )
         );
     }
 }
@@ -74,20 +135,17 @@ function load_new_multi_file_report_scripts() {
             }
         }
         
-        $script_path = get_stylesheet_directory() . '/js/ca-reports.js';
-        
-        wp_enqueue_script(
+        kidsoverprofits_enqueue_theme_script(
             'new-multi-file-report',
-            get_stylesheet_directory_uri() . '/js/ca-reports.js',
+            'js/ca-reports.js',
             array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'new-multi-file-report',
-            'myThemeData',
-            array('jsonFileUrls' => $json_urls)
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array('jsonFileUrls' => $json_urls),
+                ),
+            )
         );
     }
 }
@@ -113,20 +171,17 @@ function load_ut_reports_scripts() {
             }
         }
         
-        $script_path = get_stylesheet_directory() . '/js/ut_reports.js';
-        
-        wp_enqueue_script(
+        kidsoverprofits_enqueue_theme_script(
             'ut-reports-display',
-            get_stylesheet_directory_uri() . '/js/ut_reports.js',
+            'js/ut_reports.js',
             array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'ut-reports-display',
-            'myThemeData',
-            array('jsonFileUrls' => $json_urls)
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array('jsonFileUrls' => $json_urls),
+                ),
+            )
         );
     }
 }
@@ -156,20 +211,17 @@ function load_az_reports_scripts() {
         
         error_log('JSON URLs: ' . print_r($json_urls, true));
         
-        $script_path = get_stylesheet_directory() . '/js/az_reports.js';
-        
-        wp_enqueue_script(
+        kidsoverprofits_enqueue_theme_script(
             'az-reports-display',
-            get_stylesheet_directory_uri() . '/js/az_reports.js',
+            'js/az_reports.js',
             array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'az-reports-display',
-            'myThemeData',
-            array('jsonFileUrls' => $json_urls)
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array('jsonFileUrls' => $json_urls),
+                ),
+            )
         );
     }
 }
@@ -214,30 +266,32 @@ class AnonymousDocPortal {
     
     public function enqueue_scripts() {
         if (is_page() && has_shortcode(get_post()->post_content, 'anonymous_doc_portal')) {
-            $js_path = get_stylesheet_directory() . '/js/anonymous-portal.js';
             $css_path = get_stylesheet_directory() . '/css/anonymous-portal.css';
-            
-            wp_enqueue_script(
-                'anonymous-portal-js', 
-                get_stylesheet_directory_uri() . '/js/anonymous-portal.js', 
-                array('jquery'), 
-                file_exists($js_path) ? filemtime($js_path) : '1.0', 
-                true
+
+            kidsoverprofits_enqueue_theme_script(
+                'anonymous-portal-js',
+                'js/anonymous-portal.js',
+                array('jquery'),
+                true,
+                array(
+                    array(
+                        'name' => 'anonymous_portal_ajax',
+                        'data' => array(
+                            'ajax_url'     => admin_url('admin-ajax.php'),
+                            'nonce'        => wp_create_nonce('anonymous_doc_nonce'),
+                            'max_size'     => $this->max_file_size,
+                            'allowed_types' => $this->allowed_types,
+                        ),
+                    ),
+                )
             );
-            
+
             wp_enqueue_style(
-                'anonymous-portal-css', 
-                get_stylesheet_directory_uri() . '/css/anonymous-portal.css', 
-                array(), 
+                'anonymous-portal-css',
+                get_stylesheet_directory_uri() . '/css/anonymous-portal.css',
+                array(),
                 file_exists($css_path) ? filemtime($css_path) : '1.0'
             );
-            
-            wp_localize_script('anonymous-portal-js', 'anonymous_portal_ajax', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('anonymous_doc_nonce'),
-                'max_size' => $this->max_file_size,
-                'allowed_types' => $this->allowed_types
-            ));
         }
     }
     
@@ -749,20 +803,21 @@ $anonymous_portal = new AnonymousDocPortal();
 //TEXAS REPORTS
 function load_tx_reports_scripts() {
     if (is_page('tx-reports')) {
-        wp_enqueue_script(
+        kidsoverprofits_enqueue_theme_script(
             'tx-reports-display',
-            get_stylesheet_directory_uri() . '/js/tx_reports.js',
+            'js/tx_reports.js',
             array(),
-            filemtime(get_stylesheet_directory() . '/js/tx_reports.js'),
-            true
-        );
-        
-        wp_localize_script(
-            'tx-reports-display',
-            'myThemeData',
-            array('jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/tx_reports.json'
-            ))
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array(
+                        'jsonFileUrls' => array(
+                            esc_url(get_stylesheet_directory_uri() . '/js/data/tx_reports.json')
+                        ),
+                    ),
+                ),
+            )
         );
     }
 }
@@ -777,22 +832,25 @@ function enqueue_montana_reports_scripts() {
         $script_path = get_stylesheet_directory() . '/js/mt_reports.js';
         error_log('Script path: ' . $script_path);
         error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'mt-reports', 
-            get_stylesheet_directory_uri() . '/js/mt_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('mt-reports', 'myThemeData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/mt_reports.json'
+
+        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
+            'mt-reports',
+            'js/mt_reports.js',
+            array(),
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array(
+                        'jsonFileUrls' => array(
+                            esc_url(get_stylesheet_directory_uri() . '/js/data/mt_reports.json')
+                        ),
+                    ),
+                ),
             )
-        ));
-        
-        error_log('Script enqueued successfully');
+        );
+
+        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
     } else {
         error_log('Page condition NOT met');
     }
@@ -808,22 +866,25 @@ function enqueue_ct_reports_scripts() {
         $script_path = get_stylesheet_directory() . '/js/ct_reports.js';
         error_log('Script path: ' . $script_path);
         error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'ct-reports', 
-            get_stylesheet_directory_uri() . '/js/ct_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('ct-reports', 'myThemeData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/ct_reports.json'
+
+        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
+            'ct-reports',
+            'js/ct_reports.js',
+            array(),
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array(
+                        'jsonFileUrls' => array(
+                            esc_url(get_stylesheet_directory_uri() . '/js/data/ct_reports.json')
+                        ),
+                    ),
+                ),
             )
-        ));
-        
-        error_log('Script enqueued successfully');
+        );
+
+        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
     } else {
         error_log('Page condition NOT met');
     }
@@ -839,22 +900,25 @@ function enqueue_wa_reports_scripts() {
         $script_path = get_stylesheet_directory() . '/js/wa_reports.js';
         error_log('Script path: ' . $script_path);
         error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'wa-reports', 
-            get_stylesheet_directory_uri() . '/js/wa_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('wa-reports', 'myThemeData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/wa_reports.json'
+
+        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
+            'wa-reports',
+            'js/wa_reports.js',
+            array(),
+            true,
+            array(
+                array(
+                    'name' => 'myThemeData',
+                    'data' => array(
+                        'jsonFileUrls' => array(
+                            esc_url(get_stylesheet_directory_uri() . '/js/data/wa_reports.json')
+                        ),
+                    ),
+                ),
             )
-        ));
-        
-        error_log('Script enqueued successfully');
+        );
+
+        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
     } else {
         error_log('Page condition NOT met');
     }
