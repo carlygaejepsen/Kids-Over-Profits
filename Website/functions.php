@@ -309,6 +309,62 @@ function kidsoverprofits_enqueue_state_report_assets() {
 }
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_state_report_assets');
 
+/**
+ * Enqueue test scripts for debugging display issues
+ * 
+ * This function adds testing scripts that verify CSS and data loading
+ * and display diagnostic panels on the page.
+ * 
+ * To enable:
+ * - Add ?debug=css to any page URL to test CSS loading
+ * - Add ?debug=report to any page URL to test report data loading
+ * - Add ?debug=visual to any page URL to use visual testing tools
+ * - Add ?debug=all to any page URL to run all tests
+ */
+function kidsoverprofits_enqueue_test_scripts() {
+    if (isset($_GET['debug'])) {
+        // CSS test
+        if ($_GET['debug'] === 'css' || $_GET['debug'] === 'all') {
+            $css_script_path = get_stylesheet_directory() . '/js/css-test.js';
+            
+            wp_enqueue_script(
+                'css-test-script',
+                get_stylesheet_directory_uri() . '/js/css-test.js',
+                array('jquery'),
+                file_exists($css_script_path) ? filemtime($css_script_path) : time(),
+                true
+            );
+        }
+        
+        // Report data test
+        if ($_GET['debug'] === 'report' || $_GET['debug'] === 'all') {
+            $report_script_path = get_stylesheet_directory() . '/js/report-test.js';
+            
+            wp_enqueue_script(
+                'report-test-script',
+                get_stylesheet_directory_uri() . '/js/report-test.js',
+                array('jquery'),
+                file_exists($report_script_path) ? filemtime($report_script_path) : time(),
+                true
+            );
+        }
+        
+        // Visual regression test
+        if ($_GET['debug'] === 'visual' || $_GET['debug'] === 'all') {
+            $visual_script_path = get_stylesheet_directory() . '/js/visual-test.js';
+            
+            wp_enqueue_script(
+                'visual-test-script',
+                get_stylesheet_directory_uri() . '/js/visual-test.js',
+                array('jquery'),
+                file_exists($visual_script_path) ? filemtime($visual_script_path) : time(),
+                true
+            );
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_scripts');
+
 // =================================================================
 // ANONYMOUS DOCUMENT PORTAL
 // =================================================================
