@@ -857,8 +857,201 @@ function enqueue_wa_reports_scripts() {
         error_log('Page condition NOT met');
     }
 }
+add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
+
+// =================================================================
+// ADMIN & DATA PAGES - CSS/JS ENQUEUING
+// =================================================================
+
+/**
+ * Load assets for admin-data page
+ */
+function enqueue_admin_data_assets() {
+    if (is_page('admin-data')) {
+        // Enqueue CSS files
+        wp_enqueue_style(
+            'common-css',
+            get_stylesheet_directory_uri() . '/css/common.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/common.css')
+        );
+        wp_enqueue_style(
+            'layout-css',
+            get_stylesheet_directory_uri() . '/css/layout.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/layout.css')
+        );
+        wp_enqueue_style(
+            'forms-css',
+            get_stylesheet_directory_uri() . '/css/forms.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/forms.css')
+        );
+        wp_enqueue_style(
+            'tables-css',
+            get_stylesheet_directory_uri() . '/css/tables.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/tables.css')
+        );
+        wp_enqueue_style(
+            'modals-css',
+            get_stylesheet_directory_uri() . '/css/modals.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/modals.css')
+        );
+        wp_enqueue_style(
+            'admin-css',
+            get_stylesheet_directory_uri() . '/css/admin.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/admin.css')
+        );
+
+        // Enqueue JS files
+        wp_enqueue_script(
+            'app-logic',
+            get_stylesheet_directory_uri() . '/js/app-logic.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/app-logic.js'),
+            true
+        );
+        wp_enqueue_script(
+            'utilities',
+            get_stylesheet_directory_uri() . '/js/utilities.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/utilities.js'),
+            true
+        );
+        wp_enqueue_script(
+            'facility-form-v3',
+            get_stylesheet_directory_uri() . '/js/facility-form.v3.js',
+            array('utilities'),
+            filemtime(get_stylesheet_directory() . '/js/facility-form.v3.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_admin_data_assets');
+
+/**
+ * Load assets for data-organizer page
+ */
+function enqueue_data_organizer_assets() {
+    if (is_page('data-organizer')) {
+        // Enqueue CSS files
+        wp_enqueue_style(
+            'common-css',
+            get_stylesheet_directory_uri() . '/css/common.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/common.css')
+        );
+        wp_enqueue_style(
+            'layout-css',
+            get_stylesheet_directory_uri() . '/css/layout.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/layout.css')
+        );
+        wp_enqueue_style(
+            'forms-css',
+            get_stylesheet_directory_uri() . '/css/forms.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/forms.css')
+        );
+        wp_enqueue_style(
+            'tables-css',
+            get_stylesheet_directory_uri() . '/css/tables.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/tables.css')
+        );
+        wp_enqueue_style(
+            'modals-css',
+            get_stylesheet_directory_uri() . '/css/modals.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/modals.css')
+        );
+        wp_enqueue_style(
+            'admin-css',
+            get_stylesheet_directory_uri() . '/css/admin.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/admin.css')
+        );
+
+        // No additional JS files needed for data-organizer
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_data_organizer_assets');
+
+/**
+ * Load assets for data page
+ */
+function enqueue_data_page_assets() {
+    if (is_page('data')) {
+        // Enqueue CSS files
+        wp_enqueue_style(
+            'common-css',
+            get_stylesheet_directory_uri() . '/css/common.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/common.css')
+        );
+        wp_enqueue_style(
+            'layout-css',
+            get_stylesheet_directory_uri() . '/css/layout.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/layout.css')
+        );
+        wp_enqueue_style(
+            'forms-css',
+            get_stylesheet_directory_uri() . '/css/forms.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/forms.css')
+        );
+        wp_enqueue_style(
+            'tables-css',
+            get_stylesheet_directory_uri() . '/css/tables.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/tables.css')
+        );
+        wp_enqueue_style(
+            'modals-css',
+            get_stylesheet_directory_uri() . '/css/modals.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/modals.css')
+        );
+        wp_enqueue_style(
+            'admin-css',
+            get_stylesheet_directory_uri() . '/css/admin.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/admin.css')
+        );
+
+        // Enqueue JS files
+        wp_enqueue_script(
+            'app-logic',
+            get_stylesheet_directory_uri() . '/js/app-logic.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/app-logic.js'),
+            true
+        );
+        wp_enqueue_script(
+            'facility-form-v3',
+            get_stylesheet_directory_uri() . '/js/facility-form.v3.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/facility-form.v3.js'),
+            true
+        );
+        wp_enqueue_script(
+            'data-form',
+            get_stylesheet_directory_uri() . '/js/data-form.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/data-form.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_data_page_assets');
+
+// Keep this for backward compatibility or remove if not needed
 function enqueue_facility_form_script() {
-    if (is_page('data')) { // Replace with your actual page slug
+    if (is_page('data')) {
         wp_enqueue_script(
             'facility-form-script',
             get_stylesheet_directory_uri() . '/js/facility-form.js',
@@ -869,13 +1062,14 @@ function enqueue_facility_form_script() {
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
+
 function enqueue_facilities_script() {
     // Enqueue the facilities JavaScript
     wp_enqueue_script(
-        'tti-program-index', 
-        get_stylesheet_directory_uri() . '/js/facilities-display.js', 
-        array(), 
-        '1.0.0', 
+        'tti-program-index',
+        get_stylesheet_directory_uri() . '/js/facilities-display.js',
+        array(),
+        '1.0.0',
         true
     );
 }
