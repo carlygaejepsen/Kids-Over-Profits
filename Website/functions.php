@@ -204,7 +204,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'script'    => 'js/ca-reports.js',
             'json'      => array(
                 'dir'     => 'js/data/',
-                'pattern' => 'ccl*.json',
+                'pattern' => 'ccl_*.json',
             ),
         ),
         'ut-reports' => array(
@@ -221,6 +221,8 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'json'   => array(
                 'dir'     => 'js/data/az_reports/',
                 'pattern' => '*.json',
+                'dir'     => 'js/data/',
+                'pattern' => 'az_*.json',
             ),
         ),
         'tx-reports' => array(
@@ -251,6 +253,17 @@ function kidsoverprofits_enqueue_state_report_assets() {
                 'files' => array('js/data/wa_reports.json'),
             ),
         ),
+        'tti-program-index' => array(
+            'handle' => 'facilities-display',
+            'script' => 'js/facilities-display.js',
+            'json'   => array(
+                'files' => array('js/data/facilities_data.json'),
+            ),
+            'localize' => array(
+                'name' => 'facilitiesConfig',
+                'data' => 'jsonDataUrl',
+            ),
+        ),
     );
 
     if (!isset($configs[$slug])) {
@@ -260,16 +273,21 @@ function kidsoverprofits_enqueue_state_report_assets() {
     $config    = $configs[$slug];
     $json_urls = kidsoverprofits_get_report_json_urls($config['json']);
 
+    $localize_name = 'myThemeData';
+    $localize_key  = 'jsonFileUrls';
+
+    if (isset($config['localize'])) {
+        $localize_name = $config['localize']['name'];
+        $localize_key  = $config['localize']['data'];
+    }
+
     kidsoverprofits_enqueue_theme_script(
         $config['handle'],
         $config['script'],
         array(),
         true,
-        array(
-            array(
-                'name' => 'myThemeData', // This name is used by the script to access the JSON URLs
-                'data' => array('jsonFileUrls' => $json_urls)
-            ),
+        array( // Ensure this is always an array of arrays
+            array('name' => $localize_name, 'data' => array($localize_key => $json_urls)),
         )
     );
 }
