@@ -16,12 +16,95 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.addEventListener('change', filterAndSort);
     }
 
+    function getFacilityName(facility = {}) {
+        return facility.facility_name || facility.name || '';
+    }
+
+    function getFacilityAddress(facility = {}) {
+        return facility.facility_address || facility.address || '';
+    }
+
+    function deriveFromChecklists(facility = {}, key) {
+        if (!Array.isArray(facility.inspections)) {
+            return null;
+        }
+
+        for (const inspection of facility.inspections) {
+            if (!inspection || !Array.isArray(inspection.checklists)) {
+                continue;
+            }
+
+            const match = inspection.checklists.find(item => item && item[key] !== undefined && item[key] !== null);
+
+            if (match) {
+                return match[key];
+            }
+        }
+
+        return null;
+    }
+
+    function getFacilityCapacity(facility = {}) {
+        if (facility.capacity !== undefined && facility.capacity !== null) {
+            return facility.capacity;
+        }
+
+        return deriveFromChecklists(facility, 'capacity');
+    }
+
+    function getFacilityCensus(facility = {}) {
+        if (facility.most_recent_census !== undefined && facility.most_recent_census !== null) {
+            return facility.most_recent_census;
+        }
+
+        return deriveFromChecklists(facility, 'census');
+    }
+
+    function normaliseInspections(rawInspections = []) {
+        return rawInspections.map(inspection => {
+            if (!inspection) {
+                return {};
+            }
+
+            const findingsArray = Array.isArray(inspection.inspection_findings)
+                ? inspection.inspection_findings
+                : Array.isArray(inspection.findings)
+                    ? inspection.findings.map(finding => ({
+                        rule_number: finding?.rule_number || finding?.ruleNumber || '',
+                        description: finding?.description || finding?.rule_description || '',
+                        text: finding?.text || finding?.finding_text || ''
+                    }))
+                    : [];
+
+            const checklistUrls = Array.isArray(inspection.checklist_urls) && inspection.checklist_urls.length > 0
+                ? inspection.checklist_urls
+                : Array.isArray(inspection.checklists)
+                    ? inspection.checklists
+                        .map(item => item?.pdf_file)
+                        .filter(Boolean)
+                        .map(file => {
+                            const fileName = file.split('/').pop();
+                            return fileName ? `https://kidsoverprofits.org/wp-content/uploads/utah-checklists/${fileName}` : null;
+                        })
+                        .filter(Boolean)
+                    : [];
+
+            return {
+                inspection_date: inspection.inspection_date || inspection.date || '',
+                inspection_type: inspection.inspection_type || inspection.inspection_types || 'Inspection',
+                inspection_findings: findingsArray,
+                checklist_urls: checklistUrls,
+                checklists: inspection.checklists || [],
+            };
+        });
+    }
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Utah report...');
 
             // NOTE: This part assumes myThemeData.jsonFileUrls is correctly defined elsewhere
-            const urls = myThemeData.jsonFileUrls;
+            const urls = (window.myThemeData && Array.isArray(window.myThemeData.jsonFileUrls)) ? window.myThemeData.jsonFileUrls : [];
             console.log('URLs to fetch:', urls);
 
             if (!urls || urls.length === 0) {
@@ -29,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const jsonUrl = urls.find(url => url.includes('ut_reports.json')) || urls[0];
+            const jsonUrl = urls.find(url => url.includes('ut_reports')) || urls[0];
             console.log('Using URL:', jsonUrl);
 
             const response = await fetch(jsonUrl);
@@ -41,7 +124,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const facilitiesArray = await response.json();
             console.log('Loaded ' + facilitiesArray.length + ' facilities');
 
-            allFacilitiesData = groupFacilitiesFromArray(facilitiesArray);
+            const normalisedFacilities = facilitiesArray.map(facility => ({
+                ...facility,
+                facility_name: getFacilityName(facility),
+                facility_address: getFacilityAddress(facility),
+                capacity: getFacilityCapacity(facility),
+                most_recent_census: getFacilityCensus(facility),
+                inspections: normaliseInspections(facility.inspections),
+            }));
+
+            allFacilitiesData = groupFacilitiesFromArray(normalisedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
 
@@ -60,15 +152,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Helper function to check if inspection has violations/findings
     function inspectionHasViolations(inspection) {
-        // CHANGED: Property name from 'findings' to 'inspection_findings'
-        return inspection.inspection_findings && Array.isArray(inspection.inspection_findings) && inspection.inspection_findings.length > 0;
+        if (!inspection) {
+            return false;
+        }
+
+        if (Array.isArray(inspection.inspection_findings)) {
+            return inspection.inspection_findings.length > 0;
+        }
+
+        if (Array.isArray(inspection.findings)) {
+            return inspection.findings.length > 0;
+        }
+
+        return false;
     }
 
     // --- GROUPS THE FACILITIES BY FIRST LETTER ---
     function groupFacilitiesFromArray(facilitiesArray) {
         const grouped = facilitiesArray.reduce((acc, facility) => {
-            // CHANGED: Property name from 'name' to 'facility_name'
-            const name = facility.facility_name || '';
+            const name = getFacilityName(facility);
             const firstLetter = name.charAt(0).toUpperCase();
             const groupKey = (firstLetter >= 'A' && firstLetter <= 'Z') ? firstLetter : '#';
 
@@ -78,8 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, {});
 
         for (const letter in grouped) {
-            // CHANGED: Property name from 'name' to 'facility_name'
-            grouped[letter].sort((a, b) => (a.facility_name || '').localeCompare(b.facility_name || ''));
+            grouped[letter].sort((a, b) => getFacilityName(a).localeCompare(getFacilityName(b)));
         }
         return grouped;
     }
@@ -135,10 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const filteredFacilities = allFacilities.filter(facility => {
-                // CHANGED: Property names for name and address
-                const name = (facility.facility_name || '').toLowerCase();
-                const address = (facility.facility_address || '').toLowerCase();
-                
+                const name = getFacilityName(facility).toLowerCase();
+                const address = getFacilityAddress(facility).toLowerCase();
+
                 return name.includes(searchTerm) || address.includes(searchTerm);
             });
             
@@ -193,12 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return processedFacilities.sort((a, b) => {
             switch(sortBy) {
                 case 'name':
-                    // CHANGED: Property name from 'name' to 'facility_name'
-                    return (a.facility_name || '').localeCompare(b.facility_name || '');
-                
+                    return getFacilityName(a).localeCompare(getFacilityName(b));
+
                 case 'violations-only':
-                    // CHANGED: Property name from 'name' to 'facility_name'
-                    return (a.facility_name || '').localeCompare(b.facility_name || '');
+                    return getFacilityName(a).localeCompare(getFacilityName(b));
                 
                 case 'violations-desc':
                     const aViolations = countViolations(a);
@@ -219,8 +317,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function countViolations(facility) {
         if (!facility.inspections) return 0;
         return facility.inspections.reduce((total, inspection) => {
-            // CHANGED: Property name from 'findings' to 'inspection_findings'
-            return total + (inspection.inspection_findings ? inspection.inspection_findings.length : 0);
+            const findings = Array.isArray(inspection.inspection_findings)
+                ? inspection.inspection_findings
+                : Array.isArray(inspection.findings)
+                    ? inspection.findings
+                    : [];
+
+            return total + findings.length;
         }, 0);
     }
 
@@ -257,17 +360,18 @@ document.addEventListener('DOMContentLoaded', () => {
         facilities.forEach(facility => {
             const facilityElement = document.createElement('div');
             facilityElement.className = 'facility-box';
-            
-            // ADDED: Display for new fields
-            const capacityHTML = facility.capacity ? `<li><strong>Capacity:</strong> ${facility.capacity}</li>` : '';
-            const censusHTML = facility.most_recent_census !== null ? `<li><strong>Most Recent Census:</strong> ${facility.most_recent_census}</li>` : '';
+
+            const capacityValue = getFacilityCapacity(facility);
+            const censusValue = getFacilityCensus(facility);
+            const capacityHTML = capacityValue !== null && capacityValue !== undefined ? `<li><strong>Capacity:</strong> ${capacityValue}</li>` : '';
+            const censusHTML = censusValue !== null && censusValue !== undefined ? `<li><strong>Most Recent Census:</strong> ${censusValue}</li>` : '';
             const pageLinkHTML = facility.facility_page_link ? `<li><strong>Facility Page:</strong> <a href="${facility.facility_page_link}" target="_blank" rel="noopener noreferrer">View Official Page</a></li>` : '';
-            
+
             facilityElement.innerHTML = `
                 <details>
                     <summary class="facility-header">
-                        <h1>${toTitleCase(facility.facility_name) || 'N/A'}</h1>
-                        <p class="facility-details">Address: ${facility.facility_address || 'N/A'}</p>
+                        <h1>${toTitleCase(getFacilityName(facility)) || 'N/A'}</h1>
+                        <p class="facility-details">Address: ${getFacilityAddress(facility) || 'N/A'}</p>
                     <div class="facility-extra-details">
                         <ul>
                             ${capacityHTML}
@@ -326,6 +430,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${inspection.checklist_urls.map(url => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">View Checklist</a></li>`).join('')}
              </ul>` : '';
 
+        const findings = Array.isArray(inspection.inspection_findings)
+            ? inspection.inspection_findings
+            : Array.isArray(inspection.findings)
+                ? inspection.findings
+                : [];
+
         return `
         <details class="inspection-box ${inspectionClass}">
             <summary class="inspection-header">
@@ -337,8 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>Inspection Type:</strong> ${inspection.inspection_type || 'N/A'}
                 </div>
                 <h4>Findings:</h4>
-                ${hasViolations ? inspection.inspection_findings?.map((finding, index) => createFindingHTML(finding, index)).join('') || '<div class="no-violations"><p><strong>Violations found but no finding details available.</strong></p></div>' : '<div class="no-violations"><p><strong>No violations noted in this inspection.</strong></p></div>'}
-                
+                ${hasViolations ? findings.map((finding, index) => createFindingHTML(finding, index)).join('') || '<div class="no-violations"><p><strong>Violations found but no finding details available.</strong></p></div>' : '<div class="no-violations"><p><strong>No violations noted in this inspection.</strong></p></div>'}
+
                 ${checklistHTML}
             </div>
         </details>
@@ -346,10 +456,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createFindingHTML(finding, index) {
-        // CHANGED: Property names for rule_number, description, and text
-        const ruleNumber = finding.rule_number || 'N/A';
-        const ruleDescription = (finding.description || '').replace(/\n/g, '<br>');
-        const findingText = (finding.text || '').replace(/\n/g, '<br>');
+        if (!finding) {
+            return '';
+        }
+
+        const ruleNumber = finding.rule_number || finding.ruleNumber || 'N/A';
+        const ruleDescriptionRaw = finding.description || finding.rule_description || '';
+        const findingTextRaw = finding.text || finding.finding_text || '';
+        const ruleDescription = ruleDescriptionRaw.replace(/\n/g, '<br>');
+        const findingText = findingTextRaw.replace(/\n/g, '<br>');
         
         return `
             <details class="violation-box">
