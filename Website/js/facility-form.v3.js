@@ -104,6 +104,49 @@ let customStatuses = [];
 let customGenders = [];
 let customLocations = [];
 
+// Cached aggregated values (built from all projects) to prevent repeated heavy recomputation.
+const aggregatedDataCache = {
+    operators: null,
+    facilityNames: null,
+    humanNames: null,
+    facilityTypes: null,
+    staffRoles: null,
+    certifications: null,
+    accreditations: null,
+    memberships: null,
+    locations: null,
+    statuses: null,
+    genders: null
+};
+
+const CACHE_CATEGORY_MAP = {
+    operator: 'operators',
+    facility: 'facilityNames',
+    human: 'humanNames',
+    type: 'facilityTypes',
+    role: 'staffRoles',
+    certification: 'certifications',
+    accreditation: 'accreditations',
+    membership: 'memberships',
+    location: 'locations',
+    status: 'statuses',
+    gender: 'genders'
+};
+
+function invalidateAggregatedData(category = null) {
+    if (!category) {
+        Object.keys(aggregatedDataCache).forEach(key => {
+            aggregatedDataCache[key] = null;
+        });
+        return;
+    }
+
+    const cacheKey = CACHE_CATEGORY_MAP[category];
+    if (cacheKey) {
+        aggregatedDataCache[cacheKey] = null;
+    }
+}
+
 // Make globals available
 window.projects = projects;
 window.currentProjectName = currentProjectName;
@@ -200,6 +243,8 @@ function loadCustomDataFromLocalStorage() {
     } catch (e) {
         console.warn('Failed to load custom data from localStorage:', e);
     }
+
+    invalidateAggregatedData();
 }
 
 function saveToLocalStorage(key, value) {
@@ -277,6 +322,7 @@ function addCustomValue(category, value) {
     if (!array.includes(trimmedValue)) {
         array.push(trimmedValue);
         saveToLocalStorage(key, array);
+        invalidateAggregatedData(category);
         return true;
     }
     
@@ -287,173 +333,217 @@ function addCustomValue(category, value) {
 // DATA AGGREGATION (across all projects)
 // ============================================
 function getAllOperators() {
-    const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
-    
-    Object.values(projects).forEach(project => {
-        if (project.data?.operator?.name) operators.add(project.data.operator.name);
-        if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
-        if (project.data?.operator?.otherNames) {
-            project.data.operator.otherNames.forEach(name => operators.add(name));
-        }
-        
-        project.data?.facilities?.forEach(facility => {
-            if (facility.identification?.currentOperator) {
-                operators.add(facility.identification.currentOperator);
+    if (!aggregatedDataCache.operators) {
+        const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
+
+        Object.values(projects).forEach(project => {
+            if (project.data?.operator?.name) operators.add(project.data.operator.name);
+            if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
+            if (project.data?.operator?.otherNames) {
+                project.data.operator.otherNames.forEach(name => operators.add(name));
             }
-            facility.otherOperators?.forEach(op => operators.add(op));
+
+            project.data?.facilities?.forEach(facility => {
+                if (facility.identification?.currentOperator) {
+                    operators.add(facility.identification.currentOperator);
+                }
+                facility.otherOperators?.forEach(op => operators.add(op));
+            });
         });
-    });
-    
-    return Array.from(operators).filter(op => op && op.trim()).sort();
+
+        aggregatedDataCache.operators = Array.from(operators).filter(op => op && op.trim()).sort();
+    }
+
+    return aggregatedDataCache.operators;
 }
 
 function getAllFacilityNames() {
-    const names = new Set(customFacilityNames);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            if (facility.identification?.name) names.add(facility.identification.name);
-            if (facility.identification?.currentName) names.add(facility.identification.currentName);
-            facility.identification?.otherNames?.forEach(name => names.add(name));
+    if (!aggregatedDataCache.facilityNames) {
+        const names = new Set(customFacilityNames);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                if (facility.identification?.name) names.add(facility.identification.name);
+                if (facility.identification?.currentName) names.add(facility.identification.currentName);
+                facility.identification?.otherNames?.forEach(name => names.add(name));
+            });
         });
-    });
-    
-    return Array.from(names).filter(n => n && n.trim()).sort();
+
+        aggregatedDataCache.facilityNames = Array.from(names).filter(n => n && n.trim()).sort();
+    }
+
+    return aggregatedDataCache.facilityNames;
 }
 
 function getAllHumanNames() {
-    const names = new Set(customHumanNames);
-    
-    Object.values(projects).forEach(project => {
-        // Operator staff
-        if (project.data?.operator?.keyStaff) {
-            const ks = project.data.operator.keyStaff;
-            if (ks.ceo) names.add(ks.ceo);
-            ks.founders?.forEach(f => names.add(f));
-            ks.keyExecutives?.forEach(e => names.add(e));
-        }
-        
-        // Facility staff
-        project.data?.facilities?.forEach(facility => {
-            facility.staff?.administrator?.forEach(admin => {
-                const name = typeof admin === 'string' ? admin : admin.name;
-                if (name) names.add(name);
-            });
-            facility.staff?.notableStaff?.forEach(staff => {
-                const name = typeof staff === 'string' ? staff : staff.name;
-                if (name) names.add(name);
+    if (!aggregatedDataCache.humanNames) {
+        const names = new Set(customHumanNames);
+
+        Object.values(projects).forEach(project => {
+            // Operator staff
+            if (project.data?.operator?.keyStaff) {
+                const ks = project.data.operator.keyStaff;
+                if (ks.ceo) names.add(ks.ceo);
+                ks.founders?.forEach(f => names.add(f));
+                ks.keyExecutives?.forEach(e => names.add(e));
+            }
+
+            // Facility staff
+            project.data?.facilities?.forEach(facility => {
+                facility.staff?.administrator?.forEach(admin => {
+                    const name = typeof admin === 'string' ? admin : admin.name;
+                    if (name) names.add(name);
+                });
+                facility.staff?.notableStaff?.forEach(staff => {
+                    const name = typeof staff === 'string' ? staff : staff.name;
+                    if (name) names.add(name);
+                });
             });
         });
-    });
-    
-    return Array.from(names).filter(n => n && n.trim()).sort();
+
+        aggregatedDataCache.humanNames = Array.from(names).filter(n => n && n.trim()).sort();
+    }
+
+    return aggregatedDataCache.humanNames;
 }
 
 function getAllFacilityTypes() {
-    const types = new Set([...DEFAULT_FACILITY_TYPES, ...customFacilityTypes]);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            if (facility.facilityDetails?.type) {
-                types.add(facility.facilityDetails.type);
-            }
+    if (!aggregatedDataCache.facilityTypes) {
+        const types = new Set([...DEFAULT_FACILITY_TYPES, ...customFacilityTypes]);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                if (facility.facilityDetails?.type) {
+                    types.add(facility.facilityDetails.type);
+                }
+            });
         });
-    });
-    
-    return Array.from(types).filter(t => t && t.trim()).sort();
+
+        aggregatedDataCache.facilityTypes = Array.from(types).filter(t => t && t.trim()).sort();
+    }
+
+    return aggregatedDataCache.facilityTypes;
 }
 
 function getAllStaffRoles() {
-    const roles = new Set([...DEFAULT_STAFF_ROLES, ...customStaffRoles]);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            facility.staff?.administrator?.forEach(admin => {
-                const role = typeof admin === 'string' ? '' : admin.role;
-                if (role) roles.add(role);
-            });
-            facility.staff?.notableStaff?.forEach(staff => {
-                const role = typeof staff === 'string' ? '' : staff.role;
-                if (role) roles.add(role);
+    if (!aggregatedDataCache.staffRoles) {
+        const roles = new Set([...DEFAULT_STAFF_ROLES, ...customStaffRoles]);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                facility.staff?.administrator?.forEach(admin => {
+                    const role = typeof admin === 'string' ? '' : admin.role;
+                    if (role) roles.add(role);
+                });
+                facility.staff?.notableStaff?.forEach(staff => {
+                    const role = typeof staff === 'string' ? '' : staff.role;
+                    if (role) roles.add(role);
+                });
             });
         });
-    });
-    
-    return Array.from(roles).filter(r => r && r.trim()).sort();
+
+        aggregatedDataCache.staffRoles = Array.from(roles).filter(r => r && r.trim()).sort();
+    }
+
+    return aggregatedDataCache.staffRoles;
 }
 
 function getAllCertifications() {
-    const certs = new Set(customCertifications);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            facility.certifications?.forEach(cert => certs.add(cert));
+    if (!aggregatedDataCache.certifications) {
+        const certs = new Set(customCertifications);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                facility.certifications?.forEach(cert => certs.add(cert));
+            });
         });
-    });
-    
-    return Array.from(certs).filter(c => c && c.trim()).sort();
+
+        aggregatedDataCache.certifications = Array.from(certs).filter(c => c && c.trim()).sort();
+    }
+
+    return aggregatedDataCache.certifications;
 }
 
 function getAllAccreditations() {
-    const accreds = new Set(customAccreditations);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            facility.accreditations?.current?.forEach(acc => accreds.add(acc));
-            facility.accreditations?.past?.forEach(acc => accreds.add(acc));
+    if (!aggregatedDataCache.accreditations) {
+        const accreds = new Set(customAccreditations);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                facility.accreditations?.current?.forEach(acc => accreds.add(acc));
+                facility.accreditations?.past?.forEach(acc => accreds.add(acc));
+            });
         });
-    });
-    
-    return Array.from(accreds).filter(a => a && a.trim()).sort();
+
+        aggregatedDataCache.accreditations = Array.from(accreds).filter(a => a && a.trim()).sort();
+    }
+
+    return aggregatedDataCache.accreditations;
 }
 
 function getAllMemberships() {
-    const memberships = new Set(customMemberships);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            facility.memberships?.forEach(m => memberships.add(m));
+    if (!aggregatedDataCache.memberships) {
+        const memberships = new Set(customMemberships);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                facility.memberships?.forEach(m => memberships.add(m));
+            });
         });
-    });
-    
-    return Array.from(memberships).filter(m => m && m.trim()).sort();
+
+        aggregatedDataCache.memberships = Array.from(memberships).filter(m => m && m.trim()).sort();
+    }
+
+    return aggregatedDataCache.memberships;
 }
 
 function getAllLocations() {
-    const locations = new Set(customLocations);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            if (facility.location) locations.add(facility.location);
+    if (!aggregatedDataCache.locations) {
+        const locations = new Set(customLocations);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                if (facility.location) locations.add(facility.location);
+            });
         });
-    });
-    
-    return Array.from(locations).filter(l => l && l.trim()).sort();
+
+        aggregatedDataCache.locations = Array.from(locations).filter(l => l && l.trim()).sort();
+    }
+
+    return aggregatedDataCache.locations;
 }
 
 function getAllStatuses() {
-    const statuses = new Set([...customStatuses, 'Active', 'Closed', 'Acquired', 'Merged', 'Defunct', 'Transferred', 'Open']);
-    
-    Object.values(projects).forEach(project => {
-        if (project.data?.operator?.status) statuses.add(project.data.operator.status);
-        project.data?.facilities?.forEach(facility => {
-            if (facility.operatingPeriod?.status) statuses.add(facility.operatingPeriod.status);
+    if (!aggregatedDataCache.statuses) {
+        const statuses = new Set([...customStatuses, 'Active', 'Closed', 'Acquired', 'Merged', 'Defunct', 'Transferred', 'Open']);
+
+        Object.values(projects).forEach(project => {
+            if (project.data?.operator?.status) statuses.add(project.data.operator.status);
+            project.data?.facilities?.forEach(facility => {
+                if (facility.operatingPeriod?.status) statuses.add(facility.operatingPeriod.status);
+            });
         });
-    });
-    
-    return Array.from(statuses).filter(s => s && s.trim()).sort();
+
+        aggregatedDataCache.statuses = Array.from(statuses).filter(s => s && s.trim()).sort();
+    }
+
+    return aggregatedDataCache.statuses;
 }
 
 function getAllGenders() {
-    const genders = new Set([...customGenders, 'Male', 'Female', 'Co-ed', 'All Genders']);
-    
-    Object.values(projects).forEach(project => {
-        project.data?.facilities?.forEach(facility => {
-            if (facility.facilityDetails?.gender) genders.add(facility.facilityDetails.gender);
+    if (!aggregatedDataCache.genders) {
+        const genders = new Set([...customGenders, 'Male', 'Female', 'Co-ed', 'All Genders']);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                if (facility.facilityDetails?.gender) genders.add(facility.facilityDetails.gender);
+            });
         });
-    });
-    
-    return Array.from(genders).filter(g => g && g.trim()).sort();
+
+        aggregatedDataCache.genders = Array.from(genders).filter(g => g && g.trim()).sort();
+    }
+
+    return aggregatedDataCache.genders;
 }
 
 // ============================================
@@ -712,7 +802,9 @@ async function loadAllProjectsFromCloud() {
         if (result.success && result.projects) {
             window.projects = result.projects;
             projects = window.projects;
-            
+
+            invalidateAggregatedData();
+
             // Backup to localStorage
             saveToLocalStorage('cloudProjects', projects);
             
@@ -733,6 +825,7 @@ async function loadAllProjectsFromCloud() {
             if (Object.keys(backup).length > 0) {
                 window.projects = backup;
                 projects = window.projects;
+                invalidateAggregatedData();
                 showUploadStatus('Loaded from localStorage backup', 'info');
                 return projects;
             }
@@ -741,6 +834,7 @@ async function loadAllProjectsFromCloud() {
         }
         
         showUploadStatus('No projects found - starting fresh', 'info');
+        invalidateAggregatedData();
         return {};
     }
 }
@@ -784,6 +878,7 @@ async function saveProjectToCloud(projectName) {
         // Update local projects object
         window.projects[projectName] = projectData;
         projects = window.projects;
+        invalidateAggregatedData();
         window.currentProjectName = projectName;
         
         // Backup to localStorage
@@ -811,6 +906,7 @@ async function saveProjectToCloud(projectName) {
             };
             projects = window.projects;
             saveToLocalStorage('cloudProjects', projects);
+            invalidateAggregatedData();
             showUploadStatus('Saved to localStorage backup only', 'info');
         } catch (e) {
             console.error('localStorage backup failed:', e);
