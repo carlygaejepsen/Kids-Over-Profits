@@ -4,32 +4,807 @@ let currentProjectName = null;
 let currentFacilityIndex = 0;
 let formData = createNewProjectData();
 
+const DEFAULT_FACILITY_TYPES = [
+    'Residential Treatment Center (RTC)',
+    'Therapeutic Boarding School',
+    'Wilderness Therapy Program',
+    'Long-term Wilderness Program',
+    'Boot Camp',
+    'Behavior Modification Program',
+    'Therapeutic Group Home',
+    'Specialty Boarding School',
+    'Psychiatric Hospital',
+    'Juvenile Detention Center',
+    'Adventure Therapy Program',
+    'Emotional Growth Boarding School',
+    'Ranch Program',
+    'Military-Style Academy',
+    'Fundamentalist Religious Program',
+    'Qualified Residential Treatment Program (QRTP)',
+    'Other'
+];
+
+const DEFAULT_STAFF_ROLES = [
+    'Administrator',
+    'Director',
+    'CEO',
+    'President',
+    'Counselor',
+    'Therapist',
+    'Teacher',
+    'Nurse',
+    'Medical Director',
+    'Case Manager',
+    'Supervisor',
+    'Staff',
+    'Founder',
+    'Key Executive',
+    'Board Member',
+    'Program Director',
+    'Clinical Director',
+    'Admissions Director',
+    'Other'
+];
+
+const DEFAULT_STATUSES = ['Active', 'Inactive', 'Acquired', 'Merged', 'Defunct', 'Pending'];
+const DEFAULT_GENDERS = ['Male', 'Female', 'Coed', 'Co-ed', 'All Genders'];
+
+const CACHE_CATEGORY_MAP = {
+    operator: 'operators',
+    facility: 'facilityNames',
+    human: 'humanNames',
+    facilityType: 'facilityTypes',
+    role: 'staffRoles',
+    certification: 'certifications',
+    accreditation: 'accreditations',
+    membership: 'memberships',
+    licensing: 'licensing',
+    investor: 'investors',
+    location: 'locations',
+    status: 'statuses',
+    gender: 'genders'
+};
+
+let customOperators = [];
+let customFacilityNames = [];
+let customHumanNames = [];
+let customFacilityTypes = [];
+let customCertifications = [];
+let customAccreditations = [];
+let customMemberships = [];
+let customLicensing = [];
+let customInvestors = [];
+let customStaffRoles = [];
+let customStatuses = [];
+let customGenders = [];
+let customLocations = [];
+
+const aggregatedDataCache = {
+    operators: null,
+    facilityNames: null,
+    humanNames: null,
+    facilityTypes: null,
+    staffRoles: null,
+    certifications: null,
+    accreditations: null,
+    memberships: null,
+    licensing: null,
+    investors: null,
+    locations: null,
+    statuses: null,
+    genders: null
+};
+
+loadCustomDataFromLocalStorage();
+
+function loadCustomDataFromLocalStorage() {
+    try {
+        customOperators = JSON.parse(localStorage.getItem('customOperators') || '[]');
+        customFacilityNames = JSON.parse(localStorage.getItem('customFacilityNames') || '[]');
+        customHumanNames = JSON.parse(localStorage.getItem('customHumanNames') || '[]');
+        customFacilityTypes = JSON.parse(localStorage.getItem('customFacilityTypes') || '[]');
+        customCertifications = JSON.parse(localStorage.getItem('customCertifications') || '[]');
+        customAccreditations = JSON.parse(localStorage.getItem('customAccreditations') || '[]');
+        customMemberships = JSON.parse(localStorage.getItem('customMemberships') || '[]');
+        customLicensing = JSON.parse(localStorage.getItem('customLicensing') || '[]');
+        customInvestors = JSON.parse(localStorage.getItem('customInvestors') || '[]');
+        customStaffRoles = JSON.parse(localStorage.getItem('customStaffRoles') || '[]');
+        customStatuses = JSON.parse(localStorage.getItem('customStatuses') || '[]');
+        customGenders = JSON.parse(localStorage.getItem('customGenders') || '[]');
+        customLocations = JSON.parse(localStorage.getItem('customLocations') || '[]');
+    } catch (error) {
+        console.warn('Failed to load custom autocomplete values from localStorage:', error);
+    }
+
+    invalidateAggregatedData();
+}
+
+function saveToLocalStorage(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.warn('Failed to save autocomplete data to localStorage:', error);
+    }
+}
+
+function invalidateAggregatedData(category = null) {
+    if (!category) {
+        Object.keys(aggregatedDataCache).forEach(key => {
+            aggregatedDataCache[key] = null;
+        });
+        return;
+    }
+
+    const cacheKey = CACHE_CATEGORY_MAP[category];
+    if (cacheKey) {
+        aggregatedDataCache[cacheKey] = null;
+    }
+}
+
+function addCustomValue(category, value) {
+    const trimmed = value?.trim();
+    if (!trimmed) return false;
+
+    let targetArray;
+    let storageKey;
+
+    switch (category) {
+        case 'operator':
+            targetArray = customOperators;
+            storageKey = 'customOperators';
+            break;
+        case 'facility':
+            targetArray = customFacilityNames;
+            storageKey = 'customFacilityNames';
+            break;
+        case 'human':
+            targetArray = customHumanNames;
+            storageKey = 'customHumanNames';
+            break;
+        case 'facilityType':
+            targetArray = customFacilityTypes;
+            storageKey = 'customFacilityTypes';
+            break;
+        case 'certification':
+            targetArray = customCertifications;
+            storageKey = 'customCertifications';
+            break;
+        case 'accreditation':
+            targetArray = customAccreditations;
+            storageKey = 'customAccreditations';
+            break;
+        case 'membership':
+            targetArray = customMemberships;
+            storageKey = 'customMemberships';
+            break;
+        case 'licensing':
+            targetArray = customLicensing;
+            storageKey = 'customLicensing';
+            break;
+        case 'investor':
+            targetArray = customInvestors;
+            storageKey = 'customInvestors';
+            break;
+        case 'role':
+            targetArray = customStaffRoles;
+            storageKey = 'customStaffRoles';
+            break;
+        case 'status':
+            targetArray = customStatuses;
+            storageKey = 'customStatuses';
+            break;
+        case 'gender':
+            targetArray = customGenders;
+            storageKey = 'customGenders';
+            break;
+        case 'location':
+            targetArray = customLocations;
+            storageKey = 'customLocations';
+            break;
+        default:
+            return false;
+    }
+
+    if (!Array.isArray(targetArray)) {
+        targetArray = [];
+    }
+
+    if (!targetArray.includes(trimmed)) {
+        targetArray.push(trimmed);
+        saveToLocalStorage(storageKey, targetArray);
+        invalidateAggregatedData(category);
+        return true;
+    }
+
+    return false;
+}
+
+function registerCategorizedValue(category, value) {
+    if (!category) return;
+    invalidateAggregatedData(category);
+    if (value && value.trim()) {
+        addCustomValue(category, value.trim());
+    }
+}
+
+function forEachDataSet(callback) {
+    if (typeof callback !== 'function') return;
+
+    if (formData) {
+        callback(formData);
+    }
+
+    Object.values(projects || {}).forEach(project => {
+        const data = project && project.data ? project.data : project;
+        if (data) {
+            callback(data);
+        }
+    });
+}
+
+function addStringToSet(set, value) {
+    if (!value || typeof value !== 'string') return;
+    const trimmed = value.trim();
+    if (trimmed) {
+        set.add(trimmed);
+    }
+}
+
+function collectStringsFromArray(set, values) {
+    if (!Array.isArray(values)) return;
+    values.forEach(item => {
+        if (typeof item === 'string') {
+            addStringToSet(set, item);
+        } else if (item && typeof item === 'object') {
+            Object.values(item).forEach(val => {
+                if (typeof val === 'string') {
+                    addStringToSet(set, val);
+                }
+            });
+        }
+    });
+}
+
+function toSortedArray(set) {
+    return Array.from(set)
+        .filter(value => value && value.trim())
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+}
+
+function getAllOperators() {
+    if (!aggregatedDataCache.operators) {
+        const operators = new Set(customOperators);
+
+        forEachDataSet(dataSet => {
+            if (dataSet.operator) {
+                addStringToSet(operators, dataSet.operator.name);
+                addStringToSet(operators, dataSet.operator.currentName);
+                collectStringsFromArray(operators, dataSet.operator.pastNames);
+                collectStringsFromArray(operators, dataSet.operator.parentCompanies);
+                collectStringsFromArray(operators, dataSet.operator.otherNames);
+            }
+
+            (dataSet.facilities || []).forEach(facility => {
+                if (facility.identification) {
+                    addStringToSet(operators, facility.identification.currentOperator);
+                    collectStringsFromArray(operators, facility.identification.otherOperators);
+                }
+                collectStringsFromArray(operators, facility.pastOperators);
+                collectStringsFromArray(operators, facility.otherOperators);
+            });
+        });
+
+        aggregatedDataCache.operators = toSortedArray(operators);
+    }
+
+    return aggregatedDataCache.operators;
+}
+
+function getAllFacilityNames() {
+    if (!aggregatedDataCache.facilityNames) {
+        const names = new Set(customFacilityNames);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                if (facility.identification) {
+                    addStringToSet(names, facility.identification.name);
+                    addStringToSet(names, facility.identification.currentName);
+                    collectStringsFromArray(names, facility.identification.otherNames);
+                    collectStringsFromArray(names, facility.identification.pastNames);
+                }
+            });
+        });
+
+        aggregatedDataCache.facilityNames = toSortedArray(names);
+    }
+
+    return aggregatedDataCache.facilityNames;
+}
+
+function getAllHumanNames() {
+    if (!aggregatedDataCache.humanNames) {
+        const names = new Set(customHumanNames);
+
+        forEachDataSet(dataSet => {
+            if (dataSet.operator?.keyStaff) {
+                addStringToSet(names, dataSet.operator.keyStaff.ceo);
+                collectStringsFromArray(names, dataSet.operator.keyStaff.founders);
+                collectStringsFromArray(names, dataSet.operator.keyStaff.keyExecutives);
+            }
+
+            (dataSet.facilities || []).forEach(facility => {
+                if (facility.staff) {
+                    collectStringsFromArray(names, facility.staff.administrator);
+                    collectStringsFromArray(names, facility.staff.notableStaff);
+                }
+            });
+        });
+
+        aggregatedDataCache.humanNames = toSortedArray(names);
+    }
+
+    return aggregatedDataCache.humanNames;
+}
+
+function getAllFacilityTypes() {
+    if (!aggregatedDataCache.facilityTypes) {
+        const types = new Set([...DEFAULT_FACILITY_TYPES, ...customFacilityTypes]);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                addStringToSet(types, facility.facilityDetails?.type);
+            });
+        });
+
+        aggregatedDataCache.facilityTypes = toSortedArray(types);
+    }
+
+    return aggregatedDataCache.facilityTypes;
+}
+
+function getAllStaffRoles() {
+    if (!aggregatedDataCache.staffRoles) {
+        const roles = new Set([...DEFAULT_STAFF_ROLES, ...customStaffRoles]);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                if (facility.staff) {
+                    collectStringsFromArray(roles, facility.staff.administrator?.map(item => item?.role || item));
+                    collectStringsFromArray(roles, facility.staff.notableStaff?.map(item => item?.role || item));
+                }
+            });
+        });
+
+        aggregatedDataCache.staffRoles = toSortedArray(roles);
+    }
+
+    return aggregatedDataCache.staffRoles;
+}
+
+function getAllAccreditations() {
+    if (!aggregatedDataCache.accreditations) {
+        const accreditations = new Set(customAccreditations);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                collectStringsFromArray(accreditations, facility.accreditations?.current);
+                collectStringsFromArray(accreditations, facility.accreditations?.past);
+            });
+        });
+
+        aggregatedDataCache.accreditations = toSortedArray(accreditations);
+    }
+
+    return aggregatedDataCache.accreditations;
+}
+
+function getAllMemberships() {
+    if (!aggregatedDataCache.memberships) {
+        const memberships = new Set(customMemberships);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                collectStringsFromArray(memberships, facility.memberships);
+            });
+        });
+
+        aggregatedDataCache.memberships = toSortedArray(memberships);
+    }
+
+    return aggregatedDataCache.memberships;
+}
+
+function getAllCertifications() {
+    if (!aggregatedDataCache.certifications) {
+        const certifications = new Set(customCertifications);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                collectStringsFromArray(certifications, facility.certifications);
+            });
+        });
+
+        aggregatedDataCache.certifications = toSortedArray(certifications);
+    }
+
+    return aggregatedDataCache.certifications;
+}
+
+function getAllLicensing() {
+    if (!aggregatedDataCache.licensing) {
+        const licensing = new Set(customLicensing);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                collectStringsFromArray(licensing, facility.licensing);
+            });
+        });
+
+        aggregatedDataCache.licensing = toSortedArray(licensing);
+    }
+
+    return aggregatedDataCache.licensing;
+}
+
+function getAllInvestors() {
+    if (!aggregatedDataCache.investors) {
+        const investors = new Set(customInvestors);
+
+        forEachDataSet(dataSet => {
+            collectStringsFromArray(investors, dataSet.operator?.investors);
+        });
+
+        aggregatedDataCache.investors = toSortedArray(investors);
+    }
+
+    return aggregatedDataCache.investors;
+}
+
+function getAllLocations() {
+    if (!aggregatedDataCache.locations) {
+        const locations = new Set(customLocations);
+
+        forEachDataSet(dataSet => {
+            if (dataSet.operator) {
+                addStringToSet(locations, dataSet.operator.location);
+                addStringToSet(locations, dataSet.operator.headquarters);
+            }
+
+            (dataSet.facilities || []).forEach(facility => {
+                addStringToSet(locations, facility.location);
+                addStringToSet(locations, facility.address);
+            });
+        });
+
+        aggregatedDataCache.locations = toSortedArray(locations);
+    }
+
+    return aggregatedDataCache.locations;
+}
+
+function getAllStatuses() {
+    if (!aggregatedDataCache.statuses) {
+        const statuses = new Set([...DEFAULT_STATUSES, ...customStatuses]);
+
+        forEachDataSet(dataSet => {
+            if (dataSet.operator) {
+                addStringToSet(statuses, dataSet.operator.status);
+            }
+
+            (dataSet.facilities || []).forEach(facility => {
+                addStringToSet(statuses, facility.operatingPeriod?.status);
+            });
+        });
+
+        aggregatedDataCache.statuses = toSortedArray(statuses);
+    }
+
+    return aggregatedDataCache.statuses;
+}
+
+function getAllGenders() {
+    if (!aggregatedDataCache.genders) {
+        const genders = new Set([...DEFAULT_GENDERS, ...customGenders]);
+
+        forEachDataSet(dataSet => {
+            (dataSet.facilities || []).forEach(facility => {
+                addStringToSet(genders, facility.facilityDetails?.gender);
+            });
+        });
+
+        aggregatedDataCache.genders = toSortedArray(genders);
+    }
+
+    return aggregatedDataCache.genders;
+}
+
+const CATEGORY_PROVIDERS = {
+    operator: getAllOperators,
+    facility: getAllFacilityNames,
+    human: getAllHumanNames,
+    facilityType: getAllFacilityTypes,
+    role: getAllStaffRoles,
+    accreditation: getAllAccreditations,
+    membership: getAllMemberships,
+    certification: getAllCertifications,
+    licensing: getAllLicensing,
+    investor: getAllInvestors,
+    location: getAllLocations,
+    status: getAllStatuses,
+    gender: getAllGenders
+};
+
+function getProviderForCategory(category) {
+    return CATEGORY_PROVIDERS[category] || (() => []);
+}
+
+function determineCategoryFromPath(path) {
+    if (!path) return null;
+
+    if (/operator\.keyStaff\.(founders|keyExecutives)$/.test(path)) return 'human';
+    if (/operator\.(parentCompanies|otherNames|pastNames)$/.test(path)) return 'operator';
+    if (/operator\.investors$/.test(path)) return 'investor';
+    if (/identification\.(otherNames|pastNames)$/.test(path)) return 'facility';
+    if (/identification\.currentOperator$/.test(path)) return 'operator';
+    if (/(^|\.)otherOperators$/.test(path) || /(^|\.)pastOperators$/.test(path)) return 'operator';
+    if (/facilityDetails\.type$/.test(path)) return 'facilityType';
+    if (/facilityDetails\.gender$/.test(path)) return 'gender';
+    if (/operatingPeriod\.status$/.test(path) || /status$/.test(path)) return 'status';
+    if (path === 'location' || /\.location$/.test(path) || /\.headquarters$/.test(path)) return 'location';
+    if (/accreditations\./.test(path)) return 'accreditation';
+    if (/memberships$/.test(path)) return 'membership';
+    if (/certifications$/.test(path)) return 'certification';
+    if (/licensing$/.test(path)) return 'licensing';
+    if (/staff\./.test(path)) return 'human';
+    return null;
+}
+
+function escapeHtmlForAutocomplete(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function createAutocomplete(input, getDataFunction, category) {
+    if (!input || input.dataset.autocompleteInit === 'true') return;
+
+    if (input.hasAttribute('list')) {
+        input.removeAttribute('list');
+    }
+    input.setAttribute('autocomplete', 'off');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'autocomplete-wrapper';
+    wrapper.style.position = 'relative';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'autocomplete-dropdown';
+    dropdown.style.display = 'none';
+    wrapper.appendChild(dropdown);
+
+    let currentFocus = -1;
+
+    function closeDropdown() {
+        dropdown.innerHTML = '';
+        dropdown.style.display = 'none';
+        currentFocus = -1;
+    }
+
+    function highlightMatch(label, query) {
+        if (!query) {
+            return escapeHtmlForAutocomplete(label);
+        }
+        const index = label.toLowerCase().indexOf(query.toLowerCase());
+        if (index === -1) {
+            return escapeHtmlForAutocomplete(label);
+        }
+        const before = label.substring(0, index);
+        const match = label.substring(index, index + query.length);
+        const after = label.substring(index + query.length);
+        return `${escapeHtmlForAutocomplete(before)}<strong>${escapeHtmlForAutocomplete(match)}</strong>${escapeHtmlForAutocomplete(after)}`;
+    }
+
+    function chooseValue(value) {
+        if (typeof value !== 'string') return;
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        registerCategorizedValue(category, value);
+        closeDropdown();
+    }
+
+    function renderDropdownItems(items, query) {
+        dropdown.innerHTML = '';
+
+        if (!items.length) {
+            const empty = document.createElement('div');
+            empty.className = 'autocomplete-item empty';
+            empty.textContent = 'No matches found';
+            dropdown.appendChild(empty);
+            dropdown.style.display = 'block';
+            return;
+        }
+
+        items.forEach((item, index) => {
+            const option = document.createElement('div');
+            option.className = 'autocomplete-item';
+            option.dataset.value = item;
+            option.innerHTML = highlightMatch(item, query);
+            option.addEventListener('mousedown', (event) => {
+                event.preventDefault();
+                chooseValue(item);
+            });
+            dropdown.appendChild(option);
+        });
+
+        dropdown.style.display = 'block';
+        currentFocus = -1;
+    }
+
+    input.addEventListener('input', () => {
+        const query = input.value.trim();
+        const provider = typeof getDataFunction === 'function' ? getDataFunction : () => [];
+        const items = provider()
+            .filter(item => typeof item === 'string')
+            .filter(item => !query || item.toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 40);
+
+        if (items.length === 0 && !query) {
+            closeDropdown();
+            return;
+        }
+
+        renderDropdownItems(items, query);
+    });
+
+    input.addEventListener('focus', () => {
+        if (input.value.trim()) {
+            input.dispatchEvent(new Event('input'));
+        } else {
+            const provider = typeof getDataFunction === 'function' ? getDataFunction : () => [];
+            const items = provider().filter(item => typeof item === 'string').slice(0, 20);
+            if (items.length > 0) {
+                renderDropdownItems(items, '');
+            }
+        }
+    });
+
+    input.addEventListener('blur', () => {
+        setTimeout(() => {
+            closeDropdown();
+            registerCategorizedValue(category, input.value);
+        }, 120);
+    });
+
+    input.addEventListener('keydown', (event) => {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        if (!items.length) return;
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            currentFocus = (currentFocus + 1) % items.length;
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            currentFocus = currentFocus <= 0 ? items.length - 1 : currentFocus - 1;
+        } else if (event.key === 'Enter') {
+            if (currentFocus > -1 && items[currentFocus]) {
+                event.preventDefault();
+                chooseValue(items[currentFocus].dataset.value);
+            } else if (category) {
+                registerCategorizedValue(category, input.value);
+            }
+            return;
+        } else if (event.key === 'Escape') {
+            closeDropdown();
+            return;
+        } else {
+            return;
+        }
+
+        items.forEach((item, index) => {
+            if (index === currentFocus) {
+                item.classList.add('active');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    });
+
+    input.dataset.autocompleteInit = 'true';
+}
+
+function initializeAutocompleteFields() {
+    const singleFieldConfigs = [
+        { selector: '#operator-name', category: 'operator' },
+        { selector: '#operator-current-name', category: 'operator' },
+        { selector: '#operator-status', category: 'status' },
+        { selector: '#operator-ceo', category: 'human' },
+        { selector: '#operator-location', category: 'location' },
+        { selector: '#operator-headquarters', category: 'location' },
+        { selector: '#facility-name', category: 'facility' },
+        { selector: '#facility-type', category: 'facilityType' }
+    ];
+
+    singleFieldConfigs.forEach(({ selector, category }) => {
+        const element = document.querySelector(selector);
+        if (element && element.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(element, getProviderForCategory(category), category);
+        }
+    });
+
+    document.querySelectorAll('input[data-field="identification.currentName"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllFacilityNames, 'facility');
+        }
+    });
+
+    document.querySelectorAll('input[data-field="identification.currentOperator"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllOperators, 'operator');
+        }
+    });
+
+    document.querySelectorAll('input[data-field="facilityDetails.gender"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllGenders, 'gender');
+        }
+    });
+
+    document.querySelectorAll('input[data-field="facilityDetails.type"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllFacilityTypes, 'facilityType');
+        }
+    });
+
+    document.querySelectorAll('input[data-field="operatingPeriod.status"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllStatuses, 'status');
+        }
+    });
+
+    document.querySelectorAll('input[data-field="location"]').forEach(field => {
+        if (field.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(field, getAllLocations, 'location');
+        }
+    });
+}
+
+
 function createNewProjectData() {
     return {
-        operator: { 
-            name: "", 
-            currentName: "", 
-            pastNames: [], 
-            location: "", 
-            headquarters: "", 
-            founded: "", 
-            operatingPeriod: "", 
-            status: "", 
-            parentCompanies: [], 
-            websites: [], 
-            keyStaff: { ceo: "", founders: [], keyExecutives: [] }, 
-            notes: [] 
+        operator: {
+            name: "",
+            currentName: "",
+            pastNames: [],
+            otherNames: [],
+            location: "",
+            headquarters: "",
+            founded: "",
+            operatingPeriod: "",
+            status: "",
+            parentCompanies: [],
+            websites: [],
+            investors: [],
+            keyStaff: { ceo: "", founders: [], keyExecutives: [] },
+            notes: []
         },
         facilities: [{
-            identification: { 
-                name: "", 
-                currentName: "", 
-                currentOperator: "", 
-                pastNames: [] 
+            identification: {
+                name: "",
+                currentName: "",
+                currentOperator: "",
+                pastNames: [],
+                otherNames: []
             },
             location: "",
             address: "",
             pastOperators: [],
+            otherOperators: [],
             operatingPeriod: { 
                 startYear: null, 
                 endYear: null, 
@@ -120,15 +895,17 @@ function addFacility() {
     const newFacility = createNewProjectData().facilities[0];
     formData.facilities.push(newFacility);
     currentFacilityIndex = formData.facilities.length - 1;
+    invalidateAggregatedData();
     updateAllUI();
 }
 
 function removeFacility() {
     if (formData.facilities.length > 1) {
         formData.facilities.splice(currentFacilityIndex, 1);
-        if (currentFacilityIndex >= formData.facilities.length) { 
-            currentFacilityIndex = formData.facilities.length - 1; 
+        if (currentFacilityIndex >= formData.facilities.length) {
+            currentFacilityIndex = formData.facilities.length - 1;
         }
+        invalidateAggregatedData();
         updateAllUI();
     }
 }
@@ -298,6 +1075,7 @@ function updateAllUI() {
     updateFacilityControls();
     updateTableOfContents();
     updateJSON();
+    initializeAutocompleteFields();
     if (window.projectManager) {
         window.projectManager.renderSavedProjectsList();
         window.projectManager.updateProjectStatus();
@@ -323,11 +1101,21 @@ function renderArray(container, path, items = []) {
         input.type = 'text';
         input.value = typeof item === 'string' ? item : '';
         input.className = 'array-input';
-        input.addEventListener('input', function() { 
-            updateArrayItemValue(path, index, this.value); 
+        input.addEventListener('input', function() {
+            updateArrayItemValue(path, index, this.value);
         });
         itemDiv.appendChild(input);
-        
+
+        const category = determineCategoryFromPath(path);
+        if (category) {
+            const provider = getProviderForCategory(category);
+            setTimeout(() => {
+                if (!input.dataset.autocompleteInit) {
+                    createAutocomplete(input, provider, category);
+                }
+            }, 0);
+        }
+
         if (itemsToShow.length > 1) {
             const removeBtn = document.createElement('button');
             removeBtn.className = 'btn';
@@ -378,16 +1166,20 @@ function updateArrayItemValue(path, index, value) {
 function addNewArrayItem(path) {
     const target = path.startsWith('operator.') ? formData.operator : formData.facilities[currentFacilityIndex];
     let array = getNestedValue(target, path.replace('operator.', ''));
-    
-    if (!Array.isArray(array)) { 
-        array = []; 
-        setNestedValue(target, path.replace('operator.', ''), array); 
+
+    if (!Array.isArray(array)) {
+        array = [];
+        setNestedValue(target, path.replace('operator.', ''), array);
     }
-    
+
     array.push('');
+    const category = determineCategoryFromPath(path);
+    if (category) {
+        invalidateAggregatedData(category);
+    }
     const container = document.querySelector(`[data-path="${path}"]`);
-    if (container) { 
-        renderArray(container, path, array); 
+    if (container) {
+        renderArray(container, path, array);
     }
     updateJSON();
 }
@@ -395,12 +1187,16 @@ function addNewArrayItem(path) {
 function removeArrayItemAtIndex(path, index) {
     const target = path.startsWith('operator.') ? formData.operator : formData.facilities[currentFacilityIndex];
     const array = getNestedValue(target, path.replace('operator.', ''));
-    
+
     if (Array.isArray(array) && array.length > 1 && index >= 0 && index < array.length) {
         array.splice(index, 1);
+        const category = determineCategoryFromPath(path);
+        if (category) {
+            invalidateAggregatedData(category);
+        }
         const container = document.querySelector(`[data-path="${path}"]`);
-        if (container) { 
-            renderArray(container, path, array); 
+        if (container) {
+            renderArray(container, path, array);
         }
         updateJSON();
     }
@@ -420,10 +1216,12 @@ function loadOperatorData() {
     document.getElementById('operator-ceo').value = formData.operator.keyStaff?.ceo || '';
     
     renderArray(document.querySelector('[data-path="operator.pastNames"]'), 'operator.pastNames', formData.operator.pastNames);
+    renderArray(document.querySelector('[data-path="operator.otherNames"]'), 'operator.otherNames', formData.operator.otherNames);
     renderArray(document.querySelector('[data-path="operator.parentCompanies"]'), 'operator.parentCompanies', formData.operator.parentCompanies);
     renderArray(document.querySelector('[data-path="operator.websites"]'), 'operator.websites', formData.operator.websites);
     renderArray(document.querySelector('[data-path="operator.keyStaff.founders"]'), 'operator.keyStaff.founders', formData.operator.keyStaff?.founders);
     renderArray(document.querySelector('[data-path="operator.keyStaff.keyExecutives"]'), 'operator.keyStaff.keyExecutives', formData.operator.keyStaff?.keyExecutives);
+    renderArray(document.querySelector('[data-path="operator.investors"]'), 'operator.investors', formData.operator.investors);
     renderArray(document.querySelector('[data-path="operator.notes"]'), 'operator.notes', formData.operator.notes);
 }
 
@@ -434,7 +1232,17 @@ function loadFacilityData() {
     
     const currentFacility = formData.facilities[currentFacilityIndex];
     if (!currentFacility) return;
-    
+
+    const facilityNameInput = document.getElementById('facility-name');
+    if (facilityNameInput) {
+        facilityNameInput.value = currentFacility.identification?.name || '';
+    }
+
+    const facilityTypeInput = document.getElementById('facility-type');
+    if (facilityTypeInput) {
+        facilityTypeInput.value = currentFacility.facilityDetails?.type || '';
+    }
+
     // Load facility fields
     document.querySelectorAll('.facility-field').forEach(field => {
         const path = field.dataset.field;
@@ -450,7 +1258,9 @@ function loadFacilityData() {
     
     // Load arrays
     renderArray(document.querySelector('[data-path="identification.pastNames"]'), 'identification.pastNames', currentFacility.identification.pastNames);
+    renderArray(document.querySelector('[data-path="identification.otherNames"]'), 'identification.otherNames', currentFacility.identification.otherNames);
     renderArray(document.querySelector('[data-path="pastOperators"]'), 'pastOperators', currentFacility.pastOperators);
+    renderArray(document.querySelector('[data-path="otherOperators"]'), 'otherOperators', currentFacility.otherOperators);
     renderArray(document.querySelector('[data-path="operatingPeriod.notes"]'), 'operatingPeriod.notes', currentFacility.operatingPeriod.notes);
     renderArray(document.querySelector('[data-path="staff.administrator"]'), 'staff.administrator', currentFacility.staff.administrator);
     renderArray(document.querySelector('[data-path="staff.notableStaff"]'), 'staff.notableStaff', currentFacility.staff.notableStaff);
@@ -572,7 +1382,9 @@ function loadJSONData(jsonString) {
             importCount++;
             console.log(`Added project: ${key}`);
         });
-        
+
+        invalidateAggregatedData();
+
         // Load the first imported project
         const projectKeys = Object.keys(importedProjects);
         if (projectKeys.length > 0) {
@@ -603,13 +1415,15 @@ class ProjectManager {
         const projectName = name.trim();
 
         // Update the project in memory first
-        projects[projectName] = { 
-            name: projectName, 
-            data: deepClone(formData), 
-            currentFacilityIndex: currentFacilityIndex, 
-            timestamp: new Date().toISOString() 
+        projects[projectName] = {
+            name: projectName,
+            data: deepClone(formData),
+            currentFacilityIndex: currentFacilityIndex,
+            timestamp: new Date().toISOString()
         };
-        
+
+        invalidateAggregatedData();
+
         // Save to the cloud using your actual API file
         try {
             showUploadStatus(`Saving "${projectName}" to the cloud...`, 'info');
@@ -655,13 +1469,14 @@ class ProjectManager {
         currentProjectName = name;
         formData = deepClone(projects[name].data);
         currentFacilityIndex = projects[name].currentFacilityIndex || 0;
-        
+
         // Ensure currentFacilityIndex is valid
         if (currentFacilityIndex >= formData.facilities.length) {
             currentFacilityIndex = 0;
         }
-        
+
         document.getElementById('project-name').value = name;
+        invalidateAggregatedData();
         updateAllUI();
         showUploadStatus(`Project "${name}" loaded successfully.`, 'success');
     }
@@ -725,6 +1540,8 @@ class ProjectManager {
             const projectKeys = Object.keys(projects);
             console.log('Loaded projects:', projectKeys);
 
+            invalidateAggregatedData();
+
             if (projectKeys.length > 0) {
                 this.loadProject(projectKeys[0]);
                 showUploadStatus(`Loaded ${projectKeys.length} projects from the cloud.`, 'success');
@@ -747,6 +1564,7 @@ class ProjectManager {
         formData = createNewProjectData();
         currentFacilityIndex = 0;
         document.getElementById('project-name').value = '';
+        invalidateAggregatedData();
         updateAllUI();
         showUploadStatus('New project created.', 'info');
     }
@@ -963,7 +1781,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-    
+
+    const facilityNameInput = document.getElementById('facility-name');
+    if (facilityNameInput) {
+        facilityNameInput.addEventListener('input', function() {
+            setNestedValue(formData.facilities[currentFacilityIndex], 'identification.name', this.value);
+            updateTableOfContents();
+            updateFacilityControls();
+            updateJSON();
+        });
+    }
+
+    const facilityTypeInput = document.getElementById('facility-type');
+    if (facilityTypeInput) {
+        facilityTypeInput.addEventListener('input', function() {
+            setNestedValue(formData.facilities[currentFacilityIndex], 'facilityDetails.type', this.value);
+            updateJSON();
+        });
+    }
+
     // Set up facility field event listeners
     document.querySelectorAll('.facility-field').forEach(field => {
         field.addEventListener('input', function() {
@@ -994,14 +1830,13 @@ document.addEventListener('DOMContentLoaded', function() {
             updateJSON();
         });
     });
-    
-// ADD THIS: Initialize all arrays on page load
+
     initializeAllArrays();
-    
+    updateAllUI();
+
     console.log('Application initialized successfully');
 });
 
-// ADD THIS NEW FUNCTION:
 function initializeAllArrays() {
     // Initialize all array containers with empty arrays so they're editable
     document.querySelectorAll('[data-path]').forEach(container => {
@@ -1009,3 +1844,4 @@ function initializeAllArrays() {
         renderArray(container, path, []);
     });
 }
+
