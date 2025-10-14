@@ -40,12 +40,15 @@ A secure, encrypted system for whistleblowers and concerned parties to submit do
   - Automatic metadata stripping
   - Secure file storage with .htaccess protection
   - 90-day automatic deletion
+  - Integrated virus scanning and security checks via CloudIverse API
 - **Supported File Types**: PDF, DOC, DOCX, TXT, JPG, PNG, ZIP (max 10MB)
 - **Admin Dashboard**: WordPress admin interface for reviewing submissions
 
 ### 5. Community Data Contribution System
 - **Public Submissions**: Anyone can suggest facility data corrections or additions
 - **Admin Moderation**: Administrators review and approve suggestions before they're added to the master database
+- **Parent Organization Management**: Facilities and reports are currently organized and managed by parent company or organization. This is important because it enables tracking of networks and chains, but also means that privately owned, unaffiliated programs are not yet fully supported.
+- **Planned Feature**: Future updates will add support for browsing and managing facilities by location, including "State", "City, State", "Country", or "City, Country". This will open up the database to include privately owned programs and facilities that are not part of a larger organization.
 - **Workflow**: Suggestion → Admin Review → Approval → Master Data Update
 
 ---
@@ -70,7 +73,7 @@ Kids-Over-Profits/
 │   │   ├── config.php         # Database configuration
 │   │   ├── get-master-data.php    # Retrieve approved facility data
 │   │   ├── save-suggestion.php    # Save public data suggestions
-│   │   ├── get-suggestions.php    # Retrieve pending suggestions
+│   │   ├── get-suggestions.php    # Retrieve data for admin autocomplete dropdowns
 │   │   ├── process-edit.php       # Process data edits
 │   │   └── save-master.php        # Save approved data to master
 │   ├── html/                  # Page templates
@@ -398,7 +401,7 @@ Saves a public suggestion for admin review.
 ```
 
 ### GET `/api/get-suggestions.php`
-Retrieves pending suggestions (admin only).
+Retrieves data for populating autocomplete dropdowns (e.g., facility names, cities, or other fields) in the admin interface.
 
 **Response**:
 ```json
