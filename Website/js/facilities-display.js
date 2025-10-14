@@ -4,7 +4,7 @@
 function displayFacilities(facilitiesData, containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
-        console.error('Container not found:', containerId);
+        console.warn('Facilities display skipped - container not found:', containerId);
         return;
     }
     
@@ -211,9 +211,11 @@ function displayFacilities(facilitiesData, containerId) {
 
 
 function filterFacilities() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const statusFilter = document.getElementById('statusFilter').value;
-    
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const statusFilterSelect = document.getElementById('statusFilter');
+    const statusFilter = statusFilterSelect ? statusFilterSelect.value : '';
+
     const operatorSections = document.querySelectorAll('.operator-section');
     
     operatorSections.forEach(section => {
@@ -250,10 +252,15 @@ function filterFacilities() {
 
 // Functions for your template features
 function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('sortBy').value = '';
-    document.getElementById('clearSearch').style.display = 'none';
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortBy = document.getElementById('sortBy');
+    const clearButton = document.getElementById('clearSearch');
+
+    if (searchInput) searchInput.value = '';
+    if (statusFilter) statusFilter.value = '';
+    if (sortBy) sortBy.value = '';
+    if (clearButton) clearButton.style.display = 'none';
     filterFacilities();
 }
 
@@ -269,12 +276,14 @@ function setupAlphabetFilter() {
 
 function filterByLetter(letter) {
     const searchInput = document.getElementById('searchInput');
-    if (letter === '') {
-        searchInput.value = '';
-    } else {
-        searchInput.value = letter;
+    if (searchInput) {
+        if (letter === '') {
+            searchInput.value = '';
+        } else {
+            searchInput.value = letter;
+        }
+        filterFacilities();
     }
-    filterFacilities();
 }
 
 function setupEventListeners() {
@@ -304,10 +313,11 @@ function setupEventListeners() {
 }
 
 function handleSort() {
-    const sortValue = document.getElementById('sortBy').value;
+    const sortDropdown = document.getElementById('sortBy');
+    const sortValue = sortDropdown ? sortDropdown.value : 'name';
     const operatorSections = Array.from(document.querySelectorAll('.operator-section'));
     const container = document.querySelector('.facilities-database');
-    
+
     if (!container) return;
     
     switch(sortValue) {
@@ -359,16 +369,22 @@ function toggleAllFacilityDetails(button) {
 // Add this to the end of your facilities-display.js file
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Facilities script loaded');
-    
-    // Setup your template features
+
+    const facilitiesContainer = document.getElementById('facilities-container');
+    if (!facilitiesContainer) {
+        console.info('Facilities script: no facilities-container element present, skipping data fetch.');
+        return;
+    }
+
+    // Setup your template features when the container exists
     setupAlphabetFilter();
     setupEventListeners();
-    
+
     // Direct path to your JSON file
     const jsonPath = '/wp-content/themes/child/js/data/facility-projects-export-2025-10-02.json';
-    
+
     console.log('Loading data from:', jsonPath);
-    
+
     fetch(jsonPath)
         .then(response => {
             if (!response.ok) {

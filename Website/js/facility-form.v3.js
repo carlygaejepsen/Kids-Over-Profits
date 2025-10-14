@@ -6,15 +6,77 @@
 // ============================================
 // CONSTANTS & CONFIGURATION
 // ============================================
-const API_ENDPOINTS = {
-    SAVE_PROJECT: 'https://kidsoverprofits.org/wp-content/themes/child/api/save-master.php',
-    LOAD_PROJECTS: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php'
+const SCRIPT_BUILD_VERSION = 'facility-form.v3.sql-autocomplete.2025-10-14';
+if (typeof window !== 'undefined') {
+    window.KOP_FACILITY_FORM_VERSION = SCRIPT_BUILD_VERSION;
+}
+
+const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
+
+function resolveApiUrl(path, base) {
+    if (!path) return '';
+    if (/^https?:\/\//i.test(path)) {
+        return path;
+    }
+
+    const normalizedBase = base ? base.replace(/\/$/, '') : '';
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+    if (!normalizedBase) {
+        return normalizedPath;
+    }
+
+    return `${normalizedBase}${normalizedPath}`;
+}
+
+const explicitBase = FACILITY_FORM_CONFIG.apiBase;
+const defaultApiBase = explicitBase !== undefined
+    ? explicitBase
+    : (typeof window !== 'undefined' && window.location ? window.location.origin : '');
+const normalizedApiBase = defaultApiBase ? defaultApiBase.replace(/\/$/, '') : '';
+
+const defaultApiPaths = {
+    SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/save-master.php',
+    LOAD_PROJECTS: FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS || '/wp-content/themes/child/api/get-master-data.php',
+    SUGGESTIONS: FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/get-suggestions.php'
 };
 
-// Remote suggestions endpoint (hosted on the real site). If this endpoint is not
-// available from your local environment (CORS), the createAutocomplete() function
-// will fall back to the local `/php/get-suggestions.php` implemented in this repo.
-API_ENDPOINTS.SUGGESTIONS = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php';
+const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
+    acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBase);
+    return acc;
+}, {});
+
+function logActiveFacilityFormConfigOnce() {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    if (window.__KOP_FACILITY_FORM_CONFIG_LOGGED) {
+        return;
+    }
+
+    window.__KOP_FACILITY_FORM_CONFIG_LOGGED = true;
+
+    if (typeof console === 'undefined' || typeof console.info !== 'function') {
+        return;
+    }
+
+    try {
+        console.info('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
+        console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
+        if (FALLBACK_PROJECTS_URL) {
+            console.info('[KOP Facility Form] Fallback dataset URL:', FALLBACK_PROJECTS_URL);
+        } else {
+            console.info('[KOP Facility Form] No fallback dataset configured');
+        }
+    } catch (logError) {
+        // Swallow logging errors to avoid breaking initialization if console is locked down
+    }
+}
+
+const FALLBACK_PROJECTS_URL = FACILITY_FORM_CONFIG.fallbackProjectsUrl
+    ? resolveApiUrl(FACILITY_FORM_CONFIG.fallbackProjectsUrl, normalizedApiBase)
+    : null;
 
 const DEFAULT_FACILITY_TYPES = [
     'Residential Treatment Center (RTC)',
@@ -825,6 +887,45 @@ function initializeAutocompleteFields() {
 // ============================================
 // CLOUD STORAGE - PRIMARY
 // ============================================
+function normalizeProjectsPayload(payload) {
+    if (!payload) return null;
+
+    const normalized = {};
+
+    const assignProject = (projectName, projectPayload) => {
+        if (!projectName) return;
+        const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
+        const rawData = source.data ? source.data : source;
+        const name = source.name || projectName;
+        normalized[projectName] = {
+            name,
+            data: normalizeProjectData(rawData),
+            timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
+            currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0
+        };
+    };
+
+    if (payload.projects && typeof payload.projects === 'object') {
+        Object.entries(payload.projects).forEach(([key, value]) => {
+            assignProject(value?.name || key, value);
+        });
+    } else if (Array.isArray(payload)) {
+        payload.forEach(item => {
+            if (!item) return;
+            const projectName = item.name || item.unique_name || item.projectName;
+            assignProject(projectName || `project-${Math.random().toString(36).slice(2)}`, item);
+        });
+    } else if (typeof payload === 'object') {
+        Object.entries(payload).forEach(([key, value]) => {
+            assignProject(value?.name || key, value);
+        });
+    } else {
+        return null;
+    }
+
+    return Object.keys(normalized).length > 0 ? normalized : null;
+}
+
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
@@ -854,8 +955,8 @@ async function loadAllProjectsFromCloud() {
         }
     } catch (error) {
         console.error('Cloud load error:', error);
-        showUploadStatus('Failed to load from cloud, trying localStorage backup...', 'error');
-        
+        showUploadStatus('Failed to load from cloud. Checking backups...', 'error');
+
         // Fallback to localStorage
         try {
             const backup = JSON.parse(localStorage.getItem('cloudProjects') || '{}');
@@ -869,7 +970,31 @@ async function loadAllProjectsFromCloud() {
         } catch (e) {
             console.error('localStorage backup failed:', e);
         }
-        
+
+        if (FALLBACK_PROJECTS_URL) {
+            try {
+                showUploadStatus('Attempting to load fallback dataset...', 'info');
+                const fallbackResponse = await fetch(FALLBACK_PROJECTS_URL);
+                if (fallbackResponse.ok) {
+                    const fallbackData = await fallbackResponse.json();
+                    const normalizedProjects = normalizeProjectsPayload(fallbackData);
+                    if (normalizedProjects && Object.keys(normalizedProjects).length > 0) {
+                        projects = normalizedProjects;
+                        window.projects = projects;
+                        invalidateAggregatedData();
+                        saveToLocalStorage('cloudProjects', projects);
+                        showUploadStatus(`Loaded ${Object.keys(projects).length} projects from fallback dataset`, 'success');
+                        return projects;
+                    }
+                    console.warn('Fallback dataset did not contain usable project data.');
+                } else {
+                    console.warn(`Fallback dataset request failed with status ${fallbackResponse.status}`);
+                }
+            } catch (fallbackError) {
+                console.warn('Fallback dataset load failed:', fallbackError);
+            }
+        }
+
         showUploadStatus('No projects found - starting fresh', 'info');
         invalidateAggregatedData();
         return {};
@@ -1809,7 +1934,8 @@ function attachButtonListeners() {
 // ============================================
 async function initializeForm() {
     console.log('Initializing consolidated form with cloud-first storage...');
-    
+    logActiveFacilityFormConfigOnce();
+
     // Load custom data from localStorage (backup only)
     loadCustomDataFromLocalStorage();
     
