@@ -1,7 +1,8 @@
 // Utility Functions
 // Extracted from facility-form.js for better reusability
 
-import { STAFF_STRING_SEPARATORS } from 'https://kidsoverprofits.org/wp-content/themes/child/js/config.js';
+// Constants (previously in config.js - now inline to avoid import errors)
+const STAFF_STRING_SEPARATORS = [':', ' - ', '–', '—', '|'];
 
 // ============================================
 // HTML & STRING UTILITIES

@@ -547,19 +547,26 @@ function getAllGenders() {
 }
 
 // ============================================
-// AUTOCOMPLETE DROPDOWN SYSTEM
+// AUTOCOMPLETE DROPDOWN SYSTEM (IMPROVED)
 // ============================================
 function createAutocomplete(input, getDataFunction, category) {
+    // FIX #2: Prevent double-initialization
+    if (input.dataset.autocompleteInit === 'true') {
+        console.log('✅ Autocomplete already initialized for', input.id || input.name);
+        return;
+    }
+
     const wrapper = document.createElement('div');
     wrapper.className = 'autocomplete-wrapper';
     input.parentNode.insertBefore(wrapper, input);
     wrapper.appendChild(input);
-    
+
     const dropdown = document.createElement('div');
     dropdown.className = 'autocomplete-dropdown';
     wrapper.appendChild(dropdown);
-    
+
     let currentFocus = -1;
+    let abortController = null; // FIX #2: For cancelling pending requests
     
     function showDropdown(items) {
         dropdown.innerHTML = '';
@@ -619,29 +626,55 @@ function createAutocomplete(input, getDataFunction, category) {
 
         showDropdown(localFiltered);
 
-        // Debounced remote fetch: try the real (remote) endpoint first, then fall back to local PHP endpoint.
+        // FIX #2: Cancel any pending remote fetch
+        if (abortController) {
+            abortController.abort();
+        }
+
+        // Debounced remote fetch with improved error handling
         if (createAutocomplete._pendingFetch) clearTimeout(createAutocomplete._pendingFetch);
         createAutocomplete._pendingFetch = setTimeout(async () => {
             const q = encodeURIComponent(value);
             const params = `?category=${encodeURIComponent(category)}&q=${q}`;
-            const remoteUrl = (typeof API_ENDPOINTS !== 'undefined' && API_ENDPOINTS.SUGGESTIONS) ? API_ENDPOINTS.SUGGESTIONS + params : null;
+            const remoteUrl = API_ENDPOINTS.SUGGESTIONS + params;
 
-            if (!remoteUrl) return;
             try {
-                const resp = await fetch(remoteUrl, { cache: 'no-store' });
+                // FIX #2: Create new AbortController for this request
+                abortController = new AbortController();
+
+                const resp = await fetch(remoteUrl, {
+                    cache: 'no-store',
+                    signal: abortController.signal
+                });
+
                 if (!resp.ok) {
-                    console.warn('Autocomplete remote suggestions returned non-ok status', resp.status);
-                    return;
+                    console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
+                    return; // Keep showing local items
                 }
+
+                const contentType = resp.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
+                    return; // Keep showing local items
+                }
+
                 const json = await resp.json();
                 if (json && json.success && Array.isArray(json.values)) {
                     const merged = Array.from(new Set([...localFiltered, ...json.values]));
                     showDropdown(merged);
+                    console.log(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
+                } else {
+                    console.warn('⚠️ Autocomplete API returned unexpected format:', json);
                 }
             } catch (e) {
-                console.warn('Autocomplete remote fetch failed', e);
+                if (e.name === 'AbortError') {
+                    // Request was cancelled, ignore silently
+                    return;
+                }
+                console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
+                // Keep showing local items on error
             }
-        }, 220);
+        }, 300); // Increased from 220ms to 300ms for better performance
     });
     
     input.addEventListener('focus', () => {
@@ -692,6 +725,10 @@ function createAutocomplete(input, getDataFunction, category) {
             }
         });
     }
+
+    // FIX #2: Mark as initialized to prevent double-initialization
+    input.dataset.autocompleteInit = 'true';
+    console.log('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
 }
 
 function initializeAutocompleteFields() {
@@ -841,38 +878,63 @@ async function loadAllProjectsFromCloud() {
 
 async function saveProjectToCloud(projectName) {
     if (!projectName || !window.formData) {
-        showUploadStatus('No project name or data to save', 'error');
+        showUploadStatus('❌ No project name or data to save', 'error');
+        console.error('❌ Save blocked: projectName=', projectName, 'formData exists=', !!window.formData);
         return false;
     }
-    
+
     try {
-        showUploadStatus(`Saving "${projectName}" to cloud...`, 'info');
-        
+        showUploadStatus(`💾 Saving "${projectName}" to cloud...`, 'info');
+        console.log('=== SAVE PROJECT START ===');
+        console.log('Project name:', projectName);
+        console.log('Facility count:', window.formData.facilities?.length || 0);
+        console.log('Data size:', JSON.stringify(window.formData).length, 'characters');
+
         const projectData = {
             name: projectName,
             data: deepClone(window.formData),
             currentFacilityIndex: window.currentFacilityIndex,
             timestamp: new Date().toISOString()
         };
-        
+
+        const payload = {
+            projectName: projectName,
+            data: projectData.data,
+            action: 'save'
+        };
+
+        const payloadSize = JSON.stringify(payload).length;
+        console.log('Payload size:', payloadSize, 'characters');
+        console.log('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
+
         const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                projectName: projectName,
-                data: projectData.data,
-                action: 'save'
-            })
+            body: JSON.stringify(payload)
         });
-        
+
+        console.log('Response status:', response.status, response.statusText);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('❌ Save failed response body:', errorText.substring(0, 500));
+            throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
         }
-        
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const responseText = await response.text();
+            console.error('❌ Expected JSON but got:', contentType);
+            console.error('Response preview:', responseText.substring(0, 500));
+            throw new Error(`Expected JSON response, got ${contentType}`);
+        }
+
         const result = await response.json();
-        
+        console.log('Save result:', result);
+
         if (!result.success) {
-            throw new Error(result.error || 'Unknown server error');
+            throw new Error(result.error || result.message || 'Unknown server error');
         }
         
         // Update local projects object
@@ -880,24 +942,28 @@ async function saveProjectToCloud(projectName) {
         projects = window.projects;
         invalidateAggregatedData();
         window.currentProjectName = projectName;
-        
+
         // Backup to localStorage
         saveToLocalStorage('cloudProjects', projects);
-        
-        showUploadStatus(`✅ Saved "${projectName}" to cloud`, 'success');
-        
+
+        console.log('✅ Save successful!');
+        console.log('=== SAVE PROJECT END ===');
+        showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
+
         // Update UI
         if (typeof window.updateAllUI === 'function') {
             window.updateAllUI();
         }
-        
+
         return true;
     } catch (error) {
-        console.error('Cloud save error:', error);
-        showUploadStatus(`Failed to save to cloud: ${error.message}`, 'error');
-        
+        console.error('❌ SAVE FAILED:', error.message);
+        console.error('Error stack:', error.stack);
+        showUploadStatus(`❌ Failed to save: ${error.message}`, 'error');
+
         // Still save to localStorage as backup
         try {
+            console.log('Attempting localStorage backup...');
             window.projects[projectName] = {
                 name: projectName,
                 data: deepClone(window.formData),
@@ -907,11 +973,13 @@ async function saveProjectToCloud(projectName) {
             projects = window.projects;
             saveToLocalStorage('cloudProjects', projects);
             invalidateAggregatedData();
-            showUploadStatus('Saved to localStorage backup only', 'info');
+            console.log('✅ Saved to localStorage backup');
+            showUploadStatus('⚠️ Saved to localStorage backup only (cloud save failed)', 'info');
         } catch (e) {
-            console.error('localStorage backup failed:', e);
+            console.error('❌ localStorage backup also failed:', e);
+            showUploadStatus('❌ Save completely failed - check console for details', 'error');
         }
-        
+
         return false;
     }
 }
@@ -1356,11 +1424,90 @@ function removeFacility() {
 }
 
 function cloneFacility() {
+    // Clone facility to send to another project (NOT the current project)
     const clone = deepClone(window.formData.facilities[window.currentFacilityIndex]);
-    window.formData.facilities.splice(window.currentFacilityIndex + 1, 0, clone);
-    window.currentFacilityIndex++;
-    window.updateAllUI();
-    autoSave();
+
+    // Get list of all projects (excluding current project)
+    const availableProjects = Object.keys(window.projects || {}).filter(name => name !== window.currentProjectName);
+
+    if (availableProjects.length === 0) {
+        alert('No other projects available. Please create a new project first to clone this facility to.');
+        return;
+    }
+
+    // Prompt user to select target project
+    const projectList = availableProjects.map((name, idx) => `${idx + 1}. ${name}`).join('\n');
+    const selection = prompt(
+        `Clone facility to which project?\n\n${projectList}\n\nEnter the number of the target project (or type a new project name):`
+    );
+
+    if (!selection || selection.trim() === '') {
+        console.log('Clone cancelled by user');
+        return;
+    }
+
+    let targetProjectName;
+
+    // Check if user entered a number (selecting existing project)
+    const selectionNum = parseInt(selection);
+    if (!isNaN(selectionNum) && selectionNum >= 1 && selectionNum <= availableProjects.length) {
+        targetProjectName = availableProjects[selectionNum - 1];
+    } else {
+        // User typed a new project name
+        targetProjectName = selection.trim();
+    }
+
+    // Load or create target project
+    if (!window.projects[targetProjectName]) {
+        // Create new project with the cloned facility
+        window.projects[targetProjectName] = {
+            name: targetProjectName,
+            data: {
+                facilities: [clone]
+            },
+            currentFacilityIndex: 0,
+            timestamp: new Date().toISOString()
+        };
+        console.log(`✅ Created new project "${targetProjectName}" with cloned facility`);
+    } else {
+        // Add clone to existing project
+        if (!window.projects[targetProjectName].data.facilities) {
+            window.projects[targetProjectName].data.facilities = [];
+        }
+        window.projects[targetProjectName].data.facilities.push(clone);
+        console.log(`✅ Added cloned facility to existing project "${targetProjectName}"`);
+    }
+
+    // Save the updated projects to localStorage and cloud
+    saveToLocalStorage('cloudProjects', window.projects);
+
+    // Attempt to save target project to cloud
+    const currentProject = window.currentProjectName;
+    const currentData = deepClone(window.formData);
+    const currentIndex = window.currentFacilityIndex;
+
+    // Temporarily switch to target project for saving
+    window.currentProjectName = targetProjectName;
+    window.formData = window.projects[targetProjectName].data;
+    window.currentFacilityIndex = window.projects[targetProjectName].currentFacilityIndex || 0;
+
+    saveProjectToCloud(targetProjectName).then(() => {
+        // Restore original project
+        window.currentProjectName = currentProject;
+        window.formData = currentData;
+        window.currentFacilityIndex = currentIndex;
+
+        alert(`✅ Facility cloned to project "${targetProjectName}"!`);
+    }).catch((err) => {
+        console.error('Failed to save cloned facility to cloud:', err);
+
+        // Restore original project even on error
+        window.currentProjectName = currentProject;
+        window.formData = currentData;
+        window.currentFacilityIndex = currentIndex;
+
+        alert(`⚠️ Facility cloned to project "${targetProjectName}" (saved locally, but cloud sync failed)`);
+    });
 }
 
 function sortFacilities() {
@@ -1722,14 +1869,22 @@ if (document.readyState === 'loading') {
 // Re-run lightweight initialization checks on window.load to recover from intermittent failures.
 window.addEventListener('load', () => {
     console.log('facility-form.v3.js: window.load fired — verifying form initialization');
+
+    // ONLY run once - use flag to prevent multiple calls (FIX #1: Prevents rendering loops)
+    if (window._uiInitializedOnLoad) {
+        console.log('✅ UI already initialized on load, skipping duplicate initialization');
+        return;
+    }
+    window._uiInitializedOnLoad = true;
+
     setTimeout(() => {
         try {
             if (typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
-                console.log('facility-form.v3.js: updateAllUI re-run on load');
+                console.log('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
             }
         } catch (e) {
-            console.error('facility-form.v3.js: error during load-time UI verification', e);
+            console.error('❌ facility-form.v3.js: error during load-time UI verification', e);
         }
     }, 150);
 });
