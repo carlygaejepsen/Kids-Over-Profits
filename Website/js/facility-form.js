@@ -777,30 +777,34 @@ function initializeAutocompleteFields() {
 
 function createNewProjectData() {
     return {
-        operator: { 
-            name: "", 
-            currentName: "", 
-            pastNames: [], 
-            location: "", 
-            headquarters: "", 
-            founded: "", 
-            operatingPeriod: "", 
-            status: "", 
-            parentCompanies: [], 
-            websites: [], 
-            keyStaff: { ceo: "", founders: [], keyExecutives: [] }, 
-            notes: [] 
+        operator: {
+            name: "",
+            currentName: "",
+            pastNames: [],
+            otherNames: [],
+            location: "",
+            headquarters: "",
+            founded: "",
+            operatingPeriod: "",
+            status: "",
+            parentCompanies: [],
+            websites: [],
+            investors: [],
+            keyStaff: { ceo: "", founders: [], keyExecutives: [] },
+            notes: []
         },
         facilities: [{
-            identification: { 
-                name: "", 
-                currentName: "", 
-                currentOperator: "", 
-                pastNames: [] 
+            identification: {
+                name: "",
+                currentName: "",
+                currentOperator: "",
+                pastNames: [],
+                otherNames: []
             },
             location: "",
             address: "",
             pastOperators: [],
+            otherOperators: [],
             operatingPeriod: { 
                 startYear: null, 
                 endYear: null, 
@@ -1212,10 +1216,12 @@ function loadOperatorData() {
     document.getElementById('operator-ceo').value = formData.operator.keyStaff?.ceo || '';
     
     renderArray(document.querySelector('[data-path="operator.pastNames"]'), 'operator.pastNames', formData.operator.pastNames);
+    renderArray(document.querySelector('[data-path="operator.otherNames"]'), 'operator.otherNames', formData.operator.otherNames);
     renderArray(document.querySelector('[data-path="operator.parentCompanies"]'), 'operator.parentCompanies', formData.operator.parentCompanies);
     renderArray(document.querySelector('[data-path="operator.websites"]'), 'operator.websites', formData.operator.websites);
     renderArray(document.querySelector('[data-path="operator.keyStaff.founders"]'), 'operator.keyStaff.founders', formData.operator.keyStaff?.founders);
     renderArray(document.querySelector('[data-path="operator.keyStaff.keyExecutives"]'), 'operator.keyStaff.keyExecutives', formData.operator.keyStaff?.keyExecutives);
+    renderArray(document.querySelector('[data-path="operator.investors"]'), 'operator.investors', formData.operator.investors);
     renderArray(document.querySelector('[data-path="operator.notes"]'), 'operator.notes', formData.operator.notes);
 }
 
@@ -1252,7 +1258,9 @@ function loadFacilityData() {
     
     // Load arrays
     renderArray(document.querySelector('[data-path="identification.pastNames"]'), 'identification.pastNames', currentFacility.identification.pastNames);
+    renderArray(document.querySelector('[data-path="identification.otherNames"]'), 'identification.otherNames', currentFacility.identification.otherNames);
     renderArray(document.querySelector('[data-path="pastOperators"]'), 'pastOperators', currentFacility.pastOperators);
+    renderArray(document.querySelector('[data-path="otherOperators"]'), 'otherOperators', currentFacility.otherOperators);
     renderArray(document.querySelector('[data-path="operatingPeriod.notes"]'), 'operatingPeriod.notes', currentFacility.operatingPeriod.notes);
     renderArray(document.querySelector('[data-path="staff.administrator"]'), 'staff.administrator', currentFacility.staff.administrator);
     renderArray(document.querySelector('[data-path="staff.notableStaff"]'), 'staff.notableStaff', currentFacility.staff.notableStaff);
