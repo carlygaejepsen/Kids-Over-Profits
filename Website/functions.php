@@ -77,15 +77,30 @@ function kidsoverprofits_enqueue_theme_script($handle, $relative_path, $dependen
  * Enqueue parent theme styles
  */
 function kadence_child_enqueue_styles() {
+    $theme = wp_get_theme();
+
+    $parent_version = $theme->parent() ? $theme->parent()->get('Version') : $theme->get('Version');
+
     // Enqueue parent theme stylesheet
     wp_enqueue_style(
-        'kadence-parent-style', 
+        'kadence-parent-style',
         get_template_directory_uri() . '/style.css',
         array(),
-        wp_get_theme()->get('Version')
+        $parent_version
+    );
+
+    $child_style_path = get_stylesheet_directory() . '/style.css';
+    $child_version    = file_exists($child_style_path) ? filemtime($child_style_path) : $theme->get('Version');
+
+    // Enqueue child theme stylesheet
+    wp_enqueue_style(
+        'kadence-child-style',
+        get_stylesheet_uri(),
+        array('kadence-parent-style'),
+        $child_version
     );
 }
-add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
+add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
 
 // =================================================================
 // CUSTOM FUNCTIONS
@@ -96,7 +111,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  */
 function load_facilities_data() {
     // Only load on the TTI program index page
-    if (is_page() && get_post_field('post_name') === 'tti-program-index') {
+    if (is_page('tti-program-index')) {
         $facilities_json_url = get_stylesheet_directory_uri() . '/js/data/facilities_data.json';
 
         kidsoverprofits_enqueue_theme_script(
@@ -116,116 +131,149 @@ function load_facilities_data() {
 add_action('wp_enqueue_scripts', 'load_facilities_data');
 
 /**
- * Load scripts for CA reports page (multi-file report)
+ * Build an array of JSON file URLs for localization.
+ *
+ * @param array $json_config Array describing how to discover JSON files.
+ * @return array
  */
-function load_new_multi_file_report_scripts() {
-    if (is_page('ca-reports')) {
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/';
-        
-        // Find only CA-specific JSON files (modify pattern as needed)
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . 'ccl*.json');
-            
-            if ($json_files) {
-                foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
-                }
+function kidsoverprofits_get_report_json_urls($json_config) {
+    $json_urls = array();
+
+    if (empty($json_config)) {
+        return $json_urls;
+    }
+
+    if (!empty($json_config['files'])) {
+        foreach ($json_config['files'] as $relative_file) {
+            $file_path = get_theme_file_path($relative_file);
+
+            if ($file_path && file_exists($file_path)) {
+                $json_urls[] = esc_url(get_theme_file_uri($relative_file));
             }
         }
-        
-        kidsoverprofits_enqueue_theme_script(
-            'new-multi-file-report',
-            'js/ca-reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array('jsonFileUrls' => $json_urls),
-                ),
-            )
-        );
+
+        return $json_urls;
     }
+
+    $directory = !empty($json_config['dir']) ? trailingslashit($json_config['dir']) : '';
+    $pattern   = !empty($json_config['pattern']) ? $json_config['pattern'] : '*.json';
+
+    if (!$directory) {
+        return $json_urls;
+    }
+
+    $absolute_directory = get_theme_file_path($directory);
+
+    if ($absolute_directory && is_dir($absolute_directory)) {
+        $files    = glob(trailingslashit($absolute_directory) . $pattern);
+        $base_uri = trailingslashit(get_theme_file_uri($directory));
+
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $json_urls[] = esc_url($base_uri . basename($file));
+            }
+        }
+    }
+
+    return $json_urls;
 }
-add_action('wp_enqueue_scripts', 'load_new_multi_file_report_scripts');
 
 /**
- * Load scripts for Utah reports page
+ * Load scripts for state report pages.
  */
-function load_ut_reports_scripts() {
-    if (is_page('ut-reports')) {
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/';
-        
-        // Find only UT-specific JSON files
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . 'ut_*.json'); // Only files starting with "ut_"
-            
-            if ($json_files) {
-                foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
-                }
-            }
-        }
-        
-        kidsoverprofits_enqueue_theme_script(
-            'ut-reports-display',
-            'js/ut_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array('jsonFileUrls' => $json_urls),
-                ),
-            )
-        );
+function kidsoverprofits_enqueue_state_report_assets() {
+    if (!is_page()) {
+        return;
     }
-}
-add_action('wp_enqueue_scripts', 'load_ut_reports_scripts');
 
-/**
- * Load scripts for Arizona reports page
- */
-function load_az_reports_scripts() {
-    if (is_page('az-reports')) {
-        error_log('Arizona page detected!');
-        
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/az_reports/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/az_reports/';
-        
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . '*.json');
-            error_log('Found JSON files: ' . print_r($json_files, true));
-            
-            if ($json_files) {
-                foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
-                }
-            }
-        }
-        
-        error_log('JSON URLs: ' . print_r($json_urls, true));
-        
-        kidsoverprofits_enqueue_theme_script(
-            'az-reports-display',
-            'js/az_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array('jsonFileUrls' => $json_urls),
-                ),
-            )
-        );
+    $page_id = get_queried_object_id();
+
+    if (!$page_id) {
+        return;
     }
+
+    $slug = get_post_field('post_name', $page_id);
+
+    if (!$slug) {
+        return;
+    }
+
+    $configs = array(
+        'ca-reports' => array(
+            'handle'    => 'new-multi-file-report',
+            'script'    => 'js/ca-reports.js',
+            'json'      => array(
+                'dir'     => 'js/data/',
+                'pattern' => 'ccl*.json',
+            ),
+        ),
+        'ut-reports' => array(
+            'handle' => 'ut-reports-display',
+            'script' => 'js/ut_reports.js',
+            'json'   => array(
+                'dir'     => 'js/data/',
+                'pattern' => 'ut_*.json',
+            ),
+        ),
+        'az-reports' => array(
+            'handle' => 'az-reports-display',
+            'script' => 'js/az_reports.js',
+            'json'   => array(
+                'dir'     => 'js/data/az_reports/',
+                'pattern' => '*.json',
+            ),
+        ),
+        'tx-reports' => array(
+            'handle' => 'tx-reports-display',
+            'script' => 'js/tx_reports.js',
+            'json'   => array(
+                'files' => array('js/data/tx_reports.json'),
+            ),
+        ),
+        'mt-reports' => array(
+            'handle' => 'mt-reports',
+            'script' => 'js/mt_reports.js',
+            'json'   => array(
+                'files' => array('js/data/mt_reports.json'),
+            ),
+        ),
+        'ct-reports' => array(
+            'handle' => 'ct-reports',
+            'script' => 'js/ct_reports.js',
+            'json'   => array(
+                'files' => array('js/data/ct_reports.json'),
+            ),
+        ),
+        'wa-reports' => array(
+            'handle' => 'wa-reports',
+            'script' => 'js/wa_reports.js',
+            'json'   => array(
+                'files' => array('js/data/wa_reports.json'),
+            ),
+        ),
+    );
+
+    if (!isset($configs[$slug])) {
+        return;
+    }
+
+    $config    = $configs[$slug];
+    $json_urls = kidsoverprofits_get_report_json_urls($config['json']);
+
+    kidsoverprofits_enqueue_theme_script(
+        $config['handle'],
+        $config['script'],
+        array(),
+        true,
+        array(
+            array(
+                'name' => 'myThemeData',
+                'data' => array('jsonFileUrls' => $json_urls),
+            ),
+        )
+    );
 }
-add_action('wp_enqueue_scripts', 'load_az_reports_scripts');
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_state_report_assets');
 
 // =================================================================
 // ANONYMOUS DOCUMENT PORTAL
@@ -265,7 +313,9 @@ class AnonymousDocPortal {
     }
     
     public function enqueue_scripts() {
-        if (is_page() && has_shortcode(get_post()->post_content, 'anonymous_doc_portal')) {
+        $post = get_post();
+
+        if (is_page() && $post && has_shortcode($post->post_content, 'anonymous_doc_portal')) {
             $css_path = get_stylesheet_directory() . '/css/anonymous-portal.css';
 
             kidsoverprofits_enqueue_theme_script(
@@ -800,130 +850,6 @@ class AnonymousDocPortal {
 // Initialize the portal
 $anonymous_portal = new AnonymousDocPortal();
 
-//TEXAS REPORTS
-function load_tx_reports_scripts() {
-    if (is_page('tx-reports')) {
-        kidsoverprofits_enqueue_theme_script(
-            'tx-reports-display',
-            'js/tx_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array(
-                        'jsonFileUrls' => array(
-                            esc_url(get_stylesheet_directory_uri() . '/js/data/tx_reports.json')
-                        ),
-                    ),
-                ),
-            )
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'load_tx_reports_scripts');
-
-function enqueue_montana_reports_scripts() {
-    error_log('Montana function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('mt-reports')) {
-        error_log('mt-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/mt_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-
-        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
-            'mt-reports',
-            'js/mt_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array(
-                        'jsonFileUrls' => array(
-                            esc_url(get_stylesheet_directory_uri() . '/js/data/mt_reports.json')
-                        ),
-                    ),
-                ),
-            )
-        );
-
-        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_montana_reports_scripts');
-
-function enqueue_ct_reports_scripts() {
-    error_log('Connecticut function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('ct-reports')) {
-        error_log('ct-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/ct_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-
-        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
-            'ct-reports',
-            'js/ct_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array(
-                        'jsonFileUrls' => array(
-                            esc_url(get_stylesheet_directory_uri() . '/js/data/ct_reports.json')
-                        ),
-                    ),
-                ),
-            )
-        );
-
-        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_ct_reports_scripts');
-
-function enqueue_wa_reports_scripts() {
-    error_log('Washington function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('wa-reports')) {
-        error_log('wa-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/wa_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-
-        $enqueue_mode = kidsoverprofits_enqueue_theme_script(
-            'wa-reports',
-            'js/wa_reports.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'myThemeData',
-                    'data' => array(
-                        'jsonFileUrls' => array(
-                            esc_url(get_stylesheet_directory_uri() . '/js/data/wa_reports.json')
-                        ),
-                    ),
-                ),
-            )
-        );
-
-        error_log('Script enqueued successfully using mode: ' . ($enqueue_mode ?: 'failed'));
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
 
 // =================================================================
 // ADMIN & DATA PAGES - CSS/JS ENQUEUING
@@ -1101,12 +1027,9 @@ add_action('wp_enqueue_scripts', 'enqueue_test_autocomplete_assets');
 // Keep this for backward compatibility or remove if not needed
 function enqueue_facility_form_script() {
     if (is_page('data')) {
-        wp_enqueue_script(
+        kidsoverprofits_enqueue_theme_script(
             'facility-form-script',
-            get_stylesheet_directory_uri() . '/js/facility-form.js',
-            array(),
-            time(),
-            true
+            'js/facility-form.js'
         );
     }
 }
