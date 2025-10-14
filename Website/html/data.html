@@ -245,6 +245,17 @@
                 <label>Profile Links</label>
                 <div class="array-container" data-path="profileLinks"></div>
             </div>
+            <div class="form-group">
+                <label>Profile Links</label>
+                <div class="array-container" data-path="profileLinks"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Facility Details Section -->
+    <div class="section" id="facility-section">
+        <div class="section-header">
+            <h2 class="section-title">Facility Details</h2>
+            <span class="section-toggle">🔎</span>
         </div>
     </div>
     <!-- Facility Details Section -->
@@ -392,6 +403,31 @@
             <div id="suggestion-status" class="upload-status"></div>
         </div>
     </div>
+    <!-- Project Management Section -->
+    <div class="section expanded" id="project-section">
+        <div class="section-header">
+            <h2 class="section-title">💾 Project Management</h2>
+            <span class="section-toggle">🔎</span>
+        </div>
+        <div class="section-content">
+            <div id="project-status" class="upload-status"></div>
+            <div class="form-group">
+                <label for="project-name">Project Name</label>
+                <input type="text" id="project-name" placeholder="Enter project name to save..." class="input-form">
+            </div>
+            <div class="form-group">
+                <button class="btn btn--block" id="save-project-btn">💾 Save to Cloud</button>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-secondary btn--block" id="new-project-btn">📄 New Project</button>
+            </div>
+            <div class="form-group">
+                <button class="btn btn--block btn--success" id="submit-suggestion-btn" onclick="submitSuggestion()">📮 Submit Suggestion for Review</button>
+            </div>
+            <div id="upload-status" class="upload-status"></div>
+            <div id="suggestion-status" class="upload-status"></div>
+        </div>
+    </div>
     <!-- JSON Output Section -->
     <div class="section" id="output-section">
         <div class="section-header">
@@ -415,5 +451,131 @@
             </div>
         </div>
     </div>
+    <script>
+        (function loadKidsOverProfitsAssets() {
+            const isWordPress = typeof window.wp !== 'undefined';
+
+            if (isWordPress) {
+                console.info('Kids Over Profits: WordPress detected, relying on enqueued assets.');
+                return;
+            }
+
+            const remoteBase = (window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child').replace(/\/$/, '');
+            const localBase = (window.KOP_LOCAL_BASE || '..').replace(/\/$/, '');
+
+            const stylesheets = [
+                'css/common.css',
+                'css/layout.css',
+                'css/forms.css',
+                'css/tables.css',
+                'css/modals.css',
+                'css/admin.css'
+            ];
+
+            const scripts = [
+                {
+                    path: 'js/app-logic.js',
+                    check: () => typeof window.initializeCollapsibleSections === 'function'
+                },
+                {
+                    path: 'js/utilities.js',
+                    type: 'module',
+                    check: () => typeof window.utilities !== 'undefined'
+                },
+                {
+                    path: 'js/facility-form.v3.js',
+                    check: () => typeof window.updateAllUI === 'function'
+                },
+                {
+                    path: 'js/data-form.js',
+                    check: () => typeof window.submitSuggestion === 'function'
+                }
+            ];
+
+            stylesheets.forEach((relativePath) => {
+                loadStylesheet(relativePath);
+            });
+
+            scripts.reduce((promise, scriptConfig) => {
+                return promise.then(() => ensureScript(scriptConfig));
+            }, Promise.resolve()).catch((error) => {
+                console.error('Kids Over Profits asset loader error:', error);
+            });
+
+            function normalizePath(path) {
+                return path.replace(/^\//, '');
+            }
+
+            function buildUrl(base, relativePath) {
+                if (/^https?:\/\//i.test(relativePath)) {
+                    return relativePath;
+                }
+
+                return base + '/' + normalizePath(relativePath);
+            }
+
+            function loadStylesheet(relativePath) {
+                const primaryHref = buildUrl(remoteBase, relativePath);
+                const fallbackHref = buildUrl(localBase, relativePath);
+
+                appendStylesheet(primaryHref, () => {
+                    console.warn('Kids Over Profits: primary stylesheet failed, falling back to local copy.', {
+                        primaryHref,
+                        fallbackHref
+                    });
+                    appendStylesheet(fallbackHref);
+                });
+            }
+
+            function appendStylesheet(href, onError) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = href;
+
+                if (typeof onError === 'function') {
+                    link.addEventListener('error', () => {
+                        link.remove();
+                        onError();
+                    }, { once: true });
+                }
+
+                document.head.appendChild(link);
+            }
+
+            function ensureScript({ path, type = 'text/javascript', check }) {
+                if (typeof check === 'function' && check()) {
+                    return Promise.resolve();
+                }
+
+                const primarySrc = buildUrl(remoteBase, path);
+                const fallbackSrc = buildUrl(localBase, path);
+
+                return loadScript(primarySrc, type).catch(() => {
+                    console.warn('Kids Over Profits: primary script failed, falling back to local copy.', {
+                        primarySrc,
+                        fallbackSrc
+                    });
+                    return loadScript(fallbackSrc, type);
+                });
+            }
+
+            function loadScript(src, type) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+
+                    if (type === 'module') {
+                        script.type = 'module';
+                    }
+
+                    script.src = src;
+                    script.defer = false;
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Failed to load script: ' + src));
+
+                    document.body.appendChild(script);
+                });
+            }
+        })();
+    </script>
 </div>
 
