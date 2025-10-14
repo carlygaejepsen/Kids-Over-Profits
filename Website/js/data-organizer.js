@@ -1,0 +1,823 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Global data storage
+    let allFacilities = [];
+    let currentResults = [];
+    let currentSearchType = '';
+    let currentSearchValue = '';
+    // DOM elements
+    const organizeBySelect = document.getElementById('organizeBy');
+    const valueGroup = document.getElementById('valueGroup');
+    const specificValueSelect = document.getElementById('specificValue');
+    const searchGroup = document.getElementById('searchGroup');
+    const searchValueInput = document.getElementById('searchValue');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInfo = document.getElementById('searchInfo');
+    const loadingState = document.getElementById('loadingState');
+    const noDataState = document.getElementById('noDataState');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsTitle = document.getElementById('resultsTitle');
+    const resultsCount = document.getElementById('resultsCount');
+    const facilityGrid = document.getElementById('facilityGrid');
+    const noResults = document.getElementById('noResults');
+    const facilityModal = document.getElementById('facilityModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    // Event listeners
+    organizeBySelect.addEventListener('change', handleOrganizeByChange);
+    specificValueSelect.addEventListener('change', handleSpecificValueChange);
+    searchBtn.addEventListener('click', handleSearch);
+    searchValueInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleSearch();
+    });
+    modalClose.addEventListener('click', () => facilityModal.style.display = 'none');
+    window.addEventListener('click', (e) => {
+    if (e.target === facilityModal) facilityModal.style.display = 'none';
+    });
+    function handleOrganizeByChange() {
+    const value = organizeBySelect.value;
+    if (!value) {
+    valueGroup.style.display = 'none';
+    searchGroup.style.display = 'none';
+    searchInfo.style.display = 'none';
+    return;
+    }
+    searchInfo.style.display = 'block';
+    currentSearchType = value;
+    // Populate specific values dropdown
+    populateSpecificValues(value);
+    valueGroup.style.display = 'block';
+    searchGroup.style.display = 'block';
+    }
+    function populateSpecificValues(type) {
+    specificValueSelect.innerHTML = '<option value="">Select value...</option>';
+    if (allFacilities.length === 0) return;
+    const values = new Set();
+    allFacilities.forEach(facility => {
+    const dataPoints = extractDataPoints(facility, type);
+    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    if (point && point.toString().trim() !== '') {
+    values.add(point.toString().trim());
+    }
+    });
+    });
+    console.log(`Found ${values.size} unique ${type} values:`, Array.from(values));
+    Array.from(values)
+    .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+    .forEach(value => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    specificValueSelect.appendChild(option);
+    });
+    }
+    function extractDataPoints(facility, type) {
+    const points = [];
+    switch (type) {
+    case 'staff':
+    if (facility.staff) {
+    if (facility.staff.administrator) {
+    facility.staff.administrator.forEach(admin => {
+    if (typeof admin === 'string') points.push(admin);
+    else if (admin.name) points.push(admin.name);
+    });
+    }
+    if (facility.staff.notableStaff) {
+    facility.staff.notableStaff.forEach(staff => {
+    if (typeof staff === 'string') points.push(staff);
+    else if (staff.name) points.push(staff.name);
+    });
+    }
+    }
+    break;
+    case 'operator':
+    if (facility.identification?.operator) {
+    points.push(facility.identification.operator);
+    }
+    if (facility.otherOperators && Array.isArray(facility.otherOperators)) {
+    facility.otherOperators.forEach(op => {
+    if (typeof op === 'string' && op.trim()) {
+    points.push(op.trim());
+    }
+    });
+    }
+    // Also check for alternative operator fields that might exist
+    if (facility.operator) {
+    points.push(facility.operator);
+    }
+    if (facility.operatedBy) {
+    points.push(facility.operatedBy);
+    }
+    if (facility.company) {
+    points.push(facility.company);
+    }
+    // Check in facilityDetails for operator info
+    if (facility.facilityDetails?.operator) {
+    points.push(facility.facilityDetails.operator);
+    }
+    if (facility.facilityDetails?.company) {
+    points.push(facility.facilityDetails.company);
+    }
+    break;
+    case 'location':
+    if (facility.location) points.push(facility.location);
+    break;
+    case 'programType':
+    if (facility.facilityDetails?.type) points.push(facility.facilityDetails.type);
+    break;
+    case 'status':
+    if (facility.operatingPeriod?.status) points.push(facility.operatingPeriod.status);
+    break;
+    case 'year':
+    if (facility.operatingPeriod?.startYear) points.push(facility.operatingPeriod.startYear.toString());
+    break;
+    case 'accreditation':
+    if (facility.accreditations) {
+    if (facility.accreditations.current) {
+    facility.accreditations.current.forEach(acc => points.push(acc));
+    }
+    if (facility.accreditations.past) {
+    facility.accreditations.past.forEach(acc => points.push(acc));
+    }
+    }
+    break;
+    case 'certification':
+    if (facility.certifications) {
+    facility.certifications.forEach(cert => points.push(cert));
+    }
+    break;
+    }
+    return points.filter(p => p && p.toString().trim() !== '');
+    }
+    function handleSpecificValueChange() {
+    const value = specificValueSelect.value;
+    if (value) {
+    currentSearchValue = value;
+    performSearch();
+    }
+    }
+    function handleSearch() {
+    const value = searchValueInput.value.trim();
+    if (value && currentSearchType) {
+    currentSearchValue = value;
+    performSearch();
+    }
+    }
+    function performSearch() {
+    if (!currentSearchType || !currentSearchValue) return;
+    currentResults = [];
+    console.log(`Searching for "${currentSearchValue}" in ${currentSearchType} across ${allFacilities.length} facilities`);
+    allFacilities.forEach((facility, index) => {
+    const dataPoints = extractDataPoints(facility, currentSearchType);
+    const matches = dataPoints.filter(point =>
+    point && point.toLowerCase().includes(currentSearchValue.toLowerCase())
+    );
+    if (matches.length > 0) {
+    console.log(`Facility "${facility.identification?.name || 'Unknown'}" matches with:`, matches);
+    currentResults.push({
+    facility: facility,
+    facilityIndex: index,
+    matches: matches
+    });
+    }
+    });
+    console.log(`Found ${currentResults.length} matching facilities`);
+    displayResults();
+    }
+    function displayResults() {
+    const searchTypeLabel = organizeBySelect.options[organizeBySelect.selectedIndex].text;
+    resultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${currentSearchValue}"`;
+    resultsCount.textContent = `${currentResults.length} facilities`;
+    if (currentResults.length === 0) {
+    facilityGrid.style.display = 'none';
+    noResults.style.display = 'block';
+    } else {
+    facilityGrid.style.display = 'grid';
+    noResults.style.display = 'none';
+    facilityGrid.innerHTML = '';
+    currentResults.forEach(result => {
+    const card = createFacilityCard(result);
+    facilityGrid.appendChild(card);
+    });
+    }
+    resultsContainer.style.display = 'block';
+    }
+    function createFacilityCard(result) {
+    const { facility, facilityIndex, matches } = result;
+    const card = document.createElement('div');
+    card.className = 'facility-card';
+    card.addEventListener('click', () => showFacilityModal(facility, facilityIndex));
+    const name = facility.identification?.name || 'Unnamed Facility';
+    const operator = facility.identification?.operator || 'Unknown Operator';
+    const location = facility.location || 'Unknown Location';
+    const status = facility.operatingPeriod?.status || 'Unknown Status';
+    const type = facility.facilityDetails?.type || 'Unknown Type';
+    const projectName = facility._projectName || 'Unknown Project';
+    const nestedProjectName = facility._nestedProjectName || '';
+    const projectInfo = nestedProjectName ? `${projectName} → ${nestedProjectName}` : projectName;
+    card.innerHTML = `
+    <div class="facility-name">${escapeHtml(name)}</div>
+    <div class="facility-operator">Operated by: ${escapeHtml(operator)}</div>
+    <div style="font-size: 12px; color: #9ca3af; margin-bottom: 10px; font-style: italic;">
+    Project: ${escapeHtml(projectInfo)}
+    </div>
+    <div class="facility-details">
+    <div class="detail-row">
+    <div class="detail-label">Location:</div>
+    <div class="detail-value">${escapeHtml(location)}</div>
+    </div>
+    <div class="detail-row">
+    <div class="detail-label">Type:</div>
+    <div class="detail-value">${escapeHtml(type)}</div>
+    </div>
+    <div class="detail-row">
+    <div class="detail-label">Status:</div>
+    <div class="detail-value">${escapeHtml(status)}</div>
+    </div>
+    <div class="detail-row">
+    <div class="detail-label">Matches:</div>
+    <div class="detail-value">
+    ${matches.map(match => `<span class="highlight">${escapeHtml(match)}</span>`).join(', ')}
+    </div>
+    </div>
+    </div>
+    `;
+    return card;
+    }
+    function showFacilityModal(facility, facilityIndex) {
+    const name = facility.identification?.name || 'Unnamed Facility';
+    modalTitle.textContent = `${name} (Facility #${facilityIndex + 1})`;
+    modalBody.innerHTML = generateFacilityDetails(facility);
+    facilityModal.style.display = 'block';
+    }
+    function generateFacilityDetails(facility) {
+    let html = '';
+    // Basic Information
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="color: #000435; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #33a7b5; border-radius: 4px;">📋 Basic Information</h3>';
+    if (facility.identification) {
+    const id = facility.identification;
+    if (id.name) html += renderDetailRow('Facility Name', id.name);
+    if (id.operator) html += renderDetailRow('Operator', id.operator);
+    if (id.formerNames) html += renderDetailRow('Former Names', id.formerNames);
+    }
+    if (facility.location) html += renderDetailRow('Location', facility.location);
+    if (facility.address) html += renderDetailRow('Address', facility.address.replace(/\n/g, '<br>'));
+    html += '</div>';
+    // Operating Period
+    if (facility.operatingPeriod) {
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="color: #000435; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #33a7b5; border-radius: 4px;">📅 Operating Period</h3>';
+    const op = facility.operatingPeriod;
+    if (op.startYear) html += renderDetailRow('Opened', op.startYear);
+    if (op.endYear) html += renderDetailRow('Closed', op.endYear);
+    if (op.status) html += renderDetailRow('Status', op.status);
+    if (op.yearsOfOperation) html += renderDetailRow('Years of Operation', op.yearsOfOperation);
+    html += '</div>';
+    }
+    // Staff
+    if (facility.staff) {
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="color: #000435; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #33a7b5; border-radius: 4px;">👥 Staff</h3>';
+    if (facility.staff.administrator && facility.staff.administrator.length > 0) {
+    html += renderDetailRow('Administrators', facility.staff.administrator.join(', '));
+    }
+    if (facility.staff.notableStaff && facility.staff.notableStaff.length > 0) {
+    html += renderDetailRow('Notable Staff', facility.staff.notableStaff.join(', '));
+    }
+    html += '</div>';
+    }
+    // Facility Details
+    if (facility.facilityDetails) {
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="color: #000435; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #33a7b5; border-radius: 4px;">🏢 Facility Details</h3>';
+    const fd = facility.facilityDetails;
+    if (fd.type) html += renderDetailRow('Program Type', fd.type);
+    if (fd.capacity) html += renderDetailRow('Capacity', fd.capacity);
+    if (fd.currentCensus) html += renderDetailRow('Current Census', fd.currentCensus);
+    if (fd.gender) html += renderDetailRow('Gender', fd.gender);
+    if (fd.ageRange && (fd.ageRange.min || fd.ageRange.max)) {
+    const ageRange = `${fd.ageRange.min || '?'} - ${fd.ageRange.max || '?'}`;
+    html += renderDetailRow('Age Range', ageRange);
+    }
+    html += '</div>';
+    }
+    // Accreditations & Certifications
+    if (facility.accreditations || facility.certifications) {
+    html += '<div style="margin-bottom: 20px;">';
+    html += '<h3 style="color: #000435; margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #33a7b5; border-radius: 4px;">🏆 Accreditations & Certifications</h3>';
+    if (facility.accreditations) {
+    if (facility.accreditations.current && facility.accreditations.current.length > 0) {
+    html += renderDetailRow('Current Accreditations', facility.accreditations.current.join(', '));
+    }
+    if (facility.accreditations.past && facility.accreditations.past.length > 0) {
+    html += renderDetailRow('Past Accreditations', facility.accreditations.past.join(', '));
+    }
+    }
+    if (facility.certifications && facility.certifications.length > 0) {
+    html += renderDetailRow('Certifications', facility.certifications.join(', '));
+    }
+    html += '</div>';
+    }
+    return html;
+    }
+    function renderDetailRow(label, value) {
+    if (!value) return '';
+    return `
+    <div style="display: flex; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+    <div style="font-weight: 600; color: #000435; min-width: 150px;">${escapeHtml(label)}:</div>
+    <div style="color: #33a7b5; flex: 1;">${escapeHtml(value)}</div>
+    </div>
+    `;
+    }
+    async function loadDataFromServer() {
+    loadingState.style.display = 'block';
+    noDataState.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    try {
+    // Use the same cloud URL as the main form
+    const cloudUrl = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php';
+    console.log('🔄 Loading data from:', cloudUrl);
+    const response = await fetch(cloudUrl);
+    if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+    const responseText = await response.text();
+    console.error('Expected JSON but got:', responseText.substring(0, 500));
+    throw new Error(`Expected JSON response but got ${contentType}`);
+    }
+    const result = await response.json();
+    console.log('📦 Raw API response:', result);
+    if (!result.success) {
+    throw new Error(result.error || 'API returned success: false');
+    }
+    const projects = result.projects || {};
+    console.log('📊 Loaded projects:', Object.keys(projects).length, 'projects');
+    console.log('📋 Project names:', Object.keys(projects));
+    // Process the projects data structure - same logic as main form
+    allFacilities = [];
+    Object.keys(projects).forEach(projectName => {
+    const project = projects[projectName];
+    console.log(`Processing project: ${projectName}`, project);
+    if (project && project.data) {
+    // The project.data contains the actual facility data
+    extractFacilitiesFromProjectData(project.data, projectName);
+    }
+    });
+    loadingState.style.display = 'none';
+    console.log(`Total facilities extracted: ${allFacilities.length}`);
+    if (allFacilities.length > 0) {
+    showMessage(`✅ Loaded ${allFacilities.length} facilities from ${Object.keys(projects).length} projects!`, 'success');
+    noDataState.style.display = 'none';
+    // Re-populate dropdown if a type is selected
+    if (currentSearchType) {
+    populateSpecificValues(currentSearchType);
+    }
+    } else {
+    console.warn('No facilities found in any project data');
+    showMessage('⚠️ No facility data found in projects. Use Debug Data button to see structure.', 'warning');
+    noDataState.style.display = 'block';
+    }
+    } catch (error) {
+    console.error('Error loading data:', error);
+    loadingState.style.display = 'none';
+    // Try local fallback
+    try {
+    showMessage('⚠️ Trying local data source...', 'warning');
+    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    if (fallbackResponse.ok) {
+    const fallbackData = await fallbackResponse.json();
+    console.log('Fallback data:', fallbackData);
+    if (fallbackData.success && fallbackData.projects) {
+    const localProjects = fallbackData.projects || {};
+    allFacilities = [];
+    Object.keys(localProjects).forEach(projectName => {
+    const project = localProjects[projectName];
+    if (project && project.data) {
+    extractFacilitiesFromProjectData(project.data, projectName);
+    }
+    });
+    if (allFacilities.length > 0) {
+    loadingState.style.display = 'none';
+    showMessage(`✅ Loaded ${allFacilities.length} facilities from local source!`, 'success');
+    if (currentSearchType) {
+    populateSpecificValues(currentSearchType);
+    }
+    } else {
+    throw new Error('No facilities found in local data');
+    }
+    } else {
+    throw new Error('Invalid local response');
+    }
+    } else {
+    throw new Error('Local endpoint also failed');
+    }
+    } catch (fallbackError) {
+    console.error('Fallback also failed:', fallbackError);
+    noDataState.style.display = 'block';
+    // Update the no data state with helpful message
+    const noDataIcon = document.querySelector('#noDataState .no-results-icon');
+    const noDataTitle = document.querySelector('#noDataState h3');
+    const noDataText = document.querySelector('#noDataState p');
+    noDataIcon.textContent = '⚠️';
+    noDataTitle.textContent = 'Could Not Load Data';
+    noDataText.innerHTML = `Unable to connect to server. Please check your connection and try refreshing the page.`;
+    showMessage(`❌ Auto-load failed. Please try refreshing the page.`, 'error');
+    }
+    }
+    }
+    function extractFacilitiesFromProjectData(data, projectName) {
+    if (!data) return;
+    // Handle different data structures that might be in project data
+    if (data.projects && typeof data.projects === 'object') {
+    // Nested projects structure
+    console.log(`Found nested projects in ${projectName}`);
+    Object.keys(data.projects).forEach(nestedProjectName => {
+    const nestedProject = data.projects[nestedProjectName];
+    if (nestedProject.facilities && Array.isArray(nestedProject.facilities)) {
+    console.log(`Found ${nestedProject.facilities.length} facilities in nested project ${nestedProjectName}`);
+    nestedProject.facilities.forEach(facility => {
+    facility._projectName = projectName;
+    facility._nestedProjectName = nestedProjectName;
+    allFacilities.push(facility);
+    });
+    }
+    });
+    } else if (data.facilities && Array.isArray(data.facilities)) {
+    // Direct facilities array
+    console.log(`Found ${data.facilities.length} direct facilities in ${projectName}`);
+    data.facilities.forEach(facility => {
+    facility._projectName = projectName;
+    allFacilities.push(facility);
+    });
+    } else if (Array.isArray(data)) {
+    // Data itself is an array of facilities
+    console.log(`Found ${data.length} items in data array for ${projectName}`);
+    data.forEach(facility => {
+    facility._projectName = projectName;
+    allFacilities.push(facility);
+    });
+    } else if (typeof data === 'object') {
+    // Check if the data contains facility-like properties
+    if (data.identification || data.location || data.staff || data.facilityDetails) {
+    console.log(`Treating data as single facility for ${projectName}`);
+    data._projectName = projectName;
+    allFacilities.push(data);
+    } else {
+    // Search through sub-objects for facility-like data
+    console.log(`Searching for facilities in sub-objects of ${projectName}`);
+    Object.keys(data).forEach(key => {
+    const subData = data[key];
+    if (Array.isArray(subData)) {
+    subData.forEach(item => {
+    if (typeof item === 'object' && (item.identification || item.location || item.staff)) {
+    item._projectName = projectName;
+    item._subSection = key;
+    allFacilities.push(item);
+    }
+    });
+    } else if (typeof subData === 'object' && (subData.identification || subData.location || subData.staff)) {
+    subData._projectName = projectName;
+    subData._subSection = key;
+    allFacilities.push(subData);
+    }
+    });
+    }
+    }
+    }
+    function showMessage(message, type) {
+    // Create or update a message display
+    let messageDiv = document.getElementById('messageDiv');
+    if (!messageDiv) {
+    messageDiv = document.createElement('div');
+    messageDiv.id = 'messageDiv';
+    messageDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    z-index: 10000;
+    max-width: 400px;
+    `;
+    document.body.appendChild(messageDiv);
+    }
+    const colors = {
+    success: { bg: '#b6e3d4', border: '#33a7b5', text: '#000435' },
+    error: { bg: '#fe8088', border: '#ef9034', text: '#000435' },
+    warning: { bg: '#fff5cb', border: '#b2e102', text: '#000435' },
+    info: { bg: '#aee0ed', border: '#33a7b5', text: '#000435' }
+    };
+    const color = colors[type] || colors.success;
+    messageDiv.style.backgroundColor = color.bg;
+    messageDiv.style.border = `1px solid ${color.border}`;
+    messageDiv.style.color = color.text;
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+    setTimeout(() => {
+    messageDiv.style.display = 'none';
+    }, 5000);
+    }
+    async function debugDataLoading() {
+    console.log('=== DEBUG: Data Loading ===');
+    try {
+    const response = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    console.log('Response status:', response.status, response.statusText);
+    if (!response.ok) {
+    console.error('HTTP Error:', response.status);
+    alert(`HTTP Error: ${response.status} - ${response.statusText}\n\nMake sure you're running this through a web server (like XAMPP, WAMP, etc.) and not opening the HTML file directly.`);
+    return;
+    }
+    const data = await response.json();
+    console.log('Raw response data:', data);
+    if (data.success && data.projects) {
+    console.log('Projects found:', Object.keys(data.projects));
+    let debugInfo = `SUCCESS! Found ${Object.keys(data.projects).length} projects:\n\n`;
+    Object.keys(data.projects).forEach(projectName => {
+    const project = data.projects[projectName];
+    debugInfo += `PROJECT: "${projectName}"\n`;
+    debugInfo += `  - Has data: ${project.data ? 'YES' : 'NO'}\n`;
+    if (project.data) {
+    debugInfo += `  - Data type: ${Array.isArray(project.data) ? 'Array' : typeof project.data}\n`;
+    if (Array.isArray(project.data)) {
+    debugInfo += `  - Array length: ${project.data.length}\n`;
+    } else if (typeof project.data === 'object') {
+    const keys = Object.keys(project.data);
+    debugInfo += `  - Object keys: ${keys.join(', ')}\n`;
+    // Check for common structures
+    if (project.data.projects) {
+    debugInfo += `  - Has nested projects: ${Object.keys(project.data.projects).length}\n`;
+    Object.keys(project.data.projects).forEach(nestedName => {
+    const nested = project.data.projects[nestedName];
+    const facilityCount = nested.facilities ? nested.facilities.length : 0;
+    debugInfo += `    - "${nestedName}": ${facilityCount} facilities\n`;
+    });
+    } else if (project.data.facilities) {
+    debugInfo += `  - Direct facilities: ${project.data.facilities.length}\n`;
+    } else if (project.data.identification || project.data.location || project.data.staff) {
+    debugInfo += `  - Looks like single facility data\n`;
+    } else {
+    debugInfo += `  - Structure: ${keys.slice(0, 5).join(', ')}${keys.length > 5 ? '...' : ''}\n`;
+    }
+    }
+    }
+    debugInfo += '\n';
+    });
+    debugInfo += `\nRAW DATA SAMPLE:\n${JSON.stringify(data, null, 2).substring(0, 500)}...`;
+    alert(debugInfo);
+    } else {
+    console.error('Invalid response structure:', data);
+    let errorMsg = `INVALID RESPONSE!\n\nExpected: {success: true, projects: {...}}\n\nActual response:\n${JSON.stringify(data, null, 2)}`;
+    alert(errorMsg);
+    }
+    } catch (error) {
+    console.error('Debug error:', error);
+    let errorMsg = `DEBUG ERROR: ${error.message}\n\n`;
+    if (error.message.includes('fetch')) {
+    errorMsg += 'This usually means:\n';
+    errorMsg += '1. You\'re opening the HTML file directly (use a web server)\n';
+    errorMsg += '2. The PHP file doesn\'t exist\n';
+    errorMsg += '3. PHP is not running on your server\n';
+    errorMsg += '4. There\'s a network/CORS issue\n\n';
+    errorMsg += 'Try accessing this page via http://localhost/ instead of file://';
+    }
+    alert(errorMsg);
+    }
+    }
+    function loadTestData() {
+    // Create sample test data that matches the expected structure
+    const testData = {
+    success: true,
+    projects: {
+    "Test Project 1": {
+    name: "Test Project 1",
+    data: {
+    projects: {
+    "Sample Facilities": {
+    facilities: [
+    {
+    identification: {
+    name: "Peaceful Pines Treatment Center",
+    operator: "Healing Horizons LLC",
+    formerNames: "Pine Valley Center"
+    },
+    location: "Colorado Springs, CO",
+    address: "1234 Pine Valley Road\nColorado Springs, CO 80906",
+    operatingPeriod: {
+    startYear: "2015",
+    endYear: null,
+    status: "Currently Operating",
+    yearsOfOperation: "9"
+    },
+    staff: {
+    administrator: ["Dr. Sarah Johnson", "Michael Thompson"],
+    notableStaff: ["Dr. Emily Wilson - Clinical Director", "James Parker - Program Director"]
+    },
+    facilityDetails: {
+    type: "Residential Treatment Center (RTC)",
+    capacity: "120",
+    currentCensus: "98",
+    gender: "Co-ed",
+    ageRange: { min: "12", max: "18" }
+    },
+    accreditations: {
+    current: ["JCAHO", "CARF"],
+    past: ["State Certification"]
+    },
+    certifications: ["Mental Health Certification", "Substance Abuse Treatment"],
+    otherOperators: ["Previous Owner: Mountain View Inc."]
+    },
+    {
+    identification: {
+    name: "Sunrise Therapeutic Academy",
+    operator: "Educational Wellness Corp",
+    formerNames: "Desert View School"
+    },
+    location: "Phoenix, AZ",
+    address: "5678 Desert Road\nPhoenix, AZ 85001",
+    operatingPeriod: {
+    startYear: "2010",
+    endYear: "2022",
+    status: "Closed",
+    yearsOfOperation: "12"
+    },
+    staff: {
+    administrator: ["Dr. Robert Martinez"],
+    notableStaff: ["Dr. Sarah Johnson - Former Director", "Lisa Chen - Therapist"]
+    },
+    facilityDetails: {
+    type: "Therapeutic Boarding School",
+    capacity: "80",
+    currentCensus: "0",
+    gender: "Boys Only",
+    ageRange: { min: "14", max: "18" }
+    },
+    accreditations: {
+    current: [],
+    past: ["JCAHO", "State License"]
+    },
+    certifications: ["Educational Certification"],
+    otherOperators: []
+    },
+    {
+    identification: {
+    name: "Mountain Ridge Wilderness Program",
+    operator: "Healing Horizons LLC",
+    formerNames: null
+    },
+    location: "Durango, CO",
+    address: "Remote Location\nDurango, CO 81301",
+    operatingPeriod: {
+    startYear: "2018",
+    endYear: null,
+    status: "Currently Operating",
+    yearsOfOperation: "6"
+    },
+    staff: {
+    administrator: ["Michael Thompson"],
+    notableStaff: ["Dr. Emily Wilson - Consulting Psychologist", "David Rodriguez - Field Director"]
+    },
+    facilityDetails: {
+    type: "Wilderness Therapy Program",
+    capacity: "24",
+    currentCensus: "18",
+    gender: "Co-ed",
+    ageRange: { min: "13", max: "17" }
+    },
+    accreditations: {
+    current: ["NATSAP"],
+    past: []
+    },
+    certifications: ["Wilderness Therapy Certification"],
+    otherOperators: []
+    }
+    ]
+    }
+    }
+    }
+    },
+    "Test Project 2": {
+    name: "Test Project 2",
+    data: {
+    projects: {
+    "Additional Facilities": {
+    facilities: [
+    {
+    identification: {
+    name: "Valley View Residential",
+    operator: "Comprehensive Care Systems",
+    formerNames: "Green Valley Treatment"
+    },
+    location: "Salt Lake City, UT",
+    address: "9876 Valley Drive\nSalt Lake City, UT 84101",
+    operatingPeriod: {
+    startYear: "2012",
+    endYear: null,
+    status: "Currently Operating",
+    yearsOfOperation: "12"
+    },
+    staff: {
+    administrator: ["Dr. Patricia Adams"],
+    notableStaff: ["Dr. Sarah Johnson - Consultant", "Mark Stevens - Operations Director"]
+    },
+    facilityDetails: {
+    type: "Residential Treatment Center (RTC)",
+    capacity: "150",
+    currentCensus: "142",
+    gender: "Co-ed",
+    ageRange: { min: "11", max: "17" }
+    },
+    accreditations: {
+    current: ["JCAHO", "CARF", "State License"],
+    past: []
+    },
+    certifications: ["Mental Health Certification", "Educational Services"],
+    otherOperators: ["Former: Valley Healthcare Inc."]
+    }
+    ]
+    }
+    }
+    }
+    }
+    }
+    };
+    // Process the test data using the same logic as loadDataFromServer
+    loadingState.style.display = 'block';
+    noDataState.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    setTimeout(() => {
+    try {
+    allFacilities = [];
+    Object.keys(testData.projects).forEach(projectName => {
+    const project = testData.projects[projectName];
+    if (project.data && project.data.projects) {
+    Object.keys(project.data.projects).forEach(nestedProjectName => {
+    const nestedProject = project.data.projects[nestedProjectName];
+    if (nestedProject.facilities && Array.isArray(nestedProject.facilities)) {
+    nestedProject.facilities.forEach(facility => {
+    facility._projectName = projectName;
+    facility._nestedProjectName = nestedProjectName;
+    allFacilities.push(facility);
+    });
+    }
+    });
+    }
+    });
+    loadingState.style.display = 'none';
+    if (allFacilities.length > 0) {
+    showMessage(`✅ Loaded ${allFacilities.length} test facilities from ${Object.keys(testData.projects).length} projects!`, 'success');
+    noDataState.style.display = 'none';
+    // Re-populate dropdown if a type is selected
+    if (currentSearchType) {
+    populateSpecificValues(currentSearchType);
+    }
+    // Show some helpful information
+    setTimeout(() => {
+    showMessage(`💡 Try searching for "Sarah Johnson" under Staff Member to see cross-facility connections!`, 'info');
+    }, 2000);
+    } else {
+    showMessage('⚠️ No test facility data generated', 'warning');
+    noDataState.style.display = 'block';
+    }
+    } catch (error) {
+    console.error('Error processing test data:', error);
+    loadingState.style.display = 'none';
+    noDataState.style.display = 'block';
+    showMessage(`❌ Error processing test data: ${error.message}`, 'error');
+    }
+    }, 1000); // Simulate loading delay
+    }
+    function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+    }
+    // Initialize
+    window.addEventListener('load', () => {
+    // Auto-load data when page loads
+    console.log('🚀 Data Organizer starting up...');
+    // First check if there's already data in memory from the main form
+    if (window.allProjects) {
+    console.log('📋 Found existing data in memory');
+    // Process existing data
+    if (Array.isArray(window.allProjects)) {
+    allFacilities = window.allProjects;
+    } else {
+    allFacilities = Object.values(window.allProjects).flatMap(project =>
+    project.facilities || [project]
+    );
+    }
+    if (allFacilities.length > 0) {
+    noDataState.style.display = 'none';
+    showMessage(`✅ Loaded ${allFacilities.length} facilities from memory!`, 'success');
+    return; // Exit early since we have data
+    }
+    }
+    // If no data in memory, try to load from server automatically
+    console.log('🔄 No data in memory, attempting to load from server...');
+    loadDataFromServer();
+    });
+});
