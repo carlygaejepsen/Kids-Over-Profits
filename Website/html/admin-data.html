@@ -547,9 +547,9 @@
                 loadStylesheet(relativePath);
             });
 
-            scripts.reduce((promise, scriptConfig) => {
-                return promise.then(() => ensureScript(scriptConfig));
-            }, Promise.resolve()).catch((error) => {
+        // Sequentially load scripts to respect dependencies
+        scripts.reduce((promise, script) => promise.then(() => ensureScript(script)), Promise.resolve())
+        .catch((error) => {
                 console.error('Kids Over Profits admin asset loader error:', error);
             });
 
@@ -648,11 +648,10 @@
                     script.defer = false;
                     script.onload = () => resolve();
                     script.onerror = () => reject(new Error('Failed to load script: ' + src));
-
+                    
                     document.body.appendChild(script);
                 });
             }
         })();
     </script>
 </div>
-
