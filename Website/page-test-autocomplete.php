@@ -19,7 +19,7 @@ get_header();
             <div class="summary" id="summary">
                 <h2>Test Summary</h2>
                 <p>This tool tests all autocomplete categories against the SQL backend endpoint.</p>
-                <p><strong>Endpoint:</strong> <code>https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php</code></p>
+                <p><strong>Endpoint:</strong> <code>https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php</code></p>
                 <p><strong>Status:</strong> <span id="overall-status">Ready to test</span></p>
             </div>
             <button class="test-all-btn" onclick="testAllCategories()">▶️ Test All Categories</button>
@@ -103,6 +103,12 @@ get_header();
                     <span class="status-badge pending" id="status-investor">Pending</span>
                 </div>
                 <div class="results" id="results-investor"></div>
+                <div class="test-category">
+                    <button onclick="testCategory('operatingperiod', '199')">Test Operating Period</button>
+                    <input type="text" id="operatingperiod-query" placeholder="Search query (e.g., 199)" value="199">
+                    <span class="status-badge pending" id="status-operatingperiod">Pending</span>
+                </div>
+                <div class="results" id="results-operatingperiod"></div>
             </div>
         </div>
                 </div>

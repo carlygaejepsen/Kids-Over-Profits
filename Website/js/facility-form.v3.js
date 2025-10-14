@@ -6,7 +6,7 @@
 // ============================================
 // CONSTANTS & CONFIGURATION
 // ============================================
-const SCRIPT_BUILD_VERSION = 'facility-form.v3.sql-autocomplete.2025-10-14';
+const SCRIPT_BUILD_VERSION = 'facility-form.v3.sql-autocomplete.2025-10-15.notes';
 if (typeof window !== 'undefined') {
     window.KOP_FACILITY_FORM_VERSION = SCRIPT_BUILD_VERSION;
 }
@@ -38,13 +38,23 @@ const normalizedApiBase = defaultApiBase ? defaultApiBase.replace(/\/$/, '') : '
 const defaultApiPaths = {
     SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/save-master.php',
     LOAD_PROJECTS: FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS || '/wp-content/themes/child/api/get-master-data.php',
-    SUGGESTIONS: FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/get-suggestions.php'
+    AUTOCOMPLETE: FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE || FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/get-autocomplete.php'
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
     acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBase);
     return acc;
 }, {});
+
+const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
+    ? FACILITY_FORM_CONFIG.mode
+    : (typeof window !== 'undefined' && typeof window.FORM_MODE === 'string' ? window.FORM_MODE : 'master');
+
+const FORM_MODE = typeof resolvedFormMode === 'string'
+    ? resolvedFormMode.toLowerCase()
+    : 'master';
+
+const IS_SUGGESTION_MODE = FORM_MODE === 'suggestions';
 
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
@@ -64,6 +74,7 @@ function logActiveFacilityFormConfigOnce() {
     try {
         console.info('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
         console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
+        console.info('[KOP Facility Form] Active form mode:', FORM_MODE);
         if (FALLBACK_PROJECTS_URL) {
             console.info('[KOP Facility Form] Fallback dataset URL:', FALLBACK_PROJECTS_URL);
         } else {
@@ -165,6 +176,7 @@ let customStaffRoles = [];
 let customStatuses = [];
 let customGenders = [];
 let customLocations = [];
+let customOperatingPeriods = [];
 
 // Cached aggregated values (built from all projects) to prevent repeated heavy recomputation.
 const aggregatedDataCache = {
@@ -178,7 +190,8 @@ const aggregatedDataCache = {
     memberships: null,
     locations: null,
     statuses: null,
-    genders: null
+    genders: null,
+    operatingPeriods: null
 };
 
 const CACHE_CATEGORY_MAP = {
@@ -192,8 +205,11 @@ const CACHE_CATEGORY_MAP = {
     membership: 'memberships',
     location: 'locations',
     status: 'statuses',
-    gender: 'genders'
+    gender: 'genders',
+    operatingperiod: 'operatingPeriods'
 };
+
+let noteFieldRegistry = [];
 
 function invalidateAggregatedData(category = null) {
     if (!category) {
@@ -302,6 +318,7 @@ function loadCustomDataFromLocalStorage() {
         customStatuses = JSON.parse(localStorage.getItem('customStatuses') || '[]');
         customGenders = JSON.parse(localStorage.getItem('customGenders') || '[]');
         customLocations = JSON.parse(localStorage.getItem('customLocations') || '[]');
+        customOperatingPeriods = JSON.parse(localStorage.getItem('customOperatingPeriods') || '[]');
     } catch (e) {
         console.warn('Failed to load custom data from localStorage:', e);
     }
@@ -376,6 +393,10 @@ function addCustomValue(category, value) {
         case 'location':
             array = customLocations;
             key = 'customLocations';
+            break;
+        case 'operatingperiod':
+            array = customOperatingPeriods;
+            key = 'customOperatingPeriods';
             break;
         default:
             return false;
@@ -608,6 +629,27 @@ function getAllGenders() {
     return aggregatedDataCache.genders;
 }
 
+function getAllOperatingPeriods() {
+    if (!aggregatedDataCache.operatingPeriods) {
+        const periods = new Set(customOperatingPeriods);
+
+        Object.values(projects).forEach(project => {
+            if (project.data?.operator?.operatingPeriod) {
+                periods.add(project.data.operator.operatingPeriod);
+            }
+
+            project.data?.facilities?.forEach(facility => {
+                const years = facility.operatingPeriod?.yearsOfOperation;
+                if (years) periods.add(years);
+            });
+        });
+
+        aggregatedDataCache.operatingPeriods = Array.from(periods).filter(p => p && p.trim()).sort();
+    }
+
+    return aggregatedDataCache.operatingPeriods;
+}
+
 // ============================================
 // AUTOCOMPLETE DROPDOWN SYSTEM (IMPROVED)
 // ============================================
@@ -698,7 +740,7 @@ function createAutocomplete(input, getDataFunction, category) {
         createAutocomplete._pendingFetch = setTimeout(async () => {
             const q = encodeURIComponent(value);
             const params = `?category=${encodeURIComponent(category)}&q=${q}`;
-            const remoteUrl = API_ENDPOINTS.SUGGESTIONS + params;
+            const remoteUrl = API_ENDPOINTS.AUTOCOMPLETE + params;
 
             try {
                 // FIX #2: Create new AbortController for this request
@@ -794,94 +836,234 @@ function createAutocomplete(input, getDataFunction, category) {
 }
 
 function initializeAutocompleteFields() {
-    // Operator name
-    const operatorNameField = document.getElementById('operator-name');
-    if (operatorNameField && !operatorNameField.dataset.autocompleteInit) {
-        createAutocomplete(operatorNameField, getAllOperators, 'operator');
-        operatorNameField.dataset.autocompleteInit = 'true';
-    }
+    const categoryFunctions = {
+        operator: getAllOperators,
+        facility: getAllFacilityNames,
+        human: getAllHumanNames,
+        type: getAllFacilityTypes,
+        status: getAllStatuses,
+        gender: getAllGenders,
+        location: getAllLocations,
+        membership: getAllMemberships,
+        accreditation: getAllAccreditations,
+        certification: getAllCertifications,
+        licensing: () => Array.from(customLicensing),
+        investor: () => Array.from(customInvestors),
+        role: getAllStaffRoles,
+        operatingperiod: getAllOperatingPeriods
+    };
 
-    // Operator current name
-    const operatorCurrentNameField = document.getElementById('operator-current-name');
-    if (operatorCurrentNameField && !operatorCurrentNameField.dataset.autocompleteInit) {
-        createAutocomplete(operatorCurrentNameField, getAllOperators, 'operator');
-        operatorCurrentNameField.dataset.autocompleteInit = 'true';
-    }
+    document.querySelectorAll('input[type="text"][data-autocomplete-category]:not(.array-input)').forEach(field => {
+        if (field.dataset.autocompleteInit === 'true') {
+            return;
+        }
 
-    // Operator location
-    const operatorLocationField = document.getElementById('operator-location');
-    if (operatorLocationField && !operatorLocationField.dataset.autocompleteInit) {
-        createAutocomplete(operatorLocationField, getAllLocations, 'location');
-        operatorLocationField.dataset.autocompleteInit = 'true';
-    }
+        const category = field.dataset.autocompleteCategory;
+        const dataFunction = categoryFunctions[category];
 
-    // Operator headquarters
-    const operatorHeadquartersField = document.getElementById('operator-headquarters');
-    if (operatorHeadquartersField && !operatorHeadquartersField.dataset.autocompleteInit) {
-        createAutocomplete(operatorHeadquartersField, getAllLocations, 'location');
-        operatorHeadquartersField.dataset.autocompleteInit = 'true';
-    }
-
-    // Operator CEO
-    const operatorCeoField = document.getElementById('operator-ceo');
-    if (operatorCeoField && !operatorCeoField.dataset.autocompleteInit) {
-        createAutocomplete(operatorCeoField, getAllHumanNames, 'human');
-        operatorCeoField.dataset.autocompleteInit = 'true';
-    }
-
-    // Facility name
-    const facilityNameField = document.getElementById('facility-name');
-    if (facilityNameField && !facilityNameField.dataset.autocompleteInit) {
-        createAutocomplete(facilityNameField, getAllFacilityNames, 'facility');
-        facilityNameField.dataset.autocompleteInit = 'true';
-    }
-
-    // Facility type
-    const facilityTypeField = document.getElementById('facility-type');
-    if (facilityTypeField && !facilityTypeField.dataset.autocompleteInit) {
-        createAutocomplete(facilityTypeField, getAllFacilityTypes, 'type');
-        facilityTypeField.dataset.autocompleteInit = 'true';
-    }
-
-    // Facility current name
-    document.querySelectorAll('input[data-field="identification.currentName"]').forEach(field => {
-        if (!field.dataset.autocompleteInit) {
-            createAutocomplete(field, getAllFacilityNames, 'facility');
-            field.dataset.autocompleteInit = 'true';
+        if (typeof dataFunction === 'function') {
+            createAutocomplete(field, dataFunction, category);
+        } else {
+            console.warn('⚠️ No autocomplete data provider configured for category', category, field);
         }
     });
+}
 
-    // Facility current operator
-    document.querySelectorAll('input[data-field="identification.currentOperator"]').forEach(field => {
-        if (!field.dataset.autocompleteInit) {
-            createAutocomplete(field, getAllOperators, 'operator');
-            field.dataset.autocompleteInit = 'true';
+// ============================================
+// FIELD NOTE CONTROLS
+// ============================================
+function ensureFieldNotesStore(scope, createIfMissing = true) {
+    if (!window.formData) {
+        return null;
+    }
+
+    if (scope === 'operator') {
+        if (!window.formData.operator) {
+            return null;
         }
+        if (!window.formData.operator.fieldNotes) {
+            if (!createIfMissing) {
+                return null;
+            }
+            window.formData.operator.fieldNotes = {};
+        }
+        return window.formData.operator.fieldNotes;
+    }
+
+    if (scope === 'facility') {
+        const facility = window.formData.facilities?.[window.currentFacilityIndex];
+        if (!facility) {
+            return null;
+        }
+        if (!facility.fieldNotes) {
+            if (!createIfMissing) {
+                return null;
+            }
+            facility.fieldNotes = {};
+        }
+        return facility.fieldNotes;
+    }
+
+    if (!window.formData.fieldNotes) {
+        if (!createIfMissing) {
+            return null;
+        }
+        window.formData.fieldNotes = {};
+    }
+    return window.formData.fieldNotes;
+}
+
+function getFieldNotes(scope, key, createIfMissing = false) {
+    const store = ensureFieldNotesStore(scope, createIfMissing);
+    if (!store) {
+        return [];
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(store, key)) {
+        if (!createIfMissing) {
+            return [];
+        }
+        store[key] = [];
+    }
+
+    const notes = store[key];
+    if (!Array.isArray(notes)) {
+        const normalized = [];
+        if (notes !== null && notes !== undefined && `${notes}`.trim() !== '') {
+            normalized.push(`${notes}`);
+        }
+        store[key] = normalized;
+        return normalized;
+    }
+
+    return notes;
+}
+
+function addFieldNote(scope, key) {
+    const notes = getFieldNotes(scope, key, true);
+    notes.push('');
+    updateJSON();
+    autoSave();
+    renderAllFieldNotes();
+}
+
+function updateFieldNote(scope, key, index, value) {
+    const notes = getFieldNotes(scope, key, true);
+    if (index >= 0 && index < notes.length) {
+        notes[index] = value;
+        updateJSON();
+        autoSave();
+    }
+}
+
+function removeFieldNote(scope, key, index) {
+    const notes = getFieldNotes(scope, key, true);
+    if (index >= 0 && index < notes.length) {
+        notes.splice(index, 1);
+        updateJSON();
+        autoSave();
+        renderAllFieldNotes();
+    }
+}
+
+function renderFieldNotes(container, scope, key) {
+    if (!container) {
+        return;
+    }
+
+    const notes = getFieldNotes(scope, key, false);
+    container.innerHTML = '';
+
+    if (!notes.length) {
+        return;
+    }
+
+    notes.forEach((note, index) => {
+        const row = document.createElement('div');
+        row.className = 'note-row';
+
+        const textarea = document.createElement('textarea');
+        textarea.className = 'note-textarea';
+        textarea.placeholder = 'Add supporting notes...';
+        textarea.rows = 3;
+        textarea.value = note || '';
+        textarea.addEventListener('input', () => {
+            updateFieldNote(scope, key, index, textarea.value);
+        });
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-note-btn';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+            removeFieldNote(scope, key, index);
+        });
+
+        row.appendChild(textarea);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+    });
+}
+
+function renderAllFieldNotes() {
+    if (!Array.isArray(noteFieldRegistry)) {
+        return;
+    }
+
+    noteFieldRegistry.forEach(entry => {
+        if (!entry) {
+            return;
+        }
+        const { scope, key, container } = entry;
+        renderFieldNotes(container, scope, key);
+    });
+}
+
+function initializeNoteControls() {
+    noteFieldRegistry = [];
+
+    document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
+        if (field.closest('.array-item')) {
+            return;
+        }
+
+        const scope = field.dataset.noteScope;
+        const key = field.dataset.noteKey;
+        const group = field.closest('.form-group');
+
+        if (!group || !scope || !key) {
+            return;
+        }
+
+        let container = group.querySelector('.field-notes');
+        if (!container) {
+            const controls = document.createElement('div');
+            controls.className = 'note-controls';
+
+            const addBtn = document.createElement('button');
+            addBtn.type = 'button';
+            addBtn.className = 'note-add-btn';
+            addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+            addBtn.addEventListener('click', () => {
+                addFieldNote(scope, key);
+            });
+
+            container = document.createElement('div');
+            container.className = 'field-notes';
+
+            controls.appendChild(addBtn);
+            controls.appendChild(container);
+            group.appendChild(controls);
+
+            field.dataset.noteInit = 'true';
+        } else if (field.dataset.noteInit !== 'true') {
+            field.dataset.noteInit = 'true';
+        }
+
+        noteFieldRegistry.push({ scope, key, container });
     });
 
-    // Status fields
-    document.querySelectorAll('input[id*="status"], input[data-field*="status"]').forEach(field => {
-        if (!field.dataset.autocompleteInit) {
-            createAutocomplete(field, getAllStatuses, 'status');
-            field.dataset.autocompleteInit = 'true';
-        }
-    });
-
-    // Gender fields
-    document.querySelectorAll('input[data-field*="gender"]').forEach(field => {
-        if (!field.dataset.autocompleteInit) {
-            createAutocomplete(field, getAllGenders, 'gender');
-            field.dataset.autocompleteInit = 'true';
-        }
-    });
-
-    // Location fields
-    document.querySelectorAll('input[data-field="location"]').forEach(field => {
-        if (!field.dataset.autocompleteInit) {
-            createAutocomplete(field, getAllLocations, 'location');
-            field.dataset.autocompleteInit = 'true';
-        }
-    });
+    renderAllFieldNotes();
 }
 
 // ============================================
@@ -1001,10 +1183,62 @@ async function loadAllProjectsFromCloud() {
     }
 }
 
+function persistProjectLocally(projectName, { showStatus = false, statusType = 'info', statusMessage = '' } = {}) {
+    if (!projectName || !window.formData) {
+        return false;
+    }
+
+    if (!window.projects || typeof window.projects !== 'object') {
+        window.projects = {};
+    }
+
+    const snapshot = {
+        name: projectName,
+        data: deepClone(window.formData),
+        currentFacilityIndex: window.currentFacilityIndex,
+        timestamp: new Date().toISOString()
+    };
+
+    window.projects[projectName] = snapshot;
+    projects = window.projects;
+
+    try {
+        saveToLocalStorage('cloudProjects', window.projects);
+    } catch (storageError) {
+        console.warn('Local persistence failed:', storageError);
+    }
+
+    invalidateAggregatedData();
+
+    if (showStatus && statusMessage) {
+        showUploadStatus(statusMessage, statusType);
+    }
+
+    return true;
+}
+
 async function saveProjectToCloud(projectName) {
     if (!projectName || !window.formData) {
         showUploadStatus('❌ No project name or data to save', 'error');
         console.error('❌ Save blocked: projectName=', projectName, 'formData exists=', !!window.formData);
+        return false;
+    }
+
+    if (IS_SUGGESTION_MODE) {
+        window.currentProjectName = projectName;
+
+        const saved = persistProjectLocally(projectName, {
+            showStatus: true,
+            statusType: 'info',
+            statusMessage: '💾 Draft saved locally. Use “Submit Suggestion for Review” to send updates to Kids Over Profits.'
+        });
+
+        if (!saved) {
+            showUploadStatus('❌ Unable to save draft locally. Please try again.', 'error');
+        } else {
+            console.info('Suggestion mode active — skipping remote save for project "%s".', projectName);
+        }
+
         return false;
     }
 
@@ -1069,7 +1303,7 @@ async function saveProjectToCloud(projectName) {
         window.currentProjectName = projectName;
 
         // Backup to localStorage
-        saveToLocalStorage('cloudProjects', projects);
+        persistProjectLocally(projectName);
 
         console.log('✅ Save successful!');
         console.log('=== SAVE PROJECT END ===');
@@ -1087,21 +1321,16 @@ async function saveProjectToCloud(projectName) {
         showUploadStatus(`❌ Failed to save: ${error.message}`, 'error');
 
         // Still save to localStorage as backup
-        try {
-            console.log('Attempting localStorage backup...');
-            window.projects[projectName] = {
-                name: projectName,
-                data: deepClone(window.formData),
-                currentFacilityIndex: window.currentFacilityIndex,
-                timestamp: new Date().toISOString()
-            };
-            projects = window.projects;
-            saveToLocalStorage('cloudProjects', projects);
-            invalidateAggregatedData();
+        const fallbackSaved = persistProjectLocally(projectName, {
+            showStatus: true,
+            statusType: 'info',
+            statusMessage: '⚠️ Saved to local storage only (cloud save failed).'
+        });
+
+        if (fallbackSaved) {
             console.log('✅ Saved to localStorage backup');
-            showUploadStatus('⚠️ Saved to localStorage backup only (cloud save failed)', 'info');
-        } catch (e) {
-            console.error('❌ localStorage backup also failed:', e);
+        } else {
+            console.error('❌ localStorage backup also failed.');
             showUploadStatus('❌ Save completely failed - check console for details', 'error');
         }
 
@@ -1110,6 +1339,21 @@ async function saveProjectToCloud(projectName) {
 }
 
 function autoSave() {
+    if (IS_SUGGESTION_MODE) {
+        clearTimeout(window.autoSaveTimer);
+        window.autoSaveTimer = setTimeout(() => {
+            if (!window.currentProjectName) {
+                return;
+            }
+
+            const saved = persistProjectLocally(window.currentProjectName);
+            if (saved) {
+                console.log('Suggestion draft saved locally for', window.currentProjectName);
+            }
+        }, 2000);
+        return;
+    }
+
     if (window.currentProjectName) {
         // Debounced auto-save to cloud
         clearTimeout(window.autoSaveTimer);
@@ -1130,7 +1374,7 @@ function createNewProjectData() {
             name: "", currentName: "", otherNames: [], location: "", headquarters: "",
             founded: "", operatingPeriod: "", status: "", parentCompanies: [],
             websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
-            notes: []
+            notes: [], fieldNotes: {}
         },
         facilities: [{
             identification: { name: "", currentName: "", currentOperator: "", otherNames: [] },
@@ -1150,8 +1394,9 @@ function createNewProjectData() {
                 hasParent: false, hasWebsite: false, hasNATSAP: false, hasSurvivorStories: false,
                 hasOther: false, notes: []
             },
-            treatmentTypes: {}, philosophy: {}, criticalIncidents: {}, notes: []
-        }]
+            treatmentTypes: {}, philosophy: {}, criticalIncidents: {}, notes: [], fieldNotes: {}
+        }],
+        fieldNotes: {}
     };
 }
 
@@ -1480,6 +1725,7 @@ window.updateAllUI = function() {
     renderSavedProjectsList();
     updateProjectStatus();
     initializeAutocompleteFields();
+    initializeNoteControls();
 };
 
 function updateTableOfContents() {
@@ -1615,6 +1861,21 @@ function cloneFacility() {
     window.currentProjectName = targetProjectName;
     window.formData = window.projects[targetProjectName].data;
     window.currentFacilityIndex = window.projects[targetProjectName].currentFacilityIndex || 0;
+
+    if (IS_SUGGESTION_MODE) {
+        persistProjectLocally(targetProjectName, {
+            showStatus: true,
+            statusType: 'info',
+            statusMessage: '💾 Cloned facility saved locally. Submit your suggestion to share it.'
+        });
+
+        window.currentProjectName = currentProject;
+        window.formData = currentData;
+        window.currentFacilityIndex = currentIndex;
+
+        alert(`✅ Facility cloned to project "${targetProjectName}" (saved locally as a draft).`);
+        return;
+    }
 
     saveProjectToCloud(targetProjectName).then(() => {
         // Restore original project

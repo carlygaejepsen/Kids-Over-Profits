@@ -46,7 +46,15 @@ $categoryAliases = [
     'certifications' => 'certification',
     'investors' => 'investor',
     'roles' => 'role',
-    'staffroles' => 'role'
+    'staffroles' => 'role',
+    'operatingperiods' => 'operatingperiod',
+    'operatingperiod' => 'operatingperiod',
+    'operating_period' => 'operatingperiod',
+    'operationyears' => 'operatingperiod',
+    'operatingyears' => 'operatingperiod',
+    'operation_years' => 'operatingperiod',
+    'yearsofoperation' => 'operatingperiod',
+    'years_of_operation' => 'operatingperiod'
 ];
 
 $category = strtolower($rawCategory);
@@ -67,7 +75,8 @@ $allowedCategories = [
     'accreditation',
     'certification',
     'investor',
-    'role'
+    'role',
+    'operatingperiod'
 ];
 
 if (!in_array($category, $allowedCategories, true)) {
@@ -462,6 +471,28 @@ function collect_role_values(array $data, array &$set)
     }
 }
 
+function collect_operatingperiod_values(array $data, array &$set)
+{
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        add_value($set, $data['operator']['operatingPeriod'] ?? null);
+    }
+
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+
+        $period = $facility['operatingPeriod'] ?? [];
+        if (is_array($period)) {
+            add_value($set, $period['yearsOfOperation'] ?? null);
+        }
+    }
+}
+
 function collect_values_for_category($category, array $data, array &$set)
 {
     switch ($category) {
@@ -503,6 +534,9 @@ function collect_values_for_category($category, array $data, array &$set)
             break;
         case 'role':
             collect_role_values($data, $set);
+            break;
+        case 'operatingperiod':
+            collect_operatingperiod_values($data, $set);
             break;
     }
 }

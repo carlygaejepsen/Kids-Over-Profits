@@ -1,4 +1,4 @@
-const API_ENDPOINT = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php';
+const API_ENDPOINT = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php';
 const testResults = {};
 
 async function testCategory(category, defaultQuery) {
@@ -63,7 +63,8 @@ async function testAllCategories() {
     const categories = [
         'operator', 'facility', 'human', 'type', 'role',
         'status', 'gender', 'location', 'certification',
-        'accreditation', 'membership', 'licensing', 'investor'
+        'accreditation', 'membership', 'licensing', 'investor',
+        'operatingperiod'
     ];
 
     const statusElement = document.getElementById('overall-status');

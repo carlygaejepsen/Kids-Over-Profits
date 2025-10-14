@@ -1,3 +1,89 @@
+<style>
+    .note-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+    }
+
+    .note-add-btn {
+        background-color: #2563eb;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .note-add-btn:hover {
+        background-color: #1d4ed8;
+    }
+
+    .note-controls .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .field-notes {
+        width: 100%;
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .note-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .note-textarea {
+        flex: 1;
+        min-height: 72px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        resize: vertical;
+    }
+
+    .remove-note-btn {
+        background: none;
+        border: none;
+        color: #dc2626;
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 4px 0;
+    }
+
+    .remove-note-btn:hover {
+        text-decoration: underline;
+    }
+
+</style>
+<script>
+    window.KOP_FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
+    window.KOP_FACILITY_FORM_CONFIG.mode = 'suggestions';
+    window.KOP_FACILITY_FORM_CONFIG.endpoints = Object.assign({
+        SAVE_PROJECT: '/wp-content/themes/child/api/save-suggestion.php',
+        LOAD_PROJECTS: '/wp-content/themes/child/api/get-master-data.php',
+        AUTOCOMPLETE: '/wp-content/themes/child/api/get-autocomplete.php'
+    }, window.KOP_FACILITY_FORM_CONFIG.endpoints || {});
+    window.FORM_MODE = 'suggestions';
+</script>
 <div class="container">
     <div class="admin-header">
         <h1>📮 Submit Facility Data Suggestions</h1>
@@ -84,36 +170,36 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="operator-name">Operator Name</label>
-                    <input type="text" id="operator-name" placeholder="Type operator name..." class="input-form">
+                    <input type="text" id="operator-name" placeholder="Type operator name..." class="input-form" data-autocomplete-category="operator" data-note-scope="operator" data-note-key="name">
                 </div>
                 <div class="form-group">
                     <label for="operator-current-name">Current Name</label>
-                    <input type="text" id="operator-current-name" placeholder="Type current operator name..." class="input-form">
+                    <input type="text" id="operator-current-name" placeholder="Type current operator name..." class="input-form" data-autocomplete-category="operator" data-note-scope="operator" data-note-key="currentName">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="operator-location">Primary Location</label>
-                    <input type="text" id="operator-location" placeholder="e.g., Waynesboro, TN">
+                    <input type="text" id="operator-location" placeholder="e.g., Waynesboro, TN" data-autocomplete-category="location" data-note-scope="operator" data-note-key="location">
                 </div>
                 <div class="form-group">
                     <label for="operator-headquarters">Headquarters</label>
-                    <input type="text" id="operator-headquarters" placeholder="e.g., Nashville, TN">
+                    <input type="text" id="operator-headquarters" placeholder="e.g., Nashville, TN" data-autocomplete-category="location" data-note-scope="operator" data-note-key="headquarters">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="operator-founded">Founded</label>
-                    <input type="text" id="operator-founded" placeholder="e.g., 1985">
+                    <input type="number" id="operator-founded" placeholder="e.g., 1985" inputmode="numeric" data-note-scope="operator" data-note-key="founded">
                 </div>
                 <div class="form-group">
                     <label for="operator-period">Operating Period</label>
-                    <input type="text" id="operator-period" placeholder="e.g., 1985-Present">
+                    <input type="text" id="operator-period" placeholder="e.g., 1985-Present" data-autocomplete-category="operatingperiod" data-note-scope="operator" data-note-key="operatingPeriod">
                 </div>
             </div>
             <div class="form-group">
                 <label for="operator-status">Status</label>
-                <input type="text" id="operator-status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." class="input-form">
+                <input type="text" id="operator-status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." class="input-form" data-autocomplete-category="status" data-note-scope="operator" data-note-key="status">
             </div>
             <div class="form-group">
                 <label>Parent Companies</label>
@@ -126,7 +212,7 @@
             <h3 class="section-heading">Key Staff</h3>
             <div class="form-group">
                 <label for="operator-ceo">CEO/President</label>
-                <input type="text" id="operator-ceo" placeholder="e.g., John Smith">
+                <input type="text" id="operator-ceo" placeholder="e.g., John Smith" data-autocomplete-category="human" data-note-scope="operator" data-note-key="keyStaff.ceo">
             </div>
             <div class="form-group">
                 <label>Founders</label>
@@ -156,16 +242,16 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" id="facility-name" placeholder="Type facility name..." class="input-form">
+                <input type="text" id="facility-name" placeholder="Type facility name..." class="input-form" data-autocomplete-category="facility" data-note-scope="facility" data-note-key="identification.name">
                 </div>
                 <div class="form-group">
                     <label>Current Name</label>
-                    <input type="text" class="facility-field" data-field="identification.currentName">
+                <input type="text" class="facility-field" data-field="identification.currentName" data-autocomplete-category="facility" data-note-scope="facility" data-note-key="identification.currentName">
                 </div>
             </div>
             <div class="form-group">
                 <label>Current Operator</label>
-                <input type="text" class="facility-field" data-field="identification.currentOperator">
+                <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator" data-note-scope="facility" data-note-key="identification.currentOperator">
             </div>
             <div class="form-group">
                 <label>Other Names</label>
@@ -182,7 +268,7 @@
         <div class="section-content">
             <div class="form-group">
                 <label>Location</label>
-                <input type="text" class="facility-field" data-field="location">
+                <input type="text" class="facility-field" data-field="location" data-autocomplete-category="location" data-note-scope="facility" data-note-key="location">
             </div>
             <div class="form-group">
                 <label>Address</label>
@@ -205,20 +291,20 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Facility Opened (Year)</label>
-                    <input type="number" class="facility-field" data-field="operatingPeriod.startYear" placeholder="e.g., 1985">
+                    <input type="number" class="facility-field" data-field="operatingPeriod.startYear" placeholder="e.g., 1985" data-note-scope="facility" data-note-key="operatingPeriod.startYear">
                 </div>
                 <div class="form-group">
                     <label>Facility Closed (Year)</label>
-                    <input type="number" class="facility-field" data-field="operatingPeriod.endYear" placeholder="Leave blank if still open">
+                    <input type="number" class="facility-field" data-field="operatingPeriod.endYear" placeholder="Leave blank if still open" data-note-scope="facility" data-note-key="operatingPeriod.endYear">
                 </div>
             </div>
-            <div class="form-group">
-                <label>Current Status</label>
-                <input type="text" class="facility-field" data-field="operatingPeriod.status" placeholder="Type status (Open, Closed, Transferred, etc.)..." class="input-form">
-            </div>
+                <div class="form-group">
+                    <label>Current Status</label>
+                    <input type="text" class="facility-field input-form" data-field="operatingPeriod.status" placeholder="Type status (Open, Closed, Transferred, etc.)..." data-autocomplete-category="status" data-note-scope="facility" data-note-key="operatingPeriod.status">
+                </div>
             <div class="form-group">
                 <label>Years of Operation</label>
-                <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present">
+                <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present" data-autocomplete-category="operatingperiod" data-note-scope="facility" data-note-key="operatingPeriod.yearsOfOperation">
             </div>
             <div class="form-group">
                 <label>Operational Notes</label>
@@ -245,17 +331,6 @@
                 <label>Profile Links</label>
                 <div class="array-container" data-path="profileLinks"></div>
             </div>
-            <div class="form-group">
-                <label>Profile Links</label>
-                <div class="array-container" data-path="profileLinks"></div>
-            </div>
-        </div>
-    </div>
-    <!-- Facility Details Section -->
-    <div class="section" id="facility-section">
-        <div class="section-header">
-            <h2 class="section-title">Facility Details</h2>
-            <span class="section-toggle">🔎</span>
         </div>
     </div>
     <!-- Facility Details Section -->
@@ -267,30 +342,30 @@
         <div class="section-content">
             <div class="form-group">
                 <label>Program Type</label>
-                <input type="text" id="facility-type" placeholder="Type facility type..." class="input-form">
+                <input type="text" id="facility-type" placeholder="Type facility type..." class="facility-field input-form" data-field="facilityDetails.type" data-autocomplete-category="type" data-note-scope="facility" data-note-key="facilityDetails.type">
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Capacity</label>
-                    <input type="number" class="facility-field" data-field="facilityDetails.capacity">
+                    <input type="number" class="facility-field" data-field="facilityDetails.capacity" data-note-scope="facility" data-note-key="facilityDetails.capacity">
                 </div>
                 <div class="form-group">
                     <label>Current Census</label>
-                    <input type="number" class="facility-field" data-field="facilityDetails.currentCensus">
+                    <input type="number" class="facility-field" data-field="facilityDetails.currentCensus" data-note-scope="facility" data-note-key="facilityDetails.currentCensus">
                 </div>
             </div>
             <div class="form-row-3">
                 <div class="form-group">
                     <label>Min Age</label>
-                    <input type="number" class="facility-field" data-field="facilityDetails.ageRange.min">
+                    <input type="number" class="facility-field" data-field="facilityDetails.ageRange.min" data-note-scope="facility" data-note-key="facilityDetails.ageRange.min">
                 </div>
                 <div class="form-group">
                     <label>Max Age</label>
-                    <input type="number" class="facility-field" data-field="facilityDetails.ageRange.max">
+                    <input type="number" class="facility-field" data-field="facilityDetails.ageRange.max" data-note-scope="facility" data-note-key="facilityDetails.ageRange.max">
                 </div>
                 <div class="form-group">
                     <label>Gender</label>
-                    <input type="text" class="facility-field" data-field="facilityDetails.gender" placeholder="Type gender (Male, Female, Co-ed)..." class="input-form">
+                    <input type="text" class="facility-field input-form" data-field="facilityDetails.gender" placeholder="Type gender (Male, Female, Co-ed)..." data-autocomplete-category="gender" data-note-scope="facility" data-note-key="facilityDetails.gender">
                 </div>
             </div>
         </div>
@@ -388,32 +463,7 @@
             <div id="project-status" class="upload-status"></div>
             <div class="form-group">
                 <label for="project-name">Project Name</label>
-                <input type="text" id="project-name" placeholder="Enter project name to save..." class="input-form">
-            </div>
-            <div class="form-group">
-                <button class="btn btn--block" id="save-project-btn">💾 Save to Cloud</button>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-secondary btn--block" id="new-project-btn">📄 New Project</button>
-            </div>
-            <div class="form-group">
-                <button class="btn btn--block btn--success" id="submit-suggestion-btn" onclick="submitSuggestion()">📮 Submit Suggestion for Review</button>
-            </div>
-            <div id="upload-status" class="upload-status"></div>
-            <div id="suggestion-status" class="upload-status"></div>
-        </div>
-    </div>
-    <!-- Project Management Section -->
-    <div class="section expanded" id="project-section">
-        <div class="section-header">
-            <h2 class="section-title">💾 Project Management</h2>
-            <span class="section-toggle">🔎</span>
-        </div>
-        <div class="section-content">
-            <div id="project-status" class="upload-status"></div>
-            <div class="form-group">
-                <label for="project-name">Project Name</label>
-                <input type="text" id="project-name" placeholder="Enter project name to save..." class="input-form">
+                <input type="text" id="project-name" placeholder="Enter project name to save..." class="input-form" data-note-scope="project" data-note-key="projectName" data-autocomplete-exempt="true">
             </div>
             <div class="form-group">
                 <button class="btn btn--block" id="save-project-btn">💾 Save to Cloud</button>
@@ -462,6 +512,7 @@
 
             const remoteBase = (window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child').replace(/\/$/, '');
             const localBase = (window.KOP_LOCAL_BASE || '..').replace(/\/$/, '');
+            const assetBases = [localBase, remoteBase].filter(Boolean).filter((value, index, array) => array.indexOf(value) === index);
 
             const stylesheets = [
                 'css/common.css',
@@ -515,15 +566,27 @@
             }
 
             function loadStylesheet(relativePath) {
-                const primaryHref = buildUrl(remoteBase, relativePath);
-                const fallbackHref = buildUrl(localBase, relativePath);
+                const hrefs = assetBases.map((base) => buildUrl(base, relativePath));
+                appendStylesheetFromList(hrefs, 0, relativePath);
+            }
 
-                appendStylesheet(primaryHref, () => {
-                    console.warn('Kids Over Profits: primary stylesheet failed, falling back to local copy.', {
-                        primaryHref,
-                        fallbackHref
+            function appendStylesheetFromList(hrefs, index, relativePath) {
+                if (index >= hrefs.length) {
+                    console.error('Kids Over Profits: all stylesheet sources failed to load.', { relativePath, hrefs });
+                    return;
+                }
+
+                appendStylesheet(hrefs[index], () => {
+                    const nextIndex = index + 1;
+                    const nextHref = hrefs[nextIndex];
+
+                    console.warn('Kids Over Profits: stylesheet failed, attempting fallback.', {
+                        attemptedHref: hrefs[index],
+                        fallbackHref: nextHref,
+                        relativePath
                     });
-                    appendStylesheet(fallbackHref);
+
+                    appendStylesheetFromList(hrefs, nextIndex, relativePath);
                 });
             }
 
@@ -547,15 +610,29 @@
                     return Promise.resolve();
                 }
 
-                const primarySrc = buildUrl(remoteBase, path);
-                const fallbackSrc = buildUrl(localBase, path);
+                const sources = assetBases.map((base) => buildUrl(base, path));
+                return loadScriptFromList(sources, type, 0, path);
+            }
 
-                return loadScript(primarySrc, type).catch(() => {
-                    console.warn('Kids Over Profits: primary script failed, falling back to local copy.', {
-                        primarySrc,
-                        fallbackSrc
+            function loadScriptFromList(sources, type, index, relativePath) {
+                if (index >= sources.length) {
+                    return Promise.reject(new Error('All script sources failed for ' + relativePath));
+                }
+
+                const src = sources[index];
+
+                return loadScript(src, type).catch((error) => {
+                    const nextIndex = index + 1;
+                    const nextSrc = sources[nextIndex];
+
+                    console.warn('Kids Over Profits: script failed to load, attempting fallback.', {
+                        attemptedSrc: src,
+                        fallbackSrc: nextSrc,
+                        relativePath,
+                        error
                     });
-                    return loadScript(fallbackSrc, type);
+
+                    return loadScriptFromList(sources, type, nextIndex, relativePath);
                 });
             }
 
