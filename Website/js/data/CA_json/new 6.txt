@@ -1,0 +1,5 @@
+My variables for function.php
+function: debug_my_script_loader
+'debug-script'
+'/js/custom-scripts.js'
+JSON file path: 'js/data/
