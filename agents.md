@@ -73,7 +73,7 @@ Kids-Over-Profits/
 │   │   ├── config.php         # Database configuration
 │   │   ├── get-master-data.php    # Retrieve approved facility data
 │   │   ├── save-suggestion.php    # Save public data suggestions
-│   │   ├── get-suggestions.php    # Retrieve data for admin autocomplete dropdowns
+│   │   ├── get-autocomplete.php   # Retrieve data for admin autocomplete dropdowns
 │   │   ├── process-edit.php       # Process data edits
 │   │   └── save-master.php        # Save approved data to master
 │   ├── html/                  # Page templates
@@ -400,14 +400,15 @@ Saves a public suggestion for admin review.
 }
 ```
 
-### GET `/api/get-suggestions.php`
-Retrieves data for populating autocomplete dropdowns (e.g., facility names, cities, or other fields) in the admin interface.
+### GET `/api/get-autocomplete.php`
+Retrieves data for populating autocomplete dropdowns (e.g., facility names, cities, operating periods, or other fields) across both public and admin interfaces.
 
 **Response**:
 ```json
 {
   "success": true,
-  "suggestions": [...]
+  "values": ["Example", "..."],
+  "count": 2
 }
 ```
 
@@ -434,6 +435,19 @@ Saves approved data to master database (admin only).
   "message": "Data saved to master"
 }
 ```
+
+---
+
+## Static Form Autocomplete & Notes
+
+The standalone `Website/html/data.html` and `Website/html/admin-data.html` pages share the `facility-form.v3.js` engine for data binding. To keep autocomplete behavior and contextual notes working:
+
+- Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/get-autocomplete.php`.
+- Numeric inputs and multi-line `<textarea>` fields should omit the autocomplete category, but they can still expose notes (see below).
+- Each form control that should support inline notes must provide both `data-note-scope` (`operator`, `facility`, or `project`) and a `data-note-key` that matches the structured data path (e.g., `operatingPeriod.yearsOfOperation`). The form script will render a “＋” button and manage per-field note arrays based on these attributes.
+- When introducing new text inputs, update both static HTML pages with the appropriate data attributes so that autocomplete categories remain synchronized across the public suggestion form and the admin master form.
+- Use the shared `operatingperiod` autocomplete category for operator operating periods and facility years-of-operation strings so contributors see consistent suggestions.
+- Set `window.KOP_FACILITY_FORM_CONFIG.mode` (or `window.FORM_MODE`) to `'suggestions'` on `Website/html/data.html` and `'master'` on `Website/html/admin-data.html` so the shared form engine routes autosaves and cloud saves to the correct endpoints (public drafts stay local until explicitly submitted, while admin saves push straight to the master database).
 
 ---
 

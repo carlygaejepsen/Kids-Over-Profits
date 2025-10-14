@@ -8,13 +8,13 @@
 // ============================================
 const API_ENDPOINTS = {
     SAVE_PROJECT: 'https://kidsoverprofits.org/wp-content/themes/child/api/save-master.php',
-    LOAD_PROJECTS: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php'
+    LOAD_PROJECTS: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php',
+    AUTOCOMPLETE: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php'
 };
 
-// Remote suggestions endpoint (hosted on the real site). If this endpoint is not
+// Remote autocomplete endpoint (hosted on the real site). If this endpoint is not
 // available from your local environment (CORS), the createAutocomplete() function
-// will fall back to the local `/php/get-suggestions.php` implemented in this repo.
-API_ENDPOINTS.SUGGESTIONS = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php';
+// will fall back to the local `/php/get-autocomplete.php` implemented in this repo.
 
 const DEFAULT_FACILITY_TYPES = [
     'Residential Treatment Center (RTC)',
@@ -534,7 +534,7 @@ function createAutocomplete(input, getDataFunction, category) {
         createAutocomplete._pendingFetch = setTimeout(async () => {
             const q = encodeURIComponent(value);
             const params = `?category=${encodeURIComponent(category)}&q=${q}`;
-            const remoteUrl = (typeof API_ENDPOINTS !== 'undefined' && API_ENDPOINTS.SUGGESTIONS) ? API_ENDPOINTS.SUGGESTIONS + params : null;
+            const remoteUrl = (typeof API_ENDPOINTS !== 'undefined' && API_ENDPOINTS.AUTOCOMPLETE) ? API_ENDPOINTS.AUTOCOMPLETE + params : null;
 
             if (!remoteUrl) return;
             try {

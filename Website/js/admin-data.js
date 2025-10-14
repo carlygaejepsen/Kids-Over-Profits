@@ -186,7 +186,7 @@ function handleValidateAll() {
     if (issues.length === 0) {
         alert(` Validation passed!\n\nTotal Projects: ${Object.keys(window.projects).length}\nTotal Facilities: ${totalFacilities}\n\nNo issues found.`);
     } else {
-        const message = `  Validation found issues:\n\n` +
+        const message = `  Validation found issues:\n\n` +
             `Total Projects: ${Object.keys(window.projects).length}\n` +
             `Total Facilities: ${totalFacilities}\n` +
             `Facilities with issues: ${facilitiesWithIssues}\n\n` +
@@ -197,6 +197,11 @@ function handleValidateAll() {
         console.log('All issues:', issues);
     }
 }
+
+// Expose key handlers globally for asset loader checks and debugging
+window.handleExportAll = handleExportAll;
+window.handleBulkDelete = handleBulkDelete;
+window.handleValidateAll = handleValidateAll;
 
 // ============================================
 // ADMIN UTILITIES
