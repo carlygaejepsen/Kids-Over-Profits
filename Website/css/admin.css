@@ -11,7 +11,7 @@
 /* Admin-specific overrides and custom styles for admin.html */
 /* Admin Header */
 .admin-header {
-    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    background: #ef9034;
     color: white;
     padding: 30px;
     border-radius: 8px;
@@ -63,7 +63,7 @@
 
 .upload-status.info {
     background-color: #dbeafe;
-    color: #2563eb;
+    color: #33a7b5;
     border: 1px solid #93c5fd;
 }/* ========================================
    ADMIN DATA CUSTOM STYLES
@@ -82,12 +82,12 @@
 
 .facility-item:hover {
     background: #f1f5f9;
-    border-color: #7c3aed;
+    border-color: #b2e102;
 }
 
 .facility-item.active {
     background: #dbeafe;
-    border-color: #7c3aed;
+    border-color: #b6e3d4;
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.1);
 }
 
@@ -144,7 +144,7 @@
 
 /* Facility Duplicate Button - UNIQUE */
 .facility-duplicate-btn {
-    background: #3b82f6;
+    background: #000080;
     color: white !important;
     border: none;
     border-radius: 4px;
@@ -160,7 +160,7 @@
 }
 
 .facility-duplicate-btn:hover {
-    background: #2563eb;
+    background: #33a7b5;
     color: white !important;
     transform: scale(1.1);
 }
@@ -168,7 +168,7 @@
 .facility-index {
     font-size: 11px;
     color: #6b7280;
-    background: #f3f4f6;
+    background: #0b0b0b;
     padding: 3px 8px;
     border-radius: 4px;
     margin-left: 8px;
@@ -255,14 +255,14 @@
 }
 
 .category-tab.active {
-    border-color: #7c3aed;
-    background: #7c3aed;
+    border-color: #fe8088;
+    background: #fe8088;
     color: white;
 }
 
 .category-tab:hover:not(.active) {
-    border-color: #a855f7;
-    background: #f3f4f6;
+    border-color: #fe8088;
+    background: #0b0b0b;
 }
 
 .category-content {
@@ -280,7 +280,7 @@
     margin-bottom: 15px;
     font-size: 14px;
     color: #475569;
-    border-left: 4px solid #7c3aed;
+    border-left: 4px solid #fe8088;
 }
 
 @media (max-width: 768px) {
@@ -384,3 +384,4 @@
         font-size: 14px;
     }
 }
+

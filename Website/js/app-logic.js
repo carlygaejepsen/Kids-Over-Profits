@@ -724,8 +724,20 @@ function switchCategory(category) {
     document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
     document.getElementById(`${category}-tab`).classList.add('active');
 
-    document.getElementById('companies-content').style.display = category === 'facilities' ? 'block' : 'none';
-    document.getElementById('states-content').style.display = category === 'states' ? 'block' : 'none';
+    const companiesContent = document.getElementById('companies-content');
+    const statesContent = document.getElementById('states-content');
+
+    if (category === 'facilities') {
+        companiesContent.classList.remove('d-none');
+        companiesContent.style.display = 'block';
+        statesContent.classList.add('d-none');
+        statesContent.style.display = 'none';
+    } else {
+        companiesContent.classList.add('d-none');
+        companiesContent.style.display = 'none';
+        statesContent.classList.remove('d-none');
+        statesContent.style.display = 'block';
+    }
 
     const containerId = category === 'facilities' ? 'saved-projects-list' : 'locations-list';
     const filterType = category === 'facilities' ? 'companies' : 'locations';

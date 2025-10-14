@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child
+    - /bin/cp -R Website/* ${DEPLOYPATH}/

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocomplete SQL Backend Tester</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        h1 {
+            color: #1f2937;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .test-category button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-category button:hover {
+            background: #2563eb;
+        }
+        .test-category button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .test-category input {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            flex: 1;
+        }
+        .results {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        .results.success {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
+        .results.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .results pre {
+            margin: 10px 0 0 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .summary {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .summary h2 {
+            margin-top: 0;
+        }
+        .test-all-btn {
+            padding: 15px 30px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .test-all-btn:hover {
+            background: #059669;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status-badge.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status-badge.pending {
+            background: #e5e7eb;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Autocomplete SQL Backend Tester</h1>
+
+    <div class="summary" id="summary">
+        <h2>Test Summary</h2>
+        <p>This tool tests all autocomplete categories against the SQL backend endpoint.</p>
+        <p><strong>Endpoint:</strong> <code>https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php</code></p>
+        <p><strong>Status:</strong> <span id="overall-status">Ready to test</span></p>
+    </div>
+
+    <button class="test-all-btn" onclick="testAllCategories()">▶️ Test All Categories</button>
+
+    <div class="test-section">
+        <h2>Individual Category Tests</h2>
+
+        <div class="test-category">
+            <button onclick="testCategory('operator', 'seq')">Test Operator</button>
+            <input type="text" id="operator-query" placeholder="Search query (e.g., seq)" value="seq">
+            <span class="status-badge pending" id="status-operator">Pending</span>
+        </div>
+        <div class="results" id="results-operator" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('facility', 'academy')">Test Facility</button>
+            <input type="text" id="facility-query" placeholder="Search query (e.g., academy)" value="academy">
+            <span class="status-badge pending" id="status-facility">Pending</span>
+        </div>
+        <div class="results" id="results-facility" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('human', 'john')">Test Human Names</button>
+            <input type="text" id="human-query" placeholder="Search query (e.g., john)" value="john">
+            <span class="status-badge pending" id="status-human">Pending</span>
+        </div>
+        <div class="results" id="results-human" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('type', 'residential')">Test Facility Types</button>
+            <input type="text" id="type-query" placeholder="Search query (e.g., residential)" value="residential">
+            <span class="status-badge pending" id="status-type">Pending</span>
+        </div>
+        <div class="results" id="results-type" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('role', 'director')">Test Staff Roles</button>
+            <input type="text" id="role-query" placeholder="Search query (e.g., director)" value="director">
+            <span class="status-badge pending" id="status-role">Pending</span>
+        </div>
+        <div class="results" id="results-role" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('status', 'active')">Test Status</button>
+            <input type="text" id="status-query" placeholder="Search query (e.g., active)" value="active">
+            <span class="status-badge pending" id="status-status">Pending</span>
+        </div>
+        <div class="results" id="results-status" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('gender', 'male')">Test Gender</button>
+            <input type="text" id="gender-query" placeholder="Search query (e.g., male)" value="male">
+            <span class="status-badge pending" id="status-gender">Pending</span>
+        </div>
+        <div class="results" id="results-gender" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('location', 'utah')">Test Location</button>
+            <input type="text" id="location-query" placeholder="Search query (e.g., utah)" value="utah">
+            <span class="status-badge pending" id="status-location">Pending</span>
+        </div>
+        <div class="results" id="results-location" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('certification', 'license')">Test Certification</button>
+            <input type="text" id="certification-query" placeholder="Search query" value="license">
+            <span class="status-badge pending" id="status-certification">Pending</span>
+        </div>
+        <div class="results" id="results-certification" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('accreditation', 'carf')">Test Accreditation</button>
+            <input type="text" id="accreditation-query" placeholder="Search query" value="carf">
+            <span class="status-badge pending" id="status-accreditation">Pending</span>
+        </div>
+        <div class="results" id="results-accreditation" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('membership', 'natsap')">Test Membership</button>
+            <input type="text" id="membership-query" placeholder="Search query" value="natsap">
+            <span class="status-badge pending" id="status-membership">Pending</span>
+        </div>
+        <div class="results" id="results-membership" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('licensing', 'state')">Test Licensing</button>
+            <input type="text" id="licensing-query" placeholder="Search query" value="state">
+            <span class="status-badge pending" id="status-licensing">Pending</span>
+        </div>
+        <div class="results" id="results-licensing" style="display: none;"></div>
+
+        <div class="test-category">
+            <button onclick="testCategory('investor', 'capital')">Test Investor</button>
+            <input type="text" id="investor-query" placeholder="Search query" value="capital">
+            <span class="status-badge pending" id="status-investor">Pending</span>
+        </div>
+        <div class="results" id="results-investor" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-suggestions.php';
+        const testResults = {};
+
+        async function testCategory(category, defaultQuery) {
+            const query = document.getElementById(`${category}-query`)?.value || defaultQuery;
+            const resultsDiv = document.getElementById(`results-${category}`);
+            const statusBadge = document.getElementById(`status-${category}`);
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.className = 'results';
+            resultsDiv.innerHTML = `<p>🔄 Testing <strong>${category}</strong> with query: "${query}"...</p>`;
+
+            statusBadge.className = 'status-badge pending';
+            statusBadge.textContent = 'Testing...';
+
+            try {
+                const url = `${API_ENDPOINT}?category=${encodeURIComponent(category)}&q=${encodeURIComponent(query)}`;
+                console.log(`Testing: ${url}`);
+
+                const startTime = performance.now();
+                const response = await fetch(url, { cache: 'no-store' });
+                const endTime = performance.now();
+                const responseTime = Math.round(endTime - startTime);
+
+                const contentType = response.headers.get('content-type');
+                let result;
+
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Non-JSON response: ${text.substring(0, 200)}`);
+                }
+
+                if (response.ok && result.success) {
+                    const count = Array.isArray(result.values) ? result.values.length : 0;
+                    resultsDiv.className = 'results success';
+                    resultsDiv.innerHTML = `
+                        <p>✅ <strong>Success!</strong> Category: <code>${category}</code> | Response time: ${responseTime}ms | Results: ${count}</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                    statusBadge.className = 'status-badge pass';
+                    statusBadge.textContent = `✓ Pass (${count})`;
+                    testResults[category] = { success: true, count, responseTime };
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+            } catch (error) {
+                resultsDiv.className = 'results error';
+                resultsDiv.innerHTML = `
+                    <p>❌ <strong>Failed!</strong> Category: <code>${category}</code></p>
+                    <p>Error: ${error.message}</p>
+                `;
+                statusBadge.className = 'status-badge fail';
+                statusBadge.textContent = '✗ Fail';
+                testResults[category] = { success: false, error: error.message };
+            }
+
+            updateOverallStatus();
+        }
+
+        async function testAllCategories() {
+            const categories = [
+                'operator', 'facility', 'human', 'type', 'role',
+                'status', 'gender', 'location', 'certification',
+                'accreditation', 'membership', 'licensing', 'investor'
+            ];
+
+            document.getElementById('overall-status').textContent = 'Running tests...';
+
+            for (const category of categories) {
+                const defaultQuery = document.getElementById(`${category}-query`)?.value || '';
+                await testCategory(category, defaultQuery);
+                await new Promise(resolve => setTimeout(resolve, 300)); // Small delay between tests
+            }
+
+            updateOverallStatus();
+        }
+
+        function updateOverallStatus() {
+            const totalTests = Object.keys(testResults).length;
+            const passedTests = Object.values(testResults).filter(r => r.success).length;
+            const failedTests = totalTests - passedTests;
+
+            const statusElement = document.getElementById('overall-status');
+
+            if (totalTests === 0) {
+                statusElement.textContent = 'Ready to test';
+            } else {
+                const percentage = Math.round((passedTests / totalTests) * 100);
+                statusElement.innerHTML = `
+                    <strong>${passedTests}/${totalTests} passed</strong> (${percentage}%) |
+                    <span style="color: #10b981;">${passedTests} passed</span> |
+                    <span style="color: #ef4444;">${failedTests} failed</span>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
