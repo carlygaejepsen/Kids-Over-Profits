@@ -16,11 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.addEventListener('change', filterAndSort);
     }
     
+    function getFacilityInfo(facility = {}) {
+        return facility.facility_info || {};
+    }
+
+    function getFacilityName(facility = {}) {
+        return getFacilityInfo(facility).facility_name || '';
+    }
+
+    function getFacilityAddress(facility = {}) {
+        const info = getFacilityInfo(facility);
+        return info.full_address || info.city_state_zip || '';
+    }
+
+    function getFacilityDirector(facility = {}) {
+        return getFacilityInfo(facility).executive_director || '';
+    }
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize CT DCF report...');
-            // Use the direct path to your CT reports JSON file
-        const url = '/wp-content/themes/child/js/data/ct_reports.json'
+            const urls = (window.myThemeData && Array.isArray(window.myThemeData.jsonFileUrls)) ? window.myThemeData.jsonFileUrls : [];
+            const url = urls[0] || '/wp-content/themes/child/js/data/ct_reports.json';
             console.log('URL to fetch:', url);
 
             // Fetch the CT DCF data
@@ -152,18 +169,18 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Filter across all facilities
             const filteredFacilities = allFacilities.filter(facility => {
-                const info = facility.facility_info || {};
-                const name = (info.facility_name || '').toLowerCase();
+                const info = getFacilityInfo(facility);
+                const name = getFacilityName(facility).toLowerCase();
                 const program = (info.program_name || '').toLowerCase();
                 const director = (info.executive_director || '').toLowerCase();
                 const category = (info.program_category || '').toLowerCase();
-                const city = (info.city_state_zip || '').toLowerCase();
-                
-                return name.includes(searchTerm) || 
-                       program.includes(searchTerm) || 
+                const address = getFacilityAddress(facility).toLowerCase();
+
+                return name.includes(searchTerm) ||
+                       program.includes(searchTerm) ||
                        director.includes(searchTerm) ||
                        category.includes(searchTerm) ||
-                       city.includes(searchTerm);
+                       address.includes(searchTerm);
             });
             
             console.log(`Found ${filteredFacilities.length} matching facilities`);
@@ -231,8 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         return processedFacilities.sort((a, b) => {
-            const nameA = a.facility_info?.facility_name || '';
-            const nameB = b.facility_info?.facility_name || '';
+            const nameA = getFacilityName(a);
+            const nameB = getFacilityName(b);
             
             switch(sortBy) {
                 case 'name':
@@ -303,21 +320,21 @@ document.addEventListener('DOMContentLoaded', () => {
         facilities.forEach(facility => {
             const facilityElement = document.createElement('div');
             facilityElement.className = 'facility-box';
-            const info = facility.facility_info || {};
-            
+            const info = getFacilityInfo(facility);
+            const address = getFacilityAddress(facility);
+
             facilityElement.innerHTML = `
                 <details>
                     <summary class="facility-header">
-                        <h1>${toTitleCase(info.facility_name) || 'N/A'}</h1>
+                        <h1>${toTitleCase(getFacilityName(facility)) || 'N/A'}</h1>
                         <h2>Program: ${info.program_name || 'N/A'}</h2>
                         <p class="facility-details">
-                            Category: ${info.program_category || 'N/A'} | 
-                            Director: ${toTitleCase(info.executive_director) || 'N/A'} | 
+                            Category: ${info.program_category || 'N/A'} |
+                            Director: ${toTitleCase(getFacilityDirector(facility)) || 'N/A'} |
                             Capacity: ${info.bed_capacity || 'N/A'}
                         </p>
                         <p class="facility-address">
-                            ${info.address || ''}<br>
-                            ${info.city_state_zip || ''}<br>
+                            ${address || ''}<br>
                             ${info.phone || ''}
                         </p>
                     </summary>

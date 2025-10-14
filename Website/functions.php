@@ -216,16 +216,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle' => 'ut-reports-display',
             'script' => 'js/ut_reports.js',
             'json'   => array(
-                'dirs' => array(
-                    array(
-                        'dir'     => 'js/data/ut_reports/',
-                        'pattern' => '*.json',
-                    ),
-                    array(
-                        'dir'     => 'js/data/ut_checklists/',
-                        'pattern' => '*.json',
-                    ),
-                ),
+                'files' => array('js/data/ut_reports.json'),
             ),
         ),
         'az-reports' => array(
@@ -268,7 +259,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle' => 'facilities-display',
             'script' => 'js/facilities-display.js',
             'json'   => array(
-                'files' => array('js/data/facility-projects-export-2025-10-05.json'),
+                'files' => array('js/data/facility-projects-export.json'),
             ),
         ),
     );
