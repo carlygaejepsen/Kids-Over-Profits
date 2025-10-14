@@ -102,6 +102,10 @@ function kadence_child_enqueue_styles() {
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
 
+// =================================================================
+// CUSTOM FUNCTIONS
+// =================================================================
+
 /**
  * Build an array of JSON file URLs for localization.
  *
@@ -115,6 +119,7 @@ function kidsoverprofits_get_report_json_urls($json_config) {
         return $json_urls;
     }
 
+    // Handle explicit file list
     if (!empty($json_config['files'])) {
         foreach ($json_config['files'] as $relative_file) {
             $file_path = get_theme_file_path($relative_file);
@@ -127,6 +132,34 @@ function kidsoverprofits_get_report_json_urls($json_config) {
         return $json_urls;
     }
 
+    // Handle multiple directories (for Utah with both reports and checklists)
+    if (!empty($json_config['dirs'])) {
+        foreach ($json_config['dirs'] as $dir_config) {
+            $directory = !empty($dir_config['dir']) ? trailingslashit($dir_config['dir']) : '';
+            $pattern   = !empty($dir_config['pattern']) ? $dir_config['pattern'] : '*.json';
+
+            if (!$directory) {
+                continue;
+            }
+
+            $absolute_directory = get_theme_file_path($directory);
+
+            if ($absolute_directory && is_dir($absolute_directory)) {
+                $files    = glob(trailingslashit($absolute_directory) . $pattern);
+                $base_uri = trailingslashit(get_theme_file_uri($directory));
+
+                if (!empty($files)) {
+                    foreach ($files as $file) {
+                        $json_urls[] = esc_url($base_uri . basename($file));
+                    }
+                }
+            }
+        }
+
+        return $json_urls;
+    }
+
+    // Handle single directory
     $directory = !empty($json_config['dir']) ? trailingslashit($json_config['dir']) : '';
     $pattern   = !empty($json_config['pattern']) ? $json_config['pattern'] : '*.json';
 
@@ -172,20 +205,27 @@ function kidsoverprofits_enqueue_state_report_assets() {
 
     $configs = array(
         'ca-reports' => array(
-            'handle'    => 'new-multi-file-report',
-            'handle'    => 'ca-reports',
+            'handle'    => 'ca-reports-display',
             'script'    => 'js/ca-reports.js',
             'json'      => array(
-                'dir'     => 'js/data/',
-                'pattern' => 'ccl_*.json',
+                'dir'     => 'js/data/ca_reports/',
+                'pattern' => '*.json',
             ),
         ),
         'ut-reports' => array(
             'handle' => 'ut-reports-display',
             'script' => 'js/ut_reports.js',
             'json'   => array(
-                'dir'     => 'js/data/',
-                'pattern' => 'ut_*.json',
+                'dirs' => array(
+                    array(
+                        'dir'     => 'js/data/ut_reports/',
+                        'pattern' => '*.json',
+                    ),
+                    array(
+                        'dir'     => 'js/data/ut_checklists/',
+                        'pattern' => '*.json',
+                    ),
+                ),
             ),
         ),
         'az-reports' => array(
@@ -194,8 +234,6 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'json'   => array(
                 'dir'     => 'js/data/az_reports/',
                 'pattern' => '*.json',
-                'dir'     => 'js/data/',
-                'pattern' => 'az_*.json',
             ),
         ),
         'tx-reports' => array(
@@ -206,21 +244,21 @@ function kidsoverprofits_enqueue_state_report_assets() {
             ),
         ),
         'mt-reports' => array(
-            'handle' => 'mt-reports',
+            'handle' => 'mt-reports-display',
             'script' => 'js/mt_reports.js',
             'json'   => array(
                 'files' => array('js/data/mt_reports.json'),
             ),
         ),
         'ct-reports' => array(
-            'handle' => 'ct-reports',
+            'handle' => 'ct-reports-display',
             'script' => 'js/ct_reports.js',
             'json'   => array(
                 'files' => array('js/data/ct_reports.json'),
             ),
         ),
         'wa-reports' => array(
-            'handle' => 'wa-reports',
+            'handle' => 'wa-reports-display',
             'script' => 'js/wa_reports.js',
             'json'   => array(
                 'files' => array('js/data/wa_reports.json'),
@@ -230,11 +268,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle' => 'facilities-display',
             'script' => 'js/facilities-display.js',
             'json'   => array(
-                'files' => array('js/data/facilities_data.json'),
-            ),
-            'localize' => array(
-                'name' => 'facilitiesConfig',
-                'data' => 'jsonDataUrl',
+                'files' => array('js/data/facility-projects-export-2025-10-05.json'),
             ),
         ),
     );
@@ -246,12 +280,18 @@ function kidsoverprofits_enqueue_state_report_assets() {
     $config    = $configs[$slug];
     $json_urls = kidsoverprofits_get_report_json_urls($config['json']);
 
+    // Use consistent localization structure for all pages
     $localize_name = 'myThemeData';
     $localize_key  = 'jsonFileUrls';
 
-    if (isset($config['localize'])) {
-        $localize_name = $config['localize']['name'];
-        $localize_key  = $config['localize']['data'];
+    // Special handling for TTI program index (facilities display)
+    if ($slug === 'tti-program-index') {
+        $localize_name = 'facilitiesConfig';
+        $localize_key  = 'jsonDataUrl';
+        // For single file configs, pass just the URL string instead of array
+        $json_data = !empty($json_urls) ? $json_urls[0] : '';
+    } else {
+        $json_data = $json_urls;
     }
 
     kidsoverprofits_enqueue_theme_script(
@@ -259,8 +299,11 @@ function kidsoverprofits_enqueue_state_report_assets() {
         $config['script'],
         array(),
         true,
-        array( // Ensure this is always an array of arrays
-            array('name' => $localize_name, 'data' => array($localize_key => $json_urls)),
+        array(
+            array(
+                'name' => $localize_name,
+                'data' => array($localize_key => $json_data)
+            ),
         )
     );
 }
@@ -318,9 +361,9 @@ class AnonymousDocPortal {
                     array(
                         'name' => 'anonymous_portal_ajax',
                         'data' => array(
-                            'ajax_url'     => admin_url('admin-ajax.php'),
-                            'nonce'        => wp_create_nonce('anonymous_doc_nonce'),
-                            'max_size'     => $this->max_file_size,
+                            'ajax_url'      => admin_url('admin-ajax.php'),
+                            'nonce'         => wp_create_nonce('anonymous_doc_nonce'),
+                            'max_size'      => $this->max_file_size,
                             'allowed_types' => $this->allowed_types,
                         ),
                     ),
@@ -429,8 +472,9 @@ class AnonymousDocPortal {
     
     public function handle_submission() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'], 'anonymous_doc_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'anonymous_doc_nonce')) {
             wp_send_json_error('Security check failed');
+            return;
         }
         
         $response = array('success' => false, 'message' => '');
@@ -690,7 +734,7 @@ class AnonymousDocPortal {
         $table_name = $wpdb->prefix . 'anonymous_submissions';
         
         // Handle status updates
-        if (isset($_POST['update_status']) && wp_verify_nonce($_POST['_wpnonce'], 'update_submission_status')) {
+        if (isset($_POST['update_status']) && isset($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'update_submission_status')) {
             $wpdb->update(
                 $table_name,
                 array('status' => sanitize_text_field($_POST['status'])),
@@ -702,7 +746,7 @@ class AnonymousDocPortal {
         }
         
         // Handle file deletion for cleanup
-        if (isset($_POST['delete_files']) && wp_verify_nonce($_POST['_wpnonce'], 'delete_submission_files')) {
+        if (isset($_POST['delete_files']) && isset($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'delete_submission_files')) {
             $submission = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", intval($_POST['submission_db_id'])));
             if ($submission) {
                 $files_data = json_decode($submission->files_data, true);
