@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once get_stylesheet_directory() . '/inc/template-helpers.php';
+
 /**
  * Enqueue parent theme styles
  */
@@ -864,68 +866,70 @@ add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
 // =================================================================
 
 /**
+ * Retrieve a cache-busting version based on the file modification time.
+ *
+ * @param string $relative_path Relative path from the child theme directory.
+ * @return int|string
+ */
+function kidsoverprofits_get_asset_version($relative_path) {
+    $path = get_stylesheet_directory() . $relative_path;
+
+    return file_exists($path) ? filemtime($path) : wp_get_theme()->get('Version');
+}
+
+/**
+ * Enqueue the shared admin interface styles once per request.
+ */
+function kidsoverprofits_enqueue_admin_interface_styles() {
+    $styles = array(
+        'common-css' => '/css/common.css',
+        'layout-css' => '/css/layout.css',
+        'forms-css'  => '/css/forms.css',
+        'tables-css' => '/css/tables.css',
+        'modals-css' => '/css/modals.css',
+        'admin-css'  => '/css/admin.css',
+    );
+
+    foreach ($styles as $handle => $relative_path) {
+        if (!wp_style_is($handle, 'enqueued')) {
+            wp_enqueue_style(
+                $handle,
+                get_stylesheet_directory_uri() . $relative_path,
+                array(),
+                kidsoverprofits_get_asset_version($relative_path)
+            );
+        }
+    }
+}
+
+/**
  * Load assets for admin-data page
  */
 function enqueue_admin_data_assets() {
     if (is_page('admin-data')) {
-        // Enqueue CSS files
-        wp_enqueue_style(
-            'common-css',
-            get_stylesheet_directory_uri() . '/css/common.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/common.css')
-        );
-        wp_enqueue_style(
-            'layout-css',
-            get_stylesheet_directory_uri() . '/css/layout.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/layout.css')
-        );
-        wp_enqueue_style(
-            'forms-css',
-            get_stylesheet_directory_uri() . '/css/forms.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/forms.css')
-        );
-        wp_enqueue_style(
-            'tables-css',
-            get_stylesheet_directory_uri() . '/css/tables.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/tables.css')
-        );
-        wp_enqueue_style(
-            'modals-css',
-            get_stylesheet_directory_uri() . '/css/modals.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/modals.css')
-        );
-        wp_enqueue_style(
-            'admin-css',
-            get_stylesheet_directory_uri() . '/css/admin.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/admin.css')
-        );
+        kidsoverprofits_enqueue_admin_interface_styles();
 
         // Enqueue JS files
         wp_enqueue_script(
             'app-logic',
             get_stylesheet_directory_uri() . '/js/app-logic.js',
             array(),
-            filemtime(get_stylesheet_directory() . '/js/app-logic.js'),
+            kidsoverprofits_get_asset_version('/js/app-logic.js'),
             true
         );
         wp_enqueue_script(
             'utilities',
             get_stylesheet_directory_uri() . '/js/utilities.js',
-            array(),
-            filemtime(get_stylesheet_directory() . '/js/utilities.js'),
+            array('app-logic'),
+            kidsoverprofits_get_asset_version('/js/utilities.js'),
             true
         );
+        wp_script_add_data('utilities', 'type', 'module');
         wp_enqueue_script(
             'facility-form-v3',
             get_stylesheet_directory_uri() . '/js/facility-form.v3.js',
             array('utilities'),
-            filemtime(get_stylesheet_directory() . '/js/facility-form.v3.js'),
+            kidsoverprofits_get_asset_version('/js/facility-form.v3.js'),
             true
         );
     }
@@ -937,45 +941,15 @@ add_action('wp_enqueue_scripts', 'enqueue_admin_data_assets');
  */
 function enqueue_data_organizer_assets() {
     if (is_page('data-organizer')) {
-        // Enqueue CSS files
-        wp_enqueue_style(
-            'common-css',
-            get_stylesheet_directory_uri() . '/css/common.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/common.css')
-        );
-        wp_enqueue_style(
-            'layout-css',
-            get_stylesheet_directory_uri() . '/css/layout.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/layout.css')
-        );
-        wp_enqueue_style(
-            'forms-css',
-            get_stylesheet_directory_uri() . '/css/forms.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/forms.css')
-        );
-        wp_enqueue_style(
-            'tables-css',
-            get_stylesheet_directory_uri() . '/css/tables.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/tables.css')
-        );
-        wp_enqueue_style(
-            'modals-css',
-            get_stylesheet_directory_uri() . '/css/modals.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/modals.css')
-        );
-        wp_enqueue_style(
-            'admin-css',
-            get_stylesheet_directory_uri() . '/css/admin.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/admin.css')
-        );
+        kidsoverprofits_enqueue_admin_interface_styles();
 
-        // No additional JS files needed for data-organizer
+        wp_enqueue_script(
+            'data-organizer',
+            get_stylesheet_directory_uri() . '/js/data-organizer.js',
+            array(),
+            kidsoverprofits_get_asset_version('/js/data-organizer.js'),
+            true
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_data_organizer_assets');
@@ -985,69 +959,80 @@ add_action('wp_enqueue_scripts', 'enqueue_data_organizer_assets');
  */
 function enqueue_data_page_assets() {
     if (is_page('data')) {
-        // Enqueue CSS files
-        wp_enqueue_style(
-            'common-css',
-            get_stylesheet_directory_uri() . '/css/common.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/common.css')
-        );
-        wp_enqueue_style(
-            'layout-css',
-            get_stylesheet_directory_uri() . '/css/layout.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/layout.css')
-        );
-        wp_enqueue_style(
-            'forms-css',
-            get_stylesheet_directory_uri() . '/css/forms.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/forms.css')
-        );
-        wp_enqueue_style(
-            'tables-css',
-            get_stylesheet_directory_uri() . '/css/tables.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/tables.css')
-        );
-        wp_enqueue_style(
-            'modals-css',
-            get_stylesheet_directory_uri() . '/css/modals.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/modals.css')
-        );
-        wp_enqueue_style(
-            'admin-css',
-            get_stylesheet_directory_uri() . '/css/admin.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/css/admin.css')
-        );
+        kidsoverprofits_enqueue_admin_interface_styles();
 
         // Enqueue JS files
         wp_enqueue_script(
             'app-logic',
             get_stylesheet_directory_uri() . '/js/app-logic.js',
             array(),
-            filemtime(get_stylesheet_directory() . '/js/app-logic.js'),
+            kidsoverprofits_get_asset_version('/js/app-logic.js'),
             true
         );
         wp_enqueue_script(
+            'utilities',
+            get_stylesheet_directory_uri() . '/js/utilities.js',
+            array('app-logic'),
+            kidsoverprofits_get_asset_version('/js/utilities.js'),
+            true
+        );
+        wp_script_add_data('utilities', 'type', 'module');
+        wp_enqueue_script(
             'facility-form-v3',
             get_stylesheet_directory_uri() . '/js/facility-form.v3.js',
-            array(),
-            filemtime(get_stylesheet_directory() . '/js/facility-form.v3.js'),
+            array('utilities'),
+            kidsoverprofits_get_asset_version('/js/facility-form.v3.js'),
             true
         );
         wp_enqueue_script(
             'data-form',
             get_stylesheet_directory_uri() . '/js/data-form.js',
-            array(),
-            filemtime(get_stylesheet_directory() . '/js/data-form.js'),
+            array('facility-form-v3'),
+            kidsoverprofits_get_asset_version('/js/data-form.js'),
             true
         );
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_data_page_assets');
+
+/**
+ * Load assets for facility analysis page.
+ */
+function enqueue_facility_analysis_assets() {
+    if (is_page('facility-analysis')) {
+        kidsoverprofits_enqueue_admin_interface_styles();
+
+        $script_path = get_stylesheet_directory() . '/js/facility-analysis.js';
+        if (file_exists($script_path)) {
+            wp_enqueue_script(
+                'facility-analysis',
+                get_stylesheet_directory_uri() . '/js/facility-analysis.js',
+                array(),
+                kidsoverprofits_get_asset_version('/js/facility-analysis.js'),
+                true
+            );
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_facility_analysis_assets');
+
+/**
+ * Load assets for autocomplete tester page.
+ */
+function enqueue_test_autocomplete_assets() {
+    if (is_page('test-autocomplete')) {
+        kidsoverprofits_enqueue_admin_interface_styles();
+
+        wp_enqueue_script(
+            'test-autocomplete',
+            get_stylesheet_directory_uri() . '/js/test-autocomplete.js',
+            array(),
+            kidsoverprofits_get_asset_version('/js/test-autocomplete.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_test_autocomplete_assets');
 
 // Keep this for backward compatibility or remove if not needed
 function enqueue_facility_form_script() {
@@ -1062,15 +1047,3 @@ function enqueue_facility_form_script() {
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
-
-function enqueue_facilities_script() {
-    // Enqueue the facilities JavaScript
-    wp_enqueue_script(
-        'tti-program-index',
-        get_stylesheet_directory_uri() . '/js/facilities-display.js',
-        array(),
-        '1.0.0',
-        true
-    );
-}
-add_action('wp_enqueue_scripts', 'enqueue_facilities_script');

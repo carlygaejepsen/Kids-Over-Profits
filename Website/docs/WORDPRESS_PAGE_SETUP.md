@@ -10,6 +10,8 @@ Added proper WordPress enqueue functions in `functions.php` to load CSS and JS f
 
 ## How to Update Your WordPress Pages
 
+> **New:** The child theme now ships with dedicated page templates (`page-*.php`) for the data tools and state report pages. As long as the WordPress page slug matches the template name (for example `data`, `admin-data`, `ca-reports`, etc.), WordPress will automatically load the template and the correct assets—no manual HTML pasting required.
+
 ### Step 1: Upload Updated files.php to Server
 Upload the updated `Website/functions.php` file to your server at:
 ```
