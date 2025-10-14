@@ -102,34 +102,6 @@ function kadence_child_enqueue_styles() {
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
 
-// =================================================================
-// CUSTOM FUNCTIONS
-// =================================================================
-
-/**
- * Load facilities data for TTI program index page
- */
-function load_facilities_data() {
-    // Only load on the TTI program index page
-    if (is_page('tti-program-index')) {
-        $facilities_json_url = get_stylesheet_directory_uri() . '/js/data/facilities_data.json';
-
-        kidsoverprofits_enqueue_theme_script(
-            'facilities-display',
-            'js/facilities-display.js',
-            array(),
-            true,
-            array(
-                array(
-                    'name' => 'facilitiesConfig',
-                    'data' => array('jsonDataUrl' => esc_url($facilities_json_url)),
-                ),
-            )
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'load_facilities_data');
-
 /**
  * Build an array of JSON file URLs for localization.
  *
@@ -201,6 +173,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
     $configs = array(
         'ca-reports' => array(
             'handle'    => 'new-multi-file-report',
+            'handle'    => 'ca-reports',
             'script'    => 'js/ca-reports.js',
             'json'      => array(
                 'dir'     => 'js/data/',
