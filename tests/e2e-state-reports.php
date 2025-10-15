@@ -29,7 +29,7 @@ class StateReportsE2ETest {
         echo "1. Testing JavaScript file accessibility...\n";
         
         $jsFiles = [
-            'ca-reports.js',
+            'state_reports/ca-reports.js',
             'facilities-display.js',
             'report-test.js'
         ];

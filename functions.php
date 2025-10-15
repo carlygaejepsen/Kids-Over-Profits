@@ -102,7 +102,8 @@ if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
         $version = filemtime($file_path);
 
         if (!$version) {
-            $version = wp_get_theme()->get('Version');
+            // Fallback to the current time if filemtime fails, for aggressive cache busting.
+            $version = time();
         }
 
         return array(
