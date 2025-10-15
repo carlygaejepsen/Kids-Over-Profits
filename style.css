@@ -20,3 +20,6 @@ Fallback imports for direct CSS loading:
 @import url('css/tables.css');
 @import url('css/modals.css');
 @import url('css/admin.css');
+@import url('css/anonymous-portal.css');
+@import url('css/print-report.css');
+

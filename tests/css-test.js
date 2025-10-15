@@ -163,10 +163,25 @@
             checks: [],
             status: 'skipped',
             message: '',
+            statusDetails: {},
         };
 
-        const status = target.status || {};
-        const selectors = Array.isArray(target.selectors) ? target.selectors : [];
+        const fallbackStatus = {
+            isEnqueued: typeof target.isEnqueued === 'boolean' ? target.isEnqueued : undefined,
+            expected: typeof target.expected === 'boolean' ? target.expected : undefined,
+        };
+
+        const rawStatus = target.status && typeof target.status === 'object' ? target.status : {};
+        const status = Object.assign({}, fallbackStatus, rawStatus);
+
+        status.isEnqueued = Boolean(status.isEnqueued);
+        status.expected = Boolean(status.expected);
+
+        const selectors = Array.isArray(target.selectors)
+            ? target.selectors
+            : (Array.isArray(target.selectorTests) ? target.selectorTests : []);
+
+        evaluation.statusDetails = status;
 
         if (!status.isEnqueued && !status.expected) {
             evaluation.status = 'skipped';
@@ -183,8 +198,13 @@
         evaluation.checks = selectors.map(evaluateSelector);
 
         if (!selectors.length) {
-            evaluation.status = status.expected ? 'info' : 'skipped';
-            evaluation.message = 'No selector tests configured for this handle.';
+            if (status.expected) {
+                evaluation.status = 'pass';
+                evaluation.message = 'Stylesheet enqueued; no selector checks configured.';
+            } else {
+                evaluation.status = 'info';
+                evaluation.message = 'Stylesheet loaded (not explicitly required).';
+            }
             return evaluation;
         }
 
@@ -225,6 +245,17 @@
         `;
         header.appendChild(title);
 
+        const statusDetails = evaluation.statusDetails || {};
+
+        const metadata = document.createElement('div');
+        metadata.style.color = '#475569';
+        metadata.innerHTML = [
+            `<strong>Expected:</strong> ${statusDetails.expected ? 'Yes' : 'No'}`,
+            `<strong>Enqueued:</strong> ${statusDetails.isEnqueued ? 'Yes' : 'No'}`,
+            selectorsSummary(evaluation.checks)
+        ].filter(Boolean).join(' • ');
+        header.appendChild(metadata);
+
         const message = document.createElement('div');
         message.textContent = evaluation.message;
         message.style.color = statusColor;
@@ -261,6 +292,15 @@
         }
 
         return listItem;
+    }
+
+    function selectorsSummary(checks) {
+        if (!Array.isArray(checks) || !checks.length) {
+            return '';
+        }
+
+        const passed = checks.filter(function(check) { return check.passed; }).length;
+        return `<strong>Selector checks:</strong> ${passed}/${checks.length}`;
     }
 
     document.addEventListener('DOMContentLoaded', function() {

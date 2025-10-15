@@ -960,6 +960,10 @@ if (!function_exists('kidsoverprofits_build_test_config')) {
                     'source'     => $source,
                     'isEnqueued' => $is_enqueued,
                     'expected'   => $expected,
+                    'status'     => array(
+                        'isEnqueued' => $is_enqueued,
+                        'expected'   => $expected,
+                    ),
                 );
 
                 $localization = $wp_scripts->get_data($handle, 'data');
@@ -1004,6 +1008,11 @@ if (!function_exists('kidsoverprofits_build_test_config')) {
                     'source'     => $source,
                     'isEnqueued' => $is_enqueued,
                     'expected'   => $expected,
+                    'status'     => array(
+                        'isEnqueued' => $is_enqueued,
+                        'expected'   => $expected,
+                    ),
+                    'selectors'  => array(),
                 );
             }
         }
