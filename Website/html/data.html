@@ -78,6 +78,7 @@
     (function configureKidsOverProfitsForm() {
         const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';
         const LEGACY_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';
+        const THEME_BASE_PATTERN = /(^\.\.\/(?:wp-content\/)?themes\/)|\/themes\//i;
 
         function cleanBase(value) {
             if (typeof value !== 'string') {
@@ -85,6 +86,11 @@
             }
 
             return value.trim().replace(/\/+$/, '');
+        }
+
+        function isValidThemeBase(value) {
+            const normalized = cleanBase(value);
+            return Boolean(normalized && THEME_BASE_PATTERN.test(normalized));
         }
 
         function detectThemeBaseFromDataAttribute() {
@@ -305,7 +311,7 @@
             combined.forEach((value) => {
                 const normalized = cleanBase(value);
 
-                if (!normalized || seen.has(normalized)) {
+                if (!normalized || !isValidThemeBase(normalized) || seen.has(normalized)) {
                     return;
                 }
 
@@ -320,12 +326,18 @@
             window.KOP_THEME_BASES = [];
         }
 
-        window.KOP_THEME_BASES = uniqueThemeBases.concat(
-            window.KOP_THEME_BASES.filter((value) => !uniqueThemeBases.includes(cleanBase(value)))
-        );
+        const preservedThemeBases = window.KOP_THEME_BASES
+            .map(cleanBase)
+            .filter((value) => isValidThemeBase(value) && !uniqueThemeBases.includes(value));
+
+        window.KOP_THEME_BASES = uniqueThemeBases.concat(preservedThemeBases);
 
         if (typeof window.KOP_EXPAND_THEME_BASE !== 'function') {
             window.KOP_EXPAND_THEME_BASE = expandThemeBaseVariants;
+        }
+
+        if (typeof window.KOP_IS_VALID_THEME_BASE !== 'function') {
+            window.KOP_IS_VALID_THEME_BASE = isValidThemeBase;
         }
 
         const existingConfig = window.KOP_FACILITY_FORM_CONFIG || {};
@@ -772,10 +784,18 @@
 
             const defaultThemeBase = 'https://kidsoverprofits.org/themes/child';
             const legacyThemeBase = 'https://kidsoverprofits.org/wp-content/themes/child';
+            const themeBasePattern = /(^\.\.\/(?:wp-content\/)?themes\/)|\/themes\//i;
 
             function cleanBase(value) {
                 return typeof value === 'string' ? value.trim().replace(/\/+$/, '') : '';
             }
+
+            const isValidThemeBase = typeof window.KOP_IS_VALID_THEME_BASE === 'function'
+                ? window.KOP_IS_VALID_THEME_BASE
+                : function (value) {
+                    const normalized = cleanBase(value);
+                    return Boolean(normalized && themeBasePattern.test(normalized));
+                };
 
             const expandThemeBaseVariants = typeof window.KOP_EXPAND_THEME_BASE === 'function'
                 ? window.KOP_EXPAND_THEME_BASE
@@ -832,7 +852,7 @@
                     variants.forEach((value) => {
                         const normalized = cleanBase(value);
 
-                        if (!normalized || seen.has(normalized)) {
+                        if (!normalized || !isValidThemeBase(normalized) || seen.has(normalized)) {
                             return;
                         }
 
@@ -842,6 +862,38 @@
                 });
 
                 return results;
+            }
+
+            function sortThemeBases(bases) {
+                function rank(base) {
+                    if (/\/themes\/child/i.test(base)) {
+                        return 0;
+                    }
+
+                    if (/\/themes\//i.test(base)) {
+                        return 1;
+                    }
+
+                    if (/\/wp-content\/themes\//i.test(base)) {
+                        return 2;
+                    }
+
+                    if (/^\.\./.test(base)) {
+                        return 3;
+                    }
+
+                    return 4;
+                }
+
+                return bases.slice().sort((a, b) => {
+                    const diff = rank(a) - rank(b);
+
+                    if (diff !== 0) {
+                        return diff;
+                    }
+
+                    return a.length - b.length;
+                });
             }
 
             const remoteBase = cleanBase(
@@ -857,7 +909,9 @@
                 '../themes/child'
             );
 
-            const knownBases = Array.isArray(window.KOP_THEME_BASES) ? window.KOP_THEME_BASES : [];
+            const knownBases = Array.isArray(window.KOP_THEME_BASES)
+                ? window.KOP_THEME_BASES.map(cleanBase).filter(isValidThemeBase)
+                : [];
             const candidateBases = knownBases.concat([
                 remoteBase,
                 localBase,
@@ -868,7 +922,7 @@
                 '../wp-content/themes/child'
             ]);
 
-            const assetBases = collectUniqueBases(candidateBases);
+            const assetBases = sortThemeBases(collectUniqueBases(candidateBases));
 
             const stylesheets = [
                 'css/common.css',
