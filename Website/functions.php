@@ -602,16 +602,50 @@ function kidsoverprofits_enqueue_data_tool_assets() {
 
     $script_map = array(
         'admin-data' => array(
-            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
-            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
-            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
-            array('handle' => 'kidsoverprofits-admin-data', 'path' => 'js/admin-data.js', 'deps' => array('kidsoverprofits-facility-form')),
+            array('handle' => 'kidsoverprofits-theme-bootstrap', 'path' => 'js/theme-base-bootstrap.js'),
+            array(
+                'handle' => 'kidsoverprofits-app-logic',
+                'path'   => 'js/app-logic.js',
+                'deps'   => array('kidsoverprofits-theme-bootstrap'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-utilities',
+                'path'   => 'js/utilities.js',
+                'deps'   => array('kidsoverprofits-app-logic'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-facility-form',
+                'path'   => 'js/facility-form.v3.js',
+                'deps'   => array('kidsoverprofits-utilities'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-admin-data',
+                'path'   => 'js/admin-data.js',
+                'deps'   => array('kidsoverprofits-facility-form'),
+            ),
         ),
         'data' => array(
-            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
-            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
-            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
-            array('handle' => 'kidsoverprofits-data-form', 'path' => 'js/data-form.js', 'deps' => array('kidsoverprofits-facility-form')),
+            array('handle' => 'kidsoverprofits-theme-bootstrap', 'path' => 'js/theme-base-bootstrap.js'),
+            array(
+                'handle' => 'kidsoverprofits-app-logic',
+                'path'   => 'js/app-logic.js',
+                'deps'   => array('kidsoverprofits-theme-bootstrap'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-utilities',
+                'path'   => 'js/utilities.js',
+                'deps'   => array('kidsoverprofits-app-logic'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-facility-form',
+                'path'   => 'js/facility-form.v3.js',
+                'deps'   => array('kidsoverprofits-utilities'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-data-form',
+                'path'   => 'js/data-form.js',
+                'deps'   => array('kidsoverprofits-facility-form'),
+            ),
         ),
         'data-organizer' => array(
             array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
