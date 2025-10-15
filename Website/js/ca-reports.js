@@ -1,3 +1,4 @@
+// California Reports JavaScript - Last deployed: 2025-01-15
 document.addEventListener('DOMContentLoaded', () => {
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
