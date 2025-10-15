@@ -10,6 +10,118 @@ if (!defined('ABSPATH')) {
 
 require_once get_stylesheet_directory() . '/inc/template-helpers.php';
 
+if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
+    /**
+     * Retrieve a theme asset's URI and cache-busting version.
+     *
+     * @param string $relative_path Relative path within the child theme directory.
+     * @return array|false Array with `uri` and `version` keys or false when the file is missing.
+     */
+    function kidsoverprofits_get_theme_asset_details($relative_path) {
+        if (empty($relative_path)) {
+            return false;
+        }
+
+        $file_path = get_theme_file_path($relative_path);
+
+        if (!$file_path || !file_exists($file_path)) {
+            error_log(sprintf('[Kids Over Profits] Asset not found: %s', $relative_path));
+            return false;
+        }
+
+        $version = filemtime($file_path);
+
+        if (!$version) {
+            $version = wp_get_theme()->get('Version');
+        }
+
+        return array(
+            'uri'     => get_theme_file_uri($relative_path),
+            'version' => $version,
+        );
+    }
+}
+
+if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
+    /**
+     * Load a large HTML template for the facility data tools and adjust it for the current context.
+     *
+     * @param string $template_path Absolute path to the base template file.
+     * @param array  $args          Optional configuration. Supports `replacements` for simple str_replace tweaks.
+     *
+     * @return string Render-ready HTML or an empty string on failure.
+     */
+    function kidsoverprofits_get_and_modify_form_template($template_path, $args = array()) {
+        if (empty($template_path)) {
+            return '';
+        }
+
+        $page_slug = '';
+
+        if (function_exists('is_page') && is_page()) {
+            $page_id = get_queried_object_id();
+            if ($page_id) {
+                $page_slug = get_post_field('post_name', $page_id) ?: '';
+            }
+        }
+
+        // Use the dedicated suggestion template when rendering the public data submission page.
+        if ('data' === $page_slug) {
+            $suggestion_template = get_stylesheet_directory() . '/html/data.html';
+            if (file_exists($suggestion_template)) {
+                $template_path = $suggestion_template;
+            }
+        }
+
+        if (!file_exists($template_path)) {
+            error_log(sprintf('[Kids Over Profits] Form template not found: %s', $template_path));
+            return '';
+        }
+
+        $content = file_get_contents($template_path);
+
+        if (false === $content) {
+            error_log(sprintf('[Kids Over Profits] Failed to read form template: %s', $template_path));
+            return '';
+        }
+
+        // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
+        $theme_base = untrailingslashit(get_stylesheet_directory_uri());
+        $content    = str_replace(
+            "window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child'",
+            "window.KOP_THEME_BASE || '" . esc_url_raw($theme_base) . "'",
+            $content
+        );
+
+        if (!empty($args['replacements']) && is_array($args['replacements'])) {
+            $content = str_replace(array_keys($args['replacements']), array_values($args['replacements']), $content);
+        }
+
+        // Provide sensible fallbacks if the suggestion template is missing but the data page reuses the admin layout.
+        if ('data' === $page_slug && !file_exists(get_stylesheet_directory() . '/html/data.html')) {
+            $content = str_replace(
+                array(
+                    "mode = 'master';",
+                    "FORM_MODE = 'master';",
+                    '/api/save-master.php',
+                    'Admin: Master Facility Data Entry',
+                    'ADMIN/MASTER MODE',
+                ),
+                array(
+                    "mode = 'suggestions';",
+                    "FORM_MODE = 'suggestions';",
+                    '/api/save-suggestion.php',
+                    '📮 Submit Facility Data Suggestions',
+                    'SUGGESTION MODE',
+                ),
+                $content
+            );
+        }
+
+        return $content;
+    }
+}
+
 /**
  * Enqueue a theme JavaScript asset with an inline fallback.
  *
@@ -208,7 +320,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle'    => 'ca-reports-display',
             'script'    => 'js/ca-reports.js',
             'json'      => array(
-                'dir'     => 'js/data/ca_reports/',
+                'dir'     => 'js/data/CA_json/',
                 'pattern' => '*.json',
             ),
         ),
@@ -231,7 +343,8 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle' => 'tx-reports-display',
             'script' => 'js/tx_reports.js',
             'json'   => array(
-                'files' => array('js/data/tx_reports.json'),
+                'dir'     => 'js/data/TX_reports/',
+                'pattern' => '*.json',
             ),
         ),
         'mt-reports' => array(
@@ -301,8 +414,88 @@ function kidsoverprofits_enqueue_state_report_assets() {
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_state_report_assets');
 
 /**
+ * Enqueue shared assets for the data management tools.
+ */
+function kidsoverprofits_enqueue_data_tool_assets() {
+    if (!is_page()) {
+        return;
+    }
+
+    $page_id = get_queried_object_id();
+
+    if (!$page_id) {
+        return;
+    }
+
+    $slug = get_post_field('post_name', $page_id);
+
+    if (!$slug) {
+        return;
+    }
+
+    $style_pages = array('admin-data', 'data', 'data-organizer');
+
+    if (in_array($slug, $style_pages, true)) {
+        $styles = array(
+            'kidsoverprofits-common' => 'css/common.css',
+            'kidsoverprofits-layout' => 'css/layout.css',
+            'kidsoverprofits-forms'  => 'css/forms.css',
+            'kidsoverprofits-tables' => 'css/tables.css',
+            'kidsoverprofits-modals' => 'css/modals.css',
+            'kidsoverprofits-admin'  => 'css/admin.css',
+        );
+
+        foreach ($styles as $handle => $relative_path) {
+            $asset = kidsoverprofits_get_theme_asset_details($relative_path);
+
+            if (!$asset) {
+                continue;
+            }
+
+            wp_enqueue_style($handle, $asset['uri'], array(), $asset['version']);
+        }
+    }
+
+    $script_map = array(
+        'admin-data' => array(
+            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
+            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
+            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
+            array('handle' => 'kidsoverprofits-admin-data', 'path' => 'js/admin-data.js', 'deps' => array('kidsoverprofits-facility-form')),
+        ),
+        'data' => array(
+            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
+            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
+            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
+            array('handle' => 'kidsoverprofits-data-form', 'path' => 'js/data-form.js', 'deps' => array('kidsoverprofits-facility-form')),
+        ),
+        'data-organizer' => array(
+            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
+            array('handle' => 'kidsoverprofits-data-organizer', 'path' => 'js/data-organizer.js', 'deps' => array('kidsoverprofits-app-logic')),
+        ),
+    );
+
+    if (!isset($script_map[$slug])) {
+        return;
+    }
+
+    foreach ($script_map[$slug] as $script) {
+        $handle = $script['handle'];
+        $path   = $script['path'];
+        $deps   = $script['deps'] ?? array();
+
+        if (wp_script_is($handle, 'enqueued')) {
+            continue;
+        }
+
+        kidsoverprofits_enqueue_theme_script($handle, $path, $deps, true);
+    }
+}
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_data_tool_assets', 25);
+
+/**
  * Enqueue test scripts for debugging display issues
- * 
+ *
  * This function adds testing scripts that verify CSS and data loading
  * and display diagnostic panels on the page.
  * 
