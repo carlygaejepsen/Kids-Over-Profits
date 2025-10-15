@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once get_stylesheet_directory() . '/inc/template-helpers.php';
+require_once get_stylesheet_directory() . '/inc/test-config.php';
 
 if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
     /**
@@ -235,6 +236,7 @@ function kidsoverprofits_enqueue_theme_script($handle, $relative_path, $dependen
         foreach ($localizations as $localization) {
             if (!empty($localization['name']) && array_key_exists('data', $localization)) {
                 wp_localize_script($handle, $localization['name'], $localization['data']);
+                kidsoverprofits_register_test_localization($handle, $localization['name'], $localization['data']);
             }
         }
 
@@ -251,6 +253,7 @@ function kidsoverprofits_enqueue_theme_script($handle, $relative_path, $dependen
     foreach ($localizations as $localization) {
         if (!empty($localization['name']) && array_key_exists('data', $localization)) {
             wp_localize_script($handle, $localization['name'], $localization['data']);
+            kidsoverprofits_register_test_localization($handle, $localization['name'], $localization['data']);
         }
     }
 
@@ -623,48 +626,66 @@ add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_data_tool_assets', 25)
  * - Add ?debug=all to any page URL to run all tests
  */
 function kidsoverprofits_enqueue_test_scripts() {
-    if (isset($_GET['debug'])) {
-        // CSS test
-        if ($_GET['debug'] === 'css' || $_GET['debug'] === 'all') {
-            $css_script_path = get_stylesheet_directory() . '/js/css-test.js';
-            
-            wp_enqueue_script(
-                'css-test-script',
-                get_stylesheet_directory_uri() . '/js/css-test.js',
-                array('jquery'),
-                file_exists($css_script_path) ? filemtime($css_script_path) : time(),
-                true
-            );
-        }
-        
-        // Report data test
-        if ($_GET['debug'] === 'report' || $_GET['debug'] === 'all') {
-            $report_script_path = get_stylesheet_directory() . '/js/report-test.js';
-            
-            wp_enqueue_script(
-                'report-test-script',
-                get_stylesheet_directory_uri() . '/js/report-test.js',
-                array('jquery'),
-                file_exists($report_script_path) ? filemtime($report_script_path) : time(),
-                true
-            );
-        }
-        
-        // Visual regression test
-        if ($_GET['debug'] === 'visual' || $_GET['debug'] === 'all') {
-            $visual_script_path = get_stylesheet_directory() . '/js/visual-test.js';
-            
-            wp_enqueue_script(
-                'visual-test-script',
-                get_stylesheet_directory_uri() . '/js/visual-test.js',
-                array('jquery'),
-                file_exists($visual_script_path) ? filemtime($visual_script_path) : time(),
-                true
-            );
-        }
+    if (!isset($_GET['debug'])) {
+        return;
+    }
+
+    $debug_mode = strtolower(sanitize_text_field(wp_unslash($_GET['debug'])));
+
+    if (!in_array($debug_mode, array('css', 'report', 'visual', 'all'), true)) {
+        $debug_mode = 'all';
+    }
+
+    $config_handle = 'kidsoverprofits-test-config';
+    $config_data   = kidsoverprofits_build_test_config();
+
+    wp_register_script($config_handle, '', array(), false, true);
+    wp_enqueue_script($config_handle);
+    wp_add_inline_script(
+        $config_handle,
+        'window.kidsOverProfitsTestConfig = ' . wp_json_encode($config_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) . ';',
+        'after'
+    );
+
+    $base_dependencies = array('jquery', $config_handle);
+
+    if ($debug_mode === 'css' || $debug_mode === 'all') {
+        $css_script_path = get_stylesheet_directory() . '/js/css-test.js';
+
+        wp_enqueue_script(
+            'css-test-script',
+            get_stylesheet_directory_uri() . '/js/css-test.js',
+            $base_dependencies,
+            file_exists($css_script_path) ? filemtime($css_script_path) : time(),
+            true
+        );
+    }
+
+    if ($debug_mode === 'report' || $debug_mode === 'all') {
+        $report_script_path = get_stylesheet_directory() . '/js/report-test.js';
+
+        wp_enqueue_script(
+            'report-test-script',
+            get_stylesheet_directory_uri() . '/js/report-test.js',
+            $base_dependencies,
+            file_exists($report_script_path) ? filemtime($report_script_path) : time(),
+            true
+        );
+    }
+
+    if ($debug_mode === 'visual' || $debug_mode === 'all') {
+        $visual_script_path = get_stylesheet_directory() . '/js/visual-test.js';
+
+        wp_enqueue_script(
+            'visual-test-script',
+            get_stylesheet_directory_uri() . '/js/visual-test.js',
+            $base_dependencies,
+            file_exists($visual_script_path) ? filemtime($visual_script_path) : time(),
+            true
+        );
     }
 }
-add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_scripts');
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_scripts', 120);
 
 // =================================================================
 // ANONYMOUS DOCUMENT PORTAL
