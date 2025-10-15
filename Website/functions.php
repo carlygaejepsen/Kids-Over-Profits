@@ -296,6 +296,42 @@ function kidsoverprofits_get_report_json_urls($json_config) {
 }
 
 /**
+ * Locate the most recent JSON export that matches a pattern.
+ *
+ * @param string $relative_dir Relative directory inside the theme.
+ * @param string $pattern      Glob pattern to match files.
+ * @return string              Public URL for the most recent file, or empty string if none found.
+ */
+function kidsoverprofits_get_latest_json_url($relative_dir, $pattern = '*.json') {
+    $relative_dir = trailingslashit($relative_dir);
+    $absolute_directory = get_theme_file_path($relative_dir);
+
+    if (!$absolute_directory || !is_dir($absolute_directory)) {
+        return '';
+    }
+
+    $files = glob(trailingslashit($absolute_directory) . $pattern);
+
+    if (empty($files)) {
+        return '';
+    }
+
+    usort($files, function($a, $b) {
+        $mtime_diff = filemtime($b) - filemtime($a);
+
+        if ($mtime_diff !== 0) {
+            return $mtime_diff;
+        }
+
+        return strnatcasecmp(basename($b), basename($a));
+    });
+
+    $latest_file = basename($files[0]);
+
+    return esc_url(trailingslashit(get_theme_file_uri($relative_dir)) . $latest_file);
+}
+
+/**
  * Load scripts for state report pages.
  */
 function kidsoverprofits_enqueue_state_report_assets() {
@@ -372,7 +408,8 @@ function kidsoverprofits_enqueue_state_report_assets() {
             'handle' => 'facilities-display',
             'script' => 'js/facilities-display.js',
             'json'   => array(
-                'files' => array('js/data/facility-projects-export.json'),
+                'dir'     => 'js/data/',
+                'pattern' => 'facility-projects-export*.json',
             ),
         ),
     );
@@ -392,8 +429,14 @@ function kidsoverprofits_enqueue_state_report_assets() {
     if ($slug === 'tti-program-index') {
         $localize_name = 'facilitiesConfig';
         $localize_key  = 'jsonDataUrl';
-        // For single file configs, pass just the URL string instead of array
-        $json_data = !empty($json_urls) ? $json_urls[0] : '';
+        $latest_export_url = kidsoverprofits_get_latest_json_url('js/data', 'facility-projects-export*.json');
+
+        if (!empty($latest_export_url)) {
+            $json_data = $latest_export_url;
+        } else {
+            // For single file configs, pass just the URL string instead of array
+            $json_data = !empty($json_urls) ? $json_urls[0] : '';
+        }
     } else {
         $json_data = $json_urls;
     }

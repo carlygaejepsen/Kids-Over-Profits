@@ -1,0 +1,82 @@
+{
+  "exportDate": "2025-10-05T00:00:00.000Z",
+  "version": "1.1",
+  "totalProjects": 1,
+  "projects": {
+    "SampleProject": {
+      "name": "Sample Project",
+      "data": {
+        "operator": {
+          "name": "Sample Youth Services",
+          "currentName": "",
+          "pastNames": ["Sample Therapeutic Network"],
+          "location": "Portland, OR",
+          "headquarters": "Portland, OR",
+          "founded": "1998",
+          "operatingPeriod": "1998-Present",
+          "status": "Active",
+          "parentCompanies": ["Sample Holdings"],
+          "websites": ["https://web.archive.org/web/20210101000000/https://sample.org"],
+          "keyStaff": {
+            "ceo": "Alex Rivera",
+            "founders": ["Jamie Stone"],
+            "keyExecutives": ["Casey Smith"]
+          },
+          "notes": []
+        },
+        "facilities": [
+          {
+            "identification": {
+              "name": "Sample Canyon Academy",
+              "currentName": "",
+              "currentOperator": "",
+              "pastNames": ["Sample Canyon Residential"]
+            },
+            "location": "Bend, OR",
+            "address": "1234 Example Rd, Bend, OR",
+            "operatingPeriod": {
+              "startYear": "2001",
+              "endYear": null,
+              "status": "Active"
+            },
+            "facilityDetails": {
+              "type": "Residential Treatment",
+              "capacity": 64,
+              "ageRange": {
+                "min": 12,
+                "max": 17
+              },
+              "gender": "Co-ed"
+            },
+            "staff": {
+              "administrator": ["Morgan Patel"]
+            },
+            "accreditations": {
+              "current": ["COA"],
+              "past": ["JCAHO"]
+            },
+            "memberships": ["NATSAP"],
+            "licensing": ["Oregon DHS"],
+            "profileLinks": ["https://web.archive.org/web/20210303000000/https://samplecanyon.org"],
+            "resources": {
+              "hasNews": true,
+              "hasPressReleases": false,
+              "hasInspections": true,
+              "hasStateReports": true,
+              "hasRegulatoryFilings": false,
+              "hasLawsuits": false,
+              "hasSettlements": false,
+              "hasViolations": true,
+              "hasResearch": false,
+              "hasFinancial": false,
+              "hasNATSAP": true,
+              "hasWebsite": true,
+              "hasOther": false,
+              "customResources": ["Parent Testimonials"]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

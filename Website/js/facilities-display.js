@@ -8,57 +8,101 @@ function displayFacilities(facilitiesData, containerId) {
         return;
     }
     
-    let html = '<div class="facilities-database">';
-    
-    // Don't inject controls - use the existing ones from the template
-    
-        // Convert the new JSON structure to work with existing code
-        let operatorGroups = [];
-        if (facilitiesData.projects) {
-            // Handle new JSON structure
-            Object.values(facilitiesData.projects).forEach(project => {
-                operatorGroups.push({
-                    operator: project.data.operator,
-                    facilities: project.data.facilities
-                });
-            });
-        } else {
-            // Handle old structure (fallback)
-            operatorGroups = facilitiesData;
+    const toArray = value => Array.isArray(value) ? value : [];
+    const cleanText = value => {
+        if (typeof value === 'string') {
+            return value.trim();
         }
-        
-        // Sort operators alphabetically by name
-        operatorGroups.sort((a, b) => a.operator.name.localeCompare(b.operator.name));
-        
-        // Generate operator sections
-        operatorGroups.forEach(operatorGroup => {
-            const operator = operatorGroup.operator;
-            const facilities = operatorGroup.facilities;
-    
+
+        if (typeof value === 'number') {
+            return String(value);
+        }
+
+        return '';
+    };
+    const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
+
+    let html = '<div class="facilities-database">';
+
+    // Don't inject controls - use the existing ones from the template
+
+    // Convert the new JSON structure to work with existing code
+    let operatorGroups = [];
+    if (facilitiesData && facilitiesData.projects) {
+        // Handle new JSON structure
+        Object.values(facilitiesData.projects).forEach(project => {
+            if (!project || !project.data) {
+                return;
+            }
+
+            const operator = project.data.operator || {};
+            const facilities = toArray(project.data.facilities);
+
+            operatorGroups.push({
+                operator,
+                facilities
+            });
+        });
+    } else if (Array.isArray(facilitiesData)) {
+        // Handle old structure (fallback)
+        operatorGroups = facilitiesData;
+    } else if (facilitiesData && typeof facilitiesData === 'object') {
+        operatorGroups = Object.values(facilitiesData);
+    }
+
+    if (!Array.isArray(operatorGroups) || operatorGroups.length === 0) {
+        container.innerHTML = '<p>No facility operators found in the provided data.</p>';
+        return;
+    }
+
+    // Sort operators alphabetically by name (falling back to empty string)
+    operatorGroups.sort((a, b) => {
+        const operatorA = a && a.operator ? a.operator : {};
+        const operatorB = b && b.operator ? b.operator : {};
+        const nameA = cleanText(operatorA.name) || cleanText(operatorA.currentName) || cleanText(a && a.name) || '';
+        const nameB = cleanText(operatorB.name) || cleanText(operatorB.currentName) || cleanText(b && b.name) || '';
+        return nameA.localeCompare(nameB);
+    });
+
+    // Generate operator sections
+    operatorGroups.forEach(operatorGroup => {
+        const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
+        const facilities = toArray(operatorGroup && operatorGroup.facilities).slice();
+
+        const operatorName = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(operatorGroup && operatorGroup.name) || 'Unknown Operator';
 
         // Sort facilities alphabetically by name
-        facilities.sort((a, b) => a.identification.name.localeCompare(b.identification.name));
-        
+        facilities.sort((a, b) => {
+            const facilityA = a && a.identification ? a.identification : {};
+            const facilityB = b && b.identification ? b.identification : {};
+            const nameA = facilityA.name || facilityA.currentName || '';
+            const nameB = facilityB.name || facilityB.currentName || '';
+            return nameA.localeCompare(nameB);
+        });
+
         // Build operator header with Name - add class for long names or long words
-        const hasLongWord = operator.name.split(' ').some(word => word.length > 14);
-        const isTooLong = operator.name.length > 25;
+        const hasLongWord = operatorName.split(' ').some(word => word.length > 14);
+        const isTooLong = operatorName.length > 25;
         const operatorNameClass = (hasLongWord || isTooLong) ? 'operator-name operator-name-long' : 'operator-name';
-        let operatorHeader = `<span class="${operatorNameClass}">${operator.name}</span>`;       
+        let operatorHeader = `<span class="${operatorNameClass}">${operatorName}</span>`;
         // Build location and years - each on separate lines
         let locationYearsLine = '';
         const locationLines = [];
-        
-        if (operator.location && operator.location.trim()) {
-            locationLines.push(`<div>${operator.location}</div>`);
+
+        const operatorLocation = cleanText(operator.location);
+        if (operatorLocation) {
+            locationLines.push(`<div>${operatorLocation}</div>`);
         }
-        if (operator.headquarters && operator.headquarters.trim()) {
-            locationLines.push(`<div>${operator.headquarters}</div>`);
+        const operatorHQ = cleanText(operator.headquarters);
+        if (operatorHQ) {
+            locationLines.push(`<div>${operatorHQ}</div>`);
         }
-        if (operator.operatingPeriod && operator.operatingPeriod.trim()) {
-            locationLines.push(`<div>${operator.operatingPeriod}</div>`);
-        } else if (operator.founded && operator.founded.trim()) {
+        const operatorOperatingPeriod = cleanText(operator.operatingPeriod);
+        if (operatorOperatingPeriod) {
+            locationLines.push(`<div>${operatorOperatingPeriod}</div>`);
+        } else if (cleanText(operator.founded)) {
             const endYear = operator.status === 'Defunct' ? 'Defunct' : 'Present';
-            locationLines.push(`<div>${operator.founded}-${endYear}</div>`);
+            locationLines.push(`<div>${cleanText(operator.founded)}-${endYear}</div>`);
         }
         
         if (locationLines.length > 0) {
@@ -67,76 +111,99 @@ function displayFacilities(facilitiesData, containerId) {
         
         // Build other operator data
         let otherOperatorData = '';
+        const parentCompanies = joinList(operator.parentCompanies);
+        const keyStaff = operator.keyStaff || {};
+        const founders = joinList(keyStaff.founders);
+        const websites = joinList(operator.websites);
+        const ceoName = cleanText(keyStaff.ceo);
+
         const operatorFields = [
-            { key: 'status', label: 'Status', value: operator.status },
-            { key: 'founded', label: 'Founded', value: operator.founded },
-            { key: 'parentCompanies', label: 'Parent Companies', value: operator.parentCompanies && operator.parentCompanies.length > 0 ? operator.parentCompanies.join(', ') : null },
-            { key: 'keyStaff.founders', label: 'Founders', value: operator.keyStaff && operator.keyStaff.founders && operator.keyStaff.founders.length > 0 ? operator.keyStaff.founders.join(', ') : null },
-            { key: 'keyStaff.ceo', label: 'CEO', value: operator.keyStaff && operator.keyStaff.ceo && operator.keyStaff.ceo.trim() ? operator.keyStaff.ceo : null },
-            { key: 'websites', label: '', value: operator.websites && operator.websites.length > 0 ? `<a href='${operator.websites[0]}' target='_blank'>Archived website</a>` : null }
+            { key: 'status', label: 'Status', value: cleanText(operator.status) },
+            { key: 'founded', label: 'Founded', value: cleanText(operator.founded) },
+            { key: 'parentCompanies', label: 'Parent Companies', value: parentCompanies.length > 0 ? parentCompanies.join(', ') : null },
+            { key: 'keyStaff.founders', label: 'Founders', value: founders.length > 0 ? founders.join(', ') : null },
+            { key: 'keyStaff.ceo', label: 'CEO', value: ceoName || null },
+            { key: 'websites', label: '', value: websites.length > 0 ? `<a href='${websites[0]}' target='_blank'>Archived website</a>` : null }
         ];
         
         operatorFields.forEach(field => {
             if (field.value && field.value.toString().trim()) {
-                otherOperatorData += '<p><strong>' + field.label + ':</strong> ' + field.value + '</p>';
+                if (field.label) {
+                    otherOperatorData += '<p><strong>' + field.label + ':</strong> ' + field.value + '</p>';
+                } else {
+                    otherOperatorData += '<p>' + field.value + '</p>';
+                }
             }
         });
         
         // Always create the div, even if empty
         otherOperatorData = `<div class="operator-details">${otherOperatorData}</div>`;
         
-        html += '<details class="operator-section" data-operator="' + operator.name + '">' +
+        html += '<details class="operator-section" data-operator="' + operatorName + '">' +
                 '<summary class="operator-header">' +
                     operatorHeader +
                     locationYearsLine +
                 '</summary>' +
                 '<div class="operator-content-scrollable">' +
                     otherOperatorData;
-        
+
         facilities.forEach(facility => {
-            const statusClass = facility.operatingPeriod.status ? facility.operatingPeriod.status.toLowerCase() : 'unknown';
-            
+            const identification = facility && facility.identification ? facility.identification : {};
+            const facilityDetails = facility && facility.facilityDetails ? facility.facilityDetails : {};
+            const ageRange = facilityDetails && facilityDetails.ageRange ? facilityDetails.ageRange : {};
+            const staff = facility && facility.staff ? facility.staff : {};
+            const accreditations = facility && facility.accreditations ? facility.accreditations : {};
+            const operatingPeriod = facility && facility.operatingPeriod ? facility.operatingPeriod : {};
+            const memberships = joinList(facility && facility.memberships);
+            const licensing = joinList(facility && facility.licensing);
+            const profileLinks = joinList(facility && facility.profileLinks);
+
+            const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
+            const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
             // Build facility header with Name
-            let facilityHeader = facility.identification.name;
-            
+            let facilityHeader = cleanText(identification.name) || cleanText(identification.currentName) || 'Unnamed Facility';
+
             // Build location, years, and status - each on its own line
             let facilityLocationYears = '';
-            
-            if (facility.location && facility.location.trim()) {
-                facilityLocationYears += `<p>${facility.location}</p>`;
+
+            const facilityLocation = cleanText(facility && facility.location);
+            if (facilityLocation) {
+                facilityLocationYears += `<p>${facilityLocation}</p>`;
             }
-            if (facility.address && facility.address.trim()) {
-                facilityLocationYears += `<p>${facility.address}</p>`;
+            const facilityAddress = cleanText(facility && facility.address);
+            if (facilityAddress) {
+                facilityLocationYears += `<p>${facilityAddress}</p>`;
             }
-            
+
             // Years of operation
-            if (facility.operatingPeriod.startYear) {
-                const endYear = facility.operatingPeriod.endYear ? facility.operatingPeriod.endYear : 'Present';
-                const yearRange = facility.operatingPeriod.startYear + '-' + endYear;
+            if (operatingPeriod.startYear) {
+                const endYear = operatingPeriod.endYear ? operatingPeriod.endYear : 'Present';
+                const yearRange = operatingPeriod.startYear + '-' + endYear;
                 facilityLocationYears += `<p>${yearRange}</p>`;
             }
-            
+
             // Add status on its own line
-            if (facility.operatingPeriod.status) {
-                facilityLocationYears += `<p><span class="status-badge status-${statusClass}">${facility.operatingPeriod.status}</span></p>`;
+            if (operatingPeriod.status) {
+                facilityLocationYears += `<p><span class="status-badge status-${statusClass}">${statusLabelRaw}</span></p>`;
             }
-            
+
             // Build other facility data
             let otherFacilityData = '';
             const facilityFields = [
-                { key: 'facilityDetails.type', label: 'Type', value: facility.facilityDetails.type },
-                { key: 'facilityDetails.capacity', label: 'Capacity', value: facility.facilityDetails.capacity },
-                { key: 'facilityDetails.ageRange', label: 'Age Range', value: facility.facilityDetails.ageRange && (facility.facilityDetails.ageRange.min || facility.facilityDetails.ageRange.max) ? `${facility.facilityDetails.ageRange.min || '?'}-${facility.facilityDetails.ageRange.max || '?'}` : null },
-                { key: 'facilityDetails.gender', label: 'Gender', value: facility.facilityDetails.gender },
-                { key: 'identification.pastNames', label: 'Past Names', value: facility.identification.pastNames && facility.identification.pastNames.length > 0 ? facility.identification.pastNames.join(', ') : null },
-                { key: 'staff.administrator', label: 'Administrator', value: facility.staff.administrator && facility.staff.administrator.length > 0 ? facility.staff.administrator.join(', ') : null },
-                { key: 'accreditations.current', label: 'Current Accreditations', value: facility.accreditations.current && facility.accreditations.current.length > 0 ? facility.accreditations.current.join(', ') : null },
-                { key: 'accreditations.past', label: 'Past Accreditations', value: facility.accreditations.past && facility.accreditations.past.length > 0 ? facility.accreditations.past.join(', ') : null },
-                { key: 'memberships', label: 'Memberships', value: facility.memberships && facility.memberships.length > 0 ? facility.memberships.filter(m => m && m.trim()).join(', ') : null },
-                { key: 'licensing', label: 'Licensing', value: facility.licensing && facility.licensing.length > 0 ? facility.licensing.filter(l => l && l.trim()).join(', ') : null },
-                { key: 'profileLinks', label: '', value: facility.profileLinks && facility.profileLinks.length > 0 ? `<a href='${facility.profileLinks[0]}' target='_blank'>Archived website</a>` : null }
+                { key: 'facilityDetails.type', label: 'Type', value: cleanText(facilityDetails.type) },
+                { key: 'facilityDetails.capacity', label: 'Capacity', value: cleanText(facilityDetails.capacity) },
+                { key: 'facilityDetails.ageRange', label: 'Age Range', value: (ageRange.min || ageRange.max) ? `${ageRange.min || '?'}-${ageRange.max || '?'}` : null },
+                { key: 'facilityDetails.gender', label: 'Gender', value: cleanText(facilityDetails.gender) },
+                { key: 'identification.pastNames', label: 'Past Names', value: joinList(identification.pastNames).join(', ') || null },
+                { key: 'staff.administrator', label: 'Administrator', value: joinList(staff.administrator).join(', ') || null },
+                { key: 'accreditations.current', label: 'Current Accreditations', value: joinList(accreditations.current).join(', ') || null },
+                { key: 'accreditations.past', label: 'Past Accreditations', value: joinList(accreditations.past).join(', ') || null },
+                { key: 'memberships', label: 'Memberships', value: memberships.length > 0 ? memberships.join(', ') : null },
+                { key: 'licensing', label: 'Licensing', value: licensing.length > 0 ? licensing.join(', ') : null },
+                { key: 'profileLinks', label: '', value: profileLinks.length > 0 ? `<a href='${profileLinks[0]}' target='_blank'>Archived website</a>` : null }
             ];
-            
+
             facilityFields.forEach(field => {
                 if (field.value && field.value.toString().trim()) {
                     if (field.label) {
@@ -146,7 +213,7 @@ function displayFacilities(facilitiesData, containerId) {
                     }
                 }
             });
-            
+
             // Build resources available section
             let resourcesAvailable = '';
             if (facility.resources) {
@@ -182,7 +249,9 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             }
             
-            html += '<div class="facility-card status-' + statusClass + '" data-facility="' + facility.identification.name + '" data-status="' + statusClass + '">' +
+            const facilityDatasetName = cleanText(identification.name) || cleanText(identification.currentName) || facilityHeader;
+
+            html += '<div class="facility-card status-' + statusClass + '" data-facility="' + facilityDatasetName + '" data-status="' + statusClass + '">' +
                     '<h3 class="facility-name">' + facilityHeader + '</h3>' +
                     '<div class="facility-details">' +
                         facilityLocationYears +
