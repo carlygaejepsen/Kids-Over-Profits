@@ -73,9 +73,9 @@ const normalizedApiBases = Array.from(new Set(
 ));
 
 const defaultApiPaths = {
-    SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/save-master.php',
-    LOAD_PROJECTS: FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS || '/wp-content/themes/child/api/get-master-data.php',
-    AUTOCOMPLETE: FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE || FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/get-autocomplete.php'
+    SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/data_form/save-master.php',
+    LOAD_PROJECTS: FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS || '/wp-content/themes/child/api/data_form/get-master-data.php',
+    AUTOCOMPLETE: FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE || FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/data_form/get-autocomplete.php'
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {

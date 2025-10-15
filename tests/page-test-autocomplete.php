@@ -5,7 +5,7 @@
  * @package Kids_Over_Profits
  */
 
-$autocomplete_endpoint = trailingslashit(get_stylesheet_directory_uri()) . 'api/get-autocomplete.php';
+$autocomplete_endpoint = trailingslashit(get_stylesheet_directory_uri()) . 'api/data_form/get-autocomplete.php';
 
 get_header();
 
