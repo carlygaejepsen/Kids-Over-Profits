@@ -1,6 +1,116 @@
 // Set mode to suggestions
 window.FORM_MODE = 'suggestions';
 
+const DATA_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
+const DATA_FORM_DEFAULT_ENDPOINT = '/api/data_form/save-suggestion.php';
+
+function normaliseBaseCandidate(value) {
+    if (typeof value !== 'string') {
+        return '';
+    }
+
+    return value.trim().replace(/\/$/, '');
+}
+
+function collectBaseCandidates() {
+    const candidates = [];
+    const { apiBase, apiBaseFallbacks } = DATA_FORM_CONFIG;
+
+    if (Array.isArray(apiBase)) {
+        candidates.push(...apiBase);
+    } else if (typeof apiBase === 'string' && apiBase) {
+        candidates.push(apiBase);
+    }
+
+    if (Array.isArray(apiBaseFallbacks)) {
+        candidates.push(...apiBaseFallbacks);
+    }
+
+    if (Array.isArray(window.KOP_THEME_BASES)) {
+        candidates.push(...window.KOP_THEME_BASES);
+    }
+
+    if (typeof window.KOP_RESOLVED_THEME_BASE === 'string' && window.KOP_RESOLVED_THEME_BASE) {
+        candidates.push(window.KOP_RESOLVED_THEME_BASE);
+    }
+
+    if (typeof window.KOP_DETECTED_THEME_BASE === 'string' && window.KOP_DETECTED_THEME_BASE) {
+        candidates.push(window.KOP_DETECTED_THEME_BASE);
+    }
+
+    if (typeof window.KOP_RESOLVED_LOCAL_BASE === 'string' && window.KOP_RESOLVED_LOCAL_BASE) {
+        candidates.push(window.KOP_RESOLVED_LOCAL_BASE);
+    }
+
+    if (typeof window.KOP_LOCAL_BASE === 'string' && window.KOP_LOCAL_BASE) {
+        candidates.push(window.KOP_LOCAL_BASE);
+    }
+
+    if (typeof window.location === 'object' && window.location && window.location.origin) {
+        candidates.push(window.location.origin + '/wp-content/themes/child');
+        candidates.push(window.location.origin + '/themes/child');
+    }
+
+    const uniqueCandidates = Array.from(new Set(candidates.map(normaliseBaseCandidate).filter(Boolean)));
+
+    uniqueCandidates.sort((a, b) => scoreCandidate(b) - scoreCandidate(a));
+
+    return uniqueCandidates;
+}
+
+function scoreCandidate(candidate) {
+    if (typeof candidate !== 'string') {
+        return -1;
+    }
+
+    if (candidate.includes('/wp-content/themes/')) {
+        return 2;
+    }
+
+    if (candidate.includes('/themes/')) {
+        return 1;
+    }
+
+    return 0;
+}
+
+function resolveEndpointUrl(path) {
+    if (typeof path !== 'string' || !path) {
+        return '';
+    }
+
+    if (/^https?:\/\//i.test(path)) {
+        return path;
+    }
+
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const candidates = collectBaseCandidates();
+
+    for (const base of candidates) {
+        if (!base) {
+            continue;
+        }
+
+        return `${base}${normalizedPath}`;
+    }
+
+    return normalizedPath;
+}
+
+function getSuggestionEndpoint() {
+    if (window.__KOP_SUGGESTION_ENDPOINT) {
+        return window.__KOP_SUGGESTION_ENDPOINT;
+    }
+
+    const configuredPath =
+        (DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SAVE_PROJECT) ||
+        DATA_FORM_DEFAULT_ENDPOINT;
+
+    const resolved = resolveEndpointUrl(configuredPath) || configuredPath;
+    window.__KOP_SUGGESTION_ENDPOINT = resolved;
+    return resolved;
+}
+
 async function submitSuggestion() {
     // Ask user to summarize their changes
     const changesSummary = prompt(
@@ -57,8 +167,10 @@ async function submitSuggestion() {
     
     console.log('🔧 FORCED project name in submission data:', actualProjectName);
     
+    const suggestionEndpoint = getSuggestionEndpoint();
+
     try {
-        const response = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/save-suggestion.php', {
+        const response = await fetch(suggestionEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -70,6 +182,7 @@ async function submitSuggestion() {
                 metadata: {
                     actualProjectName: actualProjectName,
                     submittedFrom: 'data.html suggestions form',
+                    suggestionEndpoint: suggestionEndpoint,
                     timestamp: new Date().toISOString()
                 }
             })

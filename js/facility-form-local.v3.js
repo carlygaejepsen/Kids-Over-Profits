@@ -7,9 +7,9 @@
 // CONSTANTS & CONFIGURATION
 // ============================================
 const API_ENDPOINTS = {
-    SAVE_PROJECT: 'https://kidsoverprofits.org/wp-content/themes/child/api/save-master.php',
-    LOAD_PROJECTS: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php',
-    AUTOCOMPLETE: 'https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php'
+    SAVE_PROJECT: 'https://kidsoverprofits.org/wp-content/themes/child/api/data_form/save-master.php',
+    LOAD_PROJECTS: 'https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php',
+    AUTOCOMPLETE: 'https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-autocomplete.php'
 };
 
 // Remote autocomplete endpoint (hosted on the real site). If this endpoint is not

@@ -1,6 +1,6 @@
 <?php
 // Save facility data suggestions to the suggested_edits table
-require_once 'config.php';
+require_once __DIR__ . '/../config.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');

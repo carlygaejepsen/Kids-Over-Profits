@@ -92,7 +92,7 @@ class IntegrationTest
         }
         
         // Step 3: Test API submission (simulated)
-        $submission_result = $this->simulateApiSubmission('save-suggestion.php', $test_suggestion);
+        $submission_result = $this->simulateApiSubmission('data_form/save-suggestion.php', $test_suggestion);
         if ($submission_result['success']) {
             $this->recordResult($test_name . " - API Submission", true, "Data submitted successfully");
         } else {
@@ -126,7 +126,7 @@ class IntegrationTest
         echo "Running: $test_name\n";
         
         // Step 1: Test master data retrieval
-        $master_data_result = $this->simulateApiCall('get-master-data.php');
+        $master_data_result = $this->simulateApiCall('data_form/get-master-data.php');
         if ($master_data_result['success'] && isset($master_data_result['projects'])) {
             $this->recordResult($test_name . " - Master Data Retrieval", true, "Master data retrieved successfully");
         } else {
@@ -257,8 +257,8 @@ class IntegrationTest
         // Test invalid API requests
         $invalid_requests = [
             ['endpoint' => 'invalid-endpoint.php', 'expected_error' => '404 Not Found'],
-            ['endpoint' => 'get-autocomplete.php', 'params' => ['category' => 'invalid'], 'expected_error' => 'Invalid category'],
-            ['endpoint' => 'save-suggestion.php', 'params' => [], 'expected_error' => 'Missing required data']
+            ['endpoint' => 'data_form/get-autocomplete.php', 'params' => ['category' => 'invalid'], 'expected_error' => 'Invalid category'],
+            ['endpoint' => 'data_form/save-suggestion.php', 'params' => [], 'expected_error' => 'Missing required data']
         ];
         
         foreach ($invalid_requests as $request) {
@@ -366,10 +366,10 @@ class IntegrationTest
         
         // Simulate multiple concurrent requests
         $concurrent_requests = [
-            ['endpoint' => 'get-master-data.php'],
-            ['endpoint' => 'get-autocomplete.php', 'params' => ['category' => 'operator', 'q' => 'test']],
-            ['endpoint' => 'get-master-data.php'],
-            ['endpoint' => 'get-autocomplete.php', 'params' => ['category' => 'facility', 'q' => 'test']]
+            ['endpoint' => 'data_form/get-master-data.php'],
+            ['endpoint' => 'data_form/get-autocomplete.php', 'params' => ['category' => 'operator', 'q' => 'test']],
+            ['endpoint' => 'data_form/get-master-data.php'],
+            ['endpoint' => 'data_form/get-autocomplete.php', 'params' => ['category' => 'facility', 'q' => 'test']]
         ];
         
         $successful_requests = 0;
@@ -455,7 +455,7 @@ class IntegrationTest
     {
         // Simulate different endpoints
         switch ($endpoint) {
-            case 'get-master-data.php':
+            case 'data_form/get-master-data.php':
                 return [
                     'success' => true,
                     'projects' => [
@@ -469,7 +469,7 @@ class IntegrationTest
                     ]
                 ];
                 
-            case 'get-autocomplete.php':
+            case 'data_form/get-autocomplete.php':
                 return [
                     'success' => true,
                     'values' => ['Test Option 1', 'Test Option 2'],

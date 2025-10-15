@@ -9,18 +9,13 @@ alwaysApply: true
 Kids Over Profits is a 501(c)(3) nonprofit organization dedicated to tracking inspection reports, violations, and facility information for youth residential treatment facilities across the United States. The project consists of a WordPress-based website with custom PHP backend and JavaScript frontend components for displaying and managing facility data.
 
 ## Structure
-- **Website/**: Main WordPress child theme containing all website code
-  - **api/**: PHP API endpoints for data operations
-  - **css/**: Stylesheet files for the website
-  - **html/**: HTML templates for various pages
-  - **inc/**: PHP includes and helper functions
-  - **js/**: JavaScript files for frontend functionality
-  - **php/**: Additional PHP components
-  - **template-parts/**: WordPress template components
-- **Scripts/**: Python scripts for data scraping and processing
-  - **CA_json/**: California facility data
-  - **AZ_Reports/**: Arizona facility reports
-  - **checklists/**: Utah facility inspection checklists
+- **api/**: PHP API endpoints for facility data operations
+- **css/**: Shared stylesheet files for the child theme
+- **html/**: Standalone HTML templates used for diagnostics and embeds
+- **js/**: JavaScript powering the facility data tools and report pages
+- **page-*.php**: WordPress page templates for public data and state reports
+- **tests/**: Browser-based diagnostics and helper scripts
+- **agent_instructions/**: Repository-specific contributor guidance
 
 ## Language & Runtime
 **Language**: PHP 7.4+, JavaScript, Python 3.x
@@ -51,7 +46,7 @@ Kids Over Profits is a 501(c)(3) nonprofit organization dedicated to tracking in
 git push origin main
 
 # Manual deployment
-rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./Website/ /home/kidsover/public_html/wp-content/themes/child/
+rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./ /home/kidsover/public_html/wp-content/themes/child/
 ```
 
 ## Deployment
@@ -73,11 +68,11 @@ rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./Website/ /home/kidsover/pub
 ## Main Files & Resources
 **Entry Points**:
 - WordPress page templates (page-*.php)
-- API endpoints in Website/api/
+- API endpoints in api/
 - Anonymous document portal (shortcode-based)
 
 **Configuration Files**:
-- Website/api/config.php: Database connection settings
+- api/config.php: Database connection settings
 - .cpanel.yml: Deployment configuration
 
 ## State Report Pages
