@@ -1,0 +1,15 @@
+/* Styles specific to the anonymous portal */
+.anonymous-portal-container{border:1px solid #e6e6e6;padding:16px;border-radius:6px;background:#fff}
+.upload-area{border:2px dashed #ddd;padding:20px;text-align:center;border-radius:6px}
+.upload-area.dragover{border-color:#0073aa;background:#f6fbff}
+.file-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f1f1}
+.submit-btn[disabled]{opacity:0.6;cursor:not-allowed}
+.privacy-notice{margin-top:20px;font-size:13px;color:#666}
+#anonymous-doc-portal .portal-header h2{margin:0 0 8px}
+#anonymous-doc-portal .portal-description{margin:0 0 12px;color:#555}
+#anonymous-doc-portal .form-group{margin:12px 0}
+#anonymous-doc-portal input[type="file"]{display:block;margin:10px auto}
+#anonymous-doc-portal .btn-loading{display:none}
+#anonymous-doc-portal .file-list{margin-top:12px}
+#anonymous-doc-portal .checkbox-label{display:flex;align-items:flex-start;gap:8px}
+#anonymous-doc-portal .required-indicator{color:#d33;margin-left:6px}
