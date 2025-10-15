@@ -112,6 +112,30 @@ if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
     }
 }
 
+if (!function_exists('kidsoverprofits_enqueue_theme_style')) {
+    /**
+     * Enqueue a stylesheet that lives inside the child theme directory.
+     *
+     * @param string $handle        WordPress style handle.
+     * @param string $relative_path Relative file path within the theme.
+     * @param array  $dependencies  Optional list of style handles this stylesheet depends on.
+     * @param string $media         Optional media attribute value.
+     */
+    function kidsoverprofits_enqueue_theme_style($handle, $relative_path, $dependencies = array(), $media = 'all') {
+        if (!$handle || !$relative_path) {
+            return;
+        }
+
+        $asset = kidsoverprofits_get_theme_asset_details($relative_path);
+
+        if (!$asset) {
+            return;
+        }
+
+        wp_enqueue_style($handle, $asset['uri'], $dependencies, $asset['version'], $media);
+    }
+}
+
 if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
     /**
      * Load a large HTML template for the facility data tools and adjust it for the current context.
@@ -518,6 +542,22 @@ function kidsoverprofits_enqueue_state_report_assets() {
         return;
     }
 
+    $report_styles = array(
+        array('handle' => 'kidsoverprofits-common', 'path' => 'css/common.css'),
+        array('handle' => 'kidsoverprofits-layout', 'path' => 'css/layout.css'),
+        array('handle' => 'kidsoverprofits-tables', 'path' => 'css/tables.css'),
+        array('handle' => 'kidsoverprofits-print-report', 'path' => 'css/print-report.css', 'media' => 'print'),
+    );
+
+    foreach ($report_styles as $style) {
+        $handle = $style['handle'];
+        $path   = $style['path'];
+        $deps   = $style['deps'] ?? array();
+        $media  = $style['media'] ?? 'all';
+
+        kidsoverprofits_enqueue_theme_style($handle, $path, $deps, $media);
+    }
+
     $config    = $configs[$slug];
     $json_urls = kidsoverprofits_get_report_json_urls($config['json']);
 
@@ -580,22 +620,22 @@ function kidsoverprofits_enqueue_data_tool_assets() {
 
     if (in_array($slug, $style_pages, true)) {
         $styles = array(
-            'kidsoverprofits-common' => 'css/common.css',
-            'kidsoverprofits-layout' => 'css/layout.css',
-            'kidsoverprofits-forms'  => 'css/forms.css',
-            'kidsoverprofits-tables' => 'css/tables.css',
-            'kidsoverprofits-modals' => 'css/modals.css',
-            'kidsoverprofits-admin'  => 'css/admin.css',
+            array('handle' => 'kidsoverprofits-common', 'path' => 'css/common.css'),
+            array('handle' => 'kidsoverprofits-layout', 'path' => 'css/layout.css'),
+            array('handle' => 'kidsoverprofits-forms', 'path' => 'css/forms.css'),
+            array('handle' => 'kidsoverprofits-tables', 'path' => 'css/tables.css'),
+            array('handle' => 'kidsoverprofits-modals', 'path' => 'css/modals.css'),
+            array('handle' => 'kidsoverprofits-admin', 'path' => 'css/admin.css'),
+            array('handle' => 'kidsoverprofits-print-report', 'path' => 'css/print-report.css', 'media' => 'print'),
         );
 
-        foreach ($styles as $handle => $relative_path) {
-            $asset = kidsoverprofits_get_theme_asset_details($relative_path);
+        foreach ($styles as $style) {
+            $handle = $style['handle'];
+            $path   = $style['path'];
+            $deps   = $style['deps'] ?? array();
+            $media  = $style['media'] ?? 'all';
 
-            if (!$asset) {
-                continue;
-            }
-
-            wp_enqueue_style($handle, $asset['uri'], array(), $asset['version']);
+            kidsoverprofits_enqueue_theme_style($handle, $path, $deps, $media);
         }
     }
 
