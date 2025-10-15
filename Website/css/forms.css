@@ -148,7 +148,78 @@
 	display: inline-block !important;
 }
 .w-100 {
-	width: 100% !important;
+        width: 100% !important;
+}
+/* Facility form note controls */
+.note-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+}
+.note-controls .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+}
+.note-add-btn {
+        background-color: #2563eb;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: background-color 0.2s ease;
+}
+.note-add-btn:hover,
+.note-add-btn:focus {
+        background-color: #1d4ed8;
+        outline: none;
+}
+.field-notes {
+        width: 100%;
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+}
+.note-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+}
+.note-textarea {
+        flex: 1;
+        min-height: 72px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        resize: vertical;
+}
+.remove-note-btn {
+        background: none;
+        border: none;
+        color: #dc2626;
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 4px 0;
+}
+.remove-note-btn:hover,
+.remove-note-btn:focus {
+        text-decoration: underline;
+        outline: none;
 }
 /* Highlighted suggestion item for keyboard navigation */
 .suggestion-item.highlighted {
