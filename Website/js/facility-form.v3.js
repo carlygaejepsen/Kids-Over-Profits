@@ -13,27 +13,64 @@ if (typeof window !== 'undefined') {
 
 const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
 
-function resolveApiUrl(path, base) {
+function resolveApiUrl(path, bases) {
     if (!path) return '';
     if (/^https?:\/\//i.test(path)) {
         return path;
     }
 
-    const normalizedBase = base ? base.replace(/\/$/, '') : '';
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const baseCandidates = Array.isArray(bases)
+        ? bases
+        : (bases ? [bases] : []);
 
-    if (!normalizedBase) {
-        return normalizedPath;
+    for (const candidate of baseCandidates) {
+        if (typeof candidate !== 'string') {
+            continue;
+        }
+
+        const normalizedBase = candidate.replace(/\/$/, '');
+
+        if (!normalizedBase) {
+            continue;
+        }
+
+        return `${normalizedBase}${normalizedPath}`;
     }
 
-    return `${normalizedBase}${normalizedPath}`;
+    return normalizedPath;
 }
 
 const explicitBase = FACILITY_FORM_CONFIG.apiBase;
-const defaultApiBase = explicitBase !== undefined
-    ? explicitBase
-    : (typeof window !== 'undefined' && window.location ? window.location.origin : '');
-const normalizedApiBase = defaultApiBase ? defaultApiBase.replace(/\/$/, '') : '';
+const fallbackBases = FACILITY_FORM_CONFIG.apiBaseFallbacks;
+
+const apiBaseCandidates = [];
+
+if (Array.isArray(explicitBase)) {
+    apiBaseCandidates.push(...explicitBase);
+} else if (typeof explicitBase === 'string' && explicitBase) {
+    apiBaseCandidates.push(explicitBase);
+}
+
+if (Array.isArray(fallbackBases)) {
+    apiBaseCandidates.push(...fallbackBases);
+}
+
+if (typeof window !== 'undefined' && Array.isArray(window.KOP_THEME_BASES)) {
+    apiBaseCandidates.push(...window.KOP_THEME_BASES);
+}
+
+if (!apiBaseCandidates.length && typeof window !== 'undefined' && window.location && window.location.origin) {
+    apiBaseCandidates.push(window.location.origin);
+}
+
+const normalizedApiBases = Array.from(new Set(
+    apiBaseCandidates
+        .map((base) => (typeof base === 'string' ? base.trim() : ''))
+        .filter(Boolean)
+        .map((base) => base.replace(/\/$/, ''))
+        .filter(Boolean)
+));
 
 const defaultApiPaths = {
     SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/save-master.php',
@@ -42,7 +79,7 @@ const defaultApiPaths = {
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
-    acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBase);
+    acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBases);
     return acc;
 }, {});
 
@@ -73,6 +110,9 @@ function logActiveFacilityFormConfigOnce() {
 
     try {
         console.info('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
+        if (normalizedApiBases.length) {
+            console.info('[KOP Facility Form] API base candidates:', normalizedApiBases);
+        }
         console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
         console.info('[KOP Facility Form] Active form mode:', FORM_MODE);
         if (FALLBACK_PROJECTS_URL) {
@@ -86,7 +126,7 @@ function logActiveFacilityFormConfigOnce() {
 }
 
 const FALLBACK_PROJECTS_URL = FACILITY_FORM_CONFIG.fallbackProjectsUrl
-    ? resolveApiUrl(FACILITY_FORM_CONFIG.fallbackProjectsUrl, normalizedApiBase)
+    ? resolveApiUrl(FACILITY_FORM_CONFIG.fallbackProjectsUrl, normalizedApiBases)
     : null;
 
 const DEFAULT_FACILITY_TYPES = [

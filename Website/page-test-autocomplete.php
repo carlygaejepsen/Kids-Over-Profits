@@ -5,6 +5,8 @@
  * @package Kids_Over_Profits
  */
 
+$autocomplete_endpoint = trailingslashit(get_stylesheet_directory_uri()) . 'api/get-autocomplete.php';
+
 get_header();
 
 ?>
@@ -19,7 +21,7 @@ get_header();
             <div class="summary" id="summary">
                 <h2>Test Summary</h2>
                 <p>This tool tests all autocomplete categories against the SQL backend endpoint.</p>
-                <p><strong>Endpoint:</strong> <code>https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php</code></p>
+                <p><strong>Endpoint:</strong> <code data-autocomplete-endpoint="true"><?php echo esc_html($autocomplete_endpoint); ?></code></p>
                 <p><strong>Status:</strong> <span id="overall-status">Ready to test</span></p>
             </div>
             <button class="test-all-btn" onclick="testAllCategories()">▶️ Test All Categories</button>

@@ -40,6 +40,46 @@ if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
     }
 }
 
+if (!function_exists('kidsoverprofits_get_theme_base_aliases')) {
+    /**
+     * Build a prioritized list of accessible theme base URIs.
+     *
+     * @param string $uri Theme directory URI.
+     *
+     * @return array Ordered list starting with the canonical URI followed by alternate aliases.
+     */
+    function kidsoverprofits_get_theme_base_aliases($uri) {
+        $canonical = untrailingslashit($uri);
+
+        if ('' === $canonical) {
+            return array();
+        }
+
+        $aliases    = array($canonical);
+        $normalized = kidsoverprofits_normalize_theme_base_uri($canonical);
+
+        if ($normalized && $normalized !== $canonical) {
+            $aliases[] = $normalized;
+        }
+
+        $filtered = array();
+
+        foreach ($aliases as $alias) {
+            if (!is_string($alias) || '' === $alias) {
+                continue;
+            }
+
+            if (in_array($alias, $filtered, true)) {
+                continue;
+            }
+
+            $filtered[] = $alias;
+        }
+
+        return $filtered;
+    }
+}
+
 if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
     /**
      * Retrieve a theme asset's URI and cache-busting version.
@@ -116,20 +156,9 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         }
 
         // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
-        $theme_base         = untrailingslashit(get_stylesheet_directory_uri());
-        $normalized_theme   = kidsoverprofits_normalize_theme_base_uri($theme_base);
-        $available_theme_bases = array();
-
-        if (!empty($normalized_theme)) {
-            $available_theme_bases[] = $normalized_theme;
-        }
-
-        if (!empty($theme_base)) {
-            $available_theme_bases[] = $theme_base;
-        }
-
-        $available_theme_bases = array_values(array_unique(array_filter($available_theme_bases)));
-        $primary_theme_base = $available_theme_bases ? $available_theme_bases[0] : '';
+        $theme_base            = untrailingslashit(get_stylesheet_directory_uri());
+        $available_theme_bases = kidsoverprofits_get_theme_base_aliases($theme_base);
+        $primary_theme_base    = $available_theme_bases ? $available_theme_bases[0] : $theme_base;
         $content    = str_replace(
             "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';",
             "const DEFAULT_THEME_BASE = '" . esc_url_raw($primary_theme_base ?: $theme_base) . "';",
@@ -153,31 +182,6 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
             "const legacyThemeBase = '" . esc_url_raw($theme_base) . "';",
             $content
         );
-
-        $wordpress_context_script = '<script>(function(){' .
-            'var themeBases = ' . wp_json_encode(array_values($available_theme_bases)) . ';' .
-            'window.KOP_IS_WORDPRESS = true;' .
-            'if(themeBases.length && (!window.KOP_THEME_BASE || !window.KOP_THEME_BASE.length)){' .
-                'window.KOP_THEME_BASE = themeBases[0];' .
-            '}' .
-            'if(themeBases.length && (!window.KOP_LOCAL_BASE || !window.KOP_LOCAL_BASE.length)){' .
-                'window.KOP_LOCAL_BASE = themeBases[0];' .
-            '}' .
-            'if(!Array.isArray(window.KOP_THEME_BASES)){' .
-                'window.KOP_THEME_BASES = [];' .
-            '}' .
-            'themeBases.forEach(function(base){' .
-                'if(base && window.KOP_THEME_BASES.indexOf(base) === -1){' .
-                    'window.KOP_THEME_BASES.unshift(base);' .
-                '}' .
-            '});' .
-        '})();</script>';
-
-        if (false !== strpos($content, '<div class="container">')) {
-            $content = str_replace('<div class="container">', $wordpress_context_script . '\n<div class="container">', $content);
-        } else {
-            $content = $wordpress_context_script . $content;
-        }
 
         if (false === strpos($content, 'data-kop-theme-base')) {
             $content = str_replace(
@@ -595,18 +599,109 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         }
     }
 
-    $script_map = array(
+    $theme_directory_uri = untrailingslashit(get_stylesheet_directory_uri());
+    $theme_base_aliases   = kidsoverprofits_get_theme_base_aliases($theme_directory_uri);
+    $primary_theme_base   = $theme_base_aliases ? $theme_base_aliases[0] : $theme_directory_uri;
+
+    $primary_theme_base = $primary_theme_base ? esc_url_raw($primary_theme_base) : '';
+
+    $alternate_theme_bases = array();
+
+    if (!empty($theme_base_aliases)) {
+        foreach ($theme_base_aliases as $index => $alias) {
+            if (0 === $index) {
+                continue;
+            }
+
+            $sanitized_alias = esc_url_raw($alias);
+
+            if ($sanitized_alias) {
+                $alternate_theme_bases[] = $sanitized_alias;
+            }
+        }
+    }
+
+    $form_configs = array(
         'admin-data' => array(
-            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
-            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
-            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
-            array('handle' => 'kidsoverprofits-admin-data', 'path' => 'js/admin-data.js', 'deps' => array('kidsoverprofits-facility-form')),
+            'mode'      => 'master',
+            'endpoints' => array(
+                'SAVE_PROJECT' => '/api/save-master.php',
+                'LOAD_PROJECTS' => '/api/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+            ),
         ),
         'data' => array(
-            array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
-            array('handle' => 'kidsoverprofits-utilities', 'path' => 'js/utilities.js', 'deps' => array('kidsoverprofits-app-logic')),
-            array('handle' => 'kidsoverprofits-facility-form', 'path' => 'js/facility-form.v3.js', 'deps' => array('kidsoverprofits-utilities')),
-            array('handle' => 'kidsoverprofits-data-form', 'path' => 'js/data-form.js', 'deps' => array('kidsoverprofits-facility-form')),
+            'mode'      => 'suggestions',
+            'endpoints' => array(
+                'SAVE_PROJECT' => '/api/save-suggestion.php',
+                'LOAD_PROJECTS' => '/api/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+            ),
+        ),
+    );
+
+    foreach ($form_configs as $config_key => $config) {
+        if ($primary_theme_base) {
+            $form_configs[$config_key]['apiBase'] = $primary_theme_base;
+        }
+
+        if (!empty($alternate_theme_bases)) {
+            $form_configs[$config_key]['apiBaseFallbacks'] = $alternate_theme_bases;
+        }
+    }
+
+    $fallback_projects_url = kidsoverprofits_get_latest_json_url('js/data', 'facility-projects-export*.json');
+
+    if (!empty($fallback_projects_url) && isset($form_configs['data'])) {
+        $form_configs['data']['fallbackProjectsUrl'] = $fallback_projects_url;
+    }
+
+    $script_map = array(
+        'admin-data' => array(
+            array('handle' => 'kidsoverprofits-theme-bootstrap', 'path' => 'js/theme-base-bootstrap.js'),
+            array(
+                'handle' => 'kidsoverprofits-app-logic',
+                'path'   => 'js/app-logic.js',
+                'deps'   => array('kidsoverprofits-theme-bootstrap'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-utilities',
+                'path'   => 'js/utilities.js',
+                'deps'   => array('kidsoverprofits-app-logic'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-facility-form',
+                'path'   => 'js/facility-form.v3.js',
+                'deps'   => array('kidsoverprofits-utilities'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-admin-data',
+                'path'   => 'js/admin-data.js',
+                'deps'   => array('kidsoverprofits-facility-form'),
+            ),
+        ),
+        'data' => array(
+            array('handle' => 'kidsoverprofits-theme-bootstrap', 'path' => 'js/theme-base-bootstrap.js'),
+            array(
+                'handle' => 'kidsoverprofits-app-logic',
+                'path'   => 'js/app-logic.js',
+                'deps'   => array('kidsoverprofits-theme-bootstrap'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-utilities',
+                'path'   => 'js/utilities.js',
+                'deps'   => array('kidsoverprofits-app-logic'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-facility-form',
+                'path'   => 'js/facility-form.v3.js',
+                'deps'   => array('kidsoverprofits-utilities'),
+            ),
+            array(
+                'handle' => 'kidsoverprofits-data-form',
+                'path'   => 'js/data-form.js',
+                'deps'   => array('kidsoverprofits-facility-form'),
+            ),
         ),
         'data-organizer' => array(
             array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
@@ -623,14 +718,113 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         $path   = $script['path'];
         $deps   = $script['deps'] ?? array();
 
+        $localizations = array();
+
+        if (isset($form_configs[$slug]) && 'kidsoverprofits-facility-form' === $handle) {
+            $localizations[] = array(
+                'name' => 'KOP_FACILITY_FORM_CONFIG',
+                'data' => $form_configs[$slug],
+            );
+        }
+
         if (wp_script_is($handle, 'enqueued')) {
             continue;
         }
 
-        kidsoverprofits_enqueue_theme_script($handle, $path, $deps, true);
+        kidsoverprofits_enqueue_theme_script($handle, $path, $deps, true, $localizations);
+    }
+
+    if (isset($form_configs[$slug])) {
+        $form_mode = $form_configs[$slug]['mode'];
+        wp_add_inline_script(
+            'kidsoverprofits-facility-form',
+            'window.FORM_MODE = ' . wp_json_encode($form_mode) . ';',
+            'before'
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_data_tool_assets', 25);
+
+/**
+ * Enqueue assets for internal testing harness pages.
+ */
+function kidsoverprofits_enqueue_test_harness_assets() {
+    if (!is_page()) {
+        return;
+    }
+
+    $page_id = get_queried_object_id();
+
+    if (!$page_id) {
+        return;
+    }
+
+    $slug = get_post_field('post_name', $page_id);
+
+    if ('test-autocomplete' !== $slug) {
+        return;
+    }
+
+    $style = kidsoverprofits_get_theme_asset_details('css/test-harnesses.css');
+
+    if ($style) {
+        wp_enqueue_style('kidsoverprofits-test-harnesses', $style['uri'], array(), $style['version']);
+    }
+
+    $theme_directory_uri = untrailingslashit(get_stylesheet_directory_uri());
+    $theme_base_aliases   = kidsoverprofits_get_theme_base_aliases($theme_directory_uri);
+
+    $primary_theme_base = $theme_base_aliases ? $theme_base_aliases[0] : $theme_directory_uri;
+    $primary_theme_base = $primary_theme_base ? esc_url_raw($primary_theme_base) : '';
+
+    $alternate_theme_bases = array();
+
+    if (!empty($theme_base_aliases)) {
+        foreach ($theme_base_aliases as $index => $alias) {
+            if (0 === $index) {
+                continue;
+            }
+
+            $sanitized_alias = esc_url_raw($alias);
+
+            if ($sanitized_alias) {
+                $alternate_theme_bases[] = $sanitized_alias;
+            }
+        }
+    }
+
+    $endpoint_candidates = array();
+
+    if ($primary_theme_base) {
+        $endpoint_candidates[] = trailingslashit($primary_theme_base) . 'api/get-autocomplete.php';
+    }
+
+    if (!empty($alternate_theme_bases)) {
+        foreach ($alternate_theme_bases as $alias) {
+            $endpoint_candidates[] = trailingslashit($alias) . 'api/get-autocomplete.php';
+        }
+    }
+
+    $primary_endpoint = $endpoint_candidates ? array_shift($endpoint_candidates) : '';
+
+    kidsoverprofits_enqueue_theme_script(
+        'kidsoverprofits-test-autocomplete',
+        'js/test-autocomplete.js',
+        array(),
+        true,
+        array(
+            array(
+                'name' => 'KOP_AUTOCOMPLETE_TEST_CONFIG',
+                'data' => array(
+                    'endpoint'          => $primary_endpoint,
+                    'fallbackEndpoints' => $endpoint_candidates,
+                    'themeBases'        => array_values(array_filter(array_merge($primary_theme_base ? array($primary_theme_base) : array(), $alternate_theme_bases))),
+                ),
+            ),
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_harness_assets', 40);
 
 /**
  * Enqueue test scripts for debugging display issues
