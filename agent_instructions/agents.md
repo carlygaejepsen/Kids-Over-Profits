@@ -322,7 +322,7 @@ If deploying manually via cPanel File Manager or FTP:
 
 1. **Collect new inspection data** from state regulatory agencies
 2. **Process/clean data** using Scripts utilities (optional)
-3. **Update JSON files** in `Website/js/data/`
+3. **Update JSON files** in `js/data/`
 4. **Test locally** if possible
 5. **Push to Git repository**
 6. **Verify deployment** on live site
@@ -345,7 +345,7 @@ If deploying manually via cPanel File Manager or FTP:
 
 ## API Endpoints
 
-All data form API endpoints live under the `Website/api/data_form/` directory.
+All data form API endpoints live under the `api/data_form/` directory.
 
 ### GET `/api/data_form/get-master-data.php`
 Retrieves approved facility data from the master database.
@@ -410,14 +410,14 @@ Saves approved data to master database (admin only).
 
 ## Static Form Autocomplete & Notes
 
-The standalone `Website/html/data.html` and `Website/html/admin-data.html` pages share the `facility-form.v3.js` engine for data binding. To keep autocomplete behavior and contextual notes working:
+The standalone `html/data.html` and `html/admin-data.html` pages share the `facility-form.v3.js` engine for data binding. To keep autocomplete behavior and contextual notes working:
 
 - Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/data_form/get-autocomplete.php`.
 - Numeric inputs and multi-line `<textarea>` fields should omit the autocomplete category, but they can still expose notes (see below).
 - Each form control that should support inline notes must provide both `data-note-scope` (`operator`, `facility`, or `project`) and a `data-note-key` that matches the structured data path (e.g., `operatingPeriod.yearsOfOperation`). The form script will render a “＋” button and manage per-field note arrays based on these attributes.
 - When introducing new text inputs, update both static HTML pages with the appropriate data attributes so that autocomplete categories remain synchronized across the public suggestion form and the admin master form.
 - Use the shared `operatingperiod` autocomplete category for operator operating periods and facility years-of-operation strings so contributors see consistent suggestions.
-- Set `window.KOP_FACILITY_FORM_CONFIG.mode` (or `window.FORM_MODE`) to `'suggestions'` on `Website/html/data.html` and `'master'` on `Website/html/admin-data.html` so the shared form engine routes autosaves and cloud saves to the correct endpoints (public drafts stay local until explicitly submitted, while admin saves push straight to the master database).
+- Set `window.KOP_FACILITY_FORM_CONFIG.mode` (or `window.FORM_MODE`) to `'suggestions'` on `html/data.html` and `'master'` on `html/admin-data.html` so the shared form engine routes autosaves and cloud saves to the correct endpoints (public drafts stay local until explicitly submitted, while admin saves push straight to the master database).
 
 ---
 
@@ -425,7 +425,7 @@ The standalone `Website/html/data.html` and `Website/html/admin-data.html` pages
 
 ### Custom Functions
 
-Located in `Website/functions.php`:
+Located in `functions.php`:
 
 #### State Report Loaders
 - `load_new_multi_file_report_scripts()` - California (multi-file)
@@ -687,7 +687,7 @@ We collect data from:
 
 **Email**: dani@kidsoverprofits.org
 
-**Website**: [kidsoverprofits.org]
+**Site**: [kidsoverprofits.org]
 
 **Mission**: Transparency, justice, and dignity for kids affected by institutional abuse.
 
