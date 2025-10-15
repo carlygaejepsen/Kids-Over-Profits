@@ -64,57 +64,27 @@ A secure, encrypted system for whistleblowers and concerned parties to submit do
 
 ### Project Structure
 
+The project is a WordPress child theme. The repository root represents the theme's directory (`/wp-content/themes/child/`).
+
 ```
 Kids-Over-Profits/
-├── .cpanel.yml                 # Automated deployment configuration
-├── Website/
-│   ├── functions.php          # Child theme functions and custom features
-│   ├── api/                   # Backend API endpoints
-│   │   ├── config.php         # Database configuration
-│   │   ├── get-master-data.php    # Retrieve approved facility data
-│   │   ├── save-suggestion.php    # Save public data suggestions
-│   │   ├── get-autocomplete.php   # Retrieve data for admin autocomplete dropdowns
-│   │   ├── process-edit.php       # Process data edits
-│   │   └── save-master.php        # Save approved data to master
-│   ├── html/                  # Page templates
-│   │   ├── ca-reports.html
-│   │   ├── ut-reports.html
-│   │   ├── az-reports.html
-│   │   ├── tx-reports.html
-│   │   ├── mt-reports.html
-│   │   ├── ct-reports.html
-│   │   ├── wa-reports.html
-│   │   ├── data.html          # Data submission form
-│   │   └── admin-data.html    # Admin data management
-│   ├── js/                    # Frontend JavaScript
-│   │   ├── ca-reports.js      # Multi-file CA report loader
-│   │   ├── ut_reports.js
-│   │   ├── az_reports.js
-│   │   ├── tx_reports.js
-│   │   ├── mt_reports.js
-│   │   ├── ct_reports.js
-│   │   ├── wa_reports.js
-│   │   ├── facilities-display.js  # TTI program index
-│   │   ├── facility-form.js   # Data submission form
-│   │   ├── admin-data.js      # Admin interface
-│   │   ├── anonymous-portal.js    # Anonymous document submission
-│   │   └── data/              # JSON data files
-│   │       ├── ccl_*.json     # California reports (batched)
-│   │       ├── ut_reports.json
-│   │       ├── az_reports/*.json
-│   │       ├── tx_reports.json
-│   │       ├── mt_reports.json
-│   │       ├── ct_reports.json
-│   │       ├── wa_reports.json
-│   │       └── facilities_data.json
-│   └── css/
-│       └── anonymous-portal.css
-└── Scripts/                   # Data processing utilities (optional)
-    ├── CA_json/              # Raw California data batches
-    ├── az_inspections/       # Raw Arizona inspection data
-    ├── checklists/           # State-specific checklists
-    ├── dcf_facilities_clean.json
-    └── facility_input.html   # Data entry tool
+├── .cpanel.yml                 # Automated deployment configuration for cPanel.
+├── functions.php               # Child theme functions: script loading, custom features, shortcodes.
+├── style.css                   # Child theme stylesheet.
+├── api/                        # Backend API endpoints (PHP scripts).
+│   ├── config.php              # Database configuration for the suggestions system.
+│   ├── data_form/              # Scripts for data submission, editing, and admin management.
+│   └── state_reports/          # Scripts for generating state-specific report pages.
+├── css/                        # CSS files for styling different application components.
+├── html/                       # HTML template files for pages and reports.
+├── js/                         # Frontend JavaScript for application logic.
+│   ├── data/                   # Contains JSON data files and PDF checklists.
+│   └── state_reports/          # JS logic for individual state report pages.
+└── tests/                      # Testing suite.
+    ├── ApiTest.php             # PHP tests for the backend API.
+    ├── e2e-state-reports.php   # End-to-end tests for state reports.
+    ├── unit-tests.js           # JavaScript unit tests.
+    └── page-run-tests.php      # A browser-based test runner page.
 ```
 
 ---
