@@ -118,10 +118,17 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
         $theme_base         = untrailingslashit(get_stylesheet_directory_uri());
         $normalized_theme   = kidsoverprofits_normalize_theme_base_uri($theme_base);
-        $available_theme_bases = array_values(array_unique(array_filter(array(
-            $normalized_theme,
-            $theme_base,
-        ))));
+        $available_theme_bases = array();
+
+        if (!empty($normalized_theme)) {
+            $available_theme_bases[] = $normalized_theme;
+        }
+
+        if (!empty($theme_base)) {
+            $available_theme_bases[] = $theme_base;
+        }
+
+        $available_theme_bases = array_values(array_unique(array_filter($available_theme_bases)));
         $primary_theme_base = $available_theme_bases ? $available_theme_bases[0] : '';
         $content    = str_replace(
             "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';",
@@ -132,6 +139,18 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         $content = str_replace(
             "const defaultThemeBase = 'https://kidsoverprofits.org/themes/child';",
             "const defaultThemeBase = '" . esc_url_raw($primary_theme_base ?: $theme_base) . "';",
+            $content
+        );
+
+        $content = str_replace(
+            "const LEGACY_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';",
+            "const LEGACY_THEME_BASE = '" . esc_url_raw($theme_base) . "';",
+            $content
+        );
+
+        $content = str_replace(
+            "const legacyThemeBase = 'https://kidsoverprofits.org/wp-content/themes/child';",
+            "const legacyThemeBase = '" . esc_url_raw($theme_base) . "';",
             $content
         );
 
