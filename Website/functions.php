@@ -88,10 +88,36 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
         $theme_base = untrailingslashit(get_stylesheet_directory_uri());
         $content    = str_replace(
-            "window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child'",
-            "window.KOP_THEME_BASE || '" . esc_url_raw($theme_base) . "'",
+            "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';",
+            "const DEFAULT_THEME_BASE = '" . esc_url_raw($theme_base) . "';",
             $content
         );
+
+        $content = str_replace(
+            "const defaultThemeBase = 'https://kidsoverprofits.org/themes/child';",
+            "const defaultThemeBase = '" . esc_url_raw($theme_base) . "';",
+            $content
+        );
+
+        $wordpress_context_script = '<script>(function(){' .
+            'window.KOP_IS_WORDPRESS = true;' .
+            'if(!window.KOP_THEME_BASE){window.KOP_THEME_BASE = ' . json_encode(esc_url_raw($theme_base)) . ';}' .
+            'if(!window.KOP_LOCAL_BASE){window.KOP_LOCAL_BASE = ' . json_encode(esc_url_raw($theme_base)) . ';}' .
+        '})();</script>';
+
+        if (false !== strpos($content, '<div class="container">')) {
+            $content = str_replace('<div class="container">', $wordpress_context_script . '\n<div class="container">', $content);
+        } else {
+            $content = $wordpress_context_script . $content;
+        }
+
+        if (false === strpos($content, 'data-kop-theme-base')) {
+            $content = str_replace(
+                '<div class="container"',
+                '<div class="container" data-kop-theme-base="' . esc_attr($theme_base) . '"',
+                $content
+            );
+        }
 
         if (!empty($args['replacements']) && is_array($args['replacements'])) {
             $content = str_replace(array_keys($args['replacements']), array_values($args['replacements']), $content);
