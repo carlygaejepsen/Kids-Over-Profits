@@ -121,6 +121,29 @@ rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./Website/ /home/kidsover/pub
 - JSON data storage for frontend display
 - MySQL database for user submissions and admin data
 
+## Testing Framework
+**Primary Testing Framework**: Custom PHP/JavaScript Unit Testing Suite
+**Additional Tools**: Integration tests, End-to-End tests, Visual tests, Report diagnostics
+**Test Runner**: `run-tests.php` (CLI) and WordPress page template (browser-based)
+
+**Test Coverage**:
+- PHP Unit Tests (56 tests, 92.9% pass rate)
+- JavaScript Unit Tests (40+ browser-based tests)
+- Python Unit Tests (30+ scraper tests)
+- Integration Tests (28 tests, 100% pass rate)
+- End-to-End Tests (Live website functionality validation)
+
+**Test Execution**:
+- CLI: `php run-tests.php [php|js|python|integration|e2e|all]`
+- Browser: Visit `/run-tests` page or add `?runtests=js` to any URL
+- Individual: Direct execution of test files
+
+**E2E Testing**: 
+- Tests live website functionality including JavaScript file accessibility
+- Detects deployment gaps that unit tests miss
+- Validates state report pages load correctly
+- Identifies "Loading..." stuck states caused by missing JS files
+
 ## Security Features
 - PDO prepared statements for database queries
 - Input sanitization

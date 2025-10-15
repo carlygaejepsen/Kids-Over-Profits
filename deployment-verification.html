@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deployment Verification</title>
+</head>
+<body>
+    <h1>Kids Over Profits - Deployment Verification</h1>
+    <div id="results"></div>
+    
+    <script>
+        const jsFiles = [
+            "/wp-content/themes/child/Website/js/ca-reports.js",
+            "/wp-content/themes/child/Website/js/facilities-display.js", 
+            "/wp-content/themes/child/Website/js/report-test.js"
+        ];
+        
+        const results = document.getElementById("results");
+        let html = "<h2>JavaScript File Accessibility Test</h2>";
+        
+        jsFiles.forEach(file => {
+            fetch(file)
+                .then(response => {
+                    if (response.ok) {
+                        html += `<p style="color: green;">✓ ${file} - ACCESSIBLE (${response.status})</p>`;
+                    } else {
+                        html += `<p style="color: red;">✗ ${file} - NOT ACCESSIBLE (${response.status})</p>`;
+                    }
+                    results.innerHTML = html;
+                })
+                .catch(error => {
+                    html += `<p style="color: red;">✗ ${file} - ERROR: ${error.message}</p>`;
+                    results.innerHTML = html;
+                });
+        });
+    </script>
+</body>
+</html>
