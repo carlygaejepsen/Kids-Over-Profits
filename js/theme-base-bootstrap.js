@@ -3,9 +3,9 @@
 
     const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';
     const LEGACY_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';
-    const DEFAULT_LOCAL_BASE = '../themes/child';
+    const DEFAULT_LOCAL_BASE = '..';
     const LEGACY_LOCAL_BASE = '../wp-content/themes/child';
-    const THEME_BASE_PATTERN = /(^\.\.\/(?:wp-content\/)?themes\/)|\/themes\//i;
+    const THEME_BASE_PATTERN = /(^\.\.\/(?:(?:wp-content\/)?themes\/)?)|\/themes\//i;
 
     function cleanBase(value) {
         if (typeof value !== 'string') {
