@@ -380,8 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setupAlphabetFilter();
     setupEventListeners();
 
-    // Direct path to your JSON file
-    const jsonPath = '/wp-content/themes/child/js/data/facility-projects-export-2025-10-02.json';
+    const facilitiesConfig = window.facilitiesConfig || {};
+    const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
+    const jsonPath = facilitiesConfig.jsonDataUrl || configUrls[0] || '/wp-content/themes/child/js/data/facility-projects-export.json';
 
     console.log('Loading data from:', jsonPath);
 
