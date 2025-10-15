@@ -345,9 +345,9 @@ If deploying manually via cPanel File Manager or FTP:
 
 ## API Endpoints
 
-All API endpoints are in the `Website/api/` directory.
+All data form API endpoints live under the `Website/api/data_form/` directory.
 
-### GET `/api/get-master-data.php`
+### GET `/api/data_form/get-master-data.php`
 Retrieves approved facility data from the master database.
 
 **Response**:
@@ -358,7 +358,7 @@ Retrieves approved facility data from the master database.
 }
 ```
 
-### POST `/api/save-suggestion.php`
+### POST `/api/data_form/save-suggestion.php`
 Saves a public suggestion for admin review.
 
 **Parameters**: Facility data fields
@@ -370,7 +370,7 @@ Saves a public suggestion for admin review.
 }
 ```
 
-### GET `/api/get-autocomplete.php`
+### GET `/api/data_form/get-autocomplete.php`
 Retrieves data for populating autocomplete dropdowns (e.g., facility names, cities, operating periods, or other fields) across both public and admin interfaces.
 
 **Response**:
@@ -382,7 +382,7 @@ Retrieves data for populating autocomplete dropdowns (e.g., facility names, citi
 }
 ```
 
-### POST `/api/process-edit.php`
+### POST `/api/data_form/process-edit.php`
 Processes admin edits to facility data.
 
 **Parameters**: Edit data
@@ -394,7 +394,7 @@ Processes admin edits to facility data.
 }
 ```
 
-### POST `/api/save-master.php`
+### POST `/api/data_form/save-master.php`
 Saves approved data to master database (admin only).
 
 **Parameters**: Facility data
@@ -412,7 +412,7 @@ Saves approved data to master database (admin only).
 
 The standalone `Website/html/data.html` and `Website/html/admin-data.html` pages share the `facility-form.v3.js` engine for data binding. To keep autocomplete behavior and contextual notes working:
 
-- Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/get-autocomplete.php`.
+- Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/data_form/get-autocomplete.php`.
 - Numeric inputs and multi-line `<textarea>` fields should omit the autocomplete category, but they can still expose notes (see below).
 - Each form control that should support inline notes must provide both `data-note-scope` (`operator`, `facility`, or `project`) and a `data-note-key` that matches the structured data path (e.g., `operatingPeriod.yearsOfOperation`). The form script will render a “＋” button and manage per-field note arrays based on these attributes.
 - When introducing new text inputs, update both static HTML pages with the appropriate data attributes so that autocomplete categories remain synchronized across the public suggestion form and the admin master form.

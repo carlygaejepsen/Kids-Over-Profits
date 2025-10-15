@@ -117,7 +117,7 @@ class ApiTest
     }
     
     /**
-     * Test get-master-data.php endpoint
+     * Test data_form/get-master-data.php endpoint
      */
     public function testGetMasterDataEndpoint()
     {
@@ -149,7 +149,7 @@ class ApiTest
     }
     
     /**
-     * Test get-autocomplete.php endpoint
+     * Test data_form/get-autocomplete.php endpoint
      */
     public function testGetAutocompleteEndpoint()
     {
@@ -189,7 +189,7 @@ class ApiTest
     }
     
     /**
-     * Test save-suggestion.php endpoint
+     * Test data_form/save-suggestion.php endpoint
      */
     public function testSaveSuggestionEndpoint()
     {
@@ -231,7 +231,7 @@ class ApiTest
     }
     
     /**
-     * Test process-edit.php endpoint
+     * Test data_form/process-edit.php endpoint
      */
     public function testProcessEditEndpoint()
     {
@@ -254,7 +254,7 @@ class ApiTest
     }
     
     /**
-     * Test save-master.php endpoint
+     * Test data_form/save-master.php endpoint
      */
     public function testSaveMasterEndpoint()
     {
@@ -374,10 +374,10 @@ class ApiTest
         
         // Test required parameters for different endpoints
         $endpoint_parameters = [
-            'get-autocomplete.php' => ['category'],
-            'save-suggestion.php' => ['data'],
-            'process-edit.php' => ['action', 'data'],
-            'save-master.php' => ['unique_name', 'data']
+            'data_form/get-autocomplete.php' => ['category'],
+            'data_form/save-suggestion.php' => ['data'],
+            'data_form/process-edit.php' => ['action', 'data'],
+            'data_form/save-master.php' => ['unique_name', 'data']
         ];
         
         foreach ($endpoint_parameters as $endpoint => $required_params) {

@@ -202,14 +202,14 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
                 array(
                     "mode = 'master';",
                     "FORM_MODE = 'master';",
-                    '/api/save-master.php',
+                    '/api/data_form/save-master.php',
                     'Admin: Master Facility Data Entry',
                     'ADMIN/MASTER MODE',
                 ),
                 array(
                     "mode = 'suggestions';",
                     "FORM_MODE = 'suggestions';",
-                    '/api/save-suggestion.php',
+                    '/api/data_form/save-suggestion.php',
                     '📮 Submit Facility Data Suggestions',
                     'SUGGESTION MODE',
                 ),
@@ -626,17 +626,17 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         'admin-data' => array(
             'mode'      => 'master',
             'endpoints' => array(
-                'SAVE_PROJECT' => '/api/save-master.php',
-                'LOAD_PROJECTS' => '/api/get-master-data.php',
-                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+                'SAVE_PROJECT' => '/api/data_form/save-master.php',
+                'LOAD_PROJECTS' => '/api/data_form/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/data_form/get-autocomplete.php',
             ),
         ),
         'data' => array(
             'mode'      => 'suggestions',
             'endpoints' => array(
-                'SAVE_PROJECT' => '/api/save-suggestion.php',
-                'LOAD_PROJECTS' => '/api/get-master-data.php',
-                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+                'SAVE_PROJECT' => '/api/data_form/save-suggestion.php',
+                'LOAD_PROJECTS' => '/api/data_form/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/data_form/get-autocomplete.php',
             ),
         ),
     );
@@ -797,12 +797,12 @@ function kidsoverprofits_enqueue_test_harness_assets() {
     $endpoint_candidates = array();
 
     if ($primary_theme_base) {
-        $endpoint_candidates[] = trailingslashit($primary_theme_base) . 'api/get-autocomplete.php';
+        $endpoint_candidates[] = trailingslashit($primary_theme_base) . 'api/data_form/get-autocomplete.php';
     }
 
     if (!empty($alternate_theme_bases)) {
         foreach ($alternate_theme_bases as $alias) {
-            $endpoint_candidates[] = trailingslashit($alias) . 'api/get-autocomplete.php';
+            $endpoint_candidates[] = trailingslashit($alias) . 'api/data_form/get-autocomplete.php';
         }
     }
 

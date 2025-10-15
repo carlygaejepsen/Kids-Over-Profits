@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const values = new Set();
     allFacilities.forEach(facility => {
     const dataPoints = extractDataPoints(facility, type);
-    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php');
     if (point && point.toString().trim() !== '') {
     values.add(point.toString().trim());
     }
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsContainer.style.display = 'none';
     try {
     // Use the same cloud URL as the main form
-    const cloudUrl = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php';
+    const cloudUrl = 'https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php';
     console.log('🔄 Loading data from:', cloudUrl);
     const response = await fetch(cloudUrl);
     if (!response.ok) {
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Try local fallback
     try {
     showMessage('⚠️ Trying local data source...', 'warning');
-    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    const fallbackResponse = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php');
     if (fallbackResponse.ok) {
     const fallbackData = await fallbackResponse.json();
     console.log('Fallback data:', fallbackData);
@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function debugDataLoading() {
     console.log('=== DEBUG: Data Loading ===');
     try {
-    const response = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/get-master-data.php');
+    const response = await fetch('https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php');
     console.log('Response status:', response.status, response.statusText);
     if (!response.ok) {
     console.error('HTTP Error:', response.status);
