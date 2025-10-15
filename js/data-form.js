@@ -47,31 +47,11 @@ function collectBaseCandidates() {
     }
 
     if (typeof window.location === 'object' && window.location && window.location.origin) {
-        candidates.push(window.location.origin + '/wp-content/themes/child');
         candidates.push(window.location.origin + '/themes/child');
+        candidates.push(window.location.origin + '/wp-content/themes/child');
     }
 
-    const uniqueCandidates = Array.from(new Set(candidates.map(normaliseBaseCandidate).filter(Boolean)));
-
-    uniqueCandidates.sort((a, b) => scoreCandidate(b) - scoreCandidate(a));
-
-    return uniqueCandidates;
-}
-
-function scoreCandidate(candidate) {
-    if (typeof candidate !== 'string') {
-        return -1;
-    }
-
-    if (candidate.includes('/wp-content/themes/')) {
-        return 2;
-    }
-
-    if (candidate.includes('/themes/')) {
-        return 1;
-    }
-
-    return 0;
+    return Array.from(new Set(candidates.map(normaliseBaseCandidate).filter(Boolean)));
 }
 
 function resolveEndpointUrl(path) {
