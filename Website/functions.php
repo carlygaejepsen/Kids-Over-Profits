@@ -11,6 +11,35 @@ if (!defined('ABSPATH')) {
 require_once get_stylesheet_directory() . '/inc/template-helpers.php';
 require_once get_stylesheet_directory() . '/inc/test-config.php';
 
+if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
+    /**
+     * Convert a WordPress theme directory URI to the public `/themes/` alias.
+     *
+     * The production site serves child theme assets from a friendly
+     * `/themes/child/` path rather than the standard
+     * `/wp-content/themes/child/` directory. When we bootstrap the data tools
+     * inside WordPress we still receive the canonical path from
+     * `get_stylesheet_directory_uri()`. This helper rewrites the canonical
+     * value so the JavaScript asset loader prefers the publicly accessible
+     * alias while preserving the original URI as a fallback.
+     *
+     * @param string $uri Theme directory URI.
+     *
+     * @return string Normalized URI using the `/themes/` alias when possible.
+     */
+    function kidsoverprofits_normalize_theme_base_uri($uri) {
+        $clean_uri = untrailingslashit($uri);
+
+        if ('' === $clean_uri) {
+            return '';
+        }
+
+        $rewritten = preg_replace('#/wp-content/themes/#', '/themes/', $clean_uri, 1);
+
+        return is_string($rewritten) && '' !== $rewritten ? $rewritten : $clean_uri;
+    }
+}
+
 if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
     /**
      * Retrieve a theme asset's URI and cache-busting version.
@@ -87,18 +116,57 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         }
 
         // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
-        $theme_base = untrailingslashit(get_stylesheet_directory_uri());
+        $theme_base         = untrailingslashit(get_stylesheet_directory_uri());
+        $normalized_theme   = kidsoverprofits_normalize_theme_base_uri($theme_base);
+        $available_theme_bases = array_values(array_unique(array_filter(array(
+            $normalized_theme,
+            $theme_base,
+        ))));
+        $primary_theme_base = $available_theme_bases ? $available_theme_bases[0] : '';
         $content    = str_replace(
-            "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';",
-            "const DEFAULT_THEME_BASE = '" . esc_url_raw($theme_base) . "';",
+            "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/themes/child';",
+            "const DEFAULT_THEME_BASE = '" . esc_url_raw($primary_theme_base ?: $theme_base) . "';",
             $content
         );
 
         $content = str_replace(
-            "const defaultThemeBase = 'https://kidsoverprofits.org/wp-content/themes/child';",
-            "const defaultThemeBase = '" . esc_url_raw($theme_base) . "';",
+            "const defaultThemeBase = 'https://kidsoverprofits.org/themes/child';",
+            "const defaultThemeBase = '" . esc_url_raw($primary_theme_base ?: $theme_base) . "';",
             $content
         );
+
+        $wordpress_context_script = '<script>(function(){' .
+            'var themeBases = ' . wp_json_encode(array_values($available_theme_bases)) . ';' .
+            'window.KOP_IS_WORDPRESS = true;' .
+            'if(themeBases.length && (!window.KOP_THEME_BASE || !window.KOP_THEME_BASE.length)){' .
+                'window.KOP_THEME_BASE = themeBases[0];' .
+            '}' .
+            'if(themeBases.length && (!window.KOP_LOCAL_BASE || !window.KOP_LOCAL_BASE.length)){' .
+                'window.KOP_LOCAL_BASE = themeBases[0];' .
+            '}' .
+            'if(!Array.isArray(window.KOP_THEME_BASES)){' .
+                'window.KOP_THEME_BASES = [];' .
+            '}' .
+            'themeBases.forEach(function(base){' .
+                'if(base && window.KOP_THEME_BASES.indexOf(base) === -1){' .
+                    'window.KOP_THEME_BASES.unshift(base);' .
+                '}' .
+            '});' .
+        '})();</script>';
+
+        if (false !== strpos($content, '<div class="container">')) {
+            $content = str_replace('<div class="container">', $wordpress_context_script . '\n<div class="container">', $content);
+        } else {
+            $content = $wordpress_context_script . $content;
+        }
+
+        if (false === strpos($content, 'data-kop-theme-base')) {
+            $content = str_replace(
+                '<div class="container"',
+                '<div class="container" data-kop-theme-base="' . esc_attr($primary_theme_base ?: $theme_base) . '"',
+                $content
+            );
+        }
 
         if (!empty($args['replacements']) && is_array($args['replacements'])) {
             $content = str_replace(array_keys($args['replacements']), array_values($args['replacements']), $content);
