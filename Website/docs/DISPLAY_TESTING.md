@@ -29,27 +29,40 @@ Examples:
 
 ### CSS Loading Test
 
-The CSS loading test verifies that all required CSS files are properly loaded on the page. When enabled, it displays a panel in the top-right corner showing:
+The CSS loading test verifies that all required CSS files are properly loaded on the page. When enabled, it now displays a diagnostic card in the top-right corner that includes:
 
-- Which CSS files are loaded successfully
-- Which CSS files failed to load
-- Page information (slug, time)
+- Page context (title, URL, timestamp)
+- A pass/fail summary covering every stylesheet that should be active on the current page
+- Detailed results for each handle including the selectors and CSS properties that were validated
 
-If you see red X marks, it means those CSS files are not loading correctly. Check:
+Legend used in the panel:
+
+- ✅ **Pass** – All selector checks for the stylesheet matched the expected values
+- ❌ **Issue** – The stylesheet was expected but not enqueued, or one of the selector checks failed
+- ℹ️ **Info** – The stylesheet loaded even though it is optional for the current page (helpful when debugging unexpected overrides)
+- ⏭ **Skipped** – The stylesheet was neither expected nor loaded; no selector checks were executed
+
+If a stylesheet fails, the panel shows which selector/property mismatch occurred so you can inspect the relevant CSS quickly. Common fixes include:
 1. File paths in `functions.php`
 2. File permissions on the server
 3. WordPress caching issues
 
 ### Report Data Test
 
-The report data test checks if state report JSON data is loading correctly. When enabled, it displays a panel showing:
+The report data test checks whether the JSON bundles required by state report pages are loading correctly. The updated panel highlights:
 
-- Whether the data object (`myThemeData` or `facilitiesConfig`) is found
-- The configured JSON file URLs
-- Test results for each JSON file (success or error)
-- Data structure validation
+- Page context and a list of WordPress script handles that should be enqueued for the page, with ✅/❌ status indicators
+- Every localized data object detected in `functions.php`, including the keys exposed to JavaScript
+- The active data object on the page (`myThemeData`, `facilitiesConfig`, etc.) and every JSON URL discovered from that object or its localizations
+- Live fetch tests for each JSON URL with structure validation and a trimmed data preview so you can confirm the payload contents
 
-If you see errors, check:
+Result legend for JSON fetches:
+
+- ✅ **Loaded** – The request succeeded and the script detected the expected structure (facilities, reports, or projects)
+- ⚠️ **Unexpected** – The request succeeded but the structure was unfamiliar (often caused by malformed exports)
+- ❌ **Error** – The request failed (404, 403, network issue, etc.)
+
+If you see errors or warnings, check:
 1. JSON file paths in `functions.php`
 2. JSON file existence on the server
 3. JSON file syntax (validate with a JSON validator)
