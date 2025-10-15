@@ -8,8 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// require_once get_stylesheet_directory() . '/inc/template-helpers.php';
-require_once get_stylesheet_directory() . '/inc/test-config.php';
+
 
 if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
     /**
@@ -202,14 +201,14 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
                 array(
                     "mode = 'master';",
                     "FORM_MODE = 'master';",
-                    '/api/save-master.php',
+                    '/api/data_form/save-master.php',
                     'Admin: Master Facility Data Entry',
                     'ADMIN/MASTER MODE',
                 ),
                 array(
                     "mode = 'suggestions';",
                     "FORM_MODE = 'suggestions';",
-                    '/api/save-suggestion.php',
+                    '/api/data_form/save-suggestion.php',
                     '📮 Submit Facility Data Suggestions',
                     'SUGGESTION MODE',
                 ),
@@ -626,17 +625,17 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         'admin-data' => array(
             'mode'      => 'master',
             'endpoints' => array(
-                'SAVE_PROJECT' => '/api/save-master.php',
-                'LOAD_PROJECTS' => '/api/get-master-data.php',
-                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+                'SAVE_PROJECT' => '/api/data_form/save-master.php',
+                'LOAD_PROJECTS' => '/api/data_form/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/data_form/get-autocomplete.php',
             ),
         ),
         'data' => array(
             'mode'      => 'suggestions',
             'endpoints' => array(
-                'SAVE_PROJECT' => '/api/save-suggestion.php',
-                'LOAD_PROJECTS' => '/api/get-master-data.php',
-                'AUTOCOMPLETE'  => '/api/get-autocomplete.php',
+                'SAVE_PROJECT' => '/api/data_form/save-suggestion.php',
+                'LOAD_PROJECTS' => '/api/data_form/get-master-data.php',
+                'AUTOCOMPLETE'  => '/api/data_form/get-autocomplete.php',
             ),
         ),
     );
@@ -797,12 +796,12 @@ function kidsoverprofits_enqueue_test_harness_assets() {
     $endpoint_candidates = array();
 
     if ($primary_theme_base) {
-        $endpoint_candidates[] = trailingslashit($primary_theme_base) . 'api/get-autocomplete.php';
+        $endpoint_candidates[] = trailingslashit($primary_theme_base) . 'api/data_form/get-autocomplete.php';
     }
 
     if (!empty($alternate_theme_bases)) {
         foreach ($alternate_theme_bases as $alias) {
-            $endpoint_candidates[] = trailingslashit($alias) . 'api/get-autocomplete.php';
+            $endpoint_candidates[] = trailingslashit($alias) . 'api/data_form/get-autocomplete.php';
         }
     }
 
@@ -826,6 +825,152 @@ function kidsoverprofits_enqueue_test_harness_assets() {
     );
 }
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_harness_assets', 40);
+
+if (!function_exists('kidsoverprofits_build_test_config')) {
+    /**
+     * Build a diagnostic configuration blob consumed by the test harness scripts.
+     *
+     * The config captures a snapshot of the current page context, the active theme,
+     * and the scripts/styles WordPress has queued so the browser-based tests can
+     * highlight missing assets. The function degrades gracefully when invoked in
+     * non-WordPress contexts (e.g., CLI linting) by returning a minimal structure.
+     *
+     * @return array
+     */
+    function kidsoverprofits_build_test_config() {
+        $config = array(
+            'generatedAt' => gmdate('c'),
+            'page'        => array(
+                'title' => '',
+                'slug'  => '',
+                'url'   => '',
+            ),
+            'theme'       => array(
+                'stylesheet' => function_exists('get_stylesheet') ? get_stylesheet() : '',
+                'template'   => function_exists('get_template') ? get_template() : '',
+                'directory'  => function_exists('get_stylesheet_directory_uri') ? untrailingslashit(get_stylesheet_directory_uri()) : '',
+            ),
+            'scripts'     => array(),
+            'css'         => array(),
+            'localizations' => array(),
+        );
+
+        if (function_exists('get_queried_object')) {
+            $queried = get_queried_object();
+
+            if ($queried) {
+                if (isset($queried->post_title) && $queried->post_title) {
+                    $config['page']['title'] = $queried->post_title;
+                }
+
+                if (isset($queried->post_name) && $queried->post_name) {
+                    $config['page']['slug'] = $queried->post_name;
+                } elseif (isset($queried->name) && $queried->name) {
+                    $config['page']['slug'] = $queried->name;
+                }
+            }
+        }
+
+        if (empty($config['page']['title']) && function_exists('wp_get_document_title')) {
+            $config['page']['title'] = wp_get_document_title();
+        }
+
+        if (function_exists('home_url')) {
+            $request_path = '';
+
+            if (isset($GLOBALS['wp']) && is_object($GLOBALS['wp']) && property_exists($GLOBALS['wp'], 'request')) {
+                $request_path = $GLOBALS['wp']->request;
+            } elseif (!empty($_SERVER['REQUEST_URI'])) {
+                $request_path = ltrim((string) $_SERVER['REQUEST_URI'], '/');
+            }
+
+            $config['page']['url'] = home_url($request_path ? '/' . ltrim($request_path, '/') : '/');
+        } elseif (!empty($_SERVER['REQUEST_URI'])) {
+            $config['page']['url'] = (string) $_SERVER['REQUEST_URI'];
+        }
+
+        $wp_scripts = null;
+
+        if (function_exists('wp_scripts')) {
+            $wp_scripts = wp_scripts();
+        } elseif (class_exists('WP_Scripts') && isset($GLOBALS['wp_scripts']) && $GLOBALS['wp_scripts'] instanceof WP_Scripts) {
+            $wp_scripts = $GLOBALS['wp_scripts'];
+        }
+
+        if ($wp_scripts && class_exists('WP_Scripts') && $wp_scripts instanceof WP_Scripts) {
+            $script_queue = is_array($wp_scripts->queue) ? $wp_scripts->queue : array();
+            $script_done  = is_array($wp_scripts->done) ? $wp_scripts->done : array();
+
+            foreach ($wp_scripts->registered as $handle => $script) {
+                $is_enqueued = in_array($handle, $script_queue, true) || in_array($handle, $script_done, true);
+                $expected    = (bool) preg_match('/(kidsover|kop|facility|report)/i', $handle);
+                $source      = '';
+
+                if ($script && isset($script->src)) {
+                    $source = $script->src;
+                }
+
+                if ($source && 0 === strpos($source, '/') && function_exists('home_url')) {
+                    $source = home_url($source);
+                }
+
+                $config['scripts'][] = array(
+                    'handle'     => $handle,
+                    'label'      => $handle,
+                    'source'     => $source,
+                    'isEnqueued' => $is_enqueued,
+                    'expected'   => $expected,
+                );
+
+                $localization = $wp_scripts->get_data($handle, 'data');
+
+                if (!empty($localization)) {
+                    $config['localizations'][] = array(
+                        'handle' => $handle,
+                        'data'   => $localization,
+                    );
+                }
+            }
+        }
+
+        $wp_styles = null;
+
+        if (function_exists('wp_styles')) {
+            $wp_styles = wp_styles();
+        } elseif (class_exists('WP_Styles') && isset($GLOBALS['wp_styles']) && $GLOBALS['wp_styles'] instanceof WP_Styles) {
+            $wp_styles = $GLOBALS['wp_styles'];
+        }
+
+        if ($wp_styles && class_exists('WP_Styles') && $wp_styles instanceof WP_Styles) {
+            $style_queue = is_array($wp_styles->queue) ? $wp_styles->queue : array();
+            $style_done  = is_array($wp_styles->done) ? $wp_styles->done : array();
+
+            foreach ($wp_styles->registered as $handle => $style) {
+                $is_enqueued = in_array($handle, $style_queue, true) || in_array($handle, $style_done, true);
+                $expected    = (bool) preg_match('/(kidsover|kop|facility|report|theme)/i', $handle);
+                $source      = '';
+
+                if ($style && isset($style->src)) {
+                    $source = $style->src;
+                }
+
+                if ($source && 0 === strpos($source, '/') && function_exists('home_url')) {
+                    $source = home_url($source);
+                }
+
+                $config['css'][] = array(
+                    'handle'     => $handle,
+                    'label'      => $handle,
+                    'source'     => $source,
+                    'isEnqueued' => $is_enqueued,
+                    'expected'   => $expected,
+                );
+            }
+        }
+
+        return $config;
+    }
+}
 
 /**
  * Enqueue test scripts for debugging display issues
