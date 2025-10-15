@@ -88,8 +88,14 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         // Ensure the fallback asset loader points at the active child theme when running inside WordPress.
         $theme_base = untrailingslashit(get_stylesheet_directory_uri());
         $content    = str_replace(
-            "window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child'",
-            "window.KOP_THEME_BASE || '" . esc_url_raw($theme_base) . "'",
+            "const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';",
+            "const DEFAULT_THEME_BASE = '" . esc_url_raw($theme_base) . "';",
+            $content
+        );
+
+        $content = str_replace(
+            "const defaultThemeBase = 'https://kidsoverprofits.org/wp-content/themes/child';",
+            "const defaultThemeBase = '" . esc_url_raw($theme_base) . "';",
             $content
         );
 

@@ -75,14 +75,74 @@
 
 </style>
 <script>
-    window.KOP_FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
-    window.KOP_FACILITY_FORM_CONFIG.mode = 'suggestions';
-    window.KOP_FACILITY_FORM_CONFIG.endpoints = Object.assign({
-        SAVE_PROJECT: '/wp-content/themes/child/api/save-suggestion.php',
-        LOAD_PROJECTS: '/wp-content/themes/child/api/get-master-data.php',
-        AUTOCOMPLETE: '/wp-content/themes/child/api/get-autocomplete.php'
-    }, window.KOP_FACILITY_FORM_CONFIG.endpoints || {});
-    window.FORM_MODE = 'suggestions';
+    (function configureKidsOverProfitsForm() {
+        const DEFAULT_THEME_BASE = 'https://kidsoverprofits.org/wp-content/themes/child';
+
+        function detectThemeBaseFromLocation() {
+            try {
+                const { origin, pathname } = window.location;
+                const normalizedPath = pathname.replace(/\/+$/, '');
+                const htmlSegmentIndex = normalizedPath.lastIndexOf('/html/');
+
+                if (htmlSegmentIndex !== -1) {
+                    const basePath = normalizedPath.substring(0, htmlSegmentIndex);
+                    return (origin + basePath).replace(/\/$/, '');
+                }
+            } catch (error) {
+                console.warn('Kids Over Profits: unable to auto-detect theme base from location.', error);
+            }
+
+            return '';
+        }
+
+        function normalizeBase(base, fallback) {
+            return (base || fallback).replace(/\/$/, '');
+        }
+
+        function joinUrl(base, relativePath) {
+            if (!relativePath) {
+                return relativePath;
+            }
+
+            if (/^(?:https?:)?\/\//i.test(relativePath) || relativePath.startsWith('/')) {
+                return relativePath;
+            }
+
+            return base.replace(/\/$/, '') + '/' + relativePath.replace(/^\//, '');
+        }
+
+        const detectedThemeBase = detectThemeBaseFromLocation();
+
+        if (!window.KOP_THEME_BASE && detectedThemeBase) {
+            window.KOP_THEME_BASE = detectedThemeBase;
+        }
+
+        if (!window.KOP_LOCAL_BASE && detectedThemeBase) {
+            window.KOP_LOCAL_BASE = detectedThemeBase;
+        }
+
+        const resolvedThemeBase = normalizeBase(window.KOP_THEME_BASE, detectedThemeBase || DEFAULT_THEME_BASE);
+        const resolvedLocalBase = normalizeBase(window.KOP_LOCAL_BASE, detectedThemeBase || '..');
+
+        window.KOP_DETECTED_THEME_BASE = detectedThemeBase;
+        window.KOP_RESOLVED_THEME_BASE = resolvedThemeBase;
+        window.KOP_RESOLVED_LOCAL_BASE = resolvedLocalBase;
+
+        const existingConfig = window.KOP_FACILITY_FORM_CONFIG || {};
+        const existingEndpoints = existingConfig.endpoints || {};
+        const defaultEndpoints = {
+            SAVE_PROJECT: joinUrl(resolvedThemeBase, 'api/save-suggestion.php'),
+            LOAD_PROJECTS: joinUrl(resolvedThemeBase, 'api/get-master-data.php'),
+            AUTOCOMPLETE: joinUrl(resolvedThemeBase, 'api/get-autocomplete.php')
+        };
+
+        window.KOP_FACILITY_FORM_CONFIG = Object.assign({}, existingConfig, {
+            mode: 'suggestions',
+            endpoints: Object.assign({}, defaultEndpoints, existingEndpoints)
+        });
+
+        window.FORM_MODE = 'suggestions';
+    })();
 </script>
 <div class="container">
     <div class="admin-header">
@@ -510,8 +570,9 @@
                 return;
             }
 
-            const remoteBase = (window.KOP_THEME_BASE || 'https://kidsoverprofits.org/wp-content/themes/child').replace(/\/$/, '');
-            const localBase = (window.KOP_LOCAL_BASE || '..').replace(/\/$/, '');
+            const defaultThemeBase = 'https://kidsoverprofits.org/wp-content/themes/child';
+            const remoteBase = (window.KOP_RESOLVED_THEME_BASE || window.KOP_THEME_BASE || window.KOP_DETECTED_THEME_BASE || defaultThemeBase).replace(/\/$/, '');
+            const localBase = (window.KOP_RESOLVED_LOCAL_BASE || window.KOP_LOCAL_BASE || window.KOP_DETECTED_THEME_BASE || '..').replace(/\/$/, '');
             const assetBases = [localBase, remoteBase].filter(Boolean).filter((value, index, array) => array.indexOf(value) === index);
 
             const stylesheets = [
