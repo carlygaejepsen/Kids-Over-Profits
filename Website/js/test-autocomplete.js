@@ -1,4 +1,12 @@
-const API_ENDPOINT = 'https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php';
+const AUTOCOMPLETE_TEST_CONFIG = window.KOP_AUTOCOMPLETE_TEST_CONFIG || {};
+const API_ENDPOINT = AUTOCOMPLETE_TEST_CONFIG.endpoint || 'https://kidsoverprofits.org/wp-content/themes/child/api/get-autocomplete.php';
+
+if (AUTOCOMPLETE_TEST_CONFIG.endpoint) {
+    const endpointLabel = document.querySelector('[data-autocomplete-endpoint]');
+    if (endpointLabel) {
+        endpointLabel.textContent = AUTOCOMPLETE_TEST_CONFIG.endpoint;
+    }
+}
 const testResults = {};
 
 async function testCategory(category, defaultQuery) {

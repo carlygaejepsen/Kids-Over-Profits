@@ -154,31 +154,6 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
             $content
         );
 
-        $wordpress_context_script = '<script>(function(){' .
-            'var themeBases = ' . wp_json_encode(array_values($available_theme_bases)) . ';' .
-            'window.KOP_IS_WORDPRESS = true;' .
-            'if(themeBases.length && (!window.KOP_THEME_BASE || !window.KOP_THEME_BASE.length)){' .
-                'window.KOP_THEME_BASE = themeBases[0];' .
-            '}' .
-            'if(themeBases.length && (!window.KOP_LOCAL_BASE || !window.KOP_LOCAL_BASE.length)){' .
-                'window.KOP_LOCAL_BASE = themeBases[0];' .
-            '}' .
-            'if(!Array.isArray(window.KOP_THEME_BASES)){' .
-                'window.KOP_THEME_BASES = [];' .
-            '}' .
-            'themeBases.forEach(function(base){' .
-                'if(base && window.KOP_THEME_BASES.indexOf(base) === -1){' .
-                    'window.KOP_THEME_BASES.unshift(base);' .
-                '}' .
-            '});' .
-        '})();</script>';
-
-        if (false !== strpos($content, '<div class="container">')) {
-            $content = str_replace('<div class="container">', $wordpress_context_script . '\n<div class="container">', $content);
-        } else {
-            $content = $wordpress_context_script . $content;
-        }
-
         if (false === strpos($content, 'data-kop-theme-base')) {
             $content = str_replace(
                 '<div class="container"',
@@ -595,6 +570,36 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         }
     }
 
+    $theme_directory_uri   = untrailingslashit(get_stylesheet_directory_uri());
+    $normalized_theme_base = kidsoverprofits_normalize_theme_base_uri($theme_directory_uri);
+    $active_theme_base     = $normalized_theme_base ? $normalized_theme_base : $theme_directory_uri;
+    $child_theme_base      = trailingslashit($active_theme_base);
+
+    $form_configs = array(
+        'admin-data' => array(
+            'mode'      => 'master',
+            'endpoints' => array(
+                'SAVE_PROJECT' => $child_theme_base . 'api/save-master.php',
+                'LOAD_PROJECTS' => $child_theme_base . 'api/get-master-data.php',
+                'AUTOCOMPLETE'  => $child_theme_base . 'api/get-autocomplete.php',
+            ),
+        ),
+        'data' => array(
+            'mode'      => 'suggestions',
+            'endpoints' => array(
+                'SAVE_PROJECT' => $child_theme_base . 'api/save-suggestion.php',
+                'LOAD_PROJECTS' => $child_theme_base . 'api/get-master-data.php',
+                'AUTOCOMPLETE'  => $child_theme_base . 'api/get-autocomplete.php',
+            ),
+        ),
+    );
+
+    $fallback_projects_url = kidsoverprofits_get_latest_json_url('js/data', 'facility-projects-export*.json');
+
+    if (!empty($fallback_projects_url) && isset($form_configs['data'])) {
+        $form_configs['data']['fallbackProjectsUrl'] = $fallback_projects_url;
+    }
+
     $script_map = array(
         'admin-data' => array(
             array('handle' => 'kidsoverprofits-app-logic', 'path' => 'js/app-logic.js'),
@@ -623,14 +628,80 @@ function kidsoverprofits_enqueue_data_tool_assets() {
         $path   = $script['path'];
         $deps   = $script['deps'] ?? array();
 
+        $localizations = array();
+
+        if (isset($form_configs[$slug]) && 'kidsoverprofits-facility-form' === $handle) {
+            $localizations[] = array(
+                'name' => 'KOP_FACILITY_FORM_CONFIG',
+                'data' => $form_configs[$slug],
+            );
+        }
+
         if (wp_script_is($handle, 'enqueued')) {
             continue;
         }
 
-        kidsoverprofits_enqueue_theme_script($handle, $path, $deps, true);
+        kidsoverprofits_enqueue_theme_script($handle, $path, $deps, true, $localizations);
+    }
+
+    if (isset($form_configs[$slug])) {
+        $form_mode = $form_configs[$slug]['mode'];
+        wp_add_inline_script(
+            'kidsoverprofits-facility-form',
+            'window.FORM_MODE = ' . wp_json_encode($form_mode) . ';',
+            'before'
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_data_tool_assets', 25);
+
+/**
+ * Enqueue assets for internal testing harness pages.
+ */
+function kidsoverprofits_enqueue_test_harness_assets() {
+    if (!is_page()) {
+        return;
+    }
+
+    $page_id = get_queried_object_id();
+
+    if (!$page_id) {
+        return;
+    }
+
+    $slug = get_post_field('post_name', $page_id);
+
+    if ('test-autocomplete' !== $slug) {
+        return;
+    }
+
+    $style = kidsoverprofits_get_theme_asset_details('css/test-harnesses.css');
+
+    if ($style) {
+        wp_enqueue_style('kidsoverprofits-test-harnesses', $style['uri'], array(), $style['version']);
+    }
+
+    $theme_directory_uri   = untrailingslashit(get_stylesheet_directory_uri());
+    $normalized_theme_base = kidsoverprofits_normalize_theme_base_uri($theme_directory_uri);
+    $active_theme_base     = $normalized_theme_base ? $normalized_theme_base : $theme_directory_uri;
+    $endpoint              = trailingslashit($active_theme_base) . 'api/get-autocomplete.php';
+
+    kidsoverprofits_enqueue_theme_script(
+        'kidsoverprofits-test-autocomplete',
+        'js/test-autocomplete.js',
+        array(),
+        true,
+        array(
+            array(
+                'name' => 'KOP_AUTOCOMPLETE_TEST_CONFIG',
+                'data' => array(
+                    'endpoint' => $endpoint,
+                ),
+            ),
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_harness_assets', 40);
 
 /**
  * Enqueue test scripts for debugging display issues
