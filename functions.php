@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once get_stylesheet_directory() . '/inc/template-helpers.php';
+// require_once get_stylesheet_directory() . '/inc/template-helpers.php';
 require_once get_stylesheet_directory() . '/inc/test-config.php';
 
 if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
@@ -454,22 +454,22 @@ function kidsoverprofits_enqueue_state_report_assets() {
     $configs = array(
         'ca-reports' => array(
             'handle'    => 'ca-reports-display',
-            'script'    => 'js/ca-reports.js',
+            'script'    => 'js/state_reports/ca-reports.js',
             'json'      => array(
-                'dir'     => 'js/data/CA_json/',
+                'dir'     => 'js/data/ca_reports/',
                 'pattern' => '*.json',
             ),
         ),
         'ut-reports' => array(
             'handle' => 'ut-reports-display',
-            'script' => 'js/ut_reports.js',
+            'script' => 'js/state_reports/ut_reports.js',
             'json'   => array(
                 'files' => array('js/data/ut_reports.json'),
             ),
         ),
         'az-reports' => array(
             'handle' => 'az-reports-display',
-            'script' => 'js/az_reports.js',
+            'script' => 'js/state_reports/az_reports.js',
             'json'   => array(
                 'dir'     => 'js/data/az_reports/',
                 'pattern' => '*.json',
@@ -477,7 +477,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
         ),
         'tx-reports' => array(
             'handle' => 'tx-reports-display',
-            'script' => 'js/tx_reports.js',
+            'script' => 'js/state_reports/tx_reports.js',
             'json'   => array(
                 'dir'     => 'js/data/TX_reports/',
                 'pattern' => '*.json',
@@ -485,21 +485,21 @@ function kidsoverprofits_enqueue_state_report_assets() {
         ),
         'mt-reports' => array(
             'handle' => 'mt-reports-display',
-            'script' => 'js/mt_reports.js',
+            'script' => 'js/state_reports/mt_reports.js',
             'json'   => array(
                 'files' => array('js/data/mt_reports.json'),
             ),
         ),
         'ct-reports' => array(
             'handle' => 'ct-reports-display',
-            'script' => 'js/ct_reports.js',
+            'script' => 'js/state_reports/ct_reports.js',
             'json'   => array(
                 'files' => array('js/data/ct_reports.json'),
             ),
         ),
         'wa-reports' => array(
             'handle' => 'wa-reports-display',
-            'script' => 'js/wa_reports.js',
+            'script' => 'js/state_reports/wa_reports.js',
             'json'   => array(
                 'files' => array('js/data/wa_reports.json'),
             ),

@@ -35,7 +35,7 @@ class StateReportsE2ETest {
         ];
         
         foreach ($jsFiles as $file) {
-            $url = $this->baseUrl . '/wp-content/themes/child/Website/js/' . $file;
+            $url = $this->baseUrl . '/wp-content/themes/child/js/' . $file;
             $response = $this->checkUrlAccessible($url);
             
             if ($response['status'] === 200) {
