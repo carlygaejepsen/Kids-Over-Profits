@@ -1,5 +1,6 @@
 <?php
 /**
+ * Template Name: Data Submission
  * Template for the data submission page.
  *
  * @package Kids_Over_Profits
