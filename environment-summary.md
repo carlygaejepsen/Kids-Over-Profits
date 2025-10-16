@@ -29,3 +29,9 @@ This document outlines the key details of the user's development and server envi
 *   **File System:** Full access to read, write, and list files within the project directory.
 *   **Shell Access:** Ability to run shell commands on the server via SSH.
 *   **Web Fetch:** Ability to make HTTP requests to public URLs.
+
+## 5. Access Limitations
+
+*   **No Credential Handling:** This automated workspace cannot securely receive, store, or use production credentials (e.g., SSH keys, passwords, VPN profiles). Any sensitive secret shared in chat is immediately discarded and cannot be applied within the container session.
+*   **Isolated Execution:** Actions are confined to the provided project files. The agent cannot initiate direct SSH or SFTP connections to your infrastructure, so production diagnostics must rely on locally available logs, configuration snapshots, or sanitized command outputs supplied by the user.
+*   **HTTP-Only Probing:** While outbound HTTP(S) requests such as `curl` are possible, restrictions like firewalls or authentication gates may prevent successful retrievals, limiting remote validation to publicly accessible endpoints.
