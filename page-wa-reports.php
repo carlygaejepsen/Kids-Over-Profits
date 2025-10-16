@@ -7,6 +7,10 @@
 
 get_header();
 
+$theme_base = kidsoverprofits_normalize_theme_base_uri(get_stylesheet_directory_uri());
+printf('<div data-kop-theme-base="%s" style="display:none;"></div>', esc_attr($theme_base));
+
+
 ?>
 
 <main id="primary" class="site-main site-main--facility-report site-main--wa-reports">

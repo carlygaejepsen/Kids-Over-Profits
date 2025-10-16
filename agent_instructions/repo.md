@@ -146,3 +146,27 @@ rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./ /home/kidsover/public_html
 - AES-256-CBC encryption for sensitive data
 - .htaccess protection for upload directories
 - File type and size validation
+
+## Deployment Security Checklist
+Before deploying to production, complete the following steps:
+
+1. **Environment Secrets**
+   - Ensure `.env` exists on the server with up-to-date database credentials
+   - Confirm `.env` files are excluded from version control
+   - Rotate credentials if the repository previously contained secrets
+
+2. **File Permissions**
+   - Set `chmod 600` on `api/.env`
+   - Set `chmod 644` on PHP, CSS, and JS files; ensure directories are `755`
+
+3. **Configuration Verification**
+   - Verify `api/config-loader.php` loads without errors (`php -l api/config-loader.php`)
+   - Test API endpoints: `curl https://kidsoverprofits.org/wp-content/themes/child/api/data_form/get-master-data.php`
+
+4. **Logging & Monitoring**
+   - Check server error logs for configuration warnings
+   - Confirm deprecated `api/config.php` is only referencing the new loader
+
+5. **Post-Deployment Validation**
+   - Run `php tests/deployment-health-check.php`
+   - Visit a data tool page with `?debug=1` to confirm CSS/JS load without fallbacks

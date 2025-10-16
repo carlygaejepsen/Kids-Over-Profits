@@ -36,7 +36,7 @@ if (!is_user_logged_in() || !current_user_can('administrator')) {
     exit;
 }
 
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config-loader.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

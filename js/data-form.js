@@ -2,7 +2,15 @@
 window.FORM_MODE = 'suggestions';
 
 const DATA_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
-const DATA_FORM_DEFAULT_ENDPOINT = '/api/data_form/save-suggestion.php';
+const DATA_FORM_DEFAULT_ENDPOINT = 'api/data_form/save-suggestion.php';
+
+function getResolverEndpoint(filename, fallback) {
+    if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
+        return window.KOP_API.getEndpoint(filename);
+    }
+
+    return fallback;
+}
 
 function normaliseBaseCandidate(value) {
     if (typeof value !== 'string') {
@@ -63,7 +71,18 @@ function resolveEndpointUrl(path) {
         return path;
     }
 
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const trimmedPath = path.trim();
+    const filename = trimmedPath.split('/').pop();
+
+    if (filename && /\.php$/i.test(filename)) {
+        const resolverUrl = getResolverEndpoint(filename, '');
+
+        if (resolverUrl) {
+            return resolverUrl;
+        }
+    }
+
+    const normalizedPath = trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
     const candidates = collectBaseCandidates();
 
     for (const base of candidates) {
@@ -86,7 +105,9 @@ function getSuggestionEndpoint() {
         (DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SAVE_PROJECT) ||
         DATA_FORM_DEFAULT_ENDPOINT;
 
-    const resolved = resolveEndpointUrl(configuredPath) || configuredPath;
+    const resolved =
+        resolveEndpointUrl(configuredPath) ||
+        getResolverEndpoint('save-suggestion.php', '/api/data_form/save-suggestion.php');
     window.__KOP_SUGGESTION_ENDPOINT = resolved;
     return resolved;
 }
