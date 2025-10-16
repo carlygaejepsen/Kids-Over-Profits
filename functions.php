@@ -123,7 +123,7 @@ function load_ut_reports_scripts() {
         
         wp_localize_script(
             'ut-reports-display',
-            'myThemeData',
+            'utReportsData',
             array('jsonFileUrls' => $json_urls)
         );
     }

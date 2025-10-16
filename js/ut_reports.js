@@ -103,8 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('Starting to initialize Utah report...');
 
-            // NOTE: This part assumes myThemeData.jsonFileUrls is correctly defined elsewhere
-            const urls = (window.myThemeData && Array.isArray(window.myThemeData.jsonFileUrls)) ? window.myThemeData.jsonFileUrls : [];
+            // NOTE: Prefer the UT-specific data injected by WordPress, but gracefully fall back if needed
+            const themeData = window.utReportsData || window.myThemeData || {};
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             console.log('URLs to fetch:', urls);
 
             if (!urls || urls.length === 0) {
