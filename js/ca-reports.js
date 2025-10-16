@@ -1,5 +1,10 @@
 // California Reports JavaScript - Last deployed: 2025-01-15
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('=== CA REPORTS DEBUG START ===');
+    console.log('Script loaded successfully');
+    console.log('typeof myThemeData:', typeof myThemeData);
+    console.log('myThemeData:', window.myThemeData);
+
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
     const alphabetFilter = document.getElementById('alphabet-filter');
@@ -20,12 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initializeReport() {
         try {
             console.log('Starting to initialize report...');
+
+            // Check if myThemeData exists
+            if (typeof myThemeData === 'undefined') {
+                console.error('ERROR: myThemeData is undefined');
+                reportContainer.innerHTML = '<p class="error">Configuration error: myThemeData not loaded. Check WordPress functions.php</p>';
+                return;
+            }
+
             // It now gets the ARRAY of URLs from the myThemeData object
             const urls = myThemeData.jsonFileUrls;
             console.log('URLs to fetch:', urls);
+            console.log('Number of URLs:', urls ? urls.length : 0);
 
             if (!urls || urls.length === 0) {
-                reportContainer.innerHTML = '<p>No data files found to load.</p>';
+                console.error('ERROR: No URLs found in myThemeData.jsonFileUrls');
+                reportContainer.innerHTML = '<p>No data files found to load. Check that JSON files exist in /js/data/ directory.</p>';
                 return;
             }
 

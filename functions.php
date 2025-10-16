@@ -10,28 +10,21 @@ if (!defined('ABSPATH')) {
 
 /**
  * Enqueue parent theme styles
+ * Note: Child theme style.css exists but is empty - all custom styles are in /css/ directory
  */
 function kadence_child_enqueue_styles() {
     $theme = wp_get_theme();
     $parent_version = $theme->parent() ? $theme->parent()->get('Version') : $theme->get('Version');
 
-    // Enqueue parent theme stylesheet
+    // Enqueue parent theme stylesheet only
     wp_enqueue_style(
         'kadence-parent-style',
         get_template_directory_uri() . '/style.css',
         array(),
         $parent_version
     );
-
-    // Enqueue child theme stylesheet
-    wp_enqueue_style(
-        'kadence-child-style',
-        get_stylesheet_uri(),
-        array('kadence-parent-style'),
-        wp_get_theme()->get('Version')
-    );
 }
-add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
+add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 10);
 
 // =================================================================
 // STATE REPORT PAGES
@@ -41,19 +34,45 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * Load scripts for CA reports page (California - multiple JSON files)
  */
 function load_ca_reports_scripts() {
+    // DEBUG: Check if function is even being called and if page check works
+    error_log('load_ca_reports_scripts() called');
+    error_log('is_page check result: ' . (is_page('ca-reports') ? 'TRUE' : 'FALSE'));
+    error_log('Current page slug: ' . (is_page() ? get_post_field('post_name', get_queried_object_id()) : 'not a page'));
+
+    // VISIBLE DEBUG: Output to HTML source
+    add_action('wp_footer', function() {
+        echo '<!-- CA Reports Debug: Function called, is_page result: ' . (is_page('ca-reports') ? 'TRUE' : 'FALSE') . ' -->';
+        echo '<!-- Script URL: ' . get_stylesheet_directory_uri() . '/js/ca-reports.js -->';
+    });
+
     if (is_page('ca-reports')) {
+        // DEBUG: Check actual paths
+        error_log('Theme directory: ' . get_stylesheet_directory());
+        error_log('Theme URI: ' . get_stylesheet_directory_uri());
+        error_log('Script URL will be: ' . get_stylesheet_directory_uri() . '/js/ca-reports.js');
+
         $json_urls = array();
         $json_path = get_stylesheet_directory() . '/js/data/';
         $json_url_base = get_stylesheet_directory_uri() . '/js/data/';
 
+        error_log('JSON Path: ' . $json_path);
+        error_log('Is directory: ' . (is_dir($json_path) ? 'YES' : 'NO'));
+
         if (is_dir($json_path)) {
             $json_files = glob($json_path . 'ccl_reports_batch_*.json');
+            error_log('JSON files found: ' . count($json_files));
 
             if ($json_files) {
                 foreach ($json_files as $file) {
                     $json_urls[] = esc_url($json_url_base . basename($file));
                 }
+                error_log('First JSON URL: ' . (count($json_urls) > 0 ? $json_urls[0] : 'NONE'));
+                error_log('Total JSON URLs: ' . count($json_urls));
+            } else {
+                error_log('No JSON files matched the glob pattern');
             }
+        } else {
+            error_log('Directory does not exist: ' . $json_path);
         }
 
         $script_path = get_stylesheet_directory() . '/js/ca-reports.js';
