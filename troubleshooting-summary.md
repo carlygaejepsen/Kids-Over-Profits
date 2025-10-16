@@ -58,7 +58,24 @@ The earlier guidance placed the burden of validation on you. To keep the investi
 *   **Step 5: Collect Error Logs (If Accessible)**
     *   **Command:** Attempt to read WordPress or web-server logs if they are committed or exposed to the repository snapshot.
     *   **Expectation:** Direct 404 log entries could corroborate whether a security layer is intercepting the request.
-    *   **Status:** Pending—no logs are present in the repository; additional data would require secure access to the production server.
+*   **Status:** Pending—no logs are present in the repository; additional data would require secure access to the production server.
+
+### 4.1 Follow-up: LiteSpeed error log review (2025-10-16)
+
+After obtaining a LiteSpeed error log excerpt from production (timestamps around 2025-10-16 14:00–16:55 UTC), the following additional evidence was recorded:
+
+* Repeated entries of `File not found [/home/kidsover/public_html/wp-content/themes/child/js/... ]` for every requested JavaScript asset (e.g., `ca-reports.js`, `facility-form.js`, `facility-report-generator.js`).
+* For each miss, LiteSpeed immediately logged `[HTAccess] Failed to open [/home/kidsover/public_html/wp-content/themes/child/.htaccess]: Permission denied`.
+
+These two messages together indicate the web server process cannot traverse the `wp-content/themes/child` directory to read static assets because the directory (or one of its parents) is missing the standard world-readable execute bit (typically `0755` for directories) or has an ownership mismatch. When LiteSpeed cannot read the directory, it reports “file not found,” even though the JavaScript files exist.
+
+**Remediation guidance:**
+
+1. From the hosting control panel or SSH, ensure `wp-content`, `wp-content/themes`, and the child theme directory itself have directory permissions of `0755` (rwx for owner, rx for group/world) and that files inside use `0644`.
+2. Confirm the owner/group on those paths matches the account that runs PHP (usually the cPanel user). If ownership was changed while uploading files via SFTP/SSH, reset it with `chown -R kidsover:kidsover public_html/wp-content/themes/child` (replace user/group as appropriate for the host).
+3. After correcting permissions and ownership, clear LiteSpeed Cache and re-test `https://kidsoverprofits.org/wp-content/themes/child/js/ca-reports.js`. The request should return `200 OK` once the server can read the directory again.
+
+Addressing the file-system permissions resolves the 403/404 symptoms without further modifications to Wordfence or `.htaccess`.
 
 *   **Step 6: Run PHP Syntax Checks on Enqueue Logic**
     *   **Command:** `php -l functions.php` and `for f in api/*.php; do php -l "$f"; done`
