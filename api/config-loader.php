@@ -71,26 +71,46 @@ foreach ($possible_paths as $path) {
 // 4. Fail with error
 
 function kop_get_config($key, $default = null) {
-    // Try WordPress constants first
-    $wp_constant = 'KOP_' . $key;
-    if (defined($wp_constant)) {
-        return constant($wp_constant);
+    $alternate_keys = [
+        'DB_PASS' => ['DB_PASSWORD'],
+        'DB_USER' => ['DB_USERNAME'],
+    ];
+
+    $lookup_keys = array_merge([$key], $alternate_keys[$key] ?? []);
+
+    // Try WordPress constants first (custom prefixed and native)
+    $constant_candidates = [];
+    foreach ($lookup_keys as $lookup_key) {
+        $constant_candidates[] = 'KOP_' . $lookup_key;
+        $constant_candidates[] = $lookup_key;
+    }
+
+    foreach ($constant_candidates as $constant_name) {
+        if (defined($constant_name)) {
+            return constant($constant_name);
+        }
     }
 
     // Try environment variables
-    $env_value = getenv($key);
-    if ($env_value !== false) {
-        return $env_value;
+    foreach ($lookup_keys as $lookup_key) {
+        $env_value = getenv($lookup_key);
+        if ($env_value !== false) {
+            return $env_value;
+        }
     }
 
     // Try $_ENV superglobal
-    if (isset($_ENV[$key])) {
-        return $_ENV[$key];
+    foreach ($lookup_keys as $lookup_key) {
+        if (isset($_ENV[$lookup_key])) {
+            return $_ENV[$lookup_key];
+        }
     }
 
     // Try $_SERVER superglobal
-    if (isset($_SERVER[$key])) {
-        return $_SERVER[$key];
+    foreach ($lookup_keys as $lookup_key) {
+        if (isset($_SERVER[$lookup_key])) {
+            return $_SERVER[$lookup_key];
+        }
     }
 
     // Return default or throw error
