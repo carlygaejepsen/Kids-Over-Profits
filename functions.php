@@ -9,6 +9,66 @@ if (!defined('ABSPATH')) {
 }
 
 
+if (!function_exists('kidsoverprofits_log')) {
+    /**
+     * Centralized logging helper for Kids Over Profits.
+     *
+     * @param string $message Log message.
+     * @param string $level   Severity level (INFO, WARNING, ERROR, DEBUG).
+     * @param array  $context Additional context data.
+     */
+    function kidsoverprofits_log($message, $level = 'INFO', $context = array()) {
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            return;
+        }
+
+        $timestamp = current_time('Y-m-d H:i:s');
+        $formatted_context = !empty($context) ? ' | Context: ' . wp_json_encode($context) : '';
+
+        error_log(sprintf('[%s] [Kids Over Profits] [%s] %s%s', $timestamp, strtoupper($level), $message, $formatted_context));
+
+        if (in_array(strtoupper($level), array('ERROR', 'WARNING'), true)) {
+            $stored = get_transient('kop_recent_errors');
+            if (!is_array($stored)) {
+                $stored = array();
+            }
+
+            $stored[] = array(
+                'timestamp' => $timestamp,
+                'level'     => strtoupper($level),
+                'message'   => $message,
+                'context'   => $context,
+            );
+
+            $stored = array_slice($stored, -50);
+            set_transient('kop_recent_errors', $stored, DAY_IN_SECONDS);
+        }
+    }
+}
+
+if (!function_exists('kidsoverprofits_get_recent_errors')) {
+    /**
+     * Retrieve recently logged errors from transient storage.
+     *
+     * @return array
+     */
+    function kidsoverprofits_get_recent_errors() {
+        $stored = get_transient('kop_recent_errors');
+
+        return is_array($stored) ? $stored : array();
+    }
+}
+
+if (!function_exists('kidsoverprofits_clear_errors')) {
+    /**
+     * Clear stored log entries.
+     */
+    function kidsoverprofits_clear_errors() {
+        delete_transient('kop_recent_errors');
+    }
+}
+
+
 
 if (!function_exists('kidsoverprofits_normalize_theme_base_uri')) {
     /**
@@ -79,6 +139,46 @@ if (!function_exists('kidsoverprofits_get_theme_base_aliases')) {
     }
 }
 
+if (!function_exists('kidsoverprofits_verify_theme_base_accessible')) {
+    /**
+     * Verify that a theme base URI is accessible by checking for a known asset.
+     *
+     * @param string $uri Theme base URI.
+     * @return bool True when the URI responds with a successful status code.
+     */
+    function kidsoverprofits_verify_theme_base_accessible($uri) {
+        if (empty($uri)) {
+            return false;
+        }
+
+        $test_file = trailingslashit($uri) . 'style.css';
+
+        $response = wp_remote_head(
+            $test_file,
+            array(
+                'timeout'   => 5,
+                'sslverify' => false,
+            )
+        );
+
+        if (is_wp_error($response)) {
+            kidsoverprofits_log(
+                sprintf('Theme base verification failed for %s', $uri),
+                'ERROR',
+                array(
+                    'uri'   => $uri,
+                    'error' => $response->get_error_message(),
+                )
+            );
+            return false;
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+
+        return $status_code >= 200 && $status_code < 400;
+    }
+}
+
 if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
     /**
      * Retrieve a theme asset's URI and cache-busting version.
@@ -94,7 +194,11 @@ if (!function_exists('kidsoverprofits_get_theme_asset_details')) {
         $file_path = get_theme_file_path($relative_path);
 
         if (!$file_path || !file_exists($file_path)) {
-            error_log(sprintf('[Kids Over Profits] Asset not found: %s', $relative_path));
+            kidsoverprofits_log(
+                sprintf('Asset not found: %s', $relative_path),
+                'ERROR',
+                array('path' => $relative_path, 'function' => __FUNCTION__)
+            );
             return false;
         }
 
@@ -136,6 +240,103 @@ if (!function_exists('kidsoverprofits_enqueue_theme_style')) {
     }
 }
 
+if (!function_exists('kidsoverprofits_enqueue_style_with_fallback')) {
+    /**
+     * Enqueue a stylesheet with optional inline fallback support.
+     *
+     * @param string $handle          WordPress style handle.
+     * @param string $relative_path   Relative file path within the theme.
+     * @param array  $dependencies    Optional list of style handles this stylesheet depends on.
+     * @param string $media           Optional media attribute value.
+     * @param bool   $inline_fallback Whether to inline small, critical CSS files.
+     *
+     * @return bool True when the stylesheet is handled, false on failure.
+     */
+    function kidsoverprofits_enqueue_style_with_fallback($handle, $relative_path, $dependencies = array(), $media = 'all', $inline_fallback = true) {
+        if (!$handle || !$relative_path) {
+            return false;
+        }
+
+        $asset = kidsoverprofits_get_theme_asset_details($relative_path);
+
+        if (!$asset) {
+            kidsoverprofits_log(
+                sprintf('CSS not found: %s', $relative_path),
+                'ERROR',
+                array('path' => $relative_path, 'handle' => $handle)
+            );
+            return false;
+        }
+
+        $file_path   = get_theme_file_path($relative_path);
+        $file_size   = ($file_path && file_exists($file_path)) ? filesize($file_path) : 0;
+        $is_critical = in_array($handle, array('kidsoverprofits-common', 'kidsoverprofits-layout'), true);
+
+        if ($inline_fallback && $file_size > 0 && $file_size < 51200 && $is_critical) {
+            $css_content = file_get_contents($file_path);
+
+            if (false !== $css_content) {
+                add_action(
+                    'wp_head',
+                    function () use ($css_content, $handle) {
+                        printf(
+                            '<!-- Inlined CSS: %1$s --><style id="%1$s-inline">%2$s</style>',
+                            esc_attr($handle),
+                            wp_kses($css_content, array())
+                        );
+                    },
+                    5
+                );
+
+                kidsoverprofits_log(
+                    sprintf('Inlined critical CSS: %s', $relative_path),
+                    'INFO',
+                    array('path' => $relative_path, 'bytes' => $file_size)
+                );
+
+                return true;
+            }
+        }
+
+        wp_enqueue_style($handle, $asset['uri'], $dependencies, $asset['version'], $media);
+
+        $theme_bases     = kidsoverprofits_get_theme_base_aliases(get_stylesheet_directory_uri());
+        $alternate_urls  = array();
+
+        foreach ($theme_bases as $base) {
+            $alternate_urls[] = trailingslashit($base) . ltrim($relative_path, '/');
+        }
+
+        if (!empty($alternate_urls)) {
+            wp_enqueue_script('wp-polyfill');
+            wp_add_inline_script(
+                'wp-polyfill',
+                sprintf(
+                    'if(window.KOP_CSS_FALLBACKS===undefined)window.KOP_CSS_FALLBACKS={};window.KOP_CSS_FALLBACKS[%s]=%s;',
+                    wp_json_encode($handle),
+                    wp_json_encode($alternate_urls)
+                )
+            );
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Output API base metadata for front-end scripts.
+ */
+function kidsoverprofits_add_api_meta() {
+    $theme_base = kidsoverprofits_normalize_theme_base_uri(get_stylesheet_directory_uri());
+    $api_base   = trailingslashit($theme_base) . 'api/data_form';
+
+    printf(
+        '<meta name="kids-over-profits-api-base" content="%s" />' . "\n",
+        esc_url($api_base)
+    );
+}
+add_action('wp_head', 'kidsoverprofits_add_api_meta', 1);
+
 if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
     /**
      * Load a large HTML template for the facility data tools and adjust it for the current context.
@@ -168,14 +369,22 @@ if (!function_exists('kidsoverprofits_get_and_modify_form_template')) {
         }
 
         if (!file_exists($template_path)) {
-            error_log(sprintf('[Kids Over Profits] Form template not found: %s', $template_path));
+            kidsoverprofits_log(
+                sprintf('Form template not found: %s', $template_path),
+                'ERROR',
+                array('template' => $template_path)
+            );
             return '';
         }
 
         $content = file_get_contents($template_path);
 
         if (false === $content) {
-            error_log(sprintf('[Kids Over Profits] Failed to read form template: %s', $template_path));
+            kidsoverprofits_log(
+                sprintf('Failed to read form template: %s', $template_path),
+                'ERROR',
+                array('template' => $template_path)
+            );
             return '';
         }
 
@@ -270,7 +479,11 @@ function kidsoverprofits_enqueue_theme_script($handle, $relative_path, $dependen
     $file_path = get_theme_file_path($relative_path);
 
     if (!$file_path || !file_exists($file_path)) {
-        error_log(sprintf('[Kids Over Profits] Script not found: %s', $relative_path));
+        kidsoverprofits_log(
+            sprintf('Script not found: %s', $relative_path),
+            'ERROR',
+            array('path' => $relative_path, 'handle' => $handle)
+        );
         return false;
     }
 
@@ -335,6 +548,18 @@ function kadence_child_enqueue_styles() {
         array('kadence-parent-style'),
         $child_version
     );
+
+    $fallback_script = kidsoverprofits_get_theme_asset_details('js/css-fallback-loader.js');
+
+    if ($fallback_script) {
+        wp_enqueue_script(
+            'kidsoverprofits-css-fallback',
+            $fallback_script['uri'],
+            array(),
+            $fallback_script['version'],
+            false
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
 
@@ -555,7 +780,7 @@ function kidsoverprofits_enqueue_state_report_assets() {
         $deps   = $style['deps'] ?? array();
         $media  = $style['media'] ?? 'all';
 
-        kidsoverprofits_enqueue_theme_style($handle, $path, $deps, $media);
+        kidsoverprofits_enqueue_style_with_fallback($handle, $path, $deps, $media, true);
     }
 
     $config    = $configs[$slug];
@@ -600,6 +825,18 @@ add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_state_report_assets');
  * Enqueue shared assets for the data management tools.
  */
 function kidsoverprofits_enqueue_data_tool_assets() {
+    $api_resolver = kidsoverprofits_get_theme_asset_details('js/api-endpoint-resolver.js');
+
+    if ($api_resolver) {
+        wp_enqueue_script(
+            'kidsoverprofits-api-resolver',
+            $api_resolver['uri'],
+            array(),
+            $api_resolver['version'],
+            false
+        );
+    }
+
     if (!is_page()) {
         return;
     }
@@ -635,7 +872,7 @@ function kidsoverprofits_enqueue_data_tool_assets() {
             $deps   = $style['deps'] ?? array();
             $media  = $style['media'] ?? 'all';
 
-            kidsoverprofits_enqueue_theme_style($handle, $path, $deps, $media);
+            kidsoverprofits_enqueue_style_with_fallback($handle, $path, $deps, $media, true);
         }
     }
 
@@ -863,6 +1100,20 @@ function kidsoverprofits_enqueue_test_harness_assets() {
             ),
         )
     );
+
+    if (isset($_GET['debug'])) {
+        $health_check = kidsoverprofits_get_theme_asset_details('js/asset-health-check.js');
+
+        if ($health_check) {
+            wp_enqueue_script(
+                'kidsoverprofits-health-check',
+                $health_check['uri'],
+                array('kidsoverprofits-theme-bootstrap'),
+                $health_check['version'],
+                true
+            );
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'kidsoverprofits_enqueue_test_harness_assets', 40);
 
@@ -1288,7 +1539,11 @@ class AnonymousDocPortal {
             
         } catch (Exception $e) {
             $response['message'] = $e->getMessage();
-            error_log('Anonymous portal error: ' . $e->getMessage());
+            kidsoverprofits_log(
+                'Anonymous portal error: ' . $e->getMessage(),
+                'ERROR',
+                array('exception' => get_class($e))
+            );
         }
         
         wp_send_json($response);
@@ -1474,7 +1729,10 @@ class AnonymousDocPortal {
         $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
         
         if ($encrypted === false) {
-            error_log('Encryption failed');
+            kidsoverprofits_log(
+                'Encryption failed during anonymous submission processing',
+                'ERROR'
+            );
             return '';
         }
         
@@ -1498,7 +1756,15 @@ class AnonymousDocPortal {
     
     private function log_submission($submission_id, $file_count) {
         // Minimal logging - no personal information
-        error_log("Anonymous submission: ID={$submission_id}, Files={$file_count}, Time=" . current_time('mysql'));
+        kidsoverprofits_log(
+            'Anonymous submission received',
+            'INFO',
+            array(
+                'submission_id' => $submission_id,
+                'files'         => $file_count,
+                'time'          => current_time('mysql'),
+            )
+        );
     }
     
     public function add_admin_menu() {

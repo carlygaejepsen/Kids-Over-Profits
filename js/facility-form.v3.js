@@ -13,6 +13,14 @@ if (typeof window !== 'undefined') {
 
 const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
 
+function getResolverEndpoint(filename, fallback) {
+    if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
+        return window.KOP_API.getEndpoint(filename);
+    }
+
+    return fallback;
+}
+
 function resolveApiUrl(path, bases) {
     if (!path) return '';
     if (/^https?:\/\//i.test(path)) {
@@ -73,9 +81,16 @@ const normalizedApiBases = Array.from(new Set(
 ));
 
 const defaultApiPaths = {
-    SAVE_PROJECT: FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT || '/wp-content/themes/child/api/data_form/save-master.php',
-    LOAD_PROJECTS: FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS || '/wp-content/themes/child/api/data_form/get-master-data.php',
-    AUTOCOMPLETE: FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE || FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS || '/wp-content/themes/child/api/data_form/get-autocomplete.php'
+    SAVE_PROJECT:
+        FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
+        getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/data_form/save-master.php'),
+    LOAD_PROJECTS:
+        FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
+        getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/data_form/get-master-data.php'),
+    AUTOCOMPLETE:
+        FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
+        FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
+        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/data_form/get-autocomplete.php')
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
