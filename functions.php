@@ -1936,3 +1936,34 @@ class AnonymousDocPortal {
 
 // Initialize the portal
 $anonymous_portal = new AnonymousDocPortal();
+
+/**
+ * Register custom page templates.
+ *
+ * This explicitly registers our page templates with WordPress to ensure
+ * they appear in the Block Editor template dropdown.
+ */
+function kidsoverprofits_register_page_templates($templates) {
+    $templates['page-data.php'] = 'Data Submission';
+    return $templates;
+}
+add_filter('theme_page_templates', 'kidsoverprofits_register_page_templates');
+
+/**
+ * Load the custom page template file.
+ */
+function kidsoverprofits_load_page_template($template) {
+    if (is_page()) {
+        $page_template = get_page_template_slug();
+
+        if ($page_template === 'page-data.php') {
+            $custom_template = locate_template('page-data.php');
+            if ($custom_template) {
+                return $custom_template;
+            }
+        }
+    }
+
+    return $template;
+}
+add_filter('template_include', 'kidsoverprofits_load_page_template', 99);

@@ -1,5 +1,6 @@
 <?php
 /**
+ * Template Name: Admin Data Management
  * Template for the admin data management page.
  *
  * @package Kids_Over_Profits
