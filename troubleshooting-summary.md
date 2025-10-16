@@ -60,4 +60,9 @@ The earlier guidance placed the burden of validation on you. To keep the investi
     *   **Expectation:** Direct 404 log entries could corroborate whether a security layer is intercepting the request.
     *   **Status:** Pending—no logs are present in the repository; additional data would require secure access to the production server.
 
+*   **Step 6: Run PHP Syntax Checks on Enqueue Logic**
+    *   **Command:** `php -l functions.php` and `for f in api/*.php; do php -l "$f"; done`
+    *   **Expectation:** Ensure that syntax errors are not preventing the enqueue hook or related endpoints from loading in production.
+    *   **Status:** Executed—each file reported “No syntax errors detected,” confirming the PHP sources committed to the repository parse correctly under PHP 8.4.
+
 This sequence keeps the diagnostic responsibility within the container and flags the exact points where external access would be necessary to proceed further.
