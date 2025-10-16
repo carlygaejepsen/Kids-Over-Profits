@@ -74,9 +74,11 @@ Kids-Over-Profits/
 ├── api/                        # Backend API endpoints (PHP scripts).
 │   ├── config.php              # Database configuration for the suggestions system.
 │   ├── data_form/              # Scripts for data submission, editing, and admin management.
-│   └── state_reports/          # Scripts for generating state-specific report pages.
 ├── css/                        # CSS files for styling different application components.
-├── html/                       # HTML template files for pages and reports.
+├── html/                       # HTML files to copy/paste into WordPress editor.
+│   ├── data.html                # Standalone facility data submission form.
+│   ├── admin-data.html          # Standalone facility edit form for admins.
+│   └── facility-form.v3.js      # Shared autocomplete/form engine for both forms.
 ├── js/                         # Frontend JavaScript for application logic.
 │   ├── data/                   # Contains JSON data files and PDF checklists.
 │   └── state_reports/          # JS logic for individual state report pages.
@@ -322,7 +324,7 @@ If deploying manually via cPanel File Manager or FTP:
 
 1. **Collect new inspection data** from state regulatory agencies
 2. **Process/clean data** using Scripts utilities (optional)
-3. **Update JSON files** in `js/data/`
+3. **Update JSON files** in `Website/js/data/`
 4. **Test locally** if possible
 5. **Push to Git repository**
 6. **Verify deployment** on live site
@@ -345,9 +347,9 @@ If deploying manually via cPanel File Manager or FTP:
 
 ## API Endpoints
 
-All data form API endpoints live under the `api/data_form/` directory.
+All API endpoints are in the `api/` directory.
 
-### GET `/api/data_form/get-master-data.php`
+### GET `/api/get-master-data.php`
 Retrieves approved facility data from the master database.
 
 **Response**:
@@ -358,7 +360,7 @@ Retrieves approved facility data from the master database.
 }
 ```
 
-### POST `/api/data_form/save-suggestion.php`
+### POST `/api/save-suggestion.php`
 Saves a public suggestion for admin review.
 
 **Parameters**: Facility data fields
@@ -370,7 +372,7 @@ Saves a public suggestion for admin review.
 }
 ```
 
-### GET `/api/data_form/get-autocomplete.php`
+### GET `/api/get-autocomplete.php`
 Retrieves data for populating autocomplete dropdowns (e.g., facility names, cities, operating periods, or other fields) across both public and admin interfaces.
 
 **Response**:
@@ -382,7 +384,7 @@ Retrieves data for populating autocomplete dropdowns (e.g., facility names, citi
 }
 ```
 
-### POST `/api/data_form/process-edit.php`
+### POST `/api/process-edit.php`
 Processes admin edits to facility data.
 
 **Parameters**: Edit data
@@ -394,7 +396,7 @@ Processes admin edits to facility data.
 }
 ```
 
-### POST `/api/data_form/save-master.php`
+### POST `/api/save-master.php`
 Saves approved data to master database (admin only).
 
 **Parameters**: Facility data
@@ -412,7 +414,7 @@ Saves approved data to master database (admin only).
 
 The standalone `html/data.html` and `html/admin-data.html` pages share the `facility-form.v3.js` engine for data binding. To keep autocomplete behavior and contextual notes working:
 
-- Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/data_form/get-autocomplete.php`.
+- Every single-line text input must declare a `data-autocomplete-category` that maps to one of the backend categories (`operator`, `facility`, `human`, `type`, `status`, `gender`, `location`, `membership`, `certification`, `accreditation`, `licensing`, `investor`, or `operatingperiod`). This enables shared suggestion pools pulled from `/api/get-autocomplete.php`.
 - Numeric inputs and multi-line `<textarea>` fields should omit the autocomplete category, but they can still expose notes (see below).
 - Each form control that should support inline notes must provide both `data-note-scope` (`operator`, `facility`, or `project`) and a `data-note-key` that matches the structured data path (e.g., `operatingPeriod.yearsOfOperation`). The form script will render a “＋” button and manage per-field note arrays based on these attributes.
 - When introducing new text inputs, update both static HTML pages with the appropriate data attributes so that autocomplete categories remain synchronized across the public suggestion form and the admin master form.
@@ -560,20 +562,6 @@ Displays the anonymous document submission portal.
 
 ---
 
-## Scripts & Utilities
-
-The `/Scripts` directory contains optional tools for data processing and collection. These are provided as resources for other advocates and researchers.
-
-**Contents**:
-- Raw JSON data from state agencies
-- Data cleaning/transformation scripts
-- State-specific inspection checklists
-- Manual data entry tools (`facility_input.html`)
-
-**Note**: These scripts are not required for website operation. They exist to share methodology and tools with the advocacy community.
-
----
-
 ## Troubleshooting
 
 ### Script Not Loading on Page
@@ -687,7 +675,7 @@ We collect data from:
 
 **Email**: dani@kidsoverprofits.org
 
-**Site**: [kidsoverprofits.org]
+**Website**: [kidsoverprofits.org]
 
 **Mission**: Transparency, justice, and dignity for kids affected by institutional abuse.
 
