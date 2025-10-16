@@ -1,5 +1,30 @@
 ---
 deployment:
   tasks:
+    # Run pre-deployment tests
+    - php tests/asset-loading-test.php || echo "WARNING: Asset tests failed"
+
+    # Set deployment path
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
-    - /bin/rsync -aP --exclude '.git' --exclude '.cpanel.yml' ./ $DEPLOYPATH
+
+    # Sync files with rsync
+    - /bin/rsync -aP --exclude '.git' --exclude '.cpanel.yml' --exclude '.env' --exclude 'node_modules' --exclude '.vscode' ./ $DEPLOYPATH
+
+    # Verify critical files were deployed
+    - test -f $DEPLOYPATH/functions.php || echo "ERROR: functions.php not deployed"
+    - test -f $DEPLOYPATH/style.css || echo "ERROR: style.css not deployed"
+    - test -d $DEPLOYPATH/css || echo "ERROR: css directory not deployed"
+    - test -d $DEPLOYPATH/js || echo "ERROR: js directory not deployed"
+    - test -d $DEPLOYPATH/api || echo "ERROR: api directory not deployed"
+
+    # Set proper permissions
+    - chmod 755 $DEPLOYPATH
+    - chmod 644 $DEPLOYPATH/*.php || true
+    - chmod 644 $DEPLOYPATH/css/*.css || true
+    - chmod 644 $DEPLOYPATH/js/*.js || true
+    - chmod 755 $DEPLOYPATH/api || true
+    - chmod 600 $DEPLOYPATH/api/.env || true
+
+    # Log deployment
+    - echo "Deployment completed at $(date)" >> $DEPLOYPATH/deployment.log
+    - echo "Git commit: $(git rev-parse --short HEAD)" >> $DEPLOYPATH/deployment.log
