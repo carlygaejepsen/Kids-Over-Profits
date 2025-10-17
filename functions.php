@@ -70,29 +70,20 @@ function kop_get_facilities_database_connection() {
         return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
     }
 
-    // Try to load database configuration from api/config.php
-    $config_path = get_stylesheet_directory() . '/api/config.php';
+    // Connect to the facilities database
     $use_separate_db = false;
     $facilities_db = null;
 
-    if (file_exists($config_path)) {
-        // Include config.php which sets $pdo and $db_* variables
-        include $config_path;
-
-        // If we have the database variables from config.php, create a wpdb connection
-        if (isset($db_name) && isset($db_user) && isset($db_host)) {
-            try {
-                $facilities_db = new wpdb(
-                    $db_user,
-                    $db_pass ?? '',
-                    $db_name,
-                    $db_host
-                );
-                $use_separate_db = true;
-            } catch (Exception $e) {
-                error_log('Failed to connect to facilities database: ' . $e->getMessage());
-            }
-        }
+    try {
+        $facilities_db = new wpdb(
+            'kidsover_dani',
+            'Xk4&z9!pT#vR7bN@',
+            'kidsover_suggestions',
+            'localhost'
+        );
+        $use_separate_db = true;
+    } catch (Exception $e) {
+        error_log('Failed to connect to facilities database: ' . $e->getMessage());
     }
 
     $connection = array(
