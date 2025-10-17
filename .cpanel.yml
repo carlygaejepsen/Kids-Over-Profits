@@ -1,8 +1,8 @@
 ---
 deployment:
   tasks:
-    # Deploy all files to the WordPress root directory
-    - export DEPLOYPATH=/home/kidsover/public_html/
+    # Deploy all files to the WordPress child theme directory
+    - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
 
     # Remove WordPress content snippet files that shouldn't be deployed
     - /bin/rm -f $DEPLOYPATH/tti-program-index 2>/dev/null || true
