@@ -1,0 +1,13 @@
+# Environment files
+.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# WordPress files
+wp-config-local.php
