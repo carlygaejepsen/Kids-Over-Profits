@@ -357,7 +357,7 @@ function load_facilities_data() {
             'facilities-display',
             get_stylesheet_directory_uri() . '/js/facilities-display.js',
             array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
+            time(), // Force new version to bypass cache
             true
         );
 
