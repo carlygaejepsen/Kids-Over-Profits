@@ -27,14 +27,57 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 // =================================================================
 
 /**
+ * Locate available facility projects export datasets.
+ *
+ * @return string[] Sanitized URLs to the available datasets ordered by priority.
+ */
+function kop_get_facility_projects_dataset_urls() {
+    $data_directory = get_stylesheet_directory() . '/js/data/';
+    $data_directory_uri = get_stylesheet_directory_uri() . '/js/data/';
+
+    if (!is_dir($data_directory)) {
+        return array();
+    }
+
+    $ordered_basenames = array();
+    $preferred_basename = 'facility-projects-export.json';
+    $preferred_path = $data_directory . $preferred_basename;
+
+    if (file_exists($preferred_path)) {
+        $ordered_basenames[] = $preferred_basename;
+    }
+
+    $dataset_candidates = glob($data_directory . 'facility-projects-export*.json');
+
+    if (!empty($dataset_candidates)) {
+        usort($dataset_candidates, function ($a, $b) {
+            return filemtime($b) <=> filemtime($a);
+        });
+
+        foreach ($dataset_candidates as $candidate) {
+            $basename = basename($candidate);
+
+            if (!in_array($basename, $ordered_basenames, true)) {
+                $ordered_basenames[] = $basename;
+            }
+        }
+    }
+
+    return array_map(function ($basename) use ($data_directory_uri) {
+        return esc_url($data_directory_uri . $basename);
+    }, $ordered_basenames);
+}
+
+/**
  * Load facilities data for TTI program index page
  */
 function load_facilities_data() {
     // Only load on the TTI program index page
     if (is_page() && get_post_field('post_name') === 'tti-program-index') {
-        $facilities_json_url = get_stylesheet_directory_uri() . '/js/data/facilities_data.json';
+        $dataset_urls = kop_get_facility_projects_dataset_urls();
+        $primary_dataset = !empty($dataset_urls) ? $dataset_urls[0] : '';
         $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
-        
+
         wp_enqueue_script(
             'facilities-display',
             get_stylesheet_directory_uri() . '/js/facilities-display.js',
@@ -42,11 +85,14 @@ function load_facilities_data() {
             file_exists($script_path) ? filemtime($script_path) : '1.0',
             true
         );
-        
+
         wp_localize_script(
             'facilities-display',
             'facilitiesConfig',
-            array('jsonDataUrl' => esc_url($facilities_json_url))
+            array(
+                'jsonDataUrl' => $primary_dataset,
+                'jsonFileUrls' => $dataset_urls
+            )
         );
     }
 }
@@ -303,15 +349,34 @@ add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
  * Load facility form script
  */
 function enqueue_facility_form_script() {
-    if (is_page('data')) { // Replace with your actual page slug
-        wp_enqueue_script(
-            'facility-form-script',
-            get_stylesheet_directory_uri() . '/js/facility-form.js',
-            array(),
-            time(),
-            true
-        );
+    if (!is_page('data')) {
+        return;
     }
+
+    $script_relative_path = '/js/facility-form.v3.js';
+    $script_file_path = get_stylesheet_directory() . $script_relative_path;
+    $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
+
+    wp_enqueue_script(
+        'facility-form-script',
+        $script_uri,
+        array(),
+        file_exists($script_file_path) ? filemtime($script_file_path) : time(),
+        true
+    );
+
+    $dataset_urls = kop_get_facility_projects_dataset_urls();
+    $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
+
+    wp_localize_script(
+        'facility-form-script',
+        'KOP_FACILITY_FORM_CONFIG',
+        array(
+            'fallbackProjectsUrl' => $fallback_url,
+            'fallbackProjectsUrls' => $dataset_urls,
+            'apiBase' => home_url()
+        )
+    );
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
