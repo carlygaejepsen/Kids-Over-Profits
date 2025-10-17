@@ -373,6 +373,7 @@ function enqueue_facility_form_script() {
         'KOP_FACILITY_FORM_CONFIG',
         array(
             'fallbackProjectsUrl' => $fallback_url,
+            'fallbackProjectsUrls' => $dataset_urls,
             'apiBase' => home_url()
         )
     );

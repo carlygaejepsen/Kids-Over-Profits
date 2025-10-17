@@ -451,26 +451,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const facilitiesConfig = window.facilitiesConfig || {};
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
-    const jsonPath = facilitiesConfig.jsonDataUrl || configUrls[0] || '/wp-content/themes/child/js/data/facility-projects-export.json';
+    const defaultDatasetPath = '/wp-content/themes/child/js/data/facility-projects-export.json';
+    const datasetCandidates = Array.from(new Set([
+        facilitiesConfig.jsonDataUrl,
+        ...configUrls,
+        defaultDatasetPath
+    ].filter(url => typeof url === 'string' && url.trim().length > 0)));
 
-    console.log('Loading data from:', jsonPath);
+    if (!datasetCandidates.length) {
+        console.error('Facilities script: no dataset URLs are configured.');
+        facilitiesContainer.innerHTML = '<p>Error loading facilities data: no dataset URL is configured.</p>';
+        return;
+    }
 
-    fetch(jsonPath)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load JSON: ' + response.status);
+    const decodeResponseAsJson = async (response) => {
+        const text = await response.text();
+
+        try {
+            return JSON.parse(text);
+        } catch (parseError) {
+            throw new Error('Invalid JSON (' + parseError.message + ')');
+        }
+    };
+
+    (async () => {
+        const failureSummaries = [];
+
+        for (const candidateUrl of datasetCandidates) {
+            try {
+                console.log('Facilities script: attempting to load data from', candidateUrl);
+                const response = await fetch(candidateUrl, { credentials: 'same-origin' });
+
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ' ' + response.statusText);
+                }
+
+                const data = await decodeResponseAsJson(response);
+                console.log('Facilities script: data loaded successfully from', candidateUrl);
+                displayFacilities(data, 'facilities-container');
+                return;
+            } catch (candidateError) {
+                console.warn('Facilities script: failed to load dataset from', candidateUrl, candidateError);
+                failureSummaries.push(candidateUrl + ' → ' + candidateError.message);
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Data loaded successfully:', data);
-            displayFacilities(data, 'facilities-container');
-        })
-        .catch(error => {
-            console.error('Error loading facilities data:', error);
-            const container = document.getElementById('facilities-container');
-            if (container) {
-                container.innerHTML = '<p>Error loading facilities data: ' + error.message + '</p>';
-            }
-        });
+        }
+
+        const summaryMessage = failureSummaries.length
+            ? 'Tried ' + failureSummaries.length + ' URL(s): ' + failureSummaries.join('; ')
+            : 'No dataset URLs were available.';
+
+        console.error('Facilities script: unable to load facilities data. ' + summaryMessage);
+        facilitiesContainer.innerHTML = '<p>Error loading facilities data. ' + summaryMessage + '</p>';
+    })();
 });

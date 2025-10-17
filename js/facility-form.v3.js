@@ -108,6 +108,26 @@ const FORM_MODE = typeof resolvedFormMode === 'string'
 
 const IS_SUGGESTION_MODE = FORM_MODE === 'suggestions';
 
+const fallbackProjectsConfigValues = Array.isArray(FACILITY_FORM_CONFIG.fallbackProjectsUrls)
+    ? FACILITY_FORM_CONFIG.fallbackProjectsUrls.slice()
+    : [];
+
+if (typeof FACILITY_FORM_CONFIG.fallbackProjectsUrl === 'string' && FACILITY_FORM_CONFIG.fallbackProjectsUrl.trim()) {
+    fallbackProjectsConfigValues.unshift(FACILITY_FORM_CONFIG.fallbackProjectsUrl);
+}
+
+const FALLBACK_PROJECTS_URL_CANDIDATES = Array.from(new Set(
+    fallbackProjectsConfigValues
+        .map((value) => (typeof value === 'string' ? value.trim() : ''))
+        .filter(Boolean)
+        .map((value) => resolveApiUrl(value, normalizedApiBases))
+        .filter(Boolean)
+));
+
+const FALLBACK_PROJECTS_URL = FALLBACK_PROJECTS_URL_CANDIDATES.length
+    ? FALLBACK_PROJECTS_URL_CANDIDATES[0]
+    : null;
+
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
         return;
@@ -130,8 +150,8 @@ function logActiveFacilityFormConfigOnce() {
         }
         console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
         console.info('[KOP Facility Form] Active form mode:', FORM_MODE);
-        if (FALLBACK_PROJECTS_URL) {
-            console.info('[KOP Facility Form] Fallback dataset URL:', FALLBACK_PROJECTS_URL);
+        if (FALLBACK_PROJECTS_URL_CANDIDATES.length) {
+            console.info('[KOP Facility Form] Fallback dataset URL candidates:', FALLBACK_PROJECTS_URL_CANDIDATES);
         } else {
             console.info('[KOP Facility Form] No fallback dataset configured');
         }
@@ -139,10 +159,6 @@ function logActiveFacilityFormConfigOnce() {
         // Swallow logging errors to avoid breaking initialization if console is locked down
     }
 }
-
-const FALLBACK_PROJECTS_URL = FACILITY_FORM_CONFIG.fallbackProjectsUrl
-    ? resolveApiUrl(FACILITY_FORM_CONFIG.fallbackProjectsUrl, normalizedApiBases)
-    : null;
 
 const DEFAULT_FACILITY_TYPES = [
     'Residential Treatment Center (RTC)',
@@ -1163,6 +1179,55 @@ function normalizeProjectsPayload(payload) {
     return Object.keys(normalized).length > 0 ? normalized : null;
 }
 
+async function loadProjectsFromFallbackDatasets() {
+    if (!FALLBACK_PROJECTS_URL_CANDIDATES.length) {
+        return null;
+    }
+
+    const totalCandidates = FALLBACK_PROJECTS_URL_CANDIDATES.length;
+
+    for (let index = 0; index < totalCandidates; index += 1) {
+        const fallbackUrl = FALLBACK_PROJECTS_URL_CANDIDATES[index];
+        const attemptLabel = `Attempting to load fallback dataset (${index + 1}/${totalCandidates})...`;
+
+        try {
+            showUploadStatus(attemptLabel, 'info');
+
+            const response = await fetch(fallbackUrl);
+
+            if (!response.ok) {
+                console.warn(`Fallback dataset request for ${fallbackUrl} failed with status ${response.status}`);
+                continue;
+            }
+
+            const fallbackText = await response.text();
+            let fallbackData;
+
+            try {
+                fallbackData = JSON.parse(fallbackText);
+            } catch (parseError) {
+                console.warn(`Fallback dataset at ${fallbackUrl} returned invalid JSON:`, parseError);
+                continue;
+            }
+
+            const normalizedProjects = normalizeProjectsPayload(fallbackData);
+
+            if (normalizedProjects && Object.keys(normalizedProjects).length > 0) {
+                return {
+                    url: fallbackUrl,
+                    projects: normalizedProjects
+                };
+            }
+
+            console.warn('Fallback dataset did not contain usable project data at', fallbackUrl);
+        } catch (fallbackError) {
+            console.warn('Fallback dataset load failed for', fallbackUrl, fallbackError);
+        }
+    }
+
+    return null;
+}
+
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
@@ -1208,28 +1273,16 @@ async function loadAllProjectsFromCloud() {
             console.error('localStorage backup failed:', e);
         }
 
-        if (FALLBACK_PROJECTS_URL) {
-            try {
-                showUploadStatus('Attempting to load fallback dataset...', 'info');
-                const fallbackResponse = await fetch(FALLBACK_PROJECTS_URL);
-                if (fallbackResponse.ok) {
-                    const fallbackData = await fallbackResponse.json();
-                    const normalizedProjects = normalizeProjectsPayload(fallbackData);
-                    if (normalizedProjects && Object.keys(normalizedProjects).length > 0) {
-                        projects = normalizedProjects;
-                        window.projects = projects;
-                        invalidateAggregatedData();
-                        saveToLocalStorage('cloudProjects', projects);
-                        showUploadStatus(`Loaded ${Object.keys(projects).length} projects from fallback dataset`, 'success');
-                        return projects;
-                    }
-                    console.warn('Fallback dataset did not contain usable project data.');
-                } else {
-                    console.warn(`Fallback dataset request failed with status ${fallbackResponse.status}`);
-                }
-            } catch (fallbackError) {
-                console.warn('Fallback dataset load failed:', fallbackError);
-            }
+        const fallbackLoadResult = await loadProjectsFromFallbackDatasets();
+
+        if (fallbackLoadResult && fallbackLoadResult.projects) {
+            projects = fallbackLoadResult.projects;
+            window.projects = projects;
+            invalidateAggregatedData();
+            saveToLocalStorage('cloudProjects', projects);
+            showUploadStatus(`Loaded ${Object.keys(projects).length} projects from fallback dataset`, 'success');
+            console.info('Loaded projects from fallback dataset:', fallbackLoadResult.url);
+            return projects;
         }
 
         showUploadStatus('No projects found - starting fresh', 'info');
