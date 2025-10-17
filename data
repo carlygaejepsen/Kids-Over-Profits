@@ -1,0 +1,2990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Facility Data Suggestions</title>
+    </head>
+<body>
+    <div class="container">
+        <div class="admin-header">
+            <h1>📮 Submit Facility Data Suggestions</h1>
+            <p>Your submissions will be reviewed before being added to the main database</p>
+        </div>
+        
+        <div class="admin-warning">
+            ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
+        </div>
+        
+        <!-- Category Navigation -->
+        <div class="category-navigation" id="category-navigation">
+            <div class="flex-center mb-20">
+                <div class="category-tabs">
+                    <button class="category-tab active" id="facilities-tab" data-category="facilities">
+                        🏢 Companies
+                    </button>
+                    <button class="category-tab" id="states-tab" data-category="states">
+                        🌍 Locations
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Companies Content -->
+            <div id="companies-content" class="category-content">
+                <div class="content-header">
+                    <h3>Select an Operator/Company</h3>
+                    <p>Choose from existing operators or add a new one</p>
+                    <div class="mb-15 d-flex gap-10">
+                        <input type="text" id="new-operator-input" class="input-primary" placeholder="Enter new operator name...">
+                        <button class="btn btn-inline" id="add-operator-btn">Add New</button>
+                    </div>
+                </div>
+                <div class="items-list items-container" id="saved-projects-list">
+                    <div class="text-muted italic">No operators found</div>
+                </div>
+            </div>
+            
+            <!-- States Content -->
+            <div id="states-content" class="category-content d-none">
+                <div class="content-header">
+                    <h3>Location Projects</h3>
+                    <p>Choose from existing location-based projects or add a new one</p>
+                    <div class="mb-15 d-flex gap-10">
+                        <input type="text" id="new-location-project-input" class="input-primary" placeholder="Enter new location project name...">
+                        <button class="btn btn-inline" id="add-location-project-btn">Add New</button>
+                    </div>
+                </div>
+                <div class="items-list items-container" id="locations-list">
+                    <div class="text-muted italic">No location projects found</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Facility Table of Contents -->
+        <div class="facility-toc" id="facility-toc">
+            <div class="toc-header">
+                <h2 class="toc-title">Facilities Overview</h2>
+                <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
+            </div>
+            <div class="toc-content">
+                <div class="toc-stats" id="toc-stats">Total: 1 facility</div>
+                <div class="facility-list" id="facility-list">
+                    <!-- Facility items will be populated here -->
+                </div>
+                <div class="mt-15 d-flex gap-10 flex-center">
+                    <button class="btn" id="add-facility-main-btn">Add New Facility</button>
+                    <button class="btn" id="sort-facilities-btn">Sort Alphabetically</button>
+                    <button class="btn" onclick="window.open('https://kidsoverprofits.org/data-organizer/', '_blank')" title="Open Data Organizer in new tab">📊 Data Organizer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Facility Navigation -->
+        <div class="facility-controls">
+            <div class="facility-header">
+                <div class="d-flex align-items-center gap-15">
+                    <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
+                    <span id="current-facility-name" class="text-muted fw-normal"></span>
+                    <div class="d-flex gap-5">
+                        <button class="btn d-none" id="prev-facility-btn" style="padding: 8px 12px;">⬅️ Previous</button>
+                        <button class="btn d-none" id="next-facility-btn" style="padding: 8px 12px;">Next ➡️</button>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn" id="add-facility-btn">Add Facility</button>
+                    <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
+                    <button class="btn" id="clone-facility-btn">Clone Facility</button>
+                    <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Organizer Section -->
+        <div class="section" id="data-organizer-section">
+            <div class="section-header">
+                <h2 class="section-title">📊 Data Organizer</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="bg-light content-box">
+                    <p class="info-text" style="margin: 0;">
+                        <strong>🔍 Find all facilities by a specific data point:</strong> 
+                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
+                    </p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="organize-by">Organize by:</label>
+                        <select id="organize-by" class="input-secondary">
+                            <option value="">Select data point...</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="operator">Operator/Company</option>
+                            <option value="location">Location</option>
+                            <option value="programType">Program Type</option>
+                            <option value="status">Operating Status</option>
+                            <option value="year">Opening Year</option>
+                            <option value="accreditation">Accreditation</option>
+                            <option value="certification">Certification</option>
+                        </select>
+                    </div>
+                    <div class="form-group d-none" id="organize-value-group">
+                        <label for="organize-value">Search for:</label>
+                        <input type="text" id="organize-value" class="input-secondary" placeholder="Type to search...">
+                    </div>
+                </div>
+                
+                <div class="mb-15">
+                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
+                </div>
+                
+                <div id="organize-results" class="d-none">
+                    <div class="info-box">
+                        <div id="organize-results-title" class="info-title"></div>
+                        <div id="organize-results-count" class="info-text"></div>
+                    </div>
+                    
+                    <div id="organize-matches" class="scroll-container">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Operator Information Section -->
+        <div class="section expanded" id="operator-section">
+            <div class="section-header">
+                <h2 class="section-title">Operator Information</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-name">Operator Name</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="operator-name" class="input-form" placeholder="Type operator name...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-current-name">Current Name</label>
+                        <input type="text" id="operator-current-name" class="input-form" placeholder="Type current operator name...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operator-other-names">Other Names</label>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="operator-other-names" class="input-form" placeholder="Type other operator names (comma-separated)...">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-location">Primary Location</label>
+                        <input type="text" id="operator-location" placeholder="e.g., Waynesboro, TN">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters">Headquarters</label>
+                        <input type="text" id="operator-headquarters" placeholder="e.g., Nashville, TN">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-founded">Founded</label>
+                        <input type="text" id="operator-founded" placeholder="e.g., 1985">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-period">Operating Period</label>
+                        <input type="text" id="operator-period" placeholder="e.g., 1985-Present">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operator-status">Status</label>
+                    <input type="text" id="operator-status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Parent Companies</label>
+                    <div class="array-container" data-path="operator.parentCompanies"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Websites</label>
+                    <div class="array-container" data-path="operator.websites"></div>
+                </div>
+                
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Key Staff</h3>
+                
+                <div class="form-group">
+                    <label for="operator-ceo">CEO/President</label>
+                    <input type="text" id="operator-ceo" placeholder="e.g., John Smith">
+                </div>
+                
+                <div class="form-group">
+                    <label>Founders</label>
+                    <div class="array-container" data-path="operator.keyStaff.founders"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Key Executives</label>
+                    <div class="array-container" data-path="operator.keyStaff.keyExecutives"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Investors</label>
+                    <div class="array-container" data-path="operator.investors"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Operator Notes</label>
+                    <div class="array-container" data-path="operator.notes"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Identification Section -->
+        <div class="section" id="identification-section">
+            <div class="section-header">
+                <h2 class="section-title">Identification & Names</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="facility-name" placeholder="Type facility name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Name</label>
+                        <input type="text" class="facility-field" data-field="identification.currentName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Current Operator</label>
+                    <input type="text" class="facility-field" data-field="identification.currentOperator">
+                </div>
+                <div class="form-group">
+                    <label>Other Names</label>
+                    <div class="array-container" data-path="identification.otherNames"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="section" id="location-section">
+            <div class="section-header">
+                <h2 class="section-title">Location & Address</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" class="facility-field" data-field="location">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea class="facility-field" data-field="address" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Operations Section -->
+        <div class="section" id="operations-section">
+            <div class="section-header">
+                <h2 class="section-title">Facility Operations</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Other Operators</label>
+                    <div class="array-container" data-path="otherOperators"></div>
+                </div>
+                
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Facility Operating Dates</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Facility Opened (Year)</label>
+                        <input type="number" class="facility-field" data-field="operatingPeriod.startYear" placeholder="e.g., 1985">
+                    </div>
+                    <div class="form-group">
+                        <label>Facility Closed (Year)</label>
+                        <input type="number" class="facility-field" data-field="operatingPeriod.endYear" placeholder="Leave blank if still open">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Current Status</label>
+                    <input type="text" class="facility-field" data-field="operatingPeriod.status" placeholder="Type status (Open, Closed, Transferred, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                </div>
+                <div class="form-group">
+                    <label>Years of Operation</label>
+                    <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present">
+                </div>
+                <div class="form-group">
+                    <label>Operational Notes</label>
+                    <div class="array-container" data-path="operatingPeriod.notes"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Staff Section -->
+        <div class="section" id="staff-section">
+            <div class="section-header">
+                <h2 class="section-title">Staff & Links</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Administrator</label>
+                    <div class="array-container" data-path="staff.administrator"></div>
+                </div>
+                <div class="form-group">
+                    <label>Notable Staff</label>
+                    <div class="array-container" data-path="staff.notableStaff"></div>
+                </div>
+                <div class="form-group">
+                    <label>Profile Links</label>
+                    <div class="array-container" data-path="profileLinks"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Facility Details Section -->
+        <div class="section" id="facility-section">
+            <div class="section-header">
+                <h2 class="section-title">Facility Details</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Program Type</label>
+                    <div class="autocomplete-wrapper">
+                        <input type="text" id="facility-type" placeholder="Type facility type..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="number" class="facility-field" data-field="facilityDetails.capacity">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Census</label>
+                        <input type="number" class="facility-field" data-field="facilityDetails.currentCensus">
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Min Age</label>
+                        <input type="number" class="facility-field" data-field="facilityDetails.ageRange.min">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Age</label>
+                        <input type="number" class="facility-field" data-field="facilityDetails.ageRange.max">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" class="facility-field" data-field="facilityDetails.gender" placeholder="Type gender (Male, Female, Co-ed)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Accreditations & Memberships Section -->
+        <div class="section" id="accreditations-section">
+            <div class="section-header">
+                <h2 class="section-title">Accreditations & Memberships</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Current Accreditations</label>
+                    <div class="array-container" data-path="accreditations.current"></div>
+                </div>
+                <div class="form-group">
+                    <label>Past Accreditations</label>
+                    <div class="array-container" data-path="accreditations.past"></div>
+                </div>
+                <div class="form-group">
+                    <label>Professional Memberships</label>
+                    <div class="array-container" data-path="memberships"></div>
+                </div>
+                <div class="form-group">
+                    <label>Certifications</label>
+                    <div class="array-container" data-path="certifications"></div>
+                </div>
+                <div class="form-group">
+                    <label>Licensing Information</label>
+                    <div class="array-container" data-path="licensing"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resources & Documentation Section -->
+        <div class="section" id="resources-section">
+            <div class="section-header">
+                <h2 class="section-title">Available Resources & Documentation</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Resource Types</h3>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">News & Media</h4>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasNews" id="has-news">
+                    <label for="has-news">News Articles</label>
+                </div>
+                <div id="has-news-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
+                    <textarea class="facility-field" data-field="resources.newsDetails" placeholder="Enter details about news articles..." rows="2"></textarea>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPressReleases" id="has-press">
+                    <label for="has-press">Press Releases</label>
+                </div>
+                <div id="has-press-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
+                    <textarea class="facility-field" data-field="resources.pressReleasesDetails" placeholder="Enter details about press releases..." rows="2"></textarea>
+                </div>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Official Documentation</h4>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasInspections" id="has-inspections">
+                    <label for="has-inspections">Inspection Reports</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStateReports" id="has-state-reports">
+                    <label for="has-state-reports">State Reports</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasRegulatoryFilings" id="has-regulatory">
+                    <label for="has-regulatory">Regulatory Filings</label>
+                </div>
+                
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Legal & Compliance</h4>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasLawsuits" id="has-lawsuits">
+                    <label for="has-lawsuits">Lawsuits</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPoliceReports" id="has-police-reports">
+                    <label for="has-police-reports">Police Reports</label>
+                </div>
+
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Business & Property</h4>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasArticlesOfOrganization" id="has-articles">
+                    <label for="has-articles">Articles of Organization</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPropertyRecords" id="has-property">
+                    <label for="has-property">Property Records</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPromotionalMaterials" id="has-promotional">
+                    <label for="has-promotional">Promotional Materials</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasEnrollmentDocuments" id="has-enrollment">
+                    <label for="has-enrollment">Enrollment Documents</label>
+                </div>
+
+                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Other Standard Resources</h4>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasResearch" id="has-research">
+                    <label for="has-research">Academic Research</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasFinancial" id="has-financial">
+                    <label for="has-financial">Financial Reports</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStudent" id="has-student">
+                    <label for="has-student">Student or Resident Manual</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStaff" id="has-staff">
+                    <label for="has-staff">Staff Manual</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasParent" id="has-parent">
+                    <label for="has-parent">Parent Manual</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasWebsite" id="has-website">
+                    <label for="has-website">Archived Website</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasNATSAP" id="has-NATSAP">
+                    <label for="has-NATSAP">NATSAP Profile</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasSurvivorStories" id="has-survivor-stories">
+                    <label for="has-survivor-stories">Survivor Stories</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasOther" id="has-other">
+                    <label for="has-other">Other Documentation</label>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Resource Notes</h3>
+                <div class="form-group">
+                    <div class="array-container" data-path="resources.notes"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Types Section -->
+        <div class="section" id="treatment-section">
+            <div class="section-header">
+                <h2 class="section-title">Treatment Types</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Treatment Types</h3>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasABA" id="has-aba">
+                    <label for="has-aba">Applied Behavior Analysis</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEquineTherapy" id="has-equine-therapy">
+                    <label for="has-equine-therapy">Equine Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWorkTherapy" id="has-work-therapy">
+                    <label for="has-work-therapy">Work Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWildernessTherapy" id="has-wilderness-therapy">
+                    <label for="has-wilderness-therapy">Wilderness Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRealityTherapy" id="has-reality-therapy">
+                    <label for="has-reality-therapy">Reality Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasLGATSeminars" id="has-lgat">
+                    <label for="has-lgat">Large Group Awareness Training Seminars</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasFeedbackHotseatGroups" id="has-feedback-hotseat">
+                    <label for="has-feedback-hotseat">Feedback/Hotseat Groups (aka The Game)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPrimalScreamTherapy" id="has-primal-scream">
+                    <label for="has-primal-scream">Primal Scream Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRepressedMemoryTherapy" id="has-repressed-memory">
+                    <label for="has-repressed-memory">Repressed Memory Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasBehaviorModification" id="has-behavior-mod">
+                    <label for="has-behavior-mod">Behavior Modification</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasKetamineTherapy" id="has-ketamine">
+                    <label for="has-ketamine">Ketamine Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasExposureTherapy" id="has-exposure">
+                    <label for="has-exposure">Exposure Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasUnlicensedProvider" id="has-unlicensed">
+                    <label for="has-unlicensed">Therapy with an Unlicensed Provider</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasConversionTherapy" id="has-conversion">
+                    <label for="has-conversion">Sexual Orientation  Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasAttachmentTherapy" id="has-attachment">
+                    <label for="has-attachment">Attachment Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRebirthingTherapy" id="has-rebirthing">
+                    <label for="has-rebirthing">Rebirthing Therapy</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasTappingTherapy" id="has-tapping">
+                    <label for="has-tapping">Tapping/Thought Field Therapy (TFT)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPsychoanalysis" id="has-psychoanalysis">
+                    <label for="has-psychoanalysis">Psychoanalysis</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEMDR" id="has-emdr-treatment">
+                    <label for="has-emdr-treatment">Eye Movement Desensitization and Reprocessing (EMDR)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasHypnosis" id="has-hypnosis">
+                    <label for="has-hypnosis">Hypnosis</label>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Treatment Types</h3>
+                <div class="form-group">
+                    <label>Add Custom Treatment Type</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="custom-treatment-input" placeholder="Enter treatment type name..." style="flex: 1;">
+                        <button class="btn" id="add-custom-treatment-btn">Add</button>
+                    </div>
+                </div>
+                <div id="custom-treatment-list" style="margin-top: 15px;">
+                    <!-- Custom treatment checkboxes will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Philosophy Section -->
+        <div class="section" id="philosophy-section">
+            <div class="section-header">
+                <h2 class="section-title">Philosophy</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Philosophies</h3>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPositivePeerCulture" id="has-ppc">
+                    <label for="has-ppc">Positive Peer Culture</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.has12Steps" id="has-12-steps">
+                    <label for="has-12-steps">12 Steps</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasFundamentalistBaptist" id="has-baptist">
+                    <label for="has-baptist">Fundamentalist Baptist</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPentecostal" id="has-pentecostal">
+                    <label for="has-pentecostal">Pentecostal</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasScientology" id="has-scientology">
+                    <label for="has-scientology">Scientology</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasTherapeuticCommunity" id="has-tc">
+                    <label for="has-tc">Therapeutic Community</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasWildernessRoad" id="has-wilderness-road">
+                    <label for="has-wilderness-road">Wilderness Road</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPsychoanalytic" id="has-psychoanalytic">
+                    <label for="has-psychoanalytic">Psychoanalytic</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasLawOfAttraction" id="has-loa">
+                    <label for="has-loa">Law of Attraction</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasHumanPotentialMovement" id="has-hpm">
+                    <label for="has-hpm">Human Potential Movement</label>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Philosophies</h3>
+                <div class="form-group">
+                    <label>Add Custom Philosophy</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="custom-philosophy-input" placeholder="Enter philosophy name..." style="flex: 1;">
+                        <button class="btn" id="add-custom-philosophy-btn">Add</button>
+                    </div>
+                </div>
+                <div id="custom-philosophy-list" style="margin-top: 15px;">
+                    <!-- Custom philosophy checkboxes will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Incidents Section -->
+        <div class="section" id="incidents-section">
+            <div class="section-header">
+                <h2 class="section-title">Critical Incidents</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Incident Types</h3>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasDeaths" id="has-deaths">
+                    <label for="has-deaths">Deaths</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStaffArrests" id="has-staff-arrests">
+                    <label for="has-staff-arrests">Staff Arrests</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStudentHospitalizations" id="has-hospitalizations">
+                    <label for="has-hospitalizations">Student Hospitalizations</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasRiots" id="has-riots">
+                    <label for="has-riots">Riots</label>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Critical Incidents</h3>
+                <div class="form-group">
+                    <label>Add Custom Critical Incident</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="custom-incident-input" placeholder="Enter incident type name..." style="flex: 1;">
+                        <button class="btn" id="add-custom-incident-btn">Add</button>
+                    </div>
+                </div>
+                <div id="custom-incidents-list" style="margin-top: 15px;">
+                    <!-- Custom incident checkboxes will be rendered here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- General Notes Section -->
+        <div class="section" id="notes-section">
+            <div class="section-header">
+                <h2 class="section-title">General Notes</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group">
+                    <label>Facility Notes</label>
+                    <div class="array-container" data-path="notes"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Submission Section -->
+        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
+            </div>
+            <div class="section-content" style="display: block;">
+                <div id="suggestion-status" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <button type="button" class="save-master-btn" onclick="submitSuggestion()">
+                        📮 Submit for Review
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced User Mode Section -->
+        <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
+            <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
+                <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="json-output">
+                    <div class="output-header">
+                        <h3>Generated JSON</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
+                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
+                        </div>
+                    </div>
+                    <pre id="json-display">{}</pre>
+                </div>
+                
+                <div class="project-management">
+                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
+                    
+                    <div class="form-group">
+                        <label>Project Management</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
+                            <button class="btn" id="save-project-btn">Save Project</button>
+                            <button class="btn" id="load-project-btn">Load Project</button>
+                            <button class="btn" id="new-project-btn">New Project</button>
+                            <button class="btn" id="export-all-btn">Export All Projects</button>
+                            <button class="btn" id="generate-report-btn">Generate Report</button>
+                        </div>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved projects</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="file-upload">Import Data Files</label>
+                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Upload JSON or CSV files. JSON files will load directly into the form.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="json-paste">Or Paste JSON Data</label>
+                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" id="import-json-btn">Import JSON</button>
+                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                        </div>
+                    </div>
+                    
+                    <div id="upload-status" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
+    <div id="clone-facility-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Clone Facility</h3>
+                <button class="modal-close" id="clone-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
+                
+                <div class="clone-option">
+                    <label>
+                        <input type="radio" name="clone-destination" value="current" checked>
+                        Clone to current project (default behavior)
+                    </label>
+                </div>
+                
+                <div class="clone-option">
+                    <label>
+                        <input type="radio" name="clone-destination" value="existing">
+                        Clone to existing project
+                    </label>
+                    <div class="project-select-container" id="existing-project-container" style="display: none;">
+                        <select class="project-select" id="existing-project-select">
+                            <option value="">Select a project...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="clone-option">
+                    <label>
+                        <input type="radio" name="clone-destination" value="new">
+                        Clone to new project
+                    </label>
+                    <div class="project-select-container" id="new-project-container" style="display: none;">
+                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
+    <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.js"></script>
+    <script>
+        // Set mode to suggestions
+        window.FORM_MODE = 'suggestions';
+        
+        // Override save function for suggestions
+        // Function to load project and sync with our form
+        function loadProjectAndSync(projectName) {
+            console.log('🔄 Loading and syncing project:', projectName);
+            
+            // Check if this project is already loaded
+            const currentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
+            if (currentProject === projectName) {
+                console.log('ℹ️ Project already loaded:', projectName);
+                if (typeof showUploadStatus === 'function') {
+                    showUploadStatus(`ℹ️ Already working on "${projectName}"`, 'info');
+                }
+                return;
+            }
+            
+            // Show loading status
+            if (typeof showUploadStatus === 'function') {
+                showUploadStatus(`🔄 Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
+            }
+            
+            // Force clear current project first to ensure a clean switch
+            if (window.projectManager && window.projectManager.newProject) {
+                console.log('🧹 Clearing current project first...');
+                window.projectManager.newProject(false); // false = don't show status
+            }
+            
+            // Small delay to ensure clearing is complete, then load the new project
+            setTimeout(() => {
+                // Use the existing project manager to load the project
+                if (window.projectManager && window.projectManager.loadProject) {
+                    console.log('📂 Loading project:', projectName);
+                    window.projectManager.loadProject(projectName);
+                    
+                    // Wait a moment for the load to complete, then sync our formData
+                    setTimeout(() => {
+                        // Make sure we have access to the global formData
+                        if (typeof formData !== 'undefined') {
+                            window.globalFormData = formData;
+                            
+                            // Extensive debugging
+                            console.log('✅ Project loaded and synced:', projectName);
+                            console.log('📊 Current project data:', formData);
+                            console.log('📋 Project facilities:', formData?.facilities?.length || 0);
+                            console.log('🔍 Current project name from variables:', {
+                                'window.currentProjectName': window.currentProjectName,
+                                'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
+                                'formData.projectName': formData?.projectName,
+                                'requested': projectName
+                            });
+                            
+                            // Verify we loaded the right project
+                            const actualCurrentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
+                            if (actualCurrentProject !== projectName) {
+                                console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
+                                if (typeof showUploadStatus === 'function') {
+                                    showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
+                                }
+                            } else {
+                                // Show additional success status
+                                if (typeof showUploadStatus === 'function') {
+                                    const facilityCount = formData?.facilities?.length || 0;
+                                    showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
+                                }
+                            }
+                            
+                            // Also update the page title or some indicator
+                            const pageTitle = document.querySelector('h1');
+                            if (pageTitle && projectName !== 'New Project') {
+                                const actualProject = window.currentProjectName || currentProjectName || projectName;
+                                pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
+                            }
+                        } else {
+                            console.warn('⚠️ formData not found after project load');
+                            if (typeof showUploadStatus === 'function') {
+                                showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                            }
+                        }
+                    }, 300);
+                } else {
+                    console.error('❌ Project manager not available');
+                    if (typeof showUploadStatus === 'function') {
+                        showUploadStatus('❌ Project manager not available', 'error');
+                    }
+                }
+            }, 100);
+        }
+
+        async function submitSuggestion() {
+            // Ask user to summarize their changes
+            const changesSummary = prompt(
+                'Please summarize the key changes you made:\n\n' +
+                '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
+                '"Added 3 new staff members", "Updated facility closure information", etc.)'
+            );
+            
+            if (!changesSummary || changesSummary.trim() === '') {
+                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
+                return;
+            }
+            
+            // Try multiple ways to get the current project data
+            let dataToSubmit = null;
+            
+            // Try the global formData variable first (from facility-form.js)
+            if (typeof formData !== 'undefined' && formData) {
+                dataToSubmit = formData;
+                console.log('✅ Using global formData:', dataToSubmit);
+            }
+            // Try window.globalFormData as backup
+            else if (window.globalFormData) {
+                dataToSubmit = window.globalFormData;
+                console.log('✅ Using window.globalFormData:', dataToSubmit);
+            }
+            // Try window.formData as backup
+            else if (window.formData) {
+                dataToSubmit = window.formData;
+                console.log('✅ Using window.formData:', dataToSubmit);
+            }
+            
+            if (!dataToSubmit) {
+                showSuggestionStatus('❌ Error: No project data loaded. Please load a project first by clicking on one from the list above.', 'error');
+                console.error('❌ No formData found. Available variables:', {
+                    'typeof formData': typeof formData,
+                    'window.globalFormData': window.globalFormData,
+                    'window.formData': window.formData
+                });
+                return;
+            }
+            
+            // Check if we're in private facility mode and clear operator data if so
+            const privateToggle = document.getElementById('private-ownership-toggle');
+            if (privateToggle && privateToggle.checked) {
+                console.log('🔒 Private facility mode detected - clearing operator data before submission');
+                
+                // Create a copy of the data and clear operator info
+                dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
+                if (dataToSubmit.operator) {
+                    dataToSubmit.operator = {
+                        name: '',
+                        currentName: '',
+                        pastNames: [],
+                        otherNames: [],
+                        foundingDate: '',
+                        keyPersonnel: [],
+                        headquarters: '',
+                        website: ''
+                    };
+                }
+                
+                // Also clear operator data from facilities
+                if (dataToSubmit.facilities) {
+                    dataToSubmit.facilities.forEach(facility => {
+                        if (facility.operator) {
+                            facility.operator = {
+                                name: '',
+                                currentName: '',
+                                pastNames: [],
+                                otherNames: [],
+                                foundingDate: '',
+                                keyPersonnel: [],
+                                headquarters: '',
+                                website: ''
+                            };
+                        }
+                    });
+                }
+                
+                console.log('🧹 Operator data cleared for private facility submission');
+            }
+            
+            // CRITICAL FIX: Ensure the project name is correctly set
+            const actualProjectName = window.currentProjectName || currentProjectName || 'Unknown Project';
+            
+            // Force set the project name in the data being submitted
+            dataToSubmit.projectName = actualProjectName;
+            dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
+            
+            console.log('🔧 FORCED project name in submission data:', actualProjectName);
+            
+            // Show which project we're submitting
+            const projectName = window.currentProjectName || currentProjectName || dataToSubmit.projectName || 'Unknown Project';
+            console.log('📤 Submitting changes for project:', projectName);
+            console.log('🔍 Debug project name sources:', {
+                'window.currentProjectName': window.currentProjectName,
+                'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
+                'dataToSubmit.projectName': dataToSubmit.projectName,
+                'final': projectName
+            });
+            console.log('🏢 Facilities in submission:', dataToSubmit.facilities?.map(f => f.identification?.name || 'Unnamed') || []);
+            
+            try {
+                const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: dataToSubmit,
+                        reason: changesSummary.trim(),
+                        projectName: actualProjectName, // Explicit project name
+                        metadata: {
+                            actualProjectName: actualProjectName,
+                            submittedFrom: 'data.html suggestions form',
+                            timestamp: new Date().toISOString()
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuggestionStatus(`☑️ Suggestion submitted successfully for "${projectName}"! It will be reviewed before being added to the database.`, 'success');
+                } else {
+                    showSuggestionStatus('❌ Error: ' + (result.error || 'Failed to submit suggestion'), 'error');
+                }
+            } catch (error) {
+                showSuggestionStatus('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        function showSuggestionStatus(message, type) {
+            const statusDiv = document.getElementById('suggestion-status');
+            statusDiv.className = `upload-status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Generate Report function (fallback if facility-report-generator.js doesn't provide one)
+        if (!window.generateReport) {
+            window.generateReport = function() {
+                // Get form data from the JSON display element
+                const jsonDisplay = document.getElementById('json-display');
+                let reportData = null;
+                
+                try {
+                    if (jsonDisplay && jsonDisplay.textContent) {
+                        reportData = JSON.parse(jsonDisplay.textContent);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse form data:', e);
+                }
+                
+                // Check if there's form data
+                if (!reportData || !reportData.facilities || reportData.facilities.length === 0) {
+                    console.log('No facility data to generate report. Please add facility information first.');
+                    return;
+                }
+                
+                // If facility-report-generator.js is loaded and has a report function, use it
+                if (typeof window.FacilityReportGenerator !== 'undefined') {
+                    const generator = new window.FacilityReportGenerator(reportData);
+                    generator.generateReport();
+                } else {
+                    // Fallback: create comprehensive formatted report
+                    const reportWindow = window.open('', '_blank');
+                    
+                    // Helper functions
+                    const escapeHtml = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    
+                    const makeLink = (url) => {
+                        const escaped = escapeHtml(url);
+                        return '<a href="' + escaped + '" target="_blank" style="color: #1e40af; text-decoration: none; border-bottom: 1px solid #1e40af;">' + escaped + '</a>';
+                    };
+                    
+                    const hasValue = (value) => {
+                        if (value === null || value === undefined || value === '') return false;
+                        if (typeof value === 'string' && value.trim() === '') return false;
+                        return true;
+                    };
+                    
+                    const renderValue = (value) => {
+                        if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                            return makeLink(value);
+                        }
+                        return escapeHtml(value);
+                    };
+                    
+                    const renderField = (label, value) => {
+                        if (!hasValue(value)) return '';
+                        return '<div class="detail-row"><div class="detail-label">' + label + '</div><div class="detail-value">' + renderValue(value) + '</div></div>';
+                    };
+                    
+                    const renderArray = (arr, label) => {
+                        if (!arr || arr.length === 0) return '';
+                        let html = '<div class="detail-row"><div class="detail-label">' + label + '</div><div class="detail-value"><ul style="margin: 0; padding-left: 20px;">';
+                        arr.forEach(item => {
+                            if (typeof item === 'object' && item.name) {
+                                html += '<li>' + (item.role ? '<strong>' + escapeHtml(item.role) + ':</strong> ' : '') + renderValue(item.name) + '</li>';
+                            } else if (hasValue(item)) {
+                                html += '<li>' + renderValue(item) + '</li>';
+                            }
+                        });
+                        html += '</ul></div></div>';
+                        return html;
+                    };
+                    
+                    reportWindow.document.write('<html><head><title>Facility Report</title>');
+                    reportWindow.document.write('<link rel="stylesheet" href="css/print-report.css">');
+                    reportWindow.document.write('</head><body>');
+                    
+                    // Header
+                    reportWindow.document.write('<div class="header">');
+                    reportWindow.document.write('<h1>📋 Kids Over Profits TTI Data Report</h1>');
+                    reportWindow.document.write('<p>Generated on ' + new Date().toLocaleString() + '</p>');
+                    reportWindow.document.write('</div>');
+                    
+                    // Operator Section - COMPLETE (only non-empty fields)
+                    if (reportData.operator) {
+                        const op = reportData.operator;
+                        reportWindow.document.write('<div class="section">');
+                        reportWindow.document.write('<h2>🏢 Operator Information</h2>');
+                        
+                        reportWindow.document.write(renderField('Operator Name', op.name));
+                        reportWindow.document.write(renderField('Current Name', op.currentName));
+                        if (op.otherNames && op.otherNames.length > 0) reportWindow.document.write(renderArray(op.otherNames, 'Other Names'));
+                        reportWindow.document.write(renderField('Primary Location', op.location));
+                        reportWindow.document.write(renderField('Headquarters', op.headquarters));
+                        reportWindow.document.write(renderField('Founded', op.founded));
+                        reportWindow.document.write(renderField('Operating Period', op.operatingPeriod));
+                        reportWindow.document.write(renderField('Status', op.status));
+                        if (op.parentCompanies && op.parentCompanies.length > 0) reportWindow.document.write(renderArray(op.parentCompanies, 'Parent Companies'));
+                        if (op.websites && op.websites.length > 0) reportWindow.document.write(renderArray(op.websites, 'Websites'));
+                        if (op.investors && op.investors.length > 0) reportWindow.document.write(renderArray(op.investors, 'Investors'));
+                        
+                        if (op.keyStaff && (hasValue(op.keyStaff.ceo) || (op.keyStaff.founders && op.keyStaff.founders.length > 0) || (op.keyStaff.keyExecutives && op.keyStaff.keyExecutives.length > 0))) {
+                            reportWindow.document.write('<h3>Key Staff</h3>');
+                            reportWindow.document.write(renderField('CEO/President', op.keyStaff.ceo));
+                            if (op.keyStaff.founders && op.keyStaff.founders.length > 0) reportWindow.document.write(renderArray(op.keyStaff.founders, 'Founders'));
+                            if (op.keyStaff.keyExecutives && op.keyStaff.keyExecutives.length > 0) reportWindow.document.write(renderArray(op.keyStaff.keyExecutives, 'Key Executives'));
+                        }
+                        
+                        if (op.notes && op.notes.length > 0) reportWindow.document.write(renderArray(op.notes, 'Operator Notes'));
+                        
+                        reportWindow.document.write('</div>');
+                    }
+                    
+                    // Facilities Section - COMPLETE
+                    reportWindow.document.write('<div class="section">');
+                    reportWindow.document.write('<h2>🏫 Facilities (' + reportData.facilities.length + ')</h2>');
+                    
+                    reportData.facilities.forEach((facility, index) => {
+                        reportWindow.document.write('<div class="facility-card">');
+                        reportWindow.document.write('<h3>#' + (index + 1) + ' - ' + (facility.identification?.name || 'Unnamed Facility') + '</h3>');
+                        
+                        // Identification
+                        if (facility.identification) {
+                            const id = facility.identification;
+                            reportWindow.document.write(renderField('Current Name', id.currentName));
+                            reportWindow.document.write(renderField('Current Operator', id.currentOperator));
+                            if (id.otherNames && id.otherNames.length > 0) reportWindow.document.write(renderArray(id.otherNames, 'Other Names'));
+                        }
+                        
+                        // Location
+                        reportWindow.document.write(renderField('Location', facility.location));
+                        if (hasValue(facility.address)) {
+                            reportWindow.document.write('<div class="detail-row"><div class="detail-label">Address</div><div class="detail-value">' + escapeHtml(facility.address).replace(/\n/g, '<br>') + '</div></div>');
+                        }
+                        
+                        // Other Operators
+                        if (facility.otherOperators && facility.otherOperators.length > 0) reportWindow.document.write(renderArray(facility.otherOperators, 'Other Operators'));
+                        
+                        // Operating Period
+                        if (facility.operatingPeriod) {
+                            const op = facility.operatingPeriod;
+                            reportWindow.document.write(renderField('Opened', op.startYear));
+                            reportWindow.document.write(renderField('Closed', op.endYear));
+                            reportWindow.document.write(renderField('Current Status', op.status));
+                            reportWindow.document.write(renderField('Years of Operation', op.yearsOfOperation));
+                            if (op.notes && op.notes.length > 0) reportWindow.document.write(renderArray(op.notes, 'Operational Notes'));
+                        }
+                        
+                        // Staff
+                        if (facility.staff) {
+                            if (facility.staff.administrator && facility.staff.administrator.length > 0) reportWindow.document.write(renderArray(facility.staff.administrator, 'Administrators'));
+                            if (facility.staff.notableStaff && facility.staff.notableStaff.length > 0) reportWindow.document.write(renderArray(facility.staff.notableStaff, 'Notable Staff'));
+                        }
+                        
+                        // Profile Links
+                        if (facility.profileLinks && facility.profileLinks.length > 0) reportWindow.document.write(renderArray(facility.profileLinks, 'Profile Links'));
+                        
+                        // Facility Details
+                        if (facility.facilityDetails) {
+                            const fd = facility.facilityDetails;
+                            reportWindow.document.write(renderField('Program Type', fd.type));
+                            reportWindow.document.write(renderField('Capacity', fd.capacity));
+                            reportWindow.document.write(renderField('Current Census', fd.currentCensus));
+                            if (fd.ageRange && (hasValue(fd.ageRange.min) || hasValue(fd.ageRange.max))) {
+                                const ageRange = (hasValue(fd.ageRange.min) ? fd.ageRange.min : '?') + ' - ' + (hasValue(fd.ageRange.max) ? fd.ageRange.max : '?');
+                                reportWindow.document.write('<div class="detail-row"><div class="detail-label">Age Range</div><div class="detail-value">' + ageRange + '</div></div>');
+                            }
+                            reportWindow.document.write(renderField('Gender', fd.gender));
+                        }
+                        
+                        // Accreditations
+                        if (facility.accreditations) {
+                            if (facility.accreditations.current && facility.accreditations.current.length > 0) reportWindow.document.write(renderArray(facility.accreditations.current, 'Current Accreditations'));
+                            if (facility.accreditations.past && facility.accreditations.past.length > 0) reportWindow.document.write(renderArray(facility.accreditations.past, 'Past Accreditations'));
+                        }
+                        if (facility.memberships && facility.memberships.length > 0) reportWindow.document.write(renderArray(facility.memberships, 'Professional Memberships'));
+                        if (facility.certifications && facility.certifications.length > 0) reportWindow.document.write(renderArray(facility.certifications, 'Certifications'));
+                        if (facility.licensing && facility.licensing.length > 0) reportWindow.document.write(renderArray(facility.licensing, 'Licensing Information'));
+                        
+                        // Resources
+                        if (facility.resources) {
+                            const res = facility.resources;
+                            let resourceBadges = [];
+                            Object.keys(res).forEach(key => {
+                                if (key.startsWith('has') && res[key] === true) {
+                                    const label = key.replace('has', '').replace(/([A-Z])/g, ' $1').trim();
+                                    resourceBadges.push(label);
+                                }
+                            });
+                            if (resourceBadges.length > 0) {
+                                reportWindow.document.write('<div class="detail-row"><div class="detail-label">Available Resources</div><div class="detail-value">');
+                                resourceBadges.forEach(r => reportWindow.document.write('<span class="badge badge-green">' + r + '</span>'));
+                                reportWindow.document.write('</div></div>');
+                            }
+                            if (res.notes && res.notes.length > 0) reportWindow.document.write(renderArray(res.notes, 'Resource Notes'));
+                        }
+                        
+                        // Treatment Types
+                        if (facility.treatmentTypes) {
+                            let treatments = [];
+                            Object.keys(facility.treatmentTypes).forEach(key => {
+                                if (facility.treatmentTypes[key] === true) {
+                                    const label = key.replace('has', '').replace(/([A-Z])/g, ' $1').trim();
+                                    treatments.push(label);
+                                }
+                            });
+                            if (treatments.length > 0) {
+                                reportWindow.document.write('<div class="detail-row"><div class="detail-label">Treatment Types</div><div class="detail-value">');
+                                treatments.forEach(t => reportWindow.document.write('<span class="badge">' + t + '</span>'));
+                                reportWindow.document.write('</div></div>');
+                            }
+                        }
+                        
+                        // Philosophy
+                        if (facility.philosophy) {
+                            let philosophies = [];
+                            Object.keys(facility.philosophy).forEach(key => {
+                                if (facility.philosophy[key] === true) {
+                                    const label = key.replace('has', '').replace(/([A-Z])/g, ' $1').trim();
+                                    philosophies.push(label);
+                                }
+                            });
+                            if (philosophies.length > 0) {
+                                reportWindow.document.write('<div class="detail-row"><div class="detail-label">Philosophies</div><div class="detail-value">');
+                                philosophies.forEach(p => reportWindow.document.write('<span class="badge">' + p + '</span>'));
+                                reportWindow.document.write('</div></div>');
+                            }
+                        }
+                        
+                        // Critical Incidents
+                        if (facility.criticalIncidents) {
+                            let incidents = [];
+                            Object.keys(facility.criticalIncidents).forEach(key => {
+                                if (facility.criticalIncidents[key] === true) {
+                                    const label = key.replace('has', '').replace(/([A-Z])/g, ' $1').trim();
+                                    incidents.push(label);
+                                }
+                            });
+                            if (incidents.length > 0) {
+                                reportWindow.document.write('<div class="detail-row"><div class="detail-label">Critical Incidents</div><div class="detail-value">');
+                                incidents.forEach(i => reportWindow.document.write('<span class="badge" style="background: #fee2e2; color: #dc2626;">' + i + '</span>'));
+                                reportWindow.document.write('</div></div>');
+                            }
+                        }
+                        
+                        // General Notes
+                        if (facility.notes && facility.notes.length > 0) reportWindow.document.write(renderArray(facility.notes, 'Facility Notes'));
+                        
+                        reportWindow.document.write('</div>');
+                    });
+                    
+                    reportWindow.document.write('</div>');
+                    
+                    // Raw JSON (collapsible)
+                    reportWindow.document.write('<div class="section">');
+                    reportWindow.document.write('<h2>📄 Raw Data (JSON)</h2>');
+                    reportWindow.document.write('<details><summary style="cursor: pointer; font-weight: 600; padding: 10px; background: #f8fafc; border-radius: 6px;">Click to expand JSON data</summary>');
+                    reportWindow.document.write('<pre style="background: #1f2937; color: #f8fafc; padding: 20px; border-radius: 6px; overflow-x: auto; margin-top: 10px; font-size: 12px;">' + escapeHtml(JSON.stringify(reportData, null, 2)) + '</pre>');
+                    reportWindow.document.write('</details></div>');
+                    
+                    reportWindow.document.write('</body></html>');
+                    reportWindow.document.close();
+                }
+            };
+        }
+        
+        // DATA ORGANIZER FUNCTIONALITY
+        function initializeDataOrganizer() {
+            const showOrganizerBtn = document.getElementById('show-organizer-btn');
+            const organizerSection = document.getElementById('data-organizer-section');
+            const organizeBySelect = document.getElementById('organize-by');
+            const organizeValueGroup = document.getElementById('organize-value-group');
+            const organizeValueInput = document.getElementById('organize-value');
+            const organizeSearchBtn = document.getElementById('organize-search-btn');
+            const organizeClearBtn = document.getElementById('organize-clear-btn');
+            const organizeResults = document.getElementById('organize-results');
+            const organizeResultsTitle = document.getElementById('organize-results-title');
+            const organizeResultsCount = document.getElementById('organize-results-count');
+            const organizeMatches = document.getElementById('organize-matches');
+            
+            let organizerVisible = true;
+            
+            // Set initial state - organizer visible by default
+            organizerSection.style.display = 'block';
+            showOrganizerBtn.textContent = '📊 Hide Organizer';
+            
+            // Toggle organizer visibility
+            showOrganizerBtn.addEventListener('click', () => {
+                organizerVisible = !organizerVisible;
+                organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer';
+                
+                if (organizerVisible) {
+                    organizerSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            
+            // Handle organize by selection
+            organizeBySelect.addEventListener('change', () => {
+                const value = organizeBySelect.value;
+                if (value) {
+                    organizeValueGroup.style.display = 'block';
+                    organizeSearchBtn.style.display = 'inline-block';
+                    organizeValueInput.focus();
+                } else {
+                    organizeValueGroup.style.display = 'none';
+                    organizeSearchBtn.style.display = 'none';
+                    clearOrganizerResults();
+                }
+            });
+            
+            // Handle search
+            organizeSearchBtn.addEventListener('click', performOrganizedSearch);
+            organizeValueInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performOrganizedSearch();
+            });
+            
+            // Handle clear
+            organizeClearBtn.addEventListener('click', clearOrganizerResults);
+            
+            function performOrganizedSearch() {
+                const searchType = organizeBySelect.value;
+                const searchValue = organizeValueInput.value.trim();
+                
+                if (!searchType || !searchValue) {
+                    console.log('Please select a data point type and enter a search value.');
+                    return;
+                }
+                
+                // Get all facilities from all projects
+                if ((!formData || !formData.facilities || formData.facilities.length === 0) && 
+                    (!projects || Object.keys(projects).length === 0)) {
+                    console.log('No data available. Please load or create some facility data first.');
+                    return;
+                }
+                
+                const results = [];
+                
+                // Search through current formData facilities
+                if (formData && formData.facilities) {
+                    formData.facilities.forEach((facility, facilityIndex) => {
+                        const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                        if (matches.length > 0) {
+                            results.push({
+                                projectName: currentProjectName || 'Current Project',
+                                facility: facility,
+                                facilityIndex: facilityIndex,
+                                matches: matches
+                            });
+                        }
+                    });
+                }
+                
+                // Search through all saved projects
+                Object.keys(projects).forEach(projectName => {
+                    const project = projects[projectName];
+                    if (project && project.data && project.data.facilities) {
+                        project.data.facilities.forEach((facility, facilityIndex) => {
+                            const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                            if (matches.length > 0) {
+                                results.push({
+                                    projectName: projectName,
+                                    facility: facility,
+                                    facilityIndex: facilityIndex,
+                                    matches: matches
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                displayOrganizerResults(results, searchType, searchValue);
+            }
+            
+            function extractDataPointsForSearch(facility, type, searchValue) {
+                const matches = [];
+                const searchLower = searchValue.toLowerCase();
+                
+                switch (type) {
+                    case 'staff':
+                        if (facility.staff) {
+                            if (facility.staff.administrator) {
+                                facility.staff.administrator.forEach(admin => {
+                                    const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
+                                    if (adminStr.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Administrator: ${adminStr}`);
+                                    }
+                                });
+                            }
+                            if (facility.staff.notableStaff) {
+                                facility.staff.notableStaff.forEach(staff => {
+                                    const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
+                                    if (staffStr.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Notable Staff: ${staffStr}`);
+                                    }
+                                });
+                            }
+                        }
+                        break;
+                        
+                    case 'operator':
+                        if (facility.identification?.operator && 
+                            facility.identification.operator.toLowerCase().includes(searchLower)) {
+                            matches.push(facility.identification.operator);
+                        }
+                        if (facility.otherOperators) {
+                            facility.otherOperators.forEach(op => {
+                                if (op.toLowerCase().includes(searchLower)) {
+                                    matches.push(op);
+                                }
+                            });
+                        }
+                        break;
+                        
+                    case 'location':
+                        if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                            matches.push(facility.location);
+                        }
+                        break;
+                        
+                    case 'programType':
+                        if (facility.facilityDetails?.type && 
+                            facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
+                            matches.push(facility.facilityDetails.type);
+                        }
+                        break;
+                        
+                    case 'status':
+                        if (facility.operatingPeriod?.status && 
+                            facility.operatingPeriod.status.toLowerCase().includes(searchLower)) {
+                            matches.push(facility.operatingPeriod.status);
+                        }
+                        break;
+                        
+                    case 'year':
+                        if (facility.operatingPeriod?.startYear && 
+                            facility.operatingPeriod.startYear.toString().includes(searchValue)) {
+                            matches.push(`Opened: ${facility.operatingPeriod.startYear}`);
+                        }
+                        if (facility.operatingPeriod?.endYear && 
+                            facility.operatingPeriod.endYear.toString().includes(searchValue)) {
+                            matches.push(`Closed: ${facility.operatingPeriod.endYear}`);
+                        }
+                        break;
+                        
+                    case 'accreditation':
+                        if (facility.accreditations) {
+                            if (facility.accreditations.current) {
+                                facility.accreditations.current.forEach(acc => {
+                                    if (acc.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Current: ${acc}`);
+                                    }
+                                });
+                            }
+                            if (facility.accreditations.past) {
+                                facility.accreditations.past.forEach(acc => {
+                                    if (acc.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Past: ${acc}`);
+                                    }
+                                });
+                            }
+                        }
+                        break;
+                        
+                    case 'certification':
+                        if (facility.certifications) {
+                            facility.certifications.forEach(cert => {
+                                if (cert.toLowerCase().includes(searchLower)) {
+                                    matches.push(cert);
+                                }
+                            });
+                        }
+                        break;
+                }
+                
+                return matches;
+            }
+            
+            function displayOrganizerResults(results, searchType, searchValue) {
+                const searchTypeLabel = organizeBySelect.options[organizeBySelect.selectedIndex].text;
+                
+                organizeResultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+                organizeResultsCount.textContent = `Found ${results.length} facilities`;
+                
+                if (results.length === 0) {
+                    organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
+                } else {
+                    let html = '';
+                    results.forEach(result => {
+                        const facilityName = result.facility.identification?.name || 'Unnamed Facility';
+                        const operator = result.facility.identification?.operator || 'Unknown Operator';
+                        const location = result.facility.location || 'Unknown Location';
+                        
+                        html += `
+                            <div style="border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;" 
+                                 onmouseover="this.style.backgroundColor='#f8fafc'" 
+                                 onmouseout="this.style.backgroundColor='white'"
+                                 onclick="goToFacility('${result.projectName}', ${result.facilityIndex})">
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${escapeHtmlForAttr(facilityName)}</div>
+                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
+                                    ${escapeHtmlForAttr(operator)} • ${escapeHtmlForAttr(location)}
+                                </div>
+                                <div style="font-size: 13px;">
+                                    <strong>Matches:</strong> 
+                                    ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
+                                </div>
+                                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                                    Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    organizeMatches.innerHTML = html;
+                }
+                
+                organizeResults.style.display = 'block';
+                organizeClearBtn.style.display = 'inline-block';
+            }
+            
+            function clearOrganizerResults() {
+                organizeResults.style.display = 'none';
+                organizeClearBtn.style.display = 'none';
+                organizeValueInput.value = '';
+            }
+            
+            // Function to navigate to a specific facility
+            window.goToFacility = function(projectName, facilityIndex) {
+                // Switch to the project if it's different
+                if (currentProjectName !== projectName) {
+                    const projectSelect = document.getElementById('project-select');
+                    if (projectSelect) {
+                        projectSelect.value = projectName;
+                        projectSelect.dispatchEvent(new Event('change'));
+                    }
+                    currentProjectName = projectName;
+                }
+                
+                // Switch to the facility
+                currentFacilityIndex = facilityIndex;
+                updateUI();
+                
+                // Hide organizer and scroll to top
+                organizerVisible = false;
+                organizerSection.style.display = 'none';
+                showOrganizerBtn.textContent = '📊 Data Organizer';
+                
+                // Scroll to top of page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Log the navigation
+                setTimeout(() => {
+                    console.log(`Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
+                }, 500);
+            };
+        }
+        
+        // Initialize data organizer when the page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
+        });
+
+        // ============================================
+        // FIELD NOTES FUNCTIONALITY
+        // ============================================
+        
+        console.log('Note buttons script starting...');
+
+        // Store for field notes - facility-specific
+        let allFacilityNotes = {}; // Object to store notes for all facilities
+        let notesCurrentFacilityIndex = 0; // Track current facility for notes
+        let fieldNotes = {}; // Legacy fallback storage
+
+        // Get notes for current facility
+        function getCurrentFacilityNotes() {
+            if (!allFacilityNotes[notesCurrentFacilityIndex]) {
+                allFacilityNotes[notesCurrentFacilityIndex] = {};
+            }
+            return allFacilityNotes[notesCurrentFacilityIndex];
+        }
+
+        // Update when facility changes
+        function updateCurrentFacility() {
+            // Get current facility index from the external system
+            if (typeof window.currentFacilityIndex !== 'undefined') {
+                notesCurrentFacilityIndex = window.currentFacilityIndex;
+            }
+            // Refresh note buttons for the new facility
+            setTimeout(() => {
+                addNoteButtons();
+            }, 100);
+        }
+
+        // Load notes from current facility data (integrates with existing system)
+        function loadFieldNotes() {
+            try {
+                // Update current facility index
+                updateCurrentFacility();
+                
+                // Try to get notes from the current facility data if it exists
+                if (typeof window.getCurrentFacilityData === 'function') {
+                    const facilityData = window.getCurrentFacilityData();
+                    if (facilityData && facilityData.fieldNotes) {
+                        allFacilityNotes[notesCurrentFacilityIndex] = facilityData.fieldNotes;
+                        return;
+                    }
+                }
+                
+                // Fallback to localStorage if facility system not available
+                const stored = localStorage.getItem('fieldNotes');
+                if (stored) {
+                    fieldNotes = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.warn('Failed to load field notes:', e);
+                fieldNotes = {};
+            }
+        }
+
+        // Save notes to facility data (integrates with existing cloud save system)
+        function saveFieldNotes() {
+            try {
+                const currentNotes = getCurrentFacilityNotes();
+                
+                // Save to facility data structure if available
+                if (typeof window.updateCurrentFacilityData === 'function') {
+                    window.updateCurrentFacilityData({ fieldNotes: currentNotes });
+                } else if (typeof window.saveCurrentFacility === 'function') {
+                    // Try alternative save function
+                    const facilityData = window.getCurrentFacilityData ? window.getCurrentFacilityData() : {};
+                    facilityData.fieldNotes = currentNotes;
+                    window.saveCurrentFacility(facilityData);
+                } else {
+                    // If facility functions not available, trigger any existing save mechanism
+                    // and also save to localStorage as backup
+                    if (typeof window.triggerSave === 'function') {
+                        window.triggerSave();
+                    }
+                    localStorage.setItem('fieldNotes', JSON.stringify(fieldNotes));
+                }
+                
+                // Also save to localStorage as backup
+                localStorage.setItem('fieldNotes', JSON.stringify(fieldNotes));
+                
+                // Trigger any existing auto-save mechanism
+                if (typeof window.autoSave === 'function') {
+                    window.autoSave();
+                }
+                
+            } catch (e) {
+                console.warn('Failed to save field notes to cloud, saving locally:', e);
+                localStorage.setItem('fieldNotes', JSON.stringify(fieldNotes));
+            }
+        }
+
+        // Generate truly unique field identifier
+        function getFieldIdentifier(element) {
+            // If element already has a unique note ID, use it
+            if (element.dataset.noteId) {
+                return element.dataset.noteId;
+            }
+            
+            // Create a unique ID and store it on the element
+            const uniqueId = `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            element.dataset.noteId = uniqueId;
+            return uniqueId;
+        }
+
+        // Add note buttons specifically to array items
+        function addNoteButtonsToArrayItems(group) {
+            try {
+                const arrayItems = group.querySelectorAll('.array-item');
+                
+                arrayItems.forEach(arrayItem => {
+                    // Skip if this array item already has a note button
+                    if (arrayItem.querySelector('.field-note-btn')) {
+                        return;
+                    }
+
+                    // Skip if this array item is being modified (has no children yet)
+                    if (arrayItem.children.length === 0) {
+                        return;
+                    }
+
+                    // Find the input field in this array item
+                    const field = arrayItem.querySelector('input, textarea, select');
+                    if (!field) {
+                        return;
+                    }
+
+                    // Skip hidden fields
+                    if (field.type === 'hidden' || field.style.display === 'none') {
+                        return;
+                    }
+
+                    // Create note button
+                    const noteBtn = document.createElement('button');
+                    noteBtn.type = 'button';
+                    noteBtn.className = 'field-note-btn';
+                    noteBtn.innerHTML = '+';
+                    noteBtn.title = 'Add note for this field';
+
+                    // Check if this field has a note
+                    const fieldIdentifier = getFieldIdentifier(field);
+                    const currentNotes = getCurrentFacilityNotes();
+                    if (currentNotes[fieldIdentifier]) {
+                        noteBtn.classList.add('has-note');
+                        noteBtn.title = 'Edit note for this field';
+                    }
+
+                    // Add click handler
+                    noteBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        addInlineNote(field, group);
+                    });
+
+                    // Prevent button from interfering with input events
+                    noteBtn.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                    });
+
+                    noteBtn.addEventListener('mouseup', (e) => {
+                        e.stopPropagation();
+                    });
+
+                    // Restructure the array item to have top and bottom sections
+                    restructureArrayItem(arrayItem, field, noteBtn);
+                });
+            } catch (error) {
+                console.warn('Error adding note buttons to array items:', error);
+            }
+        }
+
+        // Restructure array item to have field+note button on top, remove button on bottom
+        function restructureArrayItem(arrayItem, field, noteBtn) {
+            try {
+                // Check if already restructured
+                if (arrayItem.querySelector('.array-item-top')) {
+                    // Already restructured, just add the note button to top section
+                    const topSection = arrayItem.querySelector('.array-item-top');
+                    topSection.appendChild(noteBtn);
+                    return;
+                }
+
+                // Find the remove button
+                const removeBtn = arrayItem.querySelector('.btn, button[type="button"]:not(.field-note-btn)');
+                
+                // Create top section for field and note button
+                const topSection = document.createElement('div');
+                topSection.className = 'array-item-top';
+                
+                // Create bottom section for remove button
+                const bottomSection = document.createElement('div');
+                bottomSection.className = 'array-item-bottom';
+                
+                // Move all existing content to preserve structure
+                const existingContent = Array.from(arrayItem.children);
+                
+                // Add field to top section
+                existingContent.forEach(child => {
+                    if (child === removeBtn) {
+                        // Remove button goes to bottom section
+                        bottomSection.appendChild(child);
+                    } else {
+                        // Everything else goes to top section
+                        topSection.appendChild(child);
+                    }
+                });
+                
+                // Add note button to top section
+                topSection.appendChild(noteBtn);
+                
+                // Clear array item and add the new structure
+                arrayItem.innerHTML = '';
+                arrayItem.appendChild(topSection);
+                
+                // Only add bottom section if there's a remove button
+                if (removeBtn) {
+                    arrayItem.appendChild(bottomSection);
+                }
+            } catch (error) {
+                console.warn('Error restructuring array item:', error);
+                // Fallback: just add the button to the array item
+                arrayItem.appendChild(noteBtn);
+            }
+        }
+
+        // Add note button to form groups
+        function addNoteButtons() {
+            console.log('addNoteButtons function called');
+            const formGroups = document.querySelectorAll('.form-group');
+            console.log('Found', formGroups.length, 'form groups');
+            
+            formGroups.forEach(group => {
+                // Skip if button already exists
+                if (group.querySelector('.field-note-btn')) {
+                    return;
+                }
+
+                // First, handle array items within this group
+                addNoteButtonsToArrayItems(group);
+
+                // Then handle the main field if it's not in an array item
+                // Find input, textarea, or select in this group (including deeply nested in wrappers)
+                // Look for the primary interactive field, prioritizing visible ones
+                let field = group.querySelector('input:not([type="hidden"]):not([style*="display: none"]), textarea:not([style*="display: none"]), select:not([style*="display: none"])');
+                
+                // Skip if this field is already inside an array item (handled above)
+                if (field && field.closest('.array-item')) {
+                    return;
+                }
+                
+                // If no visible field found, try any field as fallback
+                if (!field) {
+                    field = group.querySelector('input, textarea, select');
+                }
+                
+                if (!field) {
+                    return;
+                }
+
+                // Skip certain field types
+                if (field.type === 'hidden' || field.style.display === 'none') {
+                    return;
+                }
+
+                // Skip utility/action fields that don't need notes (be more selective)
+                const fieldId = field.id || '';
+                const skipFieldIds = [
+                    'import-file',
+                    'json-data',
+                    'toc-toggle',
+                    'facility-counter',
+                    'project-name',
+                    'organize-by',
+                    'organize-value'
+                ];
+                
+                if (skipFieldIds.includes(fieldId)) {
+                    return;
+                }
+
+                // Skip fields within project management section
+                if (field.closest('.project-management')) {
+                    return;
+                }
+
+                // Skip fields within data organizer section
+                if (field.closest('#data-organizer-section')) {
+                    return;
+                }
+
+                // Skip fields with certain labels that are utility functions (be more selective)
+                const label = group.querySelector('label');
+                if (label) {
+                    const labelText = label.textContent.toLowerCase();
+                    const skipLabels = [
+                        'import data',
+                        'paste json',
+                        'file upload',
+                        'import file',
+                        'project management',
+                        'saved projects'
+                    ];
+                    
+                    if (skipLabels.some(skipLabel => labelText.includes(skipLabel))) {
+                        return;
+                    }
+                }
+
+                // Create note button
+                const noteBtn = document.createElement('button');
+                noteBtn.type = 'button';
+                noteBtn.className = 'field-note-btn';
+                noteBtn.innerHTML = '+';
+                noteBtn.title = 'Add note for this field';
+
+                // Check if this field has a note
+                const fieldIdentifier = getFieldIdentifier(field);
+                const currentNotes = getCurrentFacilityNotes();
+                if (currentNotes[fieldIdentifier]) {
+                    noteBtn.classList.add('has-note');
+                    noteBtn.title = 'Edit note for this field';
+                }
+
+                // Add click handler
+                noteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    addInlineNote(field, group);
+                });
+
+                // Prevent button from interfering with input events
+                noteBtn.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                });
+
+                noteBtn.addEventListener('mouseup', (e) => {
+                    e.stopPropagation();
+                });
+
+                // Add button inside the same container as the field
+                
+                // Check if this field is inside an array-item (dynamic array field)
+                const arrayItem = field.closest('.array-item');
+                if (arrayItem) {
+                    // For array items, add the button directly to the array-item flex container
+                    arrayItem.appendChild(noteBtn);
+                } else {
+                    // Find the appropriate inner container (autocomplete-wrapper)
+                    const innerContainer = field.closest('.autocomplete-wrapper');
+                    
+                    if (innerContainer) {
+                        // For autocomplete-wrapper, add button directly to it
+                        innerContainer.style.display = 'flex';
+                        innerContainer.style.alignItems = 'flex-start';
+                        innerContainer.style.gap = '8px';
+                        
+                        // Make the field take remaining space
+                        field.style.flex = '1';
+                        field.style.minWidth = '0';
+                        
+                        // Add the button to the inner container
+                        innerContainer.appendChild(noteBtn);
+                    } else {
+                        // Fallback: create field-content wrapper as before
+                        let fieldContent = group.querySelector('.field-content');
+                        if (!fieldContent) {
+                            fieldContent = document.createElement('div');
+                            fieldContent.className = 'field-content';
+                            
+                            // Move all existing children except label to the field-content wrapper
+                            const label = group.querySelector('label');
+                            const children = Array.from(group.children);
+                            
+                            children.forEach(child => {
+                                if (child !== label) {
+                                    fieldContent.appendChild(child);
+                                }
+                            });
+                            
+                            // Add the field-content wrapper to the group
+                            group.appendChild(fieldContent);
+                        }
+                        
+                        // Add the note button to the field-content
+                        fieldContent.appendChild(noteBtn);
+                    }
+                }
+
+                // Add class to form group to apply proper styling
+                group.classList.add('has-note-button');
+            });
+        }
+
+        // Add inline note field (supports multiple notes)
+        function addInlineNote(field, group) {
+            const fieldId = getFieldIdentifier(field);
+            const label = group.querySelector('label');
+            const fieldName = label ? label.textContent.trim() : 'Field';
+            
+            // Create a new note container
+            const noteContainer = document.createElement('div');
+            noteContainer.className = 'note-container';
+            noteContainer.style.marginTop = '8px';
+            noteContainer.style.marginBottom = '8px';
+            noteContainer.style.padding = '8px';
+            noteContainer.style.border = '1px solid #e5e7eb';
+            noteContainer.style.borderRadius = '4px';
+            noteContainer.style.backgroundColor = '#f9fafb';
+            
+            const noteHeader = document.createElement('div');
+            noteHeader.style.display = 'flex';
+            noteHeader.style.justifyContent = 'space-between';
+            noteHeader.style.alignItems = 'center';
+            noteHeader.style.marginBottom = '4px';
+            
+            const noteLabel = document.createElement('label');
+            noteLabel.textContent = `${fieldName} Note`;
+            noteLabel.style.fontSize = '13px';
+            noteLabel.style.color = '#6b7280';
+            noteLabel.style.margin = '0';
+            
+            // Add a remove button for this specific note
+            const removeNoteBtn = document.createElement('button');
+            removeNoteBtn.type = 'button';
+            removeNoteBtn.innerHTML = '×';
+            removeNoteBtn.style.background = 'none';
+            removeNoteBtn.style.border = 'none';
+            removeNoteBtn.style.color = '#9ca3af';
+            removeNoteBtn.style.cursor = 'pointer';
+            removeNoteBtn.style.fontSize = '16px';
+            removeNoteBtn.style.padding = '0';
+            removeNoteBtn.style.width = '20px';
+            removeNoteBtn.style.height = '20px';
+            removeNoteBtn.title = 'Remove this note';
+            
+            const noteInput = document.createElement('input');
+            noteInput.type = 'text';
+            noteInput.className = 'note-input';
+            noteInput.placeholder = 'Add notes or context for this field...';
+            noteInput.style.fontSize = '14px';
+            noteInput.style.padding = '8px 12px';
+            noteInput.style.width = '100%';
+            noteInput.style.border = '1px solid #d1d5db';
+            noteInput.style.borderRadius = '4px';
+            
+            // Generate a unique note ID
+            const noteId = `${fieldId}_note_${Date.now()}`;
+            
+            // Save note on input
+            noteInput.addEventListener('input', () => {
+                const noteText = noteInput.value.trim();
+                const currentNotes = getCurrentFacilityNotes();
+                
+                // Ensure currentNotes[fieldId] is an array
+                if (!currentNotes[fieldId]) {
+                    currentNotes[fieldId] = [];
+                } else if (!Array.isArray(currentNotes[fieldId])) {
+                    // Convert old string-based notes to array format
+                    const oldNote = currentNotes[fieldId];
+                    currentNotes[fieldId] = [{
+                        id: `${fieldId}_note_${Date.now()}_legacy`,
+                        text: oldNote,
+                        timestamp: new Date().toISOString()
+                    }];
+                }
+                
+                // Find this note in the array and update it
+                const existingNoteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
+                if (noteText) {
+                    const noteData = { id: noteId, text: noteText, timestamp: new Date().toISOString() };
+                    if (existingNoteIndex >= 0) {
+                        currentNotes[fieldId][existingNoteIndex] = noteData;
+                    } else {
+                        currentNotes[fieldId].push(noteData);
+                    }
+                } else {
+                    // Remove empty note
+                    if (existingNoteIndex >= 0) {
+                        currentNotes[fieldId].splice(existingNoteIndex, 1);
+                    }
+                    if (currentNotes[fieldId].length === 0) {
+                        delete currentNotes[fieldId];
+                    }
+                }
+                
+                saveFieldNotes();
+                updateNoteButton(field);
+                
+                // Trigger any existing form change detection
+                if (typeof window.onFormChange === 'function') {
+                    window.onFormChange();
+                }
+                
+                // Dispatch a custom event for form changes
+                const facilityNotes = getCurrentFacilityNotes();
+                const changeEvent = new CustomEvent('facilityDataChanged', {
+                    detail: { type: 'fieldNote', fieldId: fieldId, value: facilityNotes[fieldId] }
+                });
+                document.dispatchEvent(changeEvent);
+            });
+            
+            // Remove note handler
+            removeNoteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const currentNotes = getCurrentFacilityNotes();
+                
+                // Remove this specific note from the array
+                if (currentNotes[fieldId]) {
+                    // Ensure it's an array before calling findIndex
+                    if (!Array.isArray(currentNotes[fieldId])) {
+                        // Convert old string format to array and remove
+                        delete currentNotes[fieldId];
+                    } else {
+                        const noteIndex = currentNotes[fieldId].findIndex(note => note.id === noteId);
+                        if (noteIndex >= 0) {
+                            currentNotes[fieldId].splice(noteIndex, 1);
+                        }
+                        if (currentNotes[fieldId].length === 0) {
+                            delete currentNotes[fieldId];
+                        }
+                    }
+                }
+                
+                saveFieldNotes();
+                updateNoteButton(field);
+                noteContainer.remove();
+                
+                // Trigger form change detection
+                if (typeof window.onFormChange === 'function') {
+                    window.onFormChange();
+                }
+            });
+            
+            noteHeader.appendChild(noteLabel);
+            noteHeader.appendChild(removeNoteBtn);
+            noteContainer.appendChild(noteHeader);
+            noteContainer.appendChild(noteInput);
+            
+            // Smart positioning: check if this field is in an array item
+            const arrayItem = field.closest('.array-item');
+            if (arrayItem) {
+                // For array items, find the best insertion point
+                // Look for existing notes for this field first
+                const existingNotes = Array.from(arrayItem.querySelectorAll('.note-container'));
+                const fieldNotes = existingNotes.filter(nc => {
+                    // Find notes that come after our field in the DOM
+                    const allElements = Array.from(arrayItem.children);
+                    const fieldIndex = allElements.indexOf(field);
+                    const noteIndex = allElements.indexOf(nc);
+                    return noteIndex > fieldIndex;
+                });
+                
+                if (fieldNotes.length > 0) {
+                    // Insert after the last existing note for this field
+                    const lastNote = fieldNotes[fieldNotes.length - 1];
+                    lastNote.insertAdjacentElement('afterend', noteContainer);
+                } else {
+                    // Insert immediately after the field
+                    field.insertAdjacentElement('afterend', noteContainer);
+                }
+            } else {
+                // For regular fields, position after the field or after existing notes
+                const fieldParent = field.parentElement;
+                const existingNotes = fieldParent.querySelectorAll('.note-container');
+                
+                if (existingNotes.length > 0) {
+                    // Insert after the last note
+                    const lastNote = existingNotes[existingNotes.length - 1];
+                    lastNote.insertAdjacentElement('afterend', noteContainer);
+                } else {
+                    // Insert immediately after the field
+                    field.insertAdjacentElement('afterend', noteContainer);
+                }
+            }
+            
+            // Focus the note input
+            noteInput.focus();
+            
+            updateNoteButton(field);
+        }
+
+        // Update note button appearance (simplified)
+        function updateNoteButton(field) {
+            const fieldId = getFieldIdentifier(field);
+            const formGroup = field.closest('.form-group');
+            const noteBtn = formGroup?.querySelector('.field-note-btn');
+
+            if (noteBtn) {
+                const currentNotes = getCurrentFacilityNotes();
+                const notes = currentNotes[fieldId];
+                if (notes && Array.isArray(notes) && notes.length > 0) {
+                    noteBtn.classList.add('has-note');
+                    noteBtn.title = 'Has notes - Click to add another';
+                    noteBtn.innerHTML = '+';
+                } else {
+                    noteBtn.classList.remove('has-note');
+                    noteBtn.title = 'Add note for this field';
+                    noteBtn.innerHTML = '+';
+                }
+            }
+        }
+
+        // Initialize field notes functionality
+        function initializeFieldNotes() {
+            loadFieldNotes();
+            
+            // Add note buttons to existing form groups
+            addNoteButtons();
+
+            // Load existing notes and create inline fields
+            setTimeout(() => {
+                const currentNotes = getCurrentFacilityNotes();
+                Object.keys(currentNotes).forEach(fieldId => {
+                    const field = document.querySelector(`#${fieldId}`) || 
+                                  document.querySelector(`[name="${fieldId}"]`) ||
+                                  Array.from(document.querySelectorAll('input, textarea, select')).find(f => getFieldIdentifier(f) === fieldId);
+                    
+                    if (field) {
+                        const group = field.closest('.form-group');
+                        if (group && !group.querySelector('.note-container')) {
+                            addInlineNote(field, group);
+                        }
+                    }
+                });
+            }, 500);
+
+            // Re-add buttons when content changes (for dynamic content)
+            const observer = new MutationObserver(() => {
+                setTimeout(addNoteButtons, 100);
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            console.log('Field notes functionality initialized');
+        }
+
+        // Function to sync notes when facility data changes (called by external scripts)
+        window.syncFieldNotes = function(facilityData) {
+            if (facilityData && facilityData.fieldNotes) {
+                const currentNotes = getCurrentFacilityNotes();
+                
+                // Migrate old string-based notes to new array format
+                Object.keys(facilityData.fieldNotes).forEach(fieldId => {
+                    const noteValue = facilityData.fieldNotes[fieldId];
+                    if (typeof noteValue === 'string' && noteValue.trim()) {
+                        // Convert old string notes to new array format
+                        currentNotes[fieldId] = [{
+                            id: `${fieldId}_note_${Date.now()}`,
+                            text: noteValue,
+                            timestamp: new Date().toISOString()
+                        }];
+                    } else if (Array.isArray(noteValue)) {
+                        // Keep new array format as is
+                        currentNotes[fieldId] = noteValue;
+                    }
+                });
+                
+                // Update existing note fields and buttons
+                Object.keys(currentNotes).forEach(fieldId => {
+                    const field = document.querySelector(`#${fieldId}`) || 
+                                  document.querySelector(`[name="${fieldId}"]`) ||
+                                  Array.from(document.querySelectorAll('input, textarea, select')).find(f => getFieldIdentifier(f) === fieldId);
+                    
+                    if (field) {
+                        updateNoteButton(field);
+                    }
+                });
+                
+                saveFieldNotes();
+            }
+        };
+
+        // Function to get current field notes (for external scripts)
+        window.getFieldNotes = function() {
+            return getCurrentFacilityNotes();
+        };
+
+        // Expose addNoteButtons function for external scripts
+        window.addNoteButtons = addNoteButtons;
+
+        // Initialize field notes when page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeFieldNotes, 1500); // Wait for other initialization
+        });
+
+        // Listen for facility changes and update notes accordingly
+        document.addEventListener('facilityChanged', () => {
+            updateCurrentFacility();
+        });
+
+        // Also listen for manual facility index changes
+        setInterval(() => {
+            if (typeof window.currentFacilityIndex !== 'undefined' && window.currentFacilityIndex !== notesCurrentFacilityIndex) {
+                updateCurrentFacility();
+            }
+        }, 1000);
+
+        // Listen for custom events when new array items are added
+        document.addEventListener('arrayItemAdded', (event) => {
+            console.log('Array item added event received');
+            // Add note buttons to the newly added item
+            setTimeout(() => {
+                if (event.detail && event.detail.itemDiv) {
+                    const formGroup = event.detail.itemDiv.closest('.form-group');
+                    if (formGroup) {
+                        addNoteButtonsToArrayItems(formGroup);
+                    }
+                }
+                // Also run the full addNoteButtons as backup
+                addNoteButtons();
+            }, 100);
+        });
+
+        // facility-form.js already loads projects from cloud and initializes the UI.
+        // We avoid duplicating that logic here to prevent double-renders that can clear values.
+        
+        // ============================================
+        // CATEGORY NAVIGATION (COMPANIES vs STATES)
+        // ============================================
+        
+        let currentCategory = 'facilities'; // Default to facilities/companies
+        
+        function initializeCategoryNavigation() {
+            const facilitiesTab = document.getElementById('facilities-tab');
+            const statesTab = document.getElementById('states-tab');
+            
+            // Category tab switching
+            facilitiesTab.addEventListener('click', () => switchCategory('facilities'));
+            statesTab.addEventListener('click', () => switchCategory('states'));
+            
+            // Add location project button
+            const addLocationBtn = document.getElementById('add-location-project-btn');
+            const locationInput = document.getElementById('new-location-project-input');
+            
+            if (addLocationBtn && locationInput) {
+                addLocationBtn.addEventListener('click', () => {
+                    const projectName = locationInput.value.trim();
+                    if (projectName) {
+                        createNewLocationProject(projectName);
+                        locationInput.value = ''; // Clear input
+                    } else {
+                        alert('Please enter a location project name');
+                    }
+                });
+                
+                // Allow Enter key to trigger the button
+                locationInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        addLocationBtn.click();
+                    }
+                });
+            }
+        }
+        
+        function switchCategory(category) {
+            currentCategory = category;
+            
+            // Update tab appearance
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show/hide content areas
+            const companiesContent = document.getElementById('companies-content');
+            const statesContent = document.getElementById('states-content');
+            
+            if (category === 'facilities') {
+                document.getElementById('facilities-tab').classList.add('active');
+                companiesContent.style.display = 'block';
+                statesContent.style.display = 'none';
+                
+                // Hide states-specific elements
+                hideStatesSpecificElements();
+                // Use filtered version for companies
+                setTimeout(() => {
+                    if (window.projectManager) {
+                        renderFilteredProjectsList('saved-projects-list', 'companies');
+                    }
+                }, 100);
+                console.log('Companies view active - showing company projects list');
+            } else {
+                document.getElementById('states-tab').classList.add('active');
+                companiesContent.style.display = 'none';
+                statesContent.style.display = 'block';
+                
+                // Show states-specific elements
+                showStatesSpecificElements();
+                // Use filtered version for locations
+                setTimeout(() => {
+                    renderFilteredProjectsList('locations-list', 'locations');
+                }, 100);
+                console.log('Locations view activated - showing location projects');
+            }
+        }
+        
+        function populateCompaniesList() {
+            console.log('🎨 Rendering projects list...');
+            const container = document.getElementById('operators-list');
+            if (!container) {
+                console.error('❌ operators-list container not found!');
+                return;
+            }
+            
+            const projectList = projects;
+            const projectNames = Object.keys(projectList);
+            
+            console.log('📋 Projects to render:', projectNames.length, projectNames);
+            
+            if (projectNames.length === 0) {
+                container.innerHTML = '<div class="projects-empty">📭 No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
+                console.log('📭 No projects to display');
+                return;
+            }
+            
+            projectNames.sort(function(a, b) {
+                return (projectList[b].timestamp || '').localeCompare(projectList[a].timestamp || '');
+            });
+            
+            const projectsHtml = projectNames.map(function(name) {
+                const project = projectList[name];
+                const date = new Date(project.timestamp || 0);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const facilityCount = project.data?.facilities?.length || 0;
+                
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                            <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
+                            <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
+                            <div class="project-item-actions">
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                            </div>
+                        </div>`;
+            }).join('');
+            
+            container.innerHTML = projectsHtml;
+            console.log('✅ Projects list rendered successfully');
+        }
+        
+        function populateLocationsList() {
+            console.log('🎨 Rendering location projects list...');
+            const container = document.getElementById('locations-list');
+            if (!container) {
+                console.error('❌ locations-list container not found!');
+                return;
+            }
+            
+            const projectList = projects;
+            const projectNames = Object.keys(projectList);
+            
+            console.log('📋 Location projects to render:', projectNames.length, projectNames);
+            
+            if (projectNames.length === 0) {
+                container.innerHTML = '<div class="projects-empty">📭 No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
+                console.log('📭 No location projects to display');
+                return;
+            }
+            
+            projectNames.sort(function(a, b) {
+                return (projectList[b].timestamp || '').localeCompare(projectList[a].timestamp || '');
+            });
+            
+            const projectsHtml = projectNames.map(function(name) {
+                const project = projectList[name];
+                const date = new Date(project.timestamp || 0);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const facilityCount = project.data?.facilities?.length || 0;
+                
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                            <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
+                            <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
+                            <div class="project-item-actions">
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                            </div>
+                        </div>`;
+            }).join('');
+            
+            container.innerHTML = projectsHtml;
+            console.log('✅ Location projects list rendered successfully');
+        }
+        
+        function escapeHtmlForAttr(text) {
+            return text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        
+        function renderFilteredProjectsList(containerId, filterType) {
+            console.log('🎨 Rendering filtered projects list...', filterType);
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('❌ Container not found:', containerId);
+                return;
+            }
+            
+            const projectList = projects;
+            const projectNames = Object.keys(projectList);
+            
+            // Define US states and countries
+            const usStates = [
+                'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+                'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+                'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
+                'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
+                'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
+            ];
+            
+            const countries = [
+                'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
+                'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
+                'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
+            ];
+            
+            // Filter projects based on type
+            const filteredNames = projectNames.filter(name => {
+                const lowerName = name.toLowerCase().trim();
+                if (filterType === 'locations') {
+                    // Only show projects EXACTLY named after US states or countries
+                    return usStates.includes(lowerName) || countries.includes(lowerName);
+                } else {
+                    // Companies: show projects that are NOT exactly named after states or countries
+                    const isExactLocation = usStates.includes(lowerName) || countries.includes(lowerName);
+                    return !isExactLocation;
+                }
+            });
+            
+            console.log('📋 Filtered projects:', filteredNames.length, 'of', projectNames.length);
+            
+            if (filteredNames.length === 0) {
+                const emptyMessage = filterType === 'locations' ? 
+                    'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
+                    'No company projects found<br><small>Create projects with company/operator names</small>';
+                container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
+                console.log('📭 No filtered projects to display');
+                return;
+            }
+            
+            filteredNames.sort(function(a, b) {
+                return (projectList[b].timestamp || '').localeCompare(projectList[a].timestamp || '');
+            });
+            
+            const projectsHtml = filteredNames.map(function(name) {
+                const project = projectList[name];
+                const date = new Date(project.timestamp || 0);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const facilityCount = project.data?.facilities?.length || 0;
+                
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                            <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
+                            <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
+                            <div class="project-item-actions">
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                            </div>
+                        </div>`;
+            }).join('');
+            
+            container.innerHTML = projectsHtml;
+            console.log('✅ Filtered projects list rendered successfully');
+        }
+        
+        function createNewLocationProject(projectName) {
+            console.log('Creating new location project:', projectName);
+            
+            // Use the project manager to create a new project
+            if (window.projectManager && window.projectManager.saveProject) {
+                try {
+                    // Save current form data as the new project
+                    window.projectManager.saveProject(projectName);
+                    
+                    // Refresh the locations list using filtered approach
+                    setTimeout(() => {
+                        renderFilteredProjectsList('locations-list', 'locations');
+                    }, 500);
+                    
+                    console.log('Location project created successfully:', projectName);
+                    alert(`Location project "${projectName}" created successfully!`);
+                } catch (error) {
+                    console.error('Error creating project:', error);
+                    alert('Error creating project. Please try again.');
+                }
+            } else {
+                console.error('Project manager not available');
+                alert('Unable to create project. Please try again.');
+            }
+        }
+        
+        function showStatesSpecificElements() {
+            // Create and show the private ownership toggle if it doesn't exist
+            let toggleSection = document.getElementById('private-ownership-toggle-section');
+            if (!toggleSection) {
+                toggleSection = createPrivateOwnershipToggle();
+                // Insert it right after the category navigation
+                const categoryNav = document.getElementById('category-navigation');
+                categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
+            }
+            toggleSection.style.display = 'block';
+        }
+        
+        function hideStatesSpecificElements() {
+            const toggleSection = document.getElementById('private-ownership-toggle-section');
+            if (toggleSection) {
+                toggleSection.style.display = 'none';
+            }
+            // Always show operator section when in companies view
+            const operatorSection = document.getElementById('operator-section');
+            if (operatorSection) {
+                operatorSection.style.display = 'block';
+            }
+        }
+        
+        function createPrivateOwnershipToggle() {
+            const section = document.createElement('div');
+            section.id = 'private-ownership-toggle-section';
+            section.style.cssText = `
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 20px;
+                display: none;
+            `;
+            
+            section.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                    <span>Privately Owned Facility (not part of a chain):</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>No</span>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                            <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </div>
+                        <span>Yes</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                    Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                </p>
+            `;
+            
+            // Add toggle functionality
+            const toggle = section.querySelector('#private-ownership-toggle');
+            const sliderTrack = section.querySelector('#slider-track');
+            const sliderKnob = section.querySelector('#slider-knob');
+            
+            // Make the entire slider clickable
+            sliderTrack.addEventListener('click', function() {
+                toggle.checked = !toggle.checked;
+                updateSliderAppearance();
+                
+                const isPrivate = toggle.checked;
+                const operatorSection = document.getElementById('operator-section');
+                
+                if (isPrivate) {
+                    if (operatorSection) operatorSection.style.display = 'none';
+                    // Clear operator data when switching to private mode
+                    clearOperatorFields();
+                    // Modify Operations section for private ownership
+                    modifyOperationsForPrivateOwnership(true);
+                } else {
+                    if (operatorSection) operatorSection.style.display = 'block';
+                    // Restore Operations section for corporate ownership
+                    modifyOperationsForPrivateOwnership(false);
+                }
+            });
+            
+            // Function to clear operator fields when switching to private mode
+            function clearOperatorFields() {
+                console.log('🧹 Clearing operator fields for private facility mode');
+                
+                // Clear operator section fields
+                const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
+                operatorInputs.forEach(input => {
+                    input.value = '';
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+                
+                // Also clear operator data from formData if available
+                if (typeof formData !== 'undefined' && formData && formData.operator) {
+                    formData.operator = {
+                        name: '',
+                        currentName: '',
+                        pastNames: [],
+                        otherNames: [],
+                        foundingDate: '',
+                        keyPersonnel: [],
+                        headquarters: '',
+                        website: ''
+                    };
+                    console.log('✅ Cleared operator data from formData');
+                }
+            }
+            
+            function updateSliderAppearance() {
+                if (toggle.checked) {
+                    sliderTrack.style.backgroundColor = '#10b981';
+                    sliderKnob.style.transform = 'translateX(24px)';
+                } else {
+                    sliderTrack.style.backgroundColor = '#e5e7eb';
+                    sliderKnob.style.transform = 'translateX(0px)';
+                }
+            }
+            
+            return section;
+        }
+        
+        function modifyOperationsForPrivateOwnership(isPrivate) {
+            const operationsSection = document.getElementById('operations-section');
+            if (!operationsSection) return;
+            
+            const otherOperatorsGroup = operationsSection.querySelector('.array-container[data-path="otherOperators"]');
+            const otherOperatorsLabel = otherOperatorsGroup ? otherOperatorsGroup.previousElementSibling : null;
+            
+            if (isPrivate) {
+                // Hide "Other Operators" and add "Owners" and "Other Owners" as proper autocomplete inputs
+                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'none';
+                if (otherOperatorsLabel && otherOperatorsLabel.textContent === 'Other Operators') {
+                    otherOperatorsLabel.style.display = 'none';
+                }
+                
+                // Add owners fields if they don't exist - as proper autocomplete inputs
+                if (!document.getElementById('owners-group')) {
+                    const ownersHTML = `
+                        <div class="form-group" id="owners-group">
+                            <label>Current Owner</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="facility-field" data-field="owner" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="other-owners-group">
+                            <label>Previous/Other Owners</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="facility-field" data-field="otherOwners" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Insert after the existing content in operations section
+                    const sectionContent = operationsSection.querySelector('.section-content');
+                    sectionContent.insertAdjacentHTML('beforeend', ownersHTML);
+                    
+                    // Initialize the autocomplete functionality
+                    setTimeout(() => {
+                        const ownerInput = document.querySelector('input[data-field="owner"]');
+                        const otherOwnersContainer = document.querySelector('.array-container[data-path="otherOwners"]');
+                        
+                        // Initialize autocomplete for the other owners input
+                        if (ownerInput && window.attachAutocompleteToInput) {
+                            window.attachAutocompleteToInput(ownerInput, window.getHumanNames, 'human', function(selectedValue) {
+                                ownerInput.value = selectedValue;
+                                ownerInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            });
+                        }
+                        
+                        const otherOwnersInput = document.querySelector('input[data-field="otherOwners"]');
+                        if (otherOwnersInput && window.attachAutocompleteToInput) {
+                            window.attachAutocompleteToInput(otherOwnersInput, window.getHumanNames, 'human', function(selectedValue) {
+                                otherOwnersInput.value = selectedValue;
+                                otherOwnersInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            });
+                        }
+                    }, 100);
+                }
+            } else {
+                // Show "Other Operators" and hide owners fields
+                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'block';
+                if (otherOperatorsLabel && otherOperatorsLabel.textContent === 'Other Operators') {
+                    otherOperatorsLabel.style.display = 'block';
+                }
+                
+                // Hide owners fields
+                const ownersGroup = document.getElementById('owners-group');
+                const otherOwnersGroup = document.getElementById('other-owners-group');
+                if (ownersGroup) ownersGroup.style.display = 'none';
+                if (otherOwnersGroup) otherOwnersGroup.style.display = 'none';
+            }
+        }
+        
+        // Initialize category navigation when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                initializeCategoryNavigation();
+                
+                // Try to populate operators list immediately and then retry
+                if (typeof populateOperatorsList !== 'function') {
+                    window.populateOperatorsList = function() {
+                        // TODO: Implement operator list population logic
+                        // For now, just log to avoid ReferenceError
+                        console.log('populateOperatorsList called (placeholder)');
+                    };
+                }
+                populateOperatorsList();
+                
+                // Retry populating operators after cloud data loads
+                setTimeout(() => {
+                    populateOperatorsList();
+                }, 2000);
+                
+                // One more retry after longer delay for cloud data
+                setTimeout(() => {
+                    populateOperatorsList();
+                }, 5000);
+                
+                // Add click handlers for state items
+                document.querySelectorAll('.state-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        // Remove previous selection
+                        document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                        // Add selection to clicked item
+                        this.classList.add('selected');
+                        
+                        const locationName = this.dataset.state;
+                        console.log('Selected location:', locationName);
+                        // TODO: Filter facilities by location
+                    });
+                });
+                
+                // Add functionality for "Add New Operator" button
+                const addOperatorBtn = document.getElementById('add-operator-btn');
+                const newOperatorInput = document.getElementById('new-operator-input');
+                
+                if (addOperatorBtn && newOperatorInput) {
+                    addOperatorBtn.addEventListener('click', function() {
+                        const operatorName = newOperatorInput.value.trim();
+                        if (operatorName) {
+                            // Set the operator name in the form
+                            const currentOperatorField = document.querySelector('input[data-field="identification.currentOperator"]');
+                            if (currentOperatorField) {
+                                currentOperatorField.value = operatorName;
+                                currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                            
+                            // Clear the input
+                            newOperatorInput.value = '';
+                            
+                            // Refresh the operators list
+                            populateOperatorsList();
+                            
+                            console.log('Added new operator:', operatorName);
+                        }
+                    });
+                    
+                    // Allow Enter key to add operator
+                    newOperatorInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addOperatorBtn.click();
+                        }
+                    });
+                }
+                
+                // Add functionality for "Add Location" button
+                const addLocationBtn = document.getElementById('add-location-btn');
+                const newLocationInput = document.getElementById('new-location-input');
+                
+                if (addLocationBtn && newLocationInput) {
+                    addLocationBtn.addEventListener('click', function() {
+                        const locationName = newLocationInput.value.trim();
+                        if (locationName) {
+                            // Add the new location to the list
+                            const statesList = document.getElementById('states-list');
+                            if (statesList) {
+                                // Create new location item
+                                const newLocationDiv = document.createElement('div');
+                                newLocationDiv.className = 'state-item';
+                                newLocationDiv.dataset.state = locationName;
+                                newLocationDiv.textContent = locationName;
+                                newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
+                                
+                                // Add click handler
+                                newLocationDiv.addEventListener('click', function() {
+                                    document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                                    this.classList.add('selected');
+                                    console.log('Selected location:', this.dataset.state);
+                                });
+                                
+                                // Insert at the top of the list (after header if present)
+                                const firstStateItem = statesList.querySelector('.state-item');
+                                if (firstStateItem) {
+                                    statesList.insertBefore(newLocationDiv, firstStateItem);
+                                } else {
+                                    statesList.appendChild(newLocationDiv);
+                                }
+                            }
+                            
+                            // Clear the input
+                            newLocationInput.value = '';
+                            
+                            console.log('Added new location:', locationName);
+                        }
+                    });
+                    
+                    // Allow Enter key to add location
+                    newLocationInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addLocationBtn.click();
+                        }
+                    });
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
