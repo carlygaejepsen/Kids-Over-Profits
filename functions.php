@@ -303,15 +303,50 @@ add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
  * Load facility form script
  */
 function enqueue_facility_form_script() {
-    if (is_page('data')) { // Replace with your actual page slug
-        wp_enqueue_script(
-            'facility-form-script',
-            get_stylesheet_directory_uri() . '/js/facility-form.js',
-            array(),
-            time(),
-            true
-        );
+    if (!is_page('data')) {
+        return;
     }
+
+    $script_relative_path = '/js/facility-form.v3.js';
+    $script_file_path = get_stylesheet_directory() . $script_relative_path;
+    $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
+
+    wp_enqueue_script(
+        'facility-form-script',
+        $script_uri,
+        array(),
+        file_exists($script_file_path) ? filemtime($script_file_path) : time(),
+        true
+    );
+
+    $data_directory = get_stylesheet_directory() . '/js/data/';
+    $data_directory_uri = get_stylesheet_directory_uri() . '/js/data/';
+
+    $fallback_url = '';
+    $preferred_dataset = $data_directory . 'facility-projects-export.json';
+
+    if (file_exists($preferred_dataset)) {
+        $fallback_url = $data_directory_uri . 'facility-projects-export.json';
+    } elseif (is_dir($data_directory)) {
+        $dataset_candidates = glob($data_directory . 'facility-projects-export*.json');
+
+        if (!empty($dataset_candidates)) {
+            usort($dataset_candidates, function ($a, $b) {
+                return filemtime($b) <=> filemtime($a);
+            });
+
+            $fallback_url = $data_directory_uri . basename($dataset_candidates[0]);
+        }
+    }
+
+    wp_localize_script(
+        'facility-form-script',
+        'KOP_FACILITY_FORM_CONFIG',
+        array(
+            'fallbackProjectsUrl' => esc_url($fallback_url),
+            'apiBase' => home_url()
+        )
+    );
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
