@@ -4,6 +4,10 @@ deployment:
     # Deploy all files to the WordPress root directory
     - export DEPLOYPATH=/home/kidsover/public_html/
 
+    # Remove WordPress content snippet files that shouldn't be deployed
+    - /bin/rm -f $DEPLOYPATH/tti-program-index 2>/dev/null || true
+    - /bin/rm -f $DEPLOYPATH/data 2>/dev/null || true
+
     # Copy specific directories and files (avoid copying WordPress content snippets)
     - /bin/cp -R api $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
