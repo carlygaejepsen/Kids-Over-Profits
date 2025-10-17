@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const facilitiesConfig = window.facilitiesConfig || {};
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
-    const defaultDatasetPath = '/wp-content/themes/child/js/data/facility-projects-export.json';
+    const defaultDatasetPath = '/wp-content/themes/child/js/data/facilities_master.json';
     const datasetCandidates = Array.from(new Set([
         facilitiesConfig.jsonDataUrl,
         ...configUrls,
