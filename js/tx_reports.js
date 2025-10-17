@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.addEventListener('change', filterAndSort);
     }
 
+    const themeData = window.txReportsData || window.myThemeData || {};
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Texas report...');
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Get URLs from WordPress theme data
-            const urls = window.myThemeData?.jsonFileUrls;
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             console.log('URLs to fetch:', urls);
 
             if (!urls || urls.length === 0) {

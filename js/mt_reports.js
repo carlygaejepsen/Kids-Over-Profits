@@ -16,33 +16,35 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.addEventListener('change', filterAndSort);
     }
 
+    const themeData = window.mtReportsData || window.myThemeData || {};
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Montana reports...');
-            console.log('myThemeData object:', myThemeData);
-            
-            if (!myThemeData) {
-                console.error('myThemeData is undefined');
-                reportContainer.innerHTML = '<p>Error: myThemeData not found. Check console for details.</p>';
+            console.log('mtReportsData object:', themeData);
+
+            if (!themeData) {
+                console.error('mtReportsData is undefined');
+                reportContainer.innerHTML = '<p>Error: mtReportsData not found. Check console for details.</p>';
                 return;
             }
-            
-            if (!myThemeData.jsonFileUrls) {
-                console.error('myThemeData.jsonFileUrls is undefined');
-                reportContainer.innerHTML = '<p>Error: jsonFileUrls not found in myThemeData.</p>';
+
+            if (!themeData.jsonFileUrls) {
+                console.error('mtReportsData.jsonFileUrls is undefined');
+                reportContainer.innerHTML = '<p>Error: jsonFileUrls not found in mtReportsData.</p>';
                 return;
             }
-            
-            if (myThemeData.jsonFileUrls.length === 0) {
-                console.error('myThemeData.jsonFileUrls is empty array');
+
+            if (themeData.jsonFileUrls.length === 0) {
+                console.error('mtReportsData.jsonFileUrls is empty array');
                 reportContainer.innerHTML = '<p>No data file URLs found to load.</p>';
                 return;
             }
 
-            console.log('URL to fetch:', myThemeData.jsonFileUrls[0]);
+            console.log('URL to fetch:', themeData.jsonFileUrls[0]);
 
             // Fetch the Montana reports data
-            const response = await fetch(myThemeData.jsonFileUrls[0]);
+            const response = await fetch(themeData.jsonFileUrls[0]);
             if (!response.ok) {
                 throw new Error(`Failed to fetch data: ${response.status}`);
             }
