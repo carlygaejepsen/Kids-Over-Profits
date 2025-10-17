@@ -55,13 +55,136 @@ function kop_get_facility_projects_dataset_urls() {
 }
 
 /**
+ * Discover the facilities master table that stores JSON exports.
+ *
+ * @return string|null Fully qualified table name when found, otherwise null.
+ */
+function kop_get_facilities_table_name() {
+    global $wpdb;
+
+    if (!isset($wpdb)) {
+        return null;
+    }
+
+    $candidates = array(
+        $wpdb->prefix . 'facilities_master',
+        'facilities_master'
+    );
+
+    foreach ($candidates as $candidate) {
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table names cannot be parameterised.
+        $table_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $candidate));
+
+        if ($table_exists === $candidate) {
+            return $candidate;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Fetch facilities projects data directly from the database.
+ *
+ * @return array|WP_Error Structured projects array on success, WP_Error on failure.
+ */
+function kop_get_facilities_projects_from_database() {
+    global $wpdb;
+
+    if (!isset($wpdb)) {
+        return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
+    }
+
+    $table_name = kop_get_facilities_table_name();
+
+    if ($table_name === null) {
+        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found in the database.', 'kadence-child'));
+    }
+
+    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery helper.
+    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$table_name}", ARRAY_A);
+
+    if (!is_array($rows)) {
+        return new WP_Error('kop_facilities_query_failed', __('Unable to fetch facilities data from the database.', 'kadence-child'));
+    }
+
+    $projects = array();
+
+    foreach ($rows as $row) {
+        $unique_name = isset($row['unique_name']) ? sanitize_text_field($row['unique_name']) : '';
+
+        if ($unique_name === '') {
+            continue;
+        }
+
+        $decoded = json_decode($row['json_data'], true);
+
+        if (!is_array($decoded)) {
+            error_log(sprintf('KOP facilities: invalid JSON for project "%s"', $unique_name));
+            continue;
+        }
+
+        $projects[$unique_name] = array(
+            'name' => $unique_name,
+            'data' => $decoded,
+            'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : current_time('mysql'),
+            'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+        );
+    }
+
+    return array(
+        'source' => 'database',
+        'projects' => $projects,
+    );
+}
+
+/**
+ * Register REST API routes for facilities data.
+ */
+function kop_register_facilities_rest_routes() {
+    register_rest_route(
+        'kop/v1',
+        '/facilities',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $data = kop_get_facilities_projects_from_database();
+
+                if (is_wp_error($data)) {
+                    return $data;
+                }
+
+                return rest_ensure_response($data);
+            },
+            'permission_callback' => '__return_true',
+        )
+    );
+}
+add_action('rest_api_init', 'kop_register_facilities_rest_routes');
+
+/**
+ * Get the REST API endpoint URL that provides facilities data.
+ *
+ * @return string REST URL for the facilities dataset.
+ */
+function kop_get_facilities_rest_endpoint_url() {
+    return esc_url_raw(rest_url('kop/v1/facilities'));
+}
+
+/**
  * Load facilities data for TTI program index page
  */
 function load_facilities_data() {
     // Only load on the TTI program index page
     if (is_page() && get_post_field('post_name') === 'tti-program-index') {
         $dataset_urls = kop_get_facility_projects_dataset_urls();
-        $primary_dataset = !empty($dataset_urls) ? $dataset_urls[0] : '';
+        $rest_endpoint = kop_get_facilities_rest_endpoint_url();
+
+        $primary_dataset = $rest_endpoint;
+
+        if (empty($primary_dataset) && !empty($dataset_urls)) {
+            $primary_dataset = $dataset_urls[0];
+        }
         $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
 
         wp_enqueue_script(
@@ -77,7 +200,7 @@ function load_facilities_data() {
             'facilitiesConfig',
             array(
                 'jsonDataUrl' => $primary_dataset,
-                'jsonFileUrls' => $dataset_urls
+                'jsonFileUrls' => array_values(array_filter(array_unique(array_merge(array($rest_endpoint), $dataset_urls))))
             )
         );
     }
