@@ -2,8 +2,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== CA REPORTS DEBUG START ===');
     console.log('Script loaded successfully');
-    console.log('typeof myThemeData:', typeof myThemeData);
-    console.log('myThemeData:', window.myThemeData);
+    const themeData = window.caReportsData || window.myThemeData;
+    console.log('typeof themeData:', typeof themeData);
+    console.log('CA theme data:', themeData);
 
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
@@ -26,20 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('Starting to initialize report...');
 
-            // Check if myThemeData exists
-            if (typeof myThemeData === 'undefined') {
-                console.error('ERROR: myThemeData is undefined');
-                reportContainer.innerHTML = '<p class="error">Configuration error: myThemeData not loaded. Check WordPress functions.php</p>';
+            // Check if configuration data exists
+            if (!themeData) {
+                console.error('ERROR: caReportsData is undefined');
+                reportContainer.innerHTML = '<p class="error">Configuration error: caReportsData not loaded. Check WordPress functions.php</p>';
                 return;
             }
 
-            // It now gets the ARRAY of URLs from the myThemeData object
-            const urls = myThemeData.jsonFileUrls;
+            // It now gets the ARRAY of URLs from the configuration object
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             console.log('URLs to fetch:', urls);
             console.log('Number of URLs:', urls ? urls.length : 0);
 
             if (!urls || urls.length === 0) {
-                console.error('ERROR: No URLs found in myThemeData.jsonFileUrls');
+                console.error('ERROR: No URLs found in caReportsData.jsonFileUrls');
                 reportContainer.innerHTML = '<p>No data files found to load. Check that JSON files exist in /js/data/ directory.</p>';
                 return;
             }

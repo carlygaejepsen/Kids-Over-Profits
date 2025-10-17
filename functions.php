@@ -84,7 +84,7 @@ function load_new_multi_file_report_scripts() {
         
         wp_localize_script(
             'new-multi-file-report',
-            'myThemeData',
+            'caReportsData',
             array('jsonFileUrls' => $json_urls)
         );
     }
@@ -166,7 +166,7 @@ function load_az_reports_scripts() {
         
         wp_localize_script(
             'az-reports-display',
-            'myThemeData',
+            'azReportsData',
             array('jsonFileUrls' => $json_urls)
         );
     }
@@ -188,7 +188,7 @@ function load_tx_reports_scripts() {
         
         wp_localize_script(
             'tx-reports-display',
-            'myThemeData',
+            'txReportsData',
             array('jsonFileUrls' => array(
                 get_stylesheet_directory_uri() . '/js/data/tx_reports.json'
             ))
@@ -218,7 +218,7 @@ function enqueue_montana_reports_scripts() {
             true
         );
         
-        wp_localize_script('mt-reports', 'myThemeData', array(
+        wp_localize_script('mt-reports', 'mtReportsData', array(
             'jsonFileUrls' => array(
                 get_stylesheet_directory_uri() . '/js/data/mt_reports.json'
             )
@@ -252,7 +252,7 @@ function enqueue_ct_reports_scripts() {
             true
         );
         
-        wp_localize_script('ct-reports', 'myThemeData', array(
+        wp_localize_script('ct-reports', 'ctReportsData', array(
             'jsonFileUrls' => array(
                 get_stylesheet_directory_uri() . '/js/data/ct_reports.json'
             )
@@ -286,7 +286,7 @@ function enqueue_wa_reports_scripts() {
             true
         );
         
-        wp_localize_script('wa-reports', 'myThemeData', array(
+        wp_localize_script('wa-reports', 'waReportsData', array(
             'jsonFileUrls' => array(
                 get_stylesheet_directory_uri() . '/js/data/wa_reports.json'
             )

@@ -33,10 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return getFacilityInfo(facility).executive_director || '';
     }
 
+    const themeData = window.ctReportsData || window.myThemeData || {};
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize CT DCF report...');
-            const urls = (window.myThemeData && Array.isArray(window.myThemeData.jsonFileUrls)) ? window.myThemeData.jsonFileUrls : [];
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             const url = urls[0] || '/wp-content/themes/child/js/data/ct_reports.json';
             console.log('URL to fetch:', url);
 
