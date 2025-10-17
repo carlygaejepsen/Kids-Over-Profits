@@ -70,33 +70,23 @@ function kop_get_facilities_database_connection() {
         return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
     }
 
-    // Try to load .env configuration for separate facilities database
-    $env_path = ABSPATH . '.env';
+    // Try to load database configuration from api/config.php
+    $config_path = get_stylesheet_directory() . '/api/config.php';
     $use_separate_db = false;
     $facilities_db = null;
 
-    if (file_exists($env_path)) {
-        $env_lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $env_config = array();
+    if (file_exists($config_path)) {
+        // Include config.php which sets $pdo and $db_* variables
+        include $config_path;
 
-        foreach ($env_lines as $line) {
-            if (strpos(trim($line), '#') === 0) {
-                continue;
-            }
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
-                $env_config[trim($key)] = trim($value, '"\'');
-            }
-        }
-
-        // Check if we have separate DB credentials
-        if (!empty($env_config['DB_NAME']) && !empty($env_config['DB_USER'])) {
+        // If we have the database variables from config.php, create a wpdb connection
+        if (isset($db_name) && isset($db_user) && isset($db_host)) {
             try {
                 $facilities_db = new wpdb(
-                    $env_config['DB_USER'],
-                    $env_config['DB_PASS'] ?? '',
-                    $env_config['DB_NAME'],
-                    $env_config['DB_HOST'] ?? 'localhost'
+                    $db_user,
+                    $db_pass ?? '',
+                    $db_name,
+                    $db_host
                 );
                 $use_separate_db = true;
             } catch (Exception $e) {
