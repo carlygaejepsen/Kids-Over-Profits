@@ -16,10 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.addEventListener('change', filterAndSort);
     }
     
+    const themeData = window.azReportsData || window.myThemeData || {};
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Arizona report...');
-            const urls = myThemeData.jsonFileUrls;
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             console.log('URLs to fetch:', urls);
 
             if (!urls || urls.length === 0) {
