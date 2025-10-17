@@ -16,7 +16,7 @@ $config_error = null;
 $pdo = null;
 
 try {
-    require_once __DIR__ . '/../config-loader.php';
+    require_once __DIR__ . '/config.php';
     $config_loaded = true;
 } catch (Exception $e) {
     $config_error = $e->getMessage();
