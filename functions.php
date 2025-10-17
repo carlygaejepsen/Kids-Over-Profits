@@ -39,33 +39,286 @@ function kop_get_facility_projects_dataset_urls() {
         return array();
     }
 
-    $ordered_basenames = array();
-    $preferred_basename = 'facility-projects-export.json';
-    $preferred_path = $data_directory . $preferred_basename;
-
-    if (file_exists($preferred_path)) {
-        $ordered_basenames[] = $preferred_basename;
-    }
-
     $dataset_candidates = glob($data_directory . 'facility-projects-export*.json');
 
-    if (!empty($dataset_candidates)) {
-        usort($dataset_candidates, function ($a, $b) {
-            return filemtime($b) <=> filemtime($a);
-        });
+    if (empty($dataset_candidates)) {
+        return array();
+    }
 
-        foreach ($dataset_candidates as $candidate) {
-            $basename = basename($candidate);
+    usort($dataset_candidates, function ($a, $b) {
+        return filemtime($b) <=> filemtime($a);
+    });
 
-            if (!in_array($basename, $ordered_basenames, true)) {
-                $ordered_basenames[] = $basename;
-            }
+    return array_map(function ($candidate) use ($data_directory_uri) {
+        return esc_url($data_directory_uri . basename($candidate));
+    }, $dataset_candidates);
+}
+
+/**
+ * Build a database connection that can access the facilities table.
+ *
+ * This helper keeps the facilities loader tied to the WordPress database connection by default
+ * while still allowing developers to filter the connection details when needed.
+ *
+ * @return array|WP_Error Array containing the connection (`db`) and table prefix (`prefix`)
+ *                        on success, or WP_Error on failure.
+ */
+function kop_get_facilities_database_connection() {
+    global $wpdb;
+
+    if (!isset($wpdb)) {
+        return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
+    }
+
+    $connection = array(
+        'db'     => $wpdb,
+        'prefix' => isset($wpdb->prefix) ? $wpdb->prefix : '',
+    );
+
+    /**
+     * Filter the facilities database connection details.
+     *
+     * Returning a different wpdb instance or prefix allows the facilities loader to target
+     * an alternate database/table structure without editing this helper directly.
+     *
+     * @since 1.0.0
+     *
+     * @param array $connection {
+     *     Connection details used by the facilities loader.
+     *
+     *     @type wpdb   $db     WordPress database connection instance.
+     *     @type string $prefix Table prefix that should be tried when looking for the facilities table.
+     * }
+     */
+    $connection = apply_filters('kop_facilities_database_connection', $connection);
+
+    if (!is_array($connection) || !isset($connection['db']) || !($connection['db'] instanceof wpdb)) {
+        return new WP_Error('kop_facilities_invalid_connection', __('Facilities database connection is invalid.', 'kadence-child'));
+    }
+
+    $prefix = '';
+
+    if (isset($connection['prefix'])) {
+        $prefix = is_string($connection['prefix']) ? $connection['prefix'] : '';
+    }
+
+    return array(
+        'db'     => $connection['db'],
+        'prefix' => $prefix,
+    );
+}
+
+/**
+ * Discover the facilities master table that stores JSON exports.
+ *
+ * @param wpdb  $connection Database connection that should be inspected.
+ * @param string $prefix    Optional table prefix to try during discovery.
+ *
+ * @return string|null Fully qualified table name when found, otherwise null.
+ */
+function kop_get_facilities_table_name($connection, $prefix = '') {
+    if (!($connection instanceof wpdb)) {
+        return null;
+    }
+
+    $explicit_table = defined('KOP_FACILITIES_DB_TABLE') ? KOP_FACILITIES_DB_TABLE : '';
+    $explicit_table = apply_filters('kop_facilities_db_table', $explicit_table, $connection);
+
+    $sanitize_table = function ($table_name) {
+        if (!is_string($table_name) || $table_name === '') {
+            return '';
+        }
+
+        return preg_match('/^[A-Za-z0-9_\.]+$/', $table_name) === 1 ? $table_name : '';
+    };
+
+    $candidates = array();
+
+    $explicit_table = $sanitize_table($explicit_table);
+
+    if ($explicit_table !== '') {
+        $candidates[] = $explicit_table;
+    }
+
+    $prefix = is_string($prefix) ? $prefix : '';
+
+    if ($prefix !== '') {
+        $candidates[] = $prefix . 'facilities_master';
+    }
+
+    $candidates[] = 'facilities_master';
+    $candidates = array_values(array_unique(array_filter($candidates))); // Ensure no empty or duplicate candidates.
+
+    foreach ($candidates as $candidate) {
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table names cannot be parameterised.
+        $table_exists = $connection->get_var($connection->prepare('SHOW TABLES LIKE %s', $candidate));
+
+        if ($table_exists === $candidate) {
+            return $candidate;
         }
     }
 
-    return array_map(function ($basename) use ($data_directory_uri) {
-        return esc_url($data_directory_uri . $basename);
-    }, $ordered_basenames);
+    return null;
+}
+
+/**
+ * Fetch facilities projects data directly from the database.
+ *
+ * @return array|WP_Error Structured projects array on success, WP_Error on failure.
+ */
+function kop_get_facilities_projects_from_database() {
+    $connection_details = kop_get_facilities_database_connection();
+
+    if (is_wp_error($connection_details)) {
+        return $connection_details;
+    }
+
+    $db_connection = $connection_details['db'];
+    $table_prefix = isset($connection_details['prefix']) ? $connection_details['prefix'] : '';
+
+    $table_name = kop_get_facilities_table_name($db_connection, $table_prefix);
+
+    if ($table_name === null) {
+        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found in the database.', 'kadence-child'));
+    }
+
+    // Fetch the available columns so we can adapt to different table schemas.
+    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name validated earlier.
+    $columns = $db_connection->get_results("SHOW COLUMNS FROM {$table_name}", ARRAY_A);
+
+    if (!is_array($columns) || empty($columns)) {
+        return new WP_Error('kop_facilities_columns_missing', __('Unable to inspect facilities master table columns.', 'kadence-child'));
+    }
+
+    $available_columns = array();
+
+    foreach ($columns as $column) {
+        if (isset($column['Field']) && is_string($column['Field'])) {
+            $available_columns[] = $column['Field'];
+        }
+    }
+
+    $select_column = function ($candidates) use ($available_columns) {
+        foreach ($candidates as $candidate) {
+            if (in_array($candidate, $available_columns, true)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    };
+
+    $sanitize_identifier = function ($identifier) {
+        if (!is_string($identifier)) {
+            return '';
+        }
+
+        return preg_match('/^[A-Za-z0-9_]+$/', $identifier) === 1 ? $identifier : '';
+    };
+
+    $identifier_column = $select_column(array('unique_name', 'project_unique_name', 'slug', 'project_slug', 'project_name', 'name', 'id'));
+    $json_column = $select_column(array('json_data', 'project_json', 'json', 'project_data', 'data'));
+    $updated_column = $select_column(array('updated_at', 'modified_at', 'last_updated', 'timestamp', 'created_at'));
+
+    if ($identifier_column === null || $json_column === null) {
+        return new WP_Error('kop_facilities_required_columns_missing', __('Required facilities master columns are missing. Expected an identifier and JSON payload column.', 'kadence-child'));
+    }
+
+    $identifier_column = $sanitize_identifier($identifier_column);
+    $json_column = $sanitize_identifier($json_column);
+    $updated_column = $updated_column !== null ? $sanitize_identifier($updated_column) : null;
+
+    if ($identifier_column === '' || $json_column === '') {
+        return new WP_Error('kop_facilities_required_columns_invalid', __('Facilities master table columns contained invalid characters.', 'kadence-child'));
+    }
+
+    $select_parts = array();
+    $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
+    $select_parts[] = '`' . $json_column . '` AS project_payload';
+
+    if ($updated_column !== null && $updated_column !== '') {
+        $select_parts[] = '`' . $updated_column . '` AS project_updated';
+    }
+
+    $select_sql = implode(', ', $select_parts);
+
+    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery helper.
+    $rows = $db_connection->get_results("SELECT {$select_sql} FROM {$table_name}", ARRAY_A);
+
+    if (!is_array($rows)) {
+        return new WP_Error('kop_facilities_query_failed', __('Unable to fetch facilities data from the database.', 'kadence-child'));
+    }
+
+    $projects = array();
+
+    foreach ($rows as $row) {
+        $unique_name_raw = isset($row['project_identifier']) ? $row['project_identifier'] : '';
+        $unique_name = sanitize_text_field($unique_name_raw);
+
+        if ($unique_name === '') {
+            continue;
+        }
+
+        $payload_raw = isset($row['project_payload']) ? $row['project_payload'] : '';
+
+        if (!is_string($payload_raw) || $payload_raw === '') {
+            error_log(sprintf('KOP facilities: empty JSON payload for project "%s"', $unique_name));
+            continue;
+        }
+
+        $decoded = json_decode($payload_raw, true);
+
+        if (!is_array($decoded)) {
+            error_log(sprintf('KOP facilities: invalid JSON for project "%s"', $unique_name));
+            continue;
+        }
+
+        $projects[$unique_name] = array(
+            'name' => $unique_name,
+            'label' => sanitize_text_field($unique_name_raw),
+            'data' => $decoded,
+            'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+            'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+        );
+    }
+
+    return array(
+        'source' => 'database',
+        'projects' => $projects,
+    );
+}
+
+/**
+ * Register REST API routes for facilities data.
+ */
+function kop_register_facilities_rest_routes() {
+    register_rest_route(
+        'kop/v1',
+        '/facilities',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $data = kop_get_facilities_projects_from_database();
+
+                if (is_wp_error($data)) {
+                    return $data;
+                }
+
+                return rest_ensure_response($data);
+            },
+            'permission_callback' => '__return_true',
+        )
+    );
+}
+add_action('rest_api_init', 'kop_register_facilities_rest_routes');
+
+/**
+ * Get the REST API endpoint URL that provides facilities data.
+ *
+ * @return string REST URL for the facilities dataset.
+ */
+function kop_get_facilities_rest_endpoint_url() {
+    return esc_url_raw(rest_url('kop/v1/facilities'));
 }
 
 /**
@@ -75,7 +328,13 @@ function load_facilities_data() {
     // Only load on the TTI program index page
     if (is_page() && get_post_field('post_name') === 'tti-program-index') {
         $dataset_urls = kop_get_facility_projects_dataset_urls();
-        $primary_dataset = !empty($dataset_urls) ? $dataset_urls[0] : '';
+        $rest_endpoint = kop_get_facilities_rest_endpoint_url();
+
+        $primary_dataset = $rest_endpoint;
+
+        if (empty($primary_dataset) && !empty($dataset_urls)) {
+            $primary_dataset = $dataset_urls[0];
+        }
         $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
 
         wp_enqueue_script(
@@ -91,7 +350,7 @@ function load_facilities_data() {
             'facilitiesConfig',
             array(
                 'jsonDataUrl' => $primary_dataset,
-                'jsonFileUrls' => $dataset_urls
+                'jsonFileUrls' => array_values(array_filter(array_unique(array_merge(array($rest_endpoint), $dataset_urls))))
             )
         );
     }
