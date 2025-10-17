@@ -1,0 +1,26 @@
+---
+deployment:
+  tasks:
+    # Deploy all files to the WordPress root directory
+    - export DEPLOYPATH=/home/kidsover/public_html/
+
+    # Copy all project files except .env (which should be manually configured on server)
+    - /bin/cp -R * $DEPLOYPATH
+
+    # Copy hidden files (except .env which should stay on server only)
+    - /bin/cp .htaccess $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp .gitignore $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp .env.example $DEPLOYPATH 2>/dev/null || true
+
+    # Ensure config-loader.php is executable and in the right place
+    - /bin/cp config-loader.php $DEPLOYPATH 2>/dev/null || true
+
+    # Set proper permissions
+    - /bin/chmod 644 $DEPLOYPATH/*.php 2>/dev/null || true
+    - /bin/chmod 644 $DEPLOYPATH/.env 2>/dev/null || true
+
+    # Ensure .env exists on server (create from example if missing)
+    - test -f $DEPLOYPATH/.env || /bin/cp $DEPLOYPATH/.env.example $DEPLOYPATH/.env
+
+    # Output deployment confirmation
+    - echo "Deployment complete. Remember to configure .env with your database credentials if this is first deployment."
