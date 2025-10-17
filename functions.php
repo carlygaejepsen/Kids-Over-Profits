@@ -39,33 +39,19 @@ function kop_get_facility_projects_dataset_urls() {
         return array();
     }
 
-    $ordered_basenames = array();
-    $preferred_basename = 'facility-projects-export.json';
-    $preferred_path = $data_directory . $preferred_basename;
-
-    if (file_exists($preferred_path)) {
-        $ordered_basenames[] = $preferred_basename;
-    }
-
     $dataset_candidates = glob($data_directory . 'facility-projects-export*.json');
 
-    if (!empty($dataset_candidates)) {
-        usort($dataset_candidates, function ($a, $b) {
-            return filemtime($b) <=> filemtime($a);
-        });
-
-        foreach ($dataset_candidates as $candidate) {
-            $basename = basename($candidate);
-
-            if (!in_array($basename, $ordered_basenames, true)) {
-                $ordered_basenames[] = $basename;
-            }
-        }
+    if (empty($dataset_candidates)) {
+        return array();
     }
 
-    return array_map(function ($basename) use ($data_directory_uri) {
-        return esc_url($data_directory_uri . $basename);
-    }, $ordered_basenames);
+    usort($dataset_candidates, function ($a, $b) {
+        return filemtime($b) <=> filemtime($a);
+    });
+
+    return array_map(function ($candidate) use ($data_directory_uri) {
+        return esc_url($data_directory_uri . basename($candidate));
+    }, $dataset_candidates);
 }
 
 /**
