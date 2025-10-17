@@ -4,8 +4,13 @@ deployment:
     # Deploy all files to the WordPress root directory
     - export DEPLOYPATH=/home/kidsover/public_html/
 
-    # Copy all project files except .env (which should be manually configured on server)
-    - /bin/cp -R * $DEPLOYPATH
+    # Copy specific directories and files (avoid copying WordPress content snippets)
+    - /bin/cp -R api $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp *.php $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp *.html $DEPLOYPATH 2>/dev/null || true
 
     # Copy hidden files (except .env which should stay on server only)
     - /bin/cp .htaccess $DEPLOYPATH 2>/dev/null || true
