@@ -70,9 +70,44 @@ function kop_get_facilities_database_connection() {
         return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
     }
 
+    // Try to load .env configuration for separate facilities database
+    $env_path = ABSPATH . '.env';
+    $use_separate_db = false;
+    $facilities_db = null;
+
+    if (file_exists($env_path)) {
+        $env_lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $env_config = array();
+
+        foreach ($env_lines as $line) {
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $env_config[trim($key)] = trim($value, '"\'');
+            }
+        }
+
+        // Check if we have separate DB credentials
+        if (!empty($env_config['DB_NAME']) && !empty($env_config['DB_USER'])) {
+            try {
+                $facilities_db = new wpdb(
+                    $env_config['DB_USER'],
+                    $env_config['DB_PASS'] ?? '',
+                    $env_config['DB_NAME'],
+                    $env_config['DB_HOST'] ?? 'localhost'
+                );
+                $use_separate_db = true;
+            } catch (Exception $e) {
+                error_log('Failed to connect to facilities database: ' . $e->getMessage());
+            }
+        }
+    }
+
     $connection = array(
-        'db'     => $wpdb,
-        'prefix' => isset($wpdb->prefix) ? $wpdb->prefix : '',
+        'db'     => $use_separate_db && $facilities_db ? $facilities_db : $wpdb,
+        'prefix' => '', // No prefix for the standalone facilities database
     );
 
     /**
