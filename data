@@ -884,7 +884,7 @@
     </div>
     
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
-    <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.js"></script>
+    <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
         // Set mode to suggestions
         window.FORM_MODE = 'suggestions';
