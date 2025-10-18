@@ -892,12 +892,12 @@
         // Override save function for suggestions
         // Function to load project and sync with our form
         function loadProjectAndSync(projectName) {
-            console.log('🔄 Loading and syncing project:', projectName);
+            console.log('� Loading and syncing project:', projectName);
             
             // Check if this project is already loaded
             const currentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
             if (currentProject === projectName) {
-                console.log('ℹ️ Project already loaded:', projectName);
+                console.log('Project already loaded:', projectName);
                 if (typeof showUploadStatus === 'function') {
                     showUploadStatus(`ℹ️ Already working on "${projectName}"`, 'info');
                 }
@@ -919,7 +919,7 @@
             setTimeout(() => {
                 // Use the existing project manager to load the project
                 if (window.projectManager && window.projectManager.loadProject) {
-                    console.log('📂 Loading project:', projectName);
+                    console.log('� Loading project:', projectName);
                     window.projectManager.loadProject(projectName);
                     
                     // Wait a moment for the load to complete, then sync our formData
@@ -929,10 +929,10 @@
                             window.globalFormData = formData;
                             
                             // Extensive debugging
-                            console.log('✅ Project loaded and synced:', projectName);
-                            console.log('📊 Current project data:', formData);
-                            console.log('📋 Project facilities:', formData?.facilities?.length || 0);
-                            console.log('🔍 Current project name from variables:', {
+                            console.log('Project loaded and synced:', projectName);
+                            console.log('� Current project data:', formData);
+                            console.log('� Project facilities:', formData?.facilities?.length || 0);
+                            console.log('� Current project name from variables:', {
                                 'window.currentProjectName': window.currentProjectName,
                                 'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                                 'formData.projectName': formData?.projectName,
@@ -961,14 +961,14 @@
                                 pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
                             }
                         } else {
-                            console.warn('⚠️ formData not found after project load');
+                            console.warn('formData not found after project load');
                             if (typeof showUploadStatus === 'function') {
                                 showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
                             }
                         }
                     }, 300);
                 } else {
-                    console.error('❌ Project manager not available');
+                    console.error('Project manager not available');
                     if (typeof showUploadStatus === 'function') {
                         showUploadStatus('❌ Project manager not available', 'error');
                     }
@@ -995,22 +995,22 @@
             // Try the global formData variable first (from facility-form.js)
             if (typeof formData !== 'undefined' && formData) {
                 dataToSubmit = formData;
-                console.log('✅ Using global formData:', dataToSubmit);
+                console.log('Using global formData:', dataToSubmit);
             }
             // Try window.globalFormData as backup
             else if (window.globalFormData) {
                 dataToSubmit = window.globalFormData;
-                console.log('✅ Using window.globalFormData:', dataToSubmit);
+                console.log('Using window.globalFormData:', dataToSubmit);
             }
             // Try window.formData as backup
             else if (window.formData) {
                 dataToSubmit = window.formData;
-                console.log('✅ Using window.formData:', dataToSubmit);
+                console.log('Using window.formData:', dataToSubmit);
             }
             
             if (!dataToSubmit) {
                 showSuggestionStatus('❌ Error: No project data loaded. Please load a project first by clicking on one from the list above.', 'error');
-                console.error('❌ No formData found. Available variables:', {
+                console.error('No formData found. Available variables:', {
                     'typeof formData': typeof formData,
                     'window.globalFormData': window.globalFormData,
                     'window.formData': window.formData
@@ -1021,7 +1021,7 @@
             // Check if we're in private facility mode and clear operator data if so
             const privateToggle = document.getElementById('private-ownership-toggle');
             if (privateToggle && privateToggle.checked) {
-                console.log('🔒 Private facility mode detected - clearing operator data before submission');
+                console.log('� Private facility mode detected - clearing operator data before submission');
                 
                 // Create a copy of the data and clear operator info
                 dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
@@ -1066,12 +1066,12 @@
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
             
-            console.log('🔧 FORCED project name in submission data:', actualProjectName);
+            console.log('� FORCED project name in submission data:', actualProjectName);
             
             // Show which project we're submitting
             const projectName = window.currentProjectName || currentProjectName || dataToSubmit.projectName || 'Unknown Project';
-            console.log('📤 Submitting changes for project:', projectName);
-            console.log('🔍 Debug project name sources:', {
+            console.log('� Submitting changes for project:', projectName);
+            console.log('� Debug project name sources:', {
                 'window.currentProjectName': window.currentProjectName,
                 'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                 'dataToSubmit.projectName': dataToSubmit.projectName,
@@ -2487,18 +2487,18 @@
             console.log('🎨 Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
-                console.error('❌ operators-list container not found!');
+                console.error('operators-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('📋 Projects to render:', projectNames.length, projectNames);
+            console.log('� Projects to render:', projectNames.length, projectNames);
             
             if (projectNames.length === 0) {
-                container.innerHTML = '<div class="projects-empty">📭 No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No projects to display');
+                container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
+                console.log('� No projects to display');
                 return;
             }
             
@@ -2516,31 +2516,31 @@
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('✅ Projects list rendered successfully');
+            console.log('Projects list rendered successfully');
         }
         
         function populateLocationsList() {
             console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
-                console.error('❌ locations-list container not found!');
+                console.error('locations-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('📋 Location projects to render:', projectNames.length, projectNames);
+            console.log('� Location projects to render:', projectNames.length, projectNames);
             
             if (projectNames.length === 0) {
-                container.innerHTML = '<div class="projects-empty">📭 No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No location projects to display');
+                container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
+                console.log('� No location projects to display');
                 return;
             }
             
@@ -2558,13 +2558,13 @@
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('✅ Location projects list rendered successfully');
+            console.log('Location projects list rendered successfully');
         }
         
         function escapeHtmlForAttr(text) {
@@ -2575,7 +2575,7 @@
             console.log('🎨 Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
-                console.error('❌ Container not found:', containerId);
+                console.error('Container not found:', containerId);
                 return;
             }
             
@@ -2610,14 +2610,14 @@
                 }
             });
             
-            console.log('📋 Filtered projects:', filteredNames.length, 'of', projectNames.length);
+            console.log('� Filtered projects:', filteredNames.length, 'of', projectNames.length);
             
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ? 
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('📭 No filtered projects to display');
+                console.log('� No filtered projects to display');
                 return;
             }
             
@@ -2635,13 +2635,13 @@
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('✅ Filtered projects list rendered successfully');
+            console.log('Filtered projects list rendered successfully');
         }
         
         function createNewLocationProject(projectName) {
@@ -2774,7 +2774,7 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('✅ Cleared operator data from formData');
+                    console.log('Cleared operator data from formData');
                 }
             }
             
