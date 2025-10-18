@@ -10,6 +10,8 @@ deployment:
 
     # Copy specific directories and files (avoid copying WordPress content snippets)
     - /bin/cp -R api $DEPLOYPATH 2>/dev/null || true
+    - /bin/mkdir -p $DEPLOYPATH/api/data_form 2>/dev/null || true
+    - /bin/cp api/*.php $DEPLOYPATH/api/data_form/ 2>/dev/null || true
     - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true
