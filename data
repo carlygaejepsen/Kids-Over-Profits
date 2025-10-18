@@ -1384,7 +1384,54 @@
                 }
             };
         }
-        
+
+        function initializeSectionToggles() {
+            const sections = document.querySelectorAll('.section');
+
+            sections.forEach(section => {
+                const header = section.querySelector('.section-header');
+                const toggle = section.querySelector('.section-toggle');
+                const content = section.querySelector('.section-content');
+
+                if (!header || !toggle || !content) {
+                    return;
+                }
+
+                toggle.setAttribute('role', 'button');
+                toggle.setAttribute('tabindex', '0');
+
+                const setState = (expanded) => {
+                    section.classList.toggle('expanded', expanded);
+                    content.style.display = expanded ? 'block' : 'none';
+                    toggle.setAttribute('aria-expanded', expanded.toString());
+                    toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
+                };
+
+                // Initialize with existing expanded state
+                setState(section.classList.contains('expanded'));
+
+                const handleToggle = (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setState(!section.classList.contains('expanded'));
+                };
+
+                toggle.addEventListener('click', handleToggle);
+                toggle.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        handleToggle(event);
+                    }
+                });
+
+                header.addEventListener('click', (event) => {
+                    if (event.target.closest('.section-toggle')) {
+                        return;
+                    }
+                    handleToggle(event);
+                });
+            });
+        }
+
         // DATA ORGANIZER FUNCTIONALITY
         function initializeDataOrganizer() {
             const showOrganizerBtn = document.getElementById('show-organizer-btn');
@@ -2865,9 +2912,11 @@
         
         // Initialize category navigation when page loads
         window.addEventListener('load', () => {
+            initializeSectionToggles();
+
             setTimeout(() => {
                 initializeCategoryNavigation();
-                
+
                 // Try to populate operators list immediately and then retry
                 if (typeof populateOperatorsList !== 'function') {
                     window.populateOperatorsList = function() {
