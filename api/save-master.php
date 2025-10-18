@@ -63,7 +63,7 @@ if (!$projectName) {
 
 
 // Use PDO connection from config.php
-require_once __DIR__ . '/../config-loader.php';
+require_once __DIR__ . '/config.php';
 
 
 // Handle action

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config-loader.php';
+require_once __DIR__ . '/config.php';
 
 // This script fetches all records from the master data table
 header('Content-Type: application/json');
