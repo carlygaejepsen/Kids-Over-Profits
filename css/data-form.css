@@ -657,6 +657,102 @@ textarea {
     gap: 8px;
 }
 
+/* Project Item Cards */
+.project-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.project-item:hover {
+    background: #f9fafb;
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.project-item-name {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.project-item-date {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.project-item-date small {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.project-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.project-item-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.project-item-load {
+    background: #3b82f6;
+    color: white;
+}
+
+.project-item-load:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.projects-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #9ca3af;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.projects-empty small {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #d1d5db;
+}
+
+/* Responsive adjustments for project items */
+@media (max-width: 640px) {
+    .project-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .project-item-actions {
+        justify-content: stretch;
+    }
+
+    .project-item-btn {
+        flex: 1;
+    }
+}
+
 /* ============================================
    STATUS MESSAGES
    ============================================ */
