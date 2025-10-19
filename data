@@ -893,7 +893,7 @@
         // Override save function for suggestions
         // Function to load project and sync with our form
         function loadProjectAndSync(projectName) {
-            console.log('� Loading and syncing project:', projectName);
+            console.log('📂 Loading and syncing project:', projectName);
             
             // Check if this project is already loaded
             const currentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
@@ -920,7 +920,7 @@
             setTimeout(() => {
                 // Use the existing project manager to load the project
                 if (window.projectManager && window.projectManager.loadProject) {
-                    console.log('� Loading project:', projectName);
+                    console.log('📥 Loading project:', projectName);
                     window.projectManager.loadProject(projectName);
                     
                     // Wait a moment for the load to complete, then sync our formData
@@ -931,9 +931,9 @@
                             
                             // Extensive debugging
                             console.log('Project loaded and synced:', projectName);
-                            console.log('� Current project data:', formData);
-                            console.log('� Project facilities:', formData?.facilities?.length || 0);
-                            console.log('� Current project name from variables:', {
+                            console.log('📊 Current project data:', formData);
+                            console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
+                            console.log('📝 Current project name from variables:', {
                                 'window.currentProjectName': window.currentProjectName,
                                 'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                                 'formData.projectName': formData?.projectName,
@@ -1022,7 +1022,7 @@
             // Check if we're in private facility mode and clear operator data if so
             const privateToggle = document.getElementById('private-ownership-toggle');
             if (privateToggle && privateToggle.checked) {
-                console.log('� Private facility mode detected - clearing operator data before submission');
+                console.log('🔒 Private facility mode detected - clearing operator data before submission');
                 
                 // Create a copy of the data and clear operator info
                 dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
@@ -1067,12 +1067,12 @@
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
             
-            console.log('� FORCED project name in submission data:', actualProjectName);
-            
+            console.log('✅ FORCED project name in submission data:', actualProjectName);
+
             // Show which project we're submitting
             const projectName = window.currentProjectName || currentProjectName || dataToSubmit.projectName || 'Unknown Project';
-            console.log('� Submitting changes for project:', projectName);
-            console.log('� Debug project name sources:', {
+            console.log('📤 Submitting changes for project:', projectName);
+            console.log('🔍 Debug project name sources:', {
                 'window.currentProjectName': window.currentProjectName,
                 'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                 'dataToSubmit.projectName': dataToSubmit.projectName,
@@ -2542,11 +2542,11 @@
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('� Projects to render:', projectNames.length, projectNames);
-            
+            console.log('🎨 Projects to render:', projectNames.length, projectNames);
+
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('� No projects to display');
+                console.log('📭 No projects to display');
                 return;
             }
             
@@ -2584,11 +2584,11 @@
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('� Location projects to render:', projectNames.length, projectNames);
-            
+            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
+
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('� No location projects to display');
+                console.log('📭 No location projects to display');
                 return;
             }
             
@@ -2658,14 +2658,14 @@
                 }
             });
             
-            console.log('� Filtered projects:', filteredNames.length, 'of', projectNames.length);
-            
+            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
+
             if (filteredNames.length === 0) {
-                const emptyMessage = filterType === 'locations' ? 
+                const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('� No filtered projects to display');
+                console.log('📭 No filtered projects to display');
                 return;
             }
             
