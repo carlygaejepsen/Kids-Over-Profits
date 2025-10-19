@@ -1834,7 +1834,7 @@
             // We don't want duplicate + buttons (one for adding items, one for notes)
             return;
 
-            /* COMMENTED OUT - causing duplicate + buttons
+            /* COMMENTED OUT - causing duplicate + buttons */
             try {
                 const arrayItems = group.querySelectorAll('.array-item');
 
