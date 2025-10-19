@@ -1726,22 +1726,12 @@ function renderArray(container, path, items) {
             itemDiv.appendChild(input);
         }
 
-        // Add plus button for adding a new item after this one
-        const plusBtn = document.createElement('button');
-        plusBtn.className = 'btn add-plus-btn';
-        plusBtn.textContent = '+';
-        plusBtn.type = 'button';
-        plusBtn.title = 'Add another item';
-        plusBtn.onclick = (e) => {
-            e.preventDefault();
-            addNewArrayItem(path);
-        };
-        itemDiv.appendChild(plusBtn);
+        // REMOVED: Unnecessary inline + button - the "Add More" button at bottom handles adding items
 
         if (itemsToShow.length > 1 || (itemsToShow.length === 1 && itemsToShow[0] !== '')) {
             const removeBtn = document.createElement('button');
-            removeBtn.className = 'btn';
-            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'btn remove-btn';
+            removeBtn.textContent = '−';
             removeBtn.type = 'button';
             removeBtn.onclick = () => removeArrayItemAtIndex(path, index);
             itemDiv.appendChild(removeBtn);

@@ -1830,9 +1830,14 @@
 
         // Add note buttons specifically to array items
         function addNoteButtonsToArrayItems(group) {
+            // DISABLED: Array items already have their own + button for adding new items
+            // We don't want duplicate + buttons (one for adding items, one for notes)
+            return;
+
+            /* COMMENTED OUT - causing duplicate + buttons
             try {
                 const arrayItems = group.querySelectorAll('.array-item');
-                
+
                 arrayItems.forEach(arrayItem => {
                     // Skip if this array item already has a note button
                     if (arrayItem.querySelector('.field-note-btn')) {
