@@ -489,6 +489,23 @@ textarea {
     min-width: 0;
 }
 
+/* For staff items with role + name, the + button goes between them */
+.array-item .array-input-role {
+    order: 1;
+}
+
+.array-item .add-plus-btn {
+    order: 2;
+}
+
+.array-item .array-input-name {
+    order: 3;
+}
+
+.array-item > button[type="button"]:not(.add-plus-btn) {
+    order: 4;
+}
+
 .array-input {
     flex: 1;
     padding: 6px 10px;
@@ -1133,16 +1150,23 @@ textarea {
     background: #d97706;
 }
 
-/* Ensure form-group with note buttons has proper layout */
+/* Ensure form-group with note buttons has proper layout - notes go BELOW */
 .form-group.has-note-button .field-content {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
 }
 
-.form-group.has-note-button .field-content > *:not(.field-note-btn) {
-    flex: 1;
-    min-width: 0;
+.form-group.has-note-button .field-content > input,
+.form-group.has-note-button .field-content > textarea,
+.form-group.has-note-button .field-content > select {
+    width: 100%;
+}
+
+/* Note containers should appear below fields */
+.note-container {
+    width: 100%;
+    order: 10;
 }
 
 /* ============================================
