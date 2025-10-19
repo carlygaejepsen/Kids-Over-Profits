@@ -1107,15 +1107,20 @@ function initializeNoteControls() {
         }
 
         let container = group.querySelector('.field-notes');
-        if (!container) {
-            const controls = document.createElement('div');
+        let controls = group.querySelector('.note-controls');
+
+        if (!controls) {
+            controls = document.createElement('div');
             controls.className = 'note-controls';
 
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn';
             addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
-            addBtn.addEventListener('click', () => {
+            addBtn.dataset.noteEventAttached = 'true';
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
                 addFieldNote(scope, key);
             });
 
@@ -1127,8 +1132,24 @@ function initializeNoteControls() {
             group.appendChild(controls);
 
             field.dataset.noteInit = 'true';
-        } else if (field.dataset.noteInit !== 'true') {
-            field.dataset.noteInit = 'true';
+        } else {
+            // Controls exist, make sure container reference is correct
+            if (!container) {
+                container = controls.querySelector('.field-notes');
+            }
+            // Check if button needs event listener (shouldn't happen, but defensive)
+            const addBtn = controls.querySelector('.note-add-btn');
+            if (addBtn && !addBtn.dataset.noteEventAttached) {
+                addBtn.dataset.noteEventAttached = 'true';
+                addBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    addFieldNote(scope, key);
+                });
+            }
+            if (field.dataset.noteInit !== 'true') {
+                field.dataset.noteInit = 'true';
+            }
         }
 
         noteFieldRegistry.push({ scope, key, container });
@@ -1624,7 +1645,11 @@ function removeArrayItemAtIndex(path, index) {
 
 function renderArray(container, path, items) {
     if (!container) return;
-    container.innerHTML = '';
+
+    // Remove only array items, preserve the add button to avoid click issues
+    const existingItems = container.querySelectorAll('.array-item');
+    existingItems.forEach(item => item.remove());
+
     const itemsArray = Array.isArray(items) ? items : (items ? [items] : []);
     const itemsToShow = itemsArray.length > 0 ? itemsArray : [''];
 
@@ -1781,15 +1806,21 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Resource Notes';
     }
 
-    const addButton = document.createElement('button');
-    addButton.className = 'add-item-btn';
+    // Check if add button already exists, if not create it
+    let addButton = container.querySelector('.add-item-btn');
+    if (!addButton) {
+        addButton = document.createElement('button');
+        addButton.className = 'add-item-btn';
+        addButton.type = 'button';
+        addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            addNewArrayItem(path);
+        });
+        container.appendChild(addButton);
+    }
+    // Update button text in case the label changed
     addButton.textContent = buttonLabel;
-    addButton.type = 'button';
-    addButton.onclick = (e) => {
-        e.preventDefault();
-        addNewArrayItem(path);
-    };
-    container.appendChild(addButton);
 }
 
 function loadOperatorData() {
