@@ -2128,22 +2128,22 @@ function nextFacility() {
 function renderSavedProjectsList() {
     const container = document.getElementById('saved-projects-list');
     if (!container) return;
-    
+
     const projectNames = Object.keys(window.projects);
-    
+
     if (projectNames.length === 0) {
         container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
         return;
     }
-    
+
     projectNames.sort((a, b) => (window.projects[b].timestamp || '').localeCompare(window.projects[a].timestamp || ''));
-    
+
     container.innerHTML = projectNames.map(name => {
         const project = window.projects[name];
         const date = new Date(project.timestamp || 0);
         const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const facilityCount = project.data?.facilities?.length || 0;
-        
+
         return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
@@ -2152,6 +2152,71 @@ function renderSavedProjectsList() {
                     </div>
                 </div>`;
     }).join('');
+
+    // Also populate the select dropdowns
+    populateProjectSelectDropdowns();
+}
+
+function populateProjectSelectDropdowns() {
+    // Define US states and countries for filtering
+    const usStates = [
+        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+        'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+        'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
+        'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
+        'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
+    ];
+
+    const countries = [
+        'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
+        'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
+        'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
+    ];
+
+    const projectNames = Object.keys(window.projects);
+    projectNames.sort();
+
+    // Populate company/operator select
+    const projectSelect = document.getElementById('project-select');
+    if (projectSelect) {
+        const companyProjects = projectNames.filter(name => {
+            const lowerName = name.toLowerCase().trim();
+            return !usStates.includes(lowerName) && !countries.includes(lowerName);
+        });
+
+        projectSelect.innerHTML = '<option value="">-- Select a project --</option>' +
+            companyProjects.map(name =>
+                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
+            ).join('');
+
+        // Add change event listener
+        projectSelect.onchange = (e) => {
+            if (e.target.value) {
+                loadProject(e.target.value);
+            }
+        };
+    }
+
+    // Populate location select
+    const locationSelect = document.getElementById('location-project-select');
+    if (locationSelect) {
+        const locationProjects = projectNames.filter(name => {
+            const lowerName = name.toLowerCase().trim();
+            return usStates.includes(lowerName) || countries.includes(lowerName);
+        });
+
+        locationSelect.innerHTML = '<option value="">-- Select a location project --</option>' +
+            locationProjects.map(name =>
+                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
+            ).join('');
+
+        // Add change event listener
+        locationSelect.onchange = (e) => {
+            if (e.target.value) {
+                loadProject(e.target.value);
+            }
+        };
+    }
 }
 
 function updateProjectStatus() {

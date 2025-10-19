@@ -19,37 +19,30 @@
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
-            <div class="flex-center mb-20">
-                <div class="category-tabs">
-                    <button class="category-tab active" id="facilities-tab" data-category="facilities">
-                        🏢 Companies
-                    </button>
-                    <button class="category-tab" id="states-tab" data-category="states">
-                        🌍 Locations
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Companies Content -->
-            <div id="companies-content" class="category-content">
-                <div class="content-header">
-                    <h3>Select an Operator/Company</h3>
-                    <div class="mb-15">
-                        <select id="project-select" class="input-primary" style="width: 100%; max-width: 400px;">
-                            <option value="">-- Select a project --</option>
-                        </select>
+
+            <!-- Category contents wrapper for side-by-side display -->
+            <div class="category-contents-wrapper">
+                <!-- Companies Content -->
+                <div id="companies-content" class="category-content">
+                    <div class="content-header">
+                        <h3>🏢 Companies / Operators</h3>
+                        <div class="mb-15">
+                            <select id="project-select" class="input-primary" style="width: 100%;">
+                                <option value="">-- Select a project --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- States Content -->
-            <div id="states-content" class="category-content d-none">
-                <div class="content-header">
-                    <h3>Location Projects</h3>
-                    <div class="mb-15">
-                        <select id="location-project-select" class="input-primary" style="width: 100%; max-width: 400px;">
-                            <option value="">-- Select a location project --</option>
-                        </select>
+
+                <!-- States Content -->
+                <div id="states-content" class="category-content">
+                    <div class="content-header">
+                        <h3>🌍 Locations / States</h3>
+                        <div class="mb-15">
+                            <select id="location-project-select" class="input-primary" style="width: 100%;">
+                                <option value="">-- Select a location project --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2455,79 +2448,10 @@
         // CATEGORY NAVIGATION (COMPANIES vs STATES)
         // ============================================
         
-        let currentCategory = 'facilities'; // Default to facilities/companies
-        
+        // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
-            const facilitiesTab = document.getElementById('facilities-tab');
-            const statesTab = document.getElementById('states-tab');
-            
-            // Category tab switching
-            facilitiesTab.addEventListener('click', () => switchCategory('facilities'));
-            statesTab.addEventListener('click', () => switchCategory('states'));
-            
-            // Add location project button
-            const addLocationBtn = document.getElementById('add-location-project-btn');
-            const locationInput = document.getElementById('new-location-project-input');
-            
-            if (addLocationBtn && locationInput) {
-                addLocationBtn.addEventListener('click', () => {
-                    const projectName = locationInput.value.trim();
-                    if (projectName) {
-                        createNewLocationProject(projectName);
-                        locationInput.value = ''; // Clear input
-                    } else {
-                        alert('Please enter a location project name');
-                    }
-                });
-                
-                // Allow Enter key to trigger the button
-                locationInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        addLocationBtn.click();
-                    }
-                });
-            }
-        }
-        
-        function switchCategory(category) {
-            currentCategory = category;
-            
-            // Update tab appearance
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show/hide content areas
-            const companiesContent = document.getElementById('companies-content');
-            const statesContent = document.getElementById('states-content');
-            
-            if (category === 'facilities') {
-                document.getElementById('facilities-tab').classList.add('active');
-                companiesContent.style.display = 'block';
-                statesContent.style.display = 'none';
-                
-                // Hide states-specific elements
-                hideStatesSpecificElements();
-                // Use filtered version for companies
-                setTimeout(() => {
-                    if (window.projectManager) {
-                        renderFilteredProjectsList('saved-projects-list', 'companies');
-                    }
-                }, 100);
-                console.log('Companies view active - showing company projects list');
-            } else {
-                document.getElementById('states-tab').classList.add('active');
-                companiesContent.style.display = 'none';
-                statesContent.style.display = 'block';
-                
-                // Show states-specific elements
-                showStatesSpecificElements();
-                // Use filtered version for locations
-                setTimeout(() => {
-                    renderFilteredProjectsList('locations-list', 'locations');
-                }, 100);
-                console.log('Locations view activated - showing location projects');
-            }
+            // Both dropdowns are always visible, no tab switching required
+            console.log('Category navigation initialized - both views visible');
         }
         
         function populateCompaniesList() {
