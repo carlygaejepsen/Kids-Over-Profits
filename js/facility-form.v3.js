@@ -731,14 +731,22 @@ function createAutocomplete(input, getDataFunction, category) {
         return;
     }
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'autocomplete-wrapper';
-    input.parentNode.insertBefore(wrapper, input);
-    wrapper.appendChild(input);
+    // Check if wrapper already exists
+    let wrapper = input.closest('.autocomplete-wrapper');
+    if (!wrapper) {
+        wrapper = document.createElement('div');
+        wrapper.className = 'autocomplete-wrapper';
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+    }
 
-    const dropdown = document.createElement('div');
-    dropdown.className = 'autocomplete-dropdown';
-    wrapper.appendChild(dropdown);
+    // Check if dropdown already exists
+    let dropdown = wrapper.querySelector('.autocomplete-dropdown');
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.className = 'autocomplete-dropdown';
+        wrapper.appendChild(dropdown);
+    }
 
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
@@ -1252,14 +1260,14 @@ async function loadProjectsFromFallbackDatasets() {
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
-        
+
         const response = await fetch(API_ENDPOINTS.LOAD_PROJECTS);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.json();
-        
+
         if (result.success && result.projects) {
             window.projects = result.projects;
             projects = window.projects;
@@ -1268,10 +1276,20 @@ async function loadAllProjectsFromCloud() {
 
             // Backup to localStorage
             saveToLocalStorage('cloudProjects', projects);
-            
+
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
             console.log('Loaded projects from cloud:', Object.keys(projects));
-            
+
+            // Force re-initialize autocomplete after cloud data loads
+            setTimeout(() => {
+                console.log('Re-initializing autocomplete with cloud data...');
+                // Clear autocomplete init flags to allow re-initialization
+                document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
+                    delete field.dataset.autocompleteInit;
+                });
+                initializeAutocompleteFields();
+            }, 500);
+
             return projects;
         } else {
             throw new Error(result.error || 'Failed to load projects');
