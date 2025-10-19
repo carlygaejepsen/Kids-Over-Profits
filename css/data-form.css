@@ -468,7 +468,7 @@ textarea {
 
 .array-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 8px;
     margin-bottom: 8px;
     background: #f9fafb;
@@ -483,23 +483,10 @@ textarea {
     border-color: #d1d5db;
 }
 
-.array-item-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-}
-
-.array-item-top input,
-.array-item-top textarea {
+.array-item input,
+.array-item textarea {
     flex: 1;
     min-width: 0;
-}
-
-.array-item-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
 }
 
 .array-input {
@@ -572,76 +559,56 @@ textarea {
     font-size: 13px;
 }
 
-/* Plus Button for Adding Items Inline */
+/* Plus Button for Adding Items Inline - should be small and blue */
 .add-plus-btn {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    line-height: 1;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    min-width: 28px !important;
+    background: #6b7280 !important;
+    color: white !important;
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
 }
 
 .add-plus-btn:hover {
-    background: #059669;
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    background: #4b5563 !important;
 }
 
-.add-plus-btn:active {
-    transform: scale(1.0);
-}
-
-/* Add Item Button (at bottom of arrays) */
+/* Add Item Button (at bottom of arrays) - green button */
 .add-item-btn {
-    width: 100%;
-    padding: 8px 14px;
-    margin-top: 6px;
-    background: #10b981;
-    color: white;
-    border: 2px dashed rgba(255, 255, 255, 0.5);
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    width: 100% !important;
+    padding: 8px 14px !important;
+    margin-top: 6px !important;
+    background: #10b981 !important;
+    color: white !important;
+    border: 2px dashed rgba(255, 255, 255, 0.5) !important;
+    border-radius: 4px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
 }
 
 .add-item-btn:hover {
-    background: #059669;
-    border-style: solid;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    background: #059669 !important;
+    border-style: solid !important;
 }
 
 .add-item-btn:active {
-    transform: translateY(0);
+    transform: translateY(0) !important;
 }
 
 /* Remove Button */
-.array-item .btn,
-.array-item button[type="button"] {
-    flex-shrink: 0;
-    background: #ef4444;
-    padding: 6px 10px;
-    font-size: 12px;
+.array-item > button[type="button"]:not(.add-plus-btn):not(.field-note-btn) {
     height: 28px;
-    min-width: 60px;
+    padding: 4px 12px !important;
+    font-size: 12px !important;
+    background: #ef4444 !important;
 }
 
-.array-item .btn:hover,
-.array-item button[type="button"]:hover {
-    background: #dc2626;
+.array-item > button[type="button"]:not(.add-plus-btn):not(.field-note-btn):hover {
+    background: #dc2626 !important;
 }
 
 /* ============================================

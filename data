@@ -34,14 +34,11 @@
             <div id="companies-content" class="category-content">
                 <div class="content-header">
                     <h3>Select an Operator/Company</h3>
-                    <p>Choose from existing operators or add a new one</p>
-                    <div class="mb-15 d-flex gap-10">
-                        <input type="text" id="new-operator-input" class="input-primary" placeholder="Enter new operator name...">
-                        <button class="btn btn-inline" id="add-operator-btn">Add New</button>
+                    <div class="mb-15">
+                        <select id="project-select" class="input-primary" style="width: 100%; max-width: 400px;">
+                            <option value="">-- Select a project --</option>
+                        </select>
                     </div>
-                </div>
-                <div class="items-list items-container" id="saved-projects-list">
-                    <div class="text-muted italic">No operators found</div>
                 </div>
             </div>
             
@@ -49,14 +46,11 @@
             <div id="states-content" class="category-content d-none">
                 <div class="content-header">
                     <h3>Location Projects</h3>
-                    <p>Choose from existing location-based projects or add a new one</p>
-                    <div class="mb-15 d-flex gap-10">
-                        <input type="text" id="new-location-project-input" class="input-primary" placeholder="Enter new location project name...">
-                        <button class="btn btn-inline" id="add-location-project-btn">Add New</button>
+                    <div class="mb-15">
+                        <select id="location-project-select" class="input-primary" style="width: 100%; max-width: 400px;">
+                            <option value="">-- Select a location project --</option>
+                        </select>
                     </div>
-                </div>
-                <div class="items-list items-container" id="locations-list">
-                    <div class="text-muted italic">No location projects found</div>
                 </div>
             </div>
         </div>
