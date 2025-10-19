@@ -1726,6 +1726,18 @@ function renderArray(container, path, items) {
             itemDiv.appendChild(input);
         }
 
+        // Add plus button for adding a new item after this one
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'btn add-plus-btn';
+        plusBtn.textContent = '+';
+        plusBtn.type = 'button';
+        plusBtn.title = 'Add another item';
+        plusBtn.onclick = (e) => {
+            e.preventDefault();
+            addNewArrayItem(path);
+        };
+        itemDiv.appendChild(plusBtn);
+
         if (itemsToShow.length > 1 || (itemsToShow.length === 1 && itemsToShow[0] !== '')) {
             const removeBtn = document.createElement('button');
             removeBtn.className = 'btn';
@@ -1737,9 +1749,52 @@ function renderArray(container, path, items) {
         container.appendChild(itemDiv);
     });
 
+    // Generate descriptive button label based on path
+    let buttonLabel = 'Add More';
+    if (/^staff\.administrator$/.test(path)) {
+        buttonLabel = 'Add More Administrators';
+    } else if (/^staff\.notableStaff$/.test(path)) {
+        buttonLabel = 'Add More Notable Staff';
+    } else if (/operator\.keyStaff\.founders$/.test(path)) {
+        buttonLabel = 'Add More Founders';
+    } else if (/operator\.keyStaff\.keyExecutives$/.test(path)) {
+        buttonLabel = 'Add More Key Executives';
+    } else if (/operator\.parentCompanies$/.test(path)) {
+        buttonLabel = 'Add More Parent Companies';
+    } else if (/operator\.investors$/.test(path)) {
+        buttonLabel = 'Add More Investors';
+    } else if (/operator\.otherNames$/.test(path)) {
+        buttonLabel = 'Add More Names';
+    } else if (/identification\.otherNames$/.test(path)) {
+        buttonLabel = 'Add More Names';
+    } else if (/otherOperators$/.test(path)) {
+        buttonLabel = 'Add More Operators';
+    } else if (/accreditations\.current$/.test(path)) {
+        buttonLabel = 'Add More Accreditations';
+    } else if (/accreditations\.past$/.test(path)) {
+        buttonLabel = 'Add More Past Accreditations';
+    } else if (/memberships$/.test(path)) {
+        buttonLabel = 'Add More Memberships';
+    } else if (/certifications$/.test(path)) {
+        buttonLabel = 'Add More Certifications';
+    } else if (/licensing$/.test(path)) {
+        buttonLabel = 'Add More Licensing Info';
+    } else if (/websites$/.test(path)) {
+        buttonLabel = 'Add More Websites';
+    } else if (/profileLinks$/.test(path)) {
+        buttonLabel = 'Add More Profile Links';
+    } else if (/notes$/.test(path)) {
+        buttonLabel = 'Add More Notes';
+    } else if (/operatingPeriod\.notes$/.test(path)) {
+        buttonLabel = 'Add More Operational Notes';
+    } else if (/resources\.notes$/.test(path)) {
+        buttonLabel = 'Add More Resource Notes';
+    }
+
     const addButton = document.createElement('button');
     addButton.className = 'add-item-btn';
     addButton.textContent = 'Add Item';
+    addButton.textContent = buttonLabel;
     addButton.type = 'button';
     addButton.onclick = (e) => {
         e.preventDefault();
