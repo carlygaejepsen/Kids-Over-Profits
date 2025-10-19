@@ -1288,6 +1288,10 @@ async function loadAllProjectsFromCloud() {
                     delete field.dataset.autocompleteInit;
                 });
                 initializeAutocompleteFields();
+
+                // Also re-populate the project select dropdowns
+                console.log('Re-populating project select dropdowns...');
+                populateProjectSelectDropdowns();
             }, 500);
 
             return projects;
