@@ -1793,7 +1793,6 @@ function renderArray(container, path, items) {
 
     const addButton = document.createElement('button');
     addButton.className = 'add-item-btn';
-    addButton.textContent = 'Add Item';
     addButton.textContent = buttonLabel;
     addButton.type = 'button';
     addButton.onclick = (e) => {
