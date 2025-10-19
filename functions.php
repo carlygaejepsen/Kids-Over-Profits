@@ -14,11 +14,21 @@ if (!defined('ABSPATH')) {
 function kadence_child_enqueue_styles() {
     // Enqueue parent theme stylesheet
     wp_enqueue_style(
-        'kadence-parent-style', 
+        'kadence-parent-style',
         get_template_directory_uri() . '/style.css',
         array(),
         wp_get_theme()->get('Version')
     );
+
+    // Enqueue data form stylesheet (only on data submission page)
+    if (is_page() && basename($_SERVER['REQUEST_URI']) === 'data') {
+        wp_enqueue_style(
+            'kop-data-form-style',
+            get_stylesheet_directory_uri() . '/css/data-form.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/data-form.css')
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
