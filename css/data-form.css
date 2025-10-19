@@ -393,6 +393,72 @@ textarea {
     flex: 1;
 }
 
+/* Autocomplete Dropdown */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: -1px;
+}
+
+.autocomplete-dropdown.active {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1f2937;
+    transition: background-color 0.15s ease;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #f0f9ff;
+    color: #1e40af;
+}
+
+.autocomplete-item strong {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.autocomplete-no-results {
+    padding: 12px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.autocomplete-loading {
+    padding: 12px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* Make sure dropdown appears above other elements but below modals */
+.autocomplete-wrapper {
+    z-index: 100;
+}
+
 /* ============================================
    ARRAY CONTAINERS & ITEMS
    ============================================ */
