@@ -158,33 +158,33 @@
                     <div class="form-group">
                         <label for="operator-name">Operator Name</label>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="operator-name" class="input-form" placeholder="Type operator name...">
+                            <input type="text" id="operator-name" class="input-form" data-autocomplete-category="operator" placeholder="Type operator name...">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="operator-current-name">Current Name</label>
-                        <input type="text" id="operator-current-name" class="input-form" placeholder="Type current operator name...">
+                        <input type="text" id="operator-current-name" class="input-form" data-autocomplete-category="operator" placeholder="Type current operator name...">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="operator-other-names">Other Names</label>
                     <div class="autocomplete-wrapper">
-                        <input type="text" id="operator-other-names" class="input-form" placeholder="Type other operator names (comma-separated)...">
+                        <input type="text" id="operator-other-names" class="input-form" data-autocomplete-category="operator" placeholder="Type other operator names (comma-separated)...">
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="operator-location">Primary Location</label>
-                        <input type="text" id="operator-location" placeholder="e.g., Waynesboro, TN">
+                        <input type="text" id="operator-location" data-autocomplete-category="location" placeholder="e.g., Waynesboro, TN">
                     </div>
                     <div class="form-group">
                         <label for="operator-headquarters">Headquarters</label>
-                        <input type="text" id="operator-headquarters" placeholder="e.g., Nashville, TN">
+                        <input type="text" id="operator-headquarters" data-autocomplete-category="location" placeholder="e.g., Nashville, TN">
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="operator-founded">Founded</label>
@@ -192,13 +192,13 @@
                     </div>
                     <div class="form-group">
                         <label for="operator-period">Operating Period</label>
-                        <input type="text" id="operator-period" placeholder="e.g., 1985-Present">
+                        <input type="text" id="operator-period" data-autocomplete-category="operatingperiod" placeholder="e.g., 1985-Present">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="operator-status">Status</label>
-                    <input type="text" id="operator-status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <input type="text" id="operator-status" data-autocomplete-category="status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div class="form-group">
@@ -215,7 +215,7 @@
                 
                 <div class="form-group">
                     <label for="operator-ceo">CEO/President</label>
-                    <input type="text" id="operator-ceo" placeholder="e.g., John Smith">
+                    <input type="text" id="operator-ceo" data-autocomplete-category="human" placeholder="e.g., John Smith">
                 </div>
                 
                 <div class="form-group">
@@ -251,17 +251,17 @@
                     <div class="form-group">
                         <label>Name</label>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="facility-name" placeholder="Type facility name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <input type="text" id="facility-name" data-autocomplete-category="facility" placeholder="Type facility name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Current Name</label>
-                        <input type="text" class="facility-field" data-field="identification.currentName">
+                        <input type="text" class="facility-field" data-field="identification.currentName" data-autocomplete-category="facility">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Current Operator</label>
-                    <input type="text" class="facility-field" data-field="identification.currentOperator">
+                    <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
                 </div>
                 <div class="form-group">
                     <label>Other Names</label>
