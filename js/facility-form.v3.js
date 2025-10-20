@@ -2461,13 +2461,54 @@ function attachFieldListeners() {
     // Checkboxes
     document.querySelectorAll('.facility-checkbox').forEach(checkbox => {
         if (!checkbox.dataset.listenerAttached) {
-            checkbox.addEventListener('change', () => {
+            const changeHandler = () => {
                 const path = checkbox.dataset.field;
-                setNestedValue(window.formData.facilities[window.currentFacilityIndex], path, checkbox.checked);
+                if (path) {
+                    setNestedValue(window.formData.facilities[window.currentFacilityIndex], path, checkbox.checked);
+                }
+
+                const controlledElementId = checkbox.dataset.controls;
+                if (controlledElementId) {
+                    const controlledElement = document.getElementById(controlledElementId);
+                    if (controlledElement) {
+                        controlledElement.style.display = checkbox.checked ? '' : 'none';
+                    }
+                }
+
+                // Special handling for notes on checkboxes
+                if (checkbox.checked) {
+                    const scope = checkbox.dataset.noteScope;
+                    const key = checkbox.dataset.noteKey;
+                    if (scope && key) {
+                        const notes = getFieldNotes(scope, key);
+                        if (notes.length === 0) {
+                            addFieldNote(scope, key);
+                        }
+                    }
+                }
+
                 updateJSON();
                 autoSave();
-            });
+            };
+
+            checkbox.addEventListener('change', changeHandler);
             checkbox.dataset.listenerAttached = 'true';
+
+            // Run handler once on init to set initial state, but without adding notes
+            const initHandler = () => {
+                const path = checkbox.dataset.field;
+                const isChecked = path ? getNestedValue(window.formData.facilities[window.currentFacilityIndex], path) : checkbox.checked;
+                checkbox.checked = !!isChecked;
+
+                const controlledElementId = checkbox.dataset.controls;
+                if (controlledElementId) {
+                    const controlledElement = document.getElementById(controlledElementId);
+                    if (controlledElement) {
+                        controlledElement.style.display = checkbox.checked ? '' : 'none';
+                    }
+                }
+            };
+            initHandler();
         }
     });
 }

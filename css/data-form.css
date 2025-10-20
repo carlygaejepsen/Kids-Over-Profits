@@ -514,7 +514,7 @@ textarea {
 
 .array-item input,
 .array-item textarea {
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
 }
 
