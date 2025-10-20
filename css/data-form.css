@@ -631,6 +631,7 @@ textarea {
 .remove-btn {
     width: 28px !important;
     height: 28px !important;
+    aspect-ratio: 1 / 1;
     padding: 0 !important;
     min-width: 28px !important;
     background: #ef4444 !important;

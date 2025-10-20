@@ -1130,12 +1130,10 @@ function initializeNoteControls() {
         let controls = group.querySelector('.note-controls');
 
         if (!controls) {
-            controls = document.createElement('div');
-            controls.className = 'note-controls';
-
+            // Create the + button that goes inline with the field
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
-            addBtn.className = 'note-add-btn';
+            addBtn.className = 'note-add-btn field-note-btn';
             addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
             addBtn.dataset.noteEventAttached = 'true';
             addBtn.addEventListener('click', (e) => {
@@ -1144,10 +1142,15 @@ function initializeNoteControls() {
                 addFieldNote(scope, key);
             });
 
+            // Insert button after the field (inline)
+            field.parentNode.insertBefore(addBtn, field.nextSibling);
+
+            // Create notes container (goes below field and button)
             container = document.createElement('div');
             container.className = 'field-notes';
 
-            controls.appendChild(addBtn);
+            controls = document.createElement('div');
+            controls.className = 'note-controls';
             controls.appendChild(container);
             group.appendChild(controls);
 
@@ -1709,10 +1712,13 @@ function renderArray(container, path, items) {
     if (itemsArray.length === 0) {
         const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
         const array = getNestedValue(target, path.replace('operator.', ''));
-        if (Array.isArray(array)) {
+        if (Array.isArray(array) && array.length === 0) {
             const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
-            array.push(isStaff ? { role: '', name: '' } : '');
-            itemsArray.push(isStaff ? { role: '', name: '' } : '');
+            const emptyItem = isStaff ? { role: '', name: '' } : '';
+            array.push(emptyItem);
+            // Re-render with the updated array
+            renderArray(container, path, array);
+            return;
         }
     }
 
