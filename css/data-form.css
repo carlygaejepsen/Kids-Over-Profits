@@ -398,6 +398,11 @@ textarea {
     display: flex;
     align-items: center;
     gap: 8px;
+    z-index: 1;
+}
+
+.autocomplete-wrapper:has(.autocomplete-dropdown.active) {
+    z-index: 10000;
 }
 
 .autocomplete-wrapper input {
@@ -606,8 +611,8 @@ textarea {
 
 /* Add Item Button (at bottom of arrays) - green button */
 .add-item-btn {
-    width: 100% !important;
-    padding: 6px 12px !important;
+    max-width: 250px !important;
+    padding: 8px 16px !important;
     margin-top: 6px !important;
     background: #10b981 !important;
     color: white !important;
@@ -617,6 +622,7 @@ textarea {
     font-weight: 500 !important;
     cursor: pointer !important;
     transition: all 0.15s ease !important;
+    display: inline-block !important;
 }
 
 .add-item-btn:hover {
@@ -1217,14 +1223,20 @@ textarea {
 
 .remove-note-btn {
     flex-shrink: 0;
-    padding: 6px 12px;
+    width: 28px;
+    height: 28px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
     background: #ef4444;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 13px;
-    white-space: nowrap;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .remove-note-btn:hover {
