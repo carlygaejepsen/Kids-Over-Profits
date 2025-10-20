@@ -1683,12 +1683,40 @@ function removeArrayItemAtIndex(path, index) {
 function renderArray(container, path, items) {
     if (!container) return;
 
+    // Set up event delegation on container if not already done
+    if (!container.dataset.delegationInit) {
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-item-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                const btnPath = e.target.dataset.arrayPath;
+                if (btnPath) {
+                    addNewArrayItem(btnPath);
+                }
+            }
+        });
+        container.dataset.delegationInit = 'true';
+    }
+
     // Remove only array items, preserve the add button to avoid click issues
     const existingItems = container.querySelectorAll('.array-item');
     existingItems.forEach(item => item.remove());
 
     const itemsArray = Array.isArray(items) ? items : (items ? [items] : []);
-    const itemsToShow = itemsArray.length > 0 ? itemsArray : [''];
+
+    // If array is empty, initialize it with one empty item so user input gets saved
+    if (itemsArray.length === 0) {
+        const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
+        const array = getNestedValue(target, path.replace('operator.', ''));
+        if (Array.isArray(array)) {
+            const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+            array.push(isStaff ? { role: '', name: '' } : '');
+            itemsArray.push(isStaff ? { role: '', name: '' } : '');
+        }
+    }
+
+    const itemsToShow = itemsArray;
 
     itemsToShow.forEach((item, index) => {
         const itemDiv = document.createElement('div');
@@ -1849,21 +1877,12 @@ function renderArray(container, path, items) {
         addButton.type = 'button';
         addButton.dataset.arrayPath = path;
         container.appendChild(addButton);
-
-        // Attach event listener only once when button is created
-        addButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            const btnPath = e.currentTarget.dataset.arrayPath;
-            if (btnPath) {
-                addNewArrayItem(btnPath);
-            }
-        });
+        // Event listener is handled by delegation on the container
     }
 
-    // Just update the button text, don't recreate or clone
+    // Update button text and ensure path is set
     addButton.textContent = buttonLabel;
+    addButton.dataset.arrayPath = path;
 }
 
 function loadOperatorData() {
