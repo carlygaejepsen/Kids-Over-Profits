@@ -1,31 +1,47 @@
-# Kids Over Profits – Project Guide
+# Kids Over Profits – Contributor Guide
 
-Welcome! This repository contains the working files for the **Kids Over Profits** campaign website, which is implemented as a WordPress child theme running on a LiteSpeed-managed PHP 8.2 stack. Use this guide to understand the environment, key directories, and collaboration preferences before you make changes.
+Welcome! This repository powers the **Kids Over Profits** WordPress child theme. Before making changes, read through this guide to understand the environment, collaboration preferences, and visual direction.
 
 ## Environment Snapshot
-- **Hosting provider & control panel:** NixiHost shared hosting managed through cPanel with Softaculous WordPress Manager for application administration.
-- **Hosting stack:** LiteSpeed web server with PHP 8.2 (handler `ea-php82___lsphp`).
-- **Database:** MySQL managed through the NixiHost/cPanel environment.
-- **CMS:** WordPress with the Kadence parent theme and a custom child theme located in this repository.
-- **Local development:** Originally set up on Windows (`c:\Users\daniu\OneDrive\Documents\GitHub\Kids-Over-Profits`).
-- **Access constraints:** No production credentials are stored here; automation can only work with files present in the repo.
+- **Hosting provider & control panel:** NixiHost shared hosting managed through cPanel (Softaculous WordPress Manager for application administration).
+- **Web server & PHP:** LiteSpeed with PHP 8.2 (`ea-php82___lsphp`).
+- **Database:** MySQL provisioned through the hosting environment.
+- **CMS stack:** WordPress with the Kadence parent theme and this custom child theme.
+- **Local development context:** Historically maintained from Windows at `c:\\Users\\daniu\\OneDrive\\Documents\\GitHub\\Kids-Over-Profits`.
+- **Access constraints:** No production credentials live in the repo; automation must work only with the checked-in files.
+
+For more operational background, consult `environment-summary.md`, `troubleshooting-summary.md`, and `ca-reports.html`.
 
 ## Repository Layout
 - `api/` – PHP endpoints for AJAX and admin tooling (configuration checks, data imports, saving edits, etc.).
-- `js/` – Front-end scripts used across the campaign tools. Files are plain JavaScript modules organized by feature (e.g., `facility-form.v3.js`, state-specific report builders).
-- `data/` – Static export for the WordPress page whose slug is `data`, providing the facility submission interface.
-- `functions.php`, `style.css` – Child theme overrides that extend the Kadence parent.
+- `data/` – Static export of the WordPress page whose slug is `data`, providing the facility submission interface.
+- `js/` – Front-end scripts written in vanilla ES6 modules. Filenames are versioned (e.g., `facility-form.v3.js`).
+- `css/`, `style.css` – Theme styling overrides that extend the Kadence parent.
+- `functions.php` – Child theme bootstrap, hooks, and shortcode registrations.
 - `tti-program-index/` – Content and assets for the TTI program database index.
-- Supporting documents: `environment-summary.md`, `troubleshooting-summary.md`, and `ca-reports.html` capture operational context and archived outputs.
-
-## Dependencies & Tooling
-- Server-side code targets WordPress conventions (hooks, shortcodes, REST-style endpoints).
-- JavaScript is vanilla ES6 with a focus on compatibility with WordPress admin and front-end pages; no bundler is currently in use.
-- External integrations rely on WordPress core and Kadence-provided functionality. Additional PHP libraries should remain lightweight and WordPress-friendly.
 
 ## Collaboration Preferences
-- **File versioning:** When iterating on assets, prefer explicit versioned filenames (e.g., `facility-form.v1.js`, `facility-form.v2.js`). Preserve prior versions instead of overwriting unless instructed otherwise.
-- **Code style:** Follow existing patterns in each directory (procedural PHP for endpoints, modular ES6 for scripts). Avoid introducing build tooling unless necessary.
+- **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `facility-form.v4.js`). Preserve prior versions unless instructed otherwise.
+- **Code style:** Follow established patterns—procedural PHP for endpoints, modular ES6 for scripts, and WordPress-friendly conventions throughout. Do not introduce new build tooling unless necessary.
 - **Documentation:** Update this guide or the relevant `*-summary.md` files when environment or process details change.
+- **Testing:** Where possible, validate changes against a WordPress instance running the Kadence parent theme plus this child theme.
 
-Thanks for contributing! Keep consistency with the structure above to ensure smooth collaboration across the project.
+## Visual & UX Direction
+Use the preferred campaign color palette for new UI work:
+- Soft Pastel Yellow — `#FFF5CB`
+- Mint Green — `#B6E3D4`
+- Teal — `#33A7B5`
+- Navy Blue — `#000080`
+- Midnight Blue — `#000435`
+- Orange — `#EF9034`
+- White — `#FFFFFF`
+- Chartreuse — `#B2E102`
+- Pale Spring Yellow — `#ECF385`
+- Coral Pink — `#FE8088`
+- Sand / Warm Ivory — `#F2EEDF`
+- Powder Blue — `#AEE0ED`
+- Bubblegum Pink — `#FC8ED6`
+
+Favor accessible contrasts and align UI accents with the bold blues and teals. Reserve the brighter lime and pink tones (`Chartreuse`, `Coral Pink`, `Bubblegum Pink`) for borders, outlines, and other highlight treatments rather than full backgrounds. When working with the softer pastels, use them as glow or shadow accents layered over neutral bases to preserve legibility. When styling text, ensure headings remain readable against light backgrounds from the palette.
+
+Thanks for contributing! Maintain consistency with the structure above to ensure smooth collaboration.
