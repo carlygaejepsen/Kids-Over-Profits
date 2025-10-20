@@ -1151,6 +1151,9 @@ function initializeNoteControls() {
             controls.appendChild(container);
             group.appendChild(controls);
 
+            // Add class to form-group for proper layout
+            group.classList.add('has-note-button');
+
             field.dataset.noteInit = 'true';
         } else {
             // Controls exist, make sure container reference is correct

@@ -1200,6 +1200,39 @@ textarea {
     width: 100%;
 }
 
+.note-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.note-textarea {
+    flex: 1;
+    min-width: 0;
+    resize: vertical;
+}
+
+.remove-note-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.remove-note-btn:hover {
+    background: #dc2626;
+}
+
+.note-add-btn {
+    flex-shrink: 0;
+}
+
 /* ============================================
    SCROLLBAR STYLING
    ============================================ */
