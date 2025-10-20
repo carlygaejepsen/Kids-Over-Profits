@@ -1702,7 +1702,13 @@ function renderArray(container, path, items) {
         container.dataset.delegationInit = 'true';
     }
 
-    // Remove only array items, preserve the add button to avoid click issues
+    // Preserve the add button to avoid click issues, but remove it temporarily
+    let addButton = container.querySelector('.add-item-btn');
+    if (addButton) {
+        addButton.remove();
+    }
+
+    // Remove only array items
     const existingItems = container.querySelectorAll('.array-item');
     existingItems.forEach(item => item.remove());
 
@@ -1728,6 +1734,8 @@ function renderArray(container, path, items) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'array-item';
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+        const scope = path.startsWith('operator.') ? 'operator' : 'facility';
+        const noteKey = `${path}.${index}`;
 
         if (isStaff) {
             const roleInput = document.createElement('input');
@@ -1736,7 +1744,6 @@ function renderArray(container, path, items) {
             roleInput.value = (item && item.role) ? item.role : '';
             roleInput.className = 'array-input array-input-role';
             roleInput.oninput = () => updateArrayObjectItemValue(path, index, 'role', roleInput.value);
-            // Autocomplete for staff role
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
                     createAutocomplete(roleInput, getAllStaffRoles, 'role');
@@ -1752,7 +1759,6 @@ function renderArray(container, path, items) {
             nameInput.className = 'array-input array-input-name';
             nameInput.oninput = () => updateArrayObjectItemValue(path, index, 'name', nameInput.value);
             itemDiv.appendChild(nameInput);
-            // Autocomplete for staff name (human) - always create since this is a new input
             setTimeout(() => {
                 createAutocomplete(nameInput, getAllHumanNames, 'human');
                 nameInput.dataset.autocompleteInit = 'true';
@@ -1764,50 +1770,33 @@ function renderArray(container, path, items) {
             input.className = 'array-input';
             input.oninput = () => updateArrayItemValue(path, index, input.value);
 
-            // --- AUTOCOMPLETE CATEGORY MAPPING (per AUTOCOMPLETE_FIX_SUMMARY.md) ---
             let category = null;
             let dataFunc = () => [];
-            // Facility name arrays
             if (/identification\.otherNames$/.test(path)) {
                 category = 'facility';
                 dataFunc = getAllFacilityNames;
-            }
-            // Operator name arrays
-            else if (/operator\.otherNames$/.test(path) || /operator\.parentCompanies$/.test(path) || /otherOperators$/.test(path)) {
+            } else if (/operator\.otherNames$/.test(path) || /operator\.parentCompanies$/.test(path) || /otherOperators$/.test(path)) {
                 category = 'operator';
                 dataFunc = getAllOperators;
-            }
-            // Human name arrays
-            else if (/operator\.keyStaff\.founders$/.test(path) || /operator\.keyStaff\.keyExecutives$/.test(path)) {
+            } else if (/operator\.keyStaff\.founders$/.test(path) || /operator\.keyStaff\.keyExecutives$/.test(path)) {
                 category = 'human';
                 dataFunc = getAllHumanNames;
-            }
-            // Accreditations
-            else if (/accreditations\.current$/.test(path) || /accreditations\.past$/.test(path)) {
+            } else if (/accreditations\.current$/.test(path) || /accreditations\.past$/.test(path)) {
                 category = 'accreditation';
                 dataFunc = getAllAccreditations;
-            }
-            // Memberships
-            else if (/memberships$/.test(path)) {
+            } else if (/memberships$/.test(path)) {
                 category = 'membership';
                 dataFunc = getAllMemberships;
-            }
-            // Certifications
-            else if (/certifications$/.test(path)) {
+            } else if (/certifications$/.test(path)) {
                 category = 'certification';
                 dataFunc = getAllCertifications;
-            }
-            // Licensing
-            else if (/licensing$/.test(path)) {
+            } else if (/licensing$/.test(path)) {
                 category = 'licensing';
                 dataFunc = () => Array.from(customLicensing);
-            }
-            // Investors
-            else if (/investors$/.test(path)) {
+            } else if (/investors$/.test(path)) {
                 category = 'investor';
                 dataFunc = () => Array.from(customInvestors);
             }
-            // Profile links, notes, etc. - no autocomplete
 
             if (category) {
                 setTimeout(() => {
@@ -1820,9 +1809,19 @@ function renderArray(container, path, items) {
             itemDiv.appendChild(input);
         }
 
-        // REMOVED: Unnecessary inline + button - the "Add More" button at bottom handles adding items
+        // Add Note button for each array item
+        const addNoteBtn = document.createElement('button');
+        addNoteBtn.type = 'button';
+        addNoteBtn.className = 'note-add-btn field-note-btn';
+        addNoteBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+        addNoteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            addFieldNote(scope, noteKey);
+        });
+        itemDiv.appendChild(addNoteBtn);
 
-        if (itemsToShow.length > 1 || (itemsToShow.length === 1 && itemsToShow[0] !== '')) {
+        if (itemsToShow.length > 1 || (itemsToShow.length === 1 && (isStaff ? item.name : item) !== '')) {
             const removeBtn = document.createElement('button');
             removeBtn.className = 'btn remove-btn';
             removeBtn.textContent = '−';
@@ -1830,6 +1829,16 @@ function renderArray(container, path, items) {
             removeBtn.onclick = () => removeArrayItemAtIndex(path, index);
             itemDiv.appendChild(removeBtn);
         }
+
+        // Container for notes for this specific item
+        const notesContainer = document.createElement('div');
+        notesContainer.className = 'field-notes';
+        notesContainer.dataset.noteContainerKey = noteKey;
+        itemDiv.appendChild(notesContainer);
+
+        // Register this container so it can be rendered
+        noteFieldRegistry.push({ scope, key: noteKey, container: notesContainer });
+
         container.appendChild(itemDiv);
     });
 
@@ -1875,20 +1884,22 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Resource Notes';
     }
 
-    // Check if add button already exists, if not create it
-    let addButton = container.querySelector('.add-item-btn');
+    // Re-create the add button if it was removed
     if (!addButton) {
         addButton = document.createElement('button');
         addButton.className = 'add-item-btn';
         addButton.type = 'button';
-        addButton.dataset.arrayPath = path;
-        container.appendChild(addButton);
-        // Event listener is handled by delegation on the container
     }
+
+    // Always append at the end to ensure correct position
+    container.appendChild(addButton);
 
     // Update button text and ensure path is set
     addButton.textContent = buttonLabel;
     addButton.dataset.arrayPath = path;
+
+    // Render notes for the array items
+    renderAllFieldNotes();
 }
 
 function loadOperatorData() {

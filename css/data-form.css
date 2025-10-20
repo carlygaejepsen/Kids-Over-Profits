@@ -608,56 +608,55 @@ textarea {
 
 /* Plus Button for Adding Items Inline - should be small and blue */
 .add-plus-btn {
-    width: 28px !important;
-    height: 28px !important;
-    padding: 0 !important;
-    min-width: 28px !important;
-    background: #6b7280 !important;
-    color: white !important;
-    font-size: 16px !important;
-    flex-shrink: 0 !important;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    min-width: 28px;
+    background: #3b82f6; /* Blue */
+    color: white;
+    font-size: 16px;
+    flex: 0 0 28px; /* Prevent stretching */
+    border-radius: 4px;
+    border: none;
 }
 
 .add-plus-btn:hover {
-    background: #4b5563 !important;
+    background: #2563eb;
 }
 
 /* Add Item Button (at bottom of arrays) - green button */
 .add-item-btn {
-    max-width: 250px !important;
-    padding: 8px 16px !important;
-    margin-top: 6px !important;
-    background: #10b981 !important;
-    color: white !important;
-    border: 1px solid #059669 !important;
-    border-radius: 4px !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: all 0.15s ease !important;
-    display: inline-block !important;
+    padding: 8px 16px;
+    margin-top: 8px;
+    background: #10b981;
+    color: white;
+    border: 1px solid #059669;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-block; /* Changed from block */
+    width: auto; /* Fit content */
 }
 
 .add-item-btn:hover {
-    background: #059669 !important;
-}
-
-.add-item-btn:active {
-    transform: translateY(0) !important;
+    background: #059669;
 }
 
 /* Remove Button - small inline minus button */
 .remove-btn {
-    width: 28px !important;
-    height: 28px !important;
-    aspect-ratio: 1 / 1;
-    padding: 0 !important;
-    min-width: 28px !important;
-    background: #ef4444 !important;
-    color: white !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
-    flex-shrink: 0 !important;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    min-width: 28px;
+    background: #ef4444;
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+    flex: 0 0 28px; /* Prevent stretching */
+    border-radius: 4px;
+    border: none;
 }
 
 .remove-btn:hover {
