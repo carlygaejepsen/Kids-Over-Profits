@@ -1254,12 +1254,15 @@ textarea {
 
 /* Array item layout tweaks so note buttons stay inline */
 .array-item {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    display: flex;
+    align-items: center; /* Vertically center items */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .array-item .field-note-btn {
-    align-self: flex-start;
+    align-self: center;
 }
 
 .array-item .note-container {

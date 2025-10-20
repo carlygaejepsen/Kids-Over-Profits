@@ -1085,7 +1085,7 @@ function renderFieldNotes(container, scope, key) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'remove-note-btn';
-        removeBtn.textContent = 'Remove';
+        removeBtn.textContent = '−';
         removeBtn.addEventListener('click', () => {
             removeFieldNote(scope, key, index);
         });
@@ -1809,17 +1809,20 @@ function renderArray(container, path, items) {
             itemDiv.appendChild(input);
         }
 
-        // Add Note button for each array item
-        const addNoteBtn = document.createElement('button');
-        addNoteBtn.type = 'button';
-        addNoteBtn.className = 'note-add-btn field-note-btn';
-        addNoteBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
-        addNoteBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            addFieldNote(scope, noteKey);
-        });
-        itemDiv.appendChild(addNoteBtn);
+        // Add Note button for each array item, unless it's a notes array
+        const isNoteArray = /notes$/.test(path);
+        if (!isNoteArray) {
+            const addNoteBtn = document.createElement('button');
+            addNoteBtn.type = 'button';
+            addNoteBtn.className = 'note-add-btn field-note-btn';
+            addNoteBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+            addNoteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                addFieldNote(scope, noteKey);
+            });
+            itemDiv.appendChild(addNoteBtn);
+        }
 
         if (itemsToShow.length > 1 || (itemsToShow.length === 1 && (isStaff ? item.name : item) !== '')) {
             const removeBtn = document.createElement('button');
