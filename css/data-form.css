@@ -1190,14 +1190,39 @@ textarea {
 /* Ensure form-group with note buttons has proper layout - notes go BELOW */
 .form-group.has-note-button .field-content {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: 8px;
 }
 
 .form-group.has-note-button .field-content > input,
 .form-group.has-note-button .field-content > textarea,
 .form-group.has-note-button .field-content > select {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+    max-width: 100%;
+}
+
+.form-group.has-note-button .autocomplete-wrapper {
+    flex: 1 1 auto;
+}
+
+.form-group.has-note-button .autocomplete-wrapper input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+}
+
+.form-group.has-note-button .field-content > .field-note-btn {
+    order: 1;
+    align-self: flex-start;
+}
+
+.form-group.has-note-button .field-content > .note-container {
+    flex: 0 0 100%;
+    order: 2;
+    margin: 0;
 }
 
 /* Note containers should appear below fields */
@@ -1226,6 +1251,22 @@ textarea {
     gap: 8px;
     width: 100%;
     align-items: flex-start;
+}
+
+/* Array item layout tweaks so note buttons stay inline */
+.array-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.array-item .field-note-btn {
+    align-self: flex-start;
+}
+
+.array-item .note-container {
+    flex: 0 0 100%;
+    order: 10;
+    margin: 4px 0 0 0;
 }
 
 .note-textarea {
