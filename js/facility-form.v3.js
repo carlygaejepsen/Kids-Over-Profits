@@ -1844,21 +1844,23 @@ function renderArray(container, path, items) {
         addButton = document.createElement('button');
         addButton.className = 'add-item-btn';
         addButton.type = 'button';
+        addButton.dataset.arrayPath = path;
         container.appendChild(addButton);
+
+        // Attach event listener only once when button is created
+        addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            const btnPath = e.currentTarget.dataset.arrayPath;
+            if (btnPath) {
+                addNewArrayItem(btnPath);
+            }
+        });
     }
 
-    // Remove old event listeners and add new one to ensure clean state
-    const newButton = addButton.cloneNode(false);
-    addButton.parentNode.replaceChild(newButton, addButton);
-    addButton = newButton;
-
+    // Just update the button text, don't recreate or clone
     addButton.textContent = buttonLabel;
-    addButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        addNewArrayItem(path);
-    }, { once: false });
 }
 
 function loadOperatorData() {
