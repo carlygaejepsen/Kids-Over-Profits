@@ -2162,6 +2162,10 @@ function renderSavedProjectsList() {
 }
 
 function populateProjectSelectDropdowns() {
+    console.log('🔧 populateProjectSelectDropdowns called');
+    console.log('🔧 window.projects:', window.projects);
+    console.log('🔧 Project count:', Object.keys(window.projects || {}).length);
+
     // Define US states and countries for filtering
     const usStates = [
         'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
@@ -2177,21 +2181,27 @@ function populateProjectSelectDropdowns() {
         'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
     ];
 
-    const projectNames = Object.keys(window.projects);
+    const projectNames = Object.keys(window.projects || {});
+    console.log('🔧 Project names:', projectNames);
     projectNames.sort();
 
     // Populate company/operator select
     const projectSelect = document.getElementById('project-select');
+    console.log('🔧 projectSelect element:', projectSelect);
     if (projectSelect) {
         const companyProjects = projectNames.filter(name => {
             const lowerName = name.toLowerCase().trim();
             return !usStates.includes(lowerName) && !countries.includes(lowerName);
         });
 
+        console.log('🔧 Company projects filtered:', companyProjects);
+
         projectSelect.innerHTML = '<option value="">-- Select a project --</option>' +
             companyProjects.map(name =>
                 `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
             ).join('');
+
+        console.log('🔧 Company dropdown populated with', companyProjects.length, 'projects');
 
         // Add change event listener
         projectSelect.onchange = (e) => {
@@ -2199,6 +2209,8 @@ function populateProjectSelectDropdowns() {
                 loadProject(e.target.value);
             }
         };
+    } else {
+        console.error('🔧 project-select element NOT FOUND!');
     }
 
     // Populate location select
