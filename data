@@ -2841,25 +2841,24 @@
             setTimeout(() => {
                 initializeCategoryNavigation();
 
-                // Try to populate operators list immediately and then retry
-                if (typeof populateOperatorsList !== 'function') {
-                    window.populateOperatorsList = function() {
-                        // TODO: Implement operator list population logic
-                        // For now, just log to avoid ReferenceError
-                        console.log('populateOperatorsList called (placeholder)');
-                    };
+                // Populate project select dropdowns (from facility-form.v3.js)
+                // The facility-form.v3.js handles this automatically after cloud load,
+                // but we also try here in case the timing is different
+                if (typeof window.populateProjectSelectDropdowns === 'function') {
+                    console.log('Calling populateProjectSelectDropdowns from data.html');
+                    window.populateProjectSelectDropdowns();
+
+                    // Retry after cloud data loads
+                    setTimeout(() => {
+                        window.populateProjectSelectDropdowns();
+                    }, 2000);
+
+                    setTimeout(() => {
+                        window.populateProjectSelectDropdowns();
+                    }, 5000);
+                } else {
+                    console.warn('populateProjectSelectDropdowns not available yet');
                 }
-                populateOperatorsList();
-                
-                // Retry populating operators after cloud data loads
-                setTimeout(() => {
-                    populateOperatorsList();
-                }, 2000);
-                
-                // One more retry after longer delay for cloud data
-                setTimeout(() => {
-                    populateOperatorsList();
-                }, 5000);
                 
                 // Add click handlers for state items
                 document.querySelectorAll('.state-item').forEach(item => {

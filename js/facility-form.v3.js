@@ -2526,6 +2526,7 @@ window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
+window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
 
 // Initialize on DOMContentLoaded
 if (document.readyState === 'loading') {
