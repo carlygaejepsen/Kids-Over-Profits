@@ -330,6 +330,13 @@ body {
     z-index: 0;
 }
 
+/* Ensure active inputs and dropdowns layer above surrounding fields */
+.form-group:focus-within,
+.array-item:focus-within,
+.array-container:focus-within {
+    z-index: 1000;
+}
+
 .form-group label {
     display: block;
     margin-bottom: 8px;
