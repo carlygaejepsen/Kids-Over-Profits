@@ -538,24 +538,30 @@ function getAllHumanNames() {
             if (project.data?.operator?.keyStaff) {
                 const ks = project.data.operator.keyStaff;
                 if (ks.ceo) names.add(ks.ceo);
-                ks.founders?.forEach(f => names.add(f));
-                ks.keyExecutives?.forEach(e => names.add(e));
+                ks.founders?.forEach(f => {
+                    const name = typeof f === 'string' ? f : f?.name;
+                    if (name) names.add(name);
+                });
+                ks.keyExecutives?.forEach(e => {
+                    const name = typeof e === 'string' ? e : e?.name;
+                    if (name) names.add(name);
+                });
             }
 
             // Facility staff
             project.data?.facilities?.forEach(facility => {
                 facility.staff?.administrator?.forEach(admin => {
-                    const name = typeof admin === 'string' ? admin : admin.name;
+                    const name = typeof admin === 'string' ? admin : admin?.name;
                     if (name) names.add(name);
                 });
                 facility.staff?.notableStaff?.forEach(staff => {
-                    const name = typeof staff === 'string' ? staff : staff.name;
+                    const name = typeof staff === 'string' ? staff : staff?.name;
                     if (name) names.add(name);
                 });
             });
         });
 
-        aggregatedDataCache.humanNames = Array.from(names).filter(n => n && n.trim()).sort();
+        aggregatedDataCache.humanNames = Array.from(names).filter(n => n && typeof n === 'string' && n.trim()).sort();
     }
 
     return aggregatedDataCache.humanNames;
@@ -730,6 +736,12 @@ function createAutocomplete(input, getDataFunction, category) {
         console.log('✅ Autocomplete already initialized for', input.id || input.name);
         return;
     }
+
+    // Disable browser's native autocomplete/datalist
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('autocapitalize', 'off');
+    input.setAttribute('spellcheck', 'false');
 
     // Check if wrapper already exists
     let wrapper = input.closest('.autocomplete-wrapper');
@@ -1702,14 +1714,12 @@ function renderArray(container, path, items) {
             nameInput.value = (item && item.name) ? item.name : '';
             nameInput.className = 'array-input array-input-name';
             nameInput.oninput = () => updateArrayObjectItemValue(path, index, 'name', nameInput.value);
-            // Autocomplete for staff name (human)
-            setTimeout(() => {
-                if (!nameInput.dataset.autocompleteInit) {
-                    createAutocomplete(nameInput, getAllHumanNames, 'human');
-                    nameInput.dataset.autocompleteInit = 'true';
-                }
-            }, 100);
             itemDiv.appendChild(nameInput);
+            // Autocomplete for staff name (human) - always create since this is a new input
+            setTimeout(() => {
+                createAutocomplete(nameInput, getAllHumanNames, 'human');
+                nameInput.dataset.autocompleteInit = 'true';
+            }, 100);
         } else {
             const input = document.createElement('input');
             input.type = 'text';
@@ -1834,15 +1844,21 @@ function renderArray(container, path, items) {
         addButton = document.createElement('button');
         addButton.className = 'add-item-btn';
         addButton.type = 'button';
-        addButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            addNewArrayItem(path);
-        });
         container.appendChild(addButton);
     }
-    // Update button text in case the label changed
+
+    // Remove old event listeners and add new one to ensure clean state
+    const newButton = addButton.cloneNode(false);
+    addButton.parentNode.replaceChild(newButton, addButton);
+    addButton = newButton;
+
     addButton.textContent = buttonLabel;
+    addButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        addNewArrayItem(path);
+    }, { once: false });
 }
 
 function loadOperatorData() {

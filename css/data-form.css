@@ -367,8 +367,8 @@ select,
 .input-form,
 .input-primary,
 .input-secondary {
-    width: 100%;
-    padding: 8px 10px;
+    max-width: 400px;
+    padding: 6px 8px;
     border: 1px solid #d1d5db;
     border-radius: 4px;
     font-size: 14px;
@@ -416,7 +416,7 @@ textarea {
     border-radius: 0 0 6px 6px;
     max-height: 250px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 9999;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: none;
     margin-top: -1px;
@@ -1138,6 +1138,7 @@ textarea {
     flex-shrink: 0;
     width: 28px;
     height: 28px;
+    aspect-ratio: 1 / 1;
     padding: 0;
     display: inline-flex;
     align-items: center;
