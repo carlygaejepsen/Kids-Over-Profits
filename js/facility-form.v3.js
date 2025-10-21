@@ -1146,13 +1146,16 @@ function initializeNoteControls() {
             return;
         }
         const fieldWrapper = field.closest('.field-content') || field.parentNode;
-        const legacyControls = Array.from(group.querySelectorAll('.note-controls'));
         let container = group.querySelector('.field-notes');
         let addBtn = fieldWrapper?.querySelector('.note-add-btn.field-note-btn')
             || group.querySelector('.note-add-btn.field-note-btn');
 
-        if (!addBtn) {
-            addBtn = document.createElement('button');
+        if (!controls) {
+            controls = document.createElement('div');
+            controls.className = 'note-controls';
+
+            // Create the + button (rendered before notes within controls)
+            const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
             addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
@@ -1162,45 +1165,27 @@ function initializeNoteControls() {
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
             });
-        } else if (!addBtn.dataset.noteEventAttached) {
-            addBtn.dataset.noteEventAttached = 'true';
-            addBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                addFieldNote(scope, key);
-            });
-        }
+            controls.appendChild(addBtn);
 
-        if (fieldWrapper && typeof fieldWrapper.appendChild === 'function') {
-            if (addBtn.parentNode !== fieldWrapper) {
-                fieldWrapper.appendChild(addBtn);
-            }
-        } else if (typeof field.insertAdjacentElement === 'function') {
-            field.insertAdjacentElement('afterend', addBtn);
-        } else if (!addBtn.parentNode && typeof group.appendChild === 'function') {
-            group.appendChild(addBtn);
-        }
-
-        if (!container) {
+            // Create notes container (always rendered below the button)
             container = document.createElement('div');
             container.className = 'field-notes';
-        }
+            controls.appendChild(container);
 
-        const insertionTarget = fieldWrapper || field;
-        if (insertionTarget && typeof insertionTarget.insertAdjacentElement === 'function') {
-            insertionTarget.insertAdjacentElement('afterend', container);
-        } else if (!container.parentNode && typeof group.appendChild === 'function') {
-            group.appendChild(container);
-        }
+            if (fieldWrapper && typeof fieldWrapper.appendChild === 'function') {
+                fieldWrapper.appendChild(controls);
+            } else {
+                group.appendChild(controls);
+            }
+
+            // Add class to form-group for proper layout
+            group.classList.add('has-note-button');
 
         legacyControls.forEach(control => {
             if (!control.children.length) {
                 control.remove();
             }
         });
-
-        group.classList.add('has-note-button');
-        field.dataset.noteInit = 'true';
 
         if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
             noteFieldRegistry.push({ scope, key, container });
