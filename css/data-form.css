@@ -1186,76 +1186,40 @@ textarea {
 /* ============================================
    FIELD NOTE LAYOUTS
    ============================================ */
-.field-notes {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.note-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.note-textarea {
-    flex: 1;
-    min-height: 48px;
-    padding: 8px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 14px;
-/* Ensure form-group with note buttons has proper layout - notes go BELOW */
 .form-group.has-note-button .field-content {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
 }
 
 .form-group.has-note-button .field-content > input,
 .form-group.has-note-button .field-content > textarea,
-.form-group.has-note-button .field-content > select {
-    flex: 1 1 auto;
-    min-width: 0;
-    width: auto !important;
+.form-group.has-note-button .field-content > select,
+.form-group.has-note-button .field-content > .autocomplete-wrapper {
+    width: 100% !important;
     max-width: 100%;
 }
 
-.form-group.has-note-button .autocomplete-wrapper {
-    flex: 1 1 auto;
-}
-
 .form-group.has-note-button .autocomplete-wrapper input {
-    flex: 1 1 auto;
-    min-width: 0;
-    width: auto !important;
+    width: 100% !important;
 }
 
-.form-group.has-note-button .field-content > .field-note-btn {
-    order: 1;
-    align-self: flex-start;
+.form-group.has-note-button .note-controls {
+    width: 100%;
 }
 
-.form-group.has-note-button .field-content > .note-container {
-    flex: 0 0 100%;
-    order: 2;
-    margin: 0;
-}
-
-/* Note containers should appear below fields */
 .note-container {
     width: 100%;
     order: 10;
 }
 
-.note-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    margin-top: 8px;
+.form-group.has-note-button .field-content > .field-note-btn {
+    flex: 0 0 auto;
+}
+
+.note-controls .note-add-btn {
+    align-self: flex-start;
 }
 
 .field-notes {
@@ -1263,6 +1227,7 @@ textarea {
     flex-direction: column;
     gap: 8px;
     width: 100%;
+    margin-top: 8px;
 }
 
 .note-row {
@@ -1270,15 +1235,6 @@ textarea {
     gap: 8px;
     width: 100%;
     align-items: flex-start;
-}
-
-/* Array item layout tweaks so note buttons stay inline */
-.array-item {
-    display: flex;
-    align-items: center; /* Vertically center items */
-    flex-wrap: nowrap; /* Prevent wrapping */
-    gap: 8px;
-    margin-bottom: 8px;
 }
 
 .array-item .field-note-btn {
@@ -1296,10 +1252,16 @@ textarea {
     min-width: 0;
     max-width: 100% !important;
     width: 100% !important;
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
     resize: vertical;
 }
 
 .remove-note-btn {
+    flex-shrink: 0;
     width: 28px;
     height: 28px;
     padding: 0;
@@ -1311,13 +1273,17 @@ textarea {
     border-radius: 4px;
     border: none;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .remove-note-btn:hover {
     background: #fa5f69;
+}
+
+.note-add-btn {
+    flex-shrink: 0;
 }
 
 .array-item-notes {
@@ -1329,4 +1295,165 @@ textarea {
     margin-top: 0;
 }
 
-/* ... Rest of the file remains the same for layout ... */
+/* ============================================
+   MODAL
+   ============================================ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #FFFFFF;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 20px;
+    color: #000435;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+    color: #000435;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn-primary {
+    background: #000080;
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background: #000435;
+}
+
+.modal-btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.modal-btn-secondary:hover {
+    background: #d1d5db;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+.facility-list::-webkit-scrollbar,
+.items-list::-webkit-scrollbar,
+.scroll-container::-webkit-scrollbar,
+#json-display::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.facility-list::-webkit-scrollbar-track,
+.items-list::-webkit-scrollbar-track,
+.scroll-container::-webkit-scrollbar-track,
+#json-display::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.facility-list::-webkit-scrollbar-thumb,
+.items-list::-webkit-scrollbar-thumb,
+.scroll-container::-webkit-scrollbar-thumb,
+#json-display::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.facility-list::-webkit-scrollbar-thumb:hover,
+.items-list::-webkit-scrollbar-thumb:hover,
+.scroll-container::-webkit-scrollbar-thumb:hover,
+#json-display::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    body {
+        background: white;
+    }
+
+    .container {
+        box-shadow: none;
+    }
+
+    .btn,
+    .modal,
+    .toc-toggle,
+    .section-toggle {
+        display: none !important;
+    }
+
+    .section {
+        page-break-inside: avoid;
+    }
+
+    .section-content {
+        display: block !important;
+    }
+}
