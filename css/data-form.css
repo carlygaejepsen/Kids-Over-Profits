@@ -384,6 +384,14 @@ select,
     line-height: 1.4;
 }
 
+/* Note fields should be full width (they don't get + buttons) */
+textarea[id$="-notes"],
+textarea[data-field="notes"],
+textarea[data-field$=".notes"] {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -400,7 +408,7 @@ textarea {
 /* Autocomplete Wrapper */
 .autocomplete-wrapper {
     position: relative;
-    width: 100%;
+    max-width: 400px; /* Leave room for the + button */
     display: flex;
     align-items: center;
     gap: 8px;
@@ -413,6 +421,7 @@ textarea {
 
 .autocomplete-wrapper input {
     flex: 1;
+    max-width: 100%; /* Allow input to fill wrapper but respect wrapper's max-width */
 }
 
 /* Autocomplete Dropdown */
@@ -1193,17 +1202,8 @@ textarea {
     gap: 8px;
 }
 
-.form-group.has-note-button .field-content > input,
-.form-group.has-note-button .field-content > textarea,
-.form-group.has-note-button .field-content > select,
-.form-group.has-note-button .field-content > .autocomplete-wrapper {
-    width: 100% !important;
-    max-width: 100%;
-}
-
-.form-group.has-note-button .autocomplete-wrapper input {
-    width: 100% !important;
-}
+/* Fields with note buttons now respect their max-width to leave room for + button */
+/* Removed the 100% width override that was forcing fields to take full width */
 
 .form-group.has-note-button .note-controls {
     width: 100%;

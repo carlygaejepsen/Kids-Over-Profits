@@ -2906,8 +2906,14 @@ function addNoteButtons() {
             return;
         }
 
-        // Skip utility/action fields that don't need notes (be more selective)
+        // Skip note fields themselves (they don't need + buttons)
         const fieldId = field.id || '';
+        const dataField = field.dataset.field || '';
+        if (fieldId.endsWith('-notes') || dataField === 'notes' || dataField.endsWith('.notes')) {
+            return;
+        }
+
+        // Skip utility/action fields that don't need notes (be more selective)
         const skipFieldIds = [
             'import-file',
             'json-data',
