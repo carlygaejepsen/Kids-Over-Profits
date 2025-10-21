@@ -19,8 +19,12 @@
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
+                <button class="category-tab" data-category="locations">🌍 Locations / States</button>
+            </div>
 
-            <!-- Category contents wrapper for side-by-side display -->
+            <!-- Category contents wrapper -->
             <div class="category-contents-wrapper">
                 <!-- Companies Content -->
                 <div id="companies-content" class="category-content">
@@ -35,7 +39,7 @@
                 </div>
 
                 <!-- States Content -->
-                <div id="states-content" class="category-content">
+                <div id="states-content" class="category-content d-none">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
                         <div class="mb-15">
@@ -963,6 +967,44 @@
                 }
             }, 100);
         }
+
+        // Category tab switching
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const category = this.dataset.category;
+
+                // Update active tab
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show/hide content
+                if (category === 'companies') {
+                    document.getElementById('companies-content').classList.remove('d-none');
+                    document.getElementById('states-content').classList.add('d-none');
+
+                    // Hide private facility toggle for companies view
+                    const toggleSection = document.getElementById('private-ownership-toggle-section');
+                    if (toggleSection) toggleSection.style.display = 'none';
+
+                    // Show operator section
+                    const operatorSection = document.getElementById('operator-section');
+                    if (operatorSection) operatorSection.style.display = 'block';
+                } else if (category === 'locations') {
+                    document.getElementById('companies-content').classList.add('d-none');
+                    document.getElementById('states-content').classList.remove('d-none');
+
+                    // Show private facility toggle for locations view
+                    let toggleSection = document.getElementById('private-ownership-toggle-section');
+                    if (!toggleSection) {
+                        toggleSection = createPrivateOwnershipToggle();
+                        const categoryNav = document.getElementById('category-navigation');
+                        categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
+                    }
+                    toggleSection.style.display = 'block';
+                }
+            });
+        });
+
 
         async function submitSuggestion() {
             // Ask user to summarize their changes

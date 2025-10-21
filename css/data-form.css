@@ -115,11 +115,8 @@ body {
     box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
 }
 
-/* Category content containers displayed side by side */
+/* Category content containers */
 .category-contents-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
     margin-top: 20px;
 }
 
