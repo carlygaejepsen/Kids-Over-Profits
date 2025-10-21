@@ -885,9 +885,9 @@
         // Function to load project and sync with our form
         function loadProjectAndSync(projectName) {
             console.log('📂 Loading and syncing project:', projectName);
-            
+
             // Check if this project is already loaded
-            const currentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
+            const currentProject = window.currentProjectName;
             if (currentProject === projectName) {
                 console.log('Project already loaded:', projectName);
                 if (typeof showUploadStatus === 'function') {
@@ -926,13 +926,12 @@
                             console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
                             console.log('📝 Current project name from variables:', {
                                 'window.currentProjectName': window.currentProjectName,
-                                'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                                 'formData.projectName': formData?.projectName,
                                 'requested': projectName
                             });
-                            
+
                             // Verify we loaded the right project
-                            const actualCurrentProject = window.currentProjectName || (typeof currentProjectName !== 'undefined' ? currentProjectName : null);
+                            const actualCurrentProject = window.currentProjectName;
                             if (actualCurrentProject !== projectName) {
                                 console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
                                 if (typeof showUploadStatus === 'function') {
@@ -949,7 +948,7 @@
                             // Also update the page title or some indicator
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || currentProjectName || projectName;
+                                const actualProject = window.currentProjectName || projectName;
                                 pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
                             }
                         } else {
@@ -1085,20 +1084,19 @@
             }
             
             // CRITICAL FIX: Ensure the project name is correctly set
-            const actualProjectName = window.currentProjectName || currentProjectName || 'Unknown Project';
-            
+            const actualProjectName = window.currentProjectName || 'Unknown Project';
+
             // Force set the project name in the data being submitted
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
-            
+
             console.log('✅ FORCED project name in submission data:', actualProjectName);
 
             // Show which project we're submitting
-            const projectName = window.currentProjectName || currentProjectName || dataToSubmit.projectName || 'Unknown Project';
+            const projectName = window.currentProjectName || dataToSubmit.projectName || 'Unknown Project';
             console.log('📤 Submitting changes for project:', projectName);
             console.log('🔍 Debug project name sources:', {
                 'window.currentProjectName': window.currentProjectName,
-                'currentProjectName': (typeof currentProjectName !== 'undefined') ? currentProjectName : 'undefined',
                 'dataToSubmit.projectName': dataToSubmit.projectName,
                 'final': projectName
             });
@@ -1535,10 +1533,11 @@
                         const matches = extractDataPointsForSearch(facility, searchType, searchValue);
                         if (matches.length > 0) {
                             results.push({
-                                projectName: currentProjectName || 'Current Project',
+                                projectName: window.currentProjectName || 'Current Project',
                                 facility: facility,
                                 facilityIndex: facilityIndex,
-                                matches: matches
+                                matches: matches,
+                                operator: formData.operator?.name  // Include operator from project level
                             });
                         }
                     });
@@ -1555,7 +1554,8 @@
                                     projectName: projectName,
                                     facility: facility,
                                     facilityIndex: facilityIndex,
-                                    matches: matches
+                                    matches: matches,
+                                    operator: project.data.operator?.name  // Include operator from project level
                                 });
                             }
                         });
@@ -1681,7 +1681,7 @@
                     let html = '';
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
-                        const operator = result.facility.identification?.operator || 'Unknown Operator';
+                        const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
                         const location = result.facility.location || 'Unknown Location';
                         
                         html += `
@@ -1719,13 +1719,13 @@
             // Function to navigate to a specific facility
             window.goToFacility = function(projectName, facilityIndex) {
                 // Switch to the project if it's different
-                if (currentProjectName !== projectName) {
+                if (window.currentProjectName !== projectName) {
                     const projectSelect = document.getElementById('project-select');
                     if (projectSelect) {
                         projectSelect.value = projectName;
                         projectSelect.dispatchEvent(new Event('change'));
                     }
-                    currentProjectName = projectName;
+                    // Note: The project select change event will update window.currentProjectName
                 }
                 
                 // Switch to the facility
