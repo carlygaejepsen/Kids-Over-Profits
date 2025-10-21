@@ -1145,11 +1145,15 @@ function initializeNoteControls() {
         if (isCheckbox) {
             return;
         }
+        const fieldWrapper = field.closest('.field-content') || field.parentNode;
         let container = group.querySelector('.field-notes');
         let controls = group.querySelector('.note-controls');
 
         if (!controls) {
-            // Create the + button
+            controls = document.createElement('div');
+            controls.className = 'note-controls';
+
+            // Create the + button (rendered before notes within controls)
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
@@ -1160,18 +1164,18 @@ function initializeNoteControls() {
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
             });
+            controls.appendChild(addBtn);
 
-            // Insert button after the field (inline)
-            field.parentNode.insertBefore(addBtn, field.nextSibling);
-
-            // Create notes container (goes below field and button)
+            // Create notes container (always rendered below the button)
             container = document.createElement('div');
             container.className = 'field-notes';
-
-            controls = document.createElement('div');
-            controls.className = 'note-controls';
             controls.appendChild(container);
-            group.appendChild(controls);
+
+            if (fieldWrapper && typeof fieldWrapper.appendChild === 'function') {
+                fieldWrapper.appendChild(controls);
+            } else {
+                group.appendChild(controls);
+            }
 
             // Add class to form-group for proper layout
             group.classList.add('has-note-button');
