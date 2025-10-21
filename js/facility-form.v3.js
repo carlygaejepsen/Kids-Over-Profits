@@ -1147,7 +1147,8 @@ function initializeNoteControls() {
         }
         const fieldWrapper = field.closest('.field-content') || field.parentNode;
         let container = group.querySelector('.field-notes');
-        let controls = group.querySelector('.note-controls');
+        let addBtn = fieldWrapper?.querySelector('.note-add-btn.field-note-btn')
+            || group.querySelector('.note-add-btn.field-note-btn');
 
         if (!controls) {
             controls = document.createElement('div');
@@ -1180,26 +1181,11 @@ function initializeNoteControls() {
             // Add class to form-group for proper layout
             group.classList.add('has-note-button');
 
-            field.dataset.noteInit = 'true';
-        } else {
-            // Controls exist, make sure container reference is correct
-            if (!container) {
-                container = controls.querySelector('.field-notes');
+        legacyControls.forEach(control => {
+            if (!control.children.length) {
+                control.remove();
             }
-            // Check if button needs event listener (shouldn't happen, but defensive)
-            const addBtn = controls.querySelector('.note-add-btn');
-            if (addBtn && !addBtn.dataset.noteEventAttached) {
-                addBtn.dataset.noteEventAttached = 'true';
-                addBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    addFieldNote(scope, key);
-                });
-            }
-            if (field.dataset.noteInit !== 'true') {
-                field.dataset.noteInit = 'true';
-            }
-        }
+        });
 
         if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
             noteFieldRegistry.push({ scope, key, container });

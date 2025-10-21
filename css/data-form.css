@@ -1212,12 +1212,8 @@ textarea {
     order: 10;
 }
 
-.note-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    margin-top: 8px;
+.form-group.has-note-button .field-content > .field-note-btn {
+    flex: 0 0 auto;
 }
 
 .note-controls .note-add-btn {
@@ -1229,6 +1225,7 @@ textarea {
     flex-direction: column;
     gap: 8px;
     width: 100%;
+    margin-top: 8px;
 }
 
 .note-row {
