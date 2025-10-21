@@ -1933,7 +1933,10 @@ function loadOperatorData() {
     const operatorCeo = document.getElementById('operator-ceo');
     if (operatorCeo) operatorCeo.value = operator.keyStaff?.ceo || '';
 
-    const arrayPaths = ['operator.parentCompanies', 'operator.websites', 'operator.keyStaff.founders', 'operator.keyStaff.keyExecutives', 'operator.investors', 'operator.notes'];
+    const operatorNotes = document.getElementById('operator-notes');
+    if (operatorNotes) operatorNotes.value = operator.notes || '';
+
+    const arrayPaths = ['operator.parentCompanies', 'operator.websites', 'operator.keyStaff.founders', 'operator.keyStaff.keyExecutives', 'operator.investors'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {
@@ -2411,6 +2414,11 @@ function attachFieldListeners() {
         'operator-ceo': (val) => {
             setNestedValue(window.formData, 'operator.keyStaff.ceo', val);
             if (val.trim()) addCustomValue('human', val.trim());
+            updateJSON();
+            autoSave();
+        },
+        'operator-notes': (val) => {
+            setNestedValue(window.formData, 'operator.notes', val);
             updateJSON();
             autoSave();
         },
