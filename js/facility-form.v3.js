@@ -1111,7 +1111,20 @@ function renderAllFieldNotes() {
 }
 
 function initializeNoteControls() {
-    noteFieldRegistry = [];
+    const arrayNoteEntries = [];
+
+    document.querySelectorAll('.array-item .field-notes[data-note-container-key]').forEach(container => {
+        const scope = container.dataset.noteScope;
+        const key = container.dataset.noteContainerKey;
+
+        if (!scope || !key) {
+            return;
+        }
+
+        arrayNoteEntries.push({ scope, key, container });
+    });
+
+    noteFieldRegistry = arrayNoteEntries;
 
     document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
         if (field.closest('.array-item')) {
@@ -1184,7 +1197,9 @@ function initializeNoteControls() {
             }
         }
 
-        noteFieldRegistry.push({ scope, key, container });
+        if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
+            noteFieldRegistry.push({ scope, key, container });
+        }
     });
 
     renderAllFieldNotes();
@@ -1703,6 +1718,18 @@ function removeArrayItemAtIndex(path, index) {
 function renderArray(container, path, items) {
     if (!container) return;
 
+    if (!Array.isArray(noteFieldRegistry)) {
+        noteFieldRegistry = [];
+    } else {
+        const pathPrefix = `${path}.`;
+        noteFieldRegistry = noteFieldRegistry.filter(entry => {
+            if (!entry || !entry.key) {
+                return false;
+            }
+            return !entry.key.startsWith(pathPrefix);
+        });
+    }
+
     // Set up event delegation on container if not already done
     if (!container.dataset.delegationInit) {
         container.addEventListener('click', (e) => {
@@ -1861,6 +1888,7 @@ function renderArray(container, path, items) {
         const notesContainer = document.createElement('div');
         notesContainer.className = 'field-notes';
         notesContainer.dataset.noteContainerKey = noteKey;
+        notesContainer.dataset.noteScope = scope;
         itemDiv.appendChild(notesContainer);
 
         // Register this container so it can be rendered
@@ -3363,7 +3391,7 @@ function syncFieldNotes(facilityData) {
 }
 
 // Function to get current field notes (for external scripts)
-function getFieldNotes() {
+function getCurrentFieldNotesSnapshot() {
     return getCurrentFacilityNotes();
 }
 
@@ -3384,7 +3412,7 @@ window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
-window.getFieldNotes = getFieldNotes;
+window.getFieldNotes = getCurrentFieldNotesSnapshot;
 window.addNoteButtons = addNoteButtons;
 
 // Initialize on DOMContentLoaded
