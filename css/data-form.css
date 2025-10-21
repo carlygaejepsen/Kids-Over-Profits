@@ -509,8 +509,8 @@ textarea {
     border-color: #d1d5db;
 }
 
-.array-item input,
-.array-item textarea {
+.array-item input:not(.array-input),
+.array-item textarea:not(.array-input) {
     flex: 1 1 0;
     min-width: 0;
 }
