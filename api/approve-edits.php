@@ -13,7 +13,7 @@ try {
 }
 
 // Fetch pending suggestions
-$stmt = $pdo->prepare("SELECT * FROM suggestions WHERE status = 'pending'");
+$stmt = $pdo->prepare("SELECT * FROM suggested_edits WHERE status = 'pending'");
 $stmt->execute();
 $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -42,10 +42,16 @@ $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php else: ?>
                 <?php foreach ($suggestions as $suggestion): ?>
                     <div class="suggestion" id="suggestion-<?php echo $suggestion['id']; ?>">
-                        <h3>Suggestion for <?php echo htmlspecialchars($suggestion['facility_name']); ?></h3>
-                        <p><strong>Field:</strong> <?php echo htmlspecialchars($suggestion['field_name']); ?></p>
-                        <p><strong>Old Value:</strong> <?php echo htmlspecialchars($suggestion['old_value']); ?></p>
-                        <p><strong>New Value:</strong> <?php echo htmlspecialchars($suggestion['new_value']); ?></p>
+                        <?php
+                        $edit_data = json_decode($suggestion['edited_json_data'], true);
+                        $operator_name = $edit_data['operator']['name'] ?? 'N/A';
+                        $facility_name = $edit_data['facilities'][0]['identification']['name'] ?? 'N/A';
+                        ?>
+                        <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
+                        <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
+                        <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
+                        <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
+                        <pre><?php echo htmlspecialchars(json_encode($edit_data, JSON_PRETTY_PRINT)); ?></pre>
                         <div class="actions">
                             <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approved')">Approve</button>
                             <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'rejected')">Reject</button>
