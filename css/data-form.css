@@ -25,7 +25,22 @@ body {
     background: white;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(135deg, #FC8ED6, #B2E102, #33A7B5, #EF9034);
+    border-radius: 12px;
+    z-index: -1;
 }
 
 /* ============================================
@@ -66,10 +81,11 @@ body {
    CATEGORY NAVIGATION (TOP TABS)
    ============================================ */
 .category-navigation {
-    border: 1px solid #e2e8f0;
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
+    background: #FFFFFF;
 }
 
 .flex-center {
@@ -85,10 +101,10 @@ body {
 .category-tabs {
     display: flex;
     gap: 10px;
-    background: white;
+    background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 5px;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #B2E102; /* Chartreuse */
 }
 
 .category-tab {
@@ -121,9 +137,10 @@ body {
 
 .category-content {
     background: white;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     padding: 15px;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15);
 }
 
 .category-content.d-none {
@@ -193,17 +210,21 @@ body {
 .toc-toggle {
     background: white;
     color: #33A7B5; /* Teal */
-    border: none;
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 600;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.2);
 }
 
 .toc-toggle:hover {
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
+    border-color: #B2E102; /* Chartreuse */
     transform: scale(1.05);
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.3);
 }
 
 .toc-content {
@@ -211,34 +232,37 @@ body {
 }
 
 .toc-stats {
-    background: white;
+    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
     padding: 12px;
     border-radius: 6px;
     margin-bottom: 15px;
     font-weight: 600;
     color: #000435;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #B2E102; /* Chartreuse */
+    box-shadow: 0 2px 6px rgba(178, 225, 2, 0.2);
 }
 
 .facility-list {
     background: white;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 6px;
     padding: 15px;
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(252, 142, 214, 0.2);
 }
 
 /* ============================================
    FACILITY NAVIGATION CONTROLS
    ============================================ */
 .facility-controls {
-    background: #F2EEDF; /* Sand / Warm Ivory */
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%); /* Soft Pastel Yellow to Powder Blue */
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(252, 142, 214, 0.2);
 }
 
 .facility-header {
@@ -271,25 +295,27 @@ body {
    ============================================ */
 .section {
     background: white;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 8px;
     margin-bottom: 20px;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    background: linear-gradient(135deg, #ECF385 0%, #B6E3D4 100%); /* Pale Spring Yellow to Mint Green */
     padding: 15px 20px;
     cursor: pointer;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #B2E102; /* Chartreuse */
     transition: all 0.2s ease;
 }
 
 .section-header:hover {
-    background: #e8e4d8; /* Darker Sand */
+    background: linear-gradient(135deg, #B2E102 0%, #B6E3D4 100%); /* Chartreuse to Mint Green */
+    box-shadow: 0 2px 6px rgba(178, 225, 2, 0.3);
 }
 
 .section-title {
@@ -396,7 +422,8 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 12px rgba(178, 225, 2, 0.15);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
 }
 
 textarea {
@@ -429,14 +456,14 @@ textarea {
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
-    border: 1px solid #d1d5db;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFF5CB 100%); /* White to Soft Pastel Yellow */
+    border: 2px solid #33A7B5; /* Teal */
     border-top: none;
     border-radius: 0 0 6px 6px;
     max-height: 250px;
     overflow-y: auto;
     z-index: 9999;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(51, 167, 181, 0.2), 0 2px 6px rgba(178, 225, 2, 0.15);
     display: none;
     margin-top: -1px;
 }
@@ -460,8 +487,10 @@ textarea {
 
 .autocomplete-item:hover,
 .autocomplete-item.active {
-    background-color: #AEE0ED; /* Powder Blue */
-    color: #000080; /* Navy Blue */
+    background: linear-gradient(135deg, #ECF385 0%, #B6E3D4 100%); /* Pale Spring Yellow to Mint Green */
+    color: #000435; /* Midnight Blue */
+    border-left: 3px solid #B2E102; /* Chartreuse */
+    padding-left: 9px;
 }
 
 .autocomplete-item strong {
@@ -503,18 +532,20 @@ textarea {
     align-items: center;
     gap: 8px;
     margin-bottom: 8px;
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #ECF385; /* Pale Spring Yellow */
     transition: all 0.2s ease;
     position: relative;
     z-index: 0;
+    box-shadow: 0 1px 4px rgba(236, 243, 133, 0.2);
 }
 
 .array-item:hover {
-    background: #f3f4f6;
-    border-color: #d1d5db;
+    background: #ECF385; /* Pale Spring Yellow */
+    border-color: #B2E102; /* Chartreuse */
+    box-shadow: 0 2px 6px rgba(178, 225, 2, 0.25);
 }
 
 .array-item input:not(.array-input),
@@ -554,7 +585,8 @@ textarea {
 .array-input:focus {
     outline: none;
     border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 8px rgba(178, 225, 2, 0.15);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
 }
 
 .array-input-role {
@@ -611,42 +643,50 @@ textarea {
     font-size: 13px;
 }
 
-/* Plus Button for Adding Items Inline - should be small and blue */
+/* Plus Button for Adding Items Inline - vibrant teal button with glow */
 .add-plus-btn {
     width: 28px;
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #33A7B5 0%, #2b8a95 100%); /* Teal gradient */
     color: white;
     font-size: 16px;
+    font-weight: 700;
     flex: 0 0 28px; /* Prevent stretching */
     border-radius: 4px;
-    border: none;
+    border: 2px solid #B2E102; /* Chartreuse */
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+    transition: all 0.2s ease;
 }
 
 .add-plus-btn:hover {
-    background: #2b8a95; /* Darker Teal */
+    background: linear-gradient(135deg, #2b8a95 0%, #1f6c75 100%); /* Darker Teal gradient */
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(178, 225, 2, 0.3);
+    transform: scale(1.1);
 }
 
-/* Add Item Button (at bottom of arrays) - green button */
+/* Add Item Button (at bottom of arrays) - orange button with glow */
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: #EF9034; /* Orange */
+    background: linear-gradient(135deg, #EF9034 0%, #d97706 100%); /* Orange gradient */
     color: white;
-    border: 1px solid #059669;
+    border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 4px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
-    display: inline-block; /* Changed from block */
-    width: auto; /* Fit content */
+    display: inline-block;
+    width: auto;
+    box-shadow: 0 2px 6px rgba(239, 144, 52, 0.3);
 }
 
 .add-item-btn:hover {
-    background: #d97706; /* Darker Orange */
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%); /* Darker Orange gradient */
+    box-shadow: 0 4px 10px rgba(239, 144, 52, 0.5), 0 0 12px rgba(178, 225, 2, 0.3);
+    transform: translateY(-1px);
 }
 
 /* Remove Button - small inline minus button */
@@ -685,11 +725,14 @@ textarea {
     margin-bottom: 12px;
     padding: 10px;
     border-radius: 6px;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .checkbox-group:hover {
-    background: #e8e4d8; /* Darker Sand */
+    background: #ECF385; /* Pale Spring Yellow */
+    border-color: #B2E102; /* Chartreuse */
+    box-shadow: 0 1px 4px rgba(178, 225, 2, 0.2);
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -760,7 +803,9 @@ textarea {
 .content-box {
     padding: 15px;
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%); /* White to Soft Pastel Yellow */
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15);
 }
 
 .info-text {
@@ -770,11 +815,12 @@ textarea {
 }
 
 .info-box {
-    background: #AEE0ED; /* Powder Blue */
-    border: 1px solid #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #AEE0ED 0%, #B6E3D4 100%); /* Powder Blue to Mint Green */
+    border: 2px solid #33A7B5; /* Teal */
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
 }
 
 .info-title {
@@ -786,22 +832,24 @@ textarea {
 .scroll-container {
     max-height: 400px;
     overflow-y: auto;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #33A7B5; /* Teal */
     border-radius: 6px;
     padding: 15px;
-    background: white;
+    background: linear-gradient(135deg, #FFFFFF 0%, #AEE0ED 100%); /* White to Powder Blue */
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15);
 }
 
 /* ============================================
    ITEMS LIST (Project/Operator Lists)
    ============================================ */
 .items-list {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #FFFFFF 0%, #AEE0ED 50%, #B6E3D4 100%); /* White to Powder Blue to Mint Green */
+    border: 2px solid #33A7B5; /* Teal */
     border-radius: 6px;
     padding: 10px;
     max-height: 400px;
     overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(51, 167, 181, 0.2);
 }
 
 .items-container {
@@ -816,18 +864,20 @@ textarea {
     grid-template-columns: 1fr auto;
     gap: 12px;
     padding: 10px 12px;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%); /* White to Soft Pastel Yellow */
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
     align-items: center;
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15);
 }
 
 .project-item:hover {
-    background: #F2EEDF; /* Sand / Warm Ivory */
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 1px 3px rgba(51, 167, 181, 0.1);
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%); /* Soft Pastel Yellow to Mint Green */
+    border-color: #B2E102; /* Chartreuse */
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.25);
+    transform: translateY(-2px);
 }
 
 .project-item-name {
@@ -931,21 +981,27 @@ textarea {
 }
 
 .upload-status.success {
-    background: #B6E3D4; /* Mint Green */
+    background: linear-gradient(135deg, #B6E3D4 0%, #B2E102 100%); /* Mint Green to Chartreuse */
     color: #000435; /* Midnight Blue */
-    border: 1px solid #33A7B5; /* Teal */
+    border: 2px solid #33A7B5; /* Teal */
+    box-shadow: 0 2px 8px rgba(182, 227, 212, 0.4);
+    font-weight: 600;
 }
 
 .upload-status.error {
-    background: #FE8088; /* Coral Pink */
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
     color: #000435; /* Midnight Blue */
-    border: 1px solid #fa5f69;
+    border: 2px solid #fa5f69;
+    box-shadow: 0 2px 8px rgba(254, 128, 136, 0.4);
+    font-weight: 600;
 }
 
 .upload-status.info {
-    background: #AEE0ED; /* Powder Blue */
-    color: #000435; /* Midnight Blue */
-    border: 1px solid #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #AEE0ED 0%, #33A7B5 100%); /* Powder Blue to Teal */
+    color: white; /* White text on teal background */
+    border: 2px solid #33A7B5; /* Teal */
+    box-shadow: 0 2px 8px rgba(174, 224, 237, 0.4);
+    font-weight: 600;
 }
 
 /* ============================================
@@ -1054,8 +1110,9 @@ textarea {
 }
 
 .modal-close:hover {
-    background: #f3f4f6;
-    color: #000435;
+    background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%); /* Bubblegum Pink to Coral Pink */
+    color: white;
+    transform: rotate(90deg);
 }
 
 .modal-body {
@@ -1081,21 +1138,27 @@ textarea {
 }
 
 .modal-btn-primary {
-    background: #000080; /* Navy Blue */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
     color: white;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .modal-btn-primary:hover {
-    background: #000435; /* Midnight Blue */
+    background: linear-gradient(135deg, #000080 0%, #000435 100%); /* Navy Blue to Midnight Blue */
+    box-shadow: 0 4px 10px rgba(0, 0, 128, 0.4);
+    transform: translateY(-1px);
 }
 
 .modal-btn-secondary {
-    background: #e5e7eb;
+    background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
     color: #374151;
+    border: 1px solid #d1d5db;
 }
 
 .modal-btn-secondary:hover {
-    background: #d1d5db;
+    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+    border-color: #9ca3af;
+    transform: translateY(-1px);
 }
 
 /* ============================================
@@ -1191,11 +1254,23 @@ textarea {
 }
 
 .field-note-btn.has-note {
-    background: #EF9034; /* Orange */
+    background: linear-gradient(135deg, #EF9034 0%, #d97706 100%); /* Orange gradient */
+    box-shadow: 0 2px 6px rgba(239, 144, 52, 0.4), 0 0 8px rgba(178, 225, 2, 0.2);
+    animation: pulse-glow 2s ease-in-out infinite;
 }
 
 .field-note-btn.has-note:hover {
-    background: #d97706; /* Darker Orange */
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%); /* Darker Orange gradient */
+    box-shadow: 0 3px 10px rgba(239, 144, 52, 0.6), 0 0 12px rgba(178, 225, 2, 0.4);
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 2px 6px rgba(239, 144, 52, 0.4), 0 0 8px rgba(178, 225, 2, 0.2);
+    }
+    50% {
+        box-shadow: 0 2px 8px rgba(239, 144, 52, 0.6), 0 0 12px rgba(178, 225, 2, 0.4);
+    }
 }
 
 /* ============================================
@@ -1366,8 +1441,9 @@ textarea {
 }
 
 .modal-close:hover {
-    background: #f3f4f6;
-    color: #000435;
+    background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%); /* Bubblegum Pink to Coral Pink */
+    color: white;
+    transform: rotate(90deg);
 }
 
 .modal-body {
@@ -1393,21 +1469,27 @@ textarea {
 }
 
 .modal-btn-primary {
-    background: #000080;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
     color: white;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .modal-btn-primary:hover {
-    background: #000435;
+    background: linear-gradient(135deg, #000080 0%, #000435 100%); /* Navy Blue to Midnight Blue */
+    box-shadow: 0 4px 10px rgba(0, 0, 128, 0.4);
+    transform: translateY(-1px);
 }
 
 .modal-btn-secondary {
-    background: #e5e7eb;
+    background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
     color: #374151;
+    border: 1px solid #d1d5db;
 }
 
 .modal-btn-secondary:hover {
-    background: #d1d5db;
+    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+    border-color: #9ca3af;
+    transform: translateY(-1px);
 }
 
 /* ============================================
