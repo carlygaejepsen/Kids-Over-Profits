@@ -1126,24 +1126,27 @@ function initializeNoteControls() {
             return;
         }
 
+        const isCheckbox = field.type === 'checkbox';
         let container = group.querySelector('.field-notes');
         let controls = group.querySelector('.note-controls');
 
         if (!controls) {
-            // Create the + button that goes inline with the field
-            const addBtn = document.createElement('button');
-            addBtn.type = 'button';
-            addBtn.className = 'note-add-btn field-note-btn';
-            addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
-            addBtn.dataset.noteEventAttached = 'true';
-            addBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                addFieldNote(scope, key);
-            });
+            // Only create the + button for non-checkbox fields
+            if (!isCheckbox) {
+                const addBtn = document.createElement('button');
+                addBtn.type = 'button';
+                addBtn.className = 'note-add-btn field-note-btn';
+                addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+                addBtn.dataset.noteEventAttached = 'true';
+                addBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    addFieldNote(scope, key);
+                });
 
-            // Insert button after the field (inline)
-            field.parentNode.insertBefore(addBtn, field.nextSibling);
+                // Insert button after the field (inline)
+                field.parentNode.insertBefore(addBtn, field.nextSibling);
+            }
 
             // Create notes container (goes below field and button)
             container = document.createElement('div');
@@ -1155,7 +1158,9 @@ function initializeNoteControls() {
             group.appendChild(controls);
 
             // Add class to form-group for proper layout
-            group.classList.add('has-note-button');
+            if (!isCheckbox) {
+                group.classList.add('has-note-button');
+            }
 
             field.dataset.noteInit = 'true';
         } else {
