@@ -1,6 +1,5 @@
 <?php
 /**
-/** 
  * Kadence Child Theme Functions
  */
 
