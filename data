@@ -1019,32 +1019,27 @@
                 return;
             }
             
-            // Try multiple ways to get the current project data
-            let dataToSubmit = null;
-            
-            // Try the global formData variable first (from facility-form.js)
-            if (typeof formData !== 'undefined' && formData) {
-                dataToSubmit = formData;
-                console.log('Using global formData:', dataToSubmit);
-            }
-            // Try window.globalFormData as backup
-            else if (window.globalFormData) {
-                dataToSubmit = window.globalFormData;
-                console.log('Using window.globalFormData:', dataToSubmit);
-            }
-            // Try window.formData as backup
-            else if (window.formData) {
-                dataToSubmit = window.formData;
-                console.log('Using window.formData:', dataToSubmit);
-            }
-            
+            // Get the current project data from window.formData
+            console.log('🔍 Checking for form data...', {
+                'window.formData exists': !!window.formData,
+                'window.formData value': window.formData
+            });
+
+            let dataToSubmit = window.formData;
+
             if (!dataToSubmit) {
-                showSuggestionStatus('❌ Error: No project data loaded. Please load a project first by clicking on one from the list above.', 'error');
-                console.error('No formData found. Available variables:', {
-                    'typeof formData': typeof formData,
-                    'window.globalFormData': window.globalFormData,
-                    'window.formData': window.formData
+                console.error('❌ No formData found:', {
+                    'window.formData': window.formData,
+                    'window.projects': window.projects ? Object.keys(window.projects) : 'undefined',
+                    'window.currentProjectName': window.currentProjectName
                 });
+
+                // Check if there are projects available to load
+                if (window.projects && Object.keys(window.projects).length > 0) {
+                    showSuggestionStatus('❌ Error: No project loaded. Please load a project by clicking on one from the list above, or create a new project.', 'error');
+                } else {
+                    showSuggestionStatus('❌ Error: No projects available. The form may still be initializing. Please wait a moment and try again.', 'error');
+                }
                 return;
             }
             
