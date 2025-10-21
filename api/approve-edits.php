@@ -17,6 +17,47 @@ $stmt = $pdo->prepare("SELECT * FROM suggested_edits WHERE status = 'pending'");
 $stmt->execute();
 $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+function json_diff($old, $new) {
+    $diff = [];
+    foreach ($new as $k => $v) {
+        if (!isset($old[$k])) {
+            $diff[$k] = ['new' => $v];
+        } else if (is_array($v) && is_array($old[$k])) {
+            $sub_diff = json_diff($old[$k], $v);
+            if (!empty($sub_diff)) {
+                $diff[$k] = $sub_diff;
+            }
+        } else if ($v !== $old[$k]) {
+            $diff[$k] = ['old' => $old[$k], 'new' => $v];
+        }
+    }
+    foreach ($old as $k => $v) {
+        if (!isset($new[$k])) {
+            $diff[$k] = ['old' => $v];
+        }
+    }
+    return $diff;
+}
+
+function render_diff($diff) {
+    $html = '<dl>';
+    foreach ($diff as $k => $v) {
+        $html .= '<dt>' . htmlspecialchars($k) . '</dt>';
+        if (isset($v['new']) && !isset($v['old'])) {
+            $html .= '<dd class="added">' . htmlspecialchars(json_encode($v['new'])) . '</dd>';
+        } else if (isset($v['old']) && !isset($v['new'])) {
+            $html .= '<dd class="removed">' . htmlspecialchars(json_encode($v['old'])) . '</dd>';
+        } else if (isset($v['old']) && isset($v['new'])) {
+            $html .= '<dd class="changed"><span class="removed-value">' . htmlspecialchars(json_encode($v['old'])) . '</span> <span class="added-value">' . htmlspecialchars(json_encode($v['new'])) . '</span></dd>';
+        } else if (is_array($v)) {
+            $html .= '<dd>' . render_diff($v) . '</dd>';
+        }
+    }
+    $html .= '</dl>';
+    return $html;
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +72,13 @@ $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .suggestion h3 { margin-top: 0; }
         .actions { margin-top: 10px; }
         .actions button { margin-right: 10px; }
+        .diff { border: 1px solid #eee; padding: 10px; }
+        .diff dt { font-weight: bold; }
+        .diff dd { margin-left: 20px; }
+        .added { background-color: #dfd; }
+        .removed { background-color: #fdd; }
+        .changed .removed-value { text-decoration: line-through; background-color: #fdd; }
+        .changed .added-value { background-color: #dfd; }
     </style>
 </head>
 <body>
@@ -43,18 +91,28 @@ $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($suggestions as $suggestion): ?>
                     <div class="suggestion" id="suggestion-<?php echo $suggestion['id']; ?>">
                         <?php
-                        $edit_data = json_decode($suggestion['edited_json_data'], true);
-                        $operator_name = $edit_data['operator']['name'] ?? 'N/A';
-                        $facility_name = $edit_data['facilities'][0]['identification']['name'] ?? 'N/A';
+                        $new_data = json_decode($suggestion['edited_json_data'], true);
+                        $master_id = $suggestion['master_id'];
+                        $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ?");
+                        $stmt->execute([$master_id]);
+                        $original_data = $stmt->fetchColumn();
+                        $old_data = $original_data ? json_decode($original_data, true) : [];
+                        
+                        $diff = json_diff($old_data, $new_data);
+                        
+                        $operator_name = $new_data['operator']['name'] ?? 'N/A';
+                        $facility_name = $new_data['facilities'][0]['identification']['name'] ?? 'N/A';
                         ?>
                         <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
                         <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
                         <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
                         <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
-                        <pre><?php echo htmlspecialchars(json_encode($edit_data, JSON_PRETTY_PRINT)); ?></pre>
+                        <div class="diff">
+                            <?php echo render_diff($diff); ?>
+                        </div>
                         <div class="actions">
-                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approved')">Approve</button>
-                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'rejected')">Reject</button>
+                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approve')">Approve</button>
+                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'reject')">Reject</button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -63,23 +121,24 @@ $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <script>
-    function processEdit(id, status) {
-        if (!confirm(`Are you sure you want to ${status} this suggestion?`)) {
+    function processEdit(id, action) {
+        if (!confirm(`Are you sure you want to ${action} this suggestion?`)) {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('id', id);
-        formData.append('status', status);
+        const data = { id: id, action: action };
 
         fetch('process-edit.php', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Suggestion ' + status + ' successfully!');
+                alert('Suggestion ' + action + 'd successfully!');
                 const suggestionElement = document.getElementById('suggestion-' + id);
                 if (suggestionElement) {
                     suggestionElement.remove();

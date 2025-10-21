@@ -1584,20 +1584,17 @@ function loadProject(projectName) {
         return;
     }
 
-    console.log('✅ Project found, loading:', projectName);
     window.currentProjectName = projectName;
-    window.formData = deepClone(window.projects[projectName].data);
+    if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
+        window.formData = deepClone(window.projects[projectName].data);
+    } else {
+        window.formData = createNewProjectData();
+    }
     window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
 
-    if (window.currentFacilityIndex >= window.formData.facilities.length) {
+    if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
         window.currentFacilityIndex = 0;
     }
-
-    console.log('📊 Loaded project data:', {
-        name: projectName,
-        facilities: window.formData.facilities.length,
-        operator: window.formData.operator.name
-    });
 
     const projectNameInput = document.getElementById('project-name');
     if (projectNameInput) {
