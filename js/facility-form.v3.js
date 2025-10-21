@@ -3036,8 +3036,21 @@ function addNoteButtons() {
                     group.appendChild(fieldContent);
                 }
 
-                // Add the note button to the field-content
-                fieldContent.appendChild(noteBtn);
+                // Create a horizontal wrapper for the field and plus button
+                let fieldInputWrapper = group.querySelector('.field-input-wrapper');
+                if (!fieldInputWrapper) {
+                    fieldInputWrapper = document.createElement('div');
+                    fieldInputWrapper.className = 'field-input-wrapper';
+
+                    // Move the field into the wrapper
+                    fieldInputWrapper.appendChild(field);
+
+                    // Insert wrapper as first child of field-content
+                    fieldContent.insertBefore(fieldInputWrapper, fieldContent.firstChild);
+                }
+
+                // Add the note button to the wrapper (inline with field)
+                fieldInputWrapper.appendChild(noteBtn);
             }
         }
 
