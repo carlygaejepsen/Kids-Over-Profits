@@ -1111,7 +1111,15 @@ function renderAllFieldNotes() {
 }
 
 function initializeNoteControls() {
-    noteFieldRegistry = [];
+    // Preserve existing array item entries (those with keys containing a dot followed by a number like "staff.administrator.0")
+    const arrayItemEntries = (noteFieldRegistry || []).filter(entry => {
+        if (!entry || !entry.key) return false;
+        // Keep entries that look like array items (e.g., "path.0", "path.1", etc.)
+        return /\.\d+$/.test(entry.key);
+    });
+
+    // Reset registry but keep array item entries
+    noteFieldRegistry = [...arrayItemEntries];
 
     document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
         if (field.closest('.array-item')) {
