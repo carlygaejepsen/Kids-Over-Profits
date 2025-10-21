@@ -1120,7 +1120,7 @@ function initializeNoteControls() {
 
         const scope = field.dataset.noteScope;
         const key = field.dataset.noteKey;
-        const group = field.closest('.form-group');
+        const group = field.closest('.form-group') || field.closest('.checkbox-group');
 
         if (!group || !scope || !key) {
             return;
