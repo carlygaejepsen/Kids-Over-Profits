@@ -1743,6 +1743,9 @@ function renderArray(container, path, items) {
     const existingItems = container.querySelectorAll('.array-item');
     existingItems.forEach(item => item.remove());
 
+    const existingNoteWrappers = container.querySelectorAll('.array-item-notes');
+    existingNoteWrappers.forEach(wrapper => wrapper.remove());
+
     const itemsArray = Array.isArray(items) ? items : (items ? [items] : []);
 
     // If array is empty, initialize it with one empty item so user input gets saved
@@ -1872,16 +1875,29 @@ function renderArray(container, path, items) {
         }
 
         // Container for notes for this specific item
-        const notesContainer = document.createElement('div');
-        notesContainer.className = 'field-notes';
-        notesContainer.dataset.noteContainerKey = noteKey;
-        notesContainer.dataset.noteScope = scope;
-        itemDiv.appendChild(notesContainer);
+        let notesContainer = null;
+        let noteWrapper = null;
 
-        // Register this container so it can be rendered
-        noteFieldRegistry.push({ scope, key: noteKey, container: notesContainer });
+        if (!isNoteArray) {
+            notesContainer = document.createElement('div');
+            notesContainer.className = 'field-notes';
+            notesContainer.dataset.noteContainerKey = noteKey;
+            notesContainer.dataset.noteScope = scope;
+
+            noteWrapper = document.createElement('div');
+            noteWrapper.className = 'array-item-notes';
+            noteWrapper.dataset.arrayPath = path;
+            noteWrapper.dataset.arrayIndex = `${index}`;
+            noteWrapper.appendChild(notesContainer);
+
+            // Register this container so it can be rendered
+            noteFieldRegistry.push({ scope, key: noteKey, container: notesContainer });
+        }
 
         container.appendChild(itemDiv);
+        if (noteWrapper) {
+            container.appendChild(noteWrapper);
+        }
     });
 
     // Generate descriptive button label based on path

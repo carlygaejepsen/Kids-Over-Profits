@@ -1010,4 +1010,60 @@ textarea {
     background: #d97706;
 }
 
+/* ============================================
+   FIELD NOTE LAYOUTS
+   ============================================ */
+.field-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.note-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.note-textarea {
+    flex: 1;
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.remove-note-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    min-width: 28px;
+    background: #FE8088; /* Coral Pink */
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-note-btn:hover {
+    background: #fa5f69;
+}
+
+.array-item-notes {
+    margin: -4px 0 12px 36px;
+    padding: 0;
+}
+
+.array-item-notes .field-notes {
+    margin-top: 0;
+}
+
 /* ... Rest of the file remains the same for layout ... */
