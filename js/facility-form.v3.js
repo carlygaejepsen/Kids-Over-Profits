@@ -1873,7 +1873,9 @@ function renderArray(container, path, items) {
             itemDiv.appendChild(addNoteBtn);
         }
 
-        if (itemsToShow.length > 1 || (itemsToShow.length === 1 && (isStaff ? item.name : item) !== '')) {
+        // Show remove button when there are 2+ items (so users can remove extras)
+        // Don't show when there's only 1 item (removing it would just auto-create an empty one)
+        if (itemsToShow.length > 1) {
             const removeBtn = document.createElement('button');
             removeBtn.className = 'btn remove-btn';
             removeBtn.textContent = '−';
