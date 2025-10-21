@@ -125,14 +125,16 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false, 
-        'error' => 'Database error occurred'
+        'error' => 'Database error occurred',
+        'details' => $e->getMessage()
     ]);
 } catch (Exception $e) {
     error_log('save-suggestion.php error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false, 
-        'error' => 'An error occurred while saving the suggestion'
+        'error' => 'An error occurred while saving the suggestion',
+        'details' => $e->getMessage()
     ]);
 }
 ?>

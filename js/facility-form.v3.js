@@ -1818,14 +1818,21 @@ function renderArray(container, path, items) {
             }
 
             if (category) {
+                itemDiv.appendChild(input); // Must be in DOM for createAutocomplete to find parent
                 setTimeout(() => {
                     if (!input.dataset.autocompleteInit) {
                         createAutocomplete(input, dataFunc, category);
                         input.dataset.autocompleteInit = 'true';
                     }
                 }, 100);
+            } else {
+                // No autocomplete, so we must wrap it ourselves for consistent styling
+                const wrapper = document.createElement('div');
+                // We can reuse the autocomplete-wrapper class as it provides the flex behavior we need
+                wrapper.className = 'autocomplete-wrapper';
+                wrapper.appendChild(input);
+                itemDiv.appendChild(wrapper);
             }
-            itemDiv.appendChild(input);
         }
 
         // Add Note button for each array item, unless it's a notes array
