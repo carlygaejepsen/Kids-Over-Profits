@@ -1111,20 +1111,7 @@ function renderAllFieldNotes() {
 }
 
 function initializeNoteControls() {
-    const arrayNoteEntries = [];
-
-    document.querySelectorAll('.array-item .field-notes[data-note-container-key]').forEach(container => {
-        const scope = container.dataset.noteScope;
-        const key = container.dataset.noteContainerKey;
-
-        if (!scope || !key) {
-            return;
-        }
-
-        arrayNoteEntries.push({ scope, key, container });
-    });
-
-    noteFieldRegistry = arrayNoteEntries;
+    noteFieldRegistry = [];
 
     document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
         if (field.closest('.array-item')) {
@@ -1145,16 +1132,11 @@ function initializeNoteControls() {
         if (isCheckbox) {
             return;
         }
-        const fieldWrapper = field.closest('.field-content') || field.parentNode;
         let container = group.querySelector('.field-notes');
-        let addBtn = fieldWrapper?.querySelector('.note-add-btn.field-note-btn')
-            || group.querySelector('.note-add-btn.field-note-btn');
+        let controls = group.querySelector('.note-controls');
 
         if (!controls) {
-            controls = document.createElement('div');
-            controls.className = 'note-controls';
-
-            // Create the + button (rendered before notes within controls)
+            // Create the + button
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
@@ -1165,27 +1147,42 @@ function initializeNoteControls() {
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
             });
-            controls.appendChild(addBtn);
 
-            // Create notes container (always rendered below the button)
+            // Insert button after the field (inline)
+            field.parentNode.insertBefore(addBtn, field.nextSibling);
+
+            // Create notes container (goes below field and button)
             container = document.createElement('div');
             container.className = 'field-notes';
-            controls.appendChild(container);
 
-            if (fieldWrapper && typeof fieldWrapper.appendChild === 'function') {
-                fieldWrapper.appendChild(controls);
-            } else {
-                group.appendChild(controls);
-            }
+            controls = document.createElement('div');
+            controls.className = 'note-controls';
+            controls.appendChild(container);
+            group.appendChild(controls);
 
             // Add class to form-group for proper layout
             group.classList.add('has-note-button');
 
-        legacyControls.forEach(control => {
-            if (!control.children.length) {
-                control.remove();
+            field.dataset.noteInit = 'true';
+        } else {
+            // Controls exist, make sure container reference is correct
+            if (!container) {
+                container = controls.querySelector('.field-notes');
             }
-        });
+            // Check if button needs event listener (shouldn't happen, but defensive)
+            const addBtn = controls.querySelector('.note-add-btn');
+            if (addBtn && !addBtn.dataset.noteEventAttached) {
+                addBtn.dataset.noteEventAttached = 'true';
+                addBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    addFieldNote(scope, key);
+                });
+            }
+            if (field.dataset.noteInit !== 'true') {
+                field.dataset.noteInit = 'true';
+            }
+        }
 
         if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
             noteFieldRegistry.push({ scope, key, container });
