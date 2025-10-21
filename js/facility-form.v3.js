@@ -1570,11 +1570,16 @@ function createNewProjectData() {
 }
 
 function loadProject(projectName) {
+    console.log('🔄 loadProject called with:', projectName);
+    console.log('📦 Available projects:', Object.keys(window.projects || {}));
+
     if (!window.projects[projectName]) {
+        console.error('❌ Project not found:', projectName);
         showUploadStatus(`Project "${projectName}" not found.`, 'error');
         return;
     }
 
+    console.log('✅ Project found, loading:', projectName);
     window.currentProjectName = projectName;
     window.formData = deepClone(window.projects[projectName].data);
     window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
@@ -1583,16 +1588,25 @@ function loadProject(projectName) {
         window.currentFacilityIndex = 0;
     }
 
+    console.log('📊 Loaded project data:', {
+        name: projectName,
+        facilities: window.formData.facilities.length,
+        operator: window.formData.operator.name
+    });
+
     const projectNameInput = document.getElementById('project-name');
     if (projectNameInput) {
         projectNameInput.value = projectName;
     }
 
     if (typeof window.updateAllUI === 'function') {
+        console.log('🔄 Calling updateAllUI...');
         window.updateAllUI();
+    } else {
+        console.error('❌ updateAllUI not available!');
     }
 
-    showUploadStatus(`Project "${projectName}" loaded from cloud`, 'success');
+    showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
 }
 
 function newProject() {
@@ -2275,6 +2289,7 @@ function populateProjectSelectDropdowns() {
         // Add change event listener
         projectSelect.onchange = (e) => {
             if (e.target.value) {
+                console.log('📂 Dropdown loading project:', e.target.value);
                 loadProject(e.target.value);
             }
         };
@@ -2298,6 +2313,7 @@ function populateProjectSelectDropdowns() {
         // Add change event listener
         locationSelect.onchange = (e) => {
             if (e.target.value) {
+                console.log('📂 Location dropdown loading project:', e.target.value);
                 loadProject(e.target.value);
             }
         };
