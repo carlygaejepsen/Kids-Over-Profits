@@ -1994,6 +1994,12 @@ window.updateAllUI = function() {
     updateProjectStatus();
     initializeAutocompleteFields();
     initializeNoteControls();
+
+    // Reinitialize autocomplete for facility status field
+    const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
+    if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
+        createAutocomplete(facilityStatusField, getAllStatuses, 'status');
+    }
 };
 
 function updateTableOfContents() {
