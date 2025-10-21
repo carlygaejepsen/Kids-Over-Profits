@@ -13,8 +13,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #000435; /* Midnight Blue */
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    color: #1f2937;
+    background: #f9fafb;
     margin: 0;
     padding: 20px;
 }
@@ -22,7 +22,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #FFFFFF; /* White */
+    background: white;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -32,8 +32,8 @@ body {
    HEADER & ADMIN ELEMENTS
    ============================================ */
 .admin-header {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy to Teal */
-    color: #FFFFFF; /* White */
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
     padding: 25px;
     border-radius: 8px;
     margin-bottom: 25px;
@@ -53,13 +53,12 @@ body {
 }
 
 .admin-warning {
-    background: #FFFFFF;
-    border: 1px solid #EF9034;
-    border-left: 5px solid #EF9034; /* Orange */
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 25px;
-    color: #000435; /* Midnight Blue */
+    color: #92400e;
     font-weight: 600;
 }
 
@@ -67,7 +66,7 @@ body {
    CATEGORY NAVIGATION (TOP TABS)
    ============================================ */
 .category-navigation {
-    background: #FFFFFF;
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 15px;
@@ -87,7 +86,7 @@ body {
 .category-tabs {
     display: flex;
     gap: 10px;
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    background: white;
     padding: 5px;
     border-radius: 8px;
     border: 1px solid #e5e7eb;
@@ -99,21 +98,21 @@ body {
     font-weight: 600;
     border: none;
     background: transparent;
-    color: #000435;
+    color: #6b7280;
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.2s ease;
 }
 
 .category-tab:hover {
-    background: #AEE0ED;
-    color: #000435;
+    background: #f3f4f6;
+    color: #1f2937;
 }
 
 .category-tab.active {
-    background: #000080; /* Navy Blue */
-    color: #FFFFFF; /* White */
-    box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
+    background: #1e40af;
+    color: white;
+    box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
 }
 
 /* Category content containers */
@@ -134,7 +133,7 @@ body {
 
 .content-header h3 {
     margin: 0 0 8px 0;
-    color: #000435;
+    color: #1f2937;
     font-size: 16px;
     font-weight: 600;
 }
@@ -169,8 +168,8 @@ body {
    FACILITY TABLE OF CONTENTS
    ============================================ */
 .facility-toc {
-    background: #FFFFFF;
-    border: 2px solid #33A7B5; /* Teal */
+    background: #f0f9ff;
+    border: 2px solid #3b82f6;
     border-radius: 8px;
     margin-bottom: 25px;
     overflow: hidden;
@@ -180,8 +179,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #33A7B5; /* Teal */
-    color: #FFFFFF; /* White */
+    background: #3b82f6;
+    color: white;
     padding: 15px 20px;
     cursor: pointer;
 }
@@ -193,8 +192,8 @@ body {
 }
 
 .toc-toggle {
-    background: #FFFFFF;
-    color: #33A7B5;
+    background: white;
+    color: #3b82f6;
     border: none;
     padding: 6px 12px;
     border-radius: 6px;
@@ -204,7 +203,7 @@ body {
 }
 
 .toc-toggle:hover {
-    background: #F2EEDF;
+    background: #f0f9ff;
     transform: scale(1.05);
 }
 
@@ -218,7 +217,7 @@ body {
     border-radius: 6px;
     margin-bottom: 15px;
     font-weight: 600;
-    color: #000435;
+    color: #1f2937;
     border: 1px solid #e5e7eb;
 }
 
@@ -236,7 +235,7 @@ body {
    FACILITY NAVIGATION CONTROLS
    ============================================ */
 .facility-controls {
-    background: #FFFFFF;
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 20px;
@@ -258,7 +257,7 @@ body {
 }
 
 #facility-counter {
-    color: #33A7B5; /* Teal */
+    color: #3b82f6;
     font-weight: 700;
 }
 
@@ -291,14 +290,14 @@ body {
 }
 
 .section-header:hover {
-    background: #F2EEDF;
+    background: #f3f4f6;
 }
 
 .section-title {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #000435;
+    color: #1f2937;
 }
 
 .section-toggle {
@@ -328,6 +327,7 @@ body {
     z-index: 0;
 }
 
+/* Ensure active inputs and dropdowns layer above surrounding fields */
 .form-group:focus-within,
 .array-item:focus-within,
 .array-container:focus-within {
@@ -338,7 +338,7 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #000435;
+    color: #374151;
     font-size: 14px;
 }
 
@@ -363,6 +363,7 @@ body {
     }
 }
 
+/* Input Styles */
 input[type="text"],
 input[type="number"],
 input[type="email"],
@@ -387,8 +388,8 @@ input:focus,
 textarea:focus,
 select:focus {
     outline: none;
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 textarea {
@@ -396,6 +397,7 @@ textarea {
     min-height: 60px;
 }
 
+/* Autocomplete Wrapper */
 .autocomplete-wrapper {
     position: relative;
     width: 100%;
@@ -413,6 +415,7 @@ textarea {
     flex: 1;
 }
 
+/* Autocomplete Dropdown */
 .autocomplete-dropdown {
     position: absolute;
     top: 100%;
@@ -438,7 +441,7 @@ textarea {
     padding: 10px 12px;
     cursor: pointer;
     font-size: 14px;
-    color: #000435;
+    color: #1f2937;
     transition: background-color 0.15s ease;
     border-bottom: 1px solid #f3f4f6;
 }
@@ -449,13 +452,12 @@ textarea {
 
 .autocomplete-item:hover,
 .autocomplete-item.active {
-    background-color: #F2EEDF; /* Sand / Warm Ivory */
-    box-shadow: 0 0 8px #ECF385; /* Pale Spring Yellow glow */
-    color: #000435;
+    background-color: #f0f9ff;
+    color: #1e40af;
 }
 
 .autocomplete-item strong {
-    color: #33A7B5; /* Teal */
+    color: #3b82f6;
     font-weight: 600;
 }
 
@@ -474,6 +476,7 @@ textarea {
     font-size: 13px;
 }
 
+/* Make sure dropdown appears above other elements but below modals */
 .autocomplete-wrapper {
     z-index: 100;
 }
@@ -502,7 +505,7 @@ textarea {
 }
 
 .array-item:hover {
-    background: #F2EEDF;
+    background: #f3f4f6;
     border-color: #d1d5db;
 }
 
@@ -512,6 +515,7 @@ textarea {
     min-width: 0;
 }
 
+/* For staff items with role + name, the + button goes between them */
 .array-item .array-input-role {
     order: 1;
 }
@@ -541,8 +545,8 @@ textarea {
 
 .array-input:focus {
     outline: none;
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .array-input-role {
@@ -559,6 +563,7 @@ textarea {
    BUTTONS - CRITICAL STYLING
    ============================================ */
 
+/* Base Button Style */
 .btn {
     padding: 10px 16px;
     font-size: 14px;
@@ -567,7 +572,7 @@ textarea {
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #000080; /* Navy Blue */
+    background: #3b82f6;
     color: white;
     display: inline-flex;
     align-items: center;
@@ -576,9 +581,9 @@ textarea {
 }
 
 .btn:hover {
-    background: #000435; /* Midnight Blue */
+    background: #2563eb;
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 128, 0.2);
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
 }
 
 .btn:active {
@@ -586,11 +591,11 @@ textarea {
 }
 
 .btn-secondary {
-    background: #2a8c96; /* Darker Teal */
+    background: #6b7280;
 }
 
 .btn-secondary:hover {
-    background: #1a5a61;
+    background: #4b5563;
 }
 
 .btn-inline {
@@ -598,58 +603,61 @@ textarea {
     font-size: 13px;
 }
 
+/* Plus Button for Adding Items Inline - should be small and blue */
 .add-plus-btn {
     width: 28px;
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: #33A7B5; /* Teal */
+    background: #3b82f6; /* Blue */
     color: white;
     font-size: 16px;
-    flex: 0 0 28px;
+    flex: 0 0 28px; /* Prevent stretching */
     border-radius: 4px;
     border: none;
 }
 
 .add-plus-btn:hover {
-    background: #2a8c96;
+    background: #2563eb;
 }
 
+/* Add Item Button (at bottom of arrays) - green button */
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: #B2E102; /* Chartreuse */
-    color: #000435;
-    border: 1px solid #8aae01;
+    background: #10b981;
+    color: white;
+    border: 1px solid #059669;
     border-radius: 4px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
-    display: inline-block;
-    width: auto;
+    display: inline-block; /* Changed from block */
+    width: auto; /* Fit content */
 }
 
 .add-item-btn:hover {
-    background: #9ed002;
+    background: #059669;
 }
 
+/* Remove Button - small inline minus button */
 .remove-btn {
     width: 28px;
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: #FE8088; /* Coral Pink */
+    background: #ef4444;
     color: white;
     font-size: 20px;
     line-height: 1;
-    flex: 0 0 28px;
+    flex: 0 0 28px; /* Prevent stretching */
     border-radius: 4px;
     border: none;
 }
 
 .remove-btn:hover {
-    background: #fa5f69 !important;
+    background: #dc2626 !important;
 }
 
 /* ============================================
@@ -666,14 +674,14 @@ textarea {
 }
 
 .checkbox-group:hover {
-    background: #F2EEDF;
+    background: #f9fafb;
 }
 
 .checkbox-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: #33A7B5; /* Teal */
+    accent-color: #3b82f6;
 }
 
 .checkbox-group label {
@@ -686,18 +694,53 @@ textarea {
 /* ============================================
    UTILITY CLASSES
    ============================================ */
-.d-flex { display: flex; }
-.d-none { display: none !important; }
-.gap-5 { gap: 5px; }
-.gap-10 { gap: 10px; }
-.gap-15 { gap: 15px; }
-.align-items-center { align-items: center; }
-.mb-15 { margin-bottom: 15px; }
-.mt-15 { margin-top: 15px; }
-.fw-normal { font-weight: 400; }
-.text-muted { color: #6b7280; }
-.italic { font-style: italic; }
-.bg-light { background: #f9fafb; }
+.d-flex {
+    display: flex;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.gap-5 {
+    gap: 5px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-15 {
+    gap: 15px;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.fw-normal {
+    font-weight: 400;
+}
+
+.text-muted {
+    color: #6b7280;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bg-light {
+    background: #f9fafb;
+}
 
 .content-box {
     padding: 15px;
@@ -712,9 +755,8 @@ textarea {
 }
 
 .info-box {
-    background: #FFFFFF;
-    border: 1px solid #33A7B5;
-    border-left: 5px solid #33A7B5; /* Teal */
+    background: #f0f9ff;
+    border: 1px solid #93c5fd;
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
@@ -722,7 +764,7 @@ textarea {
 
 .info-title {
     font-weight: 600;
-    color: #000080; /* Navy Blue */
+    color: #1e40af;
     margin-bottom: 5px;
 }
 
@@ -753,6 +795,7 @@ textarea {
     gap: 8px;
 }
 
+/* Project Item Cards */
 .project-item {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -767,14 +810,14 @@ textarea {
 }
 
 .project-item:hover {
-    background: #F2EEDF;
-    border-color: #33A7B5;
-    box-shadow: 0 1px 3px rgba(51, 167, 181, 0.1);
+    background: #f9fafb;
+    border-color: #3b82f6;
+    box-shadow: 0 1px 3px rgba(59, 130, 246, 0.1);
 }
 
 .project-item-name {
     font-weight: 600;
-    color: #000435;
+    color: #1f2937;
     font-size: 14px;
     margin-bottom: 2px;
     line-height: 1.3;
@@ -809,14 +852,14 @@ textarea {
 }
 
 .project-item-load {
-    background: #33A7B5; /* Teal */
+    background: #3b82f6;
     color: white;
 }
 
 .project-item-load:hover {
-    background: #2a8c96;
+    background: #2563eb;
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .projects-empty {
@@ -834,13 +877,20 @@ textarea {
     color: #d1d5db;
 }
 
+/* Responsive adjustments for project items */
 @media (max-width: 640px) {
     .project-item {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    .project-item-actions { justify-content: stretch; }
-    .project-item-btn { flex: 1; }
+
+    .project-item-actions {
+        justify-content: stretch;
+    }
+
+    .project-item-btn {
+        flex: 1;
+    }
 }
 
 /* ============================================
@@ -850,28 +900,37 @@ textarea {
     padding: 12px 16px;
     border-radius: 6px;
     margin-bottom: 15px;
-    font-weight: 600;
+    font-weight: 500;
     animation: slideIn 0.3s ease;
-    color: #000435; /* Midnight Blue text for all */
-    background: #FFFFFF;
-    border-left: 5px solid #ccc;
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .upload-status.success {
-    border-left-color: #B6E3D4; /* Mint Green */
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
 }
 
 .upload-status.error {
-    border-left-color: #FC8ED6; /* Bubblegum Pink */
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
 }
 
 .upload-status.info {
-    border-left-color: #AEE0ED; /* Powder Blue */
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
 }
 
 /* ============================================
@@ -890,7 +949,7 @@ textarea {
 
 .output-header h3 {
     margin: 0;
-    color: #000435;
+    color: #1f2937;
     font-size: 16px;
 }
 
@@ -911,8 +970,8 @@ textarea {
 }
 
 #json-display {
-    background: #000435; /* Midnight Blue */
-    color: #F2EEDF; /* Sand / Warm Ivory */
+    background: #1f2937;
+    color: #f8fafc;
     padding: 20px;
     border-radius: 6px;
     overflow-x: auto;
@@ -926,18 +985,103 @@ textarea {
 /* ============================================
    MODAL
    ============================================ */
-.modal { /* ... existing styles ... */ }
-.modal-content { /* ... existing styles ... */ }
-.modal-header { /* ... existing styles ... */ }
-.modal-title { color: #000435; }
-.modal-close { /* ... existing styles ... */ }
-.modal-body { /* ... existing styles ... */ }
-.modal-footer { /* ... existing styles ... */ }
-.modal-btn { /* ... existing styles ... */ }
-.modal-btn-primary { background: #000080; color: white; }
-.modal-btn-primary:hover { background: #000435; }
-.modal-btn-secondary { background: #e5e7eb; color: #374151; }
-.modal-btn-secondary:hover { background: #d1d5db; }
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background: #2563eb;
+}
+
+.modal-btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.modal-btn-secondary:hover {
+    background: #d1d5db;
+}
 
 /* ============================================
    SAVE/SUBMIT BUTTON
@@ -945,7 +1089,7 @@ textarea {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy */
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -953,12 +1097,12 @@ textarea {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
 }
 
 .save-master-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 12px rgba(51, 167, 181, 0.3);
+    box-shadow: 0 8px 12px rgba(16, 185, 129, 0.3);
 }
 
 .save-master-btn:active {
@@ -969,14 +1113,39 @@ textarea {
    RESPONSIVE DESIGN
    ============================================ */
 @media (max-width: 768px) {
-    .container { padding: 15px; }
-    .admin-header { padding: 15px; }
-    .admin-header h1 { font-size: 22px; }
-    .facility-header { flex-direction: column; align-items: flex-start; }
-    .controls { width: 100%; }
-    .btn { flex: 1; min-width: 0; }
-    .category-tabs { flex-direction: column; }
-    .category-tab { width: 100%; }
+    .container {
+        padding: 15px;
+    }
+
+    .admin-header {
+        padding: 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 22px;
+    }
+
+    .facility-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .controls {
+        width: 100%;
+    }
+
+    .btn {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .category-tabs {
+        flex-direction: column;
+    }
+
+    .category-tab {
+        width: 100%;
+    }
 }
 
 /* ============================================
@@ -986,7 +1155,11 @@ textarea {
     flex-shrink: 0;
     width: 28px;
     height: 28px;
+    aspect-ratio: 1 / 1;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: #6b7280;
     color: white;
     border: none;
@@ -1003,11 +1176,190 @@ textarea {
 }
 
 .field-note-btn.has-note {
-    background: #EF9034; /* Orange */
+    background: #f59e0b;
 }
 
 .field-note-btn.has-note:hover {
     background: #d97706;
 }
 
-/* ... Rest of the file remains the same for layout ... */
+/* Ensure form-group with note buttons has proper layout - notes go BELOW */
+.form-group.has-note-button .field-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.form-group.has-note-button .field-content > input,
+.form-group.has-note-button .field-content > textarea,
+.form-group.has-note-button .field-content > select {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+    max-width: 100%;
+}
+
+.form-group.has-note-button .autocomplete-wrapper {
+    flex: 1 1 auto;
+}
+
+.form-group.has-note-button .autocomplete-wrapper input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+}
+
+.form-group.has-note-button .field-content > .field-note-btn {
+    order: 1;
+    align-self: flex-start;
+}
+
+.form-group.has-note-button .field-content > .note-container {
+    flex: 0 0 100%;
+    order: 2;
+    margin: 0;
+}
+
+/* Note containers should appear below fields */
+.note-container {
+    width: 100%;
+    order: 10;
+}
+
+.note-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.field-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.note-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* Array item layout tweaks so note buttons stay inline */
+.array-item {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.array-item .field-note-btn {
+    align-self: center;
+}
+
+.array-item .note-container {
+    flex: 0 0 100%;
+    order: 10;
+    margin: 4px 0 0 0;
+}
+
+.note-textarea {
+    flex: 1;
+    min-width: 0;
+    max-width: 100% !important;
+    width: 100% !important;
+    resize: vertical;
+}
+
+.remove-note-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.remove-note-btn:hover {
+    background: #dc2626;
+}
+
+.note-add-btn {
+    flex-shrink: 0;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+.facility-list::-webkit-scrollbar,
+.items-list::-webkit-scrollbar,
+.scroll-container::-webkit-scrollbar,
+#json-display::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.facility-list::-webkit-scrollbar-track,
+.items-list::-webkit-scrollbar-track,
+.scroll-container::-webkit-scrollbar-track,
+#json-display::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.facility-list::-webkit-scrollbar-thumb,
+.items-list::-webkit-scrollbar-thumb,
+.scroll-container::-webkit-scrollbar-thumb,
+#json-display::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.facility-list::-webkit-scrollbar-thumb:hover,
+.items-list::-webkit-scrollbar-thumb:hover,
+.scroll-container::-webkit-scrollbar-thumb:hover,
+#json-display::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    body {
+        background: white;
+    }
+
+    .container {
+        box-shadow: none;
+    }
+
+    .btn,
+    .modal,
+    .toc-toggle,
+    .section-toggle {
+        display: none !important;
+    }
+
+    .section {
+        page-break-inside: avoid;
+    }
+
+    .section-content {
+        display: block !important;
+    }
+}
