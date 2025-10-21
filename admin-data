@@ -2,20 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Facility Data Suggestions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
     </head>
 <body>
     <div class="container">
-        <div class="admin-header">
-            <h1>📮 Submit Facility Data Suggestions</h1>
-            <p>Your submissions will be reviewed before being added to the main database</p>
-        </div>
-        
-        <div class="admin-warning">
-            ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
-        </div>
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
@@ -749,22 +741,6 @@
             </div>
         </div>
         
-        <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
-            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
-            </div>
-            <div class="section-content" style="display: block;">
-                <div id="suggestion-status" style="display: none;"></div>
-                
-                <div class="form-group">
-                    <button type="button" class="save-master-btn" onclick="submitSuggestion()">
-                        📮 Submit for Review
-                    </button>
-                </div>
-            </div>
-        </div>
-        
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
@@ -786,11 +762,11 @@
                 <div class="project-management">
                     <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
                     
-                    <div class="form-group">
+                    <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
                         <label>Project Management</label>
                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                             <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn" id="save-project-btn">Save Project</button>
+                            <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
                             <button class="btn" id="load-project-btn">Load Project</button>
                             <button class="btn" id="new-project-btn">New Project</button>
                             <button class="btn" id="export-all-btn">Export All Projects</button>
@@ -878,8 +854,8 @@
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
-        // Set mode to suggestions
-        window.FORM_MODE = 'suggestions';
+        // Set mode to master for direct saving
+        window.FORM_MODE = 'master';
         
         // Override save function for suggestions
         // Function to load project and sync with our form
@@ -948,7 +924,7 @@
                             // Also update the page title or some indicator
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName;
+                                const actualProject = window.currentProjectName || projectName; 
                                 pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
                             }
                         } else {
@@ -1004,134 +980,6 @@
             });
         });
 
-
-        async function submitSuggestion() {
-            // Ask user to summarize their changes
-            const changesSummary = prompt(
-                'Please summarize the key changes you made:\n\n' +
-                '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
-                '"Added 3 new staff members", "Updated facility closure information", etc.)'
-            );
-            
-            if (!changesSummary || changesSummary.trim() === '') {
-                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
-                return;
-            }
-            
-            // Get the current project data from window.formData
-            console.log('🔍 Checking for form data...', {
-                'window.formData exists': !!window.formData,
-                'window.formData value': window.formData
-            });
-
-            let dataToSubmit = window.formData;
-
-            if (!dataToSubmit) {
-                console.error('❌ No formData found:', {
-                    'window.formData': window.formData,
-                    'window.projects': window.projects ? Object.keys(window.projects) : 'undefined',
-                    'window.currentProjectName': window.currentProjectName
-                });
-
-                // Check if there are projects available to load
-                if (window.projects && Object.keys(window.projects).length > 0) {
-                    showSuggestionStatus('❌ Error: No project loaded. Please load a project by clicking on one from the list above, or create a new project.', 'error');
-                } else {
-                    showSuggestionStatus('❌ Error: No projects available. The form may still be initializing. Please wait a moment and try again.', 'error');
-                }
-                return;
-            }
-            
-            // Check if we're in private facility mode and clear operator data if so
-            const privateToggle = document.getElementById('private-ownership-toggle');
-            if (privateToggle && privateToggle.checked) {
-                console.log('🔒 Private facility mode detected - clearing operator data before submission');
-                
-                // Create a copy of the data and clear operator info
-                dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
-                if (dataToSubmit.operator) {
-                    dataToSubmit.operator = {
-                        name: '',
-                        currentName: '',
-                        pastNames: [],
-                        otherNames: [],
-                        foundingDate: '',
-                        keyPersonnel: [],
-                        headquarters: '',
-                        website: ''
-                    };
-                }
-                
-                // Also clear operator data from facilities
-                if (dataToSubmit.facilities) {
-                    dataToSubmit.facilities.forEach(facility => {
-                        if (facility.operator) {
-                            facility.operator = {
-                                name: '',
-                                currentName: '',
-                                pastNames: [],
-                                otherNames: [],
-                                foundingDate: '',
-                                keyPersonnel: [],
-                                headquarters: '',
-                                website: ''
-                            };
-                        }
-                    });
-                }
-                
-                console.log('🧹 Operator data cleared for private facility submission');
-            }
-            
-            // CRITICAL FIX: Ensure the project name is correctly set
-            const actualProjectName = window.currentProjectName || 'Unknown Project';
-
-            // Force set the project name in the data being submitted
-            dataToSubmit.projectName = actualProjectName;
-            dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
-
-            console.log('✅ FORCED project name in submission data:', actualProjectName);
-
-            // Show which project we're submitting
-            const projectName = window.currentProjectName || dataToSubmit.projectName || 'Unknown Project';
-            console.log('📤 Submitting changes for project:', projectName);
-            console.log('🔍 Debug project name sources:', {
-                'window.currentProjectName': window.currentProjectName,
-                'dataToSubmit.projectName': dataToSubmit.projectName,
-                'final': projectName
-            });
-            console.log('🏢 Facilities in submission:', dataToSubmit.facilities?.map(f => f.identification?.name || 'Unnamed') || []);
-            
-            try {
-                const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        data: dataToSubmit,
-                        reason: changesSummary.trim(),
-                        projectName: actualProjectName, // Explicit project name
-                        metadata: {
-                            actualProjectName: actualProjectName,
-                            submittedFrom: 'data.html suggestions form',
-                            timestamp: new Date().toISOString()
-                        }
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showSuggestionStatus(`☑️ Suggestion submitted successfully for "${projectName}"! It will be reviewed before being added to the database.`, 'success');
-                } else {
-                    showSuggestionStatus('❌ Error: ' + (result.error || 'Failed to submit suggestion'), 'error');
-                }
-            } catch (error) {
-                showSuggestionStatus('❌ Error: ' + error.message, 'error');
-            }
-        }
-        
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
             statusDiv.className = `upload-status ${type}`;
