@@ -86,10 +86,10 @@ function kop_get_facilities_database_connection() {
 
     try {
         $facilities_db = new wpdb(
-            'kidsover_dani',
-            'Xk4&z9!pT#vR7bN@',
-            'kidsover_suggestions',
-            'localhost'
+            defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '',
+            defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '',
+            defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '',
+            defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost'
         );
         $use_separate_db = true;
     } catch (Exception $e) {
@@ -383,258 +383,94 @@ function load_facilities_data() {
 }
 add_action('wp_enqueue_scripts', 'load_facilities_data');
 
-/**
- * Load scripts for CA reports page (multi-file report)
- */
-function load_new_multi_file_report_scripts() {
-    if (is_page('ca-reports')) {
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/';
-        
-        // Find only CA-specific JSON files (modify pattern as needed)
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . 'ccl*.json');
-            
+function kop_enqueue_report_scripts() {
+    $reports = array(
+        'ca-reports' => array(
+            'script_handle' => 'ca-reports-script',
+            'script_path'   => '/js/ca-reports.js',
+            'data_object'   => 'caReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/ccl*.json',
+        ),
+        'ut-reports' => array(
+            'script_handle' => 'ut-reports-script',
+            'script_path'   => '/js/ut_reports.js',
+            'data_object'   => 'utReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/ut_*.json',
+        ),
+        'az-reports' => array(
+            'script_handle' => 'az-reports-script',
+            'script_path'   => '/js/az_reports.js',
+            'data_object'   => 'azReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/az_reports/*.json',
+        ),
+        'tx-reports' => array(
+            'script_handle' => 'tx-reports-script',
+            'script_path'   => '/js/tx_reports.js',
+            'data_object'   => 'txReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/tx_reports.json',
+        ),
+        'mt-reports' => array(
+            'script_handle' => 'mt-reports-script',
+            'script_path'   => '/js/mt_reports.js',
+            'data_object'   => 'mtReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/mt_reports.json',
+        ),
+        'ct-reports' => array(
+            'script_handle' => 'ct-reports-script',
+            'script_path'   => '/js/ct_reports.js',
+            'data_object'   => 'ctReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/ct_reports.json',
+        ),
+        'wa-reports' => array(
+            'script_handle' => 'wa-reports-script',
+            'script_path'   => '/js/wa_reports.js',
+            'data_object'   => 'waReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/wa_reports.json',
+        ),
+    );
+
+    foreach ($reports as $page_slug => $config) {
+        if (is_page($page_slug)) {
+            $script_full_path = get_stylesheet_directory() . $config['script_path'];
+            if (!file_exists($script_full_path)) {
+                continue;
+            }
+
+            wp_enqueue_script(
+                $config['script_handle'],
+                get_stylesheet_directory_uri() . $config['script_path'],
+                array('jquery'), // Assuming jQuery dependency
+                filemtime($script_full_path),
+                true
+            );
+
+            $json_files = glob($config['json_glob']);
+            $json_urls  = array();
             if ($json_files) {
                 foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
+                    // Construct URL relative to the theme root.
+                    $relative_path = str_replace(get_stylesheet_directory(), '', $file);
+                    $json_urls[]   = get_stylesheet_directory_uri() . $relative_path;
                 }
             }
+
+            wp_localize_script(
+                $config['script_handle'],
+                $config['data_object'],
+                array('jsonFileUrls' => $json_urls)
+            );
+
+            // Stop after finding the first matching page to avoid unnecessary checks.
+            break;
         }
-        
-        $script_path = get_stylesheet_directory() . '/js/ca-reports.js';
-        
-        wp_enqueue_script(
-            'new-multi-file-report',
-            get_stylesheet_directory_uri() . '/js/ca-reports.js',
-            array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'new-multi-file-report',
-            'caReportsData',
-            array('jsonFileUrls' => $json_urls)
-        );
     }
 }
-add_action('wp_enqueue_scripts', 'load_new_multi_file_report_scripts');
-
-/**
- * Load scripts for Utah reports page
- */
-function load_ut_reports_scripts() {
-    if (is_page('ut-reports')) {
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/';
-        
-        // Find only UT-specific JSON files
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . 'ut_*.json'); // Only files starting with "ut_"
-            
-            if ($json_files) {
-                foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
-                }
-            }
-        }
-        
-        $script_path = get_stylesheet_directory() . '/js/ut_reports.js';
-        
-        wp_enqueue_script(
-            'ut-reports-display',
-            get_stylesheet_directory_uri() . '/js/ut_reports.js',
-            array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'ut-reports-display',
-            'utReportsData',
-            array('jsonFileUrls' => $json_urls)
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'load_ut_reports_scripts');
-
-/**
- * Load scripts for Arizona reports page
- */
-function load_az_reports_scripts() {
-    if (is_page('az-reports')) {
-        error_log('Arizona page detected!');
-        
-        $json_urls = array();
-        $json_path = get_stylesheet_directory() . '/js/data/az_reports/';
-        $json_url_base = get_stylesheet_directory_uri() . '/js/data/az_reports/';
-        
-        if (is_dir($json_path)) {
-            $json_files = glob($json_path . '*.json');
-            error_log('Found JSON files: ' . print_r($json_files, true));
-            
-            if ($json_files) {
-                foreach ($json_files as $file) {
-                    $json_urls[] = esc_url($json_url_base . basename($file));
-                }
-            }
-        }
-        
-        error_log('JSON URLs: ' . print_r($json_urls, true));
-        
-        $script_path = get_stylesheet_directory() . '/js/az_reports.js';
-        
-        wp_enqueue_script(
-            'az-reports-display',
-            get_stylesheet_directory_uri() . '/js/az_reports.js',
-            array(),
-            file_exists($script_path) ? filemtime($script_path) : '1.0',
-            true
-        );
-        
-        wp_localize_script(
-            'az-reports-display',
-            'azReportsData',
-            array('jsonFileUrls' => $json_urls)
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'load_az_reports_scripts');
-
-/**
- * Load scripts for Texas reports page
- */
-function load_tx_reports_scripts() {
-    if (is_page('tx-reports')) {
-        wp_enqueue_script(
-            'tx-reports-display',
-            get_stylesheet_directory_uri() . '/js/tx_reports.js',
-            array(),
-            filemtime(get_stylesheet_directory() . '/js/tx_reports.js'),
-            true
-        );
-        
-        wp_localize_script(
-            'tx-reports-display',
-            'txReportsData',
-            array('jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/tx_reports.json'
-            ))
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'load_tx_reports_scripts');
-
-/**
- * Load scripts for Montana reports page
- */
-function enqueue_montana_reports_scripts() {
-    error_log('Montana function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('mt-reports')) {
-        error_log('mt-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/mt_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'mt-reports', 
-            get_stylesheet_directory_uri() . '/js/mt_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('mt-reports', 'mtReportsData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/mt_reports.json'
-            )
-        ));
-        
-        error_log('Script enqueued successfully');
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_montana_reports_scripts');
-
-/**
- * Load scripts for Connecticut reports page
- */
-function enqueue_ct_reports_scripts() {
-    error_log('Connecticut function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('ct-reports')) {
-        error_log('ct-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/ct_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'ct-reports', 
-            get_stylesheet_directory_uri() . '/js/ct_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('ct-reports', 'ctReportsData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/ct_reports.json'
-            )
-        ));
-        
-        error_log('Script enqueued successfully');
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_ct_reports_scripts');
-
-/**
- * Load scripts for Washington reports page
- */
-function enqueue_wa_reports_scripts() {
-    error_log('Washington function called. Current page: ' . get_post_field('post_name', get_the_ID()));
-    
-    if (is_page('wa-reports')) {
-        error_log('wa-reports page condition met!');
-        
-        $script_path = get_stylesheet_directory() . '/js/wa_reports.js';
-        error_log('Script path: ' . $script_path);
-        error_log('Script exists: ' . (file_exists($script_path) ? 'YES' : 'NO'));
-        
-        wp_enqueue_script(
-            'wa-reports', 
-            get_stylesheet_directory_uri() . '/js/wa_reports.js',
-            array(), 
-            file_exists($script_path) ? filemtime($script_path) : time(),
-            true
-        );
-        
-        wp_localize_script('wa-reports', 'waReportsData', array(
-            'jsonFileUrls' => array(
-                get_stylesheet_directory_uri() . '/js/data/wa_reports.json'
-            )
-        ));
-        
-        error_log('Script enqueued successfully');
-    } else {
-        error_log('Page condition NOT met');
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
+add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 
 /**
  * Load facility form script
  */
 function enqueue_facility_form_script() {
-    if (!is_page('data')) {
     // Only run on singular pages (posts, pages), not on archive pages.
     if (!is_singular()) {
         return;
@@ -644,14 +480,12 @@ function enqueue_facility_form_script() {
     // Check if the page content contains our unique form identifier.
     // This makes the script loading dynamic to any page with the form.
     $is_data_form_page = (
-        is_page('data') || // Keep original logic for the main 'data' page
-        (isset($post) && strpos($post->post_content, 'id="facility-toc"') !== false)
+        is_page('data') || (isset($post) && has_shortcode($post->post_content, 'facility_form'))
     );
 
     if (!$is_data_form_page) {
         return;
     }
-
     // Enqueue the shared data form stylesheet
     wp_enqueue_style(
         'kop-data-form-style',
@@ -659,26 +493,21 @@ function enqueue_facility_form_script() {
         array(),
         filemtime(get_stylesheet_directory() . '/css/data-form.css')
     );
- 
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
- 
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array(),
-        array(), // Dependencies can be added here, e.g., 'jquery'
+        array('jquery'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
 
- 
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
 
- 
     // This makes PHP variables available to your JavaScript file
     wp_localize_script(
         'facility-form-script',
@@ -747,7 +576,7 @@ class AnonymousDocPortal {
     private $upload_dir;
     private $allowed_types = array('pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png', 'zip');
     private $max_file_size = 10485760; // 10MB
-    private $cloudmersive_api_key = 'b5299933-f6fc-48b5-aac8-58b811de2519'; // Replace with your actual API key
+    private $cloudmersive_api_key;
     
     public function __construct() {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -755,6 +584,9 @@ class AnonymousDocPortal {
         add_action('wp_ajax_submit_anonymous_doc', array($this, 'handle_submission'));
         add_shortcode('anonymous_doc_portal', array($this, 'render_portal'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
+
+        // Securely load API key from a constant.
+        $this->cloudmersive_api_key = defined('CLOUDMERSIVE_API_KEY') ? CLOUDMERSIVE_API_KEY : '';
         
         // Create secure upload directory
         $this->setup_upload_directory();
@@ -783,7 +615,7 @@ class AnonymousDocPortal {
      * @return array Result with 'clean' boolean and 'message' string
      */
     private function scan_file_cloudmersive($file_path) {
-        if (empty($this->cloudmersive_api_key) || $this->cloudmersive_api_key === 'b5299933-f6fc-48b5-aac8-58b811de2519') {
+        if (empty($this->cloudmersive_api_key)) {
             // API key not configured - log warning but allow upload
             error_log('Cloudmersive API key not configured for file scanning');
             return array('clean' => true, 'message' => 'Scan skipped - API not configured');
