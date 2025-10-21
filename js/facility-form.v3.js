@@ -1111,7 +1111,20 @@ function renderAllFieldNotes() {
 }
 
 function initializeNoteControls() {
-    noteFieldRegistry = [];
+    const arrayNoteEntries = [];
+
+    document.querySelectorAll('.array-item .field-notes[data-note-container-key]').forEach(container => {
+        const scope = container.dataset.noteScope;
+        const key = container.dataset.noteContainerKey;
+
+        if (!scope || !key) {
+            return;
+        }
+
+        arrayNoteEntries.push({ scope, key, container });
+    });
+
+    noteFieldRegistry = arrayNoteEntries;
 
     document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
         if (field.closest('.array-item')) {
@@ -1132,12 +1145,14 @@ function initializeNoteControls() {
         if (isCheckbox) {
             return;
         }
+        const fieldWrapper = field.closest('.field-content') || field.parentNode;
+        const legacyControls = Array.from(group.querySelectorAll('.note-controls'));
         let container = group.querySelector('.field-notes');
-        let controls = group.querySelector('.note-controls');
+        let addBtn = fieldWrapper?.querySelector('.note-add-btn.field-note-btn')
+            || group.querySelector('.note-add-btn.field-note-btn');
 
-        if (!controls) {
-            // Create the + button
-            const addBtn = document.createElement('button');
+        if (!addBtn) {
+            addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
             addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
@@ -1147,44 +1162,49 @@ function initializeNoteControls() {
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
             });
-
-            // Insert button after the field (inline)
-            field.parentNode.insertBefore(addBtn, field.nextSibling);
-
-            // Create notes container (goes below field and button)
-            container = document.createElement('div');
-            container.className = 'field-notes';
-
-            controls = document.createElement('div');
-            controls.className = 'note-controls';
-            controls.appendChild(container);
-            group.appendChild(controls);
-
-            // Add class to form-group for proper layout
-            group.classList.add('has-note-button');
-
-            field.dataset.noteInit = 'true';
-        } else {
-            // Controls exist, make sure container reference is correct
-            if (!container) {
-                container = controls.querySelector('.field-notes');
-            }
-            // Check if button needs event listener (shouldn't happen, but defensive)
-            const addBtn = controls.querySelector('.note-add-btn');
-            if (addBtn && !addBtn.dataset.noteEventAttached) {
-                addBtn.dataset.noteEventAttached = 'true';
-                addBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    addFieldNote(scope, key);
-                });
-            }
-            if (field.dataset.noteInit !== 'true') {
-                field.dataset.noteInit = 'true';
-            }
+        } else if (!addBtn.dataset.noteEventAttached) {
+            addBtn.dataset.noteEventAttached = 'true';
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                addFieldNote(scope, key);
+            });
         }
 
-        noteFieldRegistry.push({ scope, key, container });
+        if (fieldWrapper && typeof fieldWrapper.appendChild === 'function') {
+            if (addBtn.parentNode !== fieldWrapper) {
+                fieldWrapper.appendChild(addBtn);
+            }
+        } else if (typeof field.insertAdjacentElement === 'function') {
+            field.insertAdjacentElement('afterend', addBtn);
+        } else if (!addBtn.parentNode && typeof group.appendChild === 'function') {
+            group.appendChild(addBtn);
+        }
+
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'field-notes';
+        }
+
+        const insertionTarget = fieldWrapper || field;
+        if (insertionTarget && typeof insertionTarget.insertAdjacentElement === 'function') {
+            insertionTarget.insertAdjacentElement('afterend', container);
+        } else if (!container.parentNode && typeof group.appendChild === 'function') {
+            group.appendChild(container);
+        }
+
+        legacyControls.forEach(control => {
+            if (!control.children.length) {
+                control.remove();
+            }
+        });
+
+        group.classList.add('has-note-button');
+        field.dataset.noteInit = 'true';
+
+        if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
+            noteFieldRegistry.push({ scope, key, container });
+        }
     });
 
     renderAllFieldNotes();
@@ -1703,6 +1723,18 @@ function removeArrayItemAtIndex(path, index) {
 function renderArray(container, path, items) {
     if (!container) return;
 
+    if (!Array.isArray(noteFieldRegistry)) {
+        noteFieldRegistry = [];
+    } else {
+        const pathPrefix = `${path}.`;
+        noteFieldRegistry = noteFieldRegistry.filter(entry => {
+            if (!entry || !entry.key) {
+                return false;
+            }
+            return !entry.key.startsWith(pathPrefix);
+        });
+    }
+
     // Set up event delegation on container if not already done
     if (!container.dataset.delegationInit) {
         container.addEventListener('click', (e) => {
@@ -1861,6 +1893,7 @@ function renderArray(container, path, items) {
         const notesContainer = document.createElement('div');
         notesContainer.className = 'field-notes';
         notesContainer.dataset.noteContainerKey = noteKey;
+        notesContainer.dataset.noteScope = scope;
         itemDiv.appendChild(notesContainer);
 
         // Register this container so it can be rendered
@@ -3363,7 +3396,7 @@ function syncFieldNotes(facilityData) {
 }
 
 // Function to get current field notes (for external scripts)
-function getFieldNotes() {
+function getCurrentFieldNotesSnapshot() {
     return getCurrentFacilityNotes();
 }
 
@@ -3384,7 +3417,7 @@ window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
-window.getFieldNotes = getFieldNotes;
+window.getFieldNotes = getCurrentFieldNotesSnapshot;
 window.addNoteButtons = addNoteButtons;
 
 // Initialize on DOMContentLoaded
