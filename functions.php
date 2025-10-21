@@ -1,5 +1,6 @@
 <?php
 /**
+/** 
  * Kadence Child Theme Functions
  */
 
@@ -20,8 +21,8 @@ function kadence_child_enqueue_styles() {
         wp_get_theme()->get('Version')
     );
 
-    // Enqueue data form stylesheet (only on data submission page)
-    if (is_page() && basename($_SERVER['REQUEST_URI']) === 'data') {
+    // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
+    if (is_page('data') || is_page('admin-data')) {
         wp_enqueue_style(
             'kop-data-form-style',
             get_stylesheet_directory_uri() . '/css/data-form.css',
@@ -635,24 +636,51 @@ add_action('wp_enqueue_scripts', 'enqueue_wa_reports_scripts');
  */
 function enqueue_facility_form_script() {
     if (!is_page('data')) {
+    // Only run on singular pages (posts, pages), not on archive pages.
+    if (!is_singular()) {
         return;
     }
 
+    global $post;
+    // Check if the page content contains our unique form identifier.
+    // This makes the script loading dynamic to any page with the form.
+    $is_data_form_page = (
+        is_page('data') || // Keep original logic for the main 'data' page
+        (isset($post) && strpos($post->post_content, 'id="facility-toc"') !== false)
+    );
+
+    if (!$is_data_form_page) {
+        return;
+    }
+
+    // Enqueue the shared data form stylesheet
+    wp_enqueue_style(
+        'kop-data-form-style',
+        get_stylesheet_directory_uri() . '/css/data-form.css',
+        array(),
+        filemtime(get_stylesheet_directory() . '/css/data-form.css')
+    );
+ 
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
+ 
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
         array(),
+        array(), // Dependencies can be added here, e.g., 'jquery'
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
 
+ 
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
 
+ 
+    // This makes PHP variables available to your JavaScript file
     wp_localize_script(
         'facility-form-script',
         'KOP_FACILITY_FORM_CONFIG',
