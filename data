@@ -2246,12 +2246,14 @@
             // Smart positioning: check if this field is in an array item
             const arrayItem = field.closest('.array-item');
             if (arrayItem) {
-                const existingNotes = Array.from(arrayItem.querySelectorAll(`.note-container[data-field-id="${fieldId}"]`));
+                // For array items, insert notes AFTER the entire array-item div, not inline with the field
+                const existingNotes = Array.from(arrayItem.parentElement.querySelectorAll(`.note-container[data-field-id="${fieldId}"]`));
                 if (existingNotes.length > 0) {
                     const lastNote = existingNotes[existingNotes.length - 1];
                     lastNote.insertAdjacentElement('afterend', noteContainer);
                 } else {
-                    field.insertAdjacentElement('afterend', noteContainer);
+                    // Insert after the array item, not after the field
+                    arrayItem.insertAdjacentElement('afterend', noteContainer);
                 }
             } else if (field.type === 'checkbox') {
                 const checkboxGroup = field.closest('.checkbox-group');
