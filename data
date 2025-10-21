@@ -1896,7 +1896,9 @@
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
+                        console.log('📝 Note button clicked for array item field:', field);
                         const renderedNote = addInlineNote(field, fieldGroup);
+                        console.log('📝 Note container created:', renderedNote);
                         if (renderedNote) {
                             const noteInput = renderedNote.querySelector('.note-input');
                             if (noteInput) {
@@ -2093,10 +2095,13 @@
 
         // Add inline note field (supports multiple notes)
         function addInlineNote(field, group) {
+            console.log('📝 addInlineNote called with field:', field, 'group:', group);
             const fieldId = getFieldIdentifier(field);
             const label = group.querySelector('label');
             const fieldName = label ? label.textContent.trim() : 'Field';
-            
+
+            console.log('📝 Creating note for field:', fieldName, 'ID:', fieldId);
+
             // Create a new note container
             const noteContainer = document.createElement('div');
             noteContainer.className = 'note-container';
@@ -2245,16 +2250,26 @@
             
             // Smart positioning: check if this field is in an array item
             const arrayItem = field.closest('.array-item');
+            console.log('📝 Array item found:', arrayItem);
+
             if (arrayItem) {
                 // For array items, insert notes AFTER the entire array-item div, not inline with the field
-                const existingNotes = Array.from(arrayItem.parentElement.querySelectorAll(`.note-container[data-field-id="${fieldId}"]`));
-                if (existingNotes.length > 0) {
-                    const lastNote = existingNotes[existingNotes.length - 1];
-                    lastNote.insertAdjacentElement('afterend', noteContainer);
-                } else {
-                    // Insert after the array item, not after the field
-                    arrayItem.insertAdjacentElement('afterend', noteContainer);
+                // Look for notes that immediately follow this specific array item
+                let insertPoint = arrayItem;
+                let nextSibling = arrayItem.nextElementSibling;
+
+                // Find the last consecutive note container for this field
+                while (nextSibling &&
+                       nextSibling.classList?.contains('note-container') &&
+                       nextSibling.dataset.fieldId === fieldId) {
+                    insertPoint = nextSibling;
+                    nextSibling = nextSibling.nextElementSibling;
                 }
+
+                console.log('📝 Inserting note after:', insertPoint);
+                // Insert after the last note (or after the array item if no notes exist)
+                insertPoint.insertAdjacentElement('afterend', noteContainer);
+                console.log('📝 Note inserted, container:', noteContainer);
             } else if (field.type === 'checkbox') {
                 const checkboxGroup = field.closest('.checkbox-group');
                 const insertionBase = checkboxGroup || field;
