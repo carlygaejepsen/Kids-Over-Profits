@@ -1,0 +1,25 @@
+<?php
+/**
+ * Database configuration - EXAMPLE
+ *
+ * DO NOT COMMIT THE ACTUAL CONFIG.PHP FILE WITH YOUR PASSWORD.
+ *
+ * To use, copy this file to `config.php` and fill in your actual credentials.
+ * The `config.php` file is ignored by Git to protect your secrets.
+ */
+
+// Database configuration
+$db_host = 'localhost';
+$db_name = 'kidsover_suggestions';
+$db_user = 'kidsover_dani';
+$db_pass = 'YOUR_DATABASE_PASSWORD_HERE';
+
+// Backwards-compatible variable names used by older scripts
+$host = $db_host;
+$dbname = $db_name;
+$username = $db_user;
+$password = $db_pass;
+
+// The rest of the file (PDO connection) remains the same in your actual config.php
+
+?>

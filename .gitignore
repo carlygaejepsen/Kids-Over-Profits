@@ -11,3 +11,6 @@ Thumbs.db
 
 # WordPress files
 wp-config-local.php
+
+# KOP API configuration
+api/config.php
