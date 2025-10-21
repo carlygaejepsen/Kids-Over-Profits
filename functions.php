@@ -1070,5 +1070,12 @@ class AnonymousDocPortal {
     }
 }
 
-// Initialize the portal
-$anonymous_portal = new AnonymousDocPortal();
+/**
+ * Initialize the Anonymous Document Portal after the theme is set up.
+ *
+ * This prevents issues with functions like wp_upload_dir() being called too early.
+ */
+function kop_initialize_anonymous_doc_portal() {
+    new AnonymousDocPortal();
+}
+add_action('after_setup_theme', 'kop_initialize_anonymous_doc_portal');
