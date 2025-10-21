@@ -2801,7 +2801,7 @@ function addNoteButtonsToArrayItems(group) {
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-                const renderedNote = addFieldNote(field, fieldGroup);
+                const renderedNote = createFieldNote(field, fieldGroup);
                 if (renderedNote) {
                     const noteInput = renderedNote.querySelector('.note-input');
                     if (noteInput) {
@@ -2930,8 +2930,8 @@ function addNoteButtons() {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
-            const result = addFieldNote(field, group);
-            console.log('✅ addFieldNote returned:', result);
+            const result = createFieldNote(field, group);
+            console.log('✅ createFieldNote returned:', result);
         });
 
         // Prevent button from interfering with input events
@@ -3000,8 +3000,8 @@ function addNoteButtons() {
 }
 
 // Add note field below the input field (supports multiple notes)
-function addFieldNote(field, group) {
-    console.log('🔵 addFieldNote START - field:', field, 'group:', group);
+function createFieldNote(field, group) {
+    console.log('🔵 createFieldNote START - field:', field, 'group:', group);
     const fieldId = getFieldIdentifier(field);
     console.log('🔵 fieldId:', fieldId);
     const label = group.querySelector('label');
@@ -3255,7 +3255,7 @@ function ensureCheckboxNote(checkbox) {
         return;
     }
 
-    const noteContainer = addFieldNote(checkbox, group);
+    const noteContainer = createFieldNote(checkbox, group);
     if (noteContainer) {
         const noteInput = noteContainer.querySelector('.note-input');
         if (noteInput) {
@@ -3304,7 +3304,7 @@ function initializeFieldNotes() {
             if (field) {
                 const group = field.closest('.form-group');
                 if (group && !group.querySelector('.note-container')) {
-                    addFieldNote(field, group);
+                    createFieldNote(field, group);
                 }
             }
         });
