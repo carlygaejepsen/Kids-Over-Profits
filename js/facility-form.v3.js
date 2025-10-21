@@ -3363,7 +3363,7 @@ function syncFieldNotes(facilityData) {
 }
 
 // Function to get current field notes (for external scripts)
-function getFieldNotes() {
+function getCurrentFieldNotesSnapshot() {
     return getCurrentFacilityNotes();
 }
 
@@ -3384,7 +3384,7 @@ window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
-window.getFieldNotes = getFieldNotes;
+window.getFieldNotes = getCurrentFieldNotesSnapshot;
 window.addNoteButtons = addNoteButtons;
 
 // Initialize on DOMContentLoaded
