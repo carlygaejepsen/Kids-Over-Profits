@@ -468,7 +468,7 @@ function saveToLocalStorage(key, value) {
 function addCustomValue(category, value) {
     const trimmedValue = value?.trim();
     if (!trimmedValue) return false;
-    
+
     let array;
     let key;
     
@@ -539,8 +539,43 @@ function addCustomValue(category, value) {
         invalidateAggregatedData(category);
         return true;
     }
-    
+
     return false;
+}
+
+function attachCustomValueRecorder(input, category) {
+    if (!input || !category) {
+        return;
+    }
+
+    const recorderKey = 'customValueRecorder';
+    if (input.dataset && input.dataset[recorderKey] === category) {
+        return;
+    }
+
+    const recordValue = () => {
+        const trimmed = input.value?.trim();
+        if (!trimmed) {
+            return;
+        }
+
+        if (input.dataset && input.dataset.customValueRecorderLast === trimmed) {
+            return;
+        }
+
+        addCustomValue(category, trimmed);
+
+        if (input.dataset) {
+            input.dataset.customValueRecorderLast = trimmed;
+        }
+    };
+
+    input.addEventListener('change', recordValue);
+    input.addEventListener('blur', recordValue);
+
+    if (input.dataset) {
+        input.dataset[recorderKey] = category;
+    }
 }
 
 // ============================================
@@ -1915,15 +1950,7 @@ function updateArrayObjectItemValue(path, index, field, value) {
             array[index] = { role: '', name: '' };
         }
         array[index][field] = value;
-        
-        // Save custom human names and roles
-        if (field === 'name' && value.trim()) {
-            addCustomValue('human', value.trim());
-        }
-        if (field === 'role' && value.trim()) {
-            addCustomValue('role', value.trim());
-        }
-        
+
         updateJSON();
         autoSave();
     }
@@ -2030,6 +2057,7 @@ function renderArray(container, path, items) {
             roleInput.value = (item && item.role) ? item.role : '';
             roleInput.className = 'array-input array-input-role';
             roleInput.oninput = () => updateArrayObjectItemValue(path, index, 'role', roleInput.value);
+            attachCustomValueRecorder(roleInput, 'role');
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
                     createAutocomplete(roleInput, getAllStaffRoles, 'role');
@@ -2044,6 +2072,7 @@ function renderArray(container, path, items) {
             nameInput.value = (item && item.name) ? item.name : '';
             nameInput.className = 'array-input array-input-name';
             nameInput.oninput = () => updateArrayObjectItemValue(path, index, 'name', nameInput.value);
+            attachCustomValueRecorder(nameInput, 'human');
             itemDiv.appendChild(nameInput);
             setTimeout(() => {
                 createAutocomplete(nameInput, getAllHumanNames, 'human');
