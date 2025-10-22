@@ -2548,12 +2548,12 @@ function refreshSavedProjectPanels() {
             return timeB.localeCompare(timeA);
         });
 
-    container.innerHTML = projectNames.map(name => {
-        const project = window.projects[name];
-        const date = new Date(project.timestamp || 0);
-        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const facilityCount = project.data?.facilities?.length || 0;
-        const adminButtons = !IS_SUGGESTION_MODE ? `
+        return sortedNames.map(name => {
+            const project = window.projects[name];
+            const date = new Date(project.timestamp || 0);
+            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const facilityCount = project.data?.facilities?.length || 0;
+            const adminButtons = !IS_SUGGESTION_MODE ? `
                         <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
                         <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
         ` : '';
@@ -2566,7 +2566,18 @@ function refreshSavedProjectPanels() {
                         ${adminButtons}
                     </div>
                 </div>`;
-    }).join('');
+        }).join('');
+    };
+
+    if (companyContainer) {
+        const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
+    }
+
+    if (locationContainer) {
+        const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+        locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
+    }
 
     // Also populate the select dropdowns
     populateProjectSelectDropdowns();
