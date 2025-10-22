@@ -1443,20 +1443,14 @@
 
         function initializeSectionToggles() {
             const sections = document.querySelectorAll('.section');
-            const pointerEventName = (typeof window !== 'undefined' && window.PointerEvent)
-                ? 'pointerdown'
-                : (typeof window !== 'undefined' && 'ontouchstart' in window ? 'touchstart' : null);
+            const supportsPointer = typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined';
 
             const isTouchLikePointer = (event) => {
-                if (!event) {
+                if (!event || !event.pointerType) {
                     return false;
                 }
 
-                if (event.pointerType) {
-                    return event.pointerType === 'touch' || event.pointerType === 'pen';
-                }
-
-                return event.type === 'touchstart';
+                return event.pointerType === 'touch' || event.pointerType === 'pen';
             };
 
             sections.forEach(section => {
@@ -1508,8 +1502,8 @@
                     handleToggle(event);
                 });
 
-                if (pointerEventName) {
-                    toggle.addEventListener(pointerEventName, handlePointerToggle, { passive: false });
+                if (supportsPointer) {
+                    toggle.addEventListener('pointerdown', handlePointerToggle, { passive: false });
                 }
 
                 toggle.addEventListener('keydown', (event) => {
@@ -1541,8 +1535,8 @@
                     handleToggle(event);
                 });
 
-                if (pointerEventName) {
-                    header.addEventListener(pointerEventName, headerPointerHandler, { passive: false });
+                if (supportsPointer) {
+                    header.addEventListener('pointerdown', headerPointerHandler, { passive: false });
                 }
             });
         }
