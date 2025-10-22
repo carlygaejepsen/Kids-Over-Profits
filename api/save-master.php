@@ -106,15 +106,15 @@ if ($action === 'save') {
     $jsonData = json_encode($data);
 
     // SQL to insert or update the project data based on projectName
-    // The identifier column is `unique_name` and the data column is `jsonData`.
-    $sql = "INSERT INTO facilities_master (unique_name, jsonData, last_updated) 
-            VALUES (:unique_name, :jsonData, NOW()) 
-            ON DUPLICATE KEY UPDATE jsonData = :jsonData, last_updated = NOW()";
+    // The identifier column is `unique_name` and the data column is `json_data`.
+    $sql = "INSERT INTO facilities_master (unique_name, json_data, last_updated) 
+            VALUES (:unique_name, :json_data, NOW()) 
+            ON DUPLICATE KEY UPDATE json_data = :json_data, last_updated = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':unique_name', $projectName);
-        $stmt->bindValue(':jsonData', $jsonData);
+        $stmt->bindValue(':json_data', $jsonData);
         
         $stmt->execute();
         echo json_encode([
