@@ -48,16 +48,7 @@
                 <div class="project-management" id="project-panel-inner">
                     <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
 
-                    <div class="form-group">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn" id="save-project-btn">Save Project</button>
-                            <button class="btn" id="load-project-btn">Load Project</button>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
+
                         <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
                     </div>
 
@@ -66,24 +57,15 @@
                         <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                             <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
                         </div>
-                    </div>
-
                     <div class="form-group">
-                        <label for="file-upload">Import Data Files</label>
-                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Upload JSON or CSV files. JSON files will load directly into the form.
-                        </p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="json-paste">Or Paste JSON Data</label>
-                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button class="btn" id="import-json-btn">Import JSON</button>
-                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                        <label>Project Management</label>
+                            <button class="btn" id="new-project-btn">New Project</button>
+                            <button class="btn" id="export-all-btn">Export All Projects</button>
+                            <button class="btn" id="generate-report-btn">Generate Report</button>
                         </div>
                     </div>
+
+                   
 
                     <div id="upload-status" style="display: none;"></div>
                 </div>
@@ -824,6 +806,22 @@
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
+ <div class="form-group">
+                        <label for="file-upload">Import Data Files</label>
+                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Upload JSON or CSV files. JSON files will load directly into the form.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="json-paste">Or Paste JSON Data</label>
+                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" id="import-json-btn">Import JSON</button>
+                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                        </div>
+                    </div>
                 <div class="json-output">
                     <div class="output-header">
                         <h3>Generated JSON</h3>
