@@ -822,48 +822,114 @@ function createAutocomplete(input, getDataFunction, category) {
 
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
-    
+    const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
+        ? 'pointerdown'
+        : 'mousedown';
+
+    function commitSelection(value, options = {}) {
+        const { shouldRefocus = false } = options;
+        if (typeof value !== 'string') {
+            return;
+        }
+
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        hideDropdown();
+        currentFocus = -1;
+
+        if (shouldRefocus) {
+            // Use timeout to ensure dropdown has fully closed before refocusing
+            setTimeout(() => input.focus(), 0);
+        }
+    }
+
+    function renderSuggestionContent(target, suggestion, query) {
+        const suggestionText = typeof suggestion === 'string'
+            ? suggestion
+            : (suggestion === null || suggestion === undefined ? '' : String(suggestion));
+        const queryText = typeof query === 'string'
+            ? query
+            : (query === null || query === undefined ? '' : String(query));
+        const normalizedQuery = queryText.toLowerCase();
+        const normalizedSuggestion = suggestionText.toLowerCase();
+        const matchIndex = normalizedSuggestion.indexOf(normalizedQuery);
+
+        target.textContent = '';
+
+        if (!normalizedQuery || matchIndex === -1) {
+            target.textContent = suggestionText;
+            return;
+        }
+
+        const before = suggestionText.substring(0, matchIndex);
+        const match = suggestionText.substring(matchIndex, matchIndex + queryText.length);
+        const after = suggestionText.substring(matchIndex + queryText.length);
+
+        if (before) {
+            target.appendChild(document.createTextNode(before));
+        }
+
+        const strong = document.createElement('strong');
+        strong.textContent = match;
+        target.appendChild(strong);
+
+        if (after) {
+            target.appendChild(document.createTextNode(after));
+        }
+    }
+
     function showDropdown(items) {
         dropdown.innerHTML = '';
         dropdown.style.display = 'block';
-        
+        dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
+
         if (items.length === 0) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'autocomplete-item';
             emptyDiv.textContent = 'No matches found';
             emptyDiv.style.color = '#9ca3af';
+            emptyDiv.dataset.placeholder = 'true';
             dropdown.appendChild(emptyDiv);
             return;
         }
-        
-        items.forEach((item, index) => {
+
+        items.forEach((item) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
-            
-            const inputValue = input.value.toLowerCase();
-            const itemLower = item.toLowerCase();
-            const startIdx = itemLower.indexOf(inputValue);
-            
-            if (startIdx >= 0) {
-                const before = item.substring(0, startIdx);
-                const match = item.substring(startIdx, startIdx + input.value.length);
-                const after = item.substring(startIdx + input.value.length);
-                div.innerHTML = `${escapeHtmlForAttr(before)}<strong>${escapeHtmlForAttr(match)}</strong>${escapeHtmlForAttr(after)}`;
-            } else {
-                div.textContent = item;
-            }
-            
+            const suggestionText = typeof item === 'string'
+                ? item
+                : (item === null || item === undefined ? '' : String(item));
+            div.dataset.value = suggestionText;
+
+            renderSuggestionContent(div, suggestionText, input.value);
+
+            const handleEarlySelection = (event) => {
+                if (!div.dataset.value) {
+                    return;
+                }
+                if (event && typeof event.preventDefault === 'function') {
+                    event.preventDefault();
+                }
+                if (typeof event.button === 'number' && event.button !== 0) {
+                    return;
+                }
+                commitSelection(div.dataset.value);
+            };
+
+            div.addEventListener(earlySelectionEvent, handleEarlySelection);
+
             div.addEventListener('click', () => {
-                input.value = item;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                dropdown.style.display = 'none';
-                currentFocus = -1;
+                if (!div.dataset.value) {
+                    return;
+                }
+                commitSelection(div.dataset.value);
             });
-            
+
             dropdown.appendChild(div);
         });
     }
-    
+
     function hideDropdown() {
         dropdown.style.display = 'none';
         currentFocus = -1;
@@ -955,15 +1021,26 @@ function createAutocomplete(input, getDataFunction, category) {
             currentFocus--;
             if (currentFocus < 0) currentFocus = items.length - 1;
             setActive(items);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (currentFocus > -1 && items[currentFocus]) {
-                items[currentFocus].click();
-            } else {
-                // Add as new custom value
-                if (input.value.trim() && category) {
-                    addCustomValue(category, input.value.trim());
-                }
+        } else if (e.key === 'Enter' || e.key === 'Tab') {
+            const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
+            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
+            const isTab = e.key === 'Tab';
+
+            if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
+                e.preventDefault();
+                commitSelection(items[currentFocus].dataset.value, { shouldRefocus: isTab });
+            } else if (hasVisibleOptions) {
+                e.preventDefault();
+                commitSelection(actionableItems[0].dataset.value, { shouldRefocus: isTab });
+            } else if (input.value.trim() && category) {
+                e.preventDefault();
+                const trimmedValue = input.value.trim();
+                addCustomValue(category, trimmedValue);
+                commitSelection(trimmedValue, { shouldRefocus: isTab });
+            } else if (isTab && dropdown.style.display !== 'none') {
+                e.preventDefault();
+                hideDropdown();
+                setTimeout(() => input.focus(), 0);
             }
         } else if (e.key === 'Escape') {
             hideDropdown();
