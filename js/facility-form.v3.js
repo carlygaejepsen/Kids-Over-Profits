@@ -2414,7 +2414,7 @@ function populateProjectSelectDropdowns() {
     // Populate company/operator select
     const projectSelect = document.getElementById('project-select');
     console.log('🔧 projectSelect element:', projectSelect);
-    if (projectSelect) {
+    if (projectSelect && projectSelect.tagName === 'SELECT') {
         const companyProjects = projectNames.filter(name => {
             const lowerName = name.toLowerCase().trim();
             return !usStates.includes(lowerName) && !countries.includes(lowerName);
@@ -2437,7 +2437,7 @@ function populateProjectSelectDropdowns() {
             }
         };
     } else {
-        console.error('🔧 project-select element NOT FOUND!');
+        console.warn('🔧 project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
     }
 
     // Populate location select
@@ -2460,6 +2460,8 @@ function populateProjectSelectDropdowns() {
                 loadProject(e.target.value);
             }
         };
+    } else {
+        console.warn('🔧 location-project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
     }
 }
 
