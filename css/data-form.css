@@ -341,8 +341,10 @@ body {
 
 .section-content {
     padding: 20px;
-    background: #AEE0ED; /* Powder Blue */
-    display: none;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    border: 2px solid #B2E102; /* Chartreuse */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
 }
 
 .section.expanded .section-content {
