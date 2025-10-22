@@ -822,28 +822,52 @@ function createAutocomplete(input, getDataFunction, category) {
 
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
-    
+    const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
+        ? 'pointerdown'
+        : 'mousedown';
+
+    function commitSelection(value, options = {}) {
+        const { shouldRefocus = false } = options;
+        if (typeof value !== 'string') {
+            return;
+        }
+
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        hideDropdown();
+        currentFocus = -1;
+
+        if (shouldRefocus) {
+            // Use timeout to ensure dropdown has fully closed before refocusing
+            setTimeout(() => input.focus(), 0);
+        }
+    }
+
     function showDropdown(items) {
         dropdown.innerHTML = '';
         dropdown.style.display = 'block';
-        
+        dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
+
         if (items.length === 0) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'autocomplete-item';
             emptyDiv.textContent = 'No matches found';
             emptyDiv.style.color = '#9ca3af';
+            emptyDiv.dataset.placeholder = 'true';
             dropdown.appendChild(emptyDiv);
             return;
         }
-        
+
         items.forEach((item, index) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
-            
+            div.dataset.value = item;
+
             const inputValue = input.value.toLowerCase();
             const itemLower = item.toLowerCase();
             const startIdx = itemLower.indexOf(inputValue);
-            
+
             if (startIdx >= 0) {
                 const before = item.substring(0, startIdx);
                 const match = item.substring(startIdx, startIdx + input.value.length);
@@ -853,17 +877,23 @@ function createAutocomplete(input, getDataFunction, category) {
                 div.textContent = item;
             }
             
+            const handleEarlySelection = (event) => {
+                if (event && typeof event.preventDefault === 'function') {
+                    event.preventDefault();
+                }
+                commitSelection(item);
+            };
+
+            div.addEventListener(earlySelectionEvent, handleEarlySelection);
+
             div.addEventListener('click', () => {
-                input.value = item;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                dropdown.style.display = 'none';
-                currentFocus = -1;
+                commitSelection(item);
             });
-            
+
             dropdown.appendChild(div);
         });
     }
-    
+
     function hideDropdown() {
         dropdown.style.display = 'none';
         currentFocus = -1;
@@ -955,15 +985,26 @@ function createAutocomplete(input, getDataFunction, category) {
             currentFocus--;
             if (currentFocus < 0) currentFocus = items.length - 1;
             setActive(items);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (currentFocus > -1 && items[currentFocus]) {
-                items[currentFocus].click();
-            } else {
-                // Add as new custom value
-                if (input.value.trim() && category) {
-                    addCustomValue(category, input.value.trim());
-                }
+        } else if (e.key === 'Enter' || e.key === 'Tab') {
+            const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
+            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
+            const isTab = e.key === 'Tab';
+
+            if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
+                e.preventDefault();
+                commitSelection(items[currentFocus].dataset.value, { shouldRefocus: isTab });
+            } else if (hasVisibleOptions) {
+                e.preventDefault();
+                commitSelection(actionableItems[0].dataset.value, { shouldRefocus: isTab });
+            } else if (input.value.trim() && category) {
+                e.preventDefault();
+                const trimmedValue = input.value.trim();
+                addCustomValue(category, trimmedValue);
+                commitSelection(trimmedValue, { shouldRefocus: isTab });
+            } else if (isTab && dropdown.style.display !== 'none') {
+                e.preventDefault();
+                hideDropdown();
+                setTimeout(() => input.focus(), 0);
             }
         } else if (e.key === 'Escape') {
             hideDropdown();
