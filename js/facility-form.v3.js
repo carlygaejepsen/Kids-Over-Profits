@@ -128,6 +128,66 @@ const FALLBACK_PROJECTS_URL = FALLBACK_PROJECTS_URL_CANDIDATES.length
     ? FALLBACK_PROJECTS_URL_CANDIDATES[0]
     : null;
 
+function isTruthyFlag(value) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (!normalized) {
+            return false;
+        }
+
+        return ['1', 'true', 'yes', 'on', 'enable', 'enabled'].includes(normalized);
+    }
+
+    return false;
+}
+
+const DEBUG_LOGGING_ENABLED = (() => {
+    if (isTruthyFlag(FACILITY_FORM_CONFIG.debugLogging)) {
+        return true;
+    }
+
+    if (isTruthyFlag(FACILITY_FORM_CONFIG.debug)) {
+        return true;
+    }
+
+    if (typeof window !== 'undefined') {
+        if (isTruthyFlag(window.KOP_FACILITY_FORM_DEBUG)) {
+            return true;
+        }
+
+        try {
+            if (window.localStorage && isTruthyFlag(window.localStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                return true;
+            }
+
+            if (window.sessionStorage && isTruthyFlag(window.sessionStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                return true;
+            }
+        } catch (storageFlagError) {
+            // Ignore storage errors caused by privacy settings
+        }
+    }
+
+    return false;
+})();
+
+function debugLog(...args) {
+    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
+        return;
+    }
+
+    const logFn = typeof console.debug === 'function' ? console.debug.bind(console) : console.log.bind(console);
+    try {
+        logFn(...args);
+    } catch (debugLogError) {
+        // Never let debug logging break runtime execution
+    }
+}
+
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
         return;
@@ -139,21 +199,21 @@ function logActiveFacilityFormConfigOnce() {
 
     window.__KOP_FACILITY_FORM_CONFIG_LOGGED = true;
 
-    if (typeof console === 'undefined' || typeof console.info !== 'function') {
+    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
         return;
     }
 
     try {
-        console.info('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
+        debugLog('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
         if (normalizedApiBases.length) {
-            console.info('[KOP Facility Form] API base candidates:', normalizedApiBases);
+            debugLog('[KOP Facility Form] API base candidates:', normalizedApiBases);
         }
-        console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
-        console.info('[KOP Facility Form] Active form mode:', FORM_MODE);
+        debugLog('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
+        debugLog('[KOP Facility Form] Active form mode:', FORM_MODE);
         if (FALLBACK_PROJECTS_URL_CANDIDATES.length) {
-            console.info('[KOP Facility Form] Fallback dataset URL candidates:', FALLBACK_PROJECTS_URL_CANDIDATES);
+            debugLog('[KOP Facility Form] Fallback dataset URL candidates:', FALLBACK_PROJECTS_URL_CANDIDATES);
         } else {
-            console.info('[KOP Facility Form] No fallback dataset configured');
+            debugLog('[KOP Facility Form] No fallback dataset configured');
         }
     } catch (logError) {
         // Swallow logging errors to avoid breaking initialization if console is locked down
@@ -733,7 +793,7 @@ function getAllOperatingPeriods() {
 function createAutocomplete(input, getDataFunction, category) {
     // FIX #2: Prevent double-initialization
     if (input.dataset.autocompleteInit === 'true') {
-        console.log('✅ Autocomplete already initialized for', input.id || input.name);
+        debugLog('✅ Autocomplete already initialized for', input.id || input.name);
         return;
     }
 
@@ -762,28 +822,52 @@ function createAutocomplete(input, getDataFunction, category) {
 
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
-    
+    const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
+        ? 'pointerdown'
+        : 'mousedown';
+
+    function commitSelection(value, options = {}) {
+        const { shouldRefocus = false } = options;
+        if (typeof value !== 'string') {
+            return;
+        }
+
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        hideDropdown();
+        currentFocus = -1;
+
+        if (shouldRefocus) {
+            // Use timeout to ensure dropdown has fully closed before refocusing
+            setTimeout(() => input.focus(), 0);
+        }
+    }
+
     function showDropdown(items) {
         dropdown.innerHTML = '';
         dropdown.style.display = 'block';
-        
+        dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
+
         if (items.length === 0) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'autocomplete-item';
             emptyDiv.textContent = 'No matches found';
             emptyDiv.style.color = '#9ca3af';
+            emptyDiv.dataset.placeholder = 'true';
             dropdown.appendChild(emptyDiv);
             return;
         }
-        
+
         items.forEach((item, index) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
-            
+            div.dataset.value = item;
+
             const inputValue = input.value.toLowerCase();
             const itemLower = item.toLowerCase();
             const startIdx = itemLower.indexOf(inputValue);
-            
+
             if (startIdx >= 0) {
                 const before = item.substring(0, startIdx);
                 const match = item.substring(startIdx, startIdx + input.value.length);
@@ -793,17 +877,23 @@ function createAutocomplete(input, getDataFunction, category) {
                 div.textContent = item;
             }
             
+            const handleEarlySelection = (event) => {
+                if (event && typeof event.preventDefault === 'function') {
+                    event.preventDefault();
+                }
+                commitSelection(item);
+            };
+
+            div.addEventListener(earlySelectionEvent, handleEarlySelection);
+
             div.addEventListener('click', () => {
-                input.value = item;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                dropdown.style.display = 'none';
-                currentFocus = -1;
+                commitSelection(item);
             });
-            
+
             dropdown.appendChild(div);
         });
     }
-    
+
     function hideDropdown() {
         dropdown.style.display = 'none';
         currentFocus = -1;
@@ -857,7 +947,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 if (json && json.success && Array.isArray(json.values)) {
                     const merged = Array.from(new Set([...localFiltered, ...json.values]));
                     showDropdown(merged);
-                    console.log(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
+                    debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
                     console.warn('⚠️ Autocomplete API returned unexpected format:', json);
                 }
@@ -895,15 +985,26 @@ function createAutocomplete(input, getDataFunction, category) {
             currentFocus--;
             if (currentFocus < 0) currentFocus = items.length - 1;
             setActive(items);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (currentFocus > -1 && items[currentFocus]) {
-                items[currentFocus].click();
-            } else {
-                // Add as new custom value
-                if (input.value.trim() && category) {
-                    addCustomValue(category, input.value.trim());
-                }
+        } else if (e.key === 'Enter' || e.key === 'Tab') {
+            const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
+            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
+            const isTab = e.key === 'Tab';
+
+            if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
+                e.preventDefault();
+                commitSelection(items[currentFocus].dataset.value, { shouldRefocus: isTab });
+            } else if (hasVisibleOptions) {
+                e.preventDefault();
+                commitSelection(actionableItems[0].dataset.value, { shouldRefocus: isTab });
+            } else if (input.value.trim() && category) {
+                e.preventDefault();
+                const trimmedValue = input.value.trim();
+                addCustomValue(category, trimmedValue);
+                commitSelection(trimmedValue, { shouldRefocus: isTab });
+            } else if (isTab && dropdown.style.display !== 'none') {
+                e.preventDefault();
+                hideDropdown();
+                setTimeout(() => input.focus(), 0);
             }
         } else if (e.key === 'Escape') {
             hideDropdown();
@@ -923,7 +1024,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
     // FIX #2: Mark as initialized to prevent double-initialization
     input.dataset.autocompleteInit = 'true';
-    console.log('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
+    debugLog('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
 }
 
 function initializeAutocompleteFields() {
@@ -1312,20 +1413,20 @@ async function loadAllProjectsFromCloud() {
             saveToLocalStorage('cloudProjects', projects);
 
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
-            console.log('Loaded projects from cloud:', Object.keys(projects));
+            debugLog('Loaded projects from cloud:', Object.keys(projects));
 
             // Force re-initialize autocomplete after cloud data loads
             setTimeout(() => {
-                console.log('Re-initializing autocomplete with cloud data...');
+                debugLog('Re-initializing autocomplete with cloud data...');
                 // Clear autocomplete init flags to allow re-initialization
                 document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
                     delete field.dataset.autocompleteInit;
                 });
                 initializeAutocompleteFields();
 
-                // Also re-populate the project select dropdowns
-                console.log('Re-populating project select dropdowns...');
-                populateProjectSelectDropdowns();
+                // Refresh saved project panels now that projects are available
+                debugLog('Refreshing saved project panels...');
+                refreshSavedProjectPanels();
             }, 500);
 
             return projects;
@@ -1358,7 +1459,7 @@ async function loadAllProjectsFromCloud() {
             invalidateAggregatedData();
             saveToLocalStorage('cloudProjects', projects);
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from fallback dataset`, 'success');
-            console.info('Loaded projects from fallback dataset:', fallbackLoadResult.url);
+            debugLog('Loaded projects from fallback dataset:', fallbackLoadResult.url);
             return projects;
         }
 
@@ -1421,7 +1522,7 @@ async function saveProjectToCloud(projectName) {
         if (!saved) {
             showUploadStatus('❌ Unable to save draft locally. Please try again.', 'error');
         } else {
-            console.info('Suggestion mode active — skipping remote save for project "%s".', projectName);
+            debugLog('Suggestion mode active — skipping remote save for project "%s".', projectName);
         }
 
         return false;
@@ -1429,10 +1530,10 @@ async function saveProjectToCloud(projectName) {
 
     try {
         showUploadStatus(`💾 Saving "${projectName}" to cloud...`, 'info');
-        console.log('=== SAVE PROJECT START ===');
-        console.log('Project name:', projectName);
-        console.log('Facility count:', window.formData.facilities?.length || 0);
-        console.log('Data size:', JSON.stringify(window.formData).length, 'characters');
+        debugLog('=== SAVE PROJECT START ===');
+        debugLog('Project name:', projectName);
+        debugLog('Facility count:', window.formData.facilities?.length || 0);
+        debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
 
         const projectData = {
             name: projectName,
@@ -1448,8 +1549,8 @@ async function saveProjectToCloud(projectName) {
         };
 
         const payloadSize = JSON.stringify(payload).length;
-        console.log('Payload size:', payloadSize, 'characters');
-        console.log('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
+        debugLog('Payload size:', payloadSize, 'characters');
+        debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
 
         const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
             method: 'POST',
@@ -1457,8 +1558,8 @@ async function saveProjectToCloud(projectName) {
             body: JSON.stringify(payload)
         });
 
-        console.log('Response status:', response.status, response.statusText);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        debugLog('Response status:', response.status, response.statusText);
+        debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -1475,7 +1576,7 @@ async function saveProjectToCloud(projectName) {
         }
 
         const result = await response.json();
-        console.log('Save result:', result);
+        debugLog('Save result:', result);
 
         if (!result.success) {
             throw new Error(result.error || result.message || 'Unknown server error');
@@ -1490,8 +1591,8 @@ async function saveProjectToCloud(projectName) {
         // Backup to localStorage
         persistProjectLocally(projectName);
 
-        console.log('✅ Save successful!');
-        console.log('=== SAVE PROJECT END ===');
+        debugLog('✅ Save successful!');
+        debugLog('=== SAVE PROJECT END ===');
         showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
 
         // Update UI
@@ -1513,7 +1614,7 @@ async function saveProjectToCloud(projectName) {
         });
 
         if (fallbackSaved) {
-            console.log('✅ Saved to localStorage backup');
+            debugLog('✅ Saved to localStorage backup');
         } else {
             console.error('❌ localStorage backup also failed.');
             showUploadStatus('❌ Save completely failed - check console for details', 'error');
@@ -1533,7 +1634,7 @@ function autoSave() {
 
             const saved = persistProjectLocally(window.currentProjectName);
             if (saved) {
-                console.log('Suggestion draft saved locally for', window.currentProjectName);
+                debugLog('Suggestion draft saved locally for', window.currentProjectName);
             }
         }, 2000);
         return;
@@ -1586,8 +1687,8 @@ function createNewProjectData() {
 }
 
 function loadProject(projectName) {
-    console.log('🔄 loadProject called with:', projectName);
-    console.log('📦 Available projects:', Object.keys(window.projects || {}));
+    debugLog('🔄 loadProject called with:', projectName);
+    debugLog('📦 Available projects:', Object.keys(window.projects || {}));
 
     if (!window.projects[projectName]) {
         console.error('❌ Project not found:', projectName);
@@ -1613,7 +1714,7 @@ function loadProject(projectName) {
     }
 
     if (typeof window.updateAllUI === 'function') {
-        console.log('🔄 Calling updateAllUI...');
+        debugLog('🔄 Calling updateAllUI...');
         window.updateAllUI();
     } else {
         console.error('❌ updateAllUI not available!');
@@ -2239,7 +2340,7 @@ function cloneFacility() {
     );
 
     if (!selection || selection.trim() === '') {
-        console.log('Clone cancelled by user');
+        debugLog('Clone cancelled by user');
         return;
     }
 
@@ -2265,14 +2366,14 @@ function cloneFacility() {
             currentFacilityIndex: 0,
             timestamp: new Date().toISOString()
         };
-        console.log(`✅ Created new project "${targetProjectName}" with cloned facility`);
+        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility`);
     } else {
         // Add clone to existing project
         if (!window.projects[targetProjectName].data.facilities) {
             window.projects[targetProjectName].data.facilities = [];
         }
         window.projects[targetProjectName].data.facilities.push(clone);
-        console.log(`✅ Added cloned facility to existing project "${targetProjectName}"`);
+        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}"`);
     }
 
     // Save the updated projects to localStorage and cloud
@@ -2350,18 +2451,58 @@ function nextFacility() {
     }
 }
 
+const US_STATE_NAMES = [
+    'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+    'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+    'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
+    'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
+    'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
+];
+
+const COUNTRY_NAMES = [
+    'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
+    'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
+    'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
+];
+
+const US_STATE_SET = new Set(US_STATE_NAMES);
+const COUNTRY_SET = new Set(COUNTRY_NAMES);
+
+function determineProjectCategory(name = '') {
+    const normalized = name.toLowerCase().trim();
+    if (US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized)) {
+        return 'locations';
+    }
+    return 'companies';
+}
+
 function renderSavedProjectsList() {
-    const container = document.getElementById('saved-projects-list');
-    if (!container) return;
+    refreshSavedProjectPanels();
+}
 
-    const projectNames = Object.keys(window.projects);
+function refreshSavedProjectPanels() {
+    const projects = window.projects || {};
+    const projectNames = Object.keys(projects);
+    const companyContainer = document.getElementById('company-saved-projects-list');
+    const locationContainer = document.getElementById('location-saved-projects-list');
 
-    if (projectNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
+    if (!companyContainer && !locationContainer) {
         return;
     }
 
-    projectNames.sort((a, b) => (window.projects[b].timestamp || '').localeCompare(window.projects[a].timestamp || ''));
+    const buildProjectCards = (names, emptyMessage) => {
+        if (!names.length) {
+            return `<div class="projects-empty">${emptyMessage}</div>`;
+        }
+
+        const sortedNames = names.slice().sort((a, b) => {
+            const timeA = projects[a]?.timestamp || '';
+            const timeB = projects[b]?.timestamp || '';
+            if (timeA === timeB) {
+                return a.localeCompare(b);
+            }
+            return timeB.localeCompare(timeA);
+        });
 
     container.innerHTML = projectNames.map(name => {
         const project = window.projects[name];
@@ -2373,9 +2514,9 @@ function renderSavedProjectsList() {
                         <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
         ` : '';
 
-        return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
+            return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
-                    <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
+                    <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
                         ${adminButtons}
@@ -2462,6 +2603,17 @@ function populateProjectSelectDropdowns() {
         };
     } else {
         console.warn('🔧 location-project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
+        }).join('');
+    };
+
+    if (companyContainer) {
+        const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
+    }
+
+    if (locationContainer) {
+        const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+        locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
     }
 }
 
@@ -2761,7 +2913,7 @@ function attachButtonListeners() {
 // INITIALIZATION
 // ============================================
 async function initializeForm() {
-    console.log('Initializing consolidated form with cloud-first storage...');
+    debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
     // Load custom data from localStorage (backup only)
@@ -2798,14 +2950,14 @@ async function initializeForm() {
     // Initialize field notes functionality
     initializeFieldNotes();
 
-    console.log('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
+    debugLog('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
 }
 
 // ============================================
 // FIELD NOTES FUNCTIONALITY
 // ============================================
 
-console.log('Field notes module loading...');
+debugLog('Field notes module loading...');
 
 // Store for field notes - facility-specific
 let allFacilityNotes = {}; // Object to store notes for all facilities
@@ -2972,7 +3124,9 @@ function addNoteButtonsToArrayItems(group) {
 
 // Add note button to form groups
 function addNoteButtons() {
+    debugLog('addNoteButtons function called');
     const formGroups = document.querySelectorAll('.form-group');
+    debugLog('Found', formGroups.length, 'form groups');
 
     formGroups.forEach(group => {
         // Skip if button already exists
@@ -3074,12 +3228,12 @@ function addNoteButtons() {
 
         // Add click handler
         noteBtn.addEventListener('click', (e) => {
-            console.log('✅ Note button clicked! Field:', field, 'Group:', group);
+            debugLog('✅ Note button clicked! Field:', field, 'Group:', group);
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
             const result = createFieldNote(field, group);
-            console.log('✅ createFieldNote returned:', result);
+            debugLog('✅ createFieldNote returned:', result);
         });
 
         // Prevent button from interfering with input events
@@ -3097,7 +3251,7 @@ function addNoteButtons() {
         const arrayItem = field.closest('.array-item');
         if (arrayItem) {
             // For array items, add the button directly to the array-item flex container
-            console.log('Adding button to array item for field:', field);
+            debugLog('Adding button to array item for field:', field);
             arrayItem.appendChild(noteBtn);
         } else {
             // Find the appropriate inner container (autocomplete-wrapper)
@@ -3162,12 +3316,12 @@ function addNoteButtons() {
 
 // Add note field below the input field (supports multiple notes)
 function createFieldNote(field, group) {
-    console.log('🔵 createFieldNote START - field:', field, 'group:', group);
+    debugLog('🔵 createFieldNote START - field:', field, 'group:', group);
     const fieldId = getFieldIdentifier(field);
-    console.log('🔵 fieldId:', fieldId);
+    debugLog('🔵 fieldId:', fieldId);
     const label = group.querySelector('label');
     const fieldName = label ? label.textContent.trim() : 'Field';
-    console.log('🔵 fieldName:', fieldName);
+    debugLog('🔵 fieldName:', fieldName);
 
     // Create a new note container
     const noteContainer = document.createElement('div');
@@ -3484,7 +3638,7 @@ function initializeFieldNotes() {
         subtree: true
     });
 
-    console.log('Field notes functionality initialized');
+    debugLog('Field notes functionality initialized');
 }
 
 // Function to sync notes when facility data changes (called by external scripts)
@@ -3543,7 +3697,7 @@ window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
-window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
+window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
@@ -3560,11 +3714,11 @@ if (document.readyState === 'loading') {
 // Fallback: sometimes remote resources or slow loads cause UI bits to render incorrectly.
 // Re-run lightweight initialization checks on window.load to recover from intermittent failures.
 window.addEventListener('load', () => {
-    console.log('facility-form.v3.js: window.load fired — verifying form initialization');
+    debugLog('facility-form.v3.js: window.load fired — verifying form initialization');
 
     // ONLY run once - use flag to prevent multiple calls (FIX #1: Prevents rendering loops)
     if (window._uiInitializedOnLoad) {
-        console.log('✅ UI already initialized on load, skipping duplicate initialization');
+        debugLog('✅ UI already initialized on load, skipping duplicate initialization');
         return;
     }
     window._uiInitializedOnLoad = true;
@@ -3573,7 +3727,7 @@ window.addEventListener('load', () => {
         try {
             if (typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
-                console.log('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
+                debugLog('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
             }
         } catch (e) {
             console.error('❌ facility-form.v3.js: error during load-time UI verification', e);
