@@ -22,7 +22,8 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #FFF5CB; /* Soft Pastel Yellow */
+    background: #AEE0ED; /* Powder Blue */
+    border: 2px solid #33A7B5; /* Teal */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
@@ -298,7 +299,7 @@ body {
    SECTIONS
    ============================================ */
 .section {
-    background: #AEE0ED; /* Powder Blue */
+    background: #FFF5CB; /* Soft Pastel Yellow */
     border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 8px;
     margin-bottom: 20px;
