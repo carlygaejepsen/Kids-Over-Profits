@@ -1711,32 +1711,45 @@
                 if (results.length === 0) {
                     organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
                 } else {
-                    let html = '';
+                    organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
                         const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
                         const location = result.facility.location || 'Unknown Location';
                         
-                        html += `
-                            <div style="border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;" 
-                                 onmouseover="this.style.backgroundColor='#f8fafc'" 
-                                 onmouseout="this.style.backgroundColor='white'"
-                                 onclick="goToFacility('${result.projectName}', ${result.facilityIndex})">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${escapeHtmlForAttr(facilityName)}</div>
-                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
-                                    ${escapeHtmlForAttr(operator)} • ${escapeHtmlForAttr(location)}
-                                </div>
-                                <div style="font-size: 13px;">
-                                    <strong>Matches:</strong> 
-                                    ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
-                                </div>
-                                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                                    Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
-                                </div>
+                        const resultDiv = document.createElement('div');
+                        resultDiv.style.cssText = "border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;";
+
+                        resultDiv.innerHTML = `
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;"></div>
+                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;"></div>
+                            <div style="font-size: 13px;">
+                                <strong>Matches:</strong> 
+                                ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                                Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
                             </div>
                         `;
+                        // Use textContent to prevent HTML injection issues
+                        resultDiv.children[0].textContent = facilityName;
+                        resultDiv.children[1].textContent = `${operator} • ${location}`;
+
+                        // Add event listeners with the passive option
+                        resultDiv.addEventListener('mouseover', () => {
+                            resultDiv.style.backgroundColor = '#f8fafc';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('mouseout', () => {
+                            resultDiv.style.backgroundColor = 'white';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('click', () => {
+                            goToFacility(result.projectName, result.facilityIndex);
+                        });
+
+                        organizeMatches.appendChild(resultDiv);
                     });
-                    organizeMatches.innerHTML = html;
                 }
                 
                 organizeResults.style.display = 'block';
