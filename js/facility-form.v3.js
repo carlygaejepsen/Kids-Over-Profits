@@ -2141,13 +2141,20 @@ function updateTableOfContents() {
     const tocStats = document.getElementById('toc-stats');
     const total = window.formData.facilities?.length || 0;
 
-    // If no project is loaded, show a helpful message with a link
+    // If no project is loaded, show a helpful message with a link.
+    // The link and message are different for the admin page vs. the suggestions page.
     if (!window.currentProjectName) {
         if (tocStats) tocStats.textContent = 'No project loaded';
         if (facilityList) {
-            facilityList.innerHTML = `
-                <div class="toc-no-project">Please <a href="#advanced-mode-section">load or create a project</a> to see the list of facilities.</div>
-            `;
+            if (IS_SUGGESTION_MODE) {
+                facilityList.innerHTML = `
+                    <div class="toc-no-project">Please <a href="#submission-section">create a draft or load a project</a> to see the list of facilities.</div>
+                `;
+            } else {
+                facilityList.innerHTML = `
+                    <div class="toc-no-project">Please <a href="#advanced-mode-section">load or create a project</a> to see the list of facilities.</div>
+                `;
+            }
         }
         return;
     }

@@ -767,7 +767,6 @@
                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                             <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
                             <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
-                            <button class="btn btn-danger" id="delete-project-btn">🗑️ Delete Project</button>
                             <button class="btn" id="load-project-btn">Load Project</button>
                             <button class="btn" id="new-project-btn">New Project</button>
                             <button class="btn" id="export-all-btn">Export All Projects</button>
@@ -1614,25 +1613,19 @@
         // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
             // Both dropdowns are always visible, no tab switching required
-            console.log('Category navigation initialized - both views visible');
         }
         
         function populateCompaniesList() {
-            console.log('🎨 Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
-                console.error('operators-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('🎨 Projects to render:', projectNames.length, projectNames);
-
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No projects to display');
                 return;
             }
             
@@ -1656,21 +1649,16 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Projects list rendered successfully');
         }
         
         function populateLocationsList() {
-            console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
-                console.error('locations-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
-            
-            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
@@ -1698,7 +1686,6 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Location projects list rendered successfully');
         }
         
         function escapeHtmlForAttr(text) {
@@ -1706,7 +1693,6 @@
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
-            console.log('🎨 Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error('Container not found:', containerId);
@@ -1744,14 +1730,11 @@
                 }
             });
             
-            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
-
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('📭 No filtered projects to display');
                 return;
             }
             
@@ -1775,11 +1758,9 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Filtered projects list rendered successfully');
         }
         
         function createNewLocationProject(projectName) {
-            console.log('Creating new location project:', projectName);
             
             // Use the project manager to create a new project
             if (window.projectManager && window.projectManager.saveProject) {
@@ -1792,7 +1773,6 @@
                         renderFilteredProjectsList('locations-list', 'locations');
                     }, 500);
                     
-                    console.log('Location project created successfully:', projectName);
                     alert(`Location project "${projectName}" created successfully!`);
                 } catch (error) {
                     console.error('Error creating project:', error);
@@ -1887,8 +1867,6 @@
             
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
-                
                 // Clear operator section fields
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
@@ -1908,7 +1886,6 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('Cleared operator data from formData');
                 }
             }
             
@@ -2008,17 +1985,12 @@
                 // The facility-form.v3.js handles this automatically after cloud load,
                 // but we also try here in case the timing is different
                 if (typeof window.populateProjectSelectDropdowns === 'function') {
-                    console.log('Calling populateProjectSelectDropdowns from data.html');
                     window.populateProjectSelectDropdowns();
 
                     // Retry after cloud data loads
                     setTimeout(() => {
                         window.populateProjectSelectDropdowns();
                     }, 2000);
-
-                    setTimeout(() => {
-                        window.populateProjectSelectDropdowns();
-                    }, 5000);
                 } else {
                     console.warn('populateProjectSelectDropdowns not available yet');
                 }

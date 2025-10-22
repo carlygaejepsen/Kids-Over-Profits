@@ -878,12 +878,10 @@
         // Override save function for suggestions
         // Function to load project and sync with our form
         function loadProjectAndSync(projectName) {
-            console.log('📂 Loading and syncing project:', projectName);
 
             // Check if this project is already loaded
             const currentProject = window.currentProjectName;
             if (currentProject === projectName) {
-                console.log('Project already loaded:', projectName);
                 if (typeof showUploadStatus === 'function') {
                     showUploadStatus(`ℹ️ Already working on "${projectName}"`, 'info');
                 }
@@ -897,7 +895,6 @@
             
             // Force clear current project first to ensure a clean switch
             if (window.projectManager && window.projectManager.newProject) {
-                console.log('🧹 Clearing current project first...');
                 window.projectManager.newProject(false); // false = don't show status
             }
             
@@ -905,7 +902,6 @@
             setTimeout(() => {
                 // Use the existing project manager to load the project
                 if (window.projectManager && window.projectManager.loadProject) {
-                    console.log('📥 Loading project:', projectName);
                     window.projectManager.loadProject(projectName);
                     
                     // Wait a moment for the load to complete, then sync our formData
@@ -913,16 +909,6 @@
                         // Make sure we have access to the global formData
                         if (typeof formData !== 'undefined') {
                             window.globalFormData = formData;
-                            
-                            // Extensive debugging
-                            console.log('Project loaded and synced:', projectName);
-                            console.log('📊 Current project data:', formData);
-                            console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
-                            console.log('📝 Current project name from variables:', {
-                                'window.currentProjectName': window.currentProjectName,
-                                'formData.projectName': formData?.projectName,
-                                'requested': projectName
-                            });
 
                             // Verify we loaded the right project
                             const actualCurrentProject = window.currentProjectName;
@@ -1006,17 +992,11 @@
                 '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
                 '"Added 3 new staff members", "Updated facility closure information", etc.)'
             );
-            
             if (!changesSummary || changesSummary.trim() === '') {
                 showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
                 return;
             }
-            
             // Get the current project data from window.formData
-            console.log('🔍 Checking for form data...', {
-                'window.formData exists': !!window.formData,
-                'window.formData value': window.formData
-            });
 
             let dataToSubmit = window.formData;
 
@@ -1039,7 +1019,6 @@
             // Check if we're in private facility mode and clear operator data if so
             const privateToggle = document.getElementById('private-ownership-toggle');
             if (privateToggle && privateToggle.checked) {
-                console.log('🔒 Private facility mode detected - clearing operator data before submission');
                 
                 // Create a copy of the data and clear operator info
                 dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
@@ -1074,7 +1053,6 @@
                     });
                 }
                 
-                console.log('🧹 Operator data cleared for private facility submission');
             }
             
             // CRITICAL FIX: Ensure the project name is correctly set
@@ -1083,18 +1061,6 @@
             // Force set the project name in the data being submitted
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
-
-            console.log('✅ FORCED project name in submission data:', actualProjectName);
-
-            // Show which project we're submitting
-            const projectName = window.currentProjectName || dataToSubmit.projectName || 'Unknown Project';
-            console.log('📤 Submitting changes for project:', projectName);
-            console.log('🔍 Debug project name sources:', {
-                'window.currentProjectName': window.currentProjectName,
-                'dataToSubmit.projectName': dataToSubmit.projectName,
-                'final': projectName
-            });
-            console.log('🏢 Facilities in submission:', dataToSubmit.facilities?.map(f => f.identification?.name || 'Unnamed') || []);
             
             try {
                 const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
@@ -1758,22 +1724,17 @@
         
         // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
-            // Both dropdowns are always visible, no tab switching required
-            console.log('Category navigation initialized - both views visible');
+            // Both dropdowns are always visible, no tab switching required.
         }
         
         function populateCompaniesList() {
-            console.log('🎨 Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
-                console.error('operators-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
-            
-            console.log('🎨 Projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
@@ -1801,21 +1762,16 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Projects list rendered successfully');
         }
         
         function populateLocationsList() {
-            console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
-                console.error('locations-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
-            
-            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
@@ -1843,7 +1799,6 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Location projects list rendered successfully');
         }
         
         function escapeHtmlForAttr(text) {
@@ -1851,7 +1806,6 @@
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
-            console.log('🎨 Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error('Container not found:', containerId);
@@ -1889,14 +1843,11 @@
                 }
             });
             
-            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
-
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('📭 No filtered projects to display');
                 return;
             }
             
@@ -1920,11 +1871,9 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Filtered projects list rendered successfully');
         }
         
         function createNewLocationProject(projectName) {
-            console.log('Creating new location project:', projectName);
             
             // Use the project manager to create a new project
             if (window.projectManager && window.projectManager.saveProject) {
@@ -1937,7 +1886,6 @@
                         renderFilteredProjectsList('locations-list', 'locations');
                     }, 500);
                     
-                    console.log('Location project created successfully:', projectName);
                     alert(`Location project "${projectName}" created successfully!`);
                 } catch (error) {
                     console.error('Error creating project:', error);
@@ -2032,8 +1980,6 @@
             
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
-                
                 // Clear operator section fields
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
@@ -2053,7 +1999,6 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('Cleared operator data from formData');
                 }
             }
             
@@ -2153,17 +2098,12 @@
                 // The facility-form.v3.js handles this automatically after cloud load,
                 // but we also try here in case the timing is different
                 if (typeof window.populateProjectSelectDropdowns === 'function') {
-                    console.log('Calling populateProjectSelectDropdowns from data.html');
                     window.populateProjectSelectDropdowns();
 
                     // Retry after cloud data loads
                     setTimeout(() => {
                         window.populateProjectSelectDropdowns();
                     }, 2000);
-
-                    setTimeout(() => {
-                        window.populateProjectSelectDropdowns();
-                    }, 5000);
                 } else {
                     console.warn('populateProjectSelectDropdowns not available yet');
                 }
