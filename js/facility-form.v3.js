@@ -128,6 +128,66 @@ const FALLBACK_PROJECTS_URL = FALLBACK_PROJECTS_URL_CANDIDATES.length
     ? FALLBACK_PROJECTS_URL_CANDIDATES[0]
     : null;
 
+function isTruthyFlag(value) {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (!normalized) {
+            return false;
+        }
+
+        return ['1', 'true', 'yes', 'on', 'enable', 'enabled'].includes(normalized);
+    }
+
+    return false;
+}
+
+const DEBUG_LOGGING_ENABLED = (() => {
+    if (isTruthyFlag(FACILITY_FORM_CONFIG.debugLogging)) {
+        return true;
+    }
+
+    if (isTruthyFlag(FACILITY_FORM_CONFIG.debug)) {
+        return true;
+    }
+
+    if (typeof window !== 'undefined') {
+        if (isTruthyFlag(window.KOP_FACILITY_FORM_DEBUG)) {
+            return true;
+        }
+
+        try {
+            if (window.localStorage && isTruthyFlag(window.localStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                return true;
+            }
+
+            if (window.sessionStorage && isTruthyFlag(window.sessionStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                return true;
+            }
+        } catch (storageFlagError) {
+            // Ignore storage errors caused by privacy settings
+        }
+    }
+
+    return false;
+})();
+
+function debugLog(...args) {
+    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
+        return;
+    }
+
+    const logFn = typeof console.debug === 'function' ? console.debug.bind(console) : console.log.bind(console);
+    try {
+        logFn(...args);
+    } catch (debugLogError) {
+        // Never let debug logging break runtime execution
+    }
+}
+
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
         return;
@@ -139,21 +199,21 @@ function logActiveFacilityFormConfigOnce() {
 
     window.__KOP_FACILITY_FORM_CONFIG_LOGGED = true;
 
-    if (typeof console === 'undefined' || typeof console.info !== 'function') {
+    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
         return;
     }
 
     try {
-        console.info('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
+        debugLog('[KOP Facility Form] Loaded script build %s', SCRIPT_BUILD_VERSION);
         if (normalizedApiBases.length) {
-            console.info('[KOP Facility Form] API base candidates:', normalizedApiBases);
+            debugLog('[KOP Facility Form] API base candidates:', normalizedApiBases);
         }
-        console.info('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
-        console.info('[KOP Facility Form] Active form mode:', FORM_MODE);
+        debugLog('[KOP Facility Form] Resolved API endpoints:', API_ENDPOINTS);
+        debugLog('[KOP Facility Form] Active form mode:', FORM_MODE);
         if (FALLBACK_PROJECTS_URL_CANDIDATES.length) {
-            console.info('[KOP Facility Form] Fallback dataset URL candidates:', FALLBACK_PROJECTS_URL_CANDIDATES);
+            debugLog('[KOP Facility Form] Fallback dataset URL candidates:', FALLBACK_PROJECTS_URL_CANDIDATES);
         } else {
-            console.info('[KOP Facility Form] No fallback dataset configured');
+            debugLog('[KOP Facility Form] No fallback dataset configured');
         }
     } catch (logError) {
         // Swallow logging errors to avoid breaking initialization if console is locked down
@@ -733,7 +793,7 @@ function getAllOperatingPeriods() {
 function createAutocomplete(input, getDataFunction, category) {
     // FIX #2: Prevent double-initialization
     if (input.dataset.autocompleteInit === 'true') {
-        console.log('✅ Autocomplete already initialized for', input.id || input.name);
+        debugLog('✅ Autocomplete already initialized for', input.id || input.name);
         return;
     }
 
@@ -857,7 +917,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 if (json && json.success && Array.isArray(json.values)) {
                     const merged = Array.from(new Set([...localFiltered, ...json.values]));
                     showDropdown(merged);
-                    console.log(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
+                    debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
                     console.warn('⚠️ Autocomplete API returned unexpected format:', json);
                 }
@@ -923,7 +983,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
     // FIX #2: Mark as initialized to prevent double-initialization
     input.dataset.autocompleteInit = 'true';
-    console.log('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
+    debugLog('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
 }
 
 function initializeAutocompleteFields() {
@@ -1312,11 +1372,11 @@ async function loadAllProjectsFromCloud() {
             saveToLocalStorage('cloudProjects', projects);
 
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
-            console.log('Loaded projects from cloud:', Object.keys(projects));
+            debugLog('Loaded projects from cloud:', Object.keys(projects));
 
             // Force re-initialize autocomplete after cloud data loads
             setTimeout(() => {
-                console.log('Re-initializing autocomplete with cloud data...');
+                debugLog('Re-initializing autocomplete with cloud data...');
                 // Clear autocomplete init flags to allow re-initialization
                 document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
                     delete field.dataset.autocompleteInit;
@@ -1324,7 +1384,7 @@ async function loadAllProjectsFromCloud() {
                 initializeAutocompleteFields();
 
                 // Also re-populate the project select dropdowns
-                console.log('Re-populating project select dropdowns...');
+                debugLog('Re-populating project select dropdowns...');
                 populateProjectSelectDropdowns();
             }, 500);
 
@@ -1358,7 +1418,7 @@ async function loadAllProjectsFromCloud() {
             invalidateAggregatedData();
             saveToLocalStorage('cloudProjects', projects);
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from fallback dataset`, 'success');
-            console.info('Loaded projects from fallback dataset:', fallbackLoadResult.url);
+            debugLog('Loaded projects from fallback dataset:', fallbackLoadResult.url);
             return projects;
         }
 
@@ -1421,7 +1481,7 @@ async function saveProjectToCloud(projectName) {
         if (!saved) {
             showUploadStatus('❌ Unable to save draft locally. Please try again.', 'error');
         } else {
-            console.info('Suggestion mode active — skipping remote save for project "%s".', projectName);
+            debugLog('Suggestion mode active — skipping remote save for project "%s".', projectName);
         }
 
         return false;
@@ -1429,10 +1489,10 @@ async function saveProjectToCloud(projectName) {
 
     try {
         showUploadStatus(`💾 Saving "${projectName}" to cloud...`, 'info');
-        console.log('=== SAVE PROJECT START ===');
-        console.log('Project name:', projectName);
-        console.log('Facility count:', window.formData.facilities?.length || 0);
-        console.log('Data size:', JSON.stringify(window.formData).length, 'characters');
+        debugLog('=== SAVE PROJECT START ===');
+        debugLog('Project name:', projectName);
+        debugLog('Facility count:', window.formData.facilities?.length || 0);
+        debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
 
         const projectData = {
             name: projectName,
@@ -1448,8 +1508,8 @@ async function saveProjectToCloud(projectName) {
         };
 
         const payloadSize = JSON.stringify(payload).length;
-        console.log('Payload size:', payloadSize, 'characters');
-        console.log('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
+        debugLog('Payload size:', payloadSize, 'characters');
+        debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
 
         const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
             method: 'POST',
@@ -1457,8 +1517,8 @@ async function saveProjectToCloud(projectName) {
             body: JSON.stringify(payload)
         });
 
-        console.log('Response status:', response.status, response.statusText);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        debugLog('Response status:', response.status, response.statusText);
+        debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -1475,7 +1535,7 @@ async function saveProjectToCloud(projectName) {
         }
 
         const result = await response.json();
-        console.log('Save result:', result);
+        debugLog('Save result:', result);
 
         if (!result.success) {
             throw new Error(result.error || result.message || 'Unknown server error');
@@ -1490,8 +1550,8 @@ async function saveProjectToCloud(projectName) {
         // Backup to localStorage
         persistProjectLocally(projectName);
 
-        console.log('✅ Save successful!');
-        console.log('=== SAVE PROJECT END ===');
+        debugLog('✅ Save successful!');
+        debugLog('=== SAVE PROJECT END ===');
         showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
 
         // Update UI
@@ -1513,7 +1573,7 @@ async function saveProjectToCloud(projectName) {
         });
 
         if (fallbackSaved) {
-            console.log('✅ Saved to localStorage backup');
+            debugLog('✅ Saved to localStorage backup');
         } else {
             console.error('❌ localStorage backup also failed.');
             showUploadStatus('❌ Save completely failed - check console for details', 'error');
@@ -1533,7 +1593,7 @@ function autoSave() {
 
             const saved = persistProjectLocally(window.currentProjectName);
             if (saved) {
-                console.log('Suggestion draft saved locally for', window.currentProjectName);
+                debugLog('Suggestion draft saved locally for', window.currentProjectName);
             }
         }, 2000);
         return;
@@ -1586,8 +1646,8 @@ function createNewProjectData() {
 }
 
 function loadProject(projectName) {
-    console.log('🔄 loadProject called with:', projectName);
-    console.log('📦 Available projects:', Object.keys(window.projects || {}));
+    debugLog('🔄 loadProject called with:', projectName);
+    debugLog('📦 Available projects:', Object.keys(window.projects || {}));
 
     if (!window.projects[projectName]) {
         console.error('❌ Project not found:', projectName);
@@ -1613,7 +1673,7 @@ function loadProject(projectName) {
     }
 
     if (typeof window.updateAllUI === 'function') {
-        console.log('🔄 Calling updateAllUI...');
+        debugLog('🔄 Calling updateAllUI...');
         window.updateAllUI();
     } else {
         console.error('❌ updateAllUI not available!');
@@ -2152,7 +2212,7 @@ function cloneFacility() {
     );
 
     if (!selection || selection.trim() === '') {
-        console.log('Clone cancelled by user');
+        debugLog('Clone cancelled by user');
         return;
     }
 
@@ -2178,14 +2238,14 @@ function cloneFacility() {
             currentFacilityIndex: 0,
             timestamp: new Date().toISOString()
         };
-        console.log(`✅ Created new project "${targetProjectName}" with cloned facility`);
+        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility`);
     } else {
         // Add clone to existing project
         if (!window.projects[targetProjectName].data.facilities) {
             window.projects[targetProjectName].data.facilities = [];
         }
         window.projects[targetProjectName].data.facilities.push(clone);
-        console.log(`✅ Added cloned facility to existing project "${targetProjectName}"`);
+        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}"`);
     }
 
     // Save the updated projects to localStorage and cloud
@@ -2296,9 +2356,9 @@ function renderSavedProjectsList() {
 }
 
 function populateProjectSelectDropdowns() {
-    console.log('🔧 populateProjectSelectDropdowns called');
-    console.log('🔧 window.projects:', window.projects);
-    console.log('🔧 Project count:', Object.keys(window.projects || {}).length);
+    debugLog('🔧 populateProjectSelectDropdowns called');
+    debugLog('🔧 window.projects:', window.projects);
+    debugLog('🔧 Project count:', Object.keys(window.projects || {}).length);
 
     // Define US states and countries for filtering
     const usStates = [
@@ -2316,31 +2376,31 @@ function populateProjectSelectDropdowns() {
     ];
 
     const projectNames = Object.keys(window.projects || {});
-    console.log('🔧 Project names:', projectNames);
+    debugLog('🔧 Project names:', projectNames);
     projectNames.sort();
 
     // Populate company/operator select
     const projectSelect = document.getElementById('project-select');
-    console.log('🔧 projectSelect element:', projectSelect);
+    debugLog('🔧 projectSelect element:', projectSelect);
     if (projectSelect) {
         const companyProjects = projectNames.filter(name => {
             const lowerName = name.toLowerCase().trim();
             return !usStates.includes(lowerName) && !countries.includes(lowerName);
         });
 
-        console.log('🔧 Company projects filtered:', companyProjects);
+        debugLog('🔧 Company projects filtered:', companyProjects);
 
         projectSelect.innerHTML = '<option value="">-- Select a project --</option>' +
             companyProjects.map(name =>
                 `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
             ).join('');
 
-        console.log('🔧 Company dropdown populated with', companyProjects.length, 'projects');
+        debugLog('🔧 Company dropdown populated with', companyProjects.length, 'projects');
 
         // Add change event listener
         projectSelect.onchange = (e) => {
             if (e.target.value) {
-                console.log('📂 Dropdown loading project:', e.target.value);
+                debugLog('📂 Dropdown loading project:', e.target.value);
                 loadProject(e.target.value);
             }
         };
@@ -2364,7 +2424,7 @@ function populateProjectSelectDropdowns() {
         // Add change event listener
         locationSelect.onchange = (e) => {
             if (e.target.value) {
-                console.log('📂 Location dropdown loading project:', e.target.value);
+                debugLog('📂 Location dropdown loading project:', e.target.value);
                 loadProject(e.target.value);
             }
         };
@@ -2658,7 +2718,7 @@ function attachButtonListeners() {
 // INITIALIZATION
 // ============================================
 async function initializeForm() {
-    console.log('Initializing consolidated form with cloud-first storage...');
+    debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
     // Load custom data from localStorage (backup only)
@@ -2695,14 +2755,14 @@ async function initializeForm() {
     // Initialize field notes functionality
     initializeFieldNotes();
 
-    console.log('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
+    debugLog('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
 }
 
 // ============================================
 // FIELD NOTES FUNCTIONALITY
 // ============================================
 
-console.log('Field notes module loading...');
+debugLog('Field notes module loading...');
 
 // Store for field notes - facility-specific
 let allFacilityNotes = {}; // Object to store notes for all facilities
@@ -2869,9 +2929,9 @@ function addNoteButtonsToArrayItems(group) {
 
 // Add note button to form groups
 function addNoteButtons() {
-    console.log('addNoteButtons function called');
+    debugLog('addNoteButtons function called');
     const formGroups = document.querySelectorAll('.form-group');
-    console.log('Found', formGroups.length, 'form groups');
+    debugLog('Found', formGroups.length, 'form groups');
 
     formGroups.forEach(group => {
         // Skip if button already exists
@@ -2973,12 +3033,12 @@ function addNoteButtons() {
 
         // Add click handler
         noteBtn.addEventListener('click', (e) => {
-            console.log('✅ Note button clicked! Field:', field, 'Group:', group);
+            debugLog('✅ Note button clicked! Field:', field, 'Group:', group);
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
             const result = createFieldNote(field, group);
-            console.log('✅ createFieldNote returned:', result);
+            debugLog('✅ createFieldNote returned:', result);
         });
 
         // Prevent button from interfering with input events
@@ -2996,7 +3056,7 @@ function addNoteButtons() {
         const arrayItem = field.closest('.array-item');
         if (arrayItem) {
             // For array items, add the button directly to the array-item flex container
-            console.log('Adding button to array item for field:', field);
+            debugLog('Adding button to array item for field:', field);
             arrayItem.appendChild(noteBtn);
         } else {
             // Find the appropriate inner container (autocomplete-wrapper)
@@ -3061,12 +3121,12 @@ function addNoteButtons() {
 
 // Add note field below the input field (supports multiple notes)
 function createFieldNote(field, group) {
-    console.log('🔵 createFieldNote START - field:', field, 'group:', group);
+    debugLog('🔵 createFieldNote START - field:', field, 'group:', group);
     const fieldId = getFieldIdentifier(field);
-    console.log('🔵 fieldId:', fieldId);
+    debugLog('🔵 fieldId:', fieldId);
     const label = group.querySelector('label');
     const fieldName = label ? label.textContent.trim() : 'Field';
-    console.log('🔵 fieldName:', fieldName);
+    debugLog('🔵 fieldName:', fieldName);
 
     // Create a new note container
     const noteContainer = document.createElement('div');
@@ -3383,7 +3443,7 @@ function initializeFieldNotes() {
         subtree: true
     });
 
-    console.log('Field notes functionality initialized');
+    debugLog('Field notes functionality initialized');
 }
 
 // Function to sync notes when facility data changes (called by external scripts)
@@ -3457,11 +3517,11 @@ if (document.readyState === 'loading') {
 // Fallback: sometimes remote resources or slow loads cause UI bits to render incorrectly.
 // Re-run lightweight initialization checks on window.load to recover from intermittent failures.
 window.addEventListener('load', () => {
-    console.log('facility-form.v3.js: window.load fired — verifying form initialization');
+    debugLog('facility-form.v3.js: window.load fired — verifying form initialization');
 
     // ONLY run once - use flag to prevent multiple calls (FIX #1: Prevents rendering loops)
     if (window._uiInitializedOnLoad) {
-        console.log('✅ UI already initialized on load, skipping duplicate initialization');
+        debugLog('✅ UI already initialized on load, skipping duplicate initialization');
         return;
     }
     window._uiInitializedOnLoad = true;
@@ -3470,7 +3530,7 @@ window.addEventListener('load', () => {
         try {
             if (typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
-                console.log('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
+                debugLog('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
             }
         } catch (e) {
             console.error('❌ facility-form.v3.js: error during load-time UI verification', e);
