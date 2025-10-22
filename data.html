@@ -1443,6 +1443,15 @@
 
         function initializeSectionToggles() {
             const sections = document.querySelectorAll('.section');
+            const supportsPointer = typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined';
+
+            const isTouchLikePointer = (event) => {
+                if (!event || !event.pointerType) {
+                    return false;
+                }
+
+                return event.pointerType === 'touch' || event.pointerType === 'pen';
+            };
 
             sections.forEach(section => {
                 const header = section.querySelector('.section-header');
@@ -1466,25 +1475,69 @@
                 // Initialize with existing expanded state
                 setState(section.classList.contains('expanded'));
 
+                let pointerHandledToggle = false;
                 const handleToggle = (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+                    if (event && event.cancelable) {
+                        event.preventDefault();
+                    }
+                    if (event && typeof event.stopPropagation === 'function') {
+                        event.stopPropagation();
+                    }
                     setState(!section.classList.contains('expanded'));
                 };
 
-                toggle.addEventListener('click', handleToggle);
+                const handlePointerToggle = (event) => {
+                    if (!isTouchLikePointer(event)) {
+                        return;
+                    }
+                    pointerHandledToggle = true;
+                    handleToggle(event);
+                };
+
+                toggle.addEventListener('click', (event) => {
+                    if (pointerHandledToggle) {
+                        pointerHandledToggle = false;
+                        return;
+                    }
+                    handleToggle(event);
+                });
+
+                if (supportsPointer) {
+                    toggle.addEventListener('pointerdown', handlePointerToggle, { passive: false });
+                }
+
                 toggle.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                         handleToggle(event);
                     }
                 });
 
+                let pointerHandledHeader = false;
+                const headerPointerHandler = (event) => {
+                    if (event.target && event.target.closest('.section-toggle')) {
+                        return;
+                    }
+                    if (!isTouchLikePointer(event)) {
+                        return;
+                    }
+                    pointerHandledHeader = true;
+                    handleToggle(event);
+                };
+
                 header.addEventListener('click', (event) => {
                     if (event.target.closest('.section-toggle')) {
                         return;
                     }
+                    if (pointerHandledHeader) {
+                        pointerHandledHeader = false;
+                        return;
+                    }
                     handleToggle(event);
                 });
+
+                if (supportsPointer) {
+                    header.addEventListener('pointerdown', headerPointerHandler, { passive: false });
+                }
             });
         }
 
