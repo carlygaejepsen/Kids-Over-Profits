@@ -50,6 +50,7 @@ if (!$request) {
 
 $action = $request['action'] ?? 'save';
 $projectName = $request['projectName'] ?? null;
+$newProjectName = $request['newProjectName'] ?? null;
 $data = $request['data'] ?? null;
 
 // Validate project name
@@ -64,6 +65,32 @@ if (!$projectName) {
 
 // Use PDO connection from config.php
 require_once __DIR__ . '/config.php';
+
+if ($action === 'rename') {
+    if (!$projectName || !$newProjectName) {
+        echo json_encode(['success' => false, 'error' => 'Old and new project names are required for rename.']);
+        exit;
+    }
+
+    try {
+        // Check if new project name already exists
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM facilities_master WHERE unique_name = :newProjectName");
+        $checkStmt->execute([':newProjectName' => $newProjectName]);
+        if ($checkStmt->fetchColumn() > 0) {
+            echo json_encode(['success' => false, 'error' => "Project '$newProjectName' already exists."]);
+            exit;
+        }
+
+        // Perform the rename
+        $stmt = $pdo->prepare("UPDATE facilities_master SET unique_name = :newProjectName, updated_at = NOW() WHERE unique_name = :oldProjectName");
+        $stmt->execute([':newProjectName' => $newProjectName, ':oldProjectName' => $projectName]);
+
+        echo json_encode(['success' => true, 'message' => "Project '$projectName' renamed to '$newProjectName'."]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Failed to rename project: ' . $e->getMessage()]);
+    }
+    exit;
+}
 
 
 // Handle action
@@ -102,21 +129,20 @@ if ($action === 'save') {
         exit;
     }
 
-    // Assume $data is an associative array with columns matching the table
-    $columns = array_keys($data);
-    $placeholders = ':' . implode(', :', $columns);
-    $update = [];
-    foreach ($columns as $col) {
-        $update[] = "$col = VALUES($col)";
-    }
-    $sql = "INSERT INTO facilities_master (" . implode(',', $columns) . ") VALUES (" . implode(',', array_map(function($c){return ':' . $c;}, $columns)) . ") "+
-           "ON DUPLICATE KEY UPDATE " . implode(',', $update);
+    // Encode the entire data object as a JSON string
+    $jsonData = json_encode($data);
+
+    // SQL to insert or update the project data based on projectName
+    // The identifier column is `unique_name` and the data column is `json_data`.
+    $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at) 
+            VALUES (:unique_name, :json_data, NOW()) 
+            ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
-        }
+        $stmt->bindValue(':unique_name', $projectName);
+        $stmt->bindValue(':json_data', $jsonData);
+        
         $stmt->execute();
         echo json_encode([
             'success' => true,
