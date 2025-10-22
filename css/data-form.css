@@ -152,14 +152,14 @@ body {
 
 .content-header h3 {
     margin: 0 0 8px 0;
-    color: #000435;
+    color: #FFFFFF;
     font-size: 16px;
     font-weight: 600;
 }
 
 .content-header p {
     margin: 0 0 12px 0;
-    color: #6b7280;
+    color: #AEE0ED; /* Powder Blue */
     font-size: 13px;
 }
 
@@ -339,6 +339,7 @@ body {
 
 .section-content {
     padding: 20px;
+    background: #AEE0ED; /* Powder Blue */
     display: none;
 }
 
@@ -366,7 +367,7 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #374151;
+    color: #000435; /* Midnight Blue */
     font-size: 14px;
 }
 
