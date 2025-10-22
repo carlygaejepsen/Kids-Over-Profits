@@ -13,8 +13,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #000435; /* Midnight Blue */
-    background: #FFECF5; /* Lighter Pink */
+    color: #FFFFFF; /* White text for contrast on navy */
+    background: #000080; /* Navy Blue */
     margin: 0;
     padding: 20px;
 }
@@ -22,7 +22,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #FFFFFF;
+    background: #AEE0ED; /* Powder Blue */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
@@ -58,6 +58,7 @@ body {
 .admin-header h1 {
     margin: 0 0 10px 0;
     font-size: 28px;
+    color: #FFFFFF; /* White */
     font-weight: 700;
 }
 
@@ -85,7 +86,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
-    background: #FFFFFF;
+    background: #000080; /* Navy Blue */
 }
 
 .flex-center {
@@ -100,7 +101,7 @@ body {
 
 .category-tabs {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 5px;
     border-radius: 8px;
@@ -133,12 +134,11 @@ body {
 
 /* Category content containers */
 .category-contents-wrapper {
-    margin-top: 20px;
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 .category-content {
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF0F5 100%); /* White to Lavender Blush */
+    background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     padding: 15px;
@@ -231,7 +231,7 @@ body {
 }
 
 .toc-content {
-    padding: 20px;
+    padding: 15px;
 }
 
 .toc-stats {
@@ -246,7 +246,7 @@ body {
 }
 
 .facility-list {
-    background: #fdfdff;
+    background: #FFFFFF;
     border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 6px;
     padding: 15px;
@@ -297,7 +297,7 @@ body {
    SECTIONS
    ============================================ */
 .section {
-    background: linear-gradient(135deg, #FFFFFF 0%, #F5FCFF 100%); /* White to Alice Blue */
+    background: #AEE0ED; /* Powder Blue */
     border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 8px;
     margin-bottom: 20px;
@@ -339,7 +339,7 @@ body {
 
 .section-content {
     padding: 20px;
-    background: #AEE0ED; /* Powder Blue */
+    background: #FFFFFF; /* White */
     display: none;
 }
 
@@ -366,7 +366,7 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 600;
+    font-weight: 600;    
     color: #000435; /* Midnight Blue */
     font-size: 14px;
 }
@@ -410,7 +410,7 @@ select,
     font-family: inherit;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     transition: all 0.2s ease;
-    background: white;
+    background: #FFFFFF;
     line-height: 1.4;
 }
 
@@ -425,10 +425,8 @@ textarea[data-field$=".notes"] {
 input:focus,
 textarea:focus,
 select:focus {
-    outline: none;
-    border-color: #33A7B5; /* Teal */
+    outline: none; border-color: #33A7B5; /* Teal */
     box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 12px rgba(178, 225, 2, 0.15);
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
     background: linear-gradient(135deg, #FFFFFF 0%, #FDEFF9 100%); /* White to Light Pink */
 }
 
@@ -824,7 +822,7 @@ textarea {
 
 .info-box {
     background: linear-gradient(135deg, #FFF5FA 0%, #FFE4E6 100%); /* Very Light Pink to Misty Rose */
-    border: 2px solid #FE8088; /* Coral Pink */
+    border: 2px solid #FE8088; /* Coral Pink */    
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
@@ -840,7 +838,7 @@ textarea {
 .scroll-container {
     max-height: 400px;
     overflow-y: auto;
-    border: 2px solid #33A7B5; /* Teal */
+    border: 2px solid #33A7B5; /* Teal */    
     border-radius: 6px;
     padding: 15px;
     background: linear-gradient(135deg, #FFFFFF 0%, #AEE0ED 100%); /* White to Powder Blue */
@@ -1182,7 +1180,7 @@ textarea {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
     color: white;
     border: none;
     border-radius: 8px;
