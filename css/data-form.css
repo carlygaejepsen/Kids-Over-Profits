@@ -22,7 +22,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #AEE0ED; /* Powder Blue */
+    background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
@@ -152,7 +152,7 @@ body {
 
 .content-header h3 {
     margin: 0 0 8px 0;
-    color: #FFFFFF;
+    color: #000000;
     font-size: 16px;
     font-weight: 600;
 }
@@ -339,7 +339,7 @@ body {
 
 .section-content {
     padding: 20px;
-    background: #FFFFFF; /* White */
+    background: #AEE0ED; /* Powder Blue */
     display: none;
 }
 
@@ -1160,7 +1160,7 @@ textarea {
 
 .modal-btn-secondary {
     background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
-    color: #374151;
+    color: #000080;
     border: 1px solid #d1d5db;
     background: #FC8ED6; /* Bubblegum Pink */
     color: white;
@@ -1251,7 +1251,7 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #6b7280;
+    background: #000080;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1263,7 +1263,7 @@ textarea {
 }
 
 .field-note-btn:hover {
-    background: #4b5563;
+    background: #000435;
 }
 
 .field-note-btn.has-note {
