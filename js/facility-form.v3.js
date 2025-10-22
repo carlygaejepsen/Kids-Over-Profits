@@ -930,7 +930,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 commitSelection(div.dataset.value);
             };
 
-            div.addEventListener(earlySelectionEvent, handleEarlySelection);
+            div.addEventListener(earlySelectionEvent, handleEarlySelection, { passive: true });
 
             div.addEventListener('click', (event) => {
                 if (!div.dataset.value) {
@@ -2387,106 +2387,153 @@ function removeFacility() {
     }
 }
 
-function cloneFacility() {
-    // Clone facility to send to another project (NOT the current project)
-    const clone = deepClone(window.formData.facilities[window.currentFacilityIndex]);
-
-    // Get list of all projects (excluding current project)
-    const availableProjects = Object.keys(window.projects || {}).filter(name => name !== window.currentProjectName);
-
-    if (availableProjects.length === 0) {
-        alert('No other projects available. Please create a new project first to clone this facility to.');
+async function performClone(targetProjectName) {
+    if (!targetProjectName) {
+        alert('No target project specified for cloning.');
         return;
     }
 
-    // Prompt user to select target project
-    const projectList = availableProjects.map((name, idx) => `${idx + 1}. ${name}`).join('\n');
-    const selection = prompt(
-        `Clone facility to which project?\n\n${projectList}\n\nEnter the number of the target project (or type a new project name):`
-    );
+    const facilityToClone = deepClone(window.formData.facilities[window.currentFacilityIndex]);
+    // Give the clone a new name to avoid confusion
+    facilityToClone.identification.name = `${facilityToClone.identification.name} (Clone)`;
 
-    if (!selection || selection.trim() === '') {
-        debugLog('Clone cancelled by user');
+    // Case 1: Clone to the current project
+    if (targetProjectName === window.currentProjectName) {
+        window.formData.facilities.push(facilityToClone);
+        window.currentFacilityIndex = window.formData.facilities.length - 1;
+        alert(`✅ Facility cloned within project "${targetProjectName}".`);
+        updateAllUI();
+        autoSave();
         return;
     }
 
-    let targetProjectName;
+    // Case 2 & 3: Clone to a new or different existing project
+    const isNewProject = !window.projects[targetProjectName];
 
-    // Check if user entered a number (selecting existing project)
-    const selectionNum = parseInt(selection);
-    if (!isNaN(selectionNum) && selectionNum >= 1 && selectionNum <= availableProjects.length) {
-        targetProjectName = availableProjects[selectionNum - 1];
-    } else {
-        // User typed a new project name
-        targetProjectName = selection.trim();
-    }
-
-    // Load or create target project
-    if (!window.projects[targetProjectName]) {
-        // Create new project with the cloned facility
+    if (isNewProject) {
         window.projects[targetProjectName] = {
             name: targetProjectName,
-            data: {
-                facilities: [clone]
-            },
+            data: { ...createNewProjectData(), facilities: [facilityToClone] },
             currentFacilityIndex: 0,
             timestamp: new Date().toISOString()
         };
-        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility`);
+        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility.`);
     } else {
-        // Add clone to existing project
         if (!window.projects[targetProjectName].data.facilities) {
             window.projects[targetProjectName].data.facilities = [];
         }
-        window.projects[targetProjectName].data.facilities.push(clone);
-        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}"`);
+        window.projects[targetProjectName].data.facilities.push(facilityToClone);
+        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}".`);
     }
 
-    // Save the updated projects to localStorage and cloud
-    saveToLocalStorage('cloudProjects', window.projects);
-
-    // Attempt to save target project to cloud
-    const currentProject = window.currentProjectName;
-    const currentData = deepClone(window.formData);
-    const currentIndex = window.currentFacilityIndex;
-
-    // Temporarily switch to target project for saving
-    window.currentProjectName = targetProjectName;
-    window.formData = window.projects[targetProjectName].data;
-    window.currentFacilityIndex = window.projects[targetProjectName].currentFacilityIndex || 0;
-
+    // Persist the changes
     if (IS_SUGGESTION_MODE) {
-        persistProjectLocally(targetProjectName, {
-            showStatus: true,
-            statusType: 'info',
-            statusMessage: '💾 Cloned facility saved locally. Submit your suggestion to share it.'
-        });
+        persistProjectLocally(targetProjectName);
+        alert(`✅ Facility cloned to project "${targetProjectName}" and saved as a local draft.`);
+    } else {
+        try {
+            // Save the target project to the cloud
+            const originalProject = { name: window.currentProjectName, data: deepClone(window.formData), index: window.currentFacilityIndex };
+            
+            // Temporarily switch context to save the target project
+            window.currentProjectName = targetProjectName;
+            window.formData = window.projects[targetProjectName].data;
+            
+            await saveProjectToCloud(targetProjectName);
+            
+            // Restore original context
+            window.currentProjectName = originalProject.name;
+            window.formData = originalProject.data;
+            window.currentFacilityIndex = originalProject.index;
 
-        window.currentProjectName = currentProject;
-        window.formData = currentData;
-        window.currentFacilityIndex = currentIndex;
-
-        alert(`✅ Facility cloned to project "${targetProjectName}" (saved locally as a draft).`);
-        return;
+            alert(`✅ Facility cloned and saved to project "${targetProjectName}" in the cloud.`);
+        } catch (error) {
+            alert(`⚠️ Facility cloned, but failed to save project "${targetProjectName}" to the cloud. It is saved locally.`);
+            console.error("Error saving cloned project to cloud:", error);
+        }
     }
 
-    saveProjectToCloud(targetProjectName).then(() => {
-        // Restore original project
-        window.currentProjectName = currentProject;
-        window.formData = currentData;
-        window.currentFacilityIndex = currentIndex;
+    // Refresh UI to show the new/updated project in the list
+    refreshSavedProjectPanels();
+}
 
-        alert(`✅ Facility cloned to project "${targetProjectName}"!`);
-    }).catch((err) => {
-        console.error('Failed to save cloned facility to cloud:', err);
+function cloneFacility() {
+    const modal = document.getElementById('clone-facility-modal');
+    if (!modal) return;
 
-        // Restore original project even on error
-        window.currentProjectName = currentProject;
-        window.formData = currentData;
-        window.currentFacilityIndex = currentIndex;
+    // --- Populate Modal ---
+    const currentProjectNameSpan = document.getElementById('clone-current-project-name');
+    if (currentProjectNameSpan) {
+        currentProjectNameSpan.textContent = window.currentProjectName || 'New Project';
+    }
 
-        alert(`⚠️ Facility cloned to project "${targetProjectName}" (saved locally, but cloud sync failed)`);
+    const existingProjectSelect = document.getElementById('existing-project-select');
+    existingProjectSelect.innerHTML = '<option value="">Select a project...</option>'; // Clear previous
+    const availableProjects = Object.keys(window.projects || {}).filter(name => name !== window.currentProjectName);
+    availableProjects.sort().forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        existingProjectSelect.appendChild(option);
     });
+
+    // --- Show Modal ---
+    modal.style.display = 'block';
+
+    // --- Event Handlers ---
+    const confirmBtn = document.getElementById('clone-modal-confirm');
+    const cancelBtn = document.getElementById('clone-modal-cancel');
+    const closeBtn = document.getElementById('clone-modal-close');
+    const radios = document.querySelectorAll('input[name="clone-destination"]');
+
+    const existingProjectContainer = document.getElementById('existing-project-container');
+    const newProjectContainer = document.getElementById('new-project-container');
+
+    function handleRadioChange() {
+        const selected = document.querySelector('input[name="clone-destination"]:checked').value;
+        existingProjectContainer.style.display = selected === 'existing' ? 'block' : 'none';
+        newProjectContainer.style.display = selected === 'new' ? 'block' : 'none';
+    }
+
+    radios.forEach(radio => radio.addEventListener('change', handleRadioChange));
+    handleRadioChange(); // Set initial state
+
+    function closeModal() {
+        modal.style.display = 'none';
+        // Clean up listeners to prevent multiple executions
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+        closeBtn.replaceWith(closeBtn.cloneNode(true));
+    }
+
+    confirmBtn.onclick = () => {
+        const destination = document.querySelector('input[name="clone-destination"]:checked').value;
+        let targetProjectName = '';
+
+        if (destination === 'current') {
+            targetProjectName = window.currentProjectName;
+        } else if (destination === 'existing') {
+            targetProjectName = document.getElementById('existing-project-select').value;
+        } else if (destination === 'new') {
+            targetProjectName = document.getElementById('new-project-name-input').value.trim();
+        }
+
+        if (!targetProjectName) {
+            alert('Please select or enter a valid project name.');
+            return;
+        }
+
+        if (destination === 'new' && window.projects[targetProjectName]) {
+            alert(`A project named "${targetProjectName}" already exists. Please choose a different name or select it from the 'existing' list.`);
+            return;
+        }
+
+        performClone(targetProjectName);
+        closeModal();
+    };
+
+    cancelBtn.onclick = closeModal;
+    closeBtn.onclick = closeModal;
 }
 
 function sortFacilities() {
@@ -2934,6 +2981,11 @@ async function initializeForm() {
 
     // Initialize field notes functionality
     initializeFieldNotes();
+
+    // Signal that the form and its functions are ready
+    window.formReady = true;
+    document.dispatchEvent(new CustomEvent('formReady'));
+    debugLog('🚀 Dispatched formReady event.');
 
     debugLog('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
 }

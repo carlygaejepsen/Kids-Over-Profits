@@ -836,7 +836,7 @@
         </div>
     </div>
     
-    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
+    <!-- Clone Facility Modal -->
     <div id="clone-facility-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -844,19 +844,19 @@
                 <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="current" checked>
-                        Clone to current project (default behavior)
+                        Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="existing">
-                        Clone to existing project
+                        Clone to an existing project
                     </label>
                     <div class="project-select-container" id="existing-project-container" style="display: none;">
                         <select class="project-select" id="existing-project-select">
@@ -868,10 +868,10 @@
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="new">
-                        Clone to new project
+                        Clone to a new project
                     </label>
                     <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name...">
                     </div>
                 </div>
             </div>
@@ -1652,12 +1652,28 @@
         
         // Initialize data organizer when the page loads
         window.addEventListener('load', () => {
-            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
+            // This function waits for the main form script to signal it's ready
+            const onFormReady = () => {
+                console.log('🚀 Form is ready. Initializing page-specific components.');
+                if (typeof initializeDataOrganizer === 'function') {
+                    initializeDataOrganizer();
+                } else {
+                    console.warn('initializeDataOrganizer not available on ready.');
+                }
+            };
+
+            // Check if the form is already ready, otherwise wait for the custom event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
 
         // ============================================
         // FIELD NOTES FUNCTIONALITY
         // ============================================
+        // Note: Field notes functionality has been moved to facility-form.v3.js
         // Note: Field notes functionality has been moved to facility-form.v3.js
         // It is automatically initialized when the form loads
         
@@ -1665,10 +1681,10 @@
         // CATEGORY NAVIGATION (COMPANIES vs STATES)
         // ============================================
         
-        // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
-            // Both dropdowns are always visible, no tab switching required
-            console.log('Category navigation initialized - both views visible');
+            // This function is now primarily handled by the main script,
+            // but we ensure the correct panels are displayed based on the active tab.
+            console.log('Admin page category navigation initialized.');
         }
         
         function populateCompaniesList() {
@@ -2055,7 +2071,7 @@
         window.addEventListener('load', () => {
             initializeSectionToggles();
 
-            setTimeout(() => {
+            const onFormReady = () => {
                 initializeCategoryNavigation();
 
                 // Refresh saved project panels (from facility-form.v3.js)
@@ -2172,7 +2188,14 @@
                         }
                     });
                 }
-            }, 1000);
+            };
+
+            // Check if the form is already ready, otherwise wait for the custom event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
     </script>
 </body>

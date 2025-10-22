@@ -837,7 +837,7 @@
         </div>
     </div>
     
-    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
+    <!-- Clone Facility Modal -->
     <div id="clone-facility-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -845,19 +845,19 @@
                 <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="current" checked>
-                        Clone to current project (default behavior)
+                        Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="existing">
-                        Clone to existing project
+                        Clone to an existing project
                     </label>
                     <div class="project-select-container" id="existing-project-container" style="display: none;">
                         <select class="project-select" id="existing-project-select">
@@ -869,10 +869,10 @@
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="new">
-                        Clone to new project
+                        Clone to a new project
                     </label>
                     <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name...">
                     </div>
                 </div>
             </div>
