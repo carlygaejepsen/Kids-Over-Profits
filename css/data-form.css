@@ -756,6 +756,7 @@ textarea {
     cursor: pointer;
     font-weight: 500;
     user-select: none;
+    color: #374151; /* Set a dark color for readability on light backgrounds */
 }
 
 /* ============================================

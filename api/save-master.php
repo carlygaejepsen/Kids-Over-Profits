@@ -50,6 +50,7 @@ if (!$request) {
 
 $action = $request['action'] ?? 'save';
 $projectName = $request['projectName'] ?? null;
+$newProjectName = $request['newProjectName'] ?? null;
 $data = $request['data'] ?? null;
 
 // Validate project name
@@ -64,6 +65,32 @@ if (!$projectName) {
 
 // Use PDO connection from config.php
 require_once __DIR__ . '/config.php';
+
+if ($action === 'rename') {
+    if (!$projectName || !$newProjectName) {
+        echo json_encode(['success' => false, 'error' => 'Old and new project names are required for rename.']);
+        exit;
+    }
+
+    try {
+        // Check if new project name already exists
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM facilities_master WHERE unique_name = :newProjectName");
+        $checkStmt->execute([':newProjectName' => $newProjectName]);
+        if ($checkStmt->fetchColumn() > 0) {
+            echo json_encode(['success' => false, 'error' => "Project '$newProjectName' already exists."]);
+            exit;
+        }
+
+        // Perform the rename
+        $stmt = $pdo->prepare("UPDATE facilities_master SET unique_name = :newProjectName, updated_at = NOW() WHERE unique_name = :oldProjectName");
+        $stmt->execute([':newProjectName' => $newProjectName, ':oldProjectName' => $projectName]);
+
+        echo json_encode(['success' => true, 'message' => "Project '$projectName' renamed to '$newProjectName'."]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Failed to rename project: ' . $e->getMessage()]);
+    }
+    exit;
+}
 
 
 // Handle action

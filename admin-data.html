@@ -27,11 +27,6 @@
                                 <option value="">-- Select a project --</option>
                             </select>
                         </div>
-                        <div class="items-list" id="saved-projects-list">
-                            <div class="projects-empty">
-                                📭 No saved projects yet
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -117,15 +112,15 @@
                             <option value="certification">Certification</option>
                         </select>
                     </div>
-                    <div class="form-group" id="organize-value-group" style="display: none;">
+                    <div class="form-group d-none" id="organize-value-group">
                         <label for="organize-value">Search for:</label>
                         <input type="text" id="organize-value" class="input-secondary" placeholder="Type to search...">
                     </div>
                 </div>
                 
                 <div class="mb-15">
-                    <button class="btn" id="organize-search-btn" style="display: none;">🔍 Search</button>
-                    <button class="btn btn-secondary" id="organize-clear-btn" style="display: none;">Clear Results</button>
+                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
                 </div>
                 
                 <div id="organize-results" class="d-none">
@@ -778,6 +773,13 @@
                             <button class="btn" id="generate-report-btn">Generate Report</button>
                         </div>
                         <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved projects</div>
+                        </div>
                     </div>
                     
                     <div class="form-group">

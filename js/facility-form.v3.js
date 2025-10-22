@@ -1641,6 +1641,75 @@ function newProject() {
     showUploadStatus('New project created', 'info');
 }
 
+async function renameProject(oldName) {
+    if (!oldName) {
+        showUploadStatus('❌ No project selected to rename.', 'error');
+        return;
+    }
+
+    const newName = prompt(`Enter the new name for project "${oldName}":`, oldName);
+
+    if (!newName || newName.trim() === '' || newName.trim() === oldName) {
+        showUploadStatus('ℹ️ Rename cancelled or name not changed.', 'info');
+        return;
+    }
+
+    if (window.projects && window.projects[newName.trim()]) {
+        showUploadStatus(`❌ A project named "${newName.trim()}" already exists.`, 'error');
+        return;
+    }
+
+    try {
+        showUploadStatus(`Renaming "${oldName}" to "${newName}"...`, 'info');
+        const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'rename',
+                projectName: oldName,
+                newProjectName: newName.trim()
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Update local projects object
+            window.projects[newName.trim()] = window.projects[oldName];
+            delete window.projects[oldName];
+
+            // If the renamed project is the current one, update the state
+            if (window.currentProjectName === oldName) {
+                window.currentProjectName = newName.trim();
+                window.formData.projectName = newName.trim();
+                document.getElementById('project-name').value = newName.trim();
+            }
+
+            showUploadStatus(`✅ Project renamed to "${newName.trim()}"`, 'success');
+            updateAllUI();
+        } else {
+            throw new Error(result.error || 'Failed to rename project.');
+        }
+    } catch (error) {
+        showUploadStatus(`❌ Rename failed: ${error.message}`, 'error');
+        console.error('Rename failed:', error);
+    }
+}
+
+async function deleteProject(projectName) {
+    if (!projectName) {
+        showUploadStatus('❌ No project selected to delete.', 'error');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to permanently delete the project "${projectName}"? This cannot be undone.`)) {
+        return;
+    }
+
+    // Use the existing saveProjectToCloud logic but with a delete action
+    await saveProjectToCloud(projectName, 'delete');
+}
+
 // ============================================
 // FORM DATA MANAGEMENT
 // ============================================
@@ -2628,6 +2697,15 @@ function attachButtonListeners() {
         saveBtn.dataset.listenerAttached = 'true';
     }
 
+    const deleteBtn = document.getElementById('delete-project-btn');
+    if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+        deleteBtn.onclick = () => {
+            const projectName = document.getElementById('project-name')?.value?.trim();
+            deleteProject(projectName);
+        };
+        deleteBtn.dataset.listenerAttached = 'true';
+    }
+
     const newBtn = document.getElementById('new-project-btn');
     if (newBtn && !newBtn.dataset.listenerAttached) {
         newBtn.onclick = newProject;
@@ -3433,6 +3511,8 @@ window.newProject = newProject;
 window.saveProjectToCloud = saveProjectToCloud;
 window.addFacility = addFacility;
 window.removeFacility = removeFacility;
+window.renameProject = renameProject;
+window.deleteProject = deleteProject;
 window.cloneFacility = cloneFacility;
 window.previousFacility = previousFacility;
 window.nextFacility = nextFacility;
