@@ -102,21 +102,20 @@ if ($action === 'save') {
         exit;
     }
 
-    // Assume $data is an associative array with columns matching the table
-    $columns = array_keys($data);
-    $placeholders = ':' . implode(', :', $columns);
-    $update = [];
-    foreach ($columns as $col) {
-        $update[] = "$col = VALUES($col)";
-    }
-    $sql = "INSERT INTO facilities_master (" . implode(',', $columns) . ") VALUES (" . implode(',', array_map(function($c){return ':' . $c;}, $columns)) . ") "+
-           "ON DUPLICATE KEY UPDATE " . implode(',', $update);
+    // Encode the entire data object as a JSON string
+    $jsonData = json_encode($data);
+
+    // SQL to insert or update the project data based on projectName
+    // Assumes a table with at least `projectName` (unique key) and `jsonData` columns
+    $sql = "INSERT INTO facilities_master (projectName, jsonData, last_updated) 
+            VALUES (:projectName, :jsonData, NOW()) 
+            ON DUPLICATE KEY UPDATE jsonData = :jsonData, last_updated = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
-        }
+        $stmt->bindValue(':projectName', $projectName);
+        $stmt->bindValue(':jsonData', $jsonData);
+        
         $stmt->execute();
         echo json_encode([
             'success' => true,
