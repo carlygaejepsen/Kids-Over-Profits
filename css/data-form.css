@@ -79,6 +79,14 @@ body {
     font-weight: 600;
 }
 
+/* New Top Actions Bar */
+.top-actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 /* ============================================
    CATEGORY NAVIGATION (TOP TABS)
    ============================================ */
@@ -139,7 +147,7 @@ body {
     margin-top: 15px;
 }
 
-.category-content {
+.category-content, .facility-toc {
     background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
@@ -189,7 +197,6 @@ body {
    FACILITY TABLE OF CONTENTS
    ============================================ */
 .facility-toc {
-    background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     margin-bottom: 25px;
@@ -256,6 +263,13 @@ body {
     overflow-y: auto;
     margin-bottom: 15px;
     box-shadow: 0 2px 6px rgba(252, 142, 214, 0.2);
+}
+
+.toc-no-project {
+    padding: 20px;
+    text-align: center;
+    color: #4b5563;
+    font-style: italic;
 }
 
 /* ============================================
@@ -1223,8 +1237,8 @@ textarea {
 }
 
 .save-master-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 12px rgba(51, 167, 181, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
 }
 
 .save-master-btn:active {
