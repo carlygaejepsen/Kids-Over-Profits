@@ -1460,9 +1460,9 @@ async function loadAllProjectsFromCloud() {
                 });
                 initializeAutocompleteFields();
 
-                // Also re-populate the project select dropdowns
-                debugLog('Re-populating project select dropdowns...');
-                populateProjectSelectDropdowns();
+                // Refresh saved project panels now that projects are available
+                debugLog('Refreshing saved project panels...');
+                refreshSavedProjectPanels();
             }, 500);
 
             return projects;
@@ -1776,6 +1776,75 @@ function newProject() {
     }
 
     showUploadStatus('New project created', 'info');
+}
+
+async function renameProject(oldName) {
+    if (!oldName) {
+        showUploadStatus('❌ No project selected to rename.', 'error');
+        return;
+    }
+
+    const newName = prompt(`Enter the new name for project "${oldName}":`, oldName);
+
+    if (!newName || newName.trim() === '' || newName.trim() === oldName) {
+        showUploadStatus('ℹ️ Rename cancelled or name not changed.', 'info');
+        return;
+    }
+
+    if (window.projects && window.projects[newName.trim()]) {
+        showUploadStatus(`❌ A project named "${newName.trim()}" already exists.`, 'error');
+        return;
+    }
+
+    try {
+        showUploadStatus(`Renaming "${oldName}" to "${newName}"...`, 'info');
+        const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'rename',
+                projectName: oldName,
+                newProjectName: newName.trim()
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Update local projects object
+            window.projects[newName.trim()] = window.projects[oldName];
+            delete window.projects[oldName];
+
+            // If the renamed project is the current one, update the state
+            if (window.currentProjectName === oldName) {
+                window.currentProjectName = newName.trim();
+                window.formData.projectName = newName.trim();
+                document.getElementById('project-name').value = newName.trim();
+            }
+
+            showUploadStatus(`✅ Project renamed to "${newName.trim()}"`, 'success');
+            updateAllUI();
+        } else {
+            throw new Error(result.error || 'Failed to rename project.');
+        }
+    } catch (error) {
+        showUploadStatus(`❌ Rename failed: ${error.message}`, 'error');
+        console.error('Rename failed:', error);
+    }
+}
+
+async function deleteProject(projectName) {
+    if (!projectName) {
+        showUploadStatus('❌ No project selected to delete.', 'error');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to permanently delete the project "${projectName}"? This cannot be undone.`)) {
+        return;
+    }
+
+    // Use the existing saveProjectToCloud logic but with a delete action
+    await saveProjectToCloud(projectName, 'delete');
 }
 
 // ============================================
@@ -2209,6 +2278,24 @@ function updateTableOfContents() {
     const tocStats = document.getElementById('toc-stats');
     const total = window.formData.facilities?.length || 0;
 
+    // If no project is loaded, show a helpful message with a link.
+    // The link and message are different for the admin page vs. the suggestions page.
+    if (!window.currentProjectName) {
+        if (tocStats) tocStats.textContent = 'No project loaded';
+        if (facilityList) {
+            if (IS_SUGGESTION_MODE) {
+                facilityList.innerHTML = `
+                    <div class="toc-no-project">Please <a href="#submission-section">create a draft or load a project</a> to see the list of facilities.</div>
+                `;
+            } else {
+                facilityList.innerHTML = `
+                    <div class="toc-no-project">Please <a href="#advanced-mode-section">load or create a project</a> to see the list of facilities.</div>
+                `;
+            }
+        }
+        return;
+    }
+
     if (tocStats) tocStats.textContent = `Total: ${total} facilit${total === 1 ? 'y' : 'ies'}`;
     if (facilityList) {
         facilityList.innerHTML = '';
@@ -2425,83 +2512,145 @@ function determineProjectCategory(name = '') {
     return 'companies';
 }
 
-function getActiveProjectCategory() {
-    const activeTab = document.querySelector('.category-tab.active');
-    return activeTab?.dataset.category === 'locations' ? 'locations' : 'companies';
+function renderSavedProjectsList() {
+    refreshSavedProjectPanels();
 }
 
-function renderSavedProjectsList() {
-    const container = document.getElementById('saved-projects-list');
+function refreshSavedProjectPanels() {
     const projects = window.projects || {};
     const projectNames = Object.keys(projects);
-    const activeCategory = getActiveProjectCategory();
+    const companyContainer = document.getElementById('company-saved-projects-list');
+    const locationContainer = document.getElementById('location-saved-projects-list');
 
-    if (!container) {
-        populateProjectSelectDropdowns();
+    if (!companyContainer && !locationContainer) {
         return;
     }
 
-    if (projectNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
-        populateProjectSelectDropdowns();
-        return;
-    }
-
-    const filteredNames = projectNames.filter(name => determineProjectCategory(name) === activeCategory);
-
-    if (filteredNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects for this category yet</div>';
-        populateProjectSelectDropdowns();
-        return;
-    }
-
-    filteredNames.sort((a, b) => {
-        const timeA = projects[a]?.timestamp || '';
-        const timeB = projects[b]?.timestamp || '';
-        if (timeA === timeB) {
-            return a.localeCompare(b);
+    const buildProjectCards = (names, emptyMessage) => {
+        if (!names.length) {
+            return `<div class="projects-empty">${emptyMessage}</div>`;
         }
-        return timeB.localeCompare(timeA);
-    });
 
-    container.innerHTML = filteredNames.map(name => {
-        const project = projects[name] || {};
-        const date = project.timestamp ? new Date(project.timestamp) : null;
-        const hasValidDate = date && !Number.isNaN(date.getTime());
-        const dateStr = hasValidDate ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Unknown';
+        const sortedNames = names.slice().sort((a, b) => {
+            const timeA = projects[a]?.timestamp || '';
+            const timeB = projects[b]?.timestamp || '';
+            if (timeA === timeB) {
+                return a.localeCompare(b);
+            }
+            return timeB.localeCompare(timeA);
+        });
+
+    container.innerHTML = projectNames.map(name => {
+        const project = window.projects[name];
+        const date = new Date(project.timestamp || 0);
+        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const facilityCount = project.data?.facilities?.length || 0;
+        const adminButtons = !IS_SUGGESTION_MODE ? `
+                        <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
+                        <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
+        ` : '';
 
-        return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
+            return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
-                        <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                        <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
+                        ${adminButtons}
                     </div>
                 </div>`;
     }).join('');
 
+    // Also populate the select dropdowns
     populateProjectSelectDropdowns();
 }
 
 function populateProjectSelectDropdowns() {
-    debugLog('🔧 populateProjectSelectDropdowns called');
-    const projectSelects = document.querySelectorAll('select.project-select');
-    if (!projectSelects.length) {
-        return;
+    console.log('🔧 populateProjectSelectDropdowns called');
+    console.log('🔧 window.projects:', window.projects);
+    console.log('🔧 Project count:', Object.keys(window.projects || {}).length);
+
+    // Define US states and countries for filtering
+    const usStates = [
+        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+        'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+        'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
+        'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
+        'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
+    ];
+
+    const countries = [
+        'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
+        'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
+        'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
+    ];
+
+    const projectNames = Object.keys(window.projects || {});
+    console.log('🔧 Project names:', projectNames);
+    projectNames.sort();
+
+    // Populate company/operator select
+    const projectSelect = document.getElementById('project-select');
+    console.log('🔧 projectSelect element:', projectSelect);
+    if (projectSelect && projectSelect.tagName === 'SELECT') {
+        const companyProjects = projectNames.filter(name => {
+            const lowerName = name.toLowerCase().trim();
+            return !usStates.includes(lowerName) && !countries.includes(lowerName);
+        });
+
+        console.log('🔧 Company projects filtered:', companyProjects);
+
+        projectSelect.innerHTML = '<option value="">-- Select a project --</option>' +
+            companyProjects.map(name =>
+                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
+            ).join('');
+
+        console.log('🔧 Company dropdown populated with', companyProjects.length, 'projects');
+
+        // Add change event listener
+        projectSelect.onchange = (e) => {
+            if (e.target.value) {
+                console.log('📂 Dropdown loading project:', e.target.value);
+                loadProject(e.target.value);
+            }
+        };
+    } else {
+        console.warn('🔧 project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
     }
 
-    const projects = window.projects || {};
-    const projectNames = Object.keys(projects).sort((a, b) => a.localeCompare(b));
+    // Populate location select
+    const locationSelect = document.getElementById('location-project-select');
+    if (locationSelect) {
+        const locationProjects = projectNames.filter(name => {
+            const lowerName = name.toLowerCase().trim();
+            return usStates.includes(lowerName) || countries.includes(lowerName);
+        });
 
-    projectSelects.forEach(select => {
-        const previousValue = select.value;
-        select.innerHTML = '<option value="">Select a project...</option>' +
-            projectNames.map(name => `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`).join('');
+        locationSelect.innerHTML = '<option value="">-- Select a location project --</option>' +
+            locationProjects.map(name =>
+                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
+            ).join('');
 
-        if (previousValue && projects[previousValue]) {
-            select.value = previousValue;
-        }
-    });
+        // Add change event listener
+        locationSelect.onchange = (e) => {
+            if (e.target.value) {
+                console.log('📂 Location dropdown loading project:', e.target.value);
+                loadProject(e.target.value);
+            }
+        };
+    } else {
+        console.warn('🔧 location-project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
+        }).join('');
+    };
+
+    if (companyContainer) {
+        const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
+    }
+
+    if (locationContainer) {
+        const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+        locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
+    }
 }
 
 function updateProjectStatus() {
@@ -2759,6 +2908,15 @@ function attachButtonListeners() {
             }
         };
         saveBtn.dataset.listenerAttached = 'true';
+    }
+
+    const deleteBtn = document.getElementById('delete-project-btn');
+    if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+        deleteBtn.onclick = () => {
+            const projectName = document.getElementById('project-name')?.value?.trim();
+            deleteProject(projectName);
+        };
+        deleteBtn.dataset.listenerAttached = 'true';
     }
 
     const newBtn = document.getElementById('new-project-btn');
@@ -3566,6 +3724,8 @@ window.newProject = newProject;
 window.saveProjectToCloud = saveProjectToCloud;
 window.addFacility = addFacility;
 window.removeFacility = removeFacility;
+window.renameProject = renameProject;
+window.deleteProject = deleteProject;
 window.cloneFacility = cloneFacility;
 window.previousFacility = previousFacility;
 window.nextFacility = nextFacility;
@@ -3573,7 +3733,7 @@ window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
-window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
+window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;

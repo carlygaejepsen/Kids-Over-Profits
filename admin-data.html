@@ -2,20 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Facility Data Suggestions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
     </head>
 <body>
     <div class="container">
-        <div class="admin-header">
-            <h1>📮 Submit Facility Data Suggestions</h1>
-            <p>Your submissions will be reviewed before being added to the main database</p>
-        </div>
-        
-        <div class="admin-warning">
-            ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
-        </div>
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
@@ -30,6 +22,11 @@
                 <div id="companies-content" class="category-content">
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
+                        <div class="mb-15">
+                            <select id="project-select" class="input-primary" style="width: 100%;">
+                                <option value="">-- Select a project --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -37,73 +34,16 @@
                 <div id="states-content" class="category-content d-none">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
+                        <div class="mb-15">
+                            <select id="location-project-select" class="input-primary" style="width: 100%;">
+                                <option value="">-- Select a location project --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Projects Loader Panel -->
-        <div class="projects-loader-panel" id="projects-loader-panel">
-            <div id="company-projects-panel" class="project-panel active">
-                <div class="project-management" id="project-panel-inner">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
-
-                    <div class="form-group">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn" id="save-project-btn">Save Project</button>
-                            <button class="btn" id="load-project-btn">Load Project</button>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="file-upload">Import Data Files</label>
-                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Upload JSON or CSV files. JSON files will load directly into the form.
-                        </p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="json-paste">Or Paste JSON Data</label>
-                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button class="btn" id="import-json-btn">Import JSON</button>
-                            <button class="btn" id="clear-all-btn">Clear Form</button>
-                        </div>
-                    </div>
-
-                    <div id="upload-status" style="display: none;"></div>
-                </div>
-            </div>
-            <div id="location-projects-panel" class="project-panel d-none">
-                <div class="project-management location-project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
-                    <div class="form-group">
-                        <label>Saved Location Projects</label>
-                        <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
-                        </div>
-                    </div>
-                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                        Location projects appear automatically when their titles match a known state or country.
-                    </p>
-                </div>
-            </div>
-        </div>
-
+        
         <!-- Facility Table of Contents -->
         <div class="facility-toc" id="facility-toc">
             <div class="toc-header">
@@ -801,22 +741,6 @@
             </div>
         </div>
         
-        <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
-            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
-            </div>
-            <div class="section-content" style="display: block;">
-                <div id="suggestion-status" style="display: none;"></div>
-                
-                <div class="form-group">
-                    <button type="button" class="save-master-btn" onclick="submitSuggestion()">
-                        📮 Submit for Review
-                    </button>
-                </div>
-            </div>
-        </div>
-        
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
@@ -834,7 +758,49 @@
                     </div>
                     <pre id="json-display">{}</pre>
                 </div>
+                
+                <div class="project-management">
+                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
+                    
+                    <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                        <label>Project Management</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
+                            <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
+                            <button class="btn" id="load-project-btn">Load Project</button>
+                            <button class="btn" id="new-project-btn">New Project</button>
+                            <button class="btn" id="export-all-btn">Export All Projects</button>
+                            <button class="btn" id="generate-report-btn">Generate Report</button>
+                        </div>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved projects</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="file-upload">Import Data Files</label>
+                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Upload JSON or CSV files. JSON files will load directly into the form.
+                        </p>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="json-paste">Or Paste JSON Data</label>
+                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" id="import-json-btn">Import JSON</button>
+                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                        </div>
+                    </div>
+                    
+                    <div id="upload-status" style="display: none;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -888,8 +854,8 @@
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
-        // Set mode to suggestions
-        window.FORM_MODE = 'suggestions';
+        // Set mode to master for direct saving
+        window.FORM_MODE = 'master';
         
         // Override save function for suggestions
         // Function to load project and sync with our form
@@ -958,7 +924,7 @@
                             // Also update the page title or some indicator
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName;
+                                const actualProject = window.currentProjectName || projectName; 
                                 pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
                             }
                         } else {
@@ -986,35 +952,11 @@
                 document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
 
-                const companiesContent = document.getElementById('companies-content');
-                const statesContent = document.getElementById('states-content');
-                if (companiesContent && statesContent) {
-                    if (category === 'companies') {
-                        companiesContent.classList.remove('d-none');
-                        statesContent.classList.add('d-none');
-                    } else {
-                        companiesContent.classList.add('d-none');
-                        statesContent.classList.remove('d-none');
-                    }
-                }
-
-                const companyPanel = document.getElementById('company-projects-panel');
-                const locationPanel = document.getElementById('location-projects-panel');
-                if (companyPanel && locationPanel) {
-                    if (category === 'locations') {
-                        companyPanel.classList.add('d-none');
-                        locationPanel.classList.remove('d-none');
-                    } else {
-                        locationPanel.classList.add('d-none');
-                        companyPanel.classList.remove('d-none');
-                    }
-                }
-
-                if (typeof window.refreshSavedProjectPanels === 'function') {
-                    window.refreshSavedProjectPanels();
-                }
-
+                // Show/hide content
                 if (category === 'companies') {
+                    document.getElementById('companies-content').classList.remove('d-none');
+                    document.getElementById('states-content').classList.add('d-none');
+
                     // Hide private facility toggle for companies view
                     const toggleSection = document.getElementById('private-ownership-toggle-section');
                     if (toggleSection) toggleSection.style.display = 'none';
@@ -1023,6 +965,9 @@
                     const operatorSection = document.getElementById('operator-section');
                     if (operatorSection) operatorSection.style.display = 'block';
                 } else if (category === 'locations') {
+                    document.getElementById('companies-content').classList.add('d-none');
+                    document.getElementById('states-content').classList.remove('d-none');
+
                     // Show private facility toggle for locations view
                     let toggleSection = document.getElementById('private-ownership-toggle-section');
                     if (!toggleSection) {
@@ -1032,141 +977,9 @@
                     }
                     toggleSection.style.display = 'block';
                 }
-
-                if (typeof renderSavedProjectsList === 'function') {
-                    renderSavedProjectsList();
-                }
             });
         });
 
-
-        async function submitSuggestion() {
-            // Ask user to summarize their changes
-            const changesSummary = prompt(
-                'Please summarize the key changes you made:\n\n' +
-                '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
-                '"Added 3 new staff members", "Updated facility closure information", etc.)'
-            );
-            
-            if (!changesSummary || changesSummary.trim() === '') {
-                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
-                return;
-            }
-            
-            // Get the current project data from window.formData
-            console.log('🔍 Checking for form data...', {
-                'window.formData exists': !!window.formData,
-                'window.formData value': window.formData
-            });
-
-            let dataToSubmit = window.formData;
-
-            if (!dataToSubmit) {
-                console.error('❌ No formData found:', {
-                    'window.formData': window.formData,
-                    'window.projects': window.projects ? Object.keys(window.projects) : 'undefined',
-                    'window.currentProjectName': window.currentProjectName
-                });
-
-                // Check if there are projects available to load
-                if (window.projects && Object.keys(window.projects).length > 0) {
-                    showSuggestionStatus('❌ Error: No project loaded. Please load a project by clicking on one from the list above, or create a new project.', 'error');
-                } else {
-                    showSuggestionStatus('❌ Error: No projects available. The form may still be initializing. Please wait a moment and try again.', 'error');
-                }
-                return;
-            }
-            
-            // Check if we're in private facility mode and clear operator data if so
-            const privateToggle = document.getElementById('private-ownership-toggle');
-            if (privateToggle && privateToggle.checked) {
-                console.log('🔒 Private facility mode detected - clearing operator data before submission');
-                
-                // Create a copy of the data and clear operator info
-                dataToSubmit = JSON.parse(JSON.stringify(dataToSubmit));
-                if (dataToSubmit.operator) {
-                    dataToSubmit.operator = {
-                        name: '',
-                        currentName: '',
-                        pastNames: [],
-                        otherNames: [],
-                        foundingDate: '',
-                        keyPersonnel: [],
-                        headquarters: '',
-                        website: ''
-                    };
-                }
-                
-                // Also clear operator data from facilities
-                if (dataToSubmit.facilities) {
-                    dataToSubmit.facilities.forEach(facility => {
-                        if (facility.operator) {
-                            facility.operator = {
-                                name: '',
-                                currentName: '',
-                                pastNames: [],
-                                otherNames: [],
-                                foundingDate: '',
-                                keyPersonnel: [],
-                                headquarters: '',
-                                website: ''
-                            };
-                        }
-                    });
-                }
-                
-                console.log('🧹 Operator data cleared for private facility submission');
-            }
-            
-            // CRITICAL FIX: Ensure the project name is correctly set
-            const actualProjectName = window.currentProjectName || 'Unknown Project';
-
-            // Force set the project name in the data being submitted
-            dataToSubmit.projectName = actualProjectName;
-            dataToSubmit.name = actualProjectName; // Some systems might use 'name' instead
-
-            console.log('✅ FORCED project name in submission data:', actualProjectName);
-
-            // Show which project we're submitting
-            const projectName = window.currentProjectName || dataToSubmit.projectName || 'Unknown Project';
-            console.log('📤 Submitting changes for project:', projectName);
-            console.log('🔍 Debug project name sources:', {
-                'window.currentProjectName': window.currentProjectName,
-                'dataToSubmit.projectName': dataToSubmit.projectName,
-                'final': projectName
-            });
-            console.log('🏢 Facilities in submission:', dataToSubmit.facilities?.map(f => f.identification?.name || 'Unnamed') || []);
-            
-            try {
-                const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        data: dataToSubmit,
-                        reason: changesSummary.trim(),
-                        projectName: actualProjectName, // Explicit project name
-                        metadata: {
-                            actualProjectName: actualProjectName,
-                            submittedFrom: 'data.html suggestions form',
-                            timestamp: new Date().toISOString()
-                        }
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showSuggestionStatus(`☑️ Suggestion submitted successfully for "${projectName}"! It will be reviewed before being added to the database.`, 'success');
-                } else {
-                    showSuggestionStatus('❌ Error: ' + (result.error || 'Failed to submit suggestion'), 'error');
-                }
-            } catch (error) {
-                showSuggestionStatus('❌ Error: ' + error.message, 'error');
-            }
-        }
-        
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
             statusDiv.className = `upload-status ${type}`;
@@ -1755,11 +1568,12 @@
             window.goToFacility = function(projectName, facilityIndex) {
                 // Switch to the project if it's different
                 if (window.currentProjectName !== projectName) {
-                    if (typeof loadProjectAndSync === 'function') {
-                        loadProjectAndSync(projectName);
-                    } else if (typeof loadProject === 'function') {
-                        loadProject(projectName);
+                    const projectSelect = document.getElementById('project-select');
+                    if (projectSelect) {
+                        projectSelect.value = projectName;
+                        projectSelect.dispatchEvent(new Event('change'));
                     }
+                    // Note: The project select change event will update window.currentProjectName
                 }
                 
                 // Switch to the facility
@@ -1799,25 +1613,19 @@
         // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
             // Both dropdowns are always visible, no tab switching required
-            console.log('Category navigation initialized - both views visible');
         }
         
         function populateCompaniesList() {
-            console.log('🎨 Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
-                console.error('operators-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('🎨 Projects to render:', projectNames.length, projectNames);
-
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No projects to display');
                 return;
             }
             
@@ -1841,21 +1649,16 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Projects list rendered successfully');
         }
         
         function populateLocationsList() {
-            console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
-                console.error('locations-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
-            
-            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
@@ -1883,7 +1686,6 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Location projects list rendered successfully');
         }
         
         function escapeHtmlForAttr(text) {
@@ -1891,7 +1693,6 @@
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
-            console.log('🎨 Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error('Container not found:', containerId);
@@ -1929,14 +1730,11 @@
                 }
             });
             
-            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
-
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('📭 No filtered projects to display');
                 return;
             }
             
@@ -1960,11 +1758,9 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
-            console.log('Filtered projects list rendered successfully');
         }
         
         function createNewLocationProject(projectName) {
-            console.log('Creating new location project:', projectName);
             
             // Use the project manager to create a new project
             if (window.projectManager && window.projectManager.saveProject) {
@@ -1977,7 +1773,6 @@
                         renderFilteredProjectsList('locations-list', 'locations');
                     }, 500);
                     
-                    console.log('Location project created successfully:', projectName);
                     alert(`Location project "${projectName}" created successfully!`);
                 } catch (error) {
                     console.error('Error creating project:', error);
@@ -2072,8 +1867,6 @@
             
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
-                
                 // Clear operator section fields
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
@@ -2093,7 +1886,6 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('Cleared operator data from formData');
                 }
             }
             
@@ -2189,23 +1981,18 @@
             setTimeout(() => {
                 initializeCategoryNavigation();
 
-                // Refresh saved project panels (from facility-form.v3.js)
-                // facility-form.v3.js handles this after cloud load,
-                // but we also trigger it here in case the timing is different
-                if (typeof window.refreshSavedProjectPanels === 'function') {
-                    console.log('Calling refreshSavedProjectPanels from data.html');
-                    window.refreshSavedProjectPanels();
+                // Populate project select dropdowns (from facility-form.v3.js)
+                // The facility-form.v3.js handles this automatically after cloud load,
+                // but we also try here in case the timing is different
+                if (typeof window.populateProjectSelectDropdowns === 'function') {
+                    window.populateProjectSelectDropdowns();
 
                     // Retry after cloud data loads
                     setTimeout(() => {
-                        window.refreshSavedProjectPanels();
+                        window.populateProjectSelectDropdowns();
                     }, 2000);
-
-                    setTimeout(() => {
-                        window.refreshSavedProjectPanels();
-                    }, 5000);
                 } else {
-                    console.warn('refreshSavedProjectPanels not available yet');
+                    console.warn('populateProjectSelectDropdowns not available yet');
                 }
                 
                 // Add click handlers for state items

@@ -13,8 +13,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #000435; /* Midnight Blue */
-    background: #F2EEDF; /* Sand / Warm Ivory */
+    color: #FFFFFF; /* White text for contrast on navy */
+    background: #000080; /* Navy Blue */
     margin: 0;
     padding: 20px;
 }
@@ -22,7 +22,8 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
+    background: #AEE0ED; /* Powder Blue */
+    border: 2px solid #33A7B5; /* Teal */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
@@ -58,6 +59,7 @@ body {
 .admin-header h1 {
     margin: 0 0 10px 0;
     font-size: 28px;
+    color: #FFFFFF; /* White */
     font-weight: 700;
 }
 
@@ -77,6 +79,14 @@ body {
     font-weight: 600;
 }
 
+/* New Top Actions Bar */
+.top-actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 /* ============================================
    CATEGORY NAVIGATION (TOP TABS)
    ============================================ */
@@ -85,7 +95,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
-    background: #FFFFFF;
+    background: #000080; /* Navy Blue */
 }
 
 .flex-center {
@@ -100,10 +110,11 @@ body {
 
 .category-tabs {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 5px;
     border-radius: 8px;
+    justify-content: center; /* Center the tabs */
     border: 2px solid #B2E102; /* Chartreuse */
 }
 
@@ -111,7 +122,7 @@ body {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 600;
-    border: none;
+    border: 2px solid transparent;
     background: transparent;
     color: #6b7280;
     cursor: pointer;
@@ -120,27 +131,29 @@ body {
 }
 
 .category-tab:hover {
-    background: #f3f4f6;
+    background: #fff;
     color: #000435;
 }
 
 .category-tab.active {
     background: #000080; /* Navy Blue */
-    color: white;
+    color: #FFFFFF;
     box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
+    border: 2px solid #FE8088; /* Coral Pink */
 }
 
 /* Category content containers */
 .category-contents-wrapper {
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
-.category-content {
-    background: white;
+.category-content, .facility-toc {
+    background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15);
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15), inset 0 0 20px rgba(252, 142, 214, 0.05);
 }
 
 .category-content.d-none {
@@ -149,14 +162,14 @@ body {
 
 .content-header h3 {
     margin: 0 0 8px 0;
-    color: #000435;
+    color: #000000;
     font-size: 16px;
     font-weight: 600;
 }
 
 .content-header p {
     margin: 0 0 12px 0;
-    color: #6b7280;
+    color: #AEE0ED; /* Powder Blue */
     font-size: 13px;
 }
 
@@ -184,7 +197,6 @@ body {
    FACILITY TABLE OF CONTENTS
    ============================================ */
 .facility-toc {
-    background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     margin-bottom: 25px;
@@ -195,7 +207,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #33A7B5, #2a8c97); /* Teal Gradient */
     color: white;
     padding: 15px 20px;
     cursor: pointer;
@@ -228,7 +240,7 @@ body {
 }
 
 .toc-content {
-    padding: 20px;
+    padding: 15px;
 }
 
 .toc-stats {
@@ -243,7 +255,7 @@ body {
 }
 
 .facility-list {
-    background: white;
+    background: #FFFFFF;
     border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 6px;
     padding: 15px;
@@ -251,6 +263,13 @@ body {
     overflow-y: auto;
     margin-bottom: 15px;
     box-shadow: 0 2px 6px rgba(252, 142, 214, 0.2);
+}
+
+.toc-no-project {
+    padding: 20px;
+    text-align: center;
+    color: #4b5563;
+    font-style: italic;
 }
 
 /* ============================================
@@ -271,6 +290,7 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
+    color: #000435; /* Midnight Blue for readability */
 }
 
 .controls {
@@ -294,7 +314,7 @@ body {
    SECTIONS
    ============================================ */
 .section {
-    background: white;
+    background: #FFF5CB; /* Soft Pastel Yellow */
     border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 8px;
     margin-bottom: 20px;
@@ -336,7 +356,10 @@ body {
 
 .section-content {
     padding: 20px;
-    display: none;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    border: 2px solid #B2E102; /* Chartreuse */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
 }
 
 .section.expanded .section-content {
@@ -362,8 +385,8 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 600;
-    color: #374151;
+    font-weight: 600;    
+    color: #000435; /* Midnight Blue */
     font-size: 14px;
 }
 
@@ -404,8 +427,9 @@ select,
     border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     transition: all 0.2s ease;
-    background: white;
+    background: #FFFFFF;
     line-height: 1.4;
 }
 
@@ -420,10 +444,9 @@ textarea[data-field$=".notes"] {
 input:focus,
 textarea:focus,
 select:focus {
-    outline: none;
-    border-color: #33A7B5; /* Teal */
+    outline: none; border-color: #33A7B5; /* Teal */
     box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 12px rgba(178, 225, 2, 0.15);
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FDEFF9 100%); /* White to Light Pink */
 }
 
 textarea {
@@ -587,6 +610,7 @@ textarea {
     border-color: #33A7B5; /* Teal */
     box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 8px rgba(178, 225, 2, 0.15);
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FDEFF9 100%); /* White to Light Pink */
 }
 
 .array-input-role {
@@ -630,12 +654,21 @@ textarea {
     transform: translateY(0);
 }
 
+.btn-danger {
+    background: #d63638; /* Red */
+}
+
+.btn-danger:hover {
+    background: #b91c1c; /* Darker Red */
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+}
+
 .btn-secondary {
-    background: #6b7280;
+    background: #FE8088; /* Coral Pink */
 }
 
 .btn-secondary:hover {
-    background: #4b5563;
+    background: #fa5f69; /* Darker Coral Pink */
 }
 
 .btn-inline {
@@ -670,9 +703,9 @@ textarea {
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: linear-gradient(135deg, #EF9034 0%, #d97706 100%); /* Orange gradient */
+    background: linear-gradient(135deg, #FE8088 0%, #fa5f69 100%); /* Coral Pink gradient */
     color: white;
-    border: 2px solid #B2E102; /* Chartreuse */
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
@@ -680,12 +713,12 @@ textarea {
     transition: all 0.15s ease;
     display: inline-block;
     width: auto;
-    box-shadow: 0 2px 6px rgba(239, 144, 52, 0.3);
+    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.3);
 }
 
 .add-item-btn:hover {
-    background: linear-gradient(135deg, #d97706 0%, #b45309 100%); /* Darker Orange gradient */
-    box-shadow: 0 4px 10px rgba(239, 144, 52, 0.5), 0 0 12px rgba(178, 225, 2, 0.3);
+    background: linear-gradient(135deg, #fa5f69 0%, #f84652 100%); /* Darker Coral Pink gradient */
+    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.5), 0 0 12px rgba(252, 142, 214, 0.3);
     transform: translateY(-1px);
 }
 
@@ -747,6 +780,7 @@ textarea {
     cursor: pointer;
     font-weight: 500;
     user-select: none;
+    color: #374151; /* Set a dark color for readability on light backgrounds */
 }
 
 /* ============================================
@@ -798,6 +832,7 @@ textarea {
 
 .bg-light {
     background: #F2EEDF; /* Sand / Warm Ivory */
+    background: #FFF5FA; /* Very Light Pink */
 }
 
 .content-box {
@@ -815,24 +850,24 @@ textarea {
 }
 
 .info-box {
-    background: linear-gradient(135deg, #AEE0ED 0%, #B6E3D4 100%); /* Powder Blue to Mint Green */
-    border: 2px solid #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #FFF5FA 0%, #FFE4E6 100%); /* Very Light Pink to Misty Rose */
+    border: 2px solid #FE8088; /* Coral Pink */    
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.2);
 }
 
 .info-title {
-    font-weight: 600;
-    color: #000080; /* Navy Blue */
+    font-weight: 600; /* Using .section-title styles */
+    color: #000435;
     margin-bottom: 5px;
 }
 
 .scroll-container {
     max-height: 400px;
     overflow-y: auto;
-    border: 2px solid #33A7B5; /* Teal */
+    border: 2px solid #33A7B5; /* Teal */    
     border-radius: 6px;
     padding: 15px;
     background: linear-gradient(135deg, #FFFFFF 0%, #AEE0ED 100%); /* White to Powder Blue */
@@ -925,6 +960,22 @@ textarea {
     background: #2b8a95; /* Darker Teal */
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+}
+.project-item-rename {
+    background: #EF9034; /* Orange */
+    color: white;
+}
+.project-item-rename:hover {
+    background: #d97706; /* Darker Orange */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 144, 52, 0.3);
+}
+.project-item-delete {
+    background: #d63638; /* Red */
+    color: white;
+}
+.project-item-delete:hover {
+    background: #b91c1c; /* Darker Red */
 }
 
 .projects-empty {
@@ -1027,6 +1078,8 @@ textarea {
 .copy-btn {
     padding: 8px 14px;
     background: #6b7280;
+    padding: 8px 14px; /* Using btn-secondary styles */
+    background: #FC8ED6; /* Bubblegum Pink */
     color: white;
     border: none;
     border-radius: 6px;
@@ -1038,6 +1091,7 @@ textarea {
 
 .copy-btn:hover {
     background: #4b5563;
+    background: #fa74c8; /* Darker Pink */
 }
 
 #json-display {
@@ -1151,13 +1205,17 @@ textarea {
 
 .modal-btn-secondary {
     background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
-    color: #374151;
+    color: #000080;
     border: 1px solid #d1d5db;
+    background: #FC8ED6; /* Bubblegum Pink */
+    color: white;
+    border: none;
 }
 
 .modal-btn-secondary:hover {
     background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
     border-color: #9ca3af;
+    background: #fa74c8; /* Darker Pink */
     transform: translateY(-1px);
 }
 
@@ -1167,7 +1225,7 @@ textarea {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
     color: white;
     border: none;
     border-radius: 8px;
@@ -1179,8 +1237,8 @@ textarea {
 }
 
 .save-master-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 12px rgba(51, 167, 181, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
 }
 
 .save-master-btn:active {
@@ -1238,7 +1296,7 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #6b7280;
+    background: #000080;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1250,7 +1308,7 @@ textarea {
 }
 
 .field-note-btn:hover {
-    background: #4b5563;
+    background: #000435;
 }
 
 .field-note-btn.has-note {
@@ -1481,14 +1539,13 @@ textarea {
 }
 
 .modal-btn-secondary {
-    background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: #FC8ED6; /* Bubblegum Pink */
+    color: white;
+    border: none;
 }
 
 .modal-btn-secondary:hover {
-    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-    border-color: #9ca3af;
+    background: #fa74c8; /* Darker Pink */
     transform: translateY(-1px);
 }
 
