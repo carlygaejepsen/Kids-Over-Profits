@@ -740,7 +740,36 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- Projects Section -->
+        <div class="section" id="projects-section">
+            <div class="section-header">
+                <h2 class="section-title">📂 Projects</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                    <label>Project Management</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
+                        <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
+                        <button class="btn" id="load-project-btn">Load Project</button>
+                        <button class="btn" id="new-project-btn">New Project</button>
+                        <button class="btn" id="export-all-btn">Export All Projects</button>
+                        <button class="btn" id="generate-report-btn">Generate Report</button>
+                    </div>
+                    <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Saved Projects</label>
+                    <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                        <div style="color: #6b7280; font-style: italic;">No saved projects</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
@@ -758,30 +787,10 @@
                     </div>
                     <pre id="json-display">{}</pre>
                 </div>
-                
-                <div class="project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
-                    
-                    <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
-                            <button class="btn" id="load-project-btn">Load Project</button>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved projects</div>
-                        </div>
-                    </div>
-                    
+
+                <div class="data-import" style="margin-top: 20px;">
+                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Data Import</h2>
+
                     <div class="form-group">
                         <label for="file-upload">Import Data Files</label>
                         <input type="file" id="file-upload" accept=".json,.csv,.txt">
@@ -798,7 +807,7 @@
                             <button class="btn" id="clear-all-btn">Clear Form</button>
                         </div>
                     </div>
-                    
+
                     <div id="upload-status" style="display: none;"></div>
                 </div>
             </div>

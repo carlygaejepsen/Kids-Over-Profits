@@ -822,6 +822,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
+    let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
     const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
         ? 'pointerdown'
         : 'mousedown';
@@ -832,11 +833,22 @@ function createAutocomplete(input, getDataFunction, category) {
             return;
         }
 
+        // Set flag BEFORE any value changes to prevent input event from triggering
+        isCommittingSelection = true;
+
+        // Hide dropdown immediately
+        hideDropdown();
+        currentFocus = -1;
+
+        // Now set the value
         input.value = value;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        hideDropdown();
-        currentFocus = -1;
+
+        // Reset flag after a short delay
+        setTimeout(() => {
+            isCommittingSelection = false;
+        }, 150);
 
         if (shouldRefocus) {
             // Use timeout to ensure dropdown has fully closed before refocusing
@@ -910,6 +922,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 }
                 if (event && typeof event.preventDefault === 'function') {
                     event.preventDefault();
+                    event.stopPropagation();
                 }
                 if (typeof event.button === 'number' && event.button !== 0) {
                     return;
@@ -919,9 +932,13 @@ function createAutocomplete(input, getDataFunction, category) {
 
             div.addEventListener(earlySelectionEvent, handleEarlySelection);
 
-            div.addEventListener('click', () => {
+            div.addEventListener('click', (event) => {
                 if (!div.dataset.value) {
                     return;
+                }
+                if (event && typeof event.preventDefault === 'function') {
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
                 commitSelection(div.dataset.value);
             });
@@ -936,6 +953,11 @@ function createAutocomplete(input, getDataFunction, category) {
     }
     
     input.addEventListener('input', () => {
+        // Skip if we're committing a selection (prevents dropdown from re-showing)
+        if (isCommittingSelection) {
+            return;
+        }
+
         const value = input.value.trim();
         if (!value) {
             hideDropdown();
