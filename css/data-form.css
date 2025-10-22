@@ -15,6 +15,7 @@ body {
     line-height: 1.6;
     color: #000435; /* Midnight Blue */
     background: #F2EEDF; /* Sand / Warm Ivory */
+    background: #FFF5FA; /* Very Light Pink */
     margin: 0;
     padding: 20px;
 }
@@ -23,6 +24,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     background: white;
+    background: #FEF9FC; /* Off-white pink tint */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
@@ -126,13 +128,15 @@ body {
 
 .category-tab.active {
     background: #000080; /* Navy Blue */
-    color: white;
+    color: #FFFFFF;
     box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
+    border: 2px solid #FE8088; /* Coral Pink */
 }
 
 /* Category content containers */
 .category-contents-wrapper {
     margin-top: 20px;
+    margin-top: 25px;
 }
 
 .category-content {
@@ -141,6 +145,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15);
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15), inset 0 0 20px rgba(252, 142, 214, 0.05);
 }
 
 .category-content.d-none {
@@ -404,6 +409,7 @@ select,
     border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     transition: all 0.2s ease;
     background: white;
     line-height: 1.4;
@@ -424,6 +430,7 @@ select:focus {
     border-color: #33A7B5; /* Teal */
     box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 12px rgba(178, 225, 2, 0.15);
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FDEFF9 100%); /* White to Light Pink */
 }
 
 textarea {
@@ -587,6 +594,7 @@ textarea {
     border-color: #33A7B5; /* Teal */
     box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.2), 0 0 8px rgba(178, 225, 2, 0.15);
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FDEFF9 100%); /* White to Light Pink */
 }
 
 .array-input-role {
@@ -632,10 +640,12 @@ textarea {
 
 .btn-secondary {
     background: #6b7280;
+    background: #FC8ED6; /* Bubblegum Pink */
 }
 
 .btn-secondary:hover {
     background: #4b5563;
+    background: #fa74c8; /* Darker Pink */
 }
 
 .btn-inline {
@@ -670,9 +680,9 @@ textarea {
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: linear-gradient(135deg, #EF9034 0%, #d97706 100%); /* Orange gradient */
+    background: linear-gradient(135deg, #FE8088 0%, #fa5f69 100%); /* Coral Pink gradient */
     color: white;
-    border: 2px solid #B2E102; /* Chartreuse */
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
     border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
@@ -680,12 +690,12 @@ textarea {
     transition: all 0.15s ease;
     display: inline-block;
     width: auto;
-    box-shadow: 0 2px 6px rgba(239, 144, 52, 0.3);
+    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.3);
 }
 
 .add-item-btn:hover {
-    background: linear-gradient(135deg, #d97706 0%, #b45309 100%); /* Darker Orange gradient */
-    box-shadow: 0 4px 10px rgba(239, 144, 52, 0.5), 0 0 12px rgba(178, 225, 2, 0.3);
+    background: linear-gradient(135deg, #fa5f69 0%, #f84652 100%); /* Darker Coral Pink gradient */
+    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.5), 0 0 12px rgba(252, 142, 214, 0.3);
     transform: translateY(-1px);
 }
 
@@ -798,6 +808,7 @@ textarea {
 
 .bg-light {
     background: #F2EEDF; /* Sand / Warm Ivory */
+    background: #FFF5FA; /* Very Light Pink */
 }
 
 .content-box {
@@ -815,17 +826,17 @@ textarea {
 }
 
 .info-box {
-    background: linear-gradient(135deg, #AEE0ED 0%, #B6E3D4 100%); /* Powder Blue to Mint Green */
-    border: 2px solid #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #FFF5FA 0%, #FFE4E6 100%); /* Very Light Pink to Misty Rose */
+    border: 2px solid #FE8088; /* Coral Pink */
     border-radius: 6px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.2);
 }
 
 .info-title {
-    font-weight: 600;
-    color: #000080; /* Navy Blue */
+    font-weight: 600; /* Using .section-title styles */
+    color: #000435;
     margin-bottom: 5px;
 }
 
@@ -1027,6 +1038,8 @@ textarea {
 .copy-btn {
     padding: 8px 14px;
     background: #6b7280;
+    padding: 8px 14px; /* Using btn-secondary styles */
+    background: #FC8ED6; /* Bubblegum Pink */
     color: white;
     border: none;
     border-radius: 6px;
@@ -1038,6 +1051,7 @@ textarea {
 
 .copy-btn:hover {
     background: #4b5563;
+    background: #fa74c8; /* Darker Pink */
 }
 
 #json-display {
@@ -1153,11 +1167,15 @@ textarea {
     background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
     color: #374151;
     border: 1px solid #d1d5db;
+    background: #FC8ED6; /* Bubblegum Pink */
+    color: white;
+    border: none;
 }
 
 .modal-btn-secondary:hover {
     background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
     border-color: #9ca3af;
+    background: #fa74c8; /* Darker Pink */
     transform: translateY(-1px);
 }
 
