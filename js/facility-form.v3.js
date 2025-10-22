@@ -844,6 +844,41 @@ function createAutocomplete(input, getDataFunction, category) {
         }
     }
 
+    function renderSuggestionContent(target, suggestion, query) {
+        const suggestionText = typeof suggestion === 'string'
+            ? suggestion
+            : (suggestion === null || suggestion === undefined ? '' : String(suggestion));
+        const queryText = typeof query === 'string'
+            ? query
+            : (query === null || query === undefined ? '' : String(query));
+        const normalizedQuery = queryText.toLowerCase();
+        const normalizedSuggestion = suggestionText.toLowerCase();
+        const matchIndex = normalizedSuggestion.indexOf(normalizedQuery);
+
+        target.textContent = '';
+
+        if (!normalizedQuery || matchIndex === -1) {
+            target.textContent = suggestionText;
+            return;
+        }
+
+        const before = suggestionText.substring(0, matchIndex);
+        const match = suggestionText.substring(matchIndex, matchIndex + queryText.length);
+        const after = suggestionText.substring(matchIndex + queryText.length);
+
+        if (before) {
+            target.appendChild(document.createTextNode(before));
+        }
+
+        const strong = document.createElement('strong');
+        strong.textContent = match;
+        target.appendChild(strong);
+
+        if (after) {
+            target.appendChild(document.createTextNode(after));
+        }
+    }
+
     function showDropdown(items) {
         dropdown.innerHTML = '';
         dropdown.style.display = 'block';
@@ -859,35 +894,36 @@ function createAutocomplete(input, getDataFunction, category) {
             return;
         }
 
-        items.forEach((item, index) => {
+        items.forEach((item) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
-            div.dataset.value = item;
+            const suggestionText = typeof item === 'string'
+                ? item
+                : (item === null || item === undefined ? '' : String(item));
+            div.dataset.value = suggestionText;
 
-            const inputValue = input.value.toLowerCase();
-            const itemLower = item.toLowerCase();
-            const startIdx = itemLower.indexOf(inputValue);
+            renderSuggestionContent(div, suggestionText, input.value);
 
-            if (startIdx >= 0) {
-                const before = item.substring(0, startIdx);
-                const match = item.substring(startIdx, startIdx + input.value.length);
-                const after = item.substring(startIdx + input.value.length);
-                div.innerHTML = `${escapeHtmlForAttr(before)}<strong>${escapeHtmlForAttr(match)}</strong>${escapeHtmlForAttr(after)}`;
-            } else {
-                div.textContent = item;
-            }
-            
             const handleEarlySelection = (event) => {
+                if (!div.dataset.value) {
+                    return;
+                }
                 if (event && typeof event.preventDefault === 'function') {
                     event.preventDefault();
                 }
-                commitSelection(item);
+                if (typeof event.button === 'number' && event.button !== 0) {
+                    return;
+                }
+                commitSelection(div.dataset.value);
             };
 
             div.addEventListener(earlySelectionEvent, handleEarlySelection);
 
             div.addEventListener('click', () => {
-                commitSelection(item);
+                if (!div.dataset.value) {
+                    return;
+                }
+                commitSelection(div.dataset.value);
             });
 
             dropdown.appendChild(div);
