@@ -639,6 +639,15 @@ textarea {
     transform: translateY(0);
 }
 
+.btn-danger {
+    background: #d63638; /* Red */
+}
+
+.btn-danger:hover {
+    background: #b91c1c; /* Darker Red */
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+}
+
 .btn-secondary {
     background: #FE8088; /* Coral Pink */
 }
@@ -936,6 +945,22 @@ textarea {
     background: #2b8a95; /* Darker Teal */
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+}
+.project-item-rename {
+    background: #EF9034; /* Orange */
+    color: white;
+}
+.project-item-rename:hover {
+    background: #d97706; /* Darker Orange */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 144, 52, 0.3);
+}
+.project-item-delete {
+    background: #d63638; /* Red */
+    color: white;
+}
+.project-item-delete:hover {
+    background: #b91c1c; /* Darker Red */
 }
 
 .projects-empty {

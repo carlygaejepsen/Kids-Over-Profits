@@ -2355,7 +2355,9 @@ function renderSavedProjectsList() {
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
-                        <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">📂 Load</button>
+                        <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
+                        <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
+                        <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
                     </div>
                 </div>`;
     }).join('');
