@@ -1010,7 +1010,7 @@ function createAutocomplete(input, getDataFunction, category) {
     
     input.addEventListener('keydown', (e) => {
         const items = dropdown.querySelectorAll('.autocomplete-item');
-        
+
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             currentFocus++;
@@ -1026,21 +1026,29 @@ function createAutocomplete(input, getDataFunction, category) {
             const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
             const isTab = e.key === 'Tab';
 
+            const maybePreventDefault = () => {
+                if (!isTab) {
+                    e.preventDefault();
+                }
+            };
+
             if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
-                e.preventDefault();
-                commitSelection(items[currentFocus].dataset.value, { shouldRefocus: isTab });
+                maybePreventDefault();
+                commitSelection(items[currentFocus].dataset.value);
             } else if (hasVisibleOptions) {
-                e.preventDefault();
-                commitSelection(actionableItems[0].dataset.value, { shouldRefocus: isTab });
+                maybePreventDefault();
+                commitSelection(actionableItems[0].dataset.value);
             } else if (input.value.trim() && category) {
-                e.preventDefault();
                 const trimmedValue = input.value.trim();
                 addCustomValue(category, trimmedValue);
-                commitSelection(trimmedValue, { shouldRefocus: isTab });
-            } else if (isTab && dropdown.style.display !== 'none') {
+                maybePreventDefault();
+                commitSelection(trimmedValue);
+            } else if (!isTab) {
                 e.preventDefault();
+            }
+
+            if (isTab && dropdown.style.display !== 'none') {
                 hideDropdown();
-                setTimeout(() => input.focus(), 0);
             }
         } else if (e.key === 'Escape') {
             hideDropdown();
