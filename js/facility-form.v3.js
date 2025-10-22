@@ -2949,9 +2949,7 @@ function addNoteButtonsToArrayItems(group) {
 
 // Add note button to form groups
 function addNoteButtons() {
-    console.log('addNoteButtons function called');
     const formGroups = document.querySelectorAll('.form-group');
-    console.log('Found', formGroups.length, 'form groups');
 
     formGroups.forEach(group => {
         // Skip if button already exists
