@@ -2141,6 +2141,17 @@ function updateTableOfContents() {
     const tocStats = document.getElementById('toc-stats');
     const total = window.formData.facilities?.length || 0;
 
+    // If no project is loaded, show a helpful message with a link
+    if (!window.currentProjectName) {
+        if (tocStats) tocStats.textContent = 'No project loaded';
+        if (facilityList) {
+            facilityList.innerHTML = `
+                <div class="toc-no-project">Please <a href="#advanced-mode-section">load or create a project</a> to see the list of facilities.</div>
+            `;
+        }
+        return;
+    }
+
     if (tocStats) tocStats.textContent = `Total: ${total} facilit${total === 1 ? 'y' : 'ies'}`;
     if (facilityList) {
         facilityList.innerHTML = '';

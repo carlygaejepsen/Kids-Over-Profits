@@ -106,6 +106,7 @@ body {
     background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 5px;
     border-radius: 8px;
+    justify-content: center; /* Center the tabs */
     border: 2px solid #B2E102; /* Chartreuse */
 }
 
