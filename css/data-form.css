@@ -274,6 +274,7 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
+    color: #000435; /* Midnight Blue for readability */
 }
 
 .controls {
