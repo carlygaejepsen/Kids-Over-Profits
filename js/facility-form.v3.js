@@ -1383,9 +1383,9 @@ async function loadAllProjectsFromCloud() {
                 });
                 initializeAutocompleteFields();
 
-                // Also re-populate the project select dropdowns
-                debugLog('Re-populating project select dropdowns...');
-                populateProjectSelectDropdowns();
+                // Refresh saved project panels now that projects are available
+                debugLog('Refreshing saved project panels...');
+                refreshSavedProjectPanels();
             }, 500);
 
             return projects;
@@ -2348,83 +2348,62 @@ function determineProjectCategory(name = '') {
     return 'companies';
 }
 
-function getActiveProjectCategory() {
-    const activeTab = document.querySelector('.category-tab.active');
-    return activeTab?.dataset.category === 'locations' ? 'locations' : 'companies';
+function renderSavedProjectsList() {
+    refreshSavedProjectPanels();
 }
 
-function renderSavedProjectsList() {
-    const container = document.getElementById('saved-projects-list');
+function refreshSavedProjectPanels() {
     const projects = window.projects || {};
     const projectNames = Object.keys(projects);
-    const activeCategory = getActiveProjectCategory();
+    const companyContainer = document.getElementById('company-saved-projects-list');
+    const locationContainer = document.getElementById('location-saved-projects-list');
 
-    if (!container) {
-        populateProjectSelectDropdowns();
+    if (!companyContainer && !locationContainer) {
         return;
     }
 
-    if (projectNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
-        populateProjectSelectDropdowns();
-        return;
-    }
-
-    const filteredNames = projectNames.filter(name => determineProjectCategory(name) === activeCategory);
-
-    if (filteredNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects for this category yet</div>';
-        populateProjectSelectDropdowns();
-        return;
-    }
-
-    filteredNames.sort((a, b) => {
-        const timeA = projects[a]?.timestamp || '';
-        const timeB = projects[b]?.timestamp || '';
-        if (timeA === timeB) {
-            return a.localeCompare(b);
+    const buildProjectCards = (names, emptyMessage) => {
+        if (!names.length) {
+            return `<div class="projects-empty">${emptyMessage}</div>`;
         }
-        return timeB.localeCompare(timeA);
-    });
 
-    container.innerHTML = filteredNames.map(name => {
-        const project = projects[name] || {};
-        const date = project.timestamp ? new Date(project.timestamp) : null;
-        const hasValidDate = date && !Number.isNaN(date.getTime());
-        const dateStr = hasValidDate ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Unknown';
-        const facilityCount = project.data?.facilities?.length || 0;
+        const sortedNames = names.slice().sort((a, b) => {
+            const timeA = projects[a]?.timestamp || '';
+            const timeB = projects[b]?.timestamp || '';
+            if (timeA === timeB) {
+                return a.localeCompare(b);
+            }
+            return timeB.localeCompare(timeA);
+        });
 
-        return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
+        return sortedNames.map(name => {
+            const project = projects[name] || {};
+            const date = project.timestamp ? new Date(project.timestamp) : null;
+            const hasValidDate = date && !Number.isNaN(date.getTime());
+            const dateStr = hasValidDate
+                ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : 'Unknown';
+            const facilityCount = project.data?.facilities?.length || 0;
+
+            return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">📂 Load</button>
                     </div>
                 </div>`;
-    }).join('');
+        }).join('');
+    };
 
-    populateProjectSelectDropdowns();
-}
-
-function populateProjectSelectDropdowns() {
-    debugLog('🔧 populateProjectSelectDropdowns called');
-    const projectSelects = document.querySelectorAll('select.project-select');
-    if (!projectSelects.length) {
-        return;
+    if (companyContainer) {
+        const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
     }
 
-    const projects = window.projects || {};
-    const projectNames = Object.keys(projects).sort((a, b) => a.localeCompare(b));
-
-    projectSelects.forEach(select => {
-        const previousValue = select.value;
-        select.innerHTML = '<option value="">Select a project...</option>' +
-            projectNames.map(name => `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`).join('');
-
-        if (previousValue && projects[previousValue]) {
-            select.value = previousValue;
-        }
-    });
+    if (locationContainer) {
+        const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+        locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
+    }
 }
 
 function updateProjectStatus() {
@@ -3496,7 +3475,7 @@ window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
-window.populateProjectSelectDropdowns = populateProjectSelectDropdowns;
+window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
