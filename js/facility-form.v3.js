@@ -2361,14 +2361,17 @@ function renderSavedProjectsList() {
         const date = new Date(project.timestamp || 0);
         const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const facilityCount = project.data?.facilities?.length || 0;
+        const adminButtons = !IS_SUGGESTION_MODE ? `
+                        <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
+                        <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
+        ` : '';
 
         return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
-                        <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
-                        <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
+                        ${adminButtons}
                     </div>
                 </div>`;
     }).join('');
