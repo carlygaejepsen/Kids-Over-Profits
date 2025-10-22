@@ -2647,8 +2647,7 @@ function populateProjectSelectDropdowns() {
         };
     } else {
         console.warn('🔧 location-project-select dropdown not found. Skipping population. This is expected on the public suggestions page.');
-        }).join('');
-    };
+    }
 
     if (companyContainer) {
         const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
