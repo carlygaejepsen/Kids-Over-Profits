@@ -107,9 +107,9 @@ if ($action === 'save') {
 
     // SQL to insert or update the project data based on projectName
     // The identifier column is `unique_name` and the data column is `json_data`.
-    $sql = "INSERT INTO facilities_master (unique_name, json_data, last_updated) 
+    $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at) 
             VALUES (:unique_name, :json_data, NOW()) 
-            ON DUPLICATE KEY UPDATE json_data = :json_data, last_updated = NOW()";
+            ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
