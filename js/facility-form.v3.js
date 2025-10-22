@@ -826,6 +826,10 @@ function createAutocomplete(input, getDataFunction, category) {
     const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
         ? 'pointerdown'
         : 'mousedown';
+    // We call preventDefault() inside the early selection handler, so we must
+    // explicitly opt out of passive listeners to keep the behaviour working on
+    // touch/pointer devices.
+    const earlySelectionOptions = { passive: false };
 
     function commitSelection(value, options = {}) {
         const { shouldRefocus = false } = options;
@@ -920,17 +924,21 @@ function createAutocomplete(input, getDataFunction, category) {
                 if (!div.dataset.value) {
                     return;
                 }
-                if (event && typeof event.preventDefault === 'function') {
-                    event.preventDefault();
-                    event.stopPropagation();
+                if (event) {
+                    if (event.cancelable && typeof event.preventDefault === 'function') {
+                        event.preventDefault();
+                    }
+                    if (typeof event.stopPropagation === 'function') {
+                        event.stopPropagation();
+                    }
                 }
-                if (typeof event.button === 'number' && event.button !== 0) {
+                if (event && typeof event.button === 'number' && event.button !== 0) {
                     return;
                 }
                 commitSelection(div.dataset.value);
             };
 
-            div.addEventListener(earlySelectionEvent, handleEarlySelection, { passive: true });
+            div.addEventListener(earlySelectionEvent, handleEarlySelection, earlySelectionOptions);
 
             div.addEventListener('click', (event) => {
                 if (!div.dataset.value) {
