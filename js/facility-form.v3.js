@@ -2323,112 +2323,108 @@ function nextFacility() {
     }
 }
 
+const US_STATE_NAMES = [
+    'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+    'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+    'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
+    'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
+    'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
+];
+
+const COUNTRY_NAMES = [
+    'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
+    'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
+    'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
+];
+
+const US_STATE_SET = new Set(US_STATE_NAMES);
+const COUNTRY_SET = new Set(COUNTRY_NAMES);
+
+function determineProjectCategory(name = '') {
+    const normalized = name.toLowerCase().trim();
+    if (US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized)) {
+        return 'locations';
+    }
+    return 'companies';
+}
+
+function getActiveProjectCategory() {
+    const activeTab = document.querySelector('.category-tab.active');
+    return activeTab?.dataset.category === 'locations' ? 'locations' : 'companies';
+}
+
 function renderSavedProjectsList() {
     const container = document.getElementById('saved-projects-list');
-    if (!container) return;
+    const projects = window.projects || {};
+    const projectNames = Object.keys(projects);
+    const activeCategory = getActiveProjectCategory();
 
-    const projectNames = Object.keys(window.projects);
-
-    if (projectNames.length === 0) {
-        container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
+    if (!container) {
+        populateProjectSelectDropdowns();
         return;
     }
 
-    projectNames.sort((a, b) => (window.projects[b].timestamp || '').localeCompare(window.projects[a].timestamp || ''));
+    if (projectNames.length === 0) {
+        container.innerHTML = '<div class="projects-empty">📭 No saved projects yet</div>';
+        populateProjectSelectDropdowns();
+        return;
+    }
 
-    container.innerHTML = projectNames.map(name => {
-        const project = window.projects[name];
-        const date = new Date(project.timestamp || 0);
-        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const filteredNames = projectNames.filter(name => determineProjectCategory(name) === activeCategory);
+
+    if (filteredNames.length === 0) {
+        container.innerHTML = '<div class="projects-empty">📭 No saved projects for this category yet</div>';
+        populateProjectSelectDropdowns();
+        return;
+    }
+
+    filteredNames.sort((a, b) => {
+        const timeA = projects[a]?.timestamp || '';
+        const timeB = projects[b]?.timestamp || '';
+        if (timeA === timeB) {
+            return a.localeCompare(b);
+        }
+        return timeB.localeCompare(timeA);
+    });
+
+    container.innerHTML = filteredNames.map(name => {
+        const project = projects[name] || {};
+        const date = project.timestamp ? new Date(project.timestamp) : null;
+        const hasValidDate = date && !Number.isNaN(date.getTime());
+        const dateStr = hasValidDate ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Unknown';
         const facilityCount = project.data?.facilities?.length || 0;
 
         return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
-                    <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
+                    <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} facilities</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">📂 Load</button>
                     </div>
                 </div>`;
     }).join('');
 
-    // Also populate the select dropdowns
     populateProjectSelectDropdowns();
 }
 
 function populateProjectSelectDropdowns() {
     debugLog('🔧 populateProjectSelectDropdowns called');
-    debugLog('🔧 window.projects:', window.projects);
-    debugLog('🔧 Project count:', Object.keys(window.projects || {}).length);
-
-    // Define US states and countries for filtering
-    const usStates = [
-        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
-        'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
-        'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
-        'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
-        'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
-    ];
-
-    const countries = [
-        'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
-        'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
-        'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
-    ];
-
-    const projectNames = Object.keys(window.projects || {});
-    debugLog('🔧 Project names:', projectNames);
-    projectNames.sort();
-
-    // Populate company/operator select
-    const projectSelect = document.getElementById('project-select');
-    debugLog('🔧 projectSelect element:', projectSelect);
-    if (projectSelect) {
-        const companyProjects = projectNames.filter(name => {
-            const lowerName = name.toLowerCase().trim();
-            return !usStates.includes(lowerName) && !countries.includes(lowerName);
-        });
-
-        debugLog('🔧 Company projects filtered:', companyProjects);
-
-        projectSelect.innerHTML = '<option value="">-- Select a project --</option>' +
-            companyProjects.map(name =>
-                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
-            ).join('');
-
-        debugLog('🔧 Company dropdown populated with', companyProjects.length, 'projects');
-
-        // Add change event listener
-        projectSelect.onchange = (e) => {
-            if (e.target.value) {
-                debugLog('📂 Dropdown loading project:', e.target.value);
-                loadProject(e.target.value);
-            }
-        };
-    } else {
-        console.error('🔧 project-select element NOT FOUND!');
+    const projectSelects = document.querySelectorAll('select.project-select');
+    if (!projectSelects.length) {
+        return;
     }
 
-    // Populate location select
-    const locationSelect = document.getElementById('location-project-select');
-    if (locationSelect) {
-        const locationProjects = projectNames.filter(name => {
-            const lowerName = name.toLowerCase().trim();
-            return usStates.includes(lowerName) || countries.includes(lowerName);
-        });
+    const projects = window.projects || {};
+    const projectNames = Object.keys(projects).sort((a, b) => a.localeCompare(b));
 
-        locationSelect.innerHTML = '<option value="">-- Select a location project --</option>' +
-            locationProjects.map(name =>
-                `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`
-            ).join('');
+    projectSelects.forEach(select => {
+        const previousValue = select.value;
+        select.innerHTML = '<option value="">Select a project...</option>' +
+            projectNames.map(name => `<option value="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</option>`).join('');
 
-        // Add change event listener
-        locationSelect.onchange = (e) => {
-            if (e.target.value) {
-                debugLog('📂 Location dropdown loading project:', e.target.value);
-                loadProject(e.target.value);
-            }
-        };
-    }
+        if (previousValue && projects[previousValue]) {
+            select.value = previousValue;
+        }
+    });
 }
 
 function updateProjectStatus() {
