@@ -229,16 +229,16 @@ body {
 /* Project status text - highlighted */
 #project-status,
 #upload-status {
-    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
-    color: white;
+    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
+    color: #000435; /* Midnight Blue for contrast */
     padding: 12px 20px;
     border-radius: 8px;
     font-weight: 700;
     text-align: center;
     margin: 15px auto;
     max-width: 600px;
-    border: 2px solid #FE8088;
-    box-shadow: 0 3px 8px rgba(254, 128, 136, 0.4);
+    border: 2px solid #B2E102; /* Chartreuse */
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.4);
 }
 
 /* Saved project lists - centered */
@@ -274,23 +274,23 @@ body {
 }
 
 .toc-toggle {
-    background: white;
-    color: #33A7B5; /* Teal */
-    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
+    border: 2px solid #FE8088; /* Coral Pink */
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.2);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
 }
 
 .toc-toggle:hover {
-    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
-    border-color: #B2E102; /* Chartreuse */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    border-color: #FE8088; /* Coral Pink */
     transform: scale(1.05);
-    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.3);
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 8px rgba(254, 128, 136, 0.3);
 }
 
 .toc-content {
@@ -709,20 +709,23 @@ textarea {
 }
 
 .btn-danger {
-    background: #d63638; /* Red */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-danger:hover {
-    background: #b91c1c; /* Darker Red */
-    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn-secondary {
-    background: #FE8088; /* Coral Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-secondary:hover {
-    background: #fa5f69; /* Darker Coral Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn-inline {
@@ -730,36 +733,36 @@ textarea {
     font-size: 13px;
 }
 
-/* Plus Button for Adding Items Inline - vibrant teal button with glow */
+/* Plus Button for Adding Items Inline - matches admin header */
 .add-plus-btn {
     width: 28px;
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: linear-gradient(135deg, #33A7B5 0%, #2b8a95 100%); /* Teal gradient */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     font-size: 16px;
     font-weight: 700;
     flex: 0 0 28px; /* Prevent stretching */
     border-radius: 4px;
-    border: 2px solid #B2E102; /* Chartreuse */
+    border: 2px solid #FE8088; /* Coral Pink */
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
     transition: all 0.2s ease;
 }
 
 .add-plus-btn:hover {
-    background: linear-gradient(135deg, #2b8a95 0%, #1f6c75 100%); /* Darker Teal gradient */
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(178, 225, 2, 0.3);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(254, 128, 136, 0.3);
     transform: scale(1.1);
 }
 
-/* Add Item Button (at bottom of arrays) - orange button with glow */
+/* Add Item Button (at bottom of arrays) - matches admin header */
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: linear-gradient(135deg, #FE8088 0%, #fa5f69 100%); /* Coral Pink gradient */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    border: 2px solid #FE8088; /* Coral Pink */
     border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
@@ -767,12 +770,12 @@ textarea {
     transition: all 0.15s ease;
     display: inline-block;
     width: auto;
-    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.3);
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .add-item-btn:hover {
-    background: linear-gradient(135deg, #fa5f69 0%, #f84652 100%); /* Darker Coral Pink gradient */
-    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.5), 0 0 12px rgba(252, 142, 214, 0.3);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.5), 0 0 12px rgba(254, 128, 136, 0.3);
     transform: translateY(-1px);
 }
 
@@ -998,38 +1001,42 @@ textarea {
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 600;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
 }
 
 .project-item-load {
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 
 .project-item-load:hover {
-    background: #2b8a95; /* Darker Teal */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-rename {
-    background: #EF9034; /* Orange */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-rename:hover {
-    background: #d97706; /* Darker Orange */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(239, 144, 52, 0.3);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-delete {
-    background: #d63638; /* Red */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-delete:hover {
-    background: #b91c1c; /* Darker Red */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 
 .projects-empty {
@@ -1131,11 +1138,9 @@ textarea {
 
 .copy-btn {
     padding: 8px 14px;
-    background: #6b7280;
-    padding: 8px 14px; /* Using btn-secondary styles */
-    background: #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
@@ -1144,8 +1149,8 @@ textarea {
 }
 
 .copy-btn:hover {
-    background: #4b5563;
-    background: #fa74c8; /* Darker Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 #json-display {
@@ -1237,39 +1242,38 @@ textarea {
 
 .modal-btn {
     padding: 10px 20px;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
 }
 
 .modal-btn-primary {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .modal-btn-primary:hover {
-    background: linear-gradient(135deg, #000080 0%, #000435 100%); /* Navy Blue to Midnight Blue */
-    box-shadow: 0 4px 10px rgba(0, 0, 128, 0.4);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
 }
 
 .modal-btn-secondary {
-    background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
-    color: #000080;
-    border: 1px solid #d1d5db;
-    background: #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .modal-btn-secondary:hover {
-    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-    border-color: #9ca3af;
-    background: #fa74c8; /* Darker Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
 }
 
@@ -1279,20 +1283,21 @@ textarea {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 8px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3);
 }
 
 .save-master-btn:hover {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.5), 0 0 16px rgba(254, 128, 136, 0.3);
 }
 
 .save-master-btn:active {
@@ -1350,9 +1355,9 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #000080;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 4px;
     font-size: 14px;
     font-weight: 700;
@@ -1362,7 +1367,8 @@ textarea {
 }
 
 .field-note-btn:hover {
-    background: #000435;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 
 .field-note-btn.has-note {
