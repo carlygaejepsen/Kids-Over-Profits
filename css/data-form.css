@@ -54,6 +54,7 @@ body {
     border-radius: 8px;
     margin-bottom: 25px;
     text-align: center;
+    border: 3px solid #FE8088; /* Coral Pink outline */
 }
 
 .admin-header h1 {
@@ -148,7 +149,7 @@ body {
 }
 
 .category-content, .facility-toc {
-    background: #AEE0ED; /* Powder Blue */
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%); /* White to Soft Pastel Yellow */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     padding: 15px;
@@ -191,6 +192,59 @@ body {
 
 .content-header .d-flex {
     align-items: center;
+}
+
+/* ============================================
+   PROJECT MANAGEMENT SECTIONS
+   ============================================ */
+.project-management {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.project-management h2 {
+    text-align: center;
+    color: #000435 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 20px 0 !important;
+}
+
+.project-management .form-group {
+    text-align: center;
+}
+
+.project-management .form-group label {
+    text-align: center;
+    display: block;
+    width: 100%;
+    font-weight: 700;
+    color: #000435;
+}
+
+.project-management .btn {
+    margin: 5px;
+}
+
+/* Project status text - highlighted */
+#project-status,
+#upload-status {
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-align: center;
+    margin: 15px auto;
+    max-width: 600px;
+    border: 2px solid #FE8088;
+    box-shadow: 0 3px 8px rgba(254, 128, 136, 0.4);
+}
+
+/* Saved project lists - centered */
+#company-saved-projects-list,
+#location-saved-projects-list {
+    text-align: center;
 }
 
 /* ============================================
@@ -632,11 +686,11 @@ textarea {
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     display: inline-flex;
     align-items: center;
@@ -645,9 +699,9 @@ textarea {
 }
 
 .btn:hover {
-    background: #2b8a95; /* Darker Teal */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn:active {
