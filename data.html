@@ -1794,7 +1794,22 @@
         
         // Initialize data organizer when the page loads
         window.addEventListener('load', () => {
-            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
+            // This function waits for the main form script to signal it's ready
+            const onFormReady = () => {
+                console.log('🚀 Form is ready. Initializing data organizer.');
+                if (typeof initializeDataOrganizer === 'function') {
+                    initializeDataOrganizer();
+                } else {
+                    console.error('initializeDataOrganizer function not found');
+                }
+            };
+
+            // Check if form is already ready, otherwise wait for formReady event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
 
         // ============================================
