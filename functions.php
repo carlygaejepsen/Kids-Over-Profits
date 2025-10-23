@@ -68,6 +68,18 @@ function kop_maybe_disable_kadence_navigation() {
             }
         }
     }
+
+    // The Kadence navigation script is causing errors on pages where the
+    // standard header/navigation is hidden. We dequeue and deregister it here
+    // to prevent the script from running when the header is removed.
+    wp_dequeue_script('kadence-navigation');
+    wp_deregister_script('kadence-navigation');
+
+    // Some Kadence builds register a companion initializer for navigation.
+    // Deregister it as well so the browser never executes any navigation code
+    // on pages that hide the standard header.
+    wp_dequeue_script('kadence-navigation-init');
+    wp_deregister_script('kadence-navigation-init');
 }
 
 add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
