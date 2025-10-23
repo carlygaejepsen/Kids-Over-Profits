@@ -36,13 +36,23 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * Dequeue scripts on specific pages to prevent errors.
  */
 function kop_dequeue_scripts() {
-    if (is_page('data') || is_page('admin-data')) {
-        // The Kadence navigation script is causing errors on pages where the
-        // standard header/navigation is hidden. We dequeue it here.
-        wp_dequeue_script('kadence-navigation');
+    if (!is_page('data') && !is_page('admin-data')) {
+        return;
     }
+
+    // The Kadence navigation script is causing errors on pages where the
+    // standard header/navigation is hidden. We dequeue and deregister it here
+    // to prevent the script from running when the header is removed.
+    wp_dequeue_script('kadence-navigation');
+    wp_deregister_script('kadence-navigation');
+
+    // Some Kadence builds register a companion initializer for navigation.
+    // Deregister it as well so the browser never executes any navigation code
+    // on pages that hide the standard header.
+    wp_dequeue_script('kadence-navigation-init');
+    wp_deregister_script('kadence-navigation-init');
 }
-add_action('wp_print_scripts', 'kop_dequeue_scripts', 100);
+add_action('wp_enqueue_scripts', 'kop_dequeue_scripts', 20);
 
 // =================================================================
 // CUSTOM FUNCTIONS
