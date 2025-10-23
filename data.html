@@ -2261,9 +2261,25 @@
 
         // Initialize category navigation when page loads
         window.addEventListener('load', () => {
-            initializeSectionToggles();
+            let sectionTogglesInitialized = false;
+
+            const initializeSectionTogglesSafely = () => {
+                if (sectionTogglesInitialized) {
+                    return;
+                }
+
+                if (typeof window.initializeSectionToggles === 'function') {
+                    window.initializeSectionToggles();
+                    sectionTogglesInitialized = true;
+                } else {
+                    console.warn('initializeSectionToggles not available yet; waiting for formReady event');
+                }
+            };
+
+            initializeSectionTogglesSafely();
 
             const onFormReady = () => {
+                initializeSectionTogglesSafely();
                 console.log('🚀 Form is ready. Initializing category navigation.');
                 initializeCategoryNavigation();
 
