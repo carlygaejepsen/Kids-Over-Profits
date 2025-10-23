@@ -1443,16 +1443,7 @@
 
         function initializeSectionToggles() {
             const sections = document.querySelectorAll('.section');
-            const supportsPointer = typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined';
 
-            const isTouchLikePointer = (event) => {
-                if (!event || !event.pointerType) {
-                    return false;
-                }
-                return event.pointerType === 'touch' || event.pointerType === 'pen';
-            };
-
-            // Initialize each section's state and attributes
             sections.forEach(section => {
                 const header = section.querySelector('.section-header');
                 const toggle = section.querySelector('.section-toggle');
@@ -1475,97 +1466,25 @@
                 // Initialize with existing expanded state
                 setState(section.classList.contains('expanded'));
 
-                // Store state function on section for use by delegated handlers
-                section._toggleState = setState;
-            });
-
-            // Use event delegation to handle all section toggles with a single listener
-            // This reduces 32+ passive:false listeners to just 1
-            const container = document.querySelector('.container');
-            if (!container || container.dataset.sectionDelegationInit) {
-                return;
-            }
-            container.dataset.sectionDelegationInit = 'true';
-
-            let pointerHandledMap = new WeakMap(); // Track which elements had pointer events
-
-            const handleToggleClick = (section, event) => {
-                if (event && event.cancelable) {
+                const handleToggle = (event) => {
                     event.preventDefault();
-                }
-                if (event && typeof event.stopPropagation === 'function') {
                     event.stopPropagation();
-                }
-                if (section._toggleState) {
-                    const isExpanded = section.classList.contains('expanded');
-                    section._toggleState(!isExpanded);
-                }
-            };
+                    setState(!section.classList.contains('expanded'));
+                };
 
-            // Single click handler for all sections
-            container.addEventListener('click', (event) => {
-                // Check if pointer already handled this
-                if (pointerHandledMap.has(event.target)) {
-                    pointerHandledMap.delete(event.target);
-                    return;
-                }
-
-                // Find if we clicked on a toggle or header
-                const toggle = event.target.closest('.section-toggle');
-                const header = event.target.closest('.section-header');
-
-                if (toggle) {
-                    const section = toggle.closest('.section');
-                    if (section) {
-                        handleToggleClick(section, event);
+                toggle.addEventListener('click', handleToggle);
+                toggle.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        handleToggle(event);
                     }
-                } else if (header && !event.target.closest('.section-toggle')) {
-                    const section = header.closest('.section');
-                    if (section) {
-                        handleToggleClick(section, event);
-                    }
-                }
-            });
+                });
 
-            // Single pointerdown handler for touch/pen events
-            if (supportsPointer) {
-                container.addEventListener('pointerdown', (event) => {
-                    if (!isTouchLikePointer(event)) {
+                header.addEventListener('click', (event) => {
+                    if (event.target.closest('.section-toggle')) {
                         return;
                     }
-
-                    const toggle = event.target.closest('.section-toggle');
-                    const header = event.target.closest('.section-header');
-
-                    if (toggle) {
-                        const section = toggle.closest('.section');
-                        if (section) {
-                            pointerHandledMap.set(event.target, true);
-                            handleToggleClick(section, event);
-                        }
-                    } else if (header && !event.target.closest('.section-toggle')) {
-                        const section = header.closest('.section');
-                        if (section) {
-                            pointerHandledMap.set(event.target, true);
-                            handleToggleClick(section, event);
-                        }
-                    }
-                }, { passive: false });
-            }
-
-            // Single keydown handler for keyboard navigation
-            container.addEventListener('keydown', (event) => {
-                if (event.key !== 'Enter' && event.key !== ' ') {
-                    return;
-                }
-
-                const toggle = event.target.closest('.section-toggle');
-                if (toggle) {
-                    const section = toggle.closest('.section');
-                    if (section) {
-                        handleToggleClick(section, event);
-                    }
-                }
+                    handleToggle(event);
+                });
             });
         }
 
