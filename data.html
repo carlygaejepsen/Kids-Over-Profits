@@ -1886,7 +1886,7 @@
                 console.error('operators-list container not found!');
                 return;
             }
-            
+
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
@@ -1916,11 +1916,21 @@
                             </div>
                         </div>`;
             }).join('');
-            
+
             container.innerHTML = projectsHtml;
             console.log('Projects list rendered successfully');
         }
-        
+
+        function populateOperatorsList() {
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                window.refreshSavedProjectPanels();
+            }
+
+            if (document.getElementById('operators-list')) {
+                populateCompaniesList();
+            }
+        }
+
         function populateLocationsList() {
             console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
@@ -2405,7 +2415,6 @@
             } else {
                 document.addEventListener('formReady', onFormReady, { once: true });
             }
-        });
 
             // ============================================
             // TOOLBAR FUNCTIONALITY
