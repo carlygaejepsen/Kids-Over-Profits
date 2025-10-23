@@ -1833,6 +1833,11 @@ function loadProject(projectName) {
         console.error('❌ updateAllUI not available!');
     }
 
+    // Dispatch custom event for project loaded
+    document.dispatchEvent(new CustomEvent('projectLoaded', {
+        detail: { projectName: projectName }
+    }));
+
     showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
 }
 
@@ -2336,6 +2341,7 @@ window.updateAllUI = function() {
     updateProjectStatus();
     initializeAutocompleteFields();
     initializeNoteControls();
+    updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
     // Reinitialize autocomplete for facility status field
     const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
@@ -2405,7 +2411,178 @@ function navigateToFacility(index) {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        updateToolbarFacilityInfo();
     }
+}
+
+// ============================================
+// TOOLBAR FUNCTIONALITY
+// ============================================
+function updateToolbarFacilityInfo() {
+    const dropdown = document.getElementById('facility-dropdown');
+    const projectNameSpan = document.getElementById('toolbar-project-name');
+
+    // Only proceed if toolbar elements exist (not all pages have the toolbar)
+    if (!dropdown) return;
+
+    debugLog('🔄 Updating toolbar facility info...', {
+        'formData exists': !!window.formData,
+        'facilities count': window.formData?.facilities?.length || 0,
+        'currentProjectName': window.currentProjectName
+    });
+
+    if (window.formData && window.formData.facilities) {
+        // Clear and populate dropdown
+        dropdown.innerHTML = '';
+        window.formData.facilities.forEach((facility, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            const facilityName = facility.identification?.name || `Facility ${index + 1}`;
+            option.textContent = `${index + 1}. ${facilityName}`;
+            dropdown.appendChild(option);
+        });
+
+        debugLog('✅ Populated dropdown with', window.formData.facilities.length, 'facilities');
+
+        // Set current selection
+        if (typeof window.currentFacilityIndex !== 'undefined') {
+            dropdown.value = window.currentFacilityIndex;
+        }
+
+        // Sort options alphabetically by facility name
+        const options = Array.from(dropdown.options);
+        options.sort((a, b) => {
+            const nameA = a.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+            const nameB = b.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        // Re-add sorted options
+        dropdown.innerHTML = '';
+        options.forEach(opt => dropdown.appendChild(opt));
+        // Reselect current facility
+        if (typeof window.currentFacilityIndex !== 'undefined') {
+            dropdown.value = window.currentFacilityIndex;
+        }
+    } else {
+        debugLog('⚠️ Could not update toolbar: no formData or facilities');
+        dropdown.innerHTML = '<option>No facilities</option>';
+    }
+
+    // Update project name
+    if (projectNameSpan) {
+        projectNameSpan.textContent = window.currentProjectName ? `(${window.currentProjectName})` : '';
+    }
+
+    // Show/hide remove button
+    const removeBtn = document.getElementById('remove-facility-btn-toolbar');
+    if (removeBtn && window.formData && window.formData.facilities) {
+        if (window.formData.facilities.length > 1) {
+            removeBtn.classList.remove('d-none');
+        } else {
+            removeBtn.classList.add('d-none');
+        }
+    }
+
+    // Update prev/next button states
+    updateToolbarNavButtons();
+}
+
+function updateToolbarNavButtons() {
+    const prevBtn = document.getElementById('prev-facility-btn-toolbar');
+    const nextBtn = document.getElementById('next-facility-btn-toolbar');
+    const dropdown = document.getElementById('facility-dropdown');
+
+    if (!prevBtn || !nextBtn || !dropdown) return;
+
+    const currentIndex = parseInt(dropdown.value) || 0;
+    const totalFacilities = dropdown.options.length;
+
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex === totalFacilities - 1;
+
+    prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+    nextBtn.style.opacity = currentIndex === totalFacilities - 1 ? '0.5' : '1';
+}
+
+// Make toolbar function globally accessible
+window.updateToolbarFacilityInfo = updateToolbarFacilityInfo;
+
+// Initialize toolbar button event listeners
+function initializeToolbarButtons() {
+    // Toolbar toggle (minimize/expand)
+    const toolbarToggle = document.getElementById('toolbar-toggle-btn');
+    const toolbar = document.getElementById('fixed-toolbar');
+
+    if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
+        toolbarToggle.addEventListener('click', () => {
+            toolbar.classList.toggle('minimized');
+            document.body.classList.toggle('toolbar-minimized');
+            toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
+            toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
+        });
+        toolbarToggle.dataset.listenerAttached = 'true';
+    }
+
+    // Facility dropdown change handler
+    const facilityDropdown = document.getElementById('facility-dropdown');
+    if (facilityDropdown && !facilityDropdown.dataset.listenerAttached) {
+        facilityDropdown.addEventListener('change', (e) => {
+            const newIndex = parseInt(e.target.value);
+            if (!isNaN(newIndex)) {
+                navigateToFacility(newIndex);
+            }
+        });
+        facilityDropdown.dataset.listenerAttached = 'true';
+    }
+
+    // Previous/Next facility buttons
+    const prevBtnToolbar = document.getElementById('prev-facility-btn-toolbar');
+    const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
+
+    if (prevBtnToolbar && !prevBtnToolbar.dataset.listenerAttached) {
+        prevBtnToolbar.addEventListener('click', () => {
+            const dropdown = document.getElementById('facility-dropdown');
+            if (dropdown && dropdown.selectedIndex > 0) {
+                dropdown.selectedIndex--;
+                navigateToFacility(parseInt(dropdown.value));
+            }
+        });
+        prevBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    if (nextBtnToolbar && !nextBtnToolbar.dataset.listenerAttached) {
+        nextBtnToolbar.addEventListener('click', () => {
+            const dropdown = document.getElementById('facility-dropdown');
+            if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
+                dropdown.selectedIndex++;
+                navigateToFacility(parseInt(dropdown.value));
+            }
+        });
+        nextBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    // Add Facility button
+    const addFacilityBtnToolbar = document.getElementById('add-facility-btn-toolbar');
+    if (addFacilityBtnToolbar && !addFacilityBtnToolbar.dataset.listenerAttached) {
+        addFacilityBtnToolbar.addEventListener('click', addFacility);
+        addFacilityBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    // Clone Facility button
+    const cloneFacilityBtnToolbar = document.getElementById('clone-facility-btn-toolbar');
+    if (cloneFacilityBtnToolbar && !cloneFacilityBtnToolbar.dataset.listenerAttached) {
+        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility);
+        cloneFacilityBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    // Remove Facility button
+    const removeFacilityBtnToolbar = document.getElementById('remove-facility-btn-toolbar');
+    if (removeFacilityBtnToolbar && !removeFacilityBtnToolbar.dataset.listenerAttached) {
+        removeFacilityBtnToolbar.addEventListener('click', removeFacility);
+        removeFacilityBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    debugLog('✅ Toolbar buttons initialized');
 }
 
 function addFacility() {
@@ -2414,6 +2591,11 @@ function addFacility() {
     window.currentFacilityIndex = window.formData.facilities.length - 1;
     window.updateAllUI();
     autoSave();
+
+    // Dispatch custom event
+    document.dispatchEvent(new CustomEvent('facilityChanged', {
+        detail: { action: 'add', index: window.currentFacilityIndex }
+    }));
 }
 
 function removeFacility() {
@@ -2425,6 +2607,11 @@ function removeFacility() {
         }
         window.updateAllUI();
         autoSave();
+
+        // Dispatch custom event
+        document.dispatchEvent(new CustomEvent('facilityChanged', {
+            detail: { action: 'remove', index: window.currentFacilityIndex }
+        }));
     }
 }
 
@@ -2932,6 +3119,9 @@ function attachButtonListeners() {
             btn.dataset.listenerAttached = 'true';
         }
     });
+
+    // Toolbar buttons (if toolbar exists on this page)
+    initializeToolbarButtons();
 
     // Project management
     const saveBtn = document.getElementById('save-project-btn');
