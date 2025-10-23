@@ -866,6 +866,39 @@ function createAutocomplete(input, getDataFunction, category) {
     // touch/pointer devices.
     const earlySelectionOptions = { passive: false };
 
+    // Use event delegation on the dropdown to avoid adding listeners to each item
+    // This prevents console spam when many autocomplete items are rendered
+    if (!dropdown.dataset.delegationInitialized) {
+        dropdown.dataset.delegationInitialized = 'true';
+
+        // Handle early selection (pointerdown/mousedown)
+        dropdown.addEventListener(earlySelectionEvent, (event) => {
+            const item = event.target.closest('.autocomplete-item');
+            if (!item || !item.dataset.value || item.dataset.placeholder) {
+                return;
+            }
+            if (event.cancelable) {
+                event.preventDefault();
+            }
+            event.stopPropagation();
+            if (event.button && event.button !== 0) {
+                return;
+            }
+            commitSelection(item.dataset.value);
+        }, earlySelectionOptions);
+
+        // Handle click as fallback
+        dropdown.addEventListener('click', (event) => {
+            const item = event.target.closest('.autocomplete-item');
+            if (!item || !item.dataset.value || item.dataset.placeholder) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            commitSelection(item.dataset.value);
+        });
+    }
+
     function commitSelection(value, options = {}) {
         const { shouldRefocus = false } = options;
         if (typeof value !== 'string') {
@@ -955,36 +988,8 @@ function createAutocomplete(input, getDataFunction, category) {
 
             renderSuggestionContent(div, suggestionText, input.value);
 
-            const handleEarlySelection = (event) => {
-                if (!div.dataset.value) {
-                    return;
-                }
-                if (event) {
-                    if (event.cancelable && typeof event.preventDefault === 'function') {
-                        event.preventDefault();
-                    }
-                    if (typeof event.stopPropagation === 'function') {
-                        event.stopPropagation();
-                    }
-                }
-                if (event && typeof event.button === 'number' && event.button !== 0) {
-                    return;
-                }
-                commitSelection(div.dataset.value);
-            };
-
-            div.addEventListener(earlySelectionEvent, handleEarlySelection, earlySelectionOptions);
-
-            div.addEventListener('click', (event) => {
-                if (!div.dataset.value) {
-                    return;
-                }
-                if (event && typeof event.preventDefault === 'function') {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                commitSelection(div.dataset.value);
-            });
+            // Event listeners are handled by delegation on the dropdown container
+            // No need to add listeners to each individual item
 
             dropdown.appendChild(div);
         });
