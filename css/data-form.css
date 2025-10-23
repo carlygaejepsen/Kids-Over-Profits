@@ -19,6 +19,198 @@ body {
     padding: 20px;
 }
 
+/* ============================================
+   FIXED ADMIN TOOLBAR
+   ============================================ */
+body.toolbar-active {
+    padding-top: 172px; /* 32px admin bar + 140px toolbar */
+}
+
+body.toolbar-active:not(.admin-bar) {
+    padding-top: 140px; /* Just toolbar, no admin bar */
+}
+
+body.toolbar-minimized {
+    padding-top: 32px; /* Retain space for the WordPress admin bar */
+}
+
+body.toolbar-minimized:not(.admin-bar) {
+    padding-top: 0;
+}
+
+.fixed-toolbar {
+    position: fixed;
+    top: 32px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 99998; /* Below the WP admin bar but above other UI */
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+body:not(.admin-bar) .fixed-toolbar {
+    top: 0;
+}
+
+.fixed-toolbar .toolbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 12px;
+}
+
+.fixed-toolbar .toolbar-title {
+    color: #FFFFFF;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fixed-toolbar .toolbar-toggle {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #B2E102;
+    color: #000080;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fixed-toolbar .toolbar-toggle:hover {
+    background: #FFF5CB;
+    border-color: #B2E102;
+    transform: scale(1.05);
+}
+
+.fixed-toolbar .toolbar-content {
+    padding: 15px 20px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    max-height: 1000px;
+}
+
+.fixed-toolbar .toolbar-section {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fixed-toolbar .toolbar-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.fixed-toolbar .toolbar-label {
+    color: #FFFFFF;
+    font-weight: 600;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.fixed-toolbar .btn-toolbar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000435;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fixed-toolbar .btn-toolbar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.fixed-toolbar .btn-toolbar.btn-primary {
+    background: #000080;
+    color: #FFFFFF;
+    border-color: #FE8088;
+}
+
+.fixed-toolbar .btn-toolbar.btn-primary:hover {
+    background: #33A7B5;
+}
+
+.fixed-toolbar .btn-toolbar.btn-secondary {
+    background: #FFF5CB;
+    color: #000435;
+    border-color: #B2E102;
+}
+
+.fixed-toolbar .btn-toolbar.btn-secondary:hover {
+    background: #ECF385;
+}
+
+.fixed-toolbar .btn-toolbar.btn-success {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border-color: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-success:hover {
+    background: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-danger {
+    background: #FE8088;
+    color: #000435;
+    border-color: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-danger:hover {
+    background: #EF9034;
+}
+
+.fixed-toolbar.minimized {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fixed-toolbar.minimized .toolbar-header {
+    border-bottom: none;
+}
+
+.fixed-toolbar.minimized .toolbar-toggle {
+    background: #EF9034;
+    color: #FFFFFF;
+    border-color: #B2E102;
+}
+
+.fixed-toolbar.minimized .toolbar-content {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.fixed-toolbar.minimized .btn-toolbar {
+    box-shadow: none;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
