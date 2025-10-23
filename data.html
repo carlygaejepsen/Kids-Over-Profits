@@ -2263,7 +2263,8 @@
         window.addEventListener('load', () => {
             initializeSectionToggles();
 
-            setTimeout(() => {
+            const onFormReady = () => {
+                console.log('🚀 Form is ready. Initializing category navigation.');
                 initializeCategoryNavigation();
 
                 // Refresh saved project panels (from facility-form.v3.js)
@@ -2380,7 +2381,14 @@
                         }
                     });
                 }
-            }, 1000);
+            };
+
+            // Check if form is already ready, otherwise wait for formReady event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
 
             // ============================================
