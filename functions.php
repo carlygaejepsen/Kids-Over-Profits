@@ -44,18 +44,6 @@ function kop_dequeue_scripts() {
 }
 add_action('wp_print_scripts', 'kop_dequeue_scripts', 100);
 
-/**
- * Dequeue scripts on specific pages to prevent errors.
- */
-function kop_dequeue_scripts() {
-    if (is_page('data') || is_page('admin-data')) {
-        // The Kadence navigation script is causing errors on pages where the
-        // standard header/navigation is hidden. We dequeue it here.
-        wp_dequeue_script('kadence-navigation');
-    }
-}
-add_action('wp_print_scripts', 'kop_dequeue_scripts', 100);
-
 // =================================================================
 // CUSTOM FUNCTIONS
 // =================================================================
