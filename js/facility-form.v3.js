@@ -4009,6 +4009,7 @@ window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
+window.initializeSectionToggles = initializeSectionToggles;
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
