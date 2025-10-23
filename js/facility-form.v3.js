@@ -1174,6 +1174,48 @@ function initializeAutocompleteFields() {
     });
 }
 
+function initializeSectionToggles() {
+    const sections = document.querySelectorAll('.section');
+
+    sections.forEach(section => {
+        // Prevent re-initialization
+        if (section.dataset.toggleInit === 'true') return;
+        section.dataset.toggleInit = 'true';
+
+        const header = section.querySelector('.section-header');
+        const toggle = section.querySelector('.section-toggle');
+        const content = section.querySelector('.section-content');
+
+        if (!header || !toggle || !content) {
+            return;
+        }
+
+        toggle.setAttribute('role', 'button');
+        toggle.setAttribute('tabindex', '0');
+
+        const setState = (expanded) => {
+            section.classList.toggle('expanded', expanded);
+            content.style.display = expanded ? 'block' : 'none';
+            toggle.setAttribute('aria-expanded', expanded.toString());
+            toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
+        };
+
+        // Initialize with existing expanded state
+        setState(section.classList.contains('expanded'));
+
+        const handleToggle = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setState(!section.classList.contains('expanded'));
+        };
+
+        header.addEventListener('click', (event) => {
+            if (event.target.closest('.section-toggle')) { return; }
+            handleToggle(event);
+        });
+    });
+}
+
 // ============================================
 // FIELD NOTE CONTROLS
 // ============================================
@@ -2338,6 +2380,7 @@ window.updateAllUI = function() {
     updateTableOfContents();
     updateJSON();
     renderSavedProjectsList();
+    initializeSectionToggles();
     updateProjectStatus();
     initializeAutocompleteFields();
     initializeNoteControls();
