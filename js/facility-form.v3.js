@@ -861,10 +861,9 @@ function createAutocomplete(input, getDataFunction, category) {
     const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
         ? 'pointerdown'
         : 'mousedown';
-    // We call preventDefault() inside the early selection handler, so we must
-    // explicitly opt out of passive listeners to keep the behaviour working on
-    // touch/pointer devices.
-    const earlySelectionOptions = { passive: false };
+    // Use passive listeners for better scroll performance
+    // The event.cancelable check will handle cases where preventDefault is needed
+    const earlySelectionOptions = { passive: true };
 
     // Use event delegation on the dropdown to avoid adding listeners to each item
     // This prevents console spam when many autocomplete items are rendered
