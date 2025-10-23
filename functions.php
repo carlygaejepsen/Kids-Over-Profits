@@ -42,17 +42,18 @@ function kop_is_headerless_layout() {
 }
 
 /**
- * Fully disable Kadence navigation scripts on headerless layouts.
+ * Remove Kadence navigation scripts when the page intentionally renders without a header.
  */
-function kop_disable_kadence_navigation_scripts() {
+function kop_maybe_disable_kadence_navigation() {
     if (!kop_is_headerless_layout()) {
         return;
     }
 
-    $handles = array(
-        'kadence-navigation',
-        'kadence-navigation-init',
-    );
+    wp_dequeue_script('kadence-navigation');
+    wp_dequeue_script('kadence-navigation-init');
+
+    wp_deregister_script('kadence-navigation');
+    wp_deregister_script('kadence-navigation-init');
 
     global $wp_scripts;
 
@@ -60,46 +61,18 @@ function kop_disable_kadence_navigation_scripts() {
         $wp_scripts = wp_scripts();
     }
 
-    foreach ($handles as $handle) {
-        if (wp_script_is($handle, 'enqueued')) {
-            wp_dequeue_script($handle);
-        }
-
-        if (wp_script_is($handle, 'registered')) {
-            wp_deregister_script($handle);
-        }
-
-        if ($wp_scripts instanceof WP_Scripts && isset($wp_scripts->registered[$handle])) {
-            $wp_scripts->registered[$handle]->extra = array();
+    if ($wp_scripts instanceof WP_Scripts) {
+        foreach (array('kadence-navigation', 'kadence-navigation-init') as $handle) {
+            if (isset($wp_scripts->registered[$handle])) {
+                $wp_scripts->registered[$handle]->extra = array();
+            }
         }
     }
 }
 
-/**
- * Block Kadence navigation scripts from being printed even if they slip through the queue.
- *
- * @param string|false $src    Script source URL.
- * @param string       $handle Script handle.
- *
- * @return string|false
- */
-function kop_filter_kadence_navigation_script_src($src, $handle) {
-    if (!kop_is_headerless_layout()) {
-        return $src;
-    }
-
-    if (strpos($handle, 'kadence-navigation') === 0) {
-        return false;
-    }
-
-    return $src;
-}
-
-// Run late in the queue lifecycle to catch scripts added at any priority.
-add_action('wp_enqueue_scripts', 'kop_disable_kadence_navigation_scripts', PHP_INT_MAX);
-add_action('wp_print_scripts', 'kop_disable_kadence_navigation_scripts', PHP_INT_MAX);
-add_action('wp_print_footer_scripts', 'kop_disable_kadence_navigation_scripts', PHP_INT_MAX);
-add_filter('script_loader_src', 'kop_filter_kadence_navigation_script_src', PHP_INT_MAX, 2);
+add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 
 // =================================================================
 // CUSTOM FUNCTIONS
