@@ -3186,11 +3186,11 @@ function addNoteButtonsToArrayItems(group) {
 
             noteBtn.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-            });
+            }, { passive: false });
 
             noteBtn.addEventListener('mouseup', (e) => {
                 e.stopPropagation();
-            });
+            }, { passive: false });
 
             arrayItem.appendChild(noteBtn);
             arrayItem.classList.add('has-note-button');
@@ -3317,11 +3317,11 @@ function addNoteButtons() {
         // Prevent button from interfering with input events
         noteBtn.addEventListener('mousedown', (e) => {
             e.stopPropagation();
-        });
+        }, { passive: false });
 
         noteBtn.addEventListener('mouseup', (e) => {
             e.stopPropagation();
-        });
+        }, { passive: false });
 
         // Add button inside the same container as the field
 
