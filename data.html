@@ -37,6 +37,23 @@
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
                     </div>
+                    <div class="project-management" id="project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Project Management</label>
+                            <button class="btn" id="new-project-btn">New Project</button>
+                            <button class="btn" id="export-all-btn">Export All Projects</button>
+                            <button class="btn" id="generate-report-btn">Generate Report</button>
+                        </div>
+                    </div>
+                    <div id="upload-status" style="display: none;"></div>
                 </div>
 
                 <!-- States Content -->
@@ -44,50 +61,16 @@
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Projects Loader Panel -->
-        <div class="projects-loader-panel" id="projects-loader-panel">
-            <div id="company-projects-panel" class="project-panel active">
-                <div class="project-management" id="project-panel-inner">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
-
-
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                    <div class="project-management location-project-management">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <div class="form-group">
+                            <label>Saved Location Projects</label>
+                            <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                            </div>
                         </div>
-                    <div class="form-group">
-                        <label>Project Management</label>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
                     </div>
-
-                   
-
-                    <div id="upload-status" style="display: none;"></div>
-                </div>
-            </div>
-            <div id="location-projects-panel" class="project-panel d-none">
-                <div class="project-management location-project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
-                    <div class="form-group">
-                        <label>Saved Location Projects</label>
-                        <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
-                        </div>
-                    </div>
-                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                        Location projects appear automatically when their titles match a known state or country.
-                    </p>
                 </div>
             </div>
         </div>
@@ -999,18 +982,6 @@
                     } else {
                         companiesContent.classList.add('d-none');
                         statesContent.classList.remove('d-none');
-                    }
-                }
-
-                const companyPanel = document.getElementById('company-projects-panel');
-                const locationPanel = document.getElementById('location-projects-panel');
-                if (companyPanel && locationPanel) {
-                    if (category === 'locations') {
-                        companyPanel.classList.add('d-none');
-                        locationPanel.classList.remove('d-none');
-                    } else {
-                        locationPanel.classList.add('d-none');
-                        companyPanel.classList.remove('d-none');
                     }
                 }
 
