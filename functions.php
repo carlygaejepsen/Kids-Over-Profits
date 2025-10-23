@@ -33,11 +33,40 @@ function kadence_child_enqueue_styles() {
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
 /**
- * Dequeue scripts on specific pages to prevent errors.
+ * Determine whether the current request is for a headerless layout.
+ *
+ * @return bool
  */
-function kop_dequeue_scripts() {
-    if (!is_page('data') && !is_page('admin-data')) {
+function kop_is_headerless_layout() {
+    return is_page('data') || is_page('admin-data');
+}
+
+/**
+ * Remove Kadence navigation scripts when the page intentionally renders without a header.
+ */
+function kop_maybe_disable_kadence_navigation() {
+    if (!kop_is_headerless_layout()) {
         return;
+    }
+
+    wp_dequeue_script('kadence-navigation');
+    wp_dequeue_script('kadence-navigation-init');
+
+    wp_deregister_script('kadence-navigation');
+    wp_deregister_script('kadence-navigation-init');
+
+    global $wp_scripts;
+
+    if (!($wp_scripts instanceof WP_Scripts)) {
+        $wp_scripts = wp_scripts();
+    }
+
+    if ($wp_scripts instanceof WP_Scripts) {
+        foreach (array('kadence-navigation', 'kadence-navigation-init') as $handle) {
+            if (isset($wp_scripts->registered[$handle])) {
+                $wp_scripts->registered[$handle]->extra = array();
+            }
+        }
     }
 
     // The Kadence navigation script is causing errors on pages where the
@@ -52,7 +81,10 @@ function kop_dequeue_scripts() {
     wp_dequeue_script('kadence-navigation-init');
     wp_deregister_script('kadence-navigation-init');
 }
-add_action('wp_enqueue_scripts', 'kop_dequeue_scripts', 20);
+
+add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 
 // =================================================================
 // CUSTOM FUNCTIONS

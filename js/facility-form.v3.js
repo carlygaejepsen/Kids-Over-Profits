@@ -2555,14 +2555,35 @@ function initializeToolbarButtons() {
     // Toolbar toggle (minimize/expand)
     const toolbarToggle = document.getElementById('toolbar-toggle-btn');
     const toolbar = document.getElementById('fixed-toolbar');
+    const toolbarContent = document.getElementById('toolbar-content');
+
+    if (toolbar) {
+        document.body.classList.add('toolbar-active');
+        document.body.classList.toggle('toolbar-minimized', toolbar.classList.contains('minimized'));
+        if (toolbarContent) {
+            toolbarContent.setAttribute('aria-hidden', toolbar.classList.contains('minimized') ? 'true' : 'false');
+        }
+    }
 
     if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
+        const applyToolbarState = (isMinimized) => {
+            document.body.classList.toggle('toolbar-minimized', isMinimized);
+            if (toolbarContent) {
+                toolbarContent.setAttribute('aria-hidden', isMinimized ? 'true' : 'false');
+            }
+            toolbarToggle.textContent = isMinimized ? '▼' : '−';
+            toolbarToggle.title = isMinimized ? 'Expand toolbar' : 'Minimize toolbar';
+            toolbarToggle.setAttribute('aria-expanded', isMinimized ? 'false' : 'true');
+        };
+
+        toolbarToggle.setAttribute('aria-controls', 'toolbar-content');
+        applyToolbarState(toolbar.classList.contains('minimized'));
+
         toolbarToggle.addEventListener('click', () => {
-            toolbar.classList.toggle('minimized');
-            document.body.classList.toggle('toolbar-minimized');
-            toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
-            toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
+            const isMinimized = toolbar.classList.toggle('minimized');
+            applyToolbarState(isMinimized);
         });
+
         toolbarToggle.dataset.listenerAttached = 'true';
     }
 
