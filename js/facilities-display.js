@@ -71,6 +71,11 @@ function displayFacilities(facilitiesData, containerId) {
 
         const operatorName = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(operatorGroup && operatorGroup.name) || 'Unknown Operator';
 
+        // Do not display operators with an unknown name.
+        if (operatorName === 'Unknown Operator') {
+            return;
+        }
+
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
             const facilityA = a && a.identification ? a.identification : {};
@@ -164,29 +169,9 @@ function displayFacilities(facilitiesData, containerId) {
             // Build facility header with Name
             let facilityHeader = cleanText(identification.name) || cleanText(identification.currentName) || 'Unnamed Facility';
 
-            // Build location, years, and status - each on its own line
-            let facilityLocationYears = '';
-
+            // Data for display above the "cut"
             const facilityLocation = cleanText(facility && facility.location);
-            if (facilityLocation) {
-                facilityLocationYears += `<p>${facilityLocation}</p>`;
-            }
-            const facilityAddress = cleanText(facility && facility.address);
-            if (facilityAddress) {
-                facilityLocationYears += `<p>${facilityAddress}</p>`;
-            }
-
-            // Years of operation
-            if (operatingPeriod.startYear) {
-                const endYear = operatingPeriod.endYear ? operatingPeriod.endYear : 'Present';
-                const yearRange = operatingPeriod.startYear + '-' + endYear;
-                facilityLocationYears += `<p>${yearRange}</p>`;
-            }
-
-            // Add status on its own line
-            if (operatingPeriod.status) {
-                facilityLocationYears += `<p><span class="status-badge status-${statusClass}">${statusLabelRaw}</span></p>`;
-            }
+            const yearRange = operatingPeriod.startYear ? `${operatingPeriod.startYear}-${operatingPeriod.endYear || 'Present'}` : null;
 
             // Build other facility data
             let otherFacilityData = '';
@@ -201,7 +186,8 @@ function displayFacilities(facilitiesData, containerId) {
                 { key: 'accreditations.past', label: 'Past Accreditations', value: joinList(accreditations.past).join(', ') || null },
                 { key: 'memberships', label: 'Memberships', value: memberships.length > 0 ? memberships.join(', ') : null },
                 { key: 'licensing', label: 'Licensing', value: licensing.length > 0 ? licensing.join(', ') : null },
-                { key: 'profileLinks', label: '', value: profileLinks.length > 0 ? `<a href='${profileLinks[0]}' target='_blank'>Archived website</a>` : null }
+                { key: 'address', label: 'Full Address', value: cleanText(facility && facility.address) },
+                { key: 'profileLinks', label: 'Archived Website', value: profileLinks.length > 0 ? `<a href='${profileLinks[0]}' target='_blank'>View</a>` : null }
             ];
 
             facilityFields.forEach(field => {
@@ -251,19 +237,25 @@ function displayFacilities(facilitiesData, containerId) {
             
             const facilityDatasetName = cleanText(identification.name) || cleanText(identification.currentName) || facilityHeader;
 
-            html += '<div class="facility-card status-' + statusClass + '" data-facility="' + facilityDatasetName + '" data-status="' + statusClass + '">' +
-                    '<h3 class="facility-name">' + facilityHeader + '</h3>' +
-                    '<div class="facility-details">' +
-                        facilityLocationYears +
-                        '<details class="facility-expanded-info">' +
+            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
+                    <div class="facility-summary">
+                        <h3 class="facility-name">${facilityHeader}</h3>
+                        ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
+                        ${yearRange ? `<p class="facility-years">${yearRange}</p>` : ''}
+                        <p class="facility-status">
+                            <span class="status-badge status-${statusClass}">${statusLabelRaw}</span>
+                        </p>
+                    </div>
+                    <div class="facility-details">
+                        <details class="facility-expanded-info">
                             '<summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>' +
                             '<div class="facility-extra-content">' +
                                 otherFacilityData +
                                 resourcesAvailable +
                             '</div>' +
-                        '</details>' +
-                    '</div>' +
-                '</div>';
+                        '</details>
+                    </div>
+                </div>`;
         });
         
         html += '</div>' +
