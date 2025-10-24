@@ -6,49 +6,66 @@
     <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
     <script>
-        // Prevent Kadence navigation errors on headerless pages
-        (function() {
-            // Disable Kadence navigation initialization
-            window.kadenceConfig = window.kadenceConfig || {};
-            window.kadenceConfig.breakPoints = { desktop: 99999 };
+        // Prevent WordPress from loading comment-reply script
+        window.addComment = {
+            moveForm: function() { return false; }
+        };
 
-            // Early DOM protection
-            var originalQuerySelector = document.querySelector.bind(document);
-            var originalQuerySelectorAll = document.querySelectorAll.bind(document);
-            var navSelectors = ['#main-navigation', '.main-navigation', '#site-navigation',
-                               '.site-navigation', '#primary-navigation', 'nav[role="navigation"]'];
+        // Prevent Kadence navigation from initializing
+        // This stops navigation.min.js errors when header elements don't exist
+        window.kadenceConfig = window.kadenceConfig || {};
+        window.kadenceConfig.breakPoints = window.kadenceConfig.breakPoints || {};
+        window.kadenceConfig.breakPoints.desktop = 99999; // Disable mobile breakpoint
+
+        // Create a stub to prevent navigation initialization errors
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override any Kadence navigation initialization
+            if (window.kadence && window.kadence.initNavigation) {
+                window.kadence.initNavigation = function() {
+                    console.log('Kadence navigation disabled on this page');
+                };
+            }
+        });
+
+        // Early interception: prevent the script from finding navigation elements
+        (function() {
+            var originalQuerySelector = document.querySelector;
+            var originalQuerySelectorAll = document.querySelectorAll;
+
+            // List of selectors the Kadence nav script looks for
+            var blockedSelectors = [
+                '#main-navigation',
+                '.main-navigation',
+                '#site-navigation',
+                '.site-navigation',
+                '#primary-navigation',
+                'nav[role="navigation"]'
+            ];
 
             document.querySelector = function(selector) {
-                if (selector && navSelectors.some(nav => selector.includes(nav))) {
-                    return null;
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return null; // Return null for navigation selectors
                 }
-                return originalQuerySelector(selector);
+                return originalQuerySelector.apply(this, arguments);
             };
 
             document.querySelectorAll = function(selector) {
-                if (selector && navSelectors.some(nav => selector.includes(nav))) {
-                    return [];
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return []; // Return empty array for navigation selectors
                 }
-                return originalQuerySelectorAll(selector);
+                return originalQuerySelectorAll.apply(this, arguments);
             };
-
-            // Stub navigation init on DOMContentLoaded
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.kadence && window.kadence.initNavigation) {
-                    window.kadence.initNavigation = function() {};
-                }
-            });
         })();
     </script>
     </head>
 <body>
     <div class="container">
         <div class="admin-header">
-            <h1 style="font-size: 24px; color: #fff; margin-bottom: 10px;">Admin Facility Data Management</h1>
-            <p style="font-size: 16px; color: #fff;">You are in administrator mode. Changes saved here will directly update the master database.</p>
+            <h1>🔐 Admin Facility Data Management</h1>
+            <p>You are in administrator mode. Changes saved here will directly update the master database.</p>
         </div>
         
-        <div class="admin-warning" style="border-color: #1e40af; background-color: #eff6ff; color: #1c3d8a;">
+        <div class="admin-warning">
             ❗ <strong>Administrator Mode:</strong> Data saved here will directly update the master database. Proceed with caution.
         </div>
 
@@ -77,11 +94,13 @@
                         <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                             <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="text-align: center;">
                             <label>Project Management</label>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-project-btn">New Project</button>
+                                <button class="btn" id="export-all-btn">Export All Projects</button>
+                                <button class="btn" id="generate-report-btn">Generate Report</button>
+                            </div>
                         </div>
                     </div>
                     <div id="upload-status" style="display: none;"></div>
