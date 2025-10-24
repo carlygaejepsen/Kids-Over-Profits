@@ -892,6 +892,12 @@ function createAutocomplete(input, getDataFunction, category) {
         // Set flag BEFORE any value changes to prevent input event from triggering
         isCommittingSelection = true;
 
+        // Clear any pending autocomplete fetch to prevent dropdown from re-showing
+        if (createAutocomplete._pendingFetch) {
+            clearTimeout(createAutocomplete._pendingFetch);
+            createAutocomplete._pendingFetch = null;
+        }
+
         // Hide dropdown immediately
         hideDropdown();
         currentFocus = -1;
