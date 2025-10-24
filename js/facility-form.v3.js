@@ -2096,6 +2096,12 @@ function newProject() {
         updateLabelsForProjectType(''); // Reset to default for companies/locations
     }
 
+    // After labels are set, ensure the referrer toggle state is correct
+    if (activeCategory === 'referrers') {
+        applyReferrerToggleState(false); // Default to 'Group/Agency' view
+    }
+    handleReferrerToggle(); // Apply visibility rules
+
     showUploadStatus('New project created', 'info');
 }
 
