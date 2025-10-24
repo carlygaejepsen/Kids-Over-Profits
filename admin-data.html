@@ -126,7 +126,7 @@
                 <!-- Referrers Content -->
                 <div id="referrers-content" class="category-content d-none">
                     <div class="content-header">
-                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
+                        <h3>👥 Referrers (Educational Consultants / School Districts)</h3>
                     </div>
 
                     <div class="project-management" id="referrer-project-panel-inner">
@@ -150,7 +150,7 @@
 
                     <!-- Referrer Type Toggle -->
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 600; color: #1f2937;">
                             <span>Referrer Type:</span>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span>Group/Agency</span>
@@ -163,7 +163,7 @@
                                 <span>Individual</span>
                             </div>
                         </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px; text-align: center;">
                             Toggle to track an organization/agency or an individual consultant.
                         </p>
                     </div>
@@ -177,7 +177,7 @@
                             </div>
                             <div class="section-content">
                                 <div class="form-group">
-                                    <label>Agency/Organization Name</label>
+                                    <label>Agency/Organization Name (Project Name)</label>
                                     <input type="text" id="referrer-group-name" placeholder="e.g., Educational Consulting Associates">
                                 </div>
 
@@ -229,7 +229,7 @@
                             </div>
                             <div class="section-content">
                                 <div class="form-group">
-                                    <label>Person's Name</label>
+                                    <label>Person's Name (Project Name)</label>
                                     <input type="text" id="referrer-individual-name" data-autocomplete-category="human" placeholder="e.g., Jane Smith">
                                 </div>
 
@@ -1216,6 +1216,11 @@
                     referrersContent.classList.add('d-none');
 
                     // Show the selected category
+                    const facilityWrapper = document.getElementById('facility-main-wrapper');
+                    if (facilityWrapper) {
+                        facilityWrapper.style.display = category === 'referrers' ? 'none' : '';
+                    }
+
                     if (category === 'companies') {
                         companiesContent.classList.remove('d-none');
                     } else if (category === 'locations') {
@@ -1223,11 +1228,6 @@
                     } else if (category === 'referrers') {
                         referrersContent.classList.remove('d-none');
                     }
-                }
-
-                const facilityWrapper = document.getElementById('facility-main-wrapper');
-                if (facilityWrapper) {
-                    facilityWrapper.style.display = category === 'referrers' ? 'none' : '';
                 }
 
                 if (typeof window.refreshSavedProjectPanels === 'function') {
