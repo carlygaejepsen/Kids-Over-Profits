@@ -449,140 +449,6 @@
 
 
 
-                    <!-- Referrer Type Toggle -->
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                            <span>Referrer Type:</span>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>Group/Agency</span>
-                                <div style="position: relative; display: inline-block;">
-                                    <input type="checkbox" id="referrer-type-toggle" style="display: none;">
-                                    <span id="referrer-slider-track" style="display: block; width: 48px; height: 24px; background-color: #10b981; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                        <span id="referrer-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                                    </span>
-                                </div>
-                                <span>Individual</span>
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Toggle to track an organization/agency or an individual consultant.
-                        </p>
-                    </div>
-
-                    <!-- Group/Agency Form -->
-                    <div id="referrer-group-form" style="display: block;">
-                        <div class="section expanded">
-                            <div class="section-header">
-                                <h2 class="section-title">Group/Agency Information</h2>
-                                <span class="section-toggle">🔎</span>
-                            </div>
-                            <div class="section-content">
-                                <div class="form-group">
-                                    <label>Agency/Organization Name (Project Name)</label>
-                                    <input type="text" id="referrer-group-name" placeholder="e.g., Educational Consulting Associates">
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>City</label>
-                                        <input type="text" id="referrer-group-city" placeholder="e.g., Los Angeles">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>State</label>
-                                        <input type="text" id="referrer-group-state" placeholder="e.g., CA">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Website</label>
-                                    <input type="text" id="referrer-group-website" placeholder="https://">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <textarea id="referrer-group-address" rows="3" placeholder="Full address..."></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Year Founded</label>
-                                    <input type="text" id="referrer-group-founded" placeholder="e.g., 1995">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Professional Affiliations / Memberships</label>
-                                    <div class="array-container" data-path="referrerGroup.affiliations"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Notes</label>
-                                    <textarea id="referrer-group-notes" rows="4" placeholder="Additional information about this organization..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Individual Form -->
-                    <div id="referrer-individual-form" style="display: none;">
-                        <div class="section expanded">
-                            <div class="section-header">
-                                <h2 class="section-title">Individual Information</h2>
-                                <span class="section-toggle">🔎</span>
-                            </div>
-                            <div class="section-content">
-                                <div class="form-group">
-                                    <label>Person's Name (Project Name)</label>
-                                    <input type="text" id="referrer-individual-name" data-autocomplete-category="human" placeholder="e.g., Jane Smith">
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Current Role</label>
-                                        <input type="text" id="referrer-individual-role" placeholder="e.g., Educational Consultant">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Status</label>
-                                        <select id="referrer-individual-status">
-                                            <option value="">Select status...</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Retired">Retired</option>
-                                            <option value="Deceased">Deceased</option>
-                                            <option value="Unknown">Unknown</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Education / Credentials</label>
-                                    <textarea id="referrer-individual-education" rows="3" placeholder="Degrees, licenses, certifications..."></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Past TTI Jobs / Positions</label>
-                                    <div class="array-container" data-path="referrerIndividual.pastTTIJobs"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Known Referrals (Facilities Referred To)</label>
-                                    <div class="array-container" data-path="referrerIndividual.knownReferrals"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Professional Affiliations / Memberships</label>
-                                    <div class="array-container" data-path="referrerIndividual.affiliations"></div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Lawsuits & Scandals</label>
-                                    <textarea id="referrer-individual-lawsuits" rows="4" placeholder="Document any legal issues, scandals, or controversies..."></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Additional Notes</label>
-                                    <textarea id="referrer-individual-notes" rows="4" placeholder="Any other relevant information..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -619,7 +485,7 @@
             </div>
         </div>
         
-        <!-- Data Organizer Section (Hidden - now accessed via modal) -->
+        <div id="facility-main-wrapper"><!-- Start of main wrapper -->
         <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>

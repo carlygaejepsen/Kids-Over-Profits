@@ -2054,6 +2054,7 @@ function loadProject(projectName) {
     if (typeof window.updateAllUI === 'function') {
         debugLog('🔄 Calling updateAllUI...');
         window.updateAllUI();
+        updateLabelsForProjectType(projectName);
     } else {
         console.error('❌ updateAllUI not available!');
     }
@@ -2081,6 +2082,7 @@ function newProject() {
     if (typeof window.updateAllUI === 'function') {
         window.updateAllUI();
     }
+    updateLabelsForProjectType(''); // Reset labels to default
 
     showUploadStatus('New project created', 'info');
 }
@@ -2760,6 +2762,7 @@ window.updateAllUI = function() {
     initializeSectionToggles();
     updateProjectStatus();
     initializeAutocompleteFields();
+    updateLabelsForProjectType(window.currentProjectName || '');
     initializeNoteControls();
     updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
@@ -3263,6 +3266,10 @@ const COUNTRY_SET = new Set(COUNTRY_NAMES);
 
 function determineProjectCategory(name = '') {
     const normalized = name.toLowerCase().trim();
+    // A simple heuristic: if it contains "consultant", "district", or "agency", it's a referrer.
+    if (normalized.includes('consultant') || normalized.includes('district') || normalized.includes('agency')) {
+        return 'referrers';
+    }
     if (US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized)) {
         return 'locations';
     }
@@ -3330,8 +3337,8 @@ function refreshSavedProjectPanels() {
     }
 
     if (referrerContainer) {
-        const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
-        referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet');
+        const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'referrers');
+        referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet. Create one using the "New Project" button.');
     }
 }
 
@@ -3372,6 +3379,55 @@ function updateProjectStatus() {
     }
 }
 
+function updateLabelsForProjectType(projectName) {
+    const category = determineProjectCategory(projectName);
+
+    // Define default and referrer-specific labels
+    const labels = {
+        operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
+        operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
+        facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
+        addFacilityButton: { default: 'Add New Facility', referrer: 'Add New Individual' },
+        currentFacilityLabel: { default: 'Current Facility', referrer: 'Current Individual' },
+        addFacilityToolbar: { default: '➕ Add Facility', referrer: '➕ Add Individual' },
+        cloneFacilityToolbar: { default: '📋 Clone Facility', referrer: '📋 Clone Individual' },
+        removeFacilityToolbar: { default: '🗑️ Remove', referrer: '🗑️ Remove' }, // Stays the same
+        facilityNameLabel: { default: 'Name', referrer: 'Individual\'s Name' },
+        facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
+        facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
+        facilityOperationsTitle: { default: 'Facility Operations', referrer: 'Individual\'s Operations' }
+    };
+
+    const setLabel = (elementId, text) => {
+        const el = document.getElementById(elementId);
+        if (el) el.textContent = text;
+    };
+
+    const setLabelForQuery = (selector, text) => {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = text;
+    };
+
+    const mode = (category === 'referrers') ? 'referrer' : 'default';
+
+    // Update main section titles
+    setLabelForQuery('#operator-section .section-title', labels.operatorSectionTitle[mode]);
+    setLabelForQuery('#operator-name + .field-note-btn + .field-notes + label', labels.operatorNameLabel[mode]); // This is tricky, might need better selector
+    setLabelForQuery('label[for="operator-name"]', labels.operatorNameLabel[mode]);
+
+    // Update TOC and Facility Controls
+    setLabelForQuery('.facility-toc .toc-title', labels.facilitiesOverviewTitle[mode]);
+    setLabelForQuery('#add-facility-main-btn', labels.addFacilityButton[mode]);
+    setLabelForQuery('.facility-controls strong', `${labels.currentFacilityLabel[mode]}: `);
+
+    // Update Toolbar
+    setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
+    setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
+
+    // Update Facility-specific sections
+    setLabelForQuery('#identification-section .section-title', labels.facilityIdentificationTitle[mode]);
+    setLabelForQuery('label[for="facility-name"]', labels.facilityNameLabel[mode]);
+}
 // ============================================
 // FILE IMPORT/EXPORT
 // ============================================
