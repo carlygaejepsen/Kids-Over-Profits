@@ -2789,13 +2789,18 @@ function cloneFacility() {
 
     function closeModal() {
         modal.classList.remove('active');
-        // Clean up listeners to prevent multiple executions
-        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
-        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-        closeBtn.replaceWith(closeBtn.cloneNode(true));
     }
 
-    confirmBtn.onclick = () => {
+    // Remove old listeners by cloning nodes
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    const newCancelBtn = cancelBtn.cloneNode(true);
+    const newCloseBtn = closeBtn.cloneNode(true);
+
+    confirmBtn.replaceWith(newConfirmBtn);
+    cancelBtn.replaceWith(newCancelBtn);
+    closeBtn.replaceWith(newCloseBtn);
+
+    newConfirmBtn.onclick = () => {
         const destination = document.querySelector('input[name="clone-destination"]:checked').value;
         let targetProjectName = '';
 
