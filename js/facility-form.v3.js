@@ -4014,39 +4014,13 @@ window.addNoteButtons = addNoteButtons;
 // GLOBAL AUTOCOMPLETE EVENT DELEGATION
 // Attach once at document level to reduce console warnings
 // Only intercept events within autocomplete dropdowns
+// Using click events only (no pointerdown/mousedown) to avoid passive listener warnings
 // ============================================
 (function setupGlobalAutocompleteHandlers() {
     if (window._autocompleteHandlersInitialized) return;
     window._autocompleteHandlersInitialized = true;
 
-    const earlySelectionEvent = (typeof window.PointerEvent !== 'undefined') ? 'pointerdown' : 'mousedown';
-
-    // Global handler for autocomplete item selection
-    // IMPORTANT: Only preventDefault/stopPropagation for autocomplete items
-    document.addEventListener(earlySelectionEvent, (event) => {
-        // Check if we're inside an autocomplete dropdown
-        const item = event.target.closest('.autocomplete-item');
-        if (!item) return; // Exit early - not an autocomplete item
-
-        const dropdown = item.closest('.autocomplete-dropdown');
-        if (!dropdown || item.dataset.placeholder) return;
-
-        // Only handle left-clicks
-        if (event.button && event.button !== 0) return;
-
-        // NOW we can safely preventDefault/stopPropagation
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Trigger custom event that the dropdown's commitSelection can listen for
-        const selectEvent = new CustomEvent('autocomplete-select', {
-            detail: { value: item.dataset.value },
-            bubbles: true
-        });
-        dropdown.dispatchEvent(selectEvent);
-    }, { passive: false, capture: false });
-
-    // Fallback click handler
+    // Use click event only - no need for passive: false since clicks don't block scrolling
     document.addEventListener('click', (event) => {
         const item = event.target.closest('.autocomplete-item');
         if (!item) return; // Exit early - not an autocomplete item
@@ -4062,7 +4036,7 @@ window.addNoteButtons = addNoteButtons;
             bubbles: true
         });
         dropdown.dispatchEvent(selectEvent);
-    }, { passive: false, capture: false });
+    });
 })();
 
 // Initialize on DOMContentLoaded
