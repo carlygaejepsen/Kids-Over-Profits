@@ -2045,7 +2045,14 @@ function addNewArrayItem(path) {
     const array = getNestedValue(target, path.replace('operator.', ''));
     if (Array.isArray(array)) {
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
-        array.push(isStaff ? { role: '', name: '' } : '');
+        const isPastTTIJobs = /pastTTIJobs$/.test(path);
+        let newItem = '';
+        if (isStaff) {
+            newItem = { role: '', name: '' };
+        } else if (isPastTTIJobs) {
+            newItem = { role: '', organization: '' };
+        }
+        array.push(newItem);
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) renderArray(container, path, array);
         updateJSON();
@@ -2124,7 +2131,13 @@ function renderArray(container, path, items) {
 
         if (array.length === 0) {
             const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
-            const emptyItem = isStaff ? { role: '', name: '' } : '';
+            const isPastTTIJobs = /pastTTIJobs$/.test(path);
+            let emptyItem = '';
+            if (isStaff) {
+                emptyItem = { role: '', name: '' };
+            } else if (isPastTTIJobs) {
+                emptyItem = { role: '', organization: '' };
+            }
             array.push(emptyItem);
             // Re-render with the updated array
             renderArray(container, path, array);
@@ -2138,6 +2151,7 @@ function renderArray(container, path, items) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'array-item';
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+        const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const scope = path.startsWith('operator.') ? 'operator' : 'facility';
         const noteKey = `${path}.${index}`;
 
@@ -2168,6 +2182,34 @@ function renderArray(container, path, items) {
             setTimeout(() => {
                 createAutocomplete(nameInput, getAllHumanNames, 'human');
                 nameInput.dataset.autocompleteInit = 'true';
+            }, 100);
+        } else if (isPastTTIJobs) {
+            const roleInput = document.createElement('input');
+            roleInput.type = 'text';
+            roleInput.placeholder = 'Role';
+            roleInput.value = (item && item.role) ? item.role : '';
+            roleInput.className = 'array-input array-input-role';
+            roleInput.oninput = () => updateArrayObjectItemValue(path, index, 'role', roleInput.value);
+            attachCustomValueRecorder(roleInput, 'role');
+            setTimeout(() => {
+                if (!roleInput.dataset.autocompleteInit) {
+                    createAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    roleInput.dataset.autocompleteInit = 'true';
+                }
+            }, 100);
+            itemDiv.appendChild(roleInput);
+
+            const orgInput = document.createElement('input');
+            orgInput.type = 'text';
+            orgInput.placeholder = 'Organization/Company';
+            orgInput.value = (item && item.organization) ? item.organization : '';
+            orgInput.className = 'array-input array-input-name';
+            orgInput.oninput = () => updateArrayObjectItemValue(path, index, 'organization', orgInput.value);
+            attachCustomValueRecorder(orgInput, 'operator');
+            itemDiv.appendChild(orgInput);
+            setTimeout(() => {
+                createAutocomplete(orgInput, getAllOperators, 'operator');
+                orgInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else {
             const input = document.createElement('input');

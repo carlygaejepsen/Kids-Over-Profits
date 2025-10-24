@@ -128,20 +128,140 @@
                     <div class="content-header">
                         <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
-                    <div class="project-management referrer-project-management">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Information</h2>
-                        <div class="form-group">
-                            <label>Known Referrers</label>
-                            <div id="referrers-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                                <div style="color: #6b7280; font-style: italic;">No referrers found in current projects</div>
+
+                    <!-- Referrer Type Toggle -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Referrer Type:</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>Group/Agency</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="referrer-type-toggle" style="display: none;">
+                                    <span id="referrer-slider-track" style="display: block; width: 48px; height: 24px; background-color: #10b981; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="referrer-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Individual</span>
                             </div>
                         </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Referrers are education consultants, school districts, and other agencies that refer students to facilities. This list is automatically compiled from all facility data where referrers are mentioned.
+                            Toggle to track an organization/agency or an individual consultant.
                         </p>
-                        <p style="margin-top: 10px; color: #374151; font-size: 14px;">
-                            <strong>Note:</strong> Agency names and detailed referrer profiles will be available in a future update.
-                        </p>
+                    </div>
+
+                    <!-- Group/Agency Form -->
+                    <div id="referrer-group-form" style="display: block;">
+                        <div class="section expanded">
+                            <div class="section-header">
+                                <h2 class="section-title">Group/Agency Information</h2>
+                                <span class="section-toggle">🔎</span>
+                            </div>
+                            <div class="section-content">
+                                <div class="form-group">
+                                    <label>Agency/Organization Name</label>
+                                    <input type="text" id="referrer-group-name" placeholder="e.g., Educational Consulting Associates">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" id="referrer-group-city" placeholder="e.g., Los Angeles">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input type="text" id="referrer-group-state" placeholder="e.g., CA">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Website</label>
+                                    <input type="text" id="referrer-group-website" placeholder="https://">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea id="referrer-group-address" rows="3" placeholder="Full address..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Year Founded</label>
+                                    <input type="text" id="referrer-group-founded" placeholder="e.g., 1995">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Professional Affiliations / Memberships</label>
+                                    <div class="array-container" data-path="referrerGroup.affiliations"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    <textarea id="referrer-group-notes" rows="4" placeholder="Additional information about this organization..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Individual Form -->
+                    <div id="referrer-individual-form" style="display: none;">
+                        <div class="section expanded">
+                            <div class="section-header">
+                                <h2 class="section-title">Individual Information</h2>
+                                <span class="section-toggle">🔎</span>
+                            </div>
+                            <div class="section-content">
+                                <div class="form-group">
+                                    <label>Person's Name</label>
+                                    <input type="text" id="referrer-individual-name" data-autocomplete-category="human" placeholder="e.g., Jane Smith">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Current Role</label>
+                                        <input type="text" id="referrer-individual-role" placeholder="e.g., Educational Consultant">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="referrer-individual-status">
+                                            <option value="">Select status...</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Retired">Retired</option>
+                                            <option value="Deceased">Deceased</option>
+                                            <option value="Unknown">Unknown</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Education / Credentials</label>
+                                    <textarea id="referrer-individual-education" rows="3" placeholder="Degrees, licenses, certifications..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Past TTI Jobs / Positions</label>
+                                    <div class="array-container" data-path="referrerIndividual.pastTTIJobs"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Known Referrals (Facilities Referred To)</label>
+                                    <div class="array-container" data-path="referrerIndividual.knownReferrals"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Professional Affiliations / Memberships</label>
+                                    <div class="array-container" data-path="referrerIndividual.affiliations"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Lawsuits & Scandals</label>
+                                    <textarea id="referrer-individual-lawsuits" rows="4" placeholder="Document any legal issues, scandals, or controversies..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Additional Notes</label>
+                                    <textarea id="referrer-individual-notes" rows="4" placeholder="Any other relevant information..."></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -266,14 +386,27 @@
                     </div>
                 </div>
 
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="operator-location">Primary Location</label>
-                        <input type="text" id="operator-location" data-autocomplete-category="location" placeholder="e.g., Waynesboro, TN">
+                        <label for="operator-location-city">City</label>
+                        <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
                     </div>
                     <div class="form-group">
-                        <label for="operator-headquarters">Headquarters</label>
-                        <input type="text" id="operator-headquarters" data-autocomplete-category="location" placeholder="e.g., Nashville, TN">
+                        <label for="operator-location-state">State</label>
+                        <input type="text" id="operator-location-state" placeholder="e.g., TN">
+                    </div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-headquarters-city">City</label>
+                        <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters-state">State</label>
+                        <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
                     </div>
                 </div>
 
@@ -1099,6 +1232,40 @@
                 }
             });
         });
+
+        // Referrer type toggle functionality
+        const referrerTypeToggle = document.getElementById('referrer-type-toggle');
+        const referrerSliderTrack = document.getElementById('referrer-slider-track');
+        const referrerSliderKnob = document.getElementById('referrer-slider-knob');
+        const referrerGroupForm = document.getElementById('referrer-group-form');
+        const referrerIndividualForm = document.getElementById('referrer-individual-form');
+
+        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
+            referrerSliderTrack.addEventListener('click', function() {
+                referrerTypeToggle.checked = !referrerTypeToggle.checked;
+                updateReferrerSliderAppearance();
+
+                const isIndividual = referrerTypeToggle.checked;
+
+                if (isIndividual) {
+                    referrerGroupForm.style.display = 'none';
+                    referrerIndividualForm.style.display = 'block';
+                } else {
+                    referrerGroupForm.style.display = 'block';
+                    referrerIndividualForm.style.display = 'none';
+                }
+            });
+
+            function updateReferrerSliderAppearance() {
+                if (referrerTypeToggle.checked) {
+                    referrerSliderTrack.style.backgroundColor = '#3b82f6';
+                    referrerSliderKnob.style.transform = 'translateX(24px)';
+                } else {
+                    referrerSliderTrack.style.backgroundColor = '#10b981';
+                    referrerSliderKnob.style.transform = 'translateX(0px)';
+                }
+            }
+        }
 
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
