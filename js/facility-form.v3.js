@@ -859,18 +859,6 @@ function createAutocomplete(input, getDataFunction, category) {
     let abortController = null; // FIX #2: For cancelling pending requests
     let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
 
-    // Listen for the custom autocomplete-select event from global handler
-    // This prevents console spam from passive event listener warnings
-    if (!dropdown.dataset.delegationInitialized) {
-        dropdown.dataset.delegationInitialized = 'true';
-
-        dropdown.addEventListener('autocomplete-select', (event) => {
-            if (event.detail && event.detail.value) {
-                commitSelection(event.detail.value);
-            }
-        });
-    }
-
     function commitSelection(value, options = {}) {
         const { shouldRefocus = false } = options;
         if (typeof value !== 'string') {
@@ -960,8 +948,12 @@ function createAutocomplete(input, getDataFunction, category) {
 
             renderSuggestionContent(div, suggestionText, input.value);
 
-            // Event listeners are handled by delegation on the dropdown container
-            // No need to add listeners to each individual item
+            // Attach click handler directly to this item only
+            div.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                commitSelection(suggestionText);
+            });
 
             dropdown.appendChild(div);
         });
@@ -1182,6 +1174,10 @@ function initializeSectionToggles() {
             setState(!section.classList.contains('expanded'));
         };
 
+        // Click handler for the toggle icon itself
+        toggle.addEventListener('click', handleToggle);
+
+        // Click handler for the header (excluding the toggle)
         header.addEventListener('click', (event) => {
             if (event.target.closest('.section-toggle')) { return; }
             handleToggle(event);
@@ -4011,33 +4007,11 @@ window.getFieldNotes = getCurrentFieldNotesSnapshot;
 window.addNoteButtons = addNoteButtons;
 
 // ============================================
-// GLOBAL AUTOCOMPLETE EVENT DELEGATION
-// Attach once at document level to reduce console warnings
-// Only intercept events within autocomplete dropdowns
-// Using click events only (no pointerdown/mousedown) to avoid passive listener warnings
+// AUTOCOMPLETE CLICK HANDLERS
+// Click handlers are now attached directly to each dropdown
+// when it's created (see setupAutocomplete function above)
+// This prevents interference with other page elements like toggles
 // ============================================
-(function setupGlobalAutocompleteHandlers() {
-    if (window._autocompleteHandlersInitialized) return;
-    window._autocompleteHandlersInitialized = true;
-
-    // Use click event only - no need for passive: false since clicks don't block scrolling
-    document.addEventListener('click', (event) => {
-        const item = event.target.closest('.autocomplete-item');
-        if (!item) return; // Exit early - not an autocomplete item
-
-        const dropdown = item.closest('.autocomplete-dropdown');
-        if (!dropdown || item.dataset.placeholder) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const selectEvent = new CustomEvent('autocomplete-select', {
-            detail: { value: item.dataset.value },
-            bubbles: true
-        });
-        dropdown.dispatchEvent(selectEvent);
-    });
-})();
 
 // Initialize on DOMContentLoaded
 if (document.readyState === 'loading') {
