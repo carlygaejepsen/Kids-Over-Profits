@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
+    <script>
+        // Prevent Kadence navigation errors on headerless pages
+        (function() {
+            // Disable Kadence navigation initialization
+            window.kadenceConfig = window.kadenceConfig || {};
+            window.kadenceConfig.breakPoints = { desktop: 99999 };
+
+            // Early DOM protection
+            var originalQuerySelector = document.querySelector.bind(document);
+            var originalQuerySelectorAll = document.querySelectorAll.bind(document);
+            var navSelectors = ['#main-navigation', '.main-navigation', '#site-navigation',
+                               '.site-navigation', '#primary-navigation', 'nav[role="navigation"]'];
+
+            document.querySelector = function(selector) {
+                if (selector && navSelectors.some(nav => selector.includes(nav))) {
+                    return null;
+                }
+                return originalQuerySelector(selector);
+            };
+
+            document.querySelectorAll = function(selector) {
+                if (selector && navSelectors.some(nav => selector.includes(nav))) {
+                    return [];
+                }
+                return originalQuerySelectorAll(selector);
+            };
+
+            // Stub navigation init on DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.kadence && window.kadence.initNavigation) {
+                    window.kadence.initNavigation = function() {};
+                }
+            });
+        })();
+    </script>
     </head>
 <body>
     <div class="container">

@@ -281,6 +281,52 @@
         window.addComment = {
             moveForm: function() { return false; }
         };
+
+        // Prevent Kadence navigation from initializing
+        // This stops navigation.min.js errors when header elements don't exist
+        window.kadenceConfig = window.kadenceConfig || {};
+        window.kadenceConfig.breakPoints = window.kadenceConfig.breakPoints || {};
+        window.kadenceConfig.breakPoints.desktop = 99999; // Disable mobile breakpoint
+
+        // Create a stub to prevent navigation initialization errors
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override any Kadence navigation initialization
+            if (window.kadence && window.kadence.initNavigation) {
+                window.kadence.initNavigation = function() {
+                    console.log('Kadence navigation disabled on this page');
+                };
+            }
+        });
+
+        // Early interception: prevent the script from finding navigation elements
+        (function() {
+            var originalQuerySelector = document.querySelector;
+            var originalQuerySelectorAll = document.querySelectorAll;
+
+            // List of selectors the Kadence nav script looks for
+            var blockedSelectors = [
+                '#main-navigation',
+                '.main-navigation',
+                '#site-navigation',
+                '.site-navigation',
+                '#primary-navigation',
+                'nav[role="navigation"]'
+            ];
+
+            document.querySelector = function(selector) {
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return null; // Return null for navigation selectors
+                }
+                return originalQuerySelector.apply(this, arguments);
+            };
+
+            document.querySelectorAll = function(selector) {
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return []; // Return empty array for navigation selectors
+                }
+                return originalQuerySelectorAll.apply(this, arguments);
+            };
+        })();
     </script>
     </head>
 <body>

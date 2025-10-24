@@ -42,6 +42,30 @@ function kop_is_headerless_layout() {
 }
 
 /**
+ * Enqueue Kadence navigation guard script globally to prevent timing issues.
+ * This script intercepts DOM queries and provides smart fallbacks for missing elements.
+ *
+ * The guard is "smart" - it detects headerless pages and applies strict blocking,
+ * but on normal pages it only provides graceful fallbacks for missing elements.
+ */
+function kop_enqueue_kadence_nav_guard() {
+    $guard_script_path = get_stylesheet_directory() . '/js/kadence-nav-guard.js';
+    $guard_script_url = get_stylesheet_directory_uri() . '/js/kadence-nav-guard.js';
+
+    if (file_exists($guard_script_path)) {
+        // Enqueue globally with highest priority (loaded first)
+        wp_enqueue_script(
+            'kadence-nav-guard',
+            $guard_script_url,
+            array(), // No dependencies
+            filemtime($guard_script_path),
+            false // Load in header, before other scripts
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1);
+
+/**
  * Remove Kadence navigation scripts when the page intentionally renders without a header.
  */
 function kop_maybe_disable_kadence_navigation() {
@@ -49,42 +73,61 @@ function kop_maybe_disable_kadence_navigation() {
         return;
     }
 
-    wp_dequeue_script('kadence-navigation');
-    wp_dequeue_script('kadence-navigation-init');
+    // List of Kadence navigation-related script handles to remove
+    $nav_scripts = array(
+        'kadence-navigation',
+        'kadence-navigation-init',
+        'kadence-navigation-mobile',
+        'kadence-header',
+        'kadence-sticky-header'
+    );
 
-    wp_deregister_script('kadence-navigation');
-    wp_deregister_script('kadence-navigation-init');
+    foreach ($nav_scripts as $script_handle) {
+        wp_dequeue_script($script_handle);
+        wp_deregister_script($script_handle);
+    }
 
+    // Access global scripts registry
     global $wp_scripts;
 
     if (!($wp_scripts instanceof WP_Scripts)) {
         $wp_scripts = wp_scripts();
     }
 
+    // Clear any inline scripts or extra data attached to navigation scripts
     if ($wp_scripts instanceof WP_Scripts) {
-        foreach (array('kadence-navigation', 'kadence-navigation-init') as $handle) {
-            if (isset($wp_scripts->registered[$handle])) {
-                $wp_scripts->registered[$handle]->extra = array();
+        foreach ($nav_scripts as $script_handle) {
+            if (isset($wp_scripts->registered[$script_handle])) {
+                $wp_scripts->registered[$script_handle]->extra = array();
+                $wp_scripts->registered[$script_handle]->deps = array();
             }
         }
     }
-
-    // The Kadence navigation script is causing errors on pages where the
-    // standard header/navigation is hidden. We dequeue and deregister it here
-    // to prevent the script from running when the header is removed.
-    wp_dequeue_script('kadence-navigation');
-    wp_deregister_script('kadence-navigation');
-
-    // Some Kadence builds register a companion initializer for navigation.
-    // Deregister it as well so the browser never executes any navigation code
-    // on pages that hide the standard header.
-    wp_dequeue_script('kadence-navigation-init');
-    wp_deregister_script('kadence-navigation-init');
 }
 
 add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+
+/**
+ * Add inline script to block navigation on headerless pages as early as possible.
+ */
+function kop_add_early_navigation_blocker() {
+    if (!kop_is_headerless_layout()) {
+        return;
+    }
+
+    ?>
+    <script>
+    (function(){
+        window.KADENCE_NAV_DISABLED = true;
+        window.kadenceConfig = window.kadenceConfig || {};
+        window.kadenceConfig.breakPoints = {desktop: 99999};
+    })();
+    </script>
+    <?php
+}
+add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
 
 // =================================================================
 // CUSTOM FUNCTIONS
