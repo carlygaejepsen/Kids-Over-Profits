@@ -858,6 +858,7 @@ function createAutocomplete(input, getDataFunction, category) {
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
     let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
+    let preventBlur = false; // Flag to prevent blur from closing dropdown during selection
 
     function commitSelection(value, options = {}) {
         const { shouldRefocus = false } = options;
@@ -948,11 +949,11 @@ function createAutocomplete(input, getDataFunction, category) {
 
             renderSuggestionContent(div, suggestionText, input.value);
 
-            // Use mousedown to fire BEFORE blur event
-            // Scoped to individual items only - won't interfere with other page elements
-            div.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // Prevent focus loss
+            // Use mousedown to fire BEFORE blur event (which hides dropdown)
+            div.addEventListener('mousedown', () => {
+                preventBlur = true; // Prevent blur from hiding dropdown
                 commitSelection(suggestionText);
+                setTimeout(() => { preventBlur = false; }, 100);
             });
 
             dropdown.appendChild(div);
@@ -1039,7 +1040,11 @@ function createAutocomplete(input, getDataFunction, category) {
     });
     
     input.addEventListener('blur', () => {
-        setTimeout(hideDropdown, 200);
+        setTimeout(() => {
+            if (!preventBlur) {
+                hideDropdown();
+            }
+        }, 200);
     });
     
     input.addEventListener('keydown', (e) => {
