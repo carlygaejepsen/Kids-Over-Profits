@@ -420,6 +420,8 @@ body:not(.admin-bar) .fixed-toolbar {
 
 /* Project status text - highlighted */
 #project-status,
+#project-status-location,
+#referrer-project-status,
 #upload-status {
     background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
     color: #000435; /* Midnight Blue for contrast */
@@ -435,7 +437,8 @@ body:not(.admin-bar) .fixed-toolbar {
 
 /* Saved project lists - centered */
 #company-saved-projects-list,
-#location-saved-projects-list {
+#location-saved-projects-list,
+#referrer-saved-projects-list {
     text-align: center;
 }
 

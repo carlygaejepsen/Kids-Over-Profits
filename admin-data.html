@@ -129,6 +129,25 @@
                         <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
 
+                    <div class="project-management" id="referrer-project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
+                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Referrer Projects</label>
+                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-referrer-project-btn">New Project</button>
+                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
+                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Referrer Type Toggle -->
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
@@ -267,6 +286,7 @@
             </div>
         </div>
 
+        <div id="facility-main-wrapper">
         <!-- Facility Table of Contents -->
         <div class="facility-toc" id="facility-toc">
             <div class="toc-header">
@@ -1082,7 +1102,8 @@
             </div>
         </div>
     </div>
-    
+
+        </div>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
@@ -1204,6 +1225,11 @@
                     }
                 }
 
+                const facilityWrapper = document.getElementById('facility-main-wrapper');
+                if (facilityWrapper) {
+                    facilityWrapper.style.display = category === 'referrers' ? 'none' : '';
+                }
+
                 if (typeof window.refreshSavedProjectPanels === 'function') {
                     window.refreshSavedProjectPanels();
                 }
@@ -1240,32 +1266,38 @@
         const referrerGroupForm = document.getElementById('referrer-group-form');
         const referrerIndividualForm = document.getElementById('referrer-individual-form');
 
-        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
-            referrerSliderTrack.addEventListener('click', function() {
-                referrerTypeToggle.checked = !referrerTypeToggle.checked;
-                updateReferrerSliderAppearance();
+        function applyReferrerToggleState(isIndividual) {
+            if (!referrerSliderTrack || !referrerSliderKnob || !referrerTypeToggle || !referrerGroupForm || !referrerIndividualForm) {
+                return;
+            }
 
-                const isIndividual = referrerTypeToggle.checked;
+            referrerTypeToggle.checked = !!isIndividual;
 
-                if (isIndividual) {
-                    referrerGroupForm.style.display = 'none';
-                    referrerIndividualForm.style.display = 'block';
-                } else {
-                    referrerGroupForm.style.display = 'block';
-                    referrerIndividualForm.style.display = 'none';
-                }
-            });
-
-            function updateReferrerSliderAppearance() {
-                if (referrerTypeToggle.checked) {
-                    referrerSliderTrack.style.backgroundColor = '#3b82f6';
-                    referrerSliderKnob.style.transform = 'translateX(24px)';
-                } else {
-                    referrerSliderTrack.style.backgroundColor = '#10b981';
-                    referrerSliderKnob.style.transform = 'translateX(0px)';
-                }
+            if (referrerTypeToggle.checked) {
+                referrerSliderTrack.style.backgroundColor = '#3b82f6';
+                referrerSliderKnob.style.transform = 'translateX(24px)';
+                referrerGroupForm.style.display = 'none';
+                referrerIndividualForm.style.display = 'block';
+            } else {
+                referrerSliderTrack.style.backgroundColor = '#10b981';
+                referrerSliderKnob.style.transform = 'translateX(0px)';
+                referrerGroupForm.style.display = 'block';
+                referrerIndividualForm.style.display = 'none';
             }
         }
+
+        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
+            referrerSliderTrack.addEventListener('click', function() {
+                const newState = !referrerTypeToggle.checked;
+                applyReferrerToggleState(newState);
+
+                if (typeof window.handleReferrerTypeToggle === 'function') {
+                    window.handleReferrerTypeToggle(newState ? 'individual' : 'group');
+                }
+            });
+        }
+
+        window.applyReferrerToggleState = applyReferrerToggleState;
 
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');

@@ -1284,6 +1284,28 @@ function ensureFieldNotesStore(scope, createIfMissing = true) {
         return facility.fieldNotes;
     }
 
+    if (scope === 'referrerGroup') {
+        ensureReferrerDataStructures();
+        if (!window.formData.referrerGroup.fieldNotes) {
+            if (!createIfMissing) {
+                return null;
+            }
+            window.formData.referrerGroup.fieldNotes = {};
+        }
+        return window.formData.referrerGroup.fieldNotes;
+    }
+
+    if (scope === 'referrerIndividual') {
+        ensureReferrerDataStructures();
+        if (!window.formData.referrerIndividual.fieldNotes) {
+            if (!createIfMissing) {
+                return null;
+            }
+            window.formData.referrerIndividual.fieldNotes = {};
+        }
+        return window.formData.referrerIndividual.fieldNotes;
+    }
+
     if (!window.formData.fieldNotes) {
         if (!createIfMissing) {
             return null;
@@ -1839,13 +1861,138 @@ function autoSave() {
 
 window.autoSave = autoSave;
 
+function createDefaultReferrerGroup() {
+    return {
+        name: "",
+        city: "",
+        state: "",
+        website: "",
+        address: "",
+        founded: "",
+        affiliations: [],
+        notes: "",
+        fieldNotes: {}
+    };
+}
+
+function createDefaultReferrerIndividual() {
+    return {
+        name: "",
+        role: "",
+        status: "",
+        education: "",
+        pastTTIJobs: [],
+        knownReferrals: [],
+        affiliations: [],
+        lawsuits: "",
+        notes: "",
+        fieldNotes: {}
+    };
+}
+
+function combineCityState(city, state) {
+    const trimmedCity = (city || "").trim();
+    const trimmedState = (state || "").trim();
+
+    if (trimmedCity && trimmedState) {
+        return `${trimmedCity}, ${trimmedState}`;
+    }
+
+    return trimmedCity || trimmedState || "";
+}
+
+function parseCityState(value) {
+    if (!value || typeof value !== 'string') {
+        return { city: "", state: "" };
+    }
+
+    const parts = value.split(',');
+    if (parts.length === 1) {
+        return { city: value.trim(), state: "" };
+    }
+
+    const city = parts.shift().trim();
+    const state = parts.join(',').trim();
+    return { city, state };
+}
+
+function ensureReferrerDataStructures() {
+    if (!window.formData) {
+        return;
+    }
+
+    if (!window.formData.referrerGroup || typeof window.formData.referrerGroup !== 'object') {
+        window.formData.referrerGroup = createDefaultReferrerGroup();
+    }
+
+    if (!window.formData.referrerIndividual || typeof window.formData.referrerIndividual !== 'object') {
+        window.formData.referrerIndividual = createDefaultReferrerIndividual();
+    }
+
+    if (!window.formData.referrerType) {
+        window.formData.referrerType = 'group';
+    }
+}
+
+function resolvePathTarget(path) {
+    let scope = 'facility';
+    let normalizedPath = path;
+    let target = null;
+
+    if (!window.formData) {
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('operator.')) {
+        if (!window.formData.operator) {
+            window.formData.operator = createNewProjectData().operator;
+        }
+        scope = 'operator';
+        normalizedPath = path.replace('operator.', '');
+        target = window.formData.operator;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerGroup.')) {
+        ensureReferrerDataStructures();
+        scope = 'referrerGroup';
+        normalizedPath = path.replace('referrerGroup.', '');
+        target = window.formData.referrerGroup;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerIndividual.')) {
+        ensureReferrerDataStructures();
+        scope = 'referrerIndividual';
+        normalizedPath = path.replace('referrerIndividual.', '');
+        target = window.formData.referrerIndividual;
+        return { scope, normalizedPath, target };
+    }
+
+    scope = 'facility';
+    normalizedPath = path;
+    if (!Array.isArray(window.formData.facilities) || !window.formData.facilities.length) {
+        window.formData.facilities = createNewProjectData().facilities;
+        window.currentFacilityIndex = 0;
+    }
+
+    if (!window.formData.facilities[window.currentFacilityIndex]) {
+        window.formData.facilities[window.currentFacilityIndex] = deepClone(createNewProjectData().facilities[0]);
+    }
+
+    target = window.formData.facilities[window.currentFacilityIndex];
+    return { scope, normalizedPath, target };
+}
+
 // ============================================
 // PROJECT MANAGEMENT
 // ============================================
 function createNewProjectData() {
     return {
         operator: {
-            name: "", currentName: "", otherNames: [], location: "", headquarters: "",
+            name: "", currentName: "", otherNames: [],
+            location: "", locationCity: "", locationState: "",
+            headquarters: "", headquartersCity: "", headquartersState: "",
             founded: "", operatingPeriod: "", status: "", parentCompanies: [],
             websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
             notes: [], fieldNotes: {}
@@ -1870,6 +2017,9 @@ function createNewProjectData() {
             },
             treatmentTypes: {}, philosophy: {}, criticalIncidents: {}, notes: [], fieldNotes: {}
         }],
+        referrerType: 'group',
+        referrerGroup: createDefaultReferrerGroup(),
+        referrerIndividual: createDefaultReferrerIndividual(),
         fieldNotes: {}
     };
 }
@@ -2017,8 +2167,12 @@ function updateJSON() {
 window.updateJSON = updateJSON;
 
 function updateArrayItemValue(path, index, value) {
-    const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-    const array = getNestedValue(target, path.replace('operator.', ''));
+    const { target, normalizedPath } = resolvePathTarget(path);
+    if (!target) {
+        return;
+    }
+
+    const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         array[index] = value;
         updateJSON();
@@ -2027,11 +2181,16 @@ function updateArrayItemValue(path, index, value) {
 }
 
 function updateArrayObjectItemValue(path, index, field, value) {
-    const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-    const array = getNestedValue(target, path.replace('operator.', ''));
+    const { target, normalizedPath } = resolvePathTarget(path);
+    if (!target) {
+        return;
+    }
+
+    const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
+        const isPastTTIJobs = /pastTTIJobs$/.test(path);
         if (typeof array[index] !== 'object' || array[index] === null) {
-            array[index] = { role: '', name: '' };
+            array[index] = isPastTTIJobs ? { role: '', organization: '' } : { role: '', name: '' };
         }
         array[index][field] = value;
 
@@ -2041,8 +2200,12 @@ function updateArrayObjectItemValue(path, index, field, value) {
 }
 
 function addNewArrayItem(path) {
-    const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-    const array = getNestedValue(target, path.replace('operator.', ''));
+    const { target, normalizedPath } = resolvePathTarget(path);
+    if (!target) {
+        return;
+    }
+
+    const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array)) {
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
@@ -2061,8 +2224,12 @@ function addNewArrayItem(path) {
 }
 
 function removeArrayItemAtIndex(path, index) {
-    const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-    const array = getNestedValue(target, path.replace('operator.', ''));
+    const { target, normalizedPath } = resolvePathTarget(path);
+    if (!target) {
+        return;
+    }
+
+    const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         array.splice(index, 1);
         const container = document.querySelector(`[data-path="${path}"]`);
@@ -2074,6 +2241,11 @@ function removeArrayItemAtIndex(path, index) {
 
 function renderArray(container, path, items) {
     if (!container) return;
+
+    const { scope, normalizedPath, target } = resolvePathTarget(path);
+    if (!target) {
+        return;
+    }
 
     if (!Array.isArray(noteFieldRegistry)) {
         noteFieldRegistry = [];
@@ -2116,17 +2288,17 @@ function renderArray(container, path, items) {
     const existingNoteWrappers = container.querySelectorAll('.array-item-notes');
     existingNoteWrappers.forEach(wrapper => wrapper.remove());
 
-    const itemsArray = Array.isArray(items) ? items : (items ? [items] : []);
+    const sourceItems = items !== undefined ? items : getNestedValue(target, normalizedPath);
+    const itemsArray = Array.isArray(sourceItems) ? sourceItems : (sourceItems ? [sourceItems] : []);
 
     // If array is empty, initialize it with one empty item so user input gets saved
     if (itemsArray.length === 0) {
-        const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-        let array = getNestedValue(target, path.replace('operator.', ''));
+        let array = getNestedValue(target, normalizedPath);
 
         // If array doesn't exist, create it
         if (!Array.isArray(array)) {
             array = [];
-            setNestedValue(target, path.replace('operator.', ''), array);
+            setNestedValue(target, normalizedPath, array);
         }
 
         if (array.length === 0) {
@@ -2152,7 +2324,7 @@ function renderArray(container, path, items) {
         itemDiv.className = 'array-item';
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
-        const scope = path.startsWith('operator.') ? 'operator' : 'facility';
+        const scopeForNotes = scope;
         const noteKey = `${path}.${index}`;
 
         if (isStaff) {
@@ -2247,6 +2419,12 @@ function renderArray(container, path, items) {
             } else if (/investors$/.test(path)) {
                 category = 'investor';
                 dataFunc = () => Array.from(customInvestors);
+            } else if (/referrerIndividual\.knownReferrals$/.test(path)) {
+                category = 'facility';
+                dataFunc = getAllFacilityNames;
+            } else if (/referrerGroup\.affiliations$/.test(path) || /referrerIndividual\.affiliations$/.test(path)) {
+                category = 'membership';
+                dataFunc = getAllMemberships;
             }
 
             if (category) {
@@ -2277,7 +2455,7 @@ function renderArray(container, path, items) {
             addNoteBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                addFieldNote(scope, noteKey);
+                addFieldNote(scopeForNotes, noteKey);
             });
             itemDiv.appendChild(addNoteBtn);
         }
@@ -2301,7 +2479,7 @@ function renderArray(container, path, items) {
             notesContainer = document.createElement('div');
             notesContainer.className = 'field-notes';
             notesContainer.dataset.noteContainerKey = noteKey;
-            notesContainer.dataset.noteScope = scope;
+            notesContainer.dataset.noteScope = scopeForNotes;
 
             noteWrapper = document.createElement('div');
             noteWrapper.className = 'array-item-notes';
@@ -2310,7 +2488,7 @@ function renderArray(container, path, items) {
             noteWrapper.appendChild(notesContainer);
 
             // Register this container so it can be rendered
-            noteFieldRegistry.push({ scope, key: noteKey, container: notesContainer });
+            noteFieldRegistry.push({ scope: scopeForNotes, key: noteKey, container: notesContainer });
         }
 
         container.appendChild(itemDiv);
@@ -2361,6 +2539,14 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Operational Notes';
     } else if (/resources\.notes$/.test(path)) {
         buttonLabel = 'Add More Resource Notes';
+    } else if (/referrerGroup\.affiliations$/.test(path)) {
+        buttonLabel = 'Add More Affiliations';
+    } else if (/referrerIndividual\.affiliations$/.test(path)) {
+        buttonLabel = 'Add More Affiliations';
+    } else if (/referrerIndividual\.knownReferrals$/.test(path)) {
+        buttonLabel = 'Add More Referrals';
+    } else if (/referrerIndividual\.pastTTIJobs$/.test(path)) {
+        buttonLabel = 'Add More TTI Roles';
     }
 
     // Re-create the add button if it was removed
@@ -2387,19 +2573,36 @@ function loadOperatorData() {
 
     const operatorName = document.getElementById('operator-name');
     if (operatorName) operatorName.value = operator.name || '';
-    
+
     const operatorCurrentName = document.getElementById('operator-current-name');
     if (operatorCurrentName) operatorCurrentName.value = operator.currentName || '';
-    
-    const operatorLocation = document.getElementById('operator-location');
-    if (operatorLocation) operatorLocation.value = operator.location || '';
-    
-    const operatorHeadquarters = document.getElementById('operator-headquarters');
-    if (operatorHeadquarters) operatorHeadquarters.value = operator.headquarters || '';
-    
+
+    const locationParts = parseCityState(operator.location || '');
+    if (!operator.locationCity && locationParts.city) operator.locationCity = locationParts.city;
+    if (!operator.locationState && locationParts.state) operator.locationState = locationParts.state;
+
+    const headquartersParts = parseCityState(operator.headquarters || '');
+    if (!operator.headquartersCity && headquartersParts.city) operator.headquartersCity = headquartersParts.city;
+    if (!operator.headquartersState && headquartersParts.state) operator.headquartersState = headquartersParts.state;
+
+    const operatorLocationCity = document.getElementById('operator-location-city');
+    if (operatorLocationCity) operatorLocationCity.value = operator.locationCity || '';
+
+    const operatorLocationState = document.getElementById('operator-location-state');
+    if (operatorLocationState) operatorLocationState.value = operator.locationState || '';
+
+    const operatorHeadquartersCity = document.getElementById('operator-headquarters-city');
+    if (operatorHeadquartersCity) operatorHeadquartersCity.value = operator.headquartersCity || '';
+
+    const operatorHeadquartersState = document.getElementById('operator-headquarters-state');
+    if (operatorHeadquartersState) operatorHeadquartersState.value = operator.headquartersState || '';
+
+    operator.location = combineCityState(operator.locationCity, operator.locationState);
+    operator.headquarters = combineCityState(operator.headquartersCity, operator.headquartersState);
+
     const operatorFounded = document.getElementById('operator-founded');
     if (operatorFounded) operatorFounded.value = operator.founded || '';
-    
+
     const operatorPeriod = document.getElementById('operator-period');
     if (operatorPeriod) operatorPeriod.value = operator.operatingPeriod || '';
     
@@ -2417,6 +2620,92 @@ function loadOperatorData() {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {
             renderArray(container, path, getNestedValue(operator, path.replace('operator.', '')));
+        }
+    });
+}
+
+function loadReferrerData() {
+    ensureReferrerDataStructures();
+    const referrerType = window.formData.referrerType || 'group';
+    window.formData.referrerType = referrerType;
+
+    const toggleInput = document.getElementById('referrer-type-toggle');
+    if (toggleInput) {
+        toggleInput.checked = referrerType === 'individual';
+    }
+
+    if (typeof window.applyReferrerToggleState === 'function') {
+        window.applyReferrerToggleState(referrerType === 'individual');
+    } else {
+        const groupForm = document.getElementById('referrer-group-form');
+        const individualForm = document.getElementById('referrer-individual-form');
+        if (groupForm && individualForm) {
+            if (referrerType === 'individual') {
+                groupForm.style.display = 'none';
+                individualForm.style.display = 'block';
+            } else {
+                groupForm.style.display = 'block';
+                individualForm.style.display = 'none';
+            }
+        }
+    }
+
+    const group = window.formData.referrerGroup;
+    const individual = window.formData.referrerIndividual;
+
+    if (!Array.isArray(group.affiliations)) group.affiliations = [];
+    if (!Array.isArray(individual.pastTTIJobs)) individual.pastTTIJobs = [];
+    if (!Array.isArray(individual.knownReferrals)) individual.knownReferrals = [];
+    if (!Array.isArray(individual.affiliations)) individual.affiliations = [];
+
+    const groupFieldMap = {
+        'referrer-group-name': 'name',
+        'referrer-group-city': 'city',
+        'referrer-group-state': 'state',
+        'referrer-group-website': 'website',
+        'referrer-group-address': 'address',
+        'referrer-group-founded': 'founded',
+        'referrer-group-notes': 'notes'
+    };
+
+    Object.entries(groupFieldMap).forEach(([id, key]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = group[key] || '';
+        }
+    });
+
+    const individualFieldMap = {
+        'referrer-individual-name': 'name',
+        'referrer-individual-role': 'role',
+        'referrer-individual-status': 'status',
+        'referrer-individual-education': 'education',
+        'referrer-individual-lawsuits': 'lawsuits',
+        'referrer-individual-notes': 'notes'
+    };
+
+    Object.entries(individualFieldMap).forEach(([id, key]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (el.tagName === 'SELECT') {
+                el.value = individual[key] || '';
+            } else {
+                el.value = individual[key] || '';
+            }
+        }
+    });
+
+    const arrayContainers = [
+        'referrerGroup.affiliations',
+        'referrerIndividual.pastTTIJobs',
+        'referrerIndividual.knownReferrals',
+        'referrerIndividual.affiliations'
+    ];
+
+    arrayContainers.forEach(path => {
+        const container = document.querySelector(`[data-path="${path}"]`);
+        if (container) {
+            renderArray(container, path);
         }
     });
 }
@@ -2462,6 +2751,7 @@ function loadFacilityData() {
 
 window.updateAllUI = function() {
     loadOperatorData();
+    loadReferrerData();
     loadFacilityData();
     updateFacilityControls();
     updateTableOfContents();
@@ -2988,8 +3278,9 @@ function refreshSavedProjectPanels() {
     const projectNames = Object.keys(projects);
     const companyContainer = document.getElementById('company-saved-projects-list');
     const locationContainer = document.getElementById('location-saved-projects-list');
+    const referrerContainer = document.getElementById('referrer-saved-projects-list');
 
-    if (!companyContainer && !locationContainer) {
+    if (!companyContainer && !locationContainer && !referrerContainer) {
         return;
     }
 
@@ -3037,17 +3328,47 @@ function refreshSavedProjectPanels() {
         const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
         locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
     }
+
+    if (referrerContainer) {
+        const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet');
+    }
 }
 
 function updateProjectStatus() {
-    const statusDiv = document.getElementById('project-status');
-    if (statusDiv) {
-        if (window.currentProjectName) {
-            const facilityCount = window.formData?.facilities?.length || 0;
-            statusDiv.innerHTML = `<strong>📂 Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
-        } else {
-            statusDiv.innerHTML = '⚠️ No project loaded - working with temporary data';
-        }
+    const statusTargets = [
+        document.getElementById('project-status'),
+        document.getElementById('project-status-location'),
+        document.getElementById('referrer-project-status')
+    ].filter(Boolean);
+
+    if (!statusTargets.length) {
+        return;
+    }
+
+    if (window.currentProjectName) {
+        const facilityCount = window.formData?.facilities?.length || 0;
+        const baseMessage = `<strong>📂 Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
+
+        statusTargets.forEach(target => {
+            if (target.id === 'referrer-project-status') {
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Referrer profiles for this project are saved alongside the operator & facility data.</div>`;
+            } else if (target.id === 'project-status-location') {
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Location-focused projects load the same dataset for geographic review.</div>`;
+            } else {
+                target.innerHTML = baseMessage;
+            }
+        });
+    } else {
+        statusTargets.forEach(target => {
+            if (target.id === 'referrer-project-status') {
+                target.innerHTML = '⚠️ No project loaded - referrer entries will be stored temporarily';
+            } else if (target.id === 'project-status-location') {
+                target.innerHTML = '⚠️ No project loaded - viewing temporary location data';
+            } else {
+                target.innerHTML = '⚠️ No project loaded - working with temporary data';
+            }
+        });
     }
 }
 
@@ -3126,13 +3447,27 @@ function attachFieldListeners() {
             updateJSON();
             autoSave();
         },
-        'operator-location': (val) => {
-            setNestedValue(window.formData, 'operator.location', val);
+        'operator-location-city': (val) => {
+            setNestedValue(window.formData, 'operator.locationCity', val);
+            window.formData.operator.location = combineCityState(window.formData.operator.locationCity, window.formData.operator.locationState);
             updateJSON();
             autoSave();
         },
-        'operator-headquarters': (val) => {
-            setNestedValue(window.formData, 'operator.headquarters', val);
+        'operator-location-state': (val) => {
+            setNestedValue(window.formData, 'operator.locationState', val);
+            window.formData.operator.location = combineCityState(window.formData.operator.locationCity, window.formData.operator.locationState);
+            updateJSON();
+            autoSave();
+        },
+        'operator-headquarters-city': (val) => {
+            setNestedValue(window.formData, 'operator.headquartersCity', val);
+            window.formData.operator.headquarters = combineCityState(window.formData.operator.headquartersCity, window.formData.operator.headquartersState);
+            updateJSON();
+            autoSave();
+        },
+        'operator-headquarters-state': (val) => {
+            setNestedValue(window.formData, 'operator.headquartersState', val);
+            window.formData.operator.headquarters = combineCityState(window.formData.operator.headquartersCity, window.formData.operator.headquartersState);
             updateJSON();
             autoSave();
         },
@@ -3181,6 +3516,100 @@ function attachFieldListeners() {
         const el = document.getElementById(id);
         if (el && !el.dataset.listenerAttached) {
             el.addEventListener('input', (e) => operatorFields[id](e.target.value));
+            el.dataset.listenerAttached = 'true';
+        }
+    });
+
+    const referrerFields = {
+        'referrer-group-name': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.name', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-city': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.city', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-state': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.state', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-website': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.website', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-address': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.address', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-founded': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.founded', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-group-notes': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerGroup.notes', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-name': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.name', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-role': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.role', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-status': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.status', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-education': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.education', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-lawsuits': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.lawsuits', val);
+            updateJSON();
+            autoSave();
+        },
+        'referrer-individual-notes': (val) => {
+            ensureReferrerDataStructures();
+            setNestedValue(window.formData, 'referrerIndividual.notes', val);
+            updateJSON();
+            autoSave();
+        }
+    };
+
+    Object.keys(referrerFields).forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.dataset.listenerAttached) {
+            const handler = (event) => referrerFields[id](event.target.value);
+            const eventName = el.tagName === 'SELECT' ? 'change' : 'input';
+            el.addEventListener(eventName, handler);
+            if (eventName !== 'input') {
+                el.addEventListener('input', handler);
+            }
             el.dataset.listenerAttached = 'true';
         }
     });
@@ -3258,6 +3687,19 @@ function attachFieldListeners() {
     });
 }
 
+window.handleReferrerTypeToggle = function(type) {
+    ensureReferrerDataStructures();
+    const normalized = type === 'individual' ? 'individual' : 'group';
+    window.formData.referrerType = normalized;
+
+    if (typeof window.applyReferrerToggleState === 'function') {
+        window.applyReferrerToggleState(normalized === 'individual');
+    }
+
+    updateJSON();
+    autoSave();
+};
+
 function attachButtonListeners() {
     // Facility navigation
     const facilityButtons = {
@@ -3310,6 +3752,33 @@ function attachButtonListeners() {
         newBtn.dataset.listenerAttached = 'true';
     }
 
+    const exportAllBtn = document.getElementById('export-all-btn');
+    if (exportAllBtn && !exportAllBtn.dataset.listenerAttached) {
+        exportAllBtn.onclick = () => {
+            const dataStr = JSON.stringify(window.projects || {}, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-projects-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        exportAllBtn.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtn = document.getElementById('generate-report-btn');
+    if (generateReportBtn && !generateReportBtn.dataset.listenerAttached) {
+        generateReportBtn.onclick = () => {
+            if (typeof generateReport === 'function') {
+                generateReport();
+            } else {
+                alert('Report generation is not available yet.');
+            }
+        };
+        generateReportBtn.dataset.listenerAttached = 'true';
+    }
+
     // Location project buttons
     const newBtnLocation = document.getElementById('new-project-btn-location');
     if (newBtnLocation && !newBtnLocation.dataset.listenerAttached) {
@@ -3343,6 +3812,39 @@ function attachButtonListeners() {
             }
         };
         generateReportBtnLocation.dataset.listenerAttached = 'true';
+    }
+
+    const newReferrerBtn = document.getElementById('new-referrer-project-btn');
+    if (newReferrerBtn && !newReferrerBtn.dataset.listenerAttached) {
+        newReferrerBtn.onclick = newProject;
+        newReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
+    const exportReferrerBtn = document.getElementById('export-referrer-projects-btn');
+    if (exportReferrerBtn && !exportReferrerBtn.dataset.listenerAttached) {
+        exportReferrerBtn.onclick = () => {
+            const dataStr = JSON.stringify(window.projects || {}, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-projects-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        exportReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
+    const generateReferrerReportBtn = document.getElementById('generate-referrer-report-btn');
+    if (generateReferrerReportBtn && !generateReferrerReportBtn.dataset.listenerAttached) {
+        generateReferrerReportBtn.onclick = () => {
+            if (typeof generateReport === 'function') {
+                generateReport();
+            } else {
+                alert('Report generation is not available yet.');
+            }
+        };
+        generateReferrerReportBtn.dataset.listenerAttached = 'true';
     }
 
     // Import/Export
