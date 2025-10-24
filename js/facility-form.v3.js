@@ -435,23 +435,46 @@ function normalizeProjectData(data) {
 // LOCALSTORAGE BACKUP FUNCTIONS
 // ============================================
 function loadCustomDataFromLocalStorage() {
+    // Helper to deduplicate and clean arrays
+    const dedupe = (arr) => [...new Set(arr.filter(v => v && v.trim()).map(v => v.trim()))];
+
     try {
-        customOperators = JSON.parse(localStorage.getItem('customOperators') || '[]');
-        customFacilityNames = JSON.parse(localStorage.getItem('customFacilityNames') || '[]');
-        customHumanNames = JSON.parse(localStorage.getItem('customHumanNames') || '[]');
-        customFacilityTypes = JSON.parse(localStorage.getItem('customFacilityTypes') || '[]');
-        customCertifications = JSON.parse(localStorage.getItem('customCertifications') || '[]');
-        customAccreditations = JSON.parse(localStorage.getItem('customAccreditations') || '[]');
-        customMemberships = JSON.parse(localStorage.getItem('customMemberships') || '[]');
-        customLicensing = JSON.parse(localStorage.getItem('customLicensing') || '[]');
-        customInvestors = JSON.parse(localStorage.getItem('customInvestors') || '[]');
-        customStaffRoles = JSON.parse(localStorage.getItem('customStaffRoles') || '[]');
-        customStatuses = JSON.parse(localStorage.getItem('customStatuses') || '[]');
-        customGenders = JSON.parse(localStorage.getItem('customGenders') || '[]');
-        customLocations = JSON.parse(localStorage.getItem('customLocations') || '[]');
-        customOperatingPeriods = JSON.parse(localStorage.getItem('customOperatingPeriods') || '[]');
+        customOperators = dedupe(JSON.parse(localStorage.getItem('customOperators') || '[]'));
+        customFacilityNames = dedupe(JSON.parse(localStorage.getItem('customFacilityNames') || '[]'));
+        customHumanNames = dedupe(JSON.parse(localStorage.getItem('customHumanNames') || '[]'));
+        customFacilityTypes = dedupe(JSON.parse(localStorage.getItem('customFacilityTypes') || '[]'));
+        customCertifications = dedupe(JSON.parse(localStorage.getItem('customCertifications') || '[]'));
+        customAccreditations = dedupe(JSON.parse(localStorage.getItem('customAccreditations') || '[]'));
+        customMemberships = dedupe(JSON.parse(localStorage.getItem('customMemberships') || '[]'));
+        customLicensing = dedupe(JSON.parse(localStorage.getItem('customLicensing') || '[]'));
+        customInvestors = dedupe(JSON.parse(localStorage.getItem('customInvestors') || '[]'));
+        customStaffRoles = dedupe(JSON.parse(localStorage.getItem('customStaffRoles') || '[]'));
+        customStatuses = dedupe(JSON.parse(localStorage.getItem('customStatuses') || '[]'));
+        customGenders = dedupe(JSON.parse(localStorage.getItem('customGenders') || '[]'));
+        customLocations = dedupe(JSON.parse(localStorage.getItem('customLocations') || '[]'));
+        customOperatingPeriods = dedupe(JSON.parse(localStorage.getItem('customOperatingPeriods') || '[]'));
     } catch (e) {
         console.warn('Failed to load custom data from localStorage:', e);
+    }
+
+    // Save the cleaned, deduplicated values back to localStorage
+    try {
+        localStorage.setItem('customOperators', JSON.stringify(customOperators));
+        localStorage.setItem('customFacilityNames', JSON.stringify(customFacilityNames));
+        localStorage.setItem('customHumanNames', JSON.stringify(customHumanNames));
+        localStorage.setItem('customFacilityTypes', JSON.stringify(customFacilityTypes));
+        localStorage.setItem('customCertifications', JSON.stringify(customCertifications));
+        localStorage.setItem('customAccreditations', JSON.stringify(customAccreditations));
+        localStorage.setItem('customMemberships', JSON.stringify(customMemberships));
+        localStorage.setItem('customLicensing', JSON.stringify(customLicensing));
+        localStorage.setItem('customInvestors', JSON.stringify(customInvestors));
+        localStorage.setItem('customStaffRoles', JSON.stringify(customStaffRoles));
+        localStorage.setItem('customStatuses', JSON.stringify(customStatuses));
+        localStorage.setItem('customGenders', JSON.stringify(customGenders));
+        localStorage.setItem('customLocations', JSON.stringify(customLocations));
+        localStorage.setItem('customOperatingPeriods', JSON.stringify(customOperatingPeriods));
+    } catch (e) {
+        console.warn('Failed to save cleaned data to localStorage:', e);
     }
 
     invalidateAggregatedData();
@@ -2992,13 +3015,13 @@ function attachFieldListeners() {
     const operatorFields = {
         'operator-name': (val) => {
             setNestedValue(window.formData, 'operator.name', val);
-            if (val.trim()) addCustomValue('operator', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             updateJSON();
             autoSave();
         },
         'operator-current-name': (val) => {
             setNestedValue(window.formData, 'operator.currentName', val);
-            if (val.trim()) addCustomValue('operator', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             updateJSON();
             autoSave();
         },
@@ -3024,13 +3047,13 @@ function attachFieldListeners() {
         },
         'operator-status': (val) => {
             setNestedValue(window.formData, 'operator.status', val);
-            if (val.trim()) addCustomValue('status', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             updateJSON();
             autoSave();
         },
         'operator-ceo': (val) => {
             setNestedValue(window.formData, 'operator.keyStaff.ceo', val);
-            if (val.trim()) addCustomValue('human', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             updateJSON();
             autoSave();
         },
@@ -3041,13 +3064,13 @@ function attachFieldListeners() {
         },
         'facility-name': (val) => {
             setNestedValue(window.formData, `facilities.${window.currentFacilityIndex}.identification.name`, val);
-            if (val.trim()) addCustomValue('facility', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             window.updateAllUI();
             autoSave();
         },
         'facility-type': (val) => {
             setNestedValue(window.formData, `facilities.${window.currentFacilityIndex}.facilityDetails.type`, val);
-            if (val.trim()) addCustomValue('type', val.trim());
+            // Custom values are saved by custom value recorder on blur/change
             updateJSON();
             autoSave();
         }
@@ -3069,12 +3092,8 @@ function attachFieldListeners() {
                 let value = field.type === 'number' ? (field.value === '' ? null : parseInt(field.value)) : field.value;
                 setNestedValue(window.formData.facilities[window.currentFacilityIndex], path, value);
                 
-                // Save custom values
-                if (value && typeof value === 'string' && value.trim()) {
-                    if (path.includes('gender')) addCustomValue('gender', value.trim());
-                    if (path.includes('location')) addCustomValue('location', value.trim());
-                    if (path.includes('status')) addCustomValue('status', value.trim());
-                }
+                // Custom values are saved by custom value recorder on blur/change
+                // No need to add them here on every keystroke
                 
                 updateJSON();
                 autoSave();
