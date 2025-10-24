@@ -948,10 +948,10 @@ function createAutocomplete(input, getDataFunction, category) {
 
             renderSuggestionContent(div, suggestionText, input.value);
 
-            // Attach click handler directly to this item only
-            div.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
+            // Use mousedown to fire BEFORE blur event
+            // Scoped to individual items only - won't interfere with other page elements
+            div.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // Prevent focus loss
                 commitSelection(suggestionText);
             });
 
