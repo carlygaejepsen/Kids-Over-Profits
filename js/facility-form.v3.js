@@ -2089,18 +2089,11 @@ function newProject() {
         window.updateAllUI();
     }
 
-    // Apply the correct labels based on the active tab
-    if (activeCategory === 'referrers') {
-        updateLabelsForProjectType('new-referrer-project'); // Use a placeholder to trigger referrer labels
-    } else {
-        updateLabelsForProjectType(''); // Reset to default for companies/locations
-    }
+    // Apply the correct labels based on the active tab.
+    updateLabelsForProjectType();
 
     // After labels are set, ensure the referrer toggle state is correct
-    if (activeCategory === 'referrers') {
-        applyReferrerToggleState(false); // Default to 'Group/Agency' view
-    }
-    handleReferrerToggle(); // Apply visibility rules
+    handleReferrerToggle(); // Apply visibility rules based on the active tab
 
     showUploadStatus('New project created', 'info');
 }
@@ -3397,8 +3390,10 @@ function updateProjectStatus() {
     }
 }
 
-function updateLabelsForProjectType(projectName) {
-    const category = determineProjectCategory(projectName);
+function updateLabelsForProjectType() {
+    const activeTab = document.querySelector('.category-tab.active');
+    const category = activeTab ? activeTab.dataset.category : 'companies';
+
 
     // Define default and referrer-specific labels
     const labels = {
