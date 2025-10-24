@@ -3278,8 +3278,9 @@ function refreshSavedProjectPanels() {
     const projectNames = Object.keys(projects);
     const companyContainer = document.getElementById('company-saved-projects-list');
     const locationContainer = document.getElementById('location-saved-projects-list');
+    const referrerContainer = document.getElementById('referrer-saved-projects-list');
 
-    if (!companyContainer && !locationContainer) {
+    if (!companyContainer && !locationContainer && !referrerContainer) {
         return;
     }
 
@@ -3327,17 +3328,47 @@ function refreshSavedProjectPanels() {
         const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
         locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
     }
+
+    if (referrerContainer) {
+        const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet');
+    }
 }
 
 function updateProjectStatus() {
-    const statusDiv = document.getElementById('project-status');
-    if (statusDiv) {
-        if (window.currentProjectName) {
-            const facilityCount = window.formData?.facilities?.length || 0;
-            statusDiv.innerHTML = `<strong>📂 Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
-        } else {
-            statusDiv.innerHTML = '⚠️ No project loaded - working with temporary data';
-        }
+    const statusTargets = [
+        document.getElementById('project-status'),
+        document.getElementById('project-status-location'),
+        document.getElementById('referrer-project-status')
+    ].filter(Boolean);
+
+    if (!statusTargets.length) {
+        return;
+    }
+
+    if (window.currentProjectName) {
+        const facilityCount = window.formData?.facilities?.length || 0;
+        const baseMessage = `<strong>📂 Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
+
+        statusTargets.forEach(target => {
+            if (target.id === 'referrer-project-status') {
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Referrer profiles for this project are saved alongside the operator & facility data.</div>`;
+            } else if (target.id === 'project-status-location') {
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Location-focused projects load the same dataset for geographic review.</div>`;
+            } else {
+                target.innerHTML = baseMessage;
+            }
+        });
+    } else {
+        statusTargets.forEach(target => {
+            if (target.id === 'referrer-project-status') {
+                target.innerHTML = '⚠️ No project loaded - referrer entries will be stored temporarily';
+            } else if (target.id === 'project-status-location') {
+                target.innerHTML = '⚠️ No project loaded - viewing temporary location data';
+            } else {
+                target.innerHTML = '⚠️ No project loaded - working with temporary data';
+            }
+        });
     }
 }
 
@@ -3721,6 +3752,33 @@ function attachButtonListeners() {
         newBtn.dataset.listenerAttached = 'true';
     }
 
+    const exportAllBtn = document.getElementById('export-all-btn');
+    if (exportAllBtn && !exportAllBtn.dataset.listenerAttached) {
+        exportAllBtn.onclick = () => {
+            const dataStr = JSON.stringify(window.projects || {}, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-projects-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        exportAllBtn.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtn = document.getElementById('generate-report-btn');
+    if (generateReportBtn && !generateReportBtn.dataset.listenerAttached) {
+        generateReportBtn.onclick = () => {
+            if (typeof generateReport === 'function') {
+                generateReport();
+            } else {
+                alert('Report generation is not available yet.');
+            }
+        };
+        generateReportBtn.dataset.listenerAttached = 'true';
+    }
+
     // Location project buttons
     const newBtnLocation = document.getElementById('new-project-btn-location');
     if (newBtnLocation && !newBtnLocation.dataset.listenerAttached) {
@@ -3754,6 +3812,39 @@ function attachButtonListeners() {
             }
         };
         generateReportBtnLocation.dataset.listenerAttached = 'true';
+    }
+
+    const newReferrerBtn = document.getElementById('new-referrer-project-btn');
+    if (newReferrerBtn && !newReferrerBtn.dataset.listenerAttached) {
+        newReferrerBtn.onclick = newProject;
+        newReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
+    const exportReferrerBtn = document.getElementById('export-referrer-projects-btn');
+    if (exportReferrerBtn && !exportReferrerBtn.dataset.listenerAttached) {
+        exportReferrerBtn.onclick = () => {
+            const dataStr = JSON.stringify(window.projects || {}, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-projects-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        exportReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
+    const generateReferrerReportBtn = document.getElementById('generate-referrer-report-btn');
+    if (generateReferrerReportBtn && !generateReferrerReportBtn.dataset.listenerAttached) {
+        generateReferrerReportBtn.onclick = () => {
+            if (typeof generateReport === 'function') {
+                generateReport();
+            } else {
+                alert('Report generation is not available yet.');
+            }
+        };
+        generateReferrerReportBtn.dataset.listenerAttached = 'true';
     }
 
     // Import/Export
