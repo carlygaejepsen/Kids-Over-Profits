@@ -2068,21 +2068,33 @@ function loadProject(projectName) {
 }
 
 function newProject() {
-    if (!confirm('Start a new blank project? Any unsaved changes will be lost.')) return;
+    if (!confirm('Start a new blank project? Any unsaved changes to the current project will be lost.')) return;
 
     window.currentProjectName = null;
     window.formData = createNewProjectData();
     window.currentFacilityIndex = 0;
 
+    // Clear the main project name input
     const projectNameInput = document.getElementById('project-name');
     if (projectNameInput) {
         projectNameInput.value = '';
     }
 
+    // Get the currently active category tab
+    const activeTab = document.querySelector('.category-tab.active');
+    const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+
+    // Update all UI elements to reflect the new, blank data
     if (typeof window.updateAllUI === 'function') {
         window.updateAllUI();
     }
-    updateLabelsForProjectType(''); // Reset labels to default
+
+    // Apply the correct labels based on the active tab
+    if (activeCategory === 'referrers') {
+        updateLabelsForProjectType('new-referrer-project'); // Use a placeholder to trigger referrer labels
+    } else {
+        updateLabelsForProjectType(''); // Reset to default for companies/locations
+    }
 
     showUploadStatus('New project created', 'info');
 }
