@@ -463,13 +463,18 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label>Location</label>
-                                        <input type="text" id="referrer-group-location" placeholder="e.g., Los Angeles, CA">
+                                        <label>City</label>
+                                        <input type="text" id="referrer-group-city" placeholder="e.g., Los Angeles">
                                     </div>
                                     <div class="form-group">
-                                        <label>Website</label>
-                                        <input type="text" id="referrer-group-website" placeholder="https://">
+                                        <label>State</label>
+                                        <input type="text" id="referrer-group-state" placeholder="e.g., CA">
                                     </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Website</label>
+                                    <input type="text" id="referrer-group-website" placeholder="https://">
                                 </div>
 
                                 <div class="form-group">
@@ -1705,32 +1710,38 @@
         const referrerGroupForm = document.getElementById('referrer-group-form');
         const referrerIndividualForm = document.getElementById('referrer-individual-form');
 
-        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
-            referrerSliderTrack.addEventListener('click', function() {
-                referrerTypeToggle.checked = !referrerTypeToggle.checked;
-                updateReferrerSliderAppearance();
+        function applyReferrerToggleState(isIndividual) {
+            if (!referrerSliderTrack || !referrerSliderKnob || !referrerTypeToggle || !referrerGroupForm || !referrerIndividualForm) {
+                return;
+            }
 
-                const isIndividual = referrerTypeToggle.checked;
+            referrerTypeToggle.checked = !!isIndividual;
 
-                if (isIndividual) {
-                    referrerGroupForm.style.display = 'none';
-                    referrerIndividualForm.style.display = 'block';
-                } else {
-                    referrerGroupForm.style.display = 'block';
-                    referrerIndividualForm.style.display = 'none';
-                }
-            });
-
-            function updateReferrerSliderAppearance() {
-                if (referrerTypeToggle.checked) {
-                    referrerSliderTrack.style.backgroundColor = '#3b82f6';
-                    referrerSliderKnob.style.transform = 'translateX(24px)';
-                } else {
-                    referrerSliderTrack.style.backgroundColor = '#10b981';
-                    referrerSliderKnob.style.transform = 'translateX(0px)';
-                }
+            if (referrerTypeToggle.checked) {
+                referrerSliderTrack.style.backgroundColor = '#3b82f6';
+                referrerSliderKnob.style.transform = 'translateX(24px)';
+                referrerGroupForm.style.display = 'none';
+                referrerIndividualForm.style.display = 'block';
+            } else {
+                referrerSliderTrack.style.backgroundColor = '#10b981';
+                referrerSliderKnob.style.transform = 'translateX(0px)';
+                referrerGroupForm.style.display = 'block';
+                referrerIndividualForm.style.display = 'none';
             }
         }
+
+        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
+            referrerSliderTrack.addEventListener('click', function() {
+                const newState = !referrerTypeToggle.checked;
+                applyReferrerToggleState(newState);
+
+                if (typeof window.handleReferrerTypeToggle === 'function') {
+                    window.handleReferrerTypeToggle(newState ? 'individual' : 'group');
+                }
+            });
+        }
+
+        window.applyReferrerToggleState = applyReferrerToggleState;
 
         async function submitSuggestion() {
             // Ask user to summarize their changes
