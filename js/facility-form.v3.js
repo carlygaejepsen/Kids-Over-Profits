@@ -3214,6 +3214,41 @@ function attachButtonListeners() {
         newBtn.dataset.listenerAttached = 'true';
     }
 
+    // Location project buttons
+    const newBtnLocation = document.getElementById('new-project-btn-location');
+    if (newBtnLocation && !newBtnLocation.dataset.listenerAttached) {
+        newBtnLocation.onclick = newProject;
+        newBtnLocation.dataset.listenerAttached = 'true';
+    }
+
+    const exportAllBtnLocation = document.getElementById('export-all-btn-location');
+    if (exportAllBtnLocation && !exportAllBtnLocation.dataset.listenerAttached) {
+        exportAllBtnLocation.onclick = () => {
+            // Export all projects as JSON
+            const dataStr = JSON.stringify(window.projects || {}, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'all-projects-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        exportAllBtnLocation.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtnLocation = document.getElementById('generate-report-btn-location');
+    if (generateReportBtnLocation && !generateReportBtnLocation.dataset.listenerAttached) {
+        generateReportBtnLocation.onclick = () => {
+            if (typeof generateReport === 'function') {
+                generateReport();
+            } else {
+                alert('Report generation is not available yet.');
+            }
+        };
+        generateReportBtnLocation.dataset.listenerAttached = 'true';
+    }
+
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
     if (copyBtn && !copyBtn.dataset.listenerAttached) {
