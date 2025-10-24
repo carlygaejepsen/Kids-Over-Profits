@@ -858,43 +858,16 @@ function createAutocomplete(input, getDataFunction, category) {
     let currentFocus = -1;
     let abortController = null; // FIX #2: For cancelling pending requests
     let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
-    const earlySelectionEvent = (typeof window !== 'undefined' && typeof window.PointerEvent !== 'undefined')
-        ? 'pointerdown'
-        : 'mousedown';
-    // Use passive listeners for better scroll performance.
-    // The event.cancelable check will handle cases where preventDefault is needed.
-    const earlySelectionOptions = { passive: true, capture: false };
 
-    // Use event delegation on the dropdown to avoid adding listeners to each item
-    // This prevents console spam when many autocomplete items are rendered
+    // Listen for the custom autocomplete-select event from global handler
+    // This prevents console spam from passive event listener warnings
     if (!dropdown.dataset.delegationInitialized) {
         dropdown.dataset.delegationInitialized = 'true';
 
-        // Handle early selection (pointerdown/mousedown)
-        dropdown.addEventListener(earlySelectionEvent, (event) => {
-            const item = event.target.closest('.autocomplete-item');
-            if (!item || !item.dataset.value || item.dataset.placeholder) {
-                return;
+        dropdown.addEventListener('autocomplete-select', (event) => {
+            if (event.detail && event.detail.value) {
+                commitSelection(event.detail.value);
             }
-            if (event.cancelable) {
-                event.preventDefault();
-            }
-            event.stopPropagation();
-            if (event.button && event.button !== 0) {
-                return;
-            }
-            commitSelection(item.dataset.value);
-        }, earlySelectionOptions);
-
-        // Handle click as fallback
-        dropdown.addEventListener('click', (event) => {
-            const item = event.target.closest('.autocomplete-item');
-            if (!item || !item.dataset.value || item.dataset.placeholder) {
-                return;
-            }
-            event.preventDefault();
-            event.stopPropagation();
-            commitSelection(item.dataset.value);
         });
     }
 
@@ -2770,7 +2743,7 @@ function cloneFacility() {
     });
 
     // --- Show Modal ---
-    modal.style.display = 'block';
+    modal.classList.add('active');
 
     // --- Event Handlers ---
     const confirmBtn = document.getElementById('clone-modal-confirm');
@@ -2791,7 +2764,7 @@ function cloneFacility() {
     handleRadioChange(); // Set initial state
 
     function closeModal() {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
         // Clean up listeners to prevent multiple executions
         confirmBtn.replaceWith(confirmBtn.cloneNode(true));
         cancelBtn.replaceWith(cancelBtn.cloneNode(true));
@@ -4036,6 +4009,61 @@ window.initializeSectionToggles = initializeSectionToggles;
 window.syncFieldNotes = syncFieldNotes;
 window.getFieldNotes = getCurrentFieldNotesSnapshot;
 window.addNoteButtons = addNoteButtons;
+
+// ============================================
+// GLOBAL AUTOCOMPLETE EVENT DELEGATION
+// Attach once at document level to reduce console warnings
+// Only intercept events within autocomplete dropdowns
+// ============================================
+(function setupGlobalAutocompleteHandlers() {
+    if (window._autocompleteHandlersInitialized) return;
+    window._autocompleteHandlersInitialized = true;
+
+    const earlySelectionEvent = (typeof window.PointerEvent !== 'undefined') ? 'pointerdown' : 'mousedown';
+
+    // Global handler for autocomplete item selection
+    // IMPORTANT: Only preventDefault/stopPropagation for autocomplete items
+    document.addEventListener(earlySelectionEvent, (event) => {
+        // Check if we're inside an autocomplete dropdown
+        const item = event.target.closest('.autocomplete-item');
+        if (!item) return; // Exit early - not an autocomplete item
+
+        const dropdown = item.closest('.autocomplete-dropdown');
+        if (!dropdown || item.dataset.placeholder) return;
+
+        // Only handle left-clicks
+        if (event.button && event.button !== 0) return;
+
+        // NOW we can safely preventDefault/stopPropagation
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Trigger custom event that the dropdown's commitSelection can listen for
+        const selectEvent = new CustomEvent('autocomplete-select', {
+            detail: { value: item.dataset.value },
+            bubbles: true
+        });
+        dropdown.dispatchEvent(selectEvent);
+    }, { passive: false, capture: false });
+
+    // Fallback click handler
+    document.addEventListener('click', (event) => {
+        const item = event.target.closest('.autocomplete-item');
+        if (!item) return; // Exit early - not an autocomplete item
+
+        const dropdown = item.closest('.autocomplete-dropdown');
+        if (!dropdown || item.dataset.placeholder) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const selectEvent = new CustomEvent('autocomplete-select', {
+            detail: { value: item.dataset.value },
+            bubbles: true
+        });
+        dropdown.dispatchEvent(selectEvent);
+    }, { passive: false, capture: false });
+})();
 
 // Initialize on DOMContentLoaded
 if (document.readyState === 'loading') {
