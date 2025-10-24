@@ -181,13 +181,24 @@ function kop_get_facilities_database_connection() {
     $use_separate_db = false;
     $facilities_db = null;
 
+    // Try to load credentials from constants first
+    $db_user = defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '';
+    $db_pass = defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '';
+    $db_name = defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '';
+    $db_host = defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost';
+
+    // If constants aren't defined, try to load from api/config.php
+    if (empty($db_user) || empty($db_name)) {
+        $config_path = get_stylesheet_directory() . '/api/config.php';
+        if (file_exists($config_path)) {
+            // Load the config file which sets $db_user, $db_pass, $db_name, $db_host
+            require_once $config_path;
+            // The config.php file sets these variables, so they should now be available
+        }
+    }
+
     try {
-        $facilities_db = new wpdb(
-            defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '',
-            defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '',
-            defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '',
-            defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost'
-        );
+        $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
         $use_separate_db = true;
     } catch (Exception $e) {
         error_log('Failed to connect to facilities database: ' . $e->getMessage());
