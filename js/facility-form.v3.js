@@ -297,6 +297,7 @@ let formData = null;
 let customOperators = [];
 let customFacilityNames = [];
 let customHumanNames = [];
+let customReferrers = [];
 let customFacilityTypes = [];
 let customCertifications = [];
 let customAccreditations = [];
@@ -314,6 +315,7 @@ const aggregatedDataCache = {
     operators: null,
     facilityNames: null,
     humanNames: null,
+    referrers: null,
     facilityTypes: null,
     staffRoles: null,
     certifications: null,
@@ -329,6 +331,7 @@ const CACHE_CATEGORY_MAP = {
     operator: 'operators',
     facility: 'facilityNames',
     human: 'humanNames',
+    referrer: 'referrers',
     type: 'facilityTypes',
     role: 'staffRoles',
     certification: 'certifications',
@@ -442,6 +445,7 @@ function loadCustomDataFromLocalStorage() {
         customOperators = dedupe(JSON.parse(localStorage.getItem('customOperators') || '[]'));
         customFacilityNames = dedupe(JSON.parse(localStorage.getItem('customFacilityNames') || '[]'));
         customHumanNames = dedupe(JSON.parse(localStorage.getItem('customHumanNames') || '[]'));
+        customReferrers = dedupe(JSON.parse(localStorage.getItem('customReferrers') || '[]'));
         customFacilityTypes = dedupe(JSON.parse(localStorage.getItem('customFacilityTypes') || '[]'));
         customCertifications = dedupe(JSON.parse(localStorage.getItem('customCertifications') || '[]'));
         customAccreditations = dedupe(JSON.parse(localStorage.getItem('customAccreditations') || '[]'));
@@ -462,6 +466,7 @@ function loadCustomDataFromLocalStorage() {
         localStorage.setItem('customOperators', JSON.stringify(customOperators));
         localStorage.setItem('customFacilityNames', JSON.stringify(customFacilityNames));
         localStorage.setItem('customHumanNames', JSON.stringify(customHumanNames));
+        localStorage.setItem('customReferrers', JSON.stringify(customReferrers));
         localStorage.setItem('customFacilityTypes', JSON.stringify(customFacilityTypes));
         localStorage.setItem('customCertifications', JSON.stringify(customCertifications));
         localStorage.setItem('customAccreditations', JSON.stringify(customAccreditations));
@@ -507,6 +512,10 @@ function addCustomValue(category, value) {
         case 'human':
             array = customHumanNames;
             key = 'customHumanNames';
+            break;
+        case 'referrer':
+            array = customReferrers;
+            key = 'customReferrers';
             break;
         case 'type':
             array = customFacilityTypes;
@@ -683,6 +692,26 @@ function getAllHumanNames() {
     }
 
     return aggregatedDataCache.humanNames;
+}
+
+function getAllReferrers() {
+    if (!aggregatedDataCache.referrers) {
+        const referrers = new Set(customReferrers);
+
+        Object.values(projects).forEach(project => {
+            project.data?.facilities?.forEach(facility => {
+                facility.identification?.knownReferrers?.forEach(ref => {
+                    if (ref && typeof ref === 'string') {
+                        referrers.add(ref);
+                    }
+                });
+            });
+        });
+
+        aggregatedDataCache.referrers = Array.from(referrers).filter(r => r && typeof r === 'string' && r.trim()).sort();
+    }
+
+    return aggregatedDataCache.referrers;
 }
 
 function getAllFacilityTypes() {
@@ -1144,6 +1173,7 @@ function initializeAutocompleteFields() {
         operator: getAllOperators,
         facility: getAllFacilityNames,
         human: getAllHumanNames,
+        referrer: getAllReferrers,
         type: getAllFacilityTypes,
         status: getAllStatuses,
         gender: getAllGenders,
@@ -1821,7 +1851,7 @@ function createNewProjectData() {
             notes: [], fieldNotes: {}
         },
         facilities: [{
-            identification: { name: "", currentName: "", currentOperator: "", otherNames: [] },
+            identification: { name: "", currentName: "", currentOperator: "", otherNames: [], knownReferrers: [] },
             location: "", address: "", otherOperators: [],
             operatingPeriod: { startYear: null, endYear: null, status: "", yearsOfOperation: "", notes: [] },
             staff: { administrator: [], notableStaff: [] },
@@ -2144,6 +2174,9 @@ function renderArray(container, path, items) {
             if (/identification\.otherNames$/.test(path)) {
                 category = 'facility';
                 dataFunc = getAllFacilityNames;
+            } else if (/identification\.knownReferrers$/.test(path)) {
+                category = 'referrer';
+                dataFunc = getAllReferrers;
             } else if (/operator\.otherNames$/.test(path) || /operator\.parentCompanies$/.test(path) || /otherOperators$/.test(path)) {
                 category = 'operator';
                 dataFunc = getAllOperators;
@@ -2255,6 +2288,8 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Names';
     } else if (/identification\.otherNames$/.test(path)) {
         buttonLabel = 'Add More Names';
+    } else if (/identification\.knownReferrers$/.test(path)) {
+        buttonLabel = 'Add More Referrers';
     } else if (/otherOperators$/.test(path)) {
         buttonLabel = 'Add More Operators';
     } else if (/accreditations\.current$/.test(path)) {
@@ -2367,7 +2402,7 @@ function loadFacilityData() {
     const facilityType = document.getElementById('facility-type');
     if (facilityType) facilityType.value = facility.facilityDetails?.type || '';
 
-    const arrayPaths = ['identification.otherNames', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes'];
+    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {

@@ -58,6 +58,7 @@
             <div class="category-tabs">
                 <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
                 <button class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -100,6 +101,28 @@
                             </div>
                         </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                    </div>
+                </div>
+
+                <!-- Referrers Content -->
+                <div id="referrers-content" class="category-content d-none">
+                    <div class="content-header">
+                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
+                    </div>
+                    <div class="project-management referrer-project-management">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Information</h2>
+                        <div class="form-group">
+                            <label>Known Referrers</label>
+                            <div id="referrers-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No referrers found in current projects</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Referrers are education consultants, school districts, and other agencies that refer students to facilities. This list is automatically compiled from all facility data where referrers are mentioned.
+                        </p>
+                        <p style="margin-top: 10px; color: #374151; font-size: 14px;">
+                            <strong>Note:</strong> Agency names and detailed referrer profiles will be available in a future update.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -316,6 +339,10 @@
                 <div class="form-group">
                     <label>Other Names</label>
                     <div class="array-container" data-path="identification.otherNames"></div>
+                </div>
+                <div class="form-group">
+                    <label>Known Referrers (Education Consultants / School Districts)</label>
+                    <div class="array-container" data-path="identification.knownReferrers"></div>
                 </div>
             </div>
         </div>
