@@ -2690,7 +2690,9 @@ async function performClone(targetProjectName) {
 
     const facilityToClone = deepClone(window.formData.facilities[window.currentFacilityIndex]);
     // Give the clone a new name to avoid confusion
-    facilityToClone.identification.name = `${facilityToClone.identification.name} (Clone)`;
+    if (facilityToClone.identification && facilityToClone.identification.name) {
+        facilityToClone.identification.name = `${facilityToClone.identification.name} (Clone)`;
+    }
 
     // Case 1: Clone to the current project
     if (targetProjectName === window.currentProjectName) {
@@ -2706,13 +2708,17 @@ async function performClone(targetProjectName) {
     const isNewProject = !window.projects[targetProjectName];
 
     if (isNewProject) {
+        // Create new project with ONLY the cloned facility, no operator data
+        const newProjectData = createNewProjectData();
+        newProjectData.facilities = [facilityToClone];
+
         window.projects[targetProjectName] = {
             name: targetProjectName,
-            data: { ...createNewProjectData(), facilities: [facilityToClone] },
+            data: newProjectData,
             currentFacilityIndex: 0,
             timestamp: new Date().toISOString()
         };
-        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility.`);
+        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility (no operator data).`);
     } else {
         if (!window.projects[targetProjectName].data.facilities) {
             window.projects[targetProjectName].data.facilities = [];
