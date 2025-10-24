@@ -2826,8 +2826,8 @@ function cloneFacility() {
         closeModal();
     };
 
-    cancelBtn.onclick = closeModal;
-    closeBtn.onclick = closeModal;
+    newCancelBtn.onclick = closeModal;
+    newCloseBtn.onclick = closeModal;
 }
 
 function sortFacilities() {
