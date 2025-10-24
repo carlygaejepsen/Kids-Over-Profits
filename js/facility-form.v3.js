@@ -2114,8 +2114,15 @@ function renderArray(container, path, items) {
     // If array is empty, initialize it with one empty item so user input gets saved
     if (itemsArray.length === 0) {
         const target = path.startsWith('operator.') ? window.formData.operator : window.formData.facilities[window.currentFacilityIndex];
-        const array = getNestedValue(target, path.replace('operator.', ''));
-        if (Array.isArray(array) && array.length === 0) {
+        let array = getNestedValue(target, path.replace('operator.', ''));
+
+        // If array doesn't exist, create it
+        if (!Array.isArray(array)) {
+            array = [];
+            setNestedValue(target, path.replace('operator.', ''), array);
+        }
+
+        if (array.length === 0) {
             const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
             const emptyItem = isStaff ? { role: '', name: '' } : '';
             array.push(emptyItem);

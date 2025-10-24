@@ -1034,13 +1034,21 @@
 
                 const companiesContent = document.getElementById('companies-content');
                 const statesContent = document.getElementById('states-content');
-                if (companiesContent && statesContent) {
+                const referrersContent = document.getElementById('referrers-content');
+
+                if (companiesContent && statesContent && referrersContent) {
+                    // Hide all content sections first
+                    companiesContent.classList.add('d-none');
+                    statesContent.classList.add('d-none');
+                    referrersContent.classList.add('d-none');
+
+                    // Show the selected category
                     if (category === 'companies') {
                         companiesContent.classList.remove('d-none');
-                        statesContent.classList.add('d-none');
-                    } else {
-                        companiesContent.classList.add('d-none');
+                    } else if (category === 'locations') {
                         statesContent.classList.remove('d-none');
+                    } else if (category === 'referrers') {
+                        referrersContent.classList.remove('d-none');
                     }
                 }
 
