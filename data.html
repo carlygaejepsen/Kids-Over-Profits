@@ -41,7 +41,7 @@
             position: fixed;
             top: 32px; /* Below WordPress admin bar */
             right: 20px;
-            transform: translateY(0);
+            transform: translateY(0) !important;
             background: #EF9034;
             color: white;
             border: 2px solid #B2E102;
@@ -49,7 +49,8 @@
             border-radius: 0 0 8px 8px;
             padding: 8px 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 99997;
+            z-index: 99999;
+            pointer-events: auto;
         }
 
         body:not(.admin-bar) .fixed-toolbar.minimized .toolbar-toggle {
@@ -219,7 +220,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
+            z-index: 100000;
             align-items: center;
             justify-content: center;
         }
@@ -1139,47 +1140,47 @@
     </div>
     
     <!-- Clone Facility Modal -->
-    <div id="clone-facility-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Clone Facility</h3>
-                <button class="modal-close" id="clone-modal-close">&times;</button>
+    <div id="clone-facility-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 100000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: 12px; width: 90%; max-width: 600px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #33A7B5 0%, #AEE0ED 100%); color: #000435; padding: 20px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="modal-title" style="margin: 0; font-size: 24px; color: #000435;">Clone Facility</h3>
+                <button class="modal-close" id="clone-modal-close" style="background: rgba(0, 4, 53, 0.2); border: none; color: #000435; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 24px; line-height: 1; transition: all 0.2s;">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 30px;">
                 <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="current" checked>
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="current" checked style="margin-right: 8px;">
                         Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="existing">
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="existing" style="margin-right: 8px;">
                         Clone to an existing project
                     </label>
-                    <div class="project-select-container" id="existing-project-container" style="display: none;">
-                        <select class="project-select" id="existing-project-select">
+                    <div class="project-select-container" id="existing-project-container" style="display: none; margin-top: 10px; margin-left: 24px;">
+                        <select class="project-select" id="existing-project-select" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                             <option value="">Select a project...</option>
                         </select>
                     </div>
                 </div>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="new">
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="new" style="margin-right: 8px;">
                         Clone to a new project
                     </label>
-                    <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name...">
+                    <div class="project-select-container" id="new-project-container" style="display: none; margin-top: 10px; margin-left: 24px;">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
-                <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="clone-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Clone Facility</button>
             </div>
         </div>
     </div>
@@ -1201,7 +1202,7 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                     <div class="form-group">
-                        <label for="organize-by-modal">Organize by:</label>
+                        <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
                             <option value="">Select data point...</option>
                             <option value="staff">Staff Member</option>
@@ -1215,7 +1216,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="organize-value-modal">Search for:</label>
+                        <label for="organize-value-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Search for:</label>
                         <input type="text" id="organize-value-modal" class="input-secondary" placeholder="Type to search..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
                     </div>
                 </div>
