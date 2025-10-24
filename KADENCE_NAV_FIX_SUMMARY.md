@@ -250,6 +250,7 @@ SOLUTION - Smart Multi-Layered Protection:
 - Create kadence-nav-guard.js with dual-mode operation:
   * Headerless mode: Strict blocking on data/admin-data pages
   * Standard mode: Graceful fallbacks for timing issues on normal pages
+- Fix timing issue: Make isHeaderlessPage a function to safely check body.classList
 - Load guard globally (not just headerless pages) to catch all scenarios
 - Add global error handler as last-resort protection
 - Add inline protection to data.html and admin-data.html
@@ -258,11 +259,12 @@ SOLUTION - Smart Multi-Layered Protection:
 - Dequeue 5 Kadence navigation scripts on headerless pages only
 
 CHANGES:
-- js/kadence-nav-guard.js: Smart protection with auto-detection
+- js/kadence-nav-guard.js: Smart protection with auto-detection + timing fix
 - functions.php: Global guard enqueue + enhanced dequeue
 - data.html: Inline protection script
 - admin-data.html: Inline protection script
 
 Fixes: TypeError: Cannot read properties of null (reading 'getAttribute')
+Fixes: TypeError: Cannot read properties of null (reading 'classList')
 Fixes: Timing issues causing navigation errors on home page
 ```

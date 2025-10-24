@@ -16,11 +16,16 @@
     window.KADENCE_NAV_GUARD_ACTIVE = true;
 
     // Check if this is a headerless layout (data pages)
-    var isHeaderlessPage = window.KADENCE_NAV_DISABLED ||
-                           document.body.classList.contains('page-data') ||
-                           document.body.classList.contains('page-admin-data') ||
-                           window.location.pathname.includes('data.html') ||
-                           window.location.pathname.includes('admin-data.html');
+    // Use a function to avoid accessing document.body before it exists
+    function isHeaderlessPage() {
+        return window.KADENCE_NAV_DISABLED ||
+               window.location.pathname.includes('data.html') ||
+               window.location.pathname.includes('admin-data.html') ||
+               (document.body && document.body.classList && (
+                   document.body.classList.contains('page-data') ||
+                   document.body.classList.contains('page-admin-data')
+               ));
+    }
 
     // Store original DOM query methods
     var originalQuerySelector = document.querySelector.bind(document);
@@ -74,7 +79,7 @@
     // Override querySelector with smart fallback
     document.querySelector = function(selector) {
         // On headerless pages, always block navigation queries
-        if (isHeaderlessPage && isNavSelector(selector)) {
+        if (isHeaderlessPage() && isNavSelector(selector)) {
             console.debug('[Kadence Nav Guard] Blocked querySelector on headerless page:', selector);
             return null;
         }
@@ -95,7 +100,7 @@
     // Override querySelectorAll with smart fallback
     document.querySelectorAll = function(selector) {
         // On headerless pages, always block navigation queries
-        if (isHeaderlessPage && isNavSelector(selector)) {
+        if (isHeaderlessPage() && isNavSelector(selector)) {
             console.debug('[Kadence Nav Guard] Blocked querySelectorAll on headerless page:', selector);
             return [];
         }
@@ -115,7 +120,7 @@
     // Override getElementById with smart fallback
     document.getElementById = function(id) {
         // On headerless pages, always block navigation IDs
-        if (isHeaderlessPage && navIds.includes(id)) {
+        if (isHeaderlessPage() && navIds.includes(id)) {
             console.debug('[Kadence Nav Guard] Blocked getElementById on headerless page:', id);
             return null;
         }
@@ -134,15 +139,25 @@
 
     // Override getElementsByClassName
     document.getElementsByClassName = function(className) {
-        if (navClasses.includes(className)) {
-            console.debug('[Kadence Nav Guard] Blocked getElementsByClassName:', className);
+        // On headerless pages, always block navigation classes
+        if (isHeaderlessPage() && navClasses.includes(className)) {
+            console.debug('[Kadence Nav Guard] Blocked getElementsByClassName on headerless page:', className);
             return [];
         }
-        return originalGetElementsByClassName(className);
+
+        // Try normally
+        var elements = originalGetElementsByClassName(className);
+
+        // If navigation class not found, return empty gracefully
+        if (elements.length === 0 && navClasses.includes(className)) {
+            console.debug('[Kadence Nav Guard] Navigation class not found:', className);
+            return [];
+        }
+
+        return elements;
     };
 
     // Override getElementsByTagName for specific cases
-    var originalGetElementsByTagName = document.getElementsByTagName.bind(document);
     document.getElementsByTagName = function(tagName) {
         var elements = originalGetElementsByTagName(tagName);
 
@@ -210,5 +225,5 @@
         }
     }, true);
 
-    console.log('[Kadence Nav Guard] Smart protection active' + (isHeaderlessPage ? ' (headerless mode)' : ' (standard mode)'));
+    console.log('[Kadence Nav Guard] Smart protection active' + (isHeaderlessPage() ? ' (headerless mode)' : ' (standard mode)'));
 })();
