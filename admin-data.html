@@ -1872,11 +1872,11 @@
                         // Add event listeners with the passive option
                         resultDiv.addEventListener('mouseover', () => {
                             resultDiv.style.backgroundColor = '#f8fafc';
-                        });
+                        }, { passive: true });
 
                         resultDiv.addEventListener('mouseout', () => {
                             resultDiv.style.backgroundColor = 'white';
-                        });
+                        }, { passive: true });
 
                         resultDiv.addEventListener('click', () => {
                             goToFacility(result.projectName, result.facilityIndex);

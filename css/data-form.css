@@ -1839,6 +1839,465 @@ textarea {
 }
 
 /* ============================================
+   MOBILE / SMALL SCREEN RESPONSIVE STYLES
+   ============================================ */
+
+/* Tablets and smaller */
+@media (max-width: 1024px) {
+    body {
+        padding: 15px;
+    }
+
+    body.toolbar-active {
+        padding-top: 190px;
+    }
+
+    .fixed-toolbar .toolbar-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fixed-toolbar .toolbar-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Mobile phones and narrow screens */
+@media (max-width: 640px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    body.toolbar-active {
+        padding-top: 200px;
+    }
+
+    .container {
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    /* Fixed Toolbar Mobile */
+    .fixed-toolbar .toolbar-header {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+    }
+
+    .fixed-toolbar .toolbar-title {
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .fixed-toolbar .toolbar-content {
+        padding: 10px 15px;
+    }
+
+    .fixed-toolbar .toolbar-section {
+        gap: 10px;
+    }
+
+    .fixed-toolbar .toolbar-group {
+        gap: 8px;
+    }
+
+    .fixed-toolbar .toolbar-label {
+        font-size: 13px;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    /* Header */
+    .admin-header {
+        padding: 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 20px;
+    }
+
+    .admin-header p {
+        font-size: 14px;
+    }
+
+    /* Category Tabs - Stack Vertically */
+    .category-navigation {
+        padding: 10px;
+    }
+
+    .category-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .category-tab {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    /* Table of Contents */
+    .toc-header {
+        padding: 12px 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .toc-title {
+        font-size: 16px;
+        flex: 1;
+    }
+
+    .toc-content {
+        padding: 12px;
+    }
+
+    .facility-list {
+        max-height: 200px;
+        padding: 10px;
+    }
+
+    /* Facility Controls - Stack Everything */
+    .facility-controls {
+        padding: 15px;
+    }
+
+    .facility-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .facility-header h2 {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .controls .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* Sections */
+    .section {
+        margin-bottom: 15px;
+    }
+
+    .section-header {
+        padding: 12px 15px;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .section-content {
+        padding: 15px;
+    }
+
+    /* Form Elements */
+    .form-row,
+    .form-row-3 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    textarea,
+    select,
+    .input-form,
+    .input-primary,
+    .input-secondary {
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    textarea {
+        min-height: 80px;
+    }
+
+    /* Autocomplete */
+    .autocomplete-wrapper {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .autocomplete-dropdown {
+        max-height: 180px;
+        font-size: 13px;
+    }
+
+    .autocomplete-item {
+        padding: 10px;
+    }
+
+    /* Array Items - Stack on Mobile */
+    .array-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .array-item input,
+    .array-item textarea {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .array-input {
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .array-input-role,
+    .array-input-name {
+        flex: 1;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Buttons on Mobile - Full Width and Stacked */
+    .array-item .field-note-btn,
+    .array-item .add-plus-btn,
+    .array-item .remove-btn {
+        align-self: stretch;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 36px !important;
+        font-size: 14px;
+        order: 10;
+    }
+
+    .btn {
+        padding: 12px 16px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .btn-inline {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .add-item-btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* Project Management */
+    .project-management h2 {
+        font-size: 16px !important;
+    }
+
+    .project-management .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    /* Project Items - Full Width Buttons */
+    .project-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .project-item-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .project-item-btn {
+        width: 100%;
+        padding: 10px 16px;
+        font-size: 13px;
+        justify-content: center;
+    }
+
+    /* Status Messages */
+    #project-status,
+    #project-status-location,
+    #referrer-project-status,
+    #upload-status {
+        padding: 10px 15px;
+        font-size: 13px;
+        margin: 12px auto;
+    }
+
+    .upload-status {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    /* Modal on Mobile */
+    .modal-content {
+        width: 95%;
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 15px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 12px 16px;
+    }
+
+    /* JSON Display */
+    #json-display {
+        font-size: 11px;
+        padding: 15px;
+        max-height: 300px;
+    }
+
+    .output-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .copy-btn {
+        width: 100%;
+    }
+
+    /* Save Button */
+    .save-master-btn {
+        font-size: 15px;
+        padding: 14px;
+    }
+
+    /* Top Actions Bar */
+    .top-actions-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .top-actions-bar .btn {
+        width: 100%;
+    }
+
+    /* Content Headers */
+    .content-header .d-flex {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .content-header .input-primary {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .content-header .btn-inline {
+        width: 100%;
+    }
+
+    /* Field Notes on Mobile */
+    .note-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .note-textarea {
+        min-height: 60px;
+    }
+
+    .remove-note-btn {
+        width: 100%;
+        height: 36px;
+    }
+
+    .array-item-notes {
+        margin: 8px 0 12px 0;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 375px) {
+    body {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .container {
+        padding: 12px;
+    }
+
+    .admin-header h1 {
+        font-size: 18px;
+    }
+
+    .section-title,
+    .toc-title {
+        font-size: 15px;
+    }
+
+    .category-tab {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .btn,
+    .controls .btn {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+
+    input,
+    textarea,
+    select {
+        font-size: 13px;
+    }
+}
+
+/* ============================================
    PRINT STYLES
    ============================================ */
 @media print {

@@ -2511,9 +2511,18 @@ function renderArray(container, path, items) {
             } else if (/referrerIndividual\.knownReferrals$/.test(path)) {
                 category = 'facility';
                 dataFunc = getAllFacilityNames;
-            } else if (/referrerGroup\.affiliations$/.test(path) || /referrerIndividual\.affiliations$/.test(path)) {
+            } else if (/referrerGroup\.affiliations$/.test(path) || /referrerIndividual\.affiliations$/.test(path) || /consultant\.affiliations$/.test(path)) {
                 category = 'membership';
                 dataFunc = getAllMemberships;
+            } else if (/consultant\.facilitiesReferred$/.test(path)) {
+                category = 'facility';
+                dataFunc = getAllFacilityNames;
+            } else if (/consultant\.schoolDistricts$/.test(path)) {
+                category = 'location';
+                dataFunc = () => Array.from(US_STATE_SET);
+            } else if (/referrerAgency\.keyPersonnel$/.test(path)) {
+                category = 'human';
+                dataFunc = getAllHumanNames;
             }
 
             if (category) {
@@ -2545,7 +2554,7 @@ function renderArray(container, path, items) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 addFieldNote(scopeForNotes, noteKey);
-            });
+            }, { passive: false });
             itemDiv.appendChild(addNoteBtn);
         }
 
