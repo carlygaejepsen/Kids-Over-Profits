@@ -3916,6 +3916,21 @@ function attachButtonListeners() {
         generateReferrerReportBtn.dataset.listenerAttached = 'true';
     }
 
+    const saveReferrerBtn = document.getElementById('save-referrer-project-btn');
+    if (saveReferrerBtn && !saveReferrerBtn.dataset.listenerAttached) {
+        saveReferrerBtn.onclick = () => {
+            const projectName = document.getElementById('referrer-project-name')?.value?.trim();
+            if (projectName) {
+                saveProjectToCloud(projectName);
+            } else {
+                alert('Please enter a project name');
+                const projectNameInput = document.getElementById('referrer-project-name');
+                if (projectNameInput) projectNameInput.focus();
+            }
+        };
+        saveReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
     if (copyBtn && !copyBtn.dataset.listenerAttached) {

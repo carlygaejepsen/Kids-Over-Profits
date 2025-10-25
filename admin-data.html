@@ -126,27 +126,7 @@
                 <!-- Referrers Content -->
                 <div id="referrers-content" class="category-content d-none">
                     <div class="content-header">
-                        <h3>👥 Referrers (Educational Consultants / School Districts)</h3>
-                    </div>
-
-                    <!-- Referrer Type Toggle -->
-                    <div id="referrer-type-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                            <span>Referrer Type:</span>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>Group/Agency</span>
-                                <div style="position: relative; display: inline-block;">
-                                    <input type="checkbox" id="referrer-type-toggle" style="display: none;">
-                                    <span id="referrer-slider-track" style="display: block; width: 48px; height: 24px; background-color: #10b981; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                        <span id="referrer-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                                    </span>
-                                </div>
-                                <span>Individual</span>
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px; text-align: center;">
-                            Select "Individual" to hide the Group/Agency section and track a standalone consultant.
-                        </p>
+                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
 
                     <div class="project-management" id="referrer-project-panel-inner">
@@ -167,8 +147,180 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
+        </div>
+
+        <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
+        <div id="referrer-main-wrapper" style="display: none;">
+
+            <!-- Agency Toggle -->
+            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                    <span>Independent Consultant (not part of an agency):</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>No</span>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
+                            <span id="referrer-agency-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                <span id="referrer-agency-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </div>
+                        <span>Yes</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                    Toggle to "Yes" for independent consultants to hide the agency section.
+                </p>
+            </div>
+
+            <!-- Agency Information Section -->
+            <div class="section expanded" id="referrer-agency-section">
+                <div class="section-header">
+                    <h2 class="section-title">Agency/Group Information</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>Agency/Group Name</label>
+                        <input type="text" id="referrer-agency-name" class="input-form" placeholder="e.g., Educational Consultants Association">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="referrer-agency-city" class="input-form" placeholder="e.g., Los Angeles">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="referrer-agency-state" class="input-form" placeholder="e.g., CA">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" id="referrer-agency-website" class="input-form" placeholder="https://">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Key Personnel</label>
+                        <div class="array-container" data-path="referrerAgency.keyPersonnel"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Agency Notes</label>
+                        <textarea id="referrer-agency-notes" class="input-form" rows="4" placeholder="Add notes about this agency..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Consultants Management Section -->
+            <div class="section expanded" id="referrer-consultants-section">
+                <div class="section-header">
+                    <h2 class="section-title">Individual Consultants</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button class="btn" id="prev-consultant-btn" title="Previous consultant">◀ Previous</button>
+                            <select id="consultant-dropdown" style="min-width: 250px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option>1. New Consultant</option>
+                            </select>
+                            <button class="btn" id="next-consultant-btn" title="Next consultant">Next ▶</button>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="add-consultant-btn">➕ Add Consultant</button>
+                            <button class="btn btn-danger d-none" id="remove-consultant-btn">🗑️ Remove Consultant</button>
+                        </div>
+                    </div>
+
+                    <!-- Individual Consultant Form -->
+                    <div id="consultant-form-wrapper">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="consultant-firstname" class="consultant-field" data-field="firstName" placeholder="e.g., John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="consultant-lastname" class="consultant-field" data-field="lastName" placeholder="e.g., Smith">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credentials/Title</label>
+                            <input type="text" id="consultant-credentials" class="consultant-field" data-field="credentials" placeholder="e.g., Licensed Educational Consultant, IECA">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="consultant-city" class="consultant-field" data-field="city" placeholder="e.g., Boston">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" id="consultant-state" class="consultant-field" data-field="state" placeholder="e.g., MA">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="consultant-email" class="consultant-field" data-field="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="consultant-phone" class="consultant-field" data-field="phone" placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Website/Profile</label>
+                            <input type="url" id="consultant-website" class="consultant-field" data-field="website" placeholder="https://">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Professional Affiliations</label>
+                            <div class="array-container" data-path="consultant.affiliations"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Facilities Referred To</label>
+                            <div class="array-container" data-path="consultant.facilitiesReferred"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>School Districts Worked With</label>
+                            <div class="array-container" data-path="consultant.schoolDistricts"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="consultant-notes" class="consultant-field" data-field="notes" rows="4" placeholder="Add notes about this consultant..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referrer Submission Section -->
+            <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+                <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                    <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save Referrer Project</h2>
+                </div>
+                <div class="section-content" style="display: block;">
+                    <div class="form-group">
+                        <label for="referrer-project-name">Project Name</label>
+                        <input type="text" id="referrer-project-name" placeholder="Enter referrer project name..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="save-master-btn" id="save-referrer-project-btn">
+                            💾 Save Referrer Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div id="facility-main-wrapper">
@@ -1100,6 +1252,42 @@
                     statesContent.classList.add('d-none');
                     referrersContent.classList.add('d-none');
 
+                    // Get the facility main wrapper (facility/operator form)
+                    const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+
+                    // Get the referrer main wrapper
+                    const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+
+                    // Show the selected category's content
+                    if (category === 'companies') {
+                        companiesContent.classList.remove('d-none');
+                        // Show facility form for companies
+                        if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                        // Hide referrer form
+                        if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                    } else if (category === 'locations') {
+                        statesContent.classList.remove('d-none');
+                        // Show facility form for locations
+                        if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                        // Hide referrer form
+                        if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                    } else if (category === 'referrers') {
+                        referrersContent.classList.remove('d-none');
+                        // Hide facility form for referrers - they have their own form
+                        if (facilityMainWrapper) {
+                            facilityMainWrapper.style.display = 'none';
+                            console.log('✅ Hid facility-main-wrapper for referrers view');
+                        } else {
+                            console.error('❌ facility-main-wrapper not found!');
+                        }
+                        // Show referrer form
+                        if (referrerMainWrapper) {
+                            referrerMainWrapper.style.display = 'block';
+                            console.log('✅ Showed referrer-main-wrapper');
+                        } else {
+                            console.error('❌ referrer-main-wrapper not found!');
+                        }
+                    }
                 }
 
                 if (typeof window.refreshSavedProjectPanels === 'function') {
@@ -1131,45 +1319,36 @@
             });
         });
 
-        // Referrer type toggle functionality
-        const referrerTypeToggle = document.getElementById('referrer-type-toggle');
-        const referrerSliderTrack = document.getElementById('referrer-slider-track');
-        const referrerSliderKnob = document.getElementById('referrer-slider-knob');
-        const referrerGroupForm = document.getElementById('referrer-group-form');
-        const referrerIndividualForm = document.getElementById('referrer-individual-form');
+        // Independent consultant toggle functionality
+        const independentToggle = document.getElementById('referrer-independent-toggle');
+        const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
+        const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
+        const agencySection = document.getElementById('referrer-agency-section');
 
-        function applyReferrerToggleState(isIndividual) {
-            if (!referrerSliderTrack || !referrerSliderKnob || !referrerTypeToggle || !referrerGroupForm || !referrerIndividualForm) {
-                return;
-            }
+        function updateAgencySliderAppearance() {
+            if (!agencySliderTrack || !agencySliderKnob || !independentToggle) return;
 
-            referrerTypeToggle.checked = !!isIndividual;
-
-            if (referrerTypeToggle.checked) {
-                referrerSliderTrack.style.backgroundColor = '#3b82f6';
-                referrerSliderKnob.style.transform = 'translateX(24px)';
-                referrerGroupForm.style.display = 'none';
-                referrerIndividualForm.style.display = 'block';
+            if (independentToggle.checked) {
+                // Independent consultant - toggle is ON
+                agencySliderTrack.style.backgroundColor = '#10b981';
+                agencySliderKnob.style.transform = 'translateX(24px)';
+                if (agencySection) agencySection.style.display = 'none';
             } else {
-                referrerSliderTrack.style.backgroundColor = '#10b981';
-                referrerSliderKnob.style.transform = 'translateX(0px)';
-                referrerGroupForm.style.display = 'block';
-                referrerIndividualForm.style.display = 'none';
+                // Agency-affiliated - toggle is OFF
+                agencySliderTrack.style.backgroundColor = '#e5e7eb';
+                agencySliderKnob.style.transform = 'translateX(0px)';
+                if (agencySection) agencySection.style.display = 'block';
             }
         }
 
-        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
-            referrerSliderTrack.addEventListener('click', function() {
-                const newState = !referrerTypeToggle.checked;
-                applyReferrerToggleState(newState);
-
-                if (typeof window.handleReferrerTypeToggle === 'function') {
-                    window.handleReferrerTypeToggle(newState ? 'individual' : 'group');
-                }
+        if (agencySliderTrack && independentToggle) {
+            agencySliderTrack.addEventListener('click', function() {
+                independentToggle.checked = !independentToggle.checked;
+                updateAgencySliderAppearance();
             });
         }
 
-        window.applyReferrerToggleState = applyReferrerToggleState;
+        window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
@@ -2232,6 +2411,25 @@
             const onFormReady = () => {
                 initializeCategoryNavigation();
 
+                // Initialize correct form visibility based on active tab
+                const activeTab = document.querySelector('.category-tab.active');
+                const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+                const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+                const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+
+                console.log('🚀 Initializing page with active category:', activeCategory);
+
+                if (activeCategory === 'referrers') {
+                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
+                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
+                    console.log('✅ Initialized referrers view');
+                } else {
+                    // Companies or locations view - show facility forms
+                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                    console.log('✅ Initialized', activeCategory, 'view');
+                }
+
                 // Refresh saved project panels (from facility-form.v3.js)
                 // facility-form.v3.js handles this automatically after cloud load,
                 // but we also trigger it here in case the timing is different
@@ -2346,6 +2544,10 @@
                         }
                     });
                 }
+
+                // REFERRER PROJECT MANAGEMENT
+                // Note: Referrer button event listeners are set up in facility-form.v3.js
+                // via the attachButtonListeners() function. No need to duplicate here.
             };
 
             // Check if the form is already ready, otherwise wait for the custom event
