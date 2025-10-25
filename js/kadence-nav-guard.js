@@ -12,6 +12,19 @@
 (function() {
     'use strict';
 
+    // ====================================================================
+    // CRITICAL: Create a stub for the Kadence navigation object.
+    // This prevents the navigation.min.js script from running its
+    // initialization code if it loads before this guard script has
+    // fully overridden the DOM methods.
+    // ====================================================================
+    if (typeof window.kadence === 'undefined') {
+        window.kadence = {};
+    }
+    window.kadence.initNavigation = function() {
+        console.log('[Kadence Nav Guard] Kadence navigation initialization blocked by stub.');
+    };
+
     // Flag to track if guard is active
     window.KADENCE_NAV_GUARD_ACTIVE = true;
 
