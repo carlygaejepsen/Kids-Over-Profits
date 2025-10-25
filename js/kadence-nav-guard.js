@@ -212,13 +212,13 @@
 
     // Run on DOMContentLoaded
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', disableKadenceNav);
+        document.addEventListener('DOMContentLoaded', disableKadenceNav, { passive: true });
     } else {
         disableKadenceNav();
     }
 
     // Run on load as well for extra safety
-    window.addEventListener('load', disableKadenceNav);
+    window.addEventListener('load', disableKadenceNav, { passive: true });
 
     // Add global error handler for navigation-related errors
     window.addEventListener('error', function(event) {
@@ -227,7 +227,7 @@
             event.preventDefault();
             return true;
         }
-    }, true);
+    }, { capture: true, passive: false });
 
     console.log('[Kadence Nav Guard] Smart protection active' + (isHeaderlessPage() ? ' (headerless mode)' : ' (standard mode)'));
 })();

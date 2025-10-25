@@ -1150,7 +1150,7 @@ function createAutocomplete(input, getDataFunction, category) {
         } else if (e.key === 'Escape') {
             hideDropdown();
         }
-    });
+    }, { passive: false });
     
     function setActive(items) {
         items.forEach((item, index) => {
@@ -1239,13 +1239,13 @@ function initializeSectionToggles() {
         };
 
         // Click handler for the toggle icon itself
-        toggle.addEventListener('click', handleToggle);
+        toggle.addEventListener('click', handleToggle, { passive: false });
 
         // Click handler for the header (excluding the toggle)
         header.addEventListener('click', (event) => {
             if (event.target.closest('.section-toggle')) { return; }
             handleToggle(event);
-        });
+        }, { passive: false });
     });
 }
 
@@ -1465,7 +1465,7 @@ function initializeNoteControls() {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
-            });
+            }, { passive: false });
 
             // Insert button after the field (inline)
             field.parentNode.insertBefore(addBtn, field.nextSibling);
@@ -1496,7 +1496,7 @@ function initializeNoteControls() {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     addFieldNote(scope, key);
-                });
+                }, { passive: false });
             }
             if (field.dataset.noteInit !== 'true') {
                 field.dataset.noteInit = 'true';
@@ -2360,7 +2360,7 @@ function renderArray(container, path, items) {
                     addNewArrayItem(btnPath);
                 }
             }
-        });
+        }, { passive: false });
         container.dataset.delegationInit = 'true';
     }
 
@@ -4243,15 +4243,15 @@ function addNoteButtonsToArrayItems(group) {
                         noteInput.focus();
                     }
                 }
-            });
+            }, { passive: false });
 
             noteBtn.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-            });
+            }, { passive: true });
 
             noteBtn.addEventListener('mouseup', (e) => {
                 e.stopPropagation();
-            });
+            }, { passive: true });
 
             arrayItem.appendChild(noteBtn);
             arrayItem.classList.add('has-note-button');
@@ -4373,16 +4373,16 @@ function addNoteButtons() {
             e.stopImmediatePropagation();
             const result = createFieldNote(field, group);
             debugLog('✅ createFieldNote returned:', result);
-        });
+        }, { passive: false });
 
         // Prevent button from interfering with input events
         noteBtn.addEventListener('mousedown', (e) => {
             e.stopPropagation();
-        }, { passive: false });
+        }, { passive: true });
 
         noteBtn.addEventListener('mouseup', (e) => {
             e.stopPropagation();
-        }, { passive: false });
+        }, { passive: true });
 
         // Add button inside the same container as the field
 
@@ -4601,7 +4601,7 @@ function createFieldNote(field, group) {
         if (typeof window.onFormChange === 'function') {
             window.onFormChange();
         }
-    });
+    }, { passive: false });
 
     noteHeader.appendChild(noteLabel);
     noteHeader.appendChild(removeNoteBtn);

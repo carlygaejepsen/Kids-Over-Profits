@@ -23,27 +23,37 @@ jQuery(document).ready(function($) {
     });
     
     // Drag and drop functionality
-    $uploadArea.on('dragover dragenter', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).addClass('drag-over');
-    });
-    
-    $uploadArea.on('dragleave dragend', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).removeClass('drag-over');
-    });
-    
-    $uploadArea.on('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).removeClass('drag-over');
-        
-        const files = e.originalEvent.dataTransfer.files;
-        handleFiles(files);
-    });
-    
+    if ($uploadArea.length) {
+        const uploadAreaElement = $uploadArea[0];
+        const handleDragIn = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            $uploadArea.addClass('drag-over');
+        };
+        const handleDragOut = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            $uploadArea.removeClass('drag-over');
+        };
+
+        ['dragover', 'dragenter'].forEach((eventName) => {
+            uploadAreaElement.addEventListener(eventName, handleDragIn, { passive: false });
+        });
+
+        ['dragleave', 'dragend'].forEach((eventName) => {
+            uploadAreaElement.addEventListener(eventName, handleDragOut, { passive: false });
+        });
+
+        uploadAreaElement.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            $uploadArea.removeClass('drag-over');
+
+            const files = event.dataTransfer?.files || [];
+            handleFiles(files);
+        }, { passive: false });
+    }
+
     // File input change
     $fileInput.on('change', function() {
         handleFiles(this.files);
