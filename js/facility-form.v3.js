@@ -602,8 +602,8 @@ function attachCustomValueRecorder(input, category) {
         }
     };
 
-    input.addEventListener('change', recordValue);
-    input.addEventListener('blur', recordValue);
+    input.addEventListener('change', recordValue, { passive: true });
+    input.addEventListener('blur', recordValue, { passive: true });
 
     if (input.dataset) {
         input.dataset[recorderKey] = category;
@@ -1089,22 +1089,22 @@ function createAutocomplete(input, getDataFunction, category) {
                 // Keep showing local items on error
             }
         }, 300); // Increased from 220ms to 300ms for better performance
-    });
-    
+    }, { passive: true });
+
     input.addEventListener('focus', () => {
         if (input.value.trim()) {
             input.dispatchEvent(new Event('input'));
         }
-    });
-    
+    }, { passive: true });
+
     input.addEventListener('blur', () => {
         setTimeout(() => {
             if (!preventBlur) {
                 hideDropdown();
             }
         }, 200);
-    });
-    
+    }, { passive: true });
+
     input.addEventListener('keydown', (e) => {
         const items = dropdown.querySelectorAll('.autocomplete-item');
 
@@ -1391,7 +1391,7 @@ function renderFieldNotes(container, scope, key) {
         textarea.value = note || '';
         textarea.addEventListener('input', () => {
             updateFieldNote(scope, key, index, textarea.value);
-        });
+        }, { passive: true });
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
@@ -1399,7 +1399,7 @@ function renderFieldNotes(container, scope, key) {
         removeBtn.textContent = '−';
         removeBtn.addEventListener('click', () => {
             removeFieldNote(scope, key, index);
-        });
+        }, { passive: true });
 
         row.appendChild(textarea);
         row.appendChild(removeBtn);
@@ -3058,7 +3058,7 @@ function initializeToolbarButtons() {
         toolbarToggle.addEventListener('click', () => {
             const isMinimized = toolbar.classList.toggle('minimized');
             applyToolbarState(isMinimized);
-        });
+        }, { passive: true });
 
         toolbarToggle.dataset.listenerAttached = 'true';
     }
@@ -3071,7 +3071,7 @@ function initializeToolbarButtons() {
             if (!isNaN(newIndex)) {
                 navigateToFacility(newIndex);
             }
-        });
+        }, { passive: true });
         facilityDropdown.dataset.listenerAttached = 'true';
     }
 
@@ -3086,7 +3086,7 @@ function initializeToolbarButtons() {
                 dropdown.selectedIndex--;
                 navigateToFacility(parseInt(dropdown.value));
             }
-        });
+        }, { passive: true });
         prevBtnToolbar.dataset.listenerAttached = 'true';
     }
 
@@ -3097,28 +3097,28 @@ function initializeToolbarButtons() {
                 dropdown.selectedIndex++;
                 navigateToFacility(parseInt(dropdown.value));
             }
-        });
+        }, { passive: true });
         nextBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Add Facility button
     const addFacilityBtnToolbar = document.getElementById('add-facility-btn-toolbar');
     if (addFacilityBtnToolbar && !addFacilityBtnToolbar.dataset.listenerAttached) {
-        addFacilityBtnToolbar.addEventListener('click', addFacility);
+        addFacilityBtnToolbar.addEventListener('click', addFacility, { passive: true });
         addFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Clone Facility button
     const cloneFacilityBtnToolbar = document.getElementById('clone-facility-btn-toolbar');
     if (cloneFacilityBtnToolbar && !cloneFacilityBtnToolbar.dataset.listenerAttached) {
-        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility);
+        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility, { passive: true });
         cloneFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Remove Facility button
     const removeFacilityBtnToolbar = document.getElementById('remove-facility-btn-toolbar');
     if (removeFacilityBtnToolbar && !removeFacilityBtnToolbar.dataset.listenerAttached) {
-        removeFacilityBtnToolbar.addEventListener('click', removeFacility);
+        removeFacilityBtnToolbar.addEventListener('click', removeFacility, { passive: true });
         removeFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
@@ -3269,7 +3269,7 @@ function cloneFacility() {
         newProjectContainer.style.display = selected === 'new' ? 'block' : 'none';
     }
 
-    radios.forEach(radio => radio.addEventListener('change', handleRadioChange));
+    radios.forEach(radio => radio.addEventListener('change', handleRadioChange, { passive: true }));
     handleRadioChange(); // Set initial state
 
     function closeModal() {
@@ -3681,7 +3681,7 @@ function attachFieldListeners() {
     Object.keys(operatorFields).forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.dataset.listenerAttached) {
-            el.addEventListener('input', (e) => operatorFields[id](e.target.value));
+            el.addEventListener('input', (e) => operatorFields[id](e.target.value), { passive: true });
             el.dataset.listenerAttached = 'true';
         }
     });
@@ -3723,7 +3723,7 @@ function attachFieldListeners() {
     Object.keys(referrerAgencyFields).forEach(id => {
         const el = document.getElementById(id);
         if (el && !el.dataset.listenerAttached) {
-            el.addEventListener('input', (e) => referrerAgencyFields[id](e.target.value));
+            el.addEventListener('input', (e) => referrerAgencyFields[id](e.target.value), { passive: true });
             el.dataset.listenerAttached = 'true';
         }
     });
@@ -3742,7 +3742,7 @@ function attachFieldListeners() {
                 window.formData.referrerConsultants[consultantIndex][fieldName] = e.target.value;
                 updateJSON();
                 autoSave();
-            });
+            }, { passive: true });
             field.dataset.listenerAttached = 'true';
         }
     });
@@ -3758,7 +3758,7 @@ function attachFieldListeners() {
             }
             updateJSON();
             autoSave();
-        });
+        }, { passive: true });
         independentToggle.dataset.listenerAttached = 'true';
     }
 
@@ -3770,9 +3770,9 @@ function attachFieldListeners() {
         if (el && !el.dataset.listenerAttached) {
             const handler = (event) => referrerFields[id](event.target.value);
             const eventName = el.tagName === 'SELECT' ? 'change' : 'input';
-            el.addEventListener(eventName, handler);
+            el.addEventListener(eventName, handler, { passive: true });
             if (eventName !== 'input') {
-                el.addEventListener('input', handler);
+                el.addEventListener('input', handler, { passive: true });
             }
             el.dataset.listenerAttached = 'true';
         }
@@ -3785,13 +3785,13 @@ function attachFieldListeners() {
                 const path = field.dataset.field;
                 let value = field.type === 'number' ? (field.value === '' ? null : parseInt(field.value)) : field.value;
                 setNestedValue(window.formData.facilities[window.currentFacilityIndex], path, value);
-                
+
                 // Custom values are saved by custom value recorder on blur/change
                 // No need to add them here on every keystroke
-                
+
                 updateJSON();
                 autoSave();
-            });
+            }, { passive: true });
             field.dataset.listenerAttached = 'true';
         }
     });
@@ -3829,7 +3829,7 @@ function attachFieldListeners() {
                 autoSave();
             };
 
-            checkbox.addEventListener('change', changeHandler);
+            checkbox.addEventListener('change', changeHandler, { passive: true });
             checkbox.dataset.listenerAttached = 'true';
 
             // Run handler once on init to set initial state, but without adding notes
@@ -3879,7 +3879,7 @@ function attachButtonListeners() {
     Object.keys(facilityButtons).forEach(id => {
         const btn = document.getElementById(id);
         if (btn && !btn.dataset.listenerAttached) {
-            btn.addEventListener('click', facilityButtons[id]);
+            btn.addEventListener('click', facilityButtons[id], { passive: true });
             btn.dataset.listenerAttached = 'true';
         }
     });
@@ -4029,19 +4029,19 @@ function attachButtonListeners() {
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
     if (copyBtn && !copyBtn.dataset.listenerAttached) {
-        copyBtn.addEventListener('click', copyToClipboard);
+        copyBtn.addEventListener('click', copyToClipboard, { passive: true });
         copyBtn.dataset.listenerAttached = 'true';
     }
 
     const downloadBtn = document.getElementById('download-json-btn');
     if (downloadBtn && !downloadBtn.dataset.listenerAttached) {
-        downloadBtn.addEventListener('click', downloadJSON);
+        downloadBtn.addEventListener('click', downloadJSON, { passive: true });
         downloadBtn.dataset.listenerAttached = 'true';
     }
 
     const fileUpload = document.getElementById('file-upload');
     if (fileUpload && !fileUpload.dataset.listenerAttached) {
-        fileUpload.addEventListener('change', handleFileUpload);
+        fileUpload.addEventListener('change', handleFileUpload, { passive: true });
         fileUpload.dataset.listenerAttached = 'true';
     }
 }
@@ -4570,7 +4570,7 @@ function createFieldNote(field, group) {
             detail: { type: 'fieldNote', fieldId: fieldId, value: facilityNotes[fieldId] }
         });
         document.dispatchEvent(changeEvent);
-    });
+    }, { passive: true });
 
     // Remove note handler
     removeNoteBtn.addEventListener('click', (e) => {
@@ -4734,7 +4734,7 @@ function initializeCheckboxNoteTriggers() {
             if (checkbox.checked) {
                 ensureCheckboxNote(checkbox);
             }
-        });
+        }, { passive: true });
 
         if (checkbox.checked) {
             ensureCheckboxNote(checkbox);
@@ -4863,7 +4863,7 @@ window.addNoteButtons = addNoteButtons;
 
 // Initialize on DOMContentLoaded
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeForm);
+    document.addEventListener('DOMContentLoaded', initializeForm, { passive: true });
 } else {
     initializeForm();
 }
@@ -4890,4 +4890,4 @@ window.addEventListener('load', () => {
             console.error('❌ facility-form.v3.js: error during load-time UI verification', e);
         }
     }, 150);
-});
+}, { passive: true });
