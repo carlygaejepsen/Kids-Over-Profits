@@ -1688,11 +1688,16 @@ function persistProjectLocally(projectName, { showStatus = false, statusType = '
         window.projects = {};
     }
 
+    // Determine category based on active tab
+    const activeTab = document.querySelector('.category-tab.active');
+    const category = activeTab ? activeTab.dataset.category : 'companies';
+
     const snapshot = {
         name: projectName,
         data: deepClone(window.formData),
         currentFacilityIndex: window.currentFacilityIndex,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        category: category  // Store the category based on active tab
     };
 
     window.projects[projectName] = snapshot;
@@ -1745,11 +1750,16 @@ async function saveProjectToCloud(projectName) {
         debugLog('Facility count:', window.formData.facilities?.length || 0);
         debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
 
+        // Determine category based on active tab
+        const activeTab = document.querySelector('.category-tab.active');
+        const category = activeTab ? activeTab.dataset.category : 'companies';
+
         const projectData = {
             name: projectName,
             data: deepClone(window.formData),
             currentFacilityIndex: window.currentFacilityIndex,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            category: category  // Store the category based on active tab
         };
 
         const payload = {
@@ -3276,9 +3286,21 @@ const US_STATE_SET = new Set(US_STATE_NAMES);
 const COUNTRY_SET = new Set(COUNTRY_NAMES);
 
 function determineProjectCategory(name = '') {
+    // First, check if the project has stored category metadata
+    const project = window.projects?.[name];
+    if (project && project.category) {
+        return project.category;
+    }
+
+    // Fallback to name-based heuristic for legacy projects
     const normalized = name.toLowerCase().trim();
-    // A simple heuristic: if it contains "consultant", "district", or "agency", it's a referrer.
-    if (normalized.includes('consultant') || normalized.includes('district') || normalized.includes('agency')) {
+    // A simple heuristic: if it contains referrer-related keywords, it's a referrer project
+    if (normalized.includes('consultant') ||
+        normalized.includes('district') ||
+        normalized.includes('agency') ||
+        normalized.includes('referrer') ||
+        normalized.includes('education') ||
+        normalized.includes('school')) {
         return 'referrers';
     }
     if (US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized)) {
