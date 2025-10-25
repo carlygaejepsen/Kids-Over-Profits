@@ -21,6 +21,29 @@ function displayFacilities(facilitiesData, containerId) {
         return '';
     };
     const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
+    const normalizeProjectCategory = project => {
+        if (!project || typeof project !== 'object') {
+            return 'companies';
+        }
+
+        let rawCategory = '';
+
+        if (typeof project.category === 'string' && project.category) {
+            rawCategory = project.category;
+        } else if (project.data && typeof project.data === 'object' && typeof project.data.category === 'string' && project.data.category) {
+            rawCategory = project.data.category;
+        }
+
+        if (!rawCategory) {
+            return 'companies';
+        }
+
+        return rawCategory.toLowerCase();
+    };
+    const isOperatorCategory = project => {
+        const category = normalizeProjectCategory(project);
+        return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
+    };
 
     let html = '<div class="facilities-database">';
 
@@ -30,7 +53,9 @@ function displayFacilities(facilitiesData, containerId) {
     let operatorGroups = [];
     if (facilitiesData && facilitiesData.projects) {
         // Handle new JSON structure
-        Object.values(facilitiesData.projects).forEach(project => {
+        const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
+
+        operatorProjects.forEach(project => {
             if (!project || !project.data) {
                 return;
             }
