@@ -1951,24 +1951,38 @@
             };
         }
         
-        // Initialize data organizer when the page loads
-        window.addEventListener('load', () => {
-            // This function waits for the main form script to signal it's ready
-            const onFormReady = () => {
-                console.log('🚀 Form is ready. Initializing page-specific components.');
-                if (typeof initializeDataOrganizer === 'function') {
-                    initializeDataOrganizer();
-                } else {
-                    console.warn('initializeDataOrganizer not available on ready.');
-                }
-            };
+        let organizerInitialized = false;
 
-            // Check if the form is already ready, otherwise wait for the custom event
-            if (window.formReady) {
-                onFormReady();
-            } else {
-                document.addEventListener('formReady', onFormReady, { once: true });
+        const initializeOrganizerWhenReady = () => {
+            if (organizerInitialized) {
+                return;
             }
+
+            console.log('🚀 Form is ready. Initializing page-specific components.');
+
+            if (typeof initializeDataOrganizer === 'function') {
+                initializeDataOrganizer();
+            } else {
+                console.warn('initializeDataOrganizer not available on ready.');
+            }
+
+            organizerInitialized = true;
+        };
+
+        const ensureOrganizerInitialization = () => {
+            if (window.formReady) {
+                initializeOrganizerWhenReady();
+            } else if (!organizerInitialized) {
+                document.addEventListener('formReady', initializeOrganizerWhenReady, { once: true });
+            }
+        };
+
+        // Run immediately in case the custom event already fired
+        ensureOrganizerInitialization();
+
+        // Initialize data organizer when the page loads or once the form becomes ready
+        window.addEventListener('load', () => {
+            ensureOrganizerInitialization();
         }, { passive: true });
 
         // ============================================
@@ -2378,163 +2392,181 @@
             }
         }
         
+        let adminPageInitialized = false;
+
+        const initializeAdminPage = () => {
+            if (adminPageInitialized) {
+                return;
+            }
+
+            initializeCategoryNavigation();
+
+            // Initialize correct form visibility based on active tab
+            const activeTab = document.querySelector('.category-tab.active');
+            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+            const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+
+            console.log('🚀 Initializing page with active category:', activeCategory);
+
+            if (activeCategory === 'referrers') {
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
+                console.log('✅ Initialized referrers view');
+            } else {
+                // Companies or locations view - show facility forms
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                console.log('✅ Initialized', activeCategory, 'view');
+            }
+
+            // Refresh saved project panels (from facility-form.v3.js)
+            // facility-form.v3.js handles this automatically after cloud load,
+            // but we also trigger it here in case the timing is different
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                console.log('Calling refreshSavedProjectPanels from data.html');
+                window.refreshSavedProjectPanels();
+
+                // Retry after cloud data loads
+                setTimeout(() => {
+                    window.refreshSavedProjectPanels();
+                }, 2000);
+
+                setTimeout(() => {
+                    window.refreshSavedProjectPanels();
+                }, 5000);
+            } else {
+                console.warn('refreshSavedProjectPanels not available yet');
+            }
+
+            // Add click handlers for state items (delegated to container)
+            const statesList = document.getElementById('states-list');
+            if (statesList && !statesList.dataset.stateClickAttached) {
+                statesList.addEventListener('click', (event) => {
+                    const item = event.target.closest('.state-item');
+                    if (!item || !statesList.contains(item)) {
+                        return;
+                    }
+
+                    // Remove previous selection
+                    statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                    // Add selection to clicked item
+                    item.classList.add('selected');
+
+                    const locationName = item.dataset.state;
+                    console.log('Selected location:', locationName);
+                    // TODO: Filter facilities by location
+                }, { passive: true });
+                statesList.dataset.stateClickAttached = 'true';
+            }
+
+            // Add functionality for "Add New Operator" button
+            const addOperatorBtn = document.getElementById('add-operator-btn');
+            const newOperatorInput = document.getElementById('new-operator-input');
+
+            if (addOperatorBtn && newOperatorInput) {
+                if (!addOperatorBtn.dataset.operatorClickAttached) {
+                    addOperatorBtn.addEventListener('click', function() {
+                        const operatorName = newOperatorInput.value.trim();
+                        if (operatorName) {
+                            // Set the operator name in the form
+                            const currentOperatorField = document.querySelector('input[data-field="identification.currentOperator"]');
+                            if (currentOperatorField) {
+                                currentOperatorField.value = operatorName;
+                                currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+
+                            // Clear the input
+                            newOperatorInput.value = '';
+
+                            // Refresh the operators list
+                            populateOperatorsList();
+
+                            console.log('Added new operator:', operatorName);
+                        }
+                    }, { passive: true });
+                    addOperatorBtn.dataset.operatorClickAttached = 'true';
+                }
+
+                // Allow Enter key to add operator
+                if (!newOperatorInput.dataset.operatorKeypressAttached) {
+                    newOperatorInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addOperatorBtn.click();
+                        }
+                    }, { passive: true });
+                    newOperatorInput.dataset.operatorKeypressAttached = 'true';
+                }
+            }
+
+            // Add functionality for "Add Location" button
+            const addLocationBtn = document.getElementById('add-location-btn');
+            const newLocationInput = document.getElementById('new-location-input');
+
+            if (addLocationBtn && newLocationInput) {
+                if (!addLocationBtn.dataset.locationClickAttached) {
+                    addLocationBtn.addEventListener('click', function() {
+                        const locationName = newLocationInput.value.trim();
+                        if (locationName) {
+                            // Add the new location to the list
+                            const statesList = document.getElementById('states-list');
+                            if (statesList) {
+                                // Create new location item
+                                const newLocationDiv = document.createElement('div');
+                                newLocationDiv.className = 'state-item';
+                                newLocationDiv.dataset.state = locationName;
+                                newLocationDiv.textContent = locationName;
+                                newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
+
+                                // Insert at the top of the list (after header if present)
+                                const firstStateItem = statesList.querySelector('.state-item');
+                                if (firstStateItem) {
+                                    statesList.insertBefore(newLocationDiv, firstStateItem);
+                                } else {
+                                    statesList.appendChild(newLocationDiv);
+                                }
+
+                                // Auto-select the new location
+                                statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                                newLocationDiv.classList.add('selected');
+                                console.log('Selected location:', locationName);
+                            }
+
+                            // Clear the input
+                            newLocationInput.value = '';
+                        }
+                    }, { passive: true });
+                    addLocationBtn.dataset.locationClickAttached = 'true';
+                }
+
+                if (!newLocationInput.dataset.locationKeypressAttached) {
+                    newLocationInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addLocationBtn.click();
+                        }
+                    }, { passive: true });
+                    newLocationInput.dataset.locationKeypressAttached = 'true';
+                }
+            }
+
+            adminPageInitialized = true;
+        };
+
+        const ensureAdminPageInitialization = () => {
+            if (window.formReady) {
+                initializeAdminPage();
+            } else if (!adminPageInitialized) {
+                document.addEventListener('formReady', initializeAdminPage, { once: true });
+            }
+        };
+
+        // Kick off initialization immediately in case formReady already fired
+        ensureAdminPageInitialization();
+
         // Initialize category navigation when page loads
         window.addEventListener('load', () => {
             initializeSectionToggles();
-
-            const onFormReady = () => {
-                initializeCategoryNavigation();
-
-                // Initialize correct form visibility based on active tab
-                const activeTab = document.querySelector('.category-tab.active');
-                const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
-                const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-                const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
-
-                console.log('🚀 Initializing page with active category:', activeCategory);
-
-                if (activeCategory === 'referrers') {
-                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
-                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-                    console.log('✅ Initialized referrers view');
-                } else {
-                    // Companies or locations view - show facility forms
-                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
-                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-                    console.log('✅ Initialized', activeCategory, 'view');
-                }
-
-                // Refresh saved project panels (from facility-form.v3.js)
-                // facility-form.v3.js handles this automatically after cloud load,
-                // but we also trigger it here in case the timing is different
-                if (typeof window.refreshSavedProjectPanels === 'function') {
-                    console.log('Calling refreshSavedProjectPanels from data.html');
-                    window.refreshSavedProjectPanels();
-
-                    // Retry after cloud data loads
-                    setTimeout(() => {
-                        window.refreshSavedProjectPanels();
-                    }, 2000);
-
-                    setTimeout(() => {
-                        window.refreshSavedProjectPanels();
-                    }, 5000);
-                } else {
-                    console.warn('refreshSavedProjectPanels not available yet');
-                }
-                
-                // Add click handlers for state items (delegated to container)
-                const statesList = document.getElementById('states-list');
-                if (statesList && !statesList.dataset.stateClickAttached) {
-                    statesList.addEventListener('click', (event) => {
-                        const item = event.target.closest('.state-item');
-                        if (!item || !statesList.contains(item)) {
-                            return;
-                        }
-
-                        // Remove previous selection
-                        statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                        // Add selection to clicked item
-                        item.classList.add('selected');
-
-                        const locationName = item.dataset.state;
-                        console.log('Selected location:', locationName);
-                        // TODO: Filter facilities by location
-                    }, { passive: true });
-                    statesList.dataset.stateClickAttached = 'true';
-                }
-
-                // Add functionality for "Add New Operator" button
-                const addOperatorBtn = document.getElementById('add-operator-btn');
-                const newOperatorInput = document.getElementById('new-operator-input');
-                
-                if (addOperatorBtn && newOperatorInput) {
-                    if (!addOperatorBtn.dataset.operatorClickAttached) {
-                        addOperatorBtn.addEventListener('click', function() {
-                            const operatorName = newOperatorInput.value.trim();
-                            if (operatorName) {
-                                // Set the operator name in the form
-                                const currentOperatorField = document.querySelector('input[data-field="identification.currentOperator"]');
-                                if (currentOperatorField) {
-                                    currentOperatorField.value = operatorName;
-                                    currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
-                                }
-
-                                // Clear the input
-                                newOperatorInput.value = '';
-
-                                // Refresh the operators list
-                                populateOperatorsList();
-
-                                console.log('Added new operator:', operatorName);
-                            }
-                        }, { passive: true });
-                        addOperatorBtn.dataset.operatorClickAttached = 'true';
-                    }
-
-                    // Allow Enter key to add operator
-                    if (!newOperatorInput.dataset.operatorKeypressAttached) {
-                        newOperatorInput.addEventListener('keypress', function(e) {
-                            if (e.key === 'Enter') {
-                                addOperatorBtn.click();
-                            }
-                        }, { passive: true });
-                        newOperatorInput.dataset.operatorKeypressAttached = 'true';
-                    }
-                }
-
-                // Add functionality for "Add Location" button
-                const addLocationBtn = document.getElementById('add-location-btn');
-                const newLocationInput = document.getElementById('new-location-input');
-                
-                if (addLocationBtn && newLocationInput) {
-                    if (!addLocationBtn.dataset.locationClickAttached) {
-                        addLocationBtn.addEventListener('click', function() {
-                            const locationName = newLocationInput.value.trim();
-                            if (locationName) {
-                                // Add the new location to the list
-                                const statesList = document.getElementById('states-list');
-                                if (statesList) {
-                                    // Create new location item
-                                    const newLocationDiv = document.createElement('div');
-                                    newLocationDiv.className = 'state-item';
-                                    newLocationDiv.dataset.state = locationName;
-                                    newLocationDiv.textContent = locationName;
-                                    newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
-
-                                    // Insert at the top of the list (after header if present)
-                                    const firstStateItem = statesList.querySelector('.state-item');
-                                    if (firstStateItem) {
-                                        statesList.insertBefore(newLocationDiv, firstStateItem);
-                                    } else {
-                                        statesList.appendChild(newLocationDiv);
-                                    }
-
-                                    // Auto-select the new location
-                                    statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                                    newLocationDiv.classList.add('selected');
-                                    console.log('Selected location:', locationName);
-                                }
-
-                                // Clear the input
-                                newLocationInput.value = '';
-                            }
-                        }, { passive: true });
-                        addLocationBtn.dataset.locationClickAttached = 'true';
-                    }
-
-                    if (!newLocationInput.dataset.locationKeypressAttached) {
-                        newLocationInput.addEventListener('keypress', function(e) {
-                            if (e.key === 'Enter') {
-                                addLocationBtn.click();
-                            }
-                        }, { passive: true });
-                        newLocationInput.dataset.locationKeypressAttached = 'true';
-                    }
-                }
-
-                document.addEventListener('formReady', onFormReady, { once: true });
-            }
+            ensureAdminPageInitialization();
         }, { passive: true });
     </script>
 </body>
