@@ -1183,13 +1183,19 @@
         }
 
         // Category tab switching
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const category = this.dataset.category;
+        const categoryTabsContainer = document.querySelector('.category-tabs');
+        if (categoryTabsContainer && !categoryTabsContainer.dataset.listenerAttached) {
+            const handleCategoryTabClick = (event) => {
+                const tab = event.target.closest('.category-tab');
+                if (!tab || !categoryTabsContainer.contains(tab)) {
+                    return;
+                }
+
+                const category = tab.dataset.category;
 
                 // Update active tab
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+                categoryTabsContainer.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
 
                 const companiesContent = document.getElementById('companies-content');
                 const statesContent = document.getElementById('states-content');
@@ -1265,8 +1271,11 @@
                 if (typeof renderSavedProjectsList === 'function') {
                     renderSavedProjectsList();
                 }
-            });
-        });
+            };
+
+            categoryTabsContainer.addEventListener('click', handleCategoryTabClick, { passive: true });
+            categoryTabsContainer.dataset.listenerAttached = 'true';
+        }
 
         // Independent consultant toggle functionality
         const independentToggle = document.getElementById('referrer-independent-toggle');
@@ -1294,7 +1303,7 @@
             agencySliderTrack.addEventListener('click', function() {
                 independentToggle.checked = !independentToggle.checked;
                 updateAgencySliderAppearance();
-            });
+            }, { passive: true });
         }
 
         window.updateAgencySliderAppearance = updateAgencySliderAppearance;
@@ -1606,19 +1615,19 @@
                     setState(!section.classList.contains('expanded'));
                 };
 
-                toggle.addEventListener('click', handleToggle);
+                toggle.addEventListener('click', handleToggle, { passive: false });
                 toggle.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                         handleToggle(event);
                     }
-                });
+                }, { passive: false });
 
                 header.addEventListener('click', (event) => {
                     if (event.target.closest('.section-toggle')) {
                         return;
                     }
                     handleToggle(event);
-                });
+                }, { passive: false });
             });
         }
 
@@ -1643,39 +1652,55 @@
             showOrganizerBtn.textContent = '📊 Data Organizer';
             
             // Toggle organizer visibility
-            showOrganizerBtn.addEventListener('click', () => {
-                organizerVisible = !organizerVisible;
-                organizerSection.style.display = organizerVisible ? 'block' : 'none';
-                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
-                
-                if (organizerVisible) {
-                    organizerSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-            
+            if (!showOrganizerBtn.dataset.organizerToggleAttached) {
+                showOrganizerBtn.addEventListener('click', () => {
+                    organizerVisible = !organizerVisible;
+                    organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                    showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
+
+                    if (organizerVisible) {
+                        organizerSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, { passive: true });
+                showOrganizerBtn.dataset.organizerToggleAttached = 'true';
+            }
+
             // Handle organize by selection
-            organizeBySelect.addEventListener('change', () => {
-                const value = organizeBySelect.value;
-                if (value) {
-                    organizeValueGroup.style.display = 'block';
-                    organizeSearchBtn.style.display = 'inline-block';
-                    organizeValueInput.focus();
-                } else {
-                    organizeValueGroup.style.display = 'none';
-                    organizeSearchBtn.style.display = 'none';
-                    clearOrganizerResults();
-                }
-            });
-            
+            if (!organizeBySelect.dataset.organizerChangeAttached) {
+                organizeBySelect.addEventListener('change', () => {
+                    const value = organizeBySelect.value;
+                    if (value) {
+                        organizeValueGroup.style.display = 'block';
+                        organizeSearchBtn.style.display = 'inline-block';
+                        organizeValueInput.focus();
+                    } else {
+                        organizeValueGroup.style.display = 'none';
+                        organizeSearchBtn.style.display = 'none';
+                        clearOrganizerResults();
+                    }
+                }, { passive: true });
+                organizeBySelect.dataset.organizerChangeAttached = 'true';
+            }
+
             // Handle search
-            organizeSearchBtn.addEventListener('click', performOrganizedSearch);
-            organizeValueInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performOrganizedSearch();
-            });
-            
+            if (!organizeSearchBtn.dataset.organizerSearchAttached) {
+                organizeSearchBtn.addEventListener('click', performOrganizedSearch, { passive: true });
+                organizeSearchBtn.dataset.organizerSearchAttached = 'true';
+            }
+
+            if (!organizeValueInput.dataset.organizerKeypressAttached) {
+                organizeValueInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performOrganizedSearch();
+                }, { passive: true });
+                organizeValueInput.dataset.organizerKeypressAttached = 'true';
+            }
+
             // Handle clear
-            organizeClearBtn.addEventListener('click', clearOrganizerResults);
-            
+            if (!organizeClearBtn.dataset.organizerClearAttached) {
+                organizeClearBtn.addEventListener('click', clearOrganizerResults, { passive: true });
+                organizeClearBtn.dataset.organizerClearAttached = 'true';
+            }
+
             function performOrganizedSearch() {
                 const searchType = organizeBySelect.value;
                 const searchValue = organizeValueInput.value.trim();
@@ -1880,7 +1905,7 @@
 
                         resultDiv.addEventListener('click', () => {
                             goToFacility(result.projectName, result.facilityIndex);
-                        });
+                        }, { passive: true });
 
                         organizeMatches.appendChild(resultDiv);
                     });
@@ -1926,25 +1951,39 @@
             };
         }
         
-        // Initialize data organizer when the page loads
-        window.addEventListener('load', () => {
-            // This function waits for the main form script to signal it's ready
-            const onFormReady = () => {
-                console.log('🚀 Form is ready. Initializing page-specific components.');
-                if (typeof initializeDataOrganizer === 'function') {
-                    initializeDataOrganizer();
-                } else {
-                    console.warn('initializeDataOrganizer not available on ready.');
-                }
-            };
+        let organizerInitialized = false;
 
-            // Check if the form is already ready, otherwise wait for the custom event
-            if (window.formReady) {
-                onFormReady();
-            } else {
-                document.addEventListener('formReady', onFormReady, { once: true });
+        const initializeOrganizerWhenReady = () => {
+            if (organizerInitialized) {
+                return;
             }
-        });
+
+            console.log('🚀 Form is ready. Initializing page-specific components.');
+
+            if (typeof initializeDataOrganizer === 'function') {
+                initializeDataOrganizer();
+            } else {
+                console.warn('initializeDataOrganizer not available on ready.');
+            }
+
+            organizerInitialized = true;
+        };
+
+        const ensureOrganizerInitialization = () => {
+            if (window.formReady) {
+                initializeOrganizerWhenReady();
+            } else if (!organizerInitialized) {
+                document.addEventListener('formReady', initializeOrganizerWhenReady, { once: true });
+            }
+        };
+
+        // Run immediately in case the custom event already fired
+        ensureOrganizerInitialization();
+
+        // Initialize data organizer when the page loads or once the form becomes ready
+        window.addEventListener('load', () => {
+            ensureOrganizerInitialization();
+        }, { passive: true });
 
         // ============================================
         // FIELD NOTES FUNCTIONALITY
@@ -2239,8 +2278,8 @@
                     // Restore Operations section for corporate ownership
                     modifyOperationsForPrivateOwnership(false);
                 }
-            });
-            
+            }, { passive: true });
+
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
                 console.log('🧹 Clearing operator fields for private facility mode');
@@ -2353,70 +2392,80 @@
             }
         }
         
-        // Initialize category navigation when page loads
-        window.addEventListener('load', () => {
-            initializeSectionToggles();
+        let adminPageInitialized = false;
 
-            const onFormReady = () => {
-                initializeCategoryNavigation();
+        const initializeAdminPage = () => {
+            if (adminPageInitialized) {
+                return;
+            }
 
-                // Initialize correct form visibility based on active tab
-                const activeTab = document.querySelector('.category-tab.active');
-                const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
-                const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-                const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+            initializeCategoryNavigation();
 
-                console.log('🚀 Initializing page with active category:', activeCategory);
+            // Initialize correct form visibility based on active tab
+            const activeTab = document.querySelector('.category-tab.active');
+            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+            const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
 
-                if (activeCategory === 'referrers') {
-                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
-                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-                    console.log('✅ Initialized referrers view');
-                } else {
-                    // Companies or locations view - show facility forms
-                    if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
-                    if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-                    console.log('✅ Initialized', activeCategory, 'view');
-                }
+            console.log('🚀 Initializing page with active category:', activeCategory);
 
-                // Refresh saved project panels (from facility-form.v3.js)
-                // facility-form.v3.js handles this automatically after cloud load,
-                // but we also trigger it here in case the timing is different
-                if (typeof window.refreshSavedProjectPanels === 'function') {
-                    console.log('Calling refreshSavedProjectPanels from data.html');
+            if (activeCategory === 'referrers') {
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
+                console.log('✅ Initialized referrers view');
+            } else {
+                // Companies or locations view - show facility forms
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                console.log('✅ Initialized', activeCategory, 'view');
+            }
+
+            // Refresh saved project panels (from facility-form.v3.js)
+            // facility-form.v3.js handles this automatically after cloud load,
+            // but we also trigger it here in case the timing is different
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                console.log('Calling refreshSavedProjectPanels from data.html');
+                window.refreshSavedProjectPanels();
+
+                // Retry after cloud data loads
+                setTimeout(() => {
                     window.refreshSavedProjectPanels();
+                }, 2000);
 
-                    // Retry after cloud data loads
-                    setTimeout(() => {
-                        window.refreshSavedProjectPanels();
-                    }, 2000);
+                setTimeout(() => {
+                    window.refreshSavedProjectPanels();
+                }, 5000);
+            } else {
+                console.warn('refreshSavedProjectPanels not available yet');
+            }
 
-                    setTimeout(() => {
-                        window.refreshSavedProjectPanels();
-                    }, 5000);
-                } else {
-                    console.warn('refreshSavedProjectPanels not available yet');
-                }
-                
-                // Add click handlers for state items
-                document.querySelectorAll('.state-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        // Remove previous selection
-                        document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                        // Add selection to clicked item
-                        this.classList.add('selected');
-                        
-                        const locationName = this.dataset.state;
-                        console.log('Selected location:', locationName);
-                        // TODO: Filter facilities by location
-                    });
-                });
-                
-                // Add functionality for "Add New Operator" button
-                const addOperatorBtn = document.getElementById('add-operator-btn');
-                const newOperatorInput = document.getElementById('new-operator-input');
-                
-                if (addOperatorBtn && newOperatorInput) {
+            // Add click handlers for state items (delegated to container)
+            const statesList = document.getElementById('states-list');
+            if (statesList && !statesList.dataset.stateClickAttached) {
+                statesList.addEventListener('click', (event) => {
+                    const item = event.target.closest('.state-item');
+                    if (!item || !statesList.contains(item)) {
+                        return;
+                    }
+
+                    // Remove previous selection
+                    statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                    // Add selection to clicked item
+                    item.classList.add('selected');
+
+                    const locationName = item.dataset.state;
+                    console.log('Selected location:', locationName);
+                    // TODO: Filter facilities by location
+                }, { passive: true });
+                statesList.dataset.stateClickAttached = 'true';
+            }
+
+            // Add functionality for "Add New Operator" button
+            const addOperatorBtn = document.getElementById('add-operator-btn');
+            const newOperatorInput = document.getElementById('new-operator-input');
+
+            if (addOperatorBtn && newOperatorInput) {
+                if (!addOperatorBtn.dataset.operatorClickAttached) {
                     addOperatorBtn.addEventListener('click', function() {
                         const operatorName = newOperatorInput.value.trim();
                         if (operatorName) {
@@ -2426,30 +2475,36 @@
                                 currentOperatorField.value = operatorName;
                                 currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
                             }
-                            
+
                             // Clear the input
                             newOperatorInput.value = '';
-                            
+
                             // Refresh the operators list
                             populateOperatorsList();
-                            
+
                             console.log('Added new operator:', operatorName);
                         }
-                    });
-                    
-                    // Allow Enter key to add operator
+                    }, { passive: true });
+                    addOperatorBtn.dataset.operatorClickAttached = 'true';
+                }
+
+                // Allow Enter key to add operator
+                if (!newOperatorInput.dataset.operatorKeypressAttached) {
                     newOperatorInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
                             addOperatorBtn.click();
                         }
-                    });
+                    }, { passive: true });
+                    newOperatorInput.dataset.operatorKeypressAttached = 'true';
                 }
-                
-                // Add functionality for "Add Location" button
-                const addLocationBtn = document.getElementById('add-location-btn');
-                const newLocationInput = document.getElementById('new-location-input');
-                
-                if (addLocationBtn && newLocationInput) {
+            }
+
+            // Add functionality for "Add Location" button
+            const addLocationBtn = document.getElementById('add-location-btn');
+            const newLocationInput = document.getElementById('new-location-input');
+
+            if (addLocationBtn && newLocationInput) {
+                if (!addLocationBtn.dataset.locationClickAttached) {
                     addLocationBtn.addEventListener('click', function() {
                         const locationName = newLocationInput.value.trim();
                         if (locationName) {
@@ -2462,14 +2517,7 @@
                                 newLocationDiv.dataset.state = locationName;
                                 newLocationDiv.textContent = locationName;
                                 newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
-                                
-                                // Add click handler
-                                newLocationDiv.addEventListener('click', function() {
-                                    document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                                    this.classList.add('selected');
-                                    console.log('Selected location:', this.dataset.state);
-                                });
-                                
+
                                 // Insert at the top of the list (after header if present)
                                 const firstStateItem = statesList.querySelector('.state-item');
                                 if (firstStateItem) {
@@ -2477,35 +2525,49 @@
                                 } else {
                                     statesList.appendChild(newLocationDiv);
                                 }
+
+                                // Auto-select the new location
+                                statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                                newLocationDiv.classList.add('selected');
+                                console.log('Selected location:', locationName);
                             }
-                            
+
                             // Clear the input
                             newLocationInput.value = '';
-                            
-                            console.log('Added new location:', locationName);
                         }
-                    });
-                    
-                    // Allow Enter key to add location
+                    }, { passive: true });
+                    addLocationBtn.dataset.locationClickAttached = 'true';
+                }
+
+                if (!newLocationInput.dataset.locationKeypressAttached) {
                     newLocationInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
                             addLocationBtn.click();
                         }
-                    });
+                    }, { passive: true });
+                    newLocationInput.dataset.locationKeypressAttached = 'true';
                 }
-
-                // REFERRER PROJECT MANAGEMENT
-                // Note: Referrer button event listeners are set up in facility-form.v3.js
-                // via the attachButtonListeners() function. No need to duplicate here.
-            };
-
-            // Check if the form is already ready, otherwise wait for the custom event
-            if (window.formReady) {
-                onFormReady();
-            } else {
-                document.addEventListener('formReady', onFormReady, { once: true });
             }
-        });
+
+            adminPageInitialized = true;
+        };
+
+        const ensureAdminPageInitialization = () => {
+            if (window.formReady) {
+                initializeAdminPage();
+            } else if (!adminPageInitialized) {
+                document.addEventListener('formReady', initializeAdminPage, { once: true });
+            }
+        };
+
+        // Kick off initialization immediately in case formReady already fired
+        ensureAdminPageInitialization();
+
+        // Initialize category navigation when page loads
+        window.addEventListener('load', () => {
+            initializeSectionToggles();
+            ensureAdminPageInitialization();
+        }, { passive: true });
     </script>
 </body>
 </html>
