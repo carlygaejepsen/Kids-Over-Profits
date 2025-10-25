@@ -12,19 +12,6 @@
 (function() {
     'use strict';
 
-    // ====================================================================
-    // CRITICAL: Create a stub for the Kadence navigation object.
-    // This prevents the navigation.min.js script from running its
-    // initialization code if it loads before this guard script has
-    // fully overridden the DOM methods.
-    // ====================================================================
-    if (typeof window.kadence === 'undefined') {
-        window.kadence = {};
-    }
-    window.kadence.initNavigation = function() {
-        console.log('[Kadence Nav Guard] Kadence navigation initialization blocked by stub.');
-    };
-
     // Flag to track if guard is active
     window.KADENCE_NAV_GUARD_ACTIVE = true;
 
@@ -193,21 +180,23 @@
 
     // Prevent navigation initialization when DOM is ready
     function disableKadenceNav() {
-        // Stub out navigation initialization functions
-        if (window.kadence) {
-            if (window.kadence.initNavigation) {
-                console.log('[Kadence Nav Guard] Navigation initialization disabled');
-                window.kadence.initNavigation = function() {
-                    console.debug('[Kadence Nav Guard] Kadence navigation init blocked');
-                };
-            }
-            if (window.kadence.navigation) {
-                window.kadence.navigation.init = function() {
-                    console.debug('[Kadence Nav Guard] Kadence navigation.init blocked');
-                };
-            }
-        }
+        // On headerless pages, we aggressively neutralize the Kadence object.
+        if (isHeaderlessPage()) {
+            // Create a dummy object that will absorb any function calls.
+            const dummyKadenceNav = {
+                init: function() { console.debug('[Kadence Nav Guard] Blocked kadence.navigation.init()'); },
+                toggleSubArrow: function() { console.debug('[Kadence Nav Guard] Blocked toggleSubArrow()'); },
+                initOutline: function() { console.debug('[Kadence Nav Guard] Blocked initOutline()'); }
+            };
 
+            // Overwrite the entire navigation object.
+            window.kadence = {
+                initNavigation: function() { console.debug('[Kadence Nav Guard] Blocked initNavigation()'); },
+                navigation: dummyKadenceNav
+            };
+
+            console.log('[Kadence Nav Guard] Kadence navigation object fully neutralized for headerless page.');
+        }
         // Also check for standalone Kadence navigation object
         if (window.KadenceNavigation) {
             window.KadenceNavigation.init = function() {
