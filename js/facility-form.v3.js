@@ -1010,7 +1010,7 @@ function createAutocomplete(input, getDataFunction, category) {
             // Use mousedown to fire BEFORE blur event (which hides dropdown)
             div.addEventListener('mousedown', () => {
                 preventBlur = true; // Prevent blur from hiding dropdown
-                commitSelection(suggestionText);
+                commitSelection(suggestionText, { shouldRefocus: false });
                 setTimeout(() => { preventBlur = false; }, 100);
             });
 

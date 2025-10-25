@@ -3197,11 +3197,11 @@
 
                         resultDiv.addEventListener('mouseover', () => {
                             resultDiv.style.backgroundColor = '#f8fafc';
-                        });
+                        }, { passive: true });
 
                         resultDiv.addEventListener('mouseout', () => {
                             resultDiv.style.backgroundColor = 'white';
-                        });
+                        }, { passive: true });
 
                         resultDiv.addEventListener('click', () => {
                             if (typeof goToFacility === 'function') {
