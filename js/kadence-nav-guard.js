@@ -20,11 +20,11 @@
     function isHeaderlessPage() {
         return window.KADENCE_NAV_DISABLED ||
                window.location.pathname.includes('data.html') ||
-               window.location.pathname.includes('admin-data.html') ||
-               (document.body && document.body.classList && (
-                   document.body.classList.contains('page-data') ||
-                   document.body.classList.contains('page-admin-data')
-               ));
+               window.location.pathname.includes('admin-data.html') || // Check for document.body before accessing classList
+               (document.body && (
+                   document.body.classList.contains('page-data') || 
+                   document.body.classList.contains('page-admin-data'))
+               );
     }
 
     // Store original DOM query methods
