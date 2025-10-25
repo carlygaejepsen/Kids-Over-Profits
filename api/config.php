@@ -1,5 +1,9 @@
 <?php
 // Database configuration
+
+// Message from Tom: This is hardcoded and is actually a really big security risk.
+// We need to get this from an .env file. Right now anyone who can access this file can see the password.
+// If you get hacked, this is the first thing they will try to access.
 $db_host = 'localhost';
 $db_name = 'kidsover_suggestions';
 $db_user = 'kidsover_dani';

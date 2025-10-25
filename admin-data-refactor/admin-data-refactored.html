@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Admin - Facility Data Management</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/admin-data.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/form-sections.css" />
+    <link rel="stylesheet" href="css/inline-styles.css" />
+
+    <!-- Prevent WordPress/Kadence conflicts -->
+    <script>
+      // Prevent WordPress from loading comment-reply script
+      window.addComment = {
+        moveForm: function () {
+          return false;
+        },
+      };
+
+      // Prevent Kadence navigation from initializing
+      window.kadenceConfig = window.kadenceConfig || {};
+      window.kadenceConfig.breakPoints = window.kadenceConfig.breakPoints || {};
+      window.kadenceConfig.breakPoints.desktop = 99999;
+
+      // Create a stub to prevent navigation initialization errors
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.kadence && window.kadence.initNavigation) {
+          window.kadence.initNavigation = function () {
+            console.log("Kadence navigation disabled on this page");
+          };
+        }
+      });
+
+      // Early interception: prevent the script from finding navigation elements
+      (function () {
+        var originalQuerySelector = document.querySelector;
+        var originalQuerySelectorAll = document.querySelectorAll;
+
+        var blockedSelectors = [
+          "#main-navigation",
+          ".main-navigation",
+          "#site-navigation",
+          ".site-navigation",
+          "#primary-navigation",
+          'nav[role="navigation"]',
+        ];
+
+        document.querySelector = function (selector) {
+          if (
+            blockedSelectors.some(
+              (blocked) => selector && selector.includes(blocked)
+            )
+          ) {
+            return null;
+          }
+          return originalQuerySelector.apply(this, arguments);
+        };
+
+        document.querySelectorAll = function (selector) {
+          if (
+            blockedSelectors.some(
+              (blocked) => selector && selector.includes(blocked)
+            )
+          ) {
+            return [];
+          }
+          return originalQuerySelectorAll.apply(this, arguments);
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="admin-header">
+        <h1>🔐 Admin Facility Data Management</h1>
+        <p>
+          You are in administrator mode. Changes saved here will directly update
+          the master database.
+        </p>
+      </div>
+
+      <div class="admin-warning">
+        ❗ <strong>Administrator Mode:</strong> Data saved here will directly
+        update the master database. Proceed with caution.
+      </div>
+
+      <!-- Category Navigation -->
+      <div class="category-navigation" id="category-navigation">
+        <div class="category-tabs">
+          <button class="category-tab active" data-category="companies">
+            🏢 Companies / Operators
+          </button>
+          <button class="category-tab" data-category="locations">
+            🌍 Locations / States
+          </button>
+          <button class="category-tab" data-category="referrers">
+            👥 Referrers
+          </button>
+        </div>
+
+        <!-- Category Contents -->
+        <div class="category-contents-wrapper">
+          <!-- Companies Content -->
+          <div id="companies-content" class="category-content active">
+            <div class="content-header">
+              <h3>🏢 Companies / Operators</h3>
+            </div>
+            <div class="project-management" id="project-panel-inner">
+              <h2>Projects & Data Import</h2>
+              <div id="project-status" class="project-status"></div>
+            </div>
+            <div class="form-group">
+              <label>Saved Projects</label>
+              <div id="company-saved-projects-list" class="saved-projects-list">
+                <div class="no-projects-message">No saved company projects</div>
+              </div>
+              <div class="form-group project-buttons">
+                <label>Project Management</label>
+                <div class="button-group">
+                  <button class="btn" id="new-project-btn">New Project</button>
+                  <button class="btn" id="export-all-btn">
+                    Export All Projects
+                  </button>
+                  <button class="btn" id="generate-report-btn">
+                    Generate Report
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="upload-status" class="d-none"></div>
+          </div>
+
+          <!-- Locations Content -->
+          <div id="locations-content" class="category-content">
+            <div class="content-header">
+              <h3>🌍 Locations / States</h3>
+            </div>
+            <div class="project-management location-project-management">
+              <h2>Location Projects & Data Import</h2>
+              <div class="form-group">
+                <label>Saved Location Projects</label>
+                <div
+                  id="location-saved-projects-list"
+                  class="saved-projects-list"
+                >
+                  <div class="no-projects-message">
+                    No saved location projects
+                  </div>
+                </div>
+              </div>
+              <p class="project-info">
+                Location projects appear automatically when their titles match a
+                known state or country.
+              </p>
+            </div>
+          </div>
+
+          <!-- Referrers Content -->
+          <div id="referrers-content" class="category-content">
+            <div class="content-header">
+              <h3>👥 Referrers (Educational Consultants / School Districts)</h3>
+            </div>
+
+            <!-- Referrer Type Toggle -->
+            <div id="referrer-type-toggle-section" class="toggle-section">
+              <div class="toggle-header">
+                <span>Referrer Type:</span>
+                <div class="toggle-controls">
+                  <span>Group/Agency</span>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="referrer-type-toggle" />
+                    <span class="toggle-slider"></span>
+                  </div>
+                  <span>Individual</span>
+                </div>
+              </div>
+              <p class="toggle-description">
+                Select "Individual" to hide the Group/Agency section and track a
+                standalone consultant.
+              </p>
+            </div>
+
+            <div class="project-management" id="referrer-project-panel-inner">
+              <h2>Referrer Projects & Data Import</h2>
+              <div id="referrer-project-status" class="project-status"></div>
+            </div>
+            <div class="form-group">
+              <label>Saved Referrer Projects</label>
+              <div
+                id="referrer-saved-projects-list"
+                class="saved-projects-list"
+              >
+                <div class="no-projects-message">
+                  No saved referrer projects
+                </div>
+              </div>
+              <div class="form-group project-buttons">
+                <label>Project Management</label>
+                <div class="button-group">
+                  <button class="btn" id="new-referrer-project-btn">
+                    New Project
+                  </button>
+                  <button class="btn" id="export-referrer-projects-btn">
+                    Export All Projects
+                  </button>
+                  <button class="btn" id="generate-referrer-report-btn">
+                    Generate Report
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Facility Wrapper -->
+      <div id="facility-main-wrapper">
+        <!-- Facility Table of Contents -->
+        <div class="facility-toc" id="facility-toc">
+          <div class="toc-header">
+            <h2 class="toc-title">Facilities Overview</h2>
+            <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
+          </div>
+          <div class="toc-content">
+            <div class="toc-stats" id="toc-stats">Total: 1 facility</div>
+            <div class="facility-list" id="facility-list">
+              <!-- Facility items will be populated here -->
+            </div>
+            <div class="mt-15 d-flex gap-10 flex-center">
+              <button class="btn" id="add-facility-main-btn">
+                Add New Facility
+              </button>
+              <button class="btn" id="sort-facilities-btn">
+                Sort Alphabetically
+              </button>
+              <button
+                class="btn"
+                onclick="window.open('https://kidsoverprofits.org/data-organizer/', '_blank')"
+                title="Open Data Organizer in new tab"
+              >
+                📊 Data Organizer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facility Navigation -->
+        <div class="facility-controls">
+          <div class="facility-header">
+            <div class="d-flex align-items-center gap-15">
+              <strong
+                >Current Facility:
+                <span id="facility-counter">1 of 1</span></strong
+              >
+              <span
+                id="current-facility-name"
+                class="text-muted fw-normal"
+              ></span>
+              <div class="d-flex gap-5">
+                <button
+                  class="nav-btn"
+                  data-action="first"
+                  title="Go to first facility"
+                >
+                  ⏮️
+                </button>
+                <button
+                  class="nav-btn"
+                  data-action="prev"
+                  title="Previous facility"
+                >
+                  ⏪
+                </button>
+                <button
+                  class="nav-btn"
+                  data-action="next"
+                  title="Next facility"
+                >
+                  ⏩
+                </button>
+                <button
+                  class="nav-btn"
+                  data-action="last"
+                  title="Go to last facility"
+                >
+                  ⏭️
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="facility-navigation">
+            <div class="nav-buttons">
+              <button class="nav-btn primary" id="save-facility-btn">
+                💾 Save Facility
+              </button>
+              <button class="nav-btn" id="duplicate-facility-btn">
+                📋 Duplicate
+              </button>
+              <button class="nav-btn" id="delete-facility-btn">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-nav">
+          <h3>Quick Navigation</h3>
+          <div class="section-buttons">
+            <button class="section-btn" data-section="operator-section">
+              🏢 Operator
+            </button>
+            <button class="section-btn" data-section="identification-section">
+              🆔 Identification
+            </button>
+            <button class="section-btn" data-section="location-section">
+              📍 Location
+            </button>
+            <button class="section-btn" data-section="operations-section">
+              ⚙️ Operations
+            </button>
+            <button class="section-btn" data-section="staff-section">
+              👥 Staff
+            </button>
+            <button class="section-btn" data-section="facility-section">
+              🏢 Facility
+            </button>
+            <button class="section-btn" data-section="treatment-section">
+              🏥 Treatment
+            </button>
+            <button class="section-btn" data-section="philosophy-section">
+              💭 Philosophy
+            </button>
+            <button class="section-btn" data-section="incidents-section">
+              ⚠️ Incidents
+            </button>
+            <button class="section-btn" data-section="submission-section">
+              📤 Submit
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Form -->
+        <form class="facility-form" id="facility-form">
+          <!-- Operator Section -->
+          <div class="section expanded" id="operator-section">
+            <div class="section-header">
+              <h3 class="section-title">🏢 Operator Information</h3>
+              <button class="section-toggle">▼</button>
+            </div>
+            <div class="section-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="current-operator">Current Operator *</label>
+                  <input
+                    type="text"
+                    id="current-operator"
+                    data-field="identification.currentOperator"
+                    data-autocomplete="operator"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="other-operators">Other Operators</label>
+                  <input
+                    type="text"
+                    id="other-operators"
+                    data-field="identification.otherOperators"
+                    data-autocomplete="operator"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Operators List</label>
+                <div id="operators-list" class="operators-list">
+                  <div class="no-operators-message">No operators added yet</div>
+                </div>
+              </div>
+
+              <div class="add-operator-section">
+                <div class="add-operator-input">
+                  <input
+                    type="text"
+                    id="new-operator-input"
+                    placeholder="Enter new operator name"
+                  />
+                  <button type="button" class="btn" id="add-operator-btn">
+                    Add Operator
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Identification Section -->
+          <div class="section" id="identification-section">
+            <div class="section-header">
+              <h3 class="section-title">🆔 Facility Identification</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="facility-name">Facility Name *</label>
+                  <input
+                    type="text"
+                    id="facility-name"
+                    data-field="identification.facilityName"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="facility-type">Facility Type</label>
+                  <select
+                    id="facility-type"
+                    data-field="identification.facilityType"
+                  >
+                    <option value="">Select type</option>
+                    <option value="residential">Residential Treatment</option>
+                    <option value="wilderness">Wilderness Program</option>
+                    <option value="boarding">Boarding School</option>
+                    <option value="therapeutic">Therapeutic School</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Section -->
+          <div class="section" id="location-section">
+            <div class="section-header">
+              <h3 class="section-title">📍 Location Information</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="address">Address *</label>
+                <input
+                  type="text"
+                  id="address"
+                  data-field="location.address"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="city">City *</label>
+                  <input
+                    type="text"
+                    id="city"
+                    data-field="location.city"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="state">State *</label>
+                  <input
+                    type="text"
+                    id="state"
+                    data-field="location.state"
+                    data-autocomplete="state"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="zip-code">ZIP Code *</label>
+                  <input
+                    type="text"
+                    id="zip-code"
+                    data-field="location.zipCode"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>State Selection</label>
+                <div class="state-selection" id="state-selection">
+                  <!-- State items will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operations Section -->
+          <div class="section" id="operations-section">
+            <div class="section-header">
+              <h3 class="section-title">⚙️ Operations</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="capacity">Capacity</label>
+                  <input
+                    type="number"
+                    id="capacity"
+                    data-field="operations.capacity"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="age-range">Age Range</label>
+                  <input
+                    type="text"
+                    id="age-range"
+                    data-field="operations.ageRange"
+                    placeholder="e.g., 13-18"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Staff Section -->
+          <div class="section" id="staff-section">
+            <div class="section-header">
+              <h3 class="section-title">👥 Staff Information</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="staff-count">Staff Count</label>
+                  <input
+                    type="number"
+                    id="staff-count"
+                    data-field="staff.staffCount"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="staff-ratio">Staff to Student Ratio</label>
+                  <input
+                    type="text"
+                    id="staff-ratio"
+                    data-field="staff.staffRatio"
+                    placeholder="e.g., 1:8"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Facility Section -->
+          <div class="section" id="facility-section">
+            <div class="section-header">
+              <h3 class="section-title">🏢 Facility Details</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="facility-description">Facility Description</label>
+                <textarea
+                  id="facility-description"
+                  data-field="facility.description"
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Treatment Section -->
+          <div class="section" id="treatment-section">
+            <div class="section-header">
+              <h3 class="section-title">🏥 Treatment Information</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="treatment-approach">Treatment Approach</label>
+                <textarea
+                  id="treatment-approach"
+                  data-field="treatment.approach"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Philosophy Section -->
+          <div class="section" id="philosophy-section">
+            <div class="section-header">
+              <h3 class="section-title">💭 Philosophy</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="philosophy">Philosophy</label>
+                <textarea
+                  id="philosophy"
+                  data-field="philosophy.description"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incidents Section -->
+          <div class="section" id="incidents-section">
+            <div class="section-header">
+              <h3 class="section-title">⚠️ Incidents</h3>
+              <button class="section-toggle">▶</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="incidents">Incident Reports</label>
+                <textarea
+                  id="incidents"
+                  data-field="incidents.reports"
+                  rows="4"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submission Section -->
+          <div
+            class="section expanded"
+            id="submission-section"
+            class="json-display-container"
+          >
+            <div class="section-header">
+              <h3 class="section-title">📤 Submit Data</h3>
+              <button class="section-toggle">▼</button>
+            </div>
+            <div class="section-content">
+              <div class="form-group">
+                <label for="notes">Additional Notes</label>
+                <textarea
+                  id="notes"
+                  data-field="submission.notes"
+                  rows="3"
+                  placeholder="Any additional information about this facility..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input
+                    type="checkbox"
+                    id="data-verified"
+                    data-field="submission.dataVerified"
+                  />
+                  <label for="data-verified"
+                    >I have verified this data is accurate</label
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                  💾 Save Facility Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/admin-data.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/form-manager.js"></script>
+    <script src="js/admin-data-extracted.js"></script>
+  </body>
+</html>

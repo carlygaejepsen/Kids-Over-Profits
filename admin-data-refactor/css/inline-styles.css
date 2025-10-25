@@ -1,0 +1,299 @@
+/**
+ * Inline Styles Extracted from admin-data.html
+ * All inline styles have been moved here for better organization
+ */
+
+/* Project Status and Lists */
+#project-status {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+#company-saved-projects-list,
+#location-saved-projects-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+#company-saved-projects-list > div,
+#location-saved-projects-list > div {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Section Headers */
+.section-header h2 {
+  margin: 20px 0;
+  color: #1f2937;
+  font-size: 18px;
+}
+
+/* Form Groups */
+.form-group {
+  text-align: center;
+}
+
+.form-group .button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Upload Status */
+#upload-status {
+  display: none;
+}
+
+/* Referrer Type Toggle Section */
+#referrer-type-toggle-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+#referrer-type-toggle-section .toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+#referrer-type-toggle-section .toggle-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#referrer-type-toggle-section .toggle-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#referrer-type-toggle {
+  display: none;
+}
+
+#referrer-slider-track {
+  display: block;
+  width: 48px;
+  height: 24px;
+  background-color: #10b981;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#referrer-slider-knob {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#referrer-type-toggle-section .toggle-description {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Input Field Styles */
+.input-form {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Autocomplete Wrapper */
+.autocomplete-wrapper {
+  position: relative;
+}
+
+/* Facility Field Styles */
+.facility-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* State Item Selection */
+.state-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.state-item:hover {
+  background-color: #f3f4f6;
+}
+
+.state-item.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Private Ownership Toggle */
+#private-ownership-toggle-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+#private-ownership-toggle-section .toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+#private-ownership-toggle-section .toggle-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#private-ownership-toggle-section .toggle-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#private-ownership-toggle {
+  display: none;
+}
+
+#private-ownership-slider-track {
+  display: block;
+  width: 48px;
+  height: 24px;
+  background-color: #10b981;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#private-ownership-slider-knob {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#private-ownership-toggle-section .toggle-description {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-group .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-group .button-group button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  #referrer-type-toggle-section .toggle-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #private-ownership-toggle-section .toggle-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* JSON Display Container */
+.json-display-container {
+  border: 2px solid #1e40af;
+  background: #f8fafc;
+}
+
+/* Utility Classes */
+.d-none {
+  display: none !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Status Messages */
+.upload-status {
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.upload-status.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.upload-status.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.upload-status.info {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.upload-status.warning {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
