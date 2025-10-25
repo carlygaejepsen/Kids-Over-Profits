@@ -2174,6 +2174,9 @@ function handleReferrerToggle() {
     }
 }
 
+// Expose to global scope for access from inline scripts
+window.handleReferrerToggle = handleReferrerToggle;
+
 async function renameProject(oldName) {
     if (!oldName) {
         showUploadStatus('❌ No project selected to rename.', 'error');
