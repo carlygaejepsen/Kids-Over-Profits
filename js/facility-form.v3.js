@@ -2131,24 +2131,26 @@ function newProject() {
 }
 
 function handleReferrerToggle() {
+    // This function is now the single source of truth for showing/hiding main content areas.
     const activeTab = document.querySelector('.category-tab.active');
     const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
 
     const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
     const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-    const fixedToolbar = document.getElementById('fixed-toolbar');
+    // Use querySelectorAll to handle cases where the element might be duplicated by mistake.
+    const fixedToolbars = document.querySelectorAll('#fixed-toolbar');
 
     if (activeCategory === 'referrers') {
         if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
         if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-        if (fixedToolbar) fixedToolbar.style.display = 'none';
+        fixedToolbars.forEach(tb => tb.style.display = 'none');
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
         }
     } else {
         if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
         if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-        if (fixedToolbar) fixedToolbar.style.display = 'block';
+        fixedToolbars.forEach(tb => tb.style.display = 'block');
     }
 }
 

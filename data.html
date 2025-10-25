@@ -1750,48 +1750,10 @@
                 const statesContent = document.getElementById('states-content');
                 const referrersContent = document.getElementById('referrers-content');
 
-                if (companiesContent && statesContent && referrersContent) {
-                    // Hide all content sections first
-                    companiesContent.classList.add('d-none');
-                    statesContent.classList.add('d-none');
-                    referrersContent.classList.add('d-none');
-
-                    // Get the facility main wrapper (facility/operator form)
-                    const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-
-                    // Get the referrer main wrapper
-                    const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
-
-                    // Get the fixed toolbar (for facility editing)
-                    const fixedToolbar = document.getElementById('fixed-toolbar');
-
-                    // Show the selected category's content
-                    if (category === 'companies') {
-                        companiesContent.classList.remove('d-none');
-                        // Show facility form for companies
-                        if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
-                        // Hide referrer form
-                        if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-                        // Show facility editing toolbar
-                        if (fixedToolbar) fixedToolbar.style.display = 'block';
-                    } else if (category === 'locations') {
-                        statesContent.classList.remove('d-none');
-                        // Show facility form for locations
-                        if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
-                        // Hide referrer form
-                        if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-                        // Show facility editing toolbar
-                        if (fixedToolbar) fixedToolbar.style.display = 'block';
-                    } else if (category === 'referrers') {
-                        referrersContent.classList.remove('d-none');
-                        // Hide facility form for referrers - they have their own form
-                        if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
-                        // Show referrer form
-                        if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-                        // Hide facility editing toolbar for referrers
-                        if (fixedToolbar) fixedToolbar.style.display = 'none';
-                    }
-                }
+                companiesContent.classList.toggle('d-none', category !== 'companies');
+                statesContent.classList.toggle('d-none', category !== 'locations');
+                referrersContent.classList.toggle('d-none', category !== 'referrers');
+                handleReferrerToggle(); // Use the centralized function
 
                 if (typeof window.refreshSavedProjectPanels === 'function') {
                     window.refreshSavedProjectPanels();
