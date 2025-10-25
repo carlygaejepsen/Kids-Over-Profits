@@ -1299,7 +1299,7 @@
                     const toggleSection = document.getElementById('private-ownership-toggle-section');
                     if (toggleSection) toggleSection.style.display = 'none';
 
-                    // Show operator section
+                    // Show operator section (only when in facility view, not referrers)
                     const operatorSection = document.getElementById('operator-section');
                     if (operatorSection) operatorSection.style.display = 'block';
                 } else if (category === 'locations') {
