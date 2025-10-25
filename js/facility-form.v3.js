@@ -1625,6 +1625,12 @@ async function loadAllProjectsFromCloud() {
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
             debugLog('Loaded projects from cloud:', Object.keys(projects));
 
+            // Debug: Check if category metadata is present
+            Object.keys(projects).forEach(name => {
+                const project = projects[name];
+                console.log(`📊 Project "${name}" - Category: ${project.category || 'MISSING'}, Has timestamp: ${!!project.timestamp}, Has currentFacilityIndex: ${!!project.currentFacilityIndex}`);
+            });
+
             // Force re-initialize autocomplete after cloud data loads
             setTimeout(() => {
                 debugLog('Re-initializing autocomplete with cloud data...');
@@ -1765,6 +1771,9 @@ async function saveProjectToCloud(projectName) {
         const payload = {
             projectName: projectName,
             data: projectData.data,
+            category: projectData.category,
+            currentFacilityIndex: projectData.currentFacilityIndex,
+            timestamp: projectData.timestamp,
             action: 'save'
         };
 

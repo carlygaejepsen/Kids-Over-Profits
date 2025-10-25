@@ -52,6 +52,9 @@ $action = $request['action'] ?? 'save';
 $projectName = $request['projectName'] ?? null;
 $newProjectName = $request['newProjectName'] ?? null;
 $data = $request['data'] ?? null;
+$category = $request['category'] ?? 'companies';
+$currentFacilityIndex = $request['currentFacilityIndex'] ?? 0;
+$timestamp = $request['timestamp'] ?? date('c');
 
 // Validate project name
 if (!$projectName) {
@@ -129,8 +132,17 @@ if ($action === 'save') {
         exit;
     }
 
-    // Encode the entire data object as a JSON string
-    $jsonData = json_encode($data);
+    // Create the complete project structure with metadata
+    $projectStructure = [
+        'name' => $projectName,
+        'data' => $data,
+        'category' => $category,
+        'currentFacilityIndex' => $currentFacilityIndex,
+        'timestamp' => $timestamp
+    ];
+
+    // Encode the complete project structure as a JSON string
+    $jsonData = json_encode($projectStructure);
 
     // SQL to insert or update the project data based on projectName
     // The identifier column is `unique_name` and the data column is `json_data`.
