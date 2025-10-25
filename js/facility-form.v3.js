@@ -4218,11 +4218,11 @@ function addNoteButtonsToArrayItems(group) {
 
             noteBtn.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
-            }, { passive: false });
+            });
 
             noteBtn.addEventListener('mouseup', (e) => {
                 e.stopPropagation();
-            }, { passive: false });
+            });
 
             arrayItem.appendChild(noteBtn);
             arrayItem.classList.add('has-note-button');
