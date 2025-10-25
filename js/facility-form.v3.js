@@ -2066,6 +2066,20 @@ function loadProject(projectName) {
         return;
     }
 
+    // Determine the project category and switch to the correct tab
+    const projectCategory = determineProjectCategory(projectName);
+    debugLog('📂 Project category:', projectCategory);
+
+    // Switch to the correct category tab
+    const targetTab = document.querySelector(`.category-tab[data-category="${projectCategory}"]`);
+    if (targetTab) {
+        // Remove active class from all tabs
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        // Add active class to the target tab
+        targetTab.classList.add('active');
+        debugLog('✅ Switched to', projectCategory, 'tab');
+    }
+
     window.currentProjectName = projectName;
     if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
         window.formData = deepClone(window.projects[projectName].data);
@@ -2081,6 +2095,12 @@ function loadProject(projectName) {
     const projectNameInput = document.getElementById('project-name');
     if (projectNameInput) {
         projectNameInput.value = projectName;
+    }
+
+    // Ensure the correct form wrapper is visible BEFORE updating UI
+    if (typeof handleReferrerToggle === 'function') {
+        handleReferrerToggle();
+        debugLog('✅ Updated form visibility for', projectCategory);
     }
 
     if (typeof window.updateAllUI === 'function') {
@@ -4809,6 +4829,13 @@ window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 window.initializeSectionToggles = initializeSectionToggles;
+
+// Create projectManager object for backwards compatibility
+window.projectManager = {
+    loadProject: loadProject,
+    newProject: newProject,
+    saveProjectToCloud: saveProjectToCloud
+};
 
 // Make field notes functions globally available
 window.syncFieldNotes = syncFieldNotes;
