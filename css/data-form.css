@@ -246,15 +246,19 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar.minimized .toolbar-content {
-    display: none !important; /* Completely hide when minimized */
+    /* Don't use display:none - it breaks the toggle! */
     height: 0 !important;
     max-height: 0 !important;
+    min-height: 0 !important;
     opacity: 0 !important;
-    padding: 0 !important; /* Remove ALL padding */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
-    pointer-events: none !important;
     visibility: hidden !important;
+    line-height: 0 !important;
 }
 
 .fixed-toolbar.minimized .btn-toolbar {
