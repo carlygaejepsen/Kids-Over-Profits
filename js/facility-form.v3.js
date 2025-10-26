@@ -1724,7 +1724,68 @@ function persistProjectLocally(projectName, { showStatus = false, statusType = '
     return true;
 }
 
-async function saveProjectToCloud(projectName) {
+async function saveProjectToCloud(projectName, action = 'save') {
+    // Handle delete action separately
+    if (action === 'delete') {
+        try {
+            showUploadStatus(`🗑️ Deleting "${projectName}"...`, 'info');
+            debugLog('=== DELETE PROJECT START ===');
+            debugLog('Project name:', projectName);
+
+            const payload = {
+                projectName: projectName,
+                action: 'delete'
+            };
+
+            const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+            }
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || result.message || 'Unknown server error');
+            }
+
+            // Remove from local projects object
+            delete window.projects[projectName];
+            localStorage.removeItem(`project_${projectName}`);
+
+            // If this was the current project, clear it
+            if (window.currentProjectName === projectName) {
+                newProject();
+            }
+
+            debugLog('✅ Delete successful!');
+            debugLog('=== DELETE PROJECT END ===');
+            showUploadStatus(`✅ Deleted "${projectName}" successfully!`, 'success');
+
+            // Update UI
+            if (typeof window.updateAllUI === 'function') {
+                window.updateAllUI();
+            }
+
+            // Refresh the project panels to remove the deleted project from the list
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                window.refreshSavedProjectPanels();
+            }
+
+            return true;
+        } catch (error) {
+            console.error('❌ DELETE FAILED:', error.message);
+            showUploadStatus(`❌ Failed to delete: ${error.message}`, 'error');
+            return false;
+        }
+    }
+
+    // Normal save action
     if (!projectName || !window.formData) {
         showUploadStatus('❌ No project name or data to save', 'error');
         console.error('❌ Save blocked: projectName=', projectName, 'formData exists=', !!window.formData);
@@ -1737,7 +1798,7 @@ async function saveProjectToCloud(projectName) {
         const saved = persistProjectLocally(projectName, {
             showStatus: true,
             statusType: 'info',
-            statusMessage: '💾 Draft saved locally. Use “Submit Suggestion for Review” to send updates to Kids Over Profits.'
+            statusMessage: '💾 Draft saved locally. Use "Submit Suggestion for Review" to send updates to Kids Over Profits.'
         });
 
         if (!saved) {
@@ -1774,7 +1835,7 @@ async function saveProjectToCloud(projectName) {
             category: projectData.category,
             currentFacilityIndex: projectData.currentFacilityIndex,
             timestamp: projectData.timestamp,
-            action: 'save'
+            action: action
         };
 
         const payloadSize = JSON.stringify(payload).length;
