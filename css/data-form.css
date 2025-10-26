@@ -23,19 +23,19 @@ body {
    FIXED ADMIN TOOLBAR
    ============================================ */
 body.toolbar-active {
-    padding-top: 172px; /* 32px admin bar + 140px toolbar */
+    padding-top: 120px; /* 32px admin bar + ~88px compact toolbar */
 }
 
 body.toolbar-active:not(.admin-bar) {
-    padding-top: 140px; /* Just toolbar, no admin bar */
+    padding-top: 88px; /* Just compact toolbar, no admin bar */
 }
 
 body.toolbar-minimized {
-    padding-top: 32px; /* Retain space for the WordPress admin bar */
+    padding-top: 80px; /* 32px admin bar + 48px minimized toolbar header */
 }
 
 body.toolbar-minimized:not(.admin-bar) {
-    padding-top: 0;
+    padding-top: 48px; /* Just minimized toolbar header */
 }
 
 .fixed-toolbar {
@@ -59,10 +59,11 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px;
+    padding: 8px 15px;
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     gap: 12px;
+    min-height: 48px; /* Ensure consistent height */
 }
 
 .fixed-toolbar .toolbar-title {
@@ -80,7 +81,7 @@ body:not(.admin-bar) .fixed-toolbar {
     width: 36px;
     height: 36px;
     border-radius: 6px;
-    cursor: pointer;
+    cursor: pointer !important;
     font-size: 22px;
     font-weight: bold;
     transition: all 0.2s ease;
@@ -88,10 +89,11 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    pointer-events: auto;
+    pointer-events: auto !important;
     position: relative;
-    z-index: 1;
+    z-index: 100000; /* ABOVE EVERYTHING including WP admin bar */
     flex-shrink: 0;
+    user-select: none;
 }
 
 .fixed-toolbar .toolbar-toggle:hover {
@@ -100,28 +102,61 @@ body:not(.admin-bar) .fixed-toolbar {
     transform: scale(1.05);
 }
 
+.fixed-toolbar .toolbar-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Facility Selector - keep arrows inline with dropdown */
+.fixed-toolbar .facility-selector {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.fixed-toolbar .facility-dropdown {
+    min-width: 200px;
+    max-width: 300px;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000435;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.fixed-toolbar .facility-selector .btn-toolbar {
+    width: 32px;
+    padding: 6px;
+}
+
 .fixed-toolbar .toolbar-content {
-    padding: 15px 20px;
+    padding: 8px 15px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* KEEP EVERYTHING ON ONE LINE */
+    overflow-x: auto; /* Allow horizontal scrolling if needed instead of wrapping */
 }
 
 .fixed-toolbar .toolbar-group {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
+    flex-shrink: 0; /* Prevent groups from shrinking */
+    white-space: nowrap; /* Keep content on one line */
 }
 
 .fixed-toolbar .toolbar-label {
     color: #FFFFFF;
     font-weight: 600;
+    font-size: 13px;
     margin-right: 5px;
     white-space: nowrap;
 }
@@ -130,17 +165,18 @@ body:not(.admin-bar) .fixed-toolbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 8px 14px;
-    font-size: 14px;
+    gap: 4px;
+    padding: 6px 12px;
+    font-size: 13px;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: 4px;
     border: 2px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
     background: rgba(255, 255, 255, 0.95);
     color: #000435;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 }
 
 .fixed-toolbar .btn-toolbar:hover {
