@@ -2525,20 +2525,7 @@
             // ============================================
             // TOOLBAR FUNCTIONALITY
             // ============================================
-
-            // Toolbar toggle (minimize/expand)
-            const toolbarToggle = document.getElementById('toolbar-toggle-btn');
-            const toolbar = document.getElementById('fixed-toolbar');
-            const toolbarContent = document.getElementById('toolbar-content');
-
-            if (toolbarToggle && toolbar) {
-                toolbarToggle.addEventListener('click', () => {
-                    toolbar.classList.toggle('minimized');
-                    document.body.classList.toggle('toolbar-minimized');
-                    toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
-                    toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
-                });
-            }
+            // Toolbar toggle is now handled in facility-form.v3.js via initializeFixedToolbar()
 
             // Update facility dropdown and toolbar info (GLOBAL function)
             window.updateToolbarFacilityInfo = function() {

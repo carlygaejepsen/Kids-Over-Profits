@@ -4165,6 +4165,9 @@ async function initializeForm() {
     // Initialize field notes functionality
     initializeFieldNotes();
 
+    // Initialize fixed toolbar (for data.html)
+    initializeFixedToolbar();
+
     // Signal that the form and its functions are ready
     window.formReady = true;
     document.dispatchEvent(new CustomEvent('formReady'));
@@ -5333,6 +5336,37 @@ if (document.readyState === 'loading') {
 } else {
     initializeForm();
 }
+
+// ============================================
+// FIXED TOOLBAR INITIALIZATION (for data.html)
+// ============================================
+function initializeFixedToolbar() {
+    const toolbar = document.getElementById('fixed-toolbar');
+    const toolbarToggle = document.getElementById('toolbar-toggle-btn');
+
+    if (!toolbar || !toolbarToggle) {
+        debugLog('Fixed toolbar elements not found (likely not on data.html page)');
+        return;
+    }
+
+    // Add toolbar-active class to body for proper padding
+    document.body.classList.add('toolbar-active');
+    debugLog('✅ Added toolbar-active class to body');
+
+    // Set up toggle event listener
+    toolbarToggle.addEventListener('click', () => {
+        toolbar.classList.toggle('minimized');
+        document.body.classList.toggle('toolbar-minimized');
+        toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
+        toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
+        debugLog(`Toolbar ${toolbar.classList.contains('minimized') ? 'minimized' : 'expanded'}`);
+    });
+
+    debugLog('✅ Fixed toolbar initialized with toggle functionality');
+}
+
+// Make function globally accessible
+window.initializeFixedToolbar = initializeFixedToolbar;
 
 // ============================================
 // FACILITY TOOLBAR TOGGLE
