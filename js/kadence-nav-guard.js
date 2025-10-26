@@ -1,17 +1,19 @@
 /**
- * Kadence Navigation Guard - Smart Protection
- * Prevents navigation.min.js errors with intelligent fallbacks
+ * Kadence Navigation Guard - resilient headerless protection.
  *
- * This script protects against:
- * - Missing navigation elements (headerless pages)
- * - Timing issues (script loads before DOM ready)
- * - Race conditions (elements not yet rendered)
- *
- * This script should be loaded BEFORE any Kadence navigation scripts
+ * Rather than guessing based on URLs or body classes, the guard watches the
+ * DOM itself. If Kadence scripts load before a header exists (or on layouts
+ * that never render one) we inject a hidden navigation scaffold and repeatedly
+ * neutralise Kadence's initialisers so `getAttribute` is never invoked on
+ * missing nodes.
  */
 (function() {
     'use strict';
 
+    var STUB_ATTRIBUTE = 'data-kadence-nav-guard-stub';
+    var STUB_LINK_TARGET = 'kadence-nav-guard-stub';
+    var MAX_STUB_ATTEMPTS = 120; // ~6 seconds of retries.
+    var MAX_NEUTRALISE_CHECKS = 200; // ~20 seconds of follow-up protection.
     // Flag to track if guard is active
     window.KADENCE_NAV_GUARD_ACTIVE = true;
 
@@ -53,207 +55,222 @@
         return false;
     }
 
-    // Store original DOM query methods
-    var originalQuerySelector = document.querySelector.bind(document);
-    var originalQuerySelectorAll = document.querySelectorAll.bind(document);
-    var originalGetElementById = document.getElementById.bind(document);
-    var originalGetElementsByClassName = document.getElementsByClassName.bind(document);
-    var originalGetElementsByTagName = document.getElementsByTagName.bind(document);
+    var ensureAttempts = 0;
+    var ensureTimer = null;
+    var bodyObserver = null;
+    var neutraliseInterval = null;
+    var neutraliseChecks = 0;
 
-    // Navigation-related selectors to block
-    var navSelectors = [
-        '#main-navigation',
-        '.main-navigation',
-        '#site-navigation',
-        '.site-navigation',
-        '#primary-navigation',
-        '.primary-navigation',
-        '#masthead',
-        '.site-header',
-        'header.site-header',
-        'nav[role="navigation"]',
-        '.header-navigation',
-        '.kadence-navigation'
-    ];
-
-    // Navigation-related IDs to block
-    var navIds = [
-        'main-navigation',
-        'site-navigation',
-        'primary-navigation',
-        'masthead'
-    ];
-
-    // Navigation-related class names to block
-    var navClasses = [
-        'main-navigation',
-        'site-navigation',
-        'primary-navigation',
-        'site-header',
-        'header-navigation',
-        'kadence-navigation'
-    ];
-
-    // Check if a selector contains navigation-related terms
-    function isNavSelector(selector) {
-        if (!selector || typeof selector !== 'string') return false;
-        return navSelectors.some(function(navSel) {
-            return selector.includes(navSel);
-        });
+    function hasRealKadenceHeader() {
+        return Boolean(document.querySelector('header#masthead, .site-header, [data-kadence-header]'));
     }
 
-    // Override querySelector with smart fallback
-    document.querySelector = function(selector) {
-        // On headerless pages, always block navigation queries
-        if (isHeaderlessPage() && isNavSelector(selector)) {
-            console.debug('[Kadence Nav Guard] Blocked querySelector on headerless page:', selector);
-            return null;
+    function logDebug(message) {
+        if (window.console && typeof window.console.debug === 'function') {
+            window.console.debug('[Kadence Nav Guard] ' + message);
+        }
+    }
+
+    function logInfo(message) {
+        if (window.console && typeof window.console.info === 'function') {
+            window.console.info('[Kadence Nav Guard] ' + message);
+        }
+    }
+
+    function stopEnsureTimer() {
+        if (ensureTimer) {
+            window.clearTimeout(ensureTimer);
+            ensureTimer = null;
+        }
+    }
+
+    function stopBodyObserver() {
+        if (bodyObserver) {
+            bodyObserver.disconnect();
+            bodyObserver = null;
+        }
+    }
+
+    function stopNeutraliseLoop() {
+        if (neutraliseInterval) {
+            window.clearInterval(neutraliseInterval);
+            neutraliseInterval = null;
+            neutraliseChecks = 0;
+        }
+    }
+
+    function createStubNavigation() {
+        if (!document.body) {
+            return false;
         }
 
-        // Try to find the element normally
-        var element = originalQuerySelector(selector);
-
-        // If navigation element not found, check if this is a timing issue
-        if (!element && isNavSelector(selector)) {
-            console.warn('[Kadence Nav Guard] Navigation element not found (may be timing issue):', selector);
-            // Return null gracefully to prevent errors
-            return null;
+        if (document.body.querySelector('[' + STUB_ATTRIBUTE + ']')) {
+            return true;
         }
 
-        return element;
-    };
-
-    // Override querySelectorAll with smart fallback
-    document.querySelectorAll = function(selector) {
-        // On headerless pages, always block navigation queries
-        if (isHeaderlessPage() && isNavSelector(selector)) {
-            console.debug('[Kadence Nav Guard] Blocked querySelectorAll on headerless page:', selector);
-            return [];
+        if (hasRealKadenceHeader()) {
+            return false;
         }
 
-        // Try to find elements normally
-        var elements = originalQuerySelectorAll(selector);
+        var header = document.createElement('header');
+        header.id = 'masthead';
+        header.className = 'site-header kadence-nav-guard-stub';
+        header.setAttribute(STUB_ATTRIBUTE, 'true');
+        header.setAttribute('aria-hidden', 'true');
+        header.setAttribute('hidden', '');
 
-        // If navigation elements not found, return empty array gracefully
-        if (elements.length === 0 && isNavSelector(selector)) {
-            console.debug('[Kadence Nav Guard] No navigation elements found:', selector);
-            return [];
-        }
+        header.style.position = 'absolute';
+        header.style.width = '1px';
+        header.style.height = '1px';
+        header.style.padding = '0';
+        header.style.margin = '-1px';
+        header.style.overflow = 'hidden';
+        header.style.clip = 'rect(0 0 0 0)';
+        header.style.whiteSpace = 'nowrap';
+        header.style.border = '0';
 
-        return elements;
-    };
+        var nav = document.createElement('nav');
+        nav.id = 'site-navigation';
+        nav.className = 'main-navigation primary-navigation kadence-nav-guard-stub';
+        nav.setAttribute(STUB_ATTRIBUTE, 'true');
+        nav.setAttribute('aria-hidden', 'true');
+        nav.setAttribute('data-open-delay', '0');
+        nav.setAttribute('data-close-delay', '0');
+        nav.setAttribute('data-dropdown-target', 'hover');
+        nav.setAttribute('data-nav-style', 'dropdown');
+        nav.setAttribute('data-breakpoint', '9999');
 
-    // Override getElementById with smart fallback
-    document.getElementById = function(id) {
-        // On headerless pages, always block navigation IDs
-        if (isHeaderlessPage() && navIds.includes(id)) {
-            console.debug('[Kadence Nav Guard] Blocked getElementById on headerless page:', id);
-            return null;
-        }
+        var menuList = document.createElement('ul');
+        menuList.className = 'menu kadence-nav-guard-stub';
+        menuList.setAttribute(STUB_ATTRIBUTE, 'true');
 
-        // Try to find element normally
-        var element = originalGetElementById(id);
+        var menuItem = document.createElement('li');
+        menuItem.className = 'menu-item kadence-nav-guard-stub';
+        menuItem.setAttribute(STUB_ATTRIBUTE, 'true');
 
-        // If navigation element not found, return null gracefully
-        if (!element && navIds.includes(id)) {
-            console.debug('[Kadence Nav Guard] Navigation ID not found:', id);
-            return null;
-        }
+        var menuLink = document.createElement('a');
+        menuLink.className = 'menu-link kadence-nav-guard-stub';
+        menuLink.setAttribute(STUB_ATTRIBUTE, 'true');
+        menuLink.setAttribute('href', '#' + STUB_LINK_TARGET);
+        menuLink.setAttribute('tabindex', '-1');
+        menuLink.textContent = 'Placeholder';
 
-        return element;
-    };
+        menuItem.appendChild(menuLink);
+        menuList.appendChild(menuItem);
+        nav.appendChild(menuList);
+        header.appendChild(nav);
 
-    // Override getElementsByClassName
-    document.getElementsByClassName = function(className) {
-        // On headerless pages, always block navigation classes
-        if (isHeaderlessPage() && navClasses.includes(className)) {
-            console.debug('[Kadence Nav Guard] Blocked getElementsByClassName on headerless page:', className);
-            return [];
-        }
+        document.body.insertBefore(header, document.body.firstChild);
+        logInfo('Injected hidden navigation stub.');
+        return true;
+    }
 
-        // Try normally
-        var elements = originalGetElementsByClassName(className);
-
-        // If navigation class not found, return empty gracefully
-        if (elements.length === 0 && navClasses.includes(className)) {
-            console.debug('[Kadence Nav Guard] Navigation class not found:', className);
-            return [];
-        }
-
-        return elements;
-    };
-
-    // Override getElementsByTagName for specific cases
-    document.getElementsByTagName = function(tagName) {
-        var elements = originalGetElementsByTagName(tagName);
-
-        // Filter out navigation elements
-        if (tagName.toLowerCase() === 'nav' || tagName.toLowerCase() === 'header') {
-            var filtered = Array.prototype.filter.call(elements, function(el) {
-                var elClasses = el.className || '';
-                var elId = el.id || '';
-                return !navSelectors.some(function(navSel) {
-                    return elClasses.includes(navSel.replace('.', '')) ||
-                           elId.includes(navSel.replace('#', ''));
-                });
-            });
-            console.debug('[Kadence Nav Guard] Filtered getElementsByTagName:', tagName, filtered.length);
-            return filtered;
-        }
-
-        return elements;
-    };
-
-    // Prevent navigation initialization when DOM is ready
-    function disableKadenceNav() {
-        if (!isHeaderlessPage()) {
+    function applyNeutralisers() {
+        if (hasRealKadenceHeader()) {
+            stopNeutraliseLoop();
             return;
         }
 
-        // Create a dummy object that will absorb any function calls.
-        const dummyKadenceNav = {
-            init: function() { console.debug('[Kadence Nav Guard] Blocked kadence.navigation.init()'); },
-            toggleSubArrow: function() { console.debug('[Kadence Nav Guard] Blocked toggleSubArrow()'); },
-            initOutline: function() { console.debug('[Kadence Nav Guard] Blocked initOutline()'); }
-        };
+        window.KADENCE_NAV_DISABLED = true;
 
-        // Preserve any existing Kadence configuration while neutralizing navigation.
+        var noop = function() {};
         window.kadence = window.kadence || {};
-        window.kadence.initNavigation = function() { console.debug('[Kadence Nav Guard] Blocked initNavigation()'); };
-        var existingNavigation = window.kadence.navigation || {};
-        window.kadence.navigation = Object.assign({}, existingNavigation, dummyKadenceNav);
+        window.kadence.initNavigation = noop;
 
-        // Also check for standalone Kadence navigation object
-        if (window.KadenceNavigation) {
-            window.KadenceNavigation.init = function() {
-                console.debug('[Kadence Nav Guard] KadenceNavigation.init blocked');
-            };
+        if (!window.kadence.navigation || typeof window.kadence.navigation !== 'object') {
+            window.kadence.navigation = {};
         }
 
-        console.log('[Kadence Nav Guard] Kadence navigation object fully neutralized for headerless page.');
+        ['init', 'toggleSubArrow', 'initOutline', 'handleToggle', 'setupEvents'].forEach(function(method) {
+            window.kadence.navigation[method] = noop;
+        });
+
+        if (window.KadenceNavigation && typeof window.KadenceNavigation === 'object') {
+            ['init', 'toggleSubArrow', 'initOutline', 'handleToggle', 'setupEvents'].forEach(function(method) {
+                window.KadenceNavigation[method] = noop;
+            });
+        }
     }
 
-    // Run immediately
-    disableKadenceNav();
+    function startNeutraliseLoop() {
+        if (neutraliseInterval) {
+            return;
+        }
 
-    // Run on DOMContentLoaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', disableKadenceNav, { passive: true });
-    } else {
-        disableKadenceNav();
+        applyNeutralisers();
+        neutraliseInterval = window.setInterval(function() {
+            applyNeutralisers();
+            neutraliseChecks++;
+            if (neutraliseChecks >= MAX_NEUTRALISE_CHECKS) {
+                logDebug('Stopped Kadence neutraliser loop after maximum checks.');
+                stopNeutraliseLoop();
+            }
+        }, 100);
     }
 
-    // Run on load as well for extra safety
-    window.addEventListener('load', disableKadenceNav, { passive: true });
+    function observeForBody() {
+        if (document.body || bodyObserver) {
+            return;
+        }
 
-    // Add global error handler for navigation-related errors
+        bodyObserver = new MutationObserver(function() {
+            if (document.body) {
+                ensureNavigationShell();
+            }
+        });
+
+        bodyObserver.observe(document.documentElement || document, { childList: true });
+    }
+
+    function ensureNavigationShell() {
+        if (hasRealKadenceHeader()) {
+            stopEnsureTimer();
+            stopBodyObserver();
+            stopNeutraliseLoop();
+            return;
+        }
+
+        if (createStubNavigation()) {
+            startNeutraliseLoop();
+            stopEnsureTimer();
+            stopBodyObserver();
+            return;
+        }
+
+        if (!document.body) {
+            observeForBody();
+        }
+
+        if (ensureAttempts++ < MAX_STUB_ATTEMPTS) {
+            ensureTimer = window.setTimeout(ensureNavigationShell, 50);
+        } else {
+            logDebug('Reached maximum stub injection attempts.');
+            stopEnsureTimer();
+            stopBodyObserver();
+        }
+    }
+
+    ensureNavigationShell();
+    document.addEventListener('DOMContentLoaded', ensureNavigationShell, { passive: true });
+    window.addEventListener('load', ensureNavigationShell, { passive: true });
+
     window.addEventListener('error', function(event) {
-        if (event.message && event.message.includes('navigation') && event.message.includes('getAttribute')) {
-            console.warn('[Kadence Nav Guard] Caught navigation error:', event.message);
-            event.preventDefault();
+        if (!event) {
+            return;
+        }
+
+        var message = event.message || '';
+        if (message.indexOf('getAttribute') !== -1 && message.toLowerCase().indexOf('navigation') !== -1) {
+            logDebug('Suppressed navigation error: ' + message);
+            if (typeof event.preventDefault === 'function') {
+                event.preventDefault();
+            }
+            if (typeof event.stopImmediatePropagation === 'function') {
+                event.stopImmediatePropagation();
+            }
             return true;
         }
-    }, { capture: true, passive: false });
+    }, { capture: true });
 
-    console.log('[Kadence Nav Guard] Smart protection active' + (isHeaderlessPage() ? ' (headerless mode)' : ' (standard mode)'));
+    logDebug('Guard armed.');
 })();
