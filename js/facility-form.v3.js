@@ -4842,6 +4842,394 @@ window.downloadJSON = downloadJSON;
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 window.initializeSectionToggles = initializeSectionToggles;
 
+// ============================================
+// CONSULTANTS OVERVIEW (for Referrers view)
+// ============================================
+
+function updateConsultantsOverview() {
+    const consultantsList = document.getElementById('consultants-list');
+    const consultantsStats = document.getElementById('consultants-toc-stats');
+
+    if (!consultantsList || !consultantsStats) return;
+
+    const consultants = window.formData?.referrerConsultants || [];
+    const currentIndex = window.currentConsultantIndex || 0;
+
+    // Update stats
+    consultantsStats.textContent = `Total: ${consultants.length} consultant${consultants.length !== 1 ? 's' : ''}`;
+
+    // Clear list
+    consultantsList.innerHTML = '';
+
+    // Populate consultant items
+    consultants.forEach((consultant, index) => {
+        const fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || 'Unnamed Consultant';
+        const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || 'Location not specified';
+
+        const item = document.createElement('div');
+        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+
+        const div = document.createElement('div');
+        div.textContent = fullName;
+        const nameEscaped = div.innerHTML;
+
+        const div2 = document.createElement('div');
+        div2.textContent = location;
+        const locationEscaped = div2.innerHTML;
+
+        item.innerHTML = `
+            <div class="facility-item-number">${index + 1}</div>
+            <div class="facility-item-info">
+                <div class="facility-item-name">${nameEscaped}</div>
+                <div class="facility-item-details">${locationEscaped}</div>
+            </div>
+        `;
+
+        item.addEventListener('click', function() {
+            window.currentConsultantIndex = index;
+            loadConsultantData();
+            updateConsultantsOverview();
+        }, { passive: true });
+
+        consultantsList.appendChild(item);
+    });
+}
+
+function loadConsultantData() {
+    if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length === 0) {
+        window.formData.referrerConsultants = [{
+            firstName: '',
+            lastName: '',
+            credentials: '',
+            city: '',
+            state: '',
+            email: '',
+            phone: '',
+            website: '',
+            affiliations: [],
+            facilitiesReferred: [],
+            schoolDistricts: [],
+            notes: ''
+        }];
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerConsultants[window.currentConsultantIndex];
+
+    // Load basic fields
+    const fields = {
+        'consultant-firstname': 'firstName',
+        'consultant-lastname': 'lastName',
+        'consultant-credentials': 'credentials',
+        'consultant-city': 'city',
+        'consultant-state': 'state',
+        'consultant-email': 'email',
+        'consultant-phone': 'phone',
+        'consultant-website': 'website',
+        'consultant-notes': 'notes'
+    };
+
+    Object.keys(fields).forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.value = consultant[fields[fieldId]] || '';
+        }
+    });
+
+    // Update dropdown
+    updateConsultantDropdown();
+
+    // Update remove button visibility
+    const removeBtn = document.getElementById('remove-consultant-btn');
+    if (removeBtn) {
+        if (window.formData.referrerConsultants.length > 1) {
+            removeBtn.classList.remove('d-none');
+        } else {
+            removeBtn.classList.add('d-none');
+        }
+    }
+}
+
+function updateConsultantDropdown() {
+    const dropdown = document.getElementById('consultant-dropdown');
+    if (!dropdown) return;
+
+    const consultants = window.formData?.referrerConsultants || [];
+    dropdown.innerHTML = '';
+
+    consultants.forEach((consultant, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        const fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || 'New Consultant';
+        option.textContent = `${index + 1}. ${fullName}`;
+        dropdown.appendChild(option);
+    });
+
+    dropdown.value = window.currentConsultantIndex || 0;
+}
+
+function updateConsultantsUI() {
+    loadConsultantData();
+    updateConsultantsOverview();
+    updateConsultantDropdown();
+    if (typeof updateJSON === 'function') updateJSON();
+    if (typeof autoSave === 'function') autoSave();
+}
+
+// ============================================
+// LOCATION FACILITIES OVERVIEW
+// ============================================
+
+function updateLocationFacilitiesOverview() {
+    const facilitiesList = document.getElementById('location-facilities-list');
+    const facilitiesStats = document.getElementById('location-facilities-toc-stats');
+
+    if (!facilitiesList || !facilitiesStats) return;
+
+    const facilities = window.formData?.facilities || [];
+    const currentIndex = window.currentFacilityIndex || 0;
+
+    // Update stats
+    facilitiesStats.textContent = `Total: ${facilities.length} facilit${facilities.length !== 1 ? 'ies' : 'y'}`;
+
+    // Clear list
+    facilitiesList.innerHTML = '';
+
+    if (facilities.length === 0) {
+        facilitiesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No facilities in this location yet</div>';
+        return;
+    }
+
+    // Populate facility items
+    facilities.forEach((facility, index) => {
+        const facilityName = facility.identification?.name || 'Unnamed Facility';
+        const operator = facility.identification?.currentOperator || 'Unknown Operator';
+        const programType = facility.facilityDetails?.type || '';
+        const status = facility.operatingPeriod?.status || '';
+
+        const item = document.createElement('div');
+        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+
+        // Escape HTML
+        const div1 = document.createElement('div');
+        div1.textContent = facilityName;
+        const nameEscaped = div1.innerHTML;
+
+        const div2 = document.createElement('div');
+        div2.textContent = operator;
+        const operatorEscaped = div2.innerHTML;
+
+        const div3 = document.createElement('div');
+        div3.textContent = programType;
+        const typeEscaped = div3.innerHTML;
+
+        const div4 = document.createElement('div');
+        div4.textContent = status;
+        const statusEscaped = div4.innerHTML;
+
+        item.innerHTML = `
+            <div class="facility-item-number">${index + 1}</div>
+            <div class="facility-item-info">
+                <div class="facility-item-name">${nameEscaped}</div>
+                <div class="facility-item-details">
+                    ${operatorEscaped}${programType ? ' • ' + typeEscaped : ''}${status ? ' • ' + statusEscaped : ''}
+                </div>
+            </div>
+        `;
+
+        item.addEventListener('click', function() {
+            window.currentFacilityIndex = index;
+            if (typeof window.updateAllUI === 'function') {
+                window.updateAllUI();
+            }
+            updateLocationFacilitiesOverview();
+        }, { passive: true });
+
+        facilitiesList.appendChild(item);
+    });
+}
+
+// ============================================
+// CONSULTANT NAVIGATION INITIALIZATION
+// ============================================
+
+function initializeConsultantNavigation() {
+    // Initialize consultant navigation buttons
+    const addConsultantBtn = document.getElementById('add-consultant-btn');
+    const removeConsultantBtn = document.getElementById('remove-consultant-btn');
+    const prevConsultantBtn = document.getElementById('prev-consultant-btn');
+    const nextConsultantBtn = document.getElementById('next-consultant-btn');
+    const consultantDropdown = document.getElementById('consultant-dropdown');
+
+    if (addConsultantBtn && !addConsultantBtn.dataset.listenerAttached) {
+        addConsultantBtn.addEventListener('click', function() {
+            if (!window.formData.referrerConsultants) {
+                window.formData.referrerConsultants = [];
+            }
+            window.formData.referrerConsultants.push({
+                firstName: '',
+                lastName: '',
+                credentials: '',
+                city: '',
+                state: '',
+                email: '',
+                phone: '',
+                website: '',
+                affiliations: [],
+                facilitiesReferred: [],
+                schoolDistricts: [],
+                notes: ''
+            });
+            window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
+            updateConsultantsUI();
+        }, { passive: true });
+        addConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (removeConsultantBtn && !removeConsultantBtn.dataset.listenerAttached) {
+        removeConsultantBtn.addEventListener('click', function() {
+            if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length <= 1) {
+                return;
+            }
+            if (confirm('Are you sure you want to remove this consultant?')) {
+                window.formData.referrerConsultants.splice(window.currentConsultantIndex, 1);
+                if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
+                    window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
+                }
+                updateConsultantsUI();
+            }
+        }, { passive: true });
+        removeConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (prevConsultantBtn && !prevConsultantBtn.dataset.listenerAttached) {
+        prevConsultantBtn.addEventListener('click', function() {
+            if (window.currentConsultantIndex > 0) {
+                window.currentConsultantIndex--;
+                loadConsultantData();
+                updateConsultantsOverview();
+            }
+        }, { passive: true });
+        prevConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (nextConsultantBtn && !nextConsultantBtn.dataset.listenerAttached) {
+        nextConsultantBtn.addEventListener('click', function() {
+            const maxIndex = (window.formData.referrerConsultants?.length || 1) - 1;
+            if (window.currentConsultantIndex < maxIndex) {
+                window.currentConsultantIndex++;
+                loadConsultantData();
+                updateConsultantsOverview();
+            }
+        }, { passive: true });
+        nextConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (consultantDropdown && !consultantDropdown.dataset.listenerAttached) {
+        consultantDropdown.addEventListener('change', function(e) {
+            window.currentConsultantIndex = parseInt(e.target.value);
+            loadConsultantData();
+            updateConsultantsOverview();
+        }, { passive: true });
+        consultantDropdown.dataset.listenerAttached = 'true';
+    }
+}
+
+// ============================================
+// TAB-SWITCHING INITIALIZATION FOR OVERVIEWS
+// ============================================
+
+function initializeOverviewTabSwitching() {
+    // Initialize overviews based on active tab when page loads
+    const initializeActiveTabOverview = () => {
+        setTimeout(() => {
+            const activeTab = document.querySelector('.category-tab.active');
+            if (activeTab) {
+                if (activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
+                    window.updateConsultantsUI();
+                } else if (activeTab.dataset.category === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
+                    window.updateLocationFacilitiesOverview();
+                }
+            }
+        }, 100);
+    };
+
+    // Call on page load
+    window.addEventListener('load', initializeActiveTabOverview, { passive: true });
+
+    // Also update overviews when switching tabs
+    document.addEventListener('click', function(e) {
+        const tab = e.target.closest('.category-tab');
+        if (tab) {
+            setTimeout(() => {
+                if (tab.dataset.category === 'referrers') {
+                    if (typeof window.updateConsultantsUI === 'function') {
+                        window.updateConsultantsUI();
+                    }
+                } else if (tab.dataset.category === 'locations') {
+                    if (typeof window.updateLocationFacilitiesOverview === 'function') {
+                        window.updateLocationFacilitiesOverview();
+                    }
+                }
+            }, 100);
+        }
+    }, { passive: true });
+}
+
+// ============================================
+// TOC TOGGLE INITIALIZATION
+// ============================================
+
+function initializeConsultantsTocToggle() {
+    const consultantsTocToggle = document.getElementById('consultants-toc-toggle-btn');
+    if (consultantsTocToggle && !consultantsTocToggle.dataset.listenerAttached) {
+        consultantsTocToggle.addEventListener('click', function() {
+            const toc = document.getElementById('consultants-toc');
+            const content = toc.querySelector('.toc-content');
+            const isCollapsed = content.style.display === 'none';
+
+            if (isCollapsed) {
+                content.style.display = 'block';
+                consultantsTocToggle.textContent = '🔎';
+            } else {
+                content.style.display = 'none';
+                consultantsTocToggle.textContent = '👁️';
+            }
+        }, { passive: true });
+        consultantsTocToggle.dataset.listenerAttached = 'true';
+    }
+}
+
+function initializeLocationFacilitiesToc() {
+    const locationFacilitiesTocToggle = document.getElementById('location-facilities-toc-toggle-btn');
+    if (locationFacilitiesTocToggle && !locationFacilitiesTocToggle.dataset.listenerAttached) {
+        locationFacilitiesTocToggle.addEventListener('click', function() {
+            const toc = document.getElementById('location-facilities-toc');
+            const content = toc.querySelector('.toc-content');
+            const isCollapsed = content.style.display === 'none';
+
+            if (isCollapsed) {
+                content.style.display = 'block';
+                locationFacilitiesTocToggle.textContent = '🔎';
+            } else {
+                content.style.display = 'none';
+                locationFacilitiesTocToggle.textContent = '👁️';
+            }
+        }, { passive: true });
+        locationFacilitiesTocToggle.dataset.listenerAttached = 'true';
+    }
+}
+
+// Expose to global scope
+window.updateConsultantsOverview = updateConsultantsOverview;
+window.updateConsultantsUI = updateConsultantsUI;
+window.loadConsultantData = loadConsultantData;
+window.updateLocationFacilitiesOverview = updateLocationFacilitiesOverview;
+window.initializeConsultantNavigation = initializeConsultantNavigation;
+window.initializeOverviewTabSwitching = initializeOverviewTabSwitching;
+window.initializeConsultantsTocToggle = initializeConsultantsTocToggle;
+window.initializeLocationFacilitiesToc = initializeLocationFacilitiesToc;
+
 // Create projectManager object for backwards compatibility
 window.projectManager = {
     loadProject: loadProject,
