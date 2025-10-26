@@ -5334,6 +5334,40 @@ if (document.readyState === 'loading') {
     initializeForm();
 }
 
+// ============================================
+// FACILITY TOOLBAR TOGGLE
+// ============================================
+function initializeFacilityToolbarToggle() {
+    const toggleBtn = document.getElementById('facility-toolbar-toggle');
+    const expandable = document.getElementById('facility-toolbar-expandable');
+
+    if (!toggleBtn || !expandable) return;
+
+    // Start collapsed by default to save space
+    let isCollapsed = true;
+    expandable.style.display = 'none';
+    toggleBtn.textContent = '🔎';
+    toggleBtn.title = 'Expand toolbar';
+
+    // Remove any old listeners by cloning
+    const newToggleBtn = toggleBtn.cloneNode(true);
+    toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
+
+    newToggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        isCollapsed = !isCollapsed;
+        expandable.style.display = isCollapsed ? 'none' : 'block';
+        newToggleBtn.textContent = isCollapsed ? '🔎' : '🔽';
+        newToggleBtn.title = isCollapsed ? 'Expand toolbar' : 'Minimize toolbar';
+    }, { passive: false });
+
+    debugLog('✅ Facility toolbar toggle initialized (collapsed by default)');
+}
+
+window.initializeFacilityToolbarToggle = initializeFacilityToolbarToggle;
+
 // Fallback: sometimes remote resources or slow loads cause UI bits to render incorrectly.
 // Re-run lightweight initialization checks on window.load to recover from intermittent failures.
 window.addEventListener('load', () => {

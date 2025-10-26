@@ -535,11 +535,29 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .facility-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
     color: #000435; /* Midnight Blue for readability */
+}
+
+.facility-header > .d-flex:first-child {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.facility-toolbar-expandable {
+    display: none;
+}
+
+.facility-toolbar-expandable > .d-flex,
+.facility-toolbar-expandable > .controls {
+    margin-top: 10px;
+}
+
+#facility-toolbar-toggle {
+    min-width: auto;
+    padding: 4px 8px;
+    font-size: 16px;
 }
 
 .controls {
@@ -557,6 +575,11 @@ body:not(.admin-bar) .fixed-toolbar {
     color: #6b7280;
     font-weight: 400;
     font-style: italic;
+}
+
+#prev-facility-btn,
+#next-facility-btn {
+    padding: 8px 12px;
 }
 
 /* ============================================

@@ -326,16 +326,19 @@
                 <div class="d-flex align-items-center gap-15">
                     <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
                     <span id="current-facility-name" class="text-muted fw-normal"></span>
-                    <div class="d-flex gap-5">
-                        <button class="btn d-none" id="prev-facility-btn" style="padding: 8px 12px;">⬅️ Previous</button>
-                        <button class="btn d-none" id="next-facility-btn" style="padding: 8px 12px;">Next ➡️</button>
-                    </div>
+                    <button class="btn" id="facility-toolbar-toggle">🔽</button>
                 </div>
-                <div class="controls">
-                    <button class="btn" id="add-facility-btn">Add Facility</button>
-                    <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
-                    <button class="btn" id="clone-facility-btn">Clone Facility</button>
-                    <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                <div class="facility-toolbar-expandable" id="facility-toolbar-expandable">
+                    <div class="d-flex gap-5">
+                        <button class="btn d-none" id="prev-facility-btn">⬅️ Previous</button>
+                        <button class="btn d-none" id="next-facility-btn">Next ➡️</button>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" id="add-facility-btn">Add Facility</button>
+                        <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
+                        <button class="btn" id="clone-facility-btn">Clone Facility</button>
+                        <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2436,6 +2439,11 @@
             }
 
             initializeCategoryNavigation();
+
+            // Initialize facility toolbar toggle (defined in facility-form.v3.js)
+            if (typeof window.initializeFacilityToolbarToggle === 'function') {
+                window.initializeFacilityToolbarToggle();
+            }
 
             // Initialize correct form visibility based on active tab
             const activeTab = document.querySelector('.category-tab.active');
