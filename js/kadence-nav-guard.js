@@ -18,13 +18,39 @@
     // Check if this is a headerless layout (data pages)
     // Use a function to avoid accessing document.body before it exists
     function isHeaderlessPage() {
-        return window.KADENCE_NAV_DISABLED ||
-               window.location.pathname.includes('data.html') ||
-               window.location.pathname.includes('admin-data.html') || // Check for document.body before accessing classList
-               (document.body && (
-                   document.body.classList.contains('page-data') || 
-                   document.body.classList.contains('page-admin-data'))
-               );
+        if (window.KADENCE_NAV_DISABLED) {
+            return true;
+        }
+
+        var pathname = (window.location && window.location.pathname) || '';
+
+        if (pathname) {
+            var normalizedPath = pathname.replace(/\/index\.php$/, '');
+
+            if (normalizedPath === '/data' ||
+                normalizedPath === '/data/' ||
+                normalizedPath === '/admin-data' ||
+                normalizedPath === '/admin-data/' ||
+                normalizedPath.indexOf('data.html') !== -1 ||
+                normalizedPath.indexOf('admin-data.html') !== -1) {
+                return true;
+            }
+        }
+
+        if (document.body) {
+            if (document.body.classList.contains('page-data') ||
+                document.body.classList.contains('page-admin-data')) {
+                return true;
+            }
+
+            var bodyClasses = document.body.className || '';
+            if (bodyClasses.indexOf('page-slug-data') !== -1 ||
+                bodyClasses.indexOf('page-slug-admin-data') !== -1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Store original DOM query methods
