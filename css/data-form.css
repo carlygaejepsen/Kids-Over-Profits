@@ -891,6 +891,8 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    white-space: nowrap; /* Prevent text from wrapping */
+    min-width: fit-content; /* Ensure button is wide enough for content */
 }
 
 .btn:hover {
@@ -2104,12 +2106,22 @@ textarea {
     .btn {
         padding: 12px 16px;
         font-size: 14px;
+        width: auto; /* Changed from 100% to auto to prevent narrowing in flex containers */
+        min-width: 80px; /* Minimum width to prevent vertical text wrapping */
+        flex-shrink: 0; /* Prevent buttons from shrinking below min-width */
+    }
+
+    /* Only apply full width to buttons that are not in flex containers */
+    .controls .btn,
+    .project-management .btn,
+    .form-group > .btn {
         width: 100%;
     }
 
     .btn-inline {
         padding: 10px 14px;
         font-size: 13px;
+        min-width: 70px;
     }
 
     .add-item-btn {
@@ -2257,6 +2269,50 @@ textarea {
     .array-item-notes {
         margin: 8px 0 12px 0;
     }
+
+    /* Consultant navigation - make it wrap on mobile */
+    #referrer-consultants-section .section-content > div[style*="display: flex"] {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    #referrer-consultants-section .section-content > div[style*="display: flex"] > div {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    /* Consultant dropdown - make it responsive */
+    #consultant-dropdown {
+        min-width: 150px !important;
+        max-width: 100% !important;
+        flex: 1 1 auto !important;
+    }
+
+    /* Consultant navigation buttons */
+    #prev-consultant-btn,
+    #next-consultant-btn,
+    #add-consultant-btn,
+    #remove-consultant-btn {
+        min-width: 90px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* General rule: Any flex container with buttons should wrap on mobile */
+    div[style*="display: flex"] {
+        flex-wrap: wrap !important;
+    }
+
+    /* Ensure button groups have proper spacing */
+    div[style*="display: flex"][style*="gap"] {
+        gap: 8px !important;
+    }
+
+    /* Make select dropdowns responsive in flex containers */
+    select[style*="min-width"] {
+        min-width: 120px !important;
+        max-width: 100% !important;
+    }
 }
 
 /* Extra small screens */
@@ -2288,6 +2344,17 @@ textarea {
     .controls .btn {
         font-size: 13px;
         padding: 10px 14px;
+        min-width: 70px; /* Ensure buttons don't become too narrow */
+    }
+
+    /* Consultant navigation on very small screens */
+    #prev-consultant-btn,
+    #next-consultant-btn {
+        min-width: 80px !important;
+    }
+
+    #consultant-dropdown {
+        min-width: 120px !important;
     }
 
     input,
