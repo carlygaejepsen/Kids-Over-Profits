@@ -14,6 +14,46 @@
     var STUB_LINK_TARGET = 'kadence-nav-guard-stub';
     var MAX_STUB_ATTEMPTS = 120; // ~6 seconds of retries.
     var MAX_NEUTRALISE_CHECKS = 200; // ~20 seconds of follow-up protection.
+    // Flag to track if guard is active
+    window.KADENCE_NAV_GUARD_ACTIVE = true;
+
+    // Check if this is a headerless layout (data pages)
+    // Use a function to avoid accessing document.body before it exists
+    function isHeaderlessPage() {
+        if (window.KADENCE_NAV_DISABLED) {
+            return true;
+        }
+
+        var pathname = (window.location && window.location.pathname) || '';
+
+        if (pathname) {
+            var normalizedPath = pathname.replace(/\/index\.php$/, '');
+
+            if (normalizedPath === '/data' ||
+                normalizedPath === '/data/' ||
+                normalizedPath === '/admin-data' ||
+                normalizedPath === '/admin-data/' ||
+                normalizedPath.indexOf('data.html') !== -1 ||
+                normalizedPath.indexOf('admin-data.html') !== -1) {
+                return true;
+            }
+        }
+
+        if (document.body) {
+            if (document.body.classList.contains('page-data') ||
+                document.body.classList.contains('page-admin-data')) {
+                return true;
+            }
+
+            var bodyClasses = document.body.className || '';
+            if (bodyClasses.indexOf('page-slug-data') !== -1 ||
+                bodyClasses.indexOf('page-slug-admin-data') !== -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     var ensureAttempts = 0;
     var ensureTimer = null;
