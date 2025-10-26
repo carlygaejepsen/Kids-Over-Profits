@@ -45,7 +45,7 @@ body.toolbar-minimized:not(.admin-bar) {
     right: 0;
     background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 99998; /* Below the WP admin bar but above other UI */
+    z-index: 9999; /* Below WP admin bar (99999) but above page content */
     transition: box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -88,6 +88,10 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
 }
 
 .fixed-toolbar .toolbar-toggle:hover {
