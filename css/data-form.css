@@ -64,6 +64,8 @@ body:not(.admin-bar) .fixed-toolbar {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     gap: 12px;
     min-height: 48px; /* Ensure consistent height */
+    position: relative;
+    z-index: 10000; /* Above admin bar */
 }
 
 .fixed-toolbar .toolbar-title {
@@ -72,6 +74,7 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     align-items: center;
     gap: 10px;
+    pointer-events: none; /* Don't block clicks */
 }
 
 .fixed-toolbar .toolbar-toggle {
@@ -230,21 +233,26 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .fixed-toolbar.minimized .toolbar-header {
     border-bottom: none;
+    pointer-events: auto !important; /* Keep header clickable when minimized */
 }
 
 .fixed-toolbar.minimized .toolbar-toggle {
-    background: #EF9034;
-    color: #FFFFFF;
-    border-color: #B2E102;
+    background: #EF9034 !important;
+    color: #FFFFFF !important;
+    border-color: #B2E102 !important;
+    z-index: 100001 !important; /* Even higher when minimized */
+    pointer-events: auto !important; /* Force clickable */
+    cursor: pointer !important;
 }
 
 .fixed-toolbar.minimized .toolbar-content {
-    max-height: 0;
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    overflow: hidden;
-    pointer-events: none;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    display: block !important; /* Keep in DOM but hidden */
 }
 
 .fixed-toolbar.minimized .btn-toolbar {
