@@ -4163,10 +4163,20 @@ async function initializeForm() {
     window.updateAllUI();
 
     // Initialize field notes functionality
-    initializeFieldNotes();
+    try {
+        initializeFieldNotes();
+    } catch (error) {
+        console.error('Error initializing field notes:', error);
+    }
 
     // Initialize fixed toolbar (for data.html)
-    initializeFixedToolbar();
+    console.log('📍 About to call initializeFixedToolbar...');
+    try {
+        initializeFixedToolbar();
+    } catch (error) {
+        console.error('❌ Error initializing fixed toolbar:', error);
+    }
+    console.log('📍 Finished calling initializeFixedToolbar');
 
     // Signal that the form and its functions are ready
     window.formReady = true;
@@ -5341,32 +5351,62 @@ if (document.readyState === 'loading') {
 // FIXED TOOLBAR INITIALIZATION (for data.html)
 // ============================================
 function initializeFixedToolbar() {
+    console.log('🔧 initializeFixedToolbar() called');
     const toolbar = document.getElementById('fixed-toolbar');
     const toolbarToggle = document.getElementById('toolbar-toggle-btn');
 
+    console.log('Toolbar elements:', { toolbar: !!toolbar, toolbarToggle: !!toolbarToggle });
+
     if (!toolbar || !toolbarToggle) {
-        debugLog('Fixed toolbar elements not found (likely not on data.html page)');
+        console.warn('⚠️ Fixed toolbar elements not found (likely not on data.html page)');
         return;
     }
 
     // Add toolbar-active class to body for proper padding
     document.body.classList.add('toolbar-active');
-    debugLog('✅ Added toolbar-active class to body');
+    console.log('✅ Added toolbar-active class to body');
+    console.log('Body classes:', document.body.className);
 
     // Set up toggle event listener
-    toolbarToggle.addEventListener('click', () => {
+    toolbarToggle.addEventListener('click', (e) => {
+        console.log('🖱️ Toolbar toggle clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+
         toolbar.classList.toggle('minimized');
         document.body.classList.toggle('toolbar-minimized');
         toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
         toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
-        debugLog(`Toolbar ${toolbar.classList.contains('minimized') ? 'minimized' : 'expanded'}`);
+
+        console.log(`Toolbar is now: ${toolbar.classList.contains('minimized') ? 'MINIMIZED' : 'EXPANDED'}`);
+        console.log('Toolbar classes:', toolbar.className);
+        console.log('Body classes:', document.body.className);
     });
 
-    debugLog('✅ Fixed toolbar initialized with toggle functionality');
+    console.log('✅ Fixed toolbar initialized with toggle functionality');
+    console.log('Initial toolbar classes:', toolbar.className);
 }
 
 // Make function globally accessible
 window.initializeFixedToolbar = initializeFixedToolbar;
+
+// BACKUP: Try to initialize toolbar immediately when DOM is ready
+console.log('⚡ Setting up toolbar initialization backups...');
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('⚡ DOMContentLoaded - attempting toolbar init');
+        setTimeout(initializeFixedToolbar, 100);
+    });
+} else {
+    console.log('⚡ DOM already loaded - attempting toolbar init now');
+    setTimeout(initializeFixedToolbar, 100);
+}
+
+// Also try on window load as final backup
+window.addEventListener('load', () => {
+    console.log('⚡ Window load - attempting toolbar init');
+    setTimeout(initializeFixedToolbar, 100);
+});
 
 // ============================================
 // FACILITY TOOLBAR TOGGLE
