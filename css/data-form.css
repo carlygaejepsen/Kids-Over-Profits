@@ -246,13 +246,15 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar.minimized .toolbar-content {
+    display: none !important; /* Completely hide when minimized */
+    height: 0 !important;
     max-height: 0 !important;
     opacity: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding: 0 !important; /* Remove ALL padding */
+    margin: 0 !important;
     overflow: hidden !important;
     pointer-events: none !important;
-    display: block !important; /* Keep in DOM but hidden */
+    visibility: hidden !important;
 }
 
 .fixed-toolbar.minimized .btn-toolbar {
