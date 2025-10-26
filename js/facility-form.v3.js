@@ -1817,9 +1817,12 @@ async function saveProjectToCloud(projectName, action = 'save') {
         debugLog('Facility count:', window.formData.facilities?.length || 0);
         debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
 
-        // Determine category based on active tab
-        const activeTab = document.querySelector('.category-tab.active');
-        const category = activeTab ? activeTab.dataset.category : 'companies';
+        // Determine category: check project metadata first, then fall back to active tab
+        let category = window.projects?.[projectName]?.category;
+        if (!category) {
+            const activeTab = document.querySelector('.category-tab.active');
+            category = activeTab ? activeTab.dataset.category : 'companies';
+        }
 
         const projectData = {
             name: projectName,
@@ -3216,7 +3219,7 @@ function removeFacility() {
     }
 }
 
-async function performClone(targetProjectName) {
+async function performClone(targetProjectName, targetCategory = null) {
     if (!targetProjectName) {
         alert('No target project specified for cloning.');
         return;
@@ -3246,13 +3249,21 @@ async function performClone(targetProjectName) {
         const newProjectData = createNewProjectData();
         newProjectData.facilities = [facilityToClone];
 
+        // Determine category: use provided category, or fall back to active tab
+        let category = targetCategory;
+        if (!category) {
+            const activeTab = document.querySelector('.category-tab.active');
+            category = activeTab ? activeTab.dataset.category : 'companies';
+        }
+
         window.projects[targetProjectName] = {
             name: targetProjectName,
             data: newProjectData,
             currentFacilityIndex: 0,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            category: category
         };
-        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility (no operator data).`);
+        debugLog(`✅ Created new project "${targetProjectName}" with cloned facility in category "${category}" (no operator data).`);
     } else {
         if (!window.projects[targetProjectName].data.facilities) {
             window.projects[targetProjectName].data.facilities = [];
@@ -3349,6 +3360,7 @@ function cloneFacility() {
     newConfirmBtn.onclick = () => {
         const destination = document.querySelector('input[name="clone-destination"]:checked').value;
         let targetProjectName = '';
+        let targetCategory = null;
 
         if (destination === 'current') {
             targetProjectName = window.currentProjectName;
@@ -3356,6 +3368,11 @@ function cloneFacility() {
             targetProjectName = document.getElementById('existing-project-select').value;
         } else if (destination === 'new') {
             targetProjectName = document.getElementById('new-project-name-input').value.trim();
+            // Get the selected category for new projects
+            const categorySelect = document.getElementById('new-project-category-select');
+            if (categorySelect) {
+                targetCategory = categorySelect.value;
+            }
         }
 
         if (!targetProjectName) {
@@ -3368,7 +3385,7 @@ function cloneFacility() {
             return;
         }
 
-        performClone(targetProjectName);
+        performClone(targetProjectName, targetCategory);
         closeModal();
     };
 
