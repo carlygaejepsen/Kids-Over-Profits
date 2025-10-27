@@ -34,4 +34,5 @@
 
 - Confirm Git for Windows is installed so the `git` CLI is available from PowerShell or Command Prompt; the installer also provides Git Bash for Unix-style shells when needed.【F:environment-summary.md†L5-L13】
 - From PowerShell, run the same commands referenced throughout this plan to manage branches: `git status -sb` to verify the current branch, `git switch -c phase-0-documentation` (or another name) to create the new branch, and `git push -u origin phase-0-documentation` to publish it to GitHub.【F:environment-summary.md†L5-L13】
+- When pasting commands into Git Bash or Windows Terminal, omit the leading prompt (`$`) and trim any control characters such as `^[[200~` that sometimes ride along with clipboard pastes; if you see those characters appear, backspace them away before pressing Enter so Bash receives only the intended `git …` command.
 - If a full Bash environment is preferred for parity with the production server, enable Windows Subsystem for Linux (WSL) and clone the repository inside the Linux distribution, allowing the documented shell workflows to run unchanged.【F:environment-summary.md†L5-L13】
