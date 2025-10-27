@@ -1271,6 +1271,297 @@
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
+        // Set mode to suggestions
+        window.FORM_MODE = 'suggestions';
+        
+        // Override save function for suggestions
+        // Function to load project and sync with our form
+        function loadProjectAndSync(projectName) {
+            console.log('📂 Loading and syncing project:', projectName);
+
+            // Check if this project is already loaded
+            const currentProject = window.currentProjectName;
+            if (currentProject === projectName) {
+                console.log('Project already loaded:', projectName);
+                if (typeof showUploadStatus === 'function') {
+                    showUploadStatus(`ℹ️ Already working on "${projectName}"`, 'info');
+                }
+                return;
+            }
+            
+            // Show loading status
+            if (typeof showUploadStatus === 'function') {
+                showUploadStatus(`🔄 Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
+            }
+            
+            // Force clear current project first to ensure a clean switch
+            if (window.projectManager && window.projectManager.newProject) {
+                console.log('🧹 Clearing current project first...');
+                window.projectManager.newProject(false); // false = don't show status
+            }
+            
+            // Small delay to ensure clearing is complete, then load the new project
+            setTimeout(() => {
+                // Use the existing project manager to load the project
+                if (window.projectManager && window.projectManager.loadProject) {
+                    console.log('📥 Loading project:', projectName);
+                    window.projectManager.loadProject(projectName);
+                    
+                    // Wait a moment for the load to complete, then sync our formData
+                    setTimeout(() => {
+                        // Make sure we have access to the global formData
+                        if (typeof formData !== 'undefined') {
+                            window.globalFormData = formData;
+                            
+                            // Extensive debugging
+                            console.log('Project loaded and synced:', projectName);
+                            console.log('📊 Current project data:', formData);
+                            console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
+                            console.log('📝 Current project name from variables:', {
+                                'window.currentProjectName': window.currentProjectName,
+                                'formData.projectName': formData?.projectName,
+                                'requested': projectName
+                            });
+
+                            // Verify we loaded the right project
+                            const actualCurrentProject = window.currentProjectName;
+                            if (actualCurrentProject !== projectName) {
+                                console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
+                                if (typeof showUploadStatus === 'function') {
+                                    showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
+                                }
+                            } else {
+                                // Show additional success status
+                                if (typeof showUploadStatus === 'function') {
+                                    const facilityCount = formData?.facilities?.length || 0;
+                                    showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
+                                }
+                            }
+                            
+                            // Also update the page title or some indicator
+                            const pageTitle = document.querySelector('h1');
+                            if (pageTitle && projectName !== 'New Project') {
+                                const actualProject = window.currentProjectName || projectName;
+                                pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
+                            }
+
+                            // Update toolbar facility info after project loads
+                            if (typeof window.updateToolbarFacilityInfo === 'function') {
+                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                                window.updateToolbarFacilityInfo(); // Call immediately
+                                setTimeout(window.updateToolbarFacilityInfo, 100);
+                                setTimeout(window.updateToolbarFacilityInfo, 300);
+                                setTimeout(window.updateToolbarFacilityInfo, 500);
+                                setTimeout(window.updateToolbarFacilityInfo, 1000);
+                            }
+
+                            // Dispatch custom event for project loaded
+                            document.dispatchEvent(new CustomEvent('projectLoaded', {
+                                detail: { projectName: actualCurrentProject || projectName }
+                            }));
+                        } else {
+                            console.warn('formData not found after project load');
+                            if (typeof showUploadStatus === 'function') {
+                                showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                            }
+                        }
+                    }, 300);
+                } else {
+                    console.error('Project manager not available');
+                    if (typeof showUploadStatus === 'function') {
+                        showUploadStatus('❌ Project manager not available', 'error');
+                    }
+                }
+            }, 100);
+        }
+
+        // ============================================
+        // GLOBAL HELPER FUNCTIONS
+        // ============================================
+
+        // Extract data points for search (used by both old organizer and new modal)
+        window.extractDataPointsForSearch = function(facility, type, searchValue) {
+            const matches = [];
+            const searchLower = searchValue.toLowerCase();
+
+            switch (type) {
+                case 'staff':
+                    if (facility.staff) {
+                        if (facility.staff.administrator) {
+                            facility.staff.administrator.forEach(admin => {
+                                const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
+                                if (adminStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Administrator: ${adminStr}`);
+                                }
+                            });
+                        }
+                        if (facility.staff.notableStaff) {
+                            facility.staff.notableStaff.forEach(staff => {
+                                const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
+                                if (staffStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Notable Staff: ${staffStr}`);
+                                }
+                            });
+                        }
+                    }
+                    break;
+
+                case 'operator':
+                    if (facility.identification?.operator &&
+                        facility.identification.operator.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.identification.operator);
+                    }
+                    if (facility.otherOperators) {
+                        facility.otherOperators.forEach(op => {
+                            if (op.toLowerCase().includes(searchLower)) {
+                                matches.push(op);
+                            }
+                        });
+                    }
+                    break;
+
+                case 'location':
+                    if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.location);
+                    }
+                    break;
+
+                case 'programType':
+                    if (facility.facilityDetails?.type &&
+                        facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.facilityDetails.type);
+                    }
+                    break;
+
+                case 'status':
+                    if (facility.operatingPeriod?.status &&
+                        facility.operatingPeriod.status.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.operatingPeriod.status);
+                    }
+                    break;
+
+                case 'year':
+                    if (facility.operatingPeriod?.startYear &&
+                        facility.operatingPeriod.startYear.toString().includes(searchValue)) {
+                        matches.push(`Opened: ${facility.operatingPeriod.startYear}`);
+                    }
+                    if (facility.operatingPeriod?.endYear &&
+                        facility.operatingPeriod.endYear.toString().includes(searchValue)) {
+                        matches.push(`Closed: ${facility.operatingPeriod.endYear}`);
+                    }
+                    break;
+
+                case 'accreditation':
+                    if (facility.accreditations) {
+                        if (facility.accreditations.current) {
+                            facility.accreditations.current.forEach(acc => {
+                                if (acc.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Current: ${acc}`);
+                                }
+                            });
+                        }
+                        if (facility.accreditations.past) {
+                            facility.accreditations.past.forEach(acc => {
+                                if (acc.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Past: ${acc}`);
+                                }
+                            });
+                        }
+                    }
+                    break;
+
+                case 'certification':
+                    if (facility.certifications) {
+                        facility.certifications.forEach(cert => {
+                            if (cert.toLowerCase().includes(searchLower)) {
+                                matches.push(cert);
+                            }
+                        });
+                    }
+                    break;
+            }
+
+            return matches;
+        };
+
+        // Category tab switching
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const category = this.dataset.category;
+
+                // Update active tab
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                const companiesContent = document.getElementById('companies-content');
+                const statesContent = document.getElementById('states-content');
+                const referrersContent = document.getElementById('referrers-content');
+
+                companiesContent.classList.toggle('d-none', category !== 'companies');
+                statesContent.classList.toggle('d-none', category !== 'locations');
+                referrersContent.classList.toggle('d-none', category !== 'referrers');
+                handleReferrerToggle(); // Use the centralized function
+
+                if (typeof window.refreshSavedProjectPanels === 'function') {
+                    window.refreshSavedProjectPanels();
+                }
+
+                if (category === 'companies') {
+                    // Hide private facility toggle for companies view
+                    const toggleSection = document.getElementById('private-ownership-toggle-section');
+                    if (toggleSection) toggleSection.style.display = 'none';
+
+                    // Show operator section
+                    const operatorSection = document.getElementById('operator-section');
+                    if (operatorSection) operatorSection.style.display = 'block';
+                } else if (category === 'locations') {
+                    // Show private facility toggle for locations view
+                    let toggleSection = document.getElementById('private-ownership-toggle-section');
+                    if (!toggleSection) {
+                        toggleSection = createPrivateOwnershipToggle();
+                        const categoryNav = document.getElementById('category-navigation');
+                        categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
+                    }
+                    toggleSection.style.display = 'block';
+                }
+
+                if (typeof renderSavedProjectsList === 'function') {
+                    renderSavedProjectsList();
+                }
+            });
+        });
+
+        // Independent consultant toggle functionality
+        const independentToggle = document.getElementById('referrer-independent-toggle');
+        const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
+        const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
+        const agencySection = document.getElementById('referrer-agency-section');
+
+        function updateAgencySliderAppearance() {
+            if (!agencySliderTrack || !agencySliderKnob || !independentToggle) return;
+
+            if (independentToggle.checked) {
+                // Independent consultant - toggle is ON
+                agencySliderTrack.style.backgroundColor = '#10b981';
+                agencySliderKnob.style.transform = 'translateX(24px)';
+                if (agencySection) agencySection.style.display = 'none';
+            } else {
+                // Agency-affiliated - toggle is OFF
+                agencySliderTrack.style.backgroundColor = '#e5e7eb';
+                agencySliderKnob.style.transform = 'translateX(0px)';
+                if (agencySection) agencySection.style.display = 'block';
+            }
+        }
+
+        if (agencySliderTrack && independentToggle) {
+            agencySliderTrack.addEventListener('click', function() {
+                independentToggle.checked = !independentToggle.checked;
+                updateAgencySliderAppearance();
+            });
+        }
+
+        window.updateAgencySliderAppearance = updateAgencySliderAppearance;
+
         async function submitSuggestion() {
             // Ask user to summarize their changes
             const changesSummary = prompt(
