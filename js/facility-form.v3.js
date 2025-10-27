@@ -2926,6 +2926,12 @@ window.updateAllUI = function() {
     initializeNoteControls();
     updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
+    // Ensure referrer consultant UI stays in sync when loading referrer projects
+    const activeTab = document.querySelector('.category-tab.active');
+    if (activeTab && activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
+        window.updateConsultantsUI();
+    }
+
     // Reinitialize autocomplete for facility status field
     const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
     if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
