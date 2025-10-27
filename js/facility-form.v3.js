@@ -5351,40 +5351,14 @@ if (document.readyState === 'loading') {
 // FIXED TOOLBAR INITIALIZATION (for data.html)
 // ============================================
 function initializeFixedToolbar() {
-    console.log('🔧 initializeFixedToolbar() called');
     const toolbar = document.getElementById('fixed-toolbar');
-    const toolbarToggle = document.getElementById('toolbar-toggle-btn');
-
-    console.log('Toolbar elements:', { toolbar: !!toolbar, toolbarToggle: !!toolbarToggle });
-
-    if (!toolbar || !toolbarToggle) {
-        console.warn('⚠️ Fixed toolbar elements not found (likely not on data.html page)');
+    if (!toolbar) {
+        debugLog('⚠️ Fixed toolbar element not found, skipping initialization.');
         return;
     }
-
-    // Add toolbar-active class to body for proper padding
-    document.body.classList.add('toolbar-active');
-    console.log('✅ Added toolbar-active class to body');
-    console.log('Body classes:', document.body.className);
-
-    // Set up toggle event listener
-    toolbarToggle.addEventListener('click', (e) => {
-        console.log('🖱️ Toolbar toggle clicked!');
-        e.preventDefault();
-        e.stopPropagation();
-
-        toolbar.classList.toggle('minimized');
-        document.body.classList.toggle('toolbar-minimized');
-        toolbarToggle.textContent = toolbar.classList.contains('minimized') ? '▼' : '−';
-        toolbarToggle.title = toolbar.classList.contains('minimized') ? 'Expand toolbar' : 'Minimize toolbar';
-
-        console.log(`Toolbar is now: ${toolbar.classList.contains('minimized') ? 'MINIMIZED' : 'EXPANDED'}`);
-        console.log('Toolbar classes:', toolbar.className);
-        console.log('Body classes:', document.body.className);
-    });
-
-    console.log('✅ Fixed toolbar initialized with toggle functionality');
-    console.log('Initial toolbar classes:', toolbar.className);
+    debugLog('🔧 initializeFixedToolbar() called, delegating to initializeToolbarButtons()');
+    // The initializeToolbarButtons function already contains the correct logic.
+    initializeToolbarButtons();
 }
 
 // Make function globally accessible
@@ -5392,21 +5366,11 @@ window.initializeFixedToolbar = initializeFixedToolbar;
 
 // BACKUP: Try to initialize toolbar immediately when DOM is ready
 console.log('⚡ Setting up toolbar initialization backups...');
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('⚡ DOMContentLoaded - attempting toolbar init');
-        setTimeout(initializeFixedToolbar, 100);
-    });
-} else {
-    console.log('⚡ DOM already loaded - attempting toolbar init now');
-    setTimeout(initializeFixedToolbar, 100);
-}
-
-// Also try on window load as final backup
-window.addEventListener('load', () => {
-    console.log('⚡ Window load - attempting toolbar init');
-    setTimeout(initializeFixedToolbar, 100);
-});
+document.addEventListener('DOMContentLoaded', () => {
+    debugLog('⚡ DOMContentLoaded - attempting toolbar init');
+    // This is now redundant with the main initializeForm call, but safe.
+    initializeFixedToolbar();
+}, { once: true });
 
 // ============================================
 // FACILITY TOOLBAR TOGGLE
