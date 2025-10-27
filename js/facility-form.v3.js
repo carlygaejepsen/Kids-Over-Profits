@@ -2231,6 +2231,11 @@ function handleReferrerToggle() {
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
         }
+        // Ensure the consultants overview is rendered
+        if (typeof window.updateConsultantsUI === 'function') {
+            window.updateConsultantsUI();
+        }
+
     } else {
         if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
         if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
@@ -4165,6 +4170,26 @@ async function initializeForm() {
     // Initialize autocomplete fields
     initializeAutocompleteFields();
     
+    // Initialize category tab switching logic
+    const categoryTabsContainer = document.getElementById('category-navigation');
+    if (categoryTabsContainer) {
+        categoryTabsContainer.addEventListener('click', (event) => {
+            const tab = event.target.closest('.category-tab');
+            if (!tab) return;
+
+            // Remove active class from all tabs
+            categoryTabsContainer.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            // Add active class to the clicked tab
+            tab.classList.add('active');
+
+            // Call the main handler to update the entire UI visibility
+            handleReferrerToggle();
+
+            // Also refresh the project panels to ensure they are in sync
+            refreshSavedProjectPanels();
+        });
+    }
+
     // Update all UI
     window.updateAllUI();
 
@@ -4187,6 +4212,10 @@ async function initializeForm() {
     // Signal that the form and its functions are ready
     window.formReady = true;
     document.dispatchEvent(new CustomEvent('formReady'));
+
+    // Final check to ensure the correct view is displayed on initial load
+    handleReferrerToggle();
+
     debugLog('🚀 Dispatched formReady event.');
 
     debugLog('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
