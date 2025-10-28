@@ -417,7 +417,7 @@ function showUploadStatus(message, type) {
 
 function normalizeProjectData(data) {
     if (!data) return createNewProjectData();
-    
+
     if (!data.operator) {
         data.operator = {
             name: "", currentName: "", otherNames: [], location: "", headquarters: "",
@@ -426,11 +426,47 @@ function normalizeProjectData(data) {
             notes: []
         };
     }
-    
+
     if (!data.facilities || !Array.isArray(data.facilities)) {
         data.facilities = [];
     }
-    
+
+    if (!data.referrerAgency || typeof data.referrerAgency !== 'object') {
+        data.referrerAgency = createDefaultReferrerGroup();
+    } else {
+        data.referrerAgency = Object.assign(createDefaultReferrerGroup(), data.referrerAgency);
+        if (!Array.isArray(data.referrerAgency.keyPersonnel)) {
+            data.referrerAgency.keyPersonnel = [];
+        }
+        if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
+            data.referrerAgency.fieldNotes = {};
+        }
+    }
+
+    if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
+        data.referrerConsultants = [createDefaultReferrerIndividual()];
+    } else {
+        data.referrerConsultants = data.referrerConsultants.map(consultant => {
+            const defaults = createDefaultReferrerIndividual();
+            const merged = Object.assign(defaults, consultant || {});
+            if (!Array.isArray(merged.affiliations)) merged.affiliations = [];
+            if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
+            if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
+            if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
+            return merged;
+        });
+    }
+
+    if (typeof data.isIndependentConsultant === 'undefined') {
+        data.isIndependentConsultant = false;
+    }
+
+    if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
+        data.fieldNotes = {};
+    }
+
+    data.referrer = buildReferrerEntries(data);
+
     return data;
 }
 
@@ -1694,6 +1730,8 @@ function persistProjectLocally(projectName, { showStatus = false, statusType = '
         window.projects = {};
     }
 
+    ensureReferrerDataStructures();
+
     // Determine category based on active tab
     const activeTab = document.querySelector('.category-tab.active');
     const category = activeTab ? activeTab.dataset.category : 'companies';
@@ -1816,6 +1854,8 @@ async function saveProjectToCloud(projectName, action = 'save') {
         debugLog('Project name:', projectName);
         debugLog('Facility count:', window.formData.facilities?.length || 0);
         debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
+
+        ensureReferrerDataStructures();
 
         // Determine category: check project metadata first, then fall back to active tab
         let category = window.projects?.[projectName]?.category;
@@ -1974,6 +2014,72 @@ function createDefaultReferrerIndividual() {
     };
 }
 
+function buildReferrerEntries(formData) {
+    const source = formData || {};
+    const agency = (source.referrerAgency && typeof source.referrerAgency === 'object')
+        ? source.referrerAgency
+        : createDefaultReferrerGroup();
+
+    const rawKeyPersonnel = Array.isArray(agency.keyPersonnel) ? agency.keyPersonnel : [];
+    const keyPersonnel = rawKeyPersonnel
+        .map(person => (typeof person === 'string' ? person.trim() : ''))
+        .filter(person => person);
+
+    const dataTemplate = {};
+    keyPersonnel.forEach((person, index) => {
+        dataTemplate[`referrerAgency.keyPersonnel.${index}`] = [person];
+    });
+
+    const cloneTemplate = () => {
+        const clone = {};
+        Object.entries(dataTemplate).forEach(([key, value]) => {
+            clone[key] = Array.isArray(value) ? value.slice() : value;
+        });
+        return clone;
+    };
+
+    const consultants = Array.isArray(source.referrerConsultants) ? source.referrerConsultants : [];
+    const agencyName = (agency.name || '').trim();
+
+    if (!consultants.length) {
+        return [{
+            name: agencyName,
+            data: cloneTemplate(),
+            referrerAgency: {
+                keyPersonnel: keyPersonnel.slice()
+            },
+            consultant: {
+                affiliations: [],
+                facilitiesReferred: [],
+                schoolDistricts: []
+            }
+        }];
+    }
+
+    return consultants.map(consultant => {
+        const affiliations = Array.isArray(consultant?.affiliations) ? consultant.affiliations.filter(item => item !== undefined && item !== null) : [];
+        const facilities = Array.isArray(consultant?.facilitiesReferred) ? consultant.facilitiesReferred.filter(item => item !== undefined && item !== null) : [];
+        const districts = Array.isArray(consultant?.schoolDistricts) ? consultant.schoolDistricts.filter(item => item !== undefined && item !== null) : [];
+        const consultantName = [consultant?.firstName, consultant?.lastName]
+            .map(part => (typeof part === 'string' ? part.trim() : ''))
+            .filter(Boolean)
+            .join(' ');
+
+        return {
+            name: agencyName || consultantName,
+            data: cloneTemplate(),
+            referrerAgency: {
+                keyPersonnel: keyPersonnel.slice()
+            },
+            consultant: {
+                affiliations: affiliations.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
+                facilitiesReferred: facilities.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
+                schoolDistricts: districts.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim())
+            }
+        };
+    });
+}
+
 function combineCityState(city, state) {
     const trimmedCity = (city || "").trim();
     const trimmedState = (state || "").trim();
@@ -2027,6 +2133,8 @@ function ensureReferrerDataStructures() {
     if (window.formData.referrerIndividual && !window.formData.referrerConsultants) {
         window.formData.referrerConsultants = [window.formData.referrerIndividual];
     }
+
+    window.formData.referrer = buildReferrerEntries(window.formData);
 }
 
 function resolvePathTarget(path) {
@@ -2083,7 +2191,7 @@ function resolvePathTarget(path) {
 // PROJECT MANAGEMENT
 // ============================================
 function createNewProjectData() {
-    return {
+    const project = {
         operator: {
             name: "", currentName: "", otherNames: [],
             location: "", locationCity: "", locationState: "",
@@ -2113,11 +2221,16 @@ function createNewProjectData() {
             treatmentTypes: {}, philosophy: {}, criticalIncidents: {}, notes: [], fieldNotes: {}
         }],
         // Referrer data structure
+        referrer: [],
         referrerAgency: createDefaultReferrerGroup(),
         referrerConsultants: [createDefaultReferrerIndividual()],
         isIndependentConsultant: false,
         fieldNotes: {}
     };
+
+    project.referrer = buildReferrerEntries(project);
+
+    return project;
 }
 
 function loadProject(projectName) {
@@ -2150,6 +2263,7 @@ function loadProject(projectName) {
     } else {
         window.formData = createNewProjectData();
     }
+    ensureReferrerDataStructures();
     window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
 
     if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
@@ -2327,6 +2441,7 @@ async function deleteProject(projectName) {
 // FORM DATA MANAGEMENT
 // ============================================
 function updateJSON() {
+    ensureReferrerDataStructures();
     const jsonDisplay = document.getElementById('json-display');
     if (jsonDisplay) {
         jsonDisplay.textContent = JSON.stringify(window.formData, null, 2);
