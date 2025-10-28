@@ -535,6 +535,48 @@ function load_facilities_data() {
 }
 add_action('wp_enqueue_scripts', 'load_facilities_data');
 
+/**
+ * Load educational consultant data for the "edcons" page.
+ */
+function load_edcons_data() {
+    // Only run on the 'edcons' page.
+    if (!is_page('edcons')) {
+        return;
+    }
+
+    $dataset_urls = kop_get_facility_projects_dataset_urls();
+    $rest_endpoint = kop_get_facilities_rest_endpoint_url();
+
+    $script_path = get_stylesheet_directory() . '/js/edcons-display.js';
+    if (!file_exists($script_path)) {
+        return;
+    }
+    $script_version = filemtime($script_path);
+
+    wp_enqueue_script(
+        'edcons-display',
+        get_stylesheet_directory_uri() . '/js/edcons-display.js',
+        array(),
+        $script_version,
+        true
+    );
+
+    $json_sources = array();
+    if (!empty($rest_endpoint)) {
+        $json_sources[] = $rest_endpoint;
+    }
+    if (!empty($dataset_urls)) {
+        $json_sources = array_merge($json_sources, $dataset_urls);
+    }
+
+    wp_localize_script(
+        'edcons-display',
+        'edconsConfig',
+        array('jsonFileUrls' => array_values(array_filter(array_unique($json_sources))))
+    );
+}
+add_action('wp_enqueue_scripts', 'load_edcons_data');
+
 function kop_enqueue_report_scripts() {
     $reports = array(
         'ca-reports' => array(
