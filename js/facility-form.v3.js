@@ -2221,20 +2221,33 @@ function handleReferrerToggle() {
 
     const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
     const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-    // Use querySelectorAll to handle cases where the element might be duplicated by mistake.
     const fixedToolbars = document.querySelectorAll('#fixed-toolbar');
 
+    const showElement = (element) => {
+        if (!element) return;
+        element.classList.remove('view-hidden');
+        element.removeAttribute('aria-hidden');
+        element.style.display = '';
+    };
+
+    const hideElement = (element) => {
+        if (!element) return;
+        element.classList.add('view-hidden');
+        element.setAttribute('aria-hidden', 'true');
+        element.style.display = '';
+    };
+
     if (activeCategory === 'referrers') {
-        if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
-        if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-        fixedToolbars.forEach(tb => tb.style.display = 'none');
+        hideElement(facilityMainWrapper);
+        showElement(referrerMainWrapper);
+        fixedToolbars.forEach(hideElement);
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
         }
     } else {
-        if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
-        if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-        fixedToolbars.forEach(tb => tb.style.display = 'block');
+        showElement(facilityMainWrapper);
+        hideElement(referrerMainWrapper);
+        fixedToolbars.forEach(showElement);
     }
 }
 

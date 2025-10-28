@@ -126,7 +126,7 @@
             <!-- Category contents wrapper -->
             <div class="category-contents-wrapper">
                 <!-- Companies Content -->
-                <div id="companies-content" class="category-content">
+                <div id="companies-content" class="category-content" data-section-views="companies">
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
                     </div>
@@ -152,7 +152,7 @@
                 </div>
 
                 <!-- States Content -->
-                <div id="states-content" class="category-content d-none">
+                <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
                     </div>
@@ -189,10 +189,29 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="private-ownership-toggle-section" class="view-hidden" data-section-views="locations">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Privately Owned Facility (not part of a chain):</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>No</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                                    <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Yes</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Referrers Content -->
-                <div id="referrers-content" class="category-content d-none">
+                <div id="referrers-content" class="category-content view-hidden" data-section-views="referrers">
                     <div class="content-header">
                         <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
@@ -221,7 +240,7 @@
         </div>
 
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
-        <div id="referrer-main-wrapper" style="display: none;">
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
             <!-- Agency Toggle -->
             <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -406,7 +425,7 @@
         </div>
 
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar" id="fixed-toolbar">
+        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Facility Editor</strong>
@@ -491,7 +510,7 @@
         </div>
         
         <!-- Operator Information Section -->
-        <div class="section expanded" id="operator-section">
+        <div class="section expanded" id="operator-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Operator Information</h2>
                 <span class="section-toggle">🔎</span>
@@ -597,7 +616,7 @@
         </div>
 
         <!-- Identification Section -->
-        <div class="section" id="identification-section">
+        <div class="section" id="identification-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Identification & Names</h2>
                 <span class="section-toggle">🔎</span>
@@ -631,7 +650,7 @@
         </div>
 
         <!-- Location Section -->
-        <div class="section" id="location-section">
+        <div class="section" id="location-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Location & Address</h2>
                 <span class="section-toggle">🔎</span>
@@ -649,7 +668,7 @@
         </div>
         
         <!-- Operations Section -->
-        <div class="section" id="operations-section">
+        <div class="section" id="operations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Operations</h2>
                 <span class="section-toggle">🔎</span>
@@ -687,7 +706,7 @@
         </div>
         
         <!-- Staff Section -->
-        <div class="section" id="staff-section">
+        <div class="section" id="staff-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Staff & Links</h2>
                 <span class="section-toggle">🔎</span>
@@ -709,7 +728,7 @@
         </div>
         
         <!-- Facility Details Section -->
-        <div class="section" id="facility-section">
+        <div class="section" id="facility-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Details</h2>
                 <span class="section-toggle">🔎</span>
@@ -749,7 +768,7 @@
         </div>
         
         <!-- Accreditations & Memberships Section -->
-        <div class="section" id="accreditations-section">
+        <div class="section" id="accreditations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Accreditations & Memberships</h2>
                 <span class="section-toggle">🔎</span>
@@ -779,7 +798,7 @@
         </div>
         
         <!-- Resources & Documentation Section -->
-        <div class="section" id="resources-section">
+        <div class="section" id="resources-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Available Resources & Documentation</h2>
                 <span class="section-toggle">🔎</span>
@@ -891,7 +910,7 @@
         </div>
 
         <!-- Treatment Types Section -->
-        <div class="section" id="treatment-section">
+        <div class="section" id="treatment-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Treatment Types</h2>
                 <span class="section-toggle">🔎</span>
@@ -995,7 +1014,7 @@
         </div>
 
         <!-- Philosophy Section -->
-        <div class="section" id="philosophy-section">
+        <div class="section" id="philosophy-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Philosophy</h2>
                 <span class="section-toggle">🔎</span>
@@ -1059,7 +1078,7 @@
         </div>
 
         <!-- Critical Incidents Section -->
-        <div class="section" id="incidents-section">
+        <div class="section" id="incidents-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Critical Incidents</h2>
                 <span class="section-toggle">🔎</span>
@@ -1099,7 +1118,7 @@
         </div>
         
         <!-- General Notes Section -->
-        <div class="section" id="notes-section">
+        <div class="section" id="notes-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">General Notes</h2>
                 <span class="section-toggle">🔎</span>
@@ -1271,6 +1290,41 @@
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
+        const viewManagedElements = new Set();
+
+        function registerViewManagedElement(element) {
+            if (!element || !element.dataset || !element.dataset.sectionViews) {
+                return;
+            }
+            viewManagedElements.add(element);
+        }
+
+        function applyViewLayout(category) {
+            viewManagedElements.forEach(element => {
+                const views = element.dataset.sectionViews
+                    .split(',')
+                    .map(view => view.trim())
+                    .filter(Boolean);
+                const shouldShow = views.includes(category);
+                element.classList.toggle('view-hidden', !shouldShow);
+                if (shouldShow) {
+                    element.removeAttribute('aria-hidden');
+                } else {
+                    element.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            if (category === 'referrers' && typeof window.updateAgencySliderAppearance === 'function') {
+                window.updateAgencySliderAppearance();
+            }
+        }
+
+        document.querySelectorAll('[data-section-views]').forEach(registerViewManagedElement);
+
+        const defaultCategoryTab = document.querySelector('.category-tab.active');
+        if (defaultCategoryTab) {
+            applyViewLayout(defaultCategoryTab.dataset.category || 'companies');
+        }
         // Set mode to suggestions
         window.FORM_MODE = 'suggestions';
         
@@ -1493,36 +1547,39 @@
                 document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
 
-                const companiesContent = document.getElementById('companies-content');
-                const statesContent = document.getElementById('states-content');
-                const referrersContent = document.getElementById('referrers-content');
+                if (category === 'locations') {
+                    const toggleSection = createPrivateOwnershipToggle();
+                    if (toggleSection) {
+                        registerViewManagedElement(toggleSection);
+                    }
+                }
 
-                companiesContent.classList.toggle('d-none', category !== 'companies');
-                statesContent.classList.toggle('d-none', category !== 'locations');
-                referrersContent.classList.toggle('d-none', category !== 'referrers');
-                handleReferrerToggle(); // Use the centralized function
+                applyViewLayout(category);
+
+                if (typeof handleReferrerToggle === 'function') {
+                    handleReferrerToggle();
+                }
 
                 if (typeof window.refreshSavedProjectPanels === 'function') {
                     window.refreshSavedProjectPanels();
                 }
 
                 if (category === 'companies') {
-                    // Hide private facility toggle for companies view
-                    const toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (toggleSection) toggleSection.style.display = 'none';
-
-                    // Show operator section
-                    const operatorSection = document.getElementById('operator-section');
-                    if (operatorSection) operatorSection.style.display = 'block';
-                } else if (category === 'locations') {
-                    // Show private facility toggle for locations view
-                    let toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (!toggleSection) {
-                        toggleSection = createPrivateOwnershipToggle();
-                        const categoryNav = document.getElementById('category-navigation');
-                        categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
+                    const toggle = document.getElementById('private-ownership-toggle');
+                    if (toggle) {
+                        toggle.checked = false;
                     }
-                    toggleSection.style.display = 'block';
+                    modifyOperationsForPrivateOwnership(false);
+
+                    const operatorSection = document.getElementById('operator-section');
+                    if (operatorSection) {
+                        operatorSection.style.display = '';
+                        operatorSection.classList.remove('view-hidden');
+                    }
+                }
+
+                if (typeof window.updateLabelsForProjectType === 'function') {
+                    window.updateLabelsForProjectType();
                 }
 
                 if (typeof renderSavedProjectsList === 'function') {
@@ -2178,99 +2235,45 @@
             }
         }
         
-        function showStatesSpecificElements() {
-            // Create and show the private ownership toggle if it doesn't exist
-            let toggleSection = document.getElementById('private-ownership-toggle-section');
-            if (!toggleSection) {
-                toggleSection = createPrivateOwnershipToggle();
-                // Insert it right after the category navigation
-                const categoryNav = document.getElementById('category-navigation');
-                categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
-            }
-            toggleSection.style.display = 'block';
-        }
-        
-        function hideStatesSpecificElements() {
-            const toggleSection = document.getElementById('private-ownership-toggle-section');
-            if (toggleSection) {
-                toggleSection.style.display = 'none';
-            }
-            // Always show operator section when in companies view
-            const operatorSection = document.getElementById('operator-section');
-            if (operatorSection) {
-                operatorSection.style.display = 'block';
-            }
-        }
-        
         function createPrivateOwnershipToggle() {
-            const section = document.createElement('div');
-            section.id = 'private-ownership-toggle-section';
-            section.style.cssText = `
-                background: #f8fafc;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                padding: 15px;
-                margin-bottom: 20px;
-                display: none;
-            `;
-            
-            section.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                    <span>Privately Owned Facility (not part of a chain):</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span>No</span>
-                        <div style="position: relative; display: inline-block;">
-                            <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                            <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                            </span>
-                        </div>
-                        <span>Yes</span>
-                    </div>
-                </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                    Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
-                </p>
-            `;
-            
-            // Add toggle functionality
+            const section = document.getElementById('private-ownership-toggle-section');
+            if (!section) {
+                return null;
+            }
+
+            if (!section.dataset.sectionViews) {
+                section.dataset.sectionViews = 'locations';
+            }
+            registerViewManagedElement(section);
+
+            if (section.dataset.initialized === 'true') {
+                return section;
+            }
+
             const toggle = section.querySelector('#private-ownership-toggle');
             const sliderTrack = section.querySelector('#slider-track');
             const sliderKnob = section.querySelector('#slider-knob');
-            
-            // Make the entire slider clickable
-            sliderTrack.addEventListener('click', function() {
-                toggle.checked = !toggle.checked;
-                updateSliderAppearance();
-                
-                const isPrivate = toggle.checked;
-                const operatorSection = document.getElementById('operator-section');
-                
-                if (isPrivate) {
-                    if (operatorSection) operatorSection.style.display = 'none';
-                    // Clear operator data when switching to private mode
-                    clearOperatorFields();
-                    // Modify Operations section for private ownership
-                    modifyOperationsForPrivateOwnership(true);
-                } else {
-                    if (operatorSection) operatorSection.style.display = 'block';
-                    // Restore Operations section for corporate ownership
-                    modifyOperationsForPrivateOwnership(false);
+
+            const updateSliderAppearance = () => {
+                if (!sliderTrack || !sliderKnob) {
+                    return;
                 }
-            });
-            
-            // Function to clear operator fields when switching to private mode
-            function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
-                
-                // Clear operator section fields
+                if (toggle && toggle.checked) {
+                    sliderTrack.style.backgroundColor = '#10b981';
+                    sliderKnob.style.transform = 'translateX(24px)';
+                } else {
+                    sliderTrack.style.backgroundColor = '#e5e7eb';
+                    sliderKnob.style.transform = 'translateX(0px)';
+                }
+            };
+
+            const clearOperatorFields = () => {
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
                     input.value = '';
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                 });
-                
-                // Also clear operator data from formData if available
+
                 if (typeof formData !== 'undefined' && formData && formData.operator) {
                     formData.operator = {
                         name: '',
@@ -2282,20 +2285,57 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('Cleared operator data from formData');
                 }
-            }
-            
-            function updateSliderAppearance() {
-                if (toggle.checked) {
-                    sliderTrack.style.backgroundColor = '#10b981';
-                    sliderKnob.style.transform = 'translateX(24px)';
-                } else {
-                    sliderTrack.style.backgroundColor = '#e5e7eb';
-                    sliderKnob.style.transform = 'translateX(0px)';
+            };
+
+            const applyPrivateOwnershipState = (isPrivate) => {
+                const operatorSection = document.getElementById('operator-section');
+                if (operatorSection) {
+                    operatorSection.style.display = isPrivate ? 'none' : '';
+                    if (!isPrivate) {
+                        operatorSection.classList.remove('view-hidden');
+                    }
                 }
+
+                if (isPrivate) {
+                    clearOperatorFields();
+                }
+
+                modifyOperationsForPrivateOwnership(!!isPrivate);
+            };
+
+            const handleToggleChange = () => {
+                const isPrivate = toggle ? toggle.checked : false;
+                updateSliderAppearance();
+                applyPrivateOwnershipState(isPrivate);
+            };
+
+            if (sliderTrack) {
+                sliderTrack.addEventListener('click', () => {
+                    if (toggle) {
+                        toggle.checked = !toggle.checked;
+                        handleToggleChange();
+                    }
+                });
+                sliderTrack.setAttribute('role', 'switch');
+                sliderTrack.setAttribute('tabindex', '0');
+                sliderTrack.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (toggle) {
+                            toggle.checked = !toggle.checked;
+                            handleToggleChange();
+                        }
+                    }
+                });
             }
-            
+
+            if (toggle) {
+                toggle.addEventListener('change', handleToggleChange);
+            }
+
+            updateSliderAppearance();
+            section.dataset.initialized = 'true';
             return section;
         }
         

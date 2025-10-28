@@ -403,6 +403,10 @@ body:not(.admin-bar) .fixed-toolbar {
     display: none;
 }
 
+.view-hidden {
+    display: none !important;
+}
+
 .content-header h3 {
     margin: 0 0 8px 0;
     color: #000000;
