@@ -1538,56 +1538,6 @@
             return matches;
         };
 
-        // Category tab switching
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const category = this.dataset.category;
-
-                // Update active tab
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-
-                if (category === 'locations') {
-                    const toggleSection = createPrivateOwnershipToggle();
-                    if (toggleSection) {
-                        registerViewManagedElement(toggleSection);
-                    }
-                }
-
-                applyViewLayout(category);
-
-                if (typeof handleReferrerToggle === 'function') {
-                    handleReferrerToggle();
-                }
-
-                if (typeof window.refreshSavedProjectPanels === 'function') {
-                    window.refreshSavedProjectPanels();
-                }
-
-                if (category === 'companies') {
-                    const toggle = document.getElementById('private-ownership-toggle');
-                    if (toggle) {
-                        toggle.checked = false;
-                    }
-                    modifyOperationsForPrivateOwnership(false);
-
-                    const operatorSection = document.getElementById('operator-section');
-                    if (operatorSection) {
-                        operatorSection.style.display = '';
-                        operatorSection.classList.remove('view-hidden');
-                    }
-                }
-
-                if (typeof window.updateLabelsForProjectType === 'function') {
-                    window.updateLabelsForProjectType();
-                }
-
-                if (typeof renderSavedProjectsList === 'function') {
-                    renderSavedProjectsList();
-                }
-            });
-        });
-
         // Independent consultant toggle functionality
         const independentToggle = document.getElementById('referrer-independent-toggle');
         const agencySliderTrack = document.getElementById('referrer-agency-slider-track');

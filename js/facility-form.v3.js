@@ -2368,6 +2368,58 @@ function handleReferrerToggle() {
 // Expose to global scope for access from inline scripts
 window.handleReferrerToggle = handleReferrerToggle;
 
+function initializeCategoryTabs() {
+    const categoryTabsContainer = document.querySelector('.category-tabs');
+    if (!categoryTabsContainer || categoryTabsContainer.dataset.tabsInitialized === 'true') {
+        return;
+    }
+
+    const handleCategoryTabClick = (event) => {
+        const tab = event.target.closest('.category-tab');
+        if (!tab) return;
+
+        const category = tab.dataset.category;
+
+        // Update active tab
+        categoryTabsContainer.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Hide all main content wrappers first
+        document.querySelectorAll('.category-content').forEach(content => {
+            content.classList.add('view-hidden', 'd-none');
+        });
+
+        // Determine the ID of the content to show
+        // Handles the special case where 'locations' category maps to 'states-content' ID
+        const contentId = category === 'locations' ? 'states-content' : `${category}-content`;
+        const activeContent = document.getElementById(contentId);
+
+        if (activeContent) {
+            activeContent.classList.remove('view-hidden', 'd-none');
+        }
+
+        // Handle main form visibility (facility vs. referrer form)
+        if (typeof handleReferrerToggle === 'function') {
+            handleReferrerToggle();
+        }
+
+        // Refresh the list of saved projects for the new tab
+        if (typeof refreshSavedProjectPanels === 'function') {
+            refreshSavedProjectPanels();
+        }
+
+        // Update labels if the function exists
+        if (typeof updateLabelsForProjectType === 'function') {
+            updateLabelsForProjectType();
+        }
+    };
+
+    categoryTabsContainer.addEventListener('click', handleCategoryTabClick);
+    categoryTabsContainer.dataset.tabsInitialized = 'true';
+    debugLog('✅ Category tab switching logic initialized.');
+}
+window.initializeCategoryTabs = initializeCategoryTabs;
+
 async function renameProject(oldName) {
     if (!oldName) {
         showUploadStatus('❌ No project selected to rename.', 'error');
@@ -4304,6 +4356,7 @@ async function initializeForm() {
     // Initialize autocomplete fields
     initializeAutocompleteFields();
     
+    initializeCategoryTabs();
     // Update all UI
     window.updateAllUI();
 
