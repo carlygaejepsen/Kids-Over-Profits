@@ -2970,7 +2970,18 @@ function updateTableOfContents() {
             item.className = `facility-item ${index === window.currentFacilityIndex ? 'active' : ''}`;
             const name = facility.identification?.name || 'Unnamed Facility';
             item.innerHTML = `<span class="facility-name ${name === 'Unnamed Facility' ? 'empty' : ''}">${escapeHtmlForAttr(name)}</span><span class="facility-index">${index + 1}</span>`;
-            item.onclick = () => navigateToFacility(index);
+            item.tabIndex = 0;
+            const accessibleFacilityName = name !== 'Unnamed Facility' ? name : `Facility ${index + 1}`;
+            item.setAttribute('role', 'button');
+            item.setAttribute('aria-label', `View ${accessibleFacilityName}`);
+            const goToFacility = () => navigateToFacility(index);
+            item.addEventListener('click', goToFacility, { passive: true });
+            item.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    goToFacility();
+                }
+            });
             facilityList.appendChild(item);
         });
     }
@@ -4965,6 +4976,10 @@ function updateConsultantsOverview() {
 
         const item = document.createElement('div');
         item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+        item.tabIndex = 0;
+        const accessibleName = fullName !== 'Unnamed Consultant' ? fullName : `Consultant ${index + 1}`;
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-label', `View ${accessibleName}`);
 
         const div = document.createElement('div');
         div.textContent = fullName;
@@ -4982,11 +4997,19 @@ function updateConsultantsOverview() {
             </div>
         `;
 
-        item.addEventListener('click', function() {
+        const selectConsultant = () => {
             window.currentConsultantIndex = index;
             loadConsultantData();
             updateConsultantsOverview();
-        }, { passive: true });
+        };
+
+        item.addEventListener('click', selectConsultant, { passive: true });
+        item.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectConsultant();
+            }
+        });
 
         consultantsList.appendChild(item);
     });
@@ -5106,6 +5129,10 @@ function updateLocationFacilitiesOverview() {
 
         const item = document.createElement('div');
         item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+        item.tabIndex = 0;
+        const accessibleFacilityName = facilityName !== 'Unnamed Facility' ? facilityName : `Facility ${index + 1}`;
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-label', `View ${accessibleFacilityName}`);
 
         // Escape HTML
         const div1 = document.createElement('div');
@@ -5134,13 +5161,21 @@ function updateLocationFacilitiesOverview() {
             </div>
         `;
 
-        item.addEventListener('click', function() {
+        const selectFacility = () => {
             window.currentFacilityIndex = index;
             if (typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
             }
             updateLocationFacilitiesOverview();
-        }, { passive: true });
+        };
+
+        item.addEventListener('click', selectFacility, { passive: true });
+        item.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectFacility();
+            }
+        });
 
         facilitiesList.appendChild(item);
     });
