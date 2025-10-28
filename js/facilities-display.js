@@ -273,12 +273,12 @@ function displayFacilities(facilitiesData, containerId) {
                     </div>
                     <div class="facility-details">
                         <details class="facility-expanded-info">
-                            '<summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>' +
-                            '<div class="facility-extra-content">' +
-                                otherFacilityData +
-                                resourcesAvailable +
-                            '</div>' +
-                        '</details>
+                            <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                            <div class="facility-extra-content">
+                                ${otherFacilityData}
+                                ${resourcesAvailable}
+                            </div>
+                        </details>
                     </div>
                 </div>`;
         });
