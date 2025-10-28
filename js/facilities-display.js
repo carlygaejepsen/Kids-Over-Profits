@@ -33,6 +33,17 @@ function displayFacilities(facilitiesData, containerId) {
     };
     const escapeAttribute = value => escapeHtml(value);
     const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
+    const combineLists = (...lists) => {
+        const combined = [];
+        lists.forEach(list => {
+            joinList(list).forEach(item => {
+                if (!combined.includes(item)) {
+                    combined.push(item);
+                }
+            });
+        });
+        return combined;
+    };
     const normalizeProjectCategory = project => {
         if (!project || typeof project !== 'object') {
             return 'companies';
@@ -162,7 +173,7 @@ function displayFacilities(facilitiesData, containerId) {
         const keyExecutives = joinList(keyStaff.keyExecutives);
         const websites = joinList(operator.websites);
         const ceoName = cleanText(keyStaff.ceo);
-        const pastNames = joinList(operator.pastNames);
+        const pastNames = combineLists(operator.pastNames, operator.otherNames);
         const operatorNotes = joinList(operator.notes);
 
         const operatorFields = [
@@ -251,13 +262,14 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Build other facility data
             let otherFacilityData = '';
+            const identificationPastNames = combineLists(identification.pastNames, identification.otherNames);
             const facilityFields = [
                 { key: 'facilityDetails.type', label: 'Type', value: cleanText(facilityDetails.type) },
                 { key: 'facilityDetails.capacity', label: 'Capacity', value: cleanText(facilityDetails.capacity) },
                 { key: 'facilityDetails.ageRange', label: 'Age Range', value: (ageRange.min || ageRange.max) ? `${ageRange.min || '?'}-${ageRange.max || '?'}` : null },
                 { key: 'facilityDetails.gender', label: 'Gender', value: cleanText(facilityDetails.gender) },
                 { key: 'identification.currentOperator', label: 'Current Operator', value: cleanText(identification.currentOperator) },
-                { key: 'identification.pastNames', label: 'Past Names', value: joinList(identification.pastNames), isList: true },
+                { key: 'identification.pastNames', label: 'Past Names', value: identificationPastNames, isList: true },
                 { key: 'staff.administrator', label: 'Administrator', value: joinList(staff.administrator), isList: true },
                 { key: 'accreditations.current', label: 'Current Accreditations', value: joinList(accreditations.current), isList: true },
                 { key: 'accreditations.past', label: 'Past Accreditations', value: joinList(accreditations.past), isList: true },
