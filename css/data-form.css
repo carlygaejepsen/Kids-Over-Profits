@@ -2004,8 +2004,8 @@ textarea {
    MOBILE / SMALL SCREEN RESPONSIVE STYLES
    ============================================ */
 
-/* Tablets and smaller */
-@media (max-width: 1024px) {
+/* Tablets and smaller - changed from 1024px to 768px */
+@media (max-width: 768px) {
     body {
         padding: 15px;
     }
