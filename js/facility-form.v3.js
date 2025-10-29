@@ -3033,8 +3033,12 @@ function loadOperatorData() {
 function loadReferrerData() {
     ensureReferrerDataStructures();
 
-    // Load agency data
-    const agency = window.formData.referrerAgency || createDefaultReferrerGroup();
+    // Load agency data from the project, falling back to a default if it doesn't exist.
+    // This was the missing piece: it wasn't correctly pulling the loaded data.
+    const agency = window.formData.referrerAgency && Object.keys(window.formData.referrerAgency).length > 0
+        ? window.formData.referrerAgency
+        : createDefaultReferrerGroup();
+
     window.formData.referrerAgency = agency;
 
     // Ensure consultants array exists
