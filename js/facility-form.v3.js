@@ -2495,6 +2495,51 @@ async function deleteProject(projectName) {
     await saveProjectToCloud(projectName, 'delete');
 }
 
+async function recategorizeProject(projectName) {
+    if (!projectName || !window.projects || !window.projects[projectName]) {
+        showUploadStatus('❌ Project not found to reclassify.', 'error');
+        return;
+    }
+
+    const currentCategory = determineProjectCategory(projectName);
+    const newCategory = prompt(`Project "${projectName}" is currently in "${currentCategory}".\nEnter new category (companies, locations, or referrers):`, currentCategory);
+
+    if (!newCategory || newCategory.trim() === '' || newCategory.trim().toLowerCase() === currentCategory) {
+        showUploadStatus('ℹ️ Reclassification cancelled or category not changed.', 'info');
+        return;
+    }
+
+    const validCategories = ['companies', 'locations', 'referrers'];
+    const normalizedCategory = newCategory.trim().toLowerCase();
+
+    if (!validCategories.includes(normalizedCategory)) {
+        showUploadStatus(`❌ Invalid category. Please use one of: ${validCategories.join(', ')}.`, 'error');
+        return;
+    }
+
+    // Update the category in the local project object
+    window.projects[projectName].category = normalizedCategory;
+
+    // Persist the change
+    if (IS_SUGGESTION_MODE) {
+        persistProjectLocally(projectName);
+        showUploadStatus(`✅ Project "${projectName}" reclassified to "${normalizedCategory}" in your local drafts.`, 'success');
+    } else {
+        // For master mode, we need to save the entire project back to the cloud
+        // We can re-use the saveProjectToCloud logic.
+        // Temporarily set formData to the project being modified to ensure correct data is saved.
+        const originalCurrentProject = window.currentProjectName;
+        const originalFormData = window.formData;
+        window.currentProjectName = projectName;
+        window.formData = window.projects[projectName].data;
+        await saveProjectToCloud(projectName);
+        // Restore original context
+        window.currentProjectName = originalCurrentProject;
+        window.formData = originalFormData;
+    }
+
+    refreshSavedProjectPanels();
+}
 // ============================================
 // FORM DATA MANAGEMENT
 // ============================================
@@ -3699,18 +3744,20 @@ function refreshSavedProjectPanels() {
             const date = new Date(project.timestamp || 0);
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const facilityCount = project.data?.facilities?.length || 0;
-            const facilityLabel = project.category === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
-            const adminButtons = !IS_SUGGESTION_MODE ? `
+            const facilityLabel = determineProjectCategory(name) === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
+            
+            // Admin-only buttons
+            const adminButtons = IS_SUGGESTION_MODE ? '' : `
+                        <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject('${escapeHtmlForAttr(name)}')">Reclassify</button>
                         <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
                         <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
-        ` : '';
+                    `;
 
             return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
                     <div class="project-item-name" title="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</div>
                     <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} ${facilityLabel}</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
-                        <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject('${escapeHtmlForAttr(name)}')">Reclassify</button>
                         ${adminButtons}
                     </div>
                 </div>`;
@@ -5143,6 +5190,7 @@ window.saveProjectToCloud = saveProjectToCloud;
 window.addFacility = addFacility;
 window.removeFacility = removeFacility;
 window.renameProject = renameProject;
+window.recategorizeProject = recategorizeProject;
 window.deleteProject = deleteProject;
 window.cloneFacility = cloneFacility;
 window.previousFacility = previousFacility;
