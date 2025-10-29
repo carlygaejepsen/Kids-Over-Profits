@@ -2275,6 +2275,12 @@ function loadProject(projectName) {
         projectNameInput.value = projectName;
     }
 
+    // Also populate the referrer project name input if it exists
+    const referrerProjectNameInput = document.getElementById('referrer-project-name');
+    if (referrerProjectNameInput && projectCategory === 'referrers') {
+        referrerProjectNameInput.value = projectName;
+    }
+
     // Ensure the correct form wrapper is visible BEFORE updating UI
     if (typeof handleReferrerToggle === 'function') {
         handleReferrerToggle();
