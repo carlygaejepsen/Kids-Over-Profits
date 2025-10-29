@@ -2233,14 +2233,14 @@ function createNewProjectData() {
     return project;
 }
 
-function loadProject(projectName) {
+function loadProject(projectName) { // Note: This function is now asynchronous
     debugLog('🔄 loadProject called with:', projectName);
     debugLog('📦 Available projects:', Object.keys(window.projects || {}));
 
     if (!window.projects[projectName]) {
         console.error('❌ Project not found:', projectName);
         showUploadStatus(`Project "${projectName}" not found.`, 'error');
-        return;
+        return Promise.reject(new Error(`Project not found: ${projectName}`));
     }
 
     // Determine the project category and switch to the correct tab
@@ -2256,51 +2256,56 @@ function loadProject(projectName) {
         targetTab.classList.add('active');
         debugLog('✅ Switched to', projectCategory, 'tab');
     }
+    
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            window.currentProjectName = projectName;
+            if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
+                window.formData = deepClone(window.projects[projectName].data);
+            } else {
+                window.formData = createNewProjectData();
+            }
+            ensureReferrerDataStructures();
+            window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
 
-    window.currentProjectName = projectName;
-    if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
-        window.formData = deepClone(window.projects[projectName].data);
-    } else {
-        window.formData = createNewProjectData();
-    }
-    ensureReferrerDataStructures();
-    window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
+            if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
+                window.currentFacilityIndex = 0;
+            }
 
-    if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
-        window.currentFacilityIndex = 0;
-    }
+            const projectNameInput = document.getElementById('project-name');
+            if (projectNameInput) {
+                projectNameInput.value = projectName;
+            }
 
-    const projectNameInput = document.getElementById('project-name');
-    if (projectNameInput) {
-        projectNameInput.value = projectName;
-    }
+            // Also populate the referrer project name input if it exists
+            const referrerProjectNameInput = document.getElementById('referrer-project-name');
+            if (referrerProjectNameInput && projectCategory === 'referrers') {
+                referrerProjectNameInput.value = projectName;
+            }
 
-    // Also populate the referrer project name input if it exists
-    const referrerProjectNameInput = document.getElementById('referrer-project-name');
-    if (referrerProjectNameInput && projectCategory === 'referrers') {
-        referrerProjectNameInput.value = projectName;
-    }
+            // Ensure the correct form wrapper is visible BEFORE updating UI
+            if (typeof handleReferrerToggle === 'function') {
+                handleReferrerToggle();
+                debugLog('✅ Updated form visibility for', projectCategory);
+            }
 
-    // Ensure the correct form wrapper is visible BEFORE updating UI
-    if (typeof handleReferrerToggle === 'function') {
-        handleReferrerToggle();
-        debugLog('✅ Updated form visibility for', projectCategory);
-    }
+            if (typeof window.updateAllUI === 'function') {
+                debugLog('🔄 Calling updateAllUI...');
+                window.updateAllUI();
+                updateLabelsForProjectType(projectName);
+            } else {
+                console.error('❌ updateAllUI not available!');
+            }
 
-    if (typeof window.updateAllUI === 'function') {
-        debugLog('🔄 Calling updateAllUI...');
-        window.updateAllUI();
-        updateLabelsForProjectType(projectName);
-    } else {
-        console.error('❌ updateAllUI not available!');
-    }
+            // Dispatch custom event for project loaded
+            document.dispatchEvent(new CustomEvent('projectLoaded', {
+                detail: { projectName: projectName }
+            }));
 
-    // Dispatch custom event for project loaded
-    document.dispatchEvent(new CustomEvent('projectLoaded', {
-        detail: { projectName: projectName }
-    }));
-
-    showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
+            showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
+            resolve();
+        }, 100); // A small delay to ensure DOM updates can happen
+    });
 }
 
 function newProject() {
@@ -2525,17 +2530,24 @@ async function recategorizeProject(projectName) {
         persistProjectLocally(projectName);
         showUploadStatus(`✅ Project "${projectName}" reclassified to "${normalizedCategory}" in your local drafts.`, 'success');
     } else {
-        // For master mode, we need to save the entire project back to the cloud
-        // We can re-use the saveProjectToCloud logic.
-        // Temporarily set formData to the project being modified to ensure correct data is saved.
-        const originalCurrentProject = window.currentProjectName;
-        const originalFormData = window.formData;
-        window.currentProjectName = projectName;
-        window.formData = window.projects[projectName].data;
-        await saveProjectToCloud(projectName);
-        // Restore original context
-        window.currentProjectName = originalCurrentProject;
-        window.formData = originalFormData;
+        const originalCurrentProjectName = window.currentProjectName;
+        const originalFormData = window.formData ? deepClone(window.formData) : null;
+
+        try {
+            // Load the project to be re-categorized into the main state.
+            // This now returns a promise, so we await it.
+            await loadProject(projectName);
+            
+            // Now that the correct data is loaded, save it.
+            await saveProjectToCloud(projectName);
+        } finally {
+            // Restore the original project context if there was one
+            if (originalCurrentProjectName && originalCurrentProjectName !== projectName) {
+                await loadProject(originalCurrentProjectName);
+            } else if (!originalCurrentProjectName) {
+                newProject(false); // Create a new blank project if nothing was loaded before
+            }
+        }
     }
 
     refreshSavedProjectPanels();
