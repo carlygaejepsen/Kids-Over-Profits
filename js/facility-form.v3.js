@@ -2160,15 +2160,16 @@ function resolvePathTarget(path) {
         ensureReferrerDataStructures();
         scope = 'referrerGroup';
         normalizedPath = path.replace('referrerGroup.', '');
-        target = window.formData.referrerGroup;
+        target = window.formData.referrerAgency;
         return { scope, normalizedPath, target };
     }
 
     if (path.startsWith('referrerIndividual.')) {
         ensureReferrerDataStructures();
+        const consultantIndex = window.currentConsultantIndex || 0;
         scope = 'referrerIndividual';
         normalizedPath = path.replace('referrerIndividual.', '');
-        target = window.formData.referrerIndividual;
+        target = window.formData.referrerConsultants[consultantIndex];
         return { scope, normalizedPath, target };
     }
 
@@ -2278,9 +2279,14 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             }
 
             // Also populate the referrer project name input if it exists
+            // Also populate the referrer project name input if it exists and category matches
             const referrerProjectNameInput = document.getElementById('referrer-project-name');
             if (referrerProjectNameInput && projectCategory === 'referrers') {
                 referrerProjectNameInput.value = projectName;
+            if (referrerProjectNameInput) {
+                if (projectCategory === 'referrers') {
+                    referrerProjectNameInput.value = projectName;
+                }
             }
 
             // Ensure the correct form wrapper is visible BEFORE updating UI
