@@ -1247,7 +1247,7 @@
             agencySliderTrack.addEventListener('click', function() {
                 independentToggle.checked = !independentToggle.checked;
                 updateAgencySliderAppearance();
-            }, { passive: true });
+            });
         }
 
         window.updateAgencySliderAppearance = updateAgencySliderAppearance;
@@ -2433,7 +2433,7 @@
 
                             console.log('Added new operator:', operatorName);
                         }
-                    }, { passive: true });
+                    });
                     addOperatorBtn.dataset.operatorClickAttached = 'true';
                 }
 
@@ -2443,7 +2443,7 @@
                         if (e.key === 'Enter') {
                             addOperatorBtn.click();
                         }
-                    }, { passive: true });
+                    });
                     newOperatorInput.dataset.operatorKeypressAttached = 'true';
                 }
             }
@@ -2493,7 +2493,7 @@
                         if (e.key === 'Enter') {
                             addLocationBtn.click();
                         }
-                    }, { passive: true });
+                    });
                     newLocationInput.dataset.locationKeypressAttached = 'true';
                 }
             }
@@ -2527,7 +2527,7 @@
         window.addEventListener('load', () => {
             initializeSectionToggles();
             ensureAdminPageInitialization();
-        }, { passive: true });
+        });
 
         // Initialize tab-switching for overviews (function defined in facility-form.v3.js)
         if (typeof window.initializeOverviewTabSwitching === 'function') {

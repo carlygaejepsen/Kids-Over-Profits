@@ -1277,11 +1277,11 @@ function initializeSectionToggles() {
         // Click handler for the toggle icon itself
         toggle.addEventListener('click', handleToggle, { passive: false });
 
-        // Click handler for the header (excluding the toggle)
+        // Click handler for the header (excluding the toggle) - cannot be passive
         header.addEventListener('click', (event) => {
             if (event.target.closest('.section-toggle')) { return; }
             handleToggle(event);
-        }, { passive: false });
+        });
     });
 }
 
@@ -1496,12 +1496,12 @@ function initializeNoteControls() {
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
             addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
-            addBtn.dataset.noteEventAttached = 'true';
+            addBtn.dataset.noteEventAttached = 'true'; // Note: cannot be passive
             addBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 addFieldNote(scope, key);
-            }, { passive: false });
+            });
 
             // Insert button after the field (inline)
             field.parentNode.insertBefore(addBtn, field.nextSibling);
@@ -1527,12 +1527,12 @@ function initializeNoteControls() {
             // Check if button needs event listener (shouldn't happen, but defensive)
             const addBtn = controls.querySelector('.note-add-btn');
             if (addBtn && !addBtn.dataset.noteEventAttached) {
-                addBtn.dataset.noteEventAttached = 'true';
+                addBtn.dataset.noteEventAttached = 'true'; // Note: cannot be passive
                 addBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     addFieldNote(scope, key);
-                }, { passive: false });
+                });
             }
             if (field.dataset.noteInit !== 'true') {
                 field.dataset.noteInit = 'true';
@@ -2648,7 +2648,7 @@ function renderArray(container, path, items) {
 
     // Set up event delegation on container if not already done
     if (!container.dataset.delegationInit) {
-        container.addEventListener('click', (e) => {
+        container.addEventListener('click', (e) => { // Note: cannot be passive
             if (e.target.classList.contains('add-item-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -2658,7 +2658,7 @@ function renderArray(container, path, items) {
                     addNewArrayItem(btnPath);
                 }
             }
-        }, { passive: false });
+        });
         container.dataset.delegationInit = 'true';
     }
 
@@ -2848,11 +2848,11 @@ function renderArray(container, path, items) {
             addNoteBtn.type = 'button';
             addNoteBtn.className = 'note-add-btn field-note-btn';
             addNoteBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
-            addNoteBtn.addEventListener('click', (e) => {
+            addNoteBtn.addEventListener('click', (e) => { // Note: cannot be passive
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 addFieldNote(scopeForNotes, noteKey);
-            }, { passive: false });
+            });
             itemDiv.appendChild(addNoteBtn);
         }
 
@@ -3206,8 +3206,8 @@ function updateTableOfContents() {
             item.setAttribute('role', 'button');
             item.setAttribute('aria-label', `View ${accessibleFacilityName}`);
             const goToFacility = () => navigateToFacility(index);
-            item.addEventListener('click', goToFacility, { passive: true });
-            item.addEventListener('keydown', function(event) {
+            item.addEventListener('click', goToFacility);
+            item.addEventListener('keydown', function(event) { // Note: cannot be passive
                 if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     goToFacility();
@@ -3367,7 +3367,7 @@ function initializeToolbarButtons() {
         toolbarToggle.setAttribute('aria-controls', 'toolbar-content');
         applyToolbarState(toolbar.classList.contains('minimized'));
 
-        toolbarToggle.addEventListener('click', () => {
+        toolbarToggle.addEventListener('click', () => { // UI-only, can be passive
             const isMinimized = toolbar.classList.toggle('minimized');
             applyToolbarState(isMinimized);
         }, { passive: true });
@@ -3392,7 +3392,7 @@ function initializeToolbarButtons() {
     const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
 
     if (prevBtnToolbar && !prevBtnToolbar.dataset.listenerAttached) {
-        prevBtnToolbar.addEventListener('click', () => {
+        prevBtnToolbar.addEventListener('click', () => { // UI-only, can be passive
             const dropdown = document.getElementById('facility-dropdown');
             if (dropdown && dropdown.selectedIndex > 0) {
                 dropdown.selectedIndex--;
@@ -3403,7 +3403,7 @@ function initializeToolbarButtons() {
     }
 
     if (nextBtnToolbar && !nextBtnToolbar.dataset.listenerAttached) {
-        nextBtnToolbar.addEventListener('click', () => {
+        nextBtnToolbar.addEventListener('click', () => { // UI-only, can be passive
             const dropdown = document.getElementById('facility-dropdown');
             if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
                 dropdown.selectedIndex++;
@@ -3416,21 +3416,21 @@ function initializeToolbarButtons() {
     // Add Facility button
     const addFacilityBtnToolbar = document.getElementById('add-facility-btn-toolbar');
     if (addFacilityBtnToolbar && !addFacilityBtnToolbar.dataset.listenerAttached) {
-        addFacilityBtnToolbar.addEventListener('click', addFacility, { passive: true });
+        addFacilityBtnToolbar.addEventListener('click', addFacility);
         addFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Clone Facility button
     const cloneFacilityBtnToolbar = document.getElementById('clone-facility-btn-toolbar');
     if (cloneFacilityBtnToolbar && !cloneFacilityBtnToolbar.dataset.listenerAttached) {
-        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility, { passive: true });
+        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility);
         cloneFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Remove Facility button
     const removeFacilityBtnToolbar = document.getElementById('remove-facility-btn-toolbar');
     if (removeFacilityBtnToolbar && !removeFacilityBtnToolbar.dataset.listenerAttached) {
-        removeFacilityBtnToolbar.addEventListener('click', removeFacility, { passive: true });
+        removeFacilityBtnToolbar.addEventListener('click', removeFacility);
         removeFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
@@ -4213,18 +4213,18 @@ function attachButtonListeners() {
     // Facility navigation
     const facilityButtons = {
         'add-facility-btn': addFacility,
-        'add-facility-main-btn': addFacility,
+        'add-facility-main-btn': addFacility, // Note: cannot be passive
         'remove-facility-btn': removeFacility,
         'clone-facility-btn': cloneFacility,
-        'prev-facility-btn': previousFacility,
-        'next-facility-btn': nextFacility,
+        'prev-facility-btn': previousFacility, // Note: cannot be passive
+        'next-facility-btn': nextFacility, // Note: cannot be passive
         'sort-facilities-btn': sortFacilities
     };
 
     Object.keys(facilityButtons).forEach(id => {
         const btn = document.getElementById(id);
         if (btn && !btn.dataset.listenerAttached) {
-            btn.addEventListener('click', facilityButtons[id], { passive: true });
+            btn.addEventListener('click', facilityButtons[id]);
             btn.dataset.listenerAttached = 'true';
         }
     });
@@ -4374,13 +4374,13 @@ function attachButtonListeners() {
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
     if (copyBtn && !copyBtn.dataset.listenerAttached) {
-        copyBtn.addEventListener('click', copyToClipboard, { passive: true });
+        copyBtn.addEventListener('click', copyToClipboard);
         copyBtn.dataset.listenerAttached = 'true';
     }
 
     const downloadBtn = document.getElementById('download-json-btn');
     if (downloadBtn && !downloadBtn.dataset.listenerAttached) {
-        downloadBtn.addEventListener('click', downloadJSON, { passive: true });
+        downloadBtn.addEventListener('click', downloadJSON);
         downloadBtn.dataset.listenerAttached = 'true';
     }
 
@@ -5421,8 +5421,8 @@ function updateLocationFacilitiesOverview() {
             updateLocationFacilitiesOverview();
         };
 
-        item.addEventListener('click', selectFacility, { passive: true });
-        item.addEventListener('keydown', function(event) {
+        item.addEventListener('click', selectFacility);
+        item.addEventListener('keydown', function(event) { // Note: cannot be passive
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 selectFacility();
@@ -5446,7 +5446,7 @@ function initializeConsultantNavigation() {
     const consultantDropdown = document.getElementById('consultant-dropdown');
 
     if (addConsultantBtn && !addConsultantBtn.dataset.listenerAttached) {
-        addConsultantBtn.addEventListener('click', function() {
+        addConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
             if (!window.formData.referrerConsultants) {
                 window.formData.referrerConsultants = [];
             }
@@ -5466,7 +5466,7 @@ function initializeConsultantNavigation() {
             });
             window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
             updateConsultantsUI();
-        }, { passive: true });
+        });
         addConsultantBtn.dataset.listenerAttached = 'true';
     }
 
@@ -5482,18 +5482,18 @@ function initializeConsultantNavigation() {
                 }
                 updateConsultantsUI();
             }
-        }, { passive: true });
+        });
         removeConsultantBtn.dataset.listenerAttached = 'true';
     }
 
     if (prevConsultantBtn && !prevConsultantBtn.dataset.listenerAttached) {
-        prevConsultantBtn.addEventListener('click', function() {
+        prevConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
             if (window.currentConsultantIndex > 0) {
                 window.currentConsultantIndex--;
                 loadConsultantData();
                 updateConsultantsOverview();
             }
-        }, { passive: true });
+        });
         prevConsultantBtn.dataset.listenerAttached = 'true';
     }
 
@@ -5505,7 +5505,7 @@ function initializeConsultantNavigation() {
                 loadConsultantData();
                 updateConsultantsOverview();
             }
-        }, { passive: true });
+        });
         nextConsultantBtn.dataset.listenerAttached = 'true';
     }
 
@@ -5539,7 +5539,7 @@ function initializeOverviewTabSwitching() {
     };
 
     // Call on page load
-    window.addEventListener('load', initializeActiveTabOverview, { passive: true });
+    window.addEventListener('load', initializeActiveTabOverview);
 
     // Also update overviews when switching tabs
     document.addEventListener('click', function(e) {
@@ -5557,7 +5557,7 @@ function initializeOverviewTabSwitching() {
                 }
             }, 100);
         }
-    }, { passive: true });
+    });
 }
 
 // ============================================
@@ -5567,7 +5567,7 @@ function initializeOverviewTabSwitching() {
 function initializeConsultantsTocToggle() {
     const consultantsTocToggle = document.getElementById('consultants-toc-toggle-btn');
     if (consultantsTocToggle && !consultantsTocToggle.dataset.listenerAttached) {
-        consultantsTocToggle.addEventListener('click', function() {
+        consultantsTocToggle.addEventListener('click', function() { // UI-only, can be passive
             const toc = document.getElementById('consultants-toc');
             const content = toc.querySelector('.toc-content');
             const isCollapsed = content.style.display === 'none';
@@ -5587,7 +5587,7 @@ function initializeConsultantsTocToggle() {
 function initializeLocationFacilitiesToc() {
     const locationFacilitiesTocToggle = document.getElementById('location-facilities-toc-toggle-btn');
     if (locationFacilitiesTocToggle && !locationFacilitiesTocToggle.dataset.listenerAttached) {
-        locationFacilitiesTocToggle.addEventListener('click', function() {
+        locationFacilitiesTocToggle.addEventListener('click', function() { // UI-only, can be passive
             const toc = document.getElementById('location-facilities-toc');
             const content = toc.querySelector('.toc-content');
             const isCollapsed = content.style.display === 'none';
@@ -5635,7 +5635,7 @@ window.addNoteButtons = addNoteButtons;
 
 // Initialize on DOMContentLoaded
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeForm, { passive: true });
+    document.addEventListener('DOMContentLoaded', initializeForm);
 } else {
     initializeForm();
 }
