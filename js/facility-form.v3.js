@@ -2160,16 +2160,15 @@ function resolvePathTarget(path) {
         ensureReferrerDataStructures();
         scope = 'referrerGroup';
         normalizedPath = path.replace('referrerGroup.', '');
-        target = window.formData.referrerAgency;
+        target = window.formData.referrerGroup;
         return { scope, normalizedPath, target };
     }
 
     if (path.startsWith('referrerIndividual.')) {
         ensureReferrerDataStructures();
-        const consultantIndex = window.currentConsultantIndex || 0;
         scope = 'referrerIndividual';
         normalizedPath = path.replace('referrerIndividual.', '');
-        target = window.formData.referrerConsultants[consultantIndex];
+        target = window.formData.referrerIndividual;
         return { scope, normalizedPath, target };
     }
 
@@ -2279,14 +2278,9 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             }
 
             // Also populate the referrer project name input if it exists
-            // Also populate the referrer project name input if it exists and category matches
             const referrerProjectNameInput = document.getElementById('referrer-project-name');
             if (referrerProjectNameInput && projectCategory === 'referrers') {
                 referrerProjectNameInput.value = projectName;
-            if (referrerProjectNameInput) {
-                if (projectCategory === 'referrers') {
-                    referrerProjectNameInput.value = projectName;
-                }
             }
 
             // Ensure the correct form wrapper is visible BEFORE updating UI
@@ -2352,33 +2346,28 @@ function handleReferrerToggle() {
 
     const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
     const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-    const fixedToolbars = document.querySelectorAll('#fixed-toolbar');
 
     const showElement = (element) => {
         if (!element) return;
         element.classList.remove('view-hidden');
-        element.removeAttribute('aria-hidden');
         element.style.display = '';
     };
 
     const hideElement = (element) => {
         if (!element) return;
         element.classList.add('view-hidden');
-        element.setAttribute('aria-hidden', 'true');
         element.style.display = '';
     };
 
     if (activeCategory === 'referrers') {
         hideElement(facilityMainWrapper);
         showElement(referrerMainWrapper);
-        fixedToolbars.forEach(hideElement);
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
         }
     } else {
         showElement(facilityMainWrapper);
         hideElement(referrerMainWrapper);
-        fixedToolbars.forEach(showElement);
     }
 }
 
