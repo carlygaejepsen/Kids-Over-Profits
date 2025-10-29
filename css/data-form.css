@@ -172,8 +172,8 @@ body:not(.admin-bar) .fixed-toolbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 6px 12px;
+    gap: 2px;
+    padding: 6px 8px;
     font-size: 13px;
     font-weight: 600;
     border-radius: 4px;
