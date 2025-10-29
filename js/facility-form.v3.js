@@ -2259,6 +2259,7 @@ function loadProject(projectName) { // Note: This function is now asynchronous
     
     return new Promise((resolve) => {
         setTimeout(() => {
+            const projectCategory = determineProjectCategory(projectName); // Define category inside the timeout scope
             window.currentProjectName = projectName;
             if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
                 window.formData = deepClone(window.projects[projectName].data);
@@ -2277,10 +2278,12 @@ function loadProject(projectName) { // Note: This function is now asynchronous
                 projectNameInput.value = projectName;
             }
 
-            // Also populate the referrer project name input if it exists
+            // Also populate the referrer project name input if it exists and category matches
             const referrerProjectNameInput = document.getElementById('referrer-project-name');
-            if (referrerProjectNameInput && projectCategory === 'referrers') {
-                referrerProjectNameInput.value = projectName;
+            if (referrerProjectNameInput) {
+                if (projectCategory === 'referrers') {
+                    referrerProjectNameInput.value = projectName;
+                }
             }
 
             // Ensure the correct form wrapper is visible BEFORE updating UI
