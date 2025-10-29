@@ -1990,6 +1990,9 @@ function createDefaultReferrerGroup() {
         city: "",
         state: "",
         website: "",
+        address: "",
+        founded: "",
+        affiliations: [],
         keyPersonnel: [],
         notes: "",
         fieldNotes: {}
@@ -2000,6 +2003,10 @@ function createDefaultReferrerIndividual() {
     return {
         firstName: "",
         lastName: "",
+        fullName: "",
+        role: "",
+        status: "",
+        education: "",
         credentials: "",
         city: "",
         state: "",
@@ -2008,7 +2015,10 @@ function createDefaultReferrerIndividual() {
         website: "",
         affiliations: [],
         facilitiesReferred: [],
+        knownReferrals: [],
+        pastTTIJobs: [],
         schoolDistricts: [],
+        lawsuits: "",
         notes: "",
         fieldNotes: {}
     };
@@ -2111,27 +2121,70 @@ function ensureReferrerDataStructures() {
         return;
     }
 
-    // Ensure referrer agency structure exists
-    if (!window.formData.referrerAgency || typeof window.formData.referrerAgency !== 'object') {
-        window.formData.referrerAgency = createDefaultReferrerGroup();
+    const legacyAgency = window.formData.referrerAgency || window.formData.referrerGroup || {};
+    const agency = Object.assign(createDefaultReferrerGroup(), legacyAgency);
+    if (!Array.isArray(agency.affiliations)) {
+        agency.affiliations = [];
+    }
+    if (!Array.isArray(agency.keyPersonnel)) {
+        agency.keyPersonnel = [];
+    }
+    window.formData.referrerAgency = agency;
+    window.formData.referrerGroup = agency;
+
+    if (!Array.isArray(window.formData.referrerConsultants)) {
+        window.formData.referrerConsultants = [];
     }
 
-    // Ensure referrer consultants array exists
-    if (!Array.isArray(window.formData.referrerConsultants) || window.formData.referrerConsultants.length === 0) {
-        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
+    // Merge legacy single referrerIndividual objects into the consultants array
+    if (window.formData.referrerIndividual && window.formData.referrerConsultants.length === 0) {
+        window.formData.referrerConsultants.push(window.formData.referrerIndividual);
     }
 
-    // Ensure isIndependentConsultant flag exists
+    window.formData.referrerConsultants = window.formData.referrerConsultants.map((consultant) => {
+        const merged = Object.assign(createDefaultReferrerIndividual(), consultant || {});
+        if (!Array.isArray(merged.affiliations)) {
+            merged.affiliations = [];
+        }
+        if (!Array.isArray(merged.knownReferrals)) {
+            merged.knownReferrals = Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
+        }
+        // Keep legacy facilitiesReferred array in sync with new knownReferrals field
+        merged.facilitiesReferred = merged.knownReferrals;
+        if (!Array.isArray(merged.pastTTIJobs)) {
+            merged.pastTTIJobs = [];
+        }
+        if (!merged.fullName) {
+            const fullName = [merged.firstName, merged.lastName].filter(Boolean).join(' ');
+            merged.fullName = fullName;
+        }
+        if (!merged.education && merged.credentials) {
+            merged.education = merged.credentials;
+        }
+        return merged;
+    });
+
+    if (window.formData.referrerConsultants.length === 0) {
+        window.formData.referrerConsultants.push(createDefaultReferrerIndividual());
+    }
+
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0) {
+        window.currentConsultantIndex = 0;
+    }
+    if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const activeConsultant = window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    window.formData.referrerConsultants[window.currentConsultantIndex] = activeConsultant;
+    window.formData.referrerIndividual = activeConsultant;
+
     if (typeof window.formData.isIndependentConsultant === 'undefined') {
         window.formData.isIndependentConsultant = false;
     }
 
-    // Legacy support - migrate old data structures if they exist
-    if (window.formData.referrerGroup && !window.formData.referrerAgency) {
-        window.formData.referrerAgency = window.formData.referrerGroup;
-    }
-    if (window.formData.referrerIndividual && !window.formData.referrerConsultants) {
-        window.formData.referrerConsultants = [window.formData.referrerIndividual];
+    if (!window.formData.referrerType) {
+        window.formData.referrerType = window.formData.isIndependentConsultant ? 'individual' : 'group';
     }
 
     window.formData.referrer = buildReferrerEntries(window.formData);
@@ -3033,85 +3086,90 @@ function loadOperatorData() {
 function loadReferrerData() {
     ensureReferrerDataStructures();
 
-    // Load agency data from the project, falling back to a default if it doesn't exist.
-    // This was the missing piece: it wasn't correctly pulling the loaded data.
-    const agency = window.formData.referrerAgency && Object.keys(window.formData.referrerAgency).length > 0
-        ? window.formData.referrerAgency
-        : createDefaultReferrerGroup();
+    const agency = window.formData.referrerAgency || createDefaultReferrerGroup();
 
-    window.formData.referrerAgency = agency;
+    const groupFieldMap = [
+        { ids: ['referrer-group-name', 'referrer-agency-name'], key: 'name' },
+        { ids: ['referrer-group-city', 'referrer-agency-city'], key: 'city' },
+        { ids: ['referrer-group-state', 'referrer-agency-state'], key: 'state' },
+        { ids: ['referrer-group-website', 'referrer-agency-website'], key: 'website' },
+        { ids: ['referrer-group-address'], key: 'address' },
+        { ids: ['referrer-group-founded'], key: 'founded' },
+        { ids: ['referrer-group-notes', 'referrer-agency-notes'], key: 'notes' },
+    ];
 
-    // Ensure consultants array exists
-    if (!Array.isArray(window.formData.referrerConsultants) || window.formData.referrerConsultants.length === 0) {
-        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
-    }
-
-    // Load independent consultant toggle
-    const independentToggle = document.getElementById('referrer-independent-toggle');
-    if (independentToggle) {
-        independentToggle.checked = !!window.formData.isIndependentConsultant;
-        if (typeof window.updateAgencySliderAppearance === 'function') {
-            window.updateAgencySliderAppearance();
-        }
-    }
-
-    // Load agency fields
-    const agencyFieldMap = {
-        'referrer-agency-name': 'name',
-        'referrer-agency-city': 'city',
-        'referrer-agency-state': 'state',
-        'referrer-agency-website': 'website',
-        'referrer-agency-notes': 'notes'
-    };
-
-    Object.entries(agencyFieldMap).forEach(([id, key]) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.value = agency[key] || '';
-        }
+    groupFieldMap.forEach(({ ids, key }) => {
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = agency[key] || '';
+            }
+        });
     });
 
-    // Load agency key personnel array
+    const groupAffiliationsContainer = document.querySelector('[data-path="referrerGroup.affiliations"]');
+    if (groupAffiliationsContainer) {
+        if (!Array.isArray(agency.affiliations)) {
+            agency.affiliations = [];
+        }
+        renderArray(groupAffiliationsContainer, 'referrerGroup.affiliations', agency.affiliations);
+    }
+
     const keyPersonnelContainer = document.querySelector('[data-path="referrerAgency.keyPersonnel"]');
     if (keyPersonnelContainer) {
-        if (!Array.isArray(agency.keyPersonnel)) agency.keyPersonnel = [];
+        if (!Array.isArray(agency.keyPersonnel)) {
+            agency.keyPersonnel = [];
+        }
         renderArray(keyPersonnelContainer, 'referrerAgency.keyPersonnel', agency.keyPersonnel);
     }
 
-    // Load current consultant (first one for now - navigation will be added later)
-    if (!window.currentConsultantIndex) window.currentConsultantIndex = 0;
-    const consultant = window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    const referrerType = window.formData.referrerType || (window.formData.isIndependentConsultant ? 'individual' : 'group');
+    if (typeof window.applyReferrerToggleState === 'function') {
+        window.applyReferrerToggleState(referrerType === 'individual');
+    }
 
-    const consultantFieldMap = {
-        'consultant-firstname': 'firstName',
-        'consultant-lastname': 'lastName',
-        'consultant-credentials': 'credentials',
-        'consultant-city': 'city',
-        'consultant-state': 'state',
-        'consultant-email': 'email',
-        'consultant-phone': 'phone',
-        'consultant-website': 'website',
-        'consultant-notes': 'notes'
-    };
+    const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    window.formData.referrerIndividual = consultant;
 
-    Object.entries(consultantFieldMap).forEach(([id, key]) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.value = consultant[key] || '';
-        }
-    });
-
-    // Load consultant arrays
-    const consultantArrays = [
-        {path: 'consultant.affiliations', data: consultant.affiliations},
-        {path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred},
-        {path: 'consultant.schoolDistricts', data: consultant.schoolDistricts}
+    const consultantName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ');
+    const individualFieldMap = [
+        { ids: ['referrer-individual-name'], value: consultantName },
+        { ids: ['referrer-individual-role'], value: consultant.role || '' },
+        { ids: ['referrer-individual-status'], value: consultant.status || '' },
+        { ids: ['referrer-individual-education'], value: consultant.education || consultant.credentials || '' },
+        { ids: ['referrer-individual-lawsuits'], value: consultant.lawsuits || '' },
+        { ids: ['referrer-individual-notes'], value: consultant.notes || '' },
     ];
 
-    consultantArrays.forEach(({path, data}) => {
+    individualFieldMap.forEach(({ ids, value }) => {
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = value;
+            }
+        });
+    });
+
+    if (!Array.isArray(consultant.pastTTIJobs)) {
+        consultant.pastTTIJobs = [];
+    }
+    if (!Array.isArray(consultant.knownReferrals)) {
+        consultant.knownReferrals = Array.isArray(consultant.facilitiesReferred) ? consultant.facilitiesReferred : [];
+    }
+    consultant.facilitiesReferred = consultant.knownReferrals;
+    if (!Array.isArray(consultant.affiliations)) {
+        consultant.affiliations = [];
+    }
+
+    const individualArrays = [
+        { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
+        { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
+        { path: 'referrerIndividual.affiliations', data: consultant.affiliations },
+    ];
+
+    individualArrays.forEach(({ path, data }) => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {
-            if (!Array.isArray(data)) data = [];
             renderArray(container, path, data);
         }
     });
@@ -4046,43 +4104,89 @@ function attachFieldListeners() {
     });
 
     // Referrer agency fields
-    const referrerAgencyFields = {
-        'referrer-agency-name': (val) => {
-            ensureReferrerDataStructures();
-            setNestedValue(window.formData, 'referrerAgency.name', val);
-            updateJSON();
-            autoSave();
-        },
-        'referrer-agency-city': (val) => {
-            ensureReferrerDataStructures();
-            setNestedValue(window.formData, 'referrerAgency.city', val);
-            updateJSON();
-            autoSave();
-        },
-        'referrer-agency-state': (val) => {
-            ensureReferrerDataStructures();
-            setNestedValue(window.formData, 'referrerAgency.state', val);
-            updateJSON();
-            autoSave();
-        },
-        'referrer-agency-website': (val) => {
-            ensureReferrerDataStructures();
-            setNestedValue(window.formData, 'referrerAgency.website', val);
-            updateJSON();
-            autoSave();
-        },
-        'referrer-agency-notes': (val) => {
-            ensureReferrerDataStructures();
-            setNestedValue(window.formData, 'referrerAgency.notes', val);
-            updateJSON();
-            autoSave();
-        }
+    const updateReferrerAgency = (mutator) => {
+        ensureReferrerDataStructures();
+        const agency = window.formData.referrerAgency;
+        mutator(agency);
+        window.formData.referrerGroup = agency;
+        window.formData.referrer = buildReferrerEntries(window.formData);
+        updateJSON();
+        autoSave();
     };
 
-    Object.keys(referrerAgencyFields).forEach(id => {
+    const referrerAgencyFieldHandlers = {
+        'referrer-agency-name': (val) => updateReferrerAgency(agency => { agency.name = val; }),
+        'referrer-group-name': (val) => updateReferrerAgency(agency => { agency.name = val; }),
+        'referrer-agency-city': (val) => updateReferrerAgency(agency => { agency.city = val; }),
+        'referrer-group-city': (val) => updateReferrerAgency(agency => { agency.city = val; }),
+        'referrer-agency-state': (val) => updateReferrerAgency(agency => { agency.state = val; }),
+        'referrer-group-state': (val) => updateReferrerAgency(agency => { agency.state = val; }),
+        'referrer-agency-website': (val) => updateReferrerAgency(agency => { agency.website = val; }),
+        'referrer-group-website': (val) => updateReferrerAgency(agency => { agency.website = val; }),
+        'referrer-group-address': (val) => updateReferrerAgency(agency => { agency.address = val; }),
+        'referrer-group-founded': (val) => updateReferrerAgency(agency => { agency.founded = val; }),
+        'referrer-agency-notes': (val) => updateReferrerAgency(agency => { agency.notes = val; }),
+        'referrer-group-notes': (val) => updateReferrerAgency(agency => { agency.notes = val; })
+    };
+
+    Object.entries(referrerAgencyFieldHandlers).forEach(([id, handler]) => {
         const el = document.getElementById(id);
         if (el && !el.dataset.listenerAttached) {
-            el.addEventListener('input', (e) => referrerAgencyFields[id](e.target.value), { passive: true });
+            el.addEventListener('input', (e) => handler(e.target.value), { passive: true });
+            el.dataset.listenerAttached = 'true';
+        }
+    });
+
+    const updateReferrerConsultant = (mutator) => {
+        ensureReferrerDataStructures();
+        const index = window.currentConsultantIndex || 0;
+        if (!Array.isArray(window.formData.referrerConsultants)) {
+            window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
+        }
+        const consultant = window.formData.referrerConsultants[index] || createDefaultReferrerIndividual();
+        mutator(consultant);
+        window.formData.referrerConsultants[index] = consultant;
+        window.formData.referrerIndividual = consultant;
+        window.formData.referrer = buildReferrerEntries(window.formData);
+        updateJSON();
+        autoSave();
+    };
+
+    const referrerIndividualFieldHandlers = {
+        'referrer-individual-name': (val) => {
+            updateReferrerConsultant(consultant => {
+                consultant.fullName = val;
+                if (typeof val === 'string') {
+                    const trimmed = val.trim();
+                    if (trimmed.length) {
+                        const parts = trimmed.split(/\s+/);
+                        consultant.firstName = parts.shift() || '';
+                        consultant.lastName = parts.length ? parts.join(' ') : '';
+                    } else {
+                        consultant.firstName = '';
+                        consultant.lastName = '';
+                    }
+                } else {
+                    consultant.firstName = '';
+                    consultant.lastName = '';
+                }
+            });
+        },
+        'referrer-individual-role': (val) => updateReferrerConsultant(consultant => { consultant.role = val; }),
+        'referrer-individual-status': (val) => updateReferrerConsultant(consultant => { consultant.status = val; }),
+        'referrer-individual-education': (val) => updateReferrerConsultant(consultant => {
+            consultant.education = val;
+            consultant.credentials = val;
+        }),
+        'referrer-individual-lawsuits': (val) => updateReferrerConsultant(consultant => { consultant.lawsuits = val; }),
+        'referrer-individual-notes': (val) => updateReferrerConsultant(consultant => { consultant.notes = val; })
+    };
+
+    Object.entries(referrerIndividualFieldHandlers).forEach(([id, handler]) => {
+        const el = document.getElementById(id);
+        if (el && !el.dataset.listenerAttached) {
+            const eventName = el.tagName === 'SELECT' ? 'change' : 'input';
+            el.addEventListener(eventName, (e) => handler(e.target.value), { passive: true });
             el.dataset.listenerAttached = 'true';
         }
     });
