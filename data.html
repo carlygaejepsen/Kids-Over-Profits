@@ -1138,7 +1138,7 @@
             </div>
             <div class="section-content" style="display: block;">
                 <div id="suggestion-status" style="display: none;"></div>
-                
+
                 <div class="form-group">
                     <button type="button" class="save-master-btn" onclick="submitSuggestion()">
                         📮 Submit for Review
@@ -1286,6 +1286,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Suggestion Reason Modal -->
+    <div id="suggestion-reason-modal" class="organizer-modal">
+        <div class="organizer-modal-content" style="max-width: 500px;">
+            <div class="organizer-modal-header">
+                <h2 style="margin: 0; font-size: 22px;">Reason for Submission</h2>
+                <button class="organizer-modal-close" id="suggestion-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body">
+                <p style="margin-top: 0; margin-bottom: 15px; color: #4b5563;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
+                <div class="form-group">
+                    <label for="suggestion-summary" style="font-weight: 600;">Summary of Changes:</label>
+                    <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>
+                    <p id="suggestion-error" style="color: #dc2626; font-size: 13px; display: none; margin-top: 5px;">Please provide a summary of your changes.</p>
+                </div>
+                <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn modal-btn-secondary" id="suggestion-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
@@ -1569,20 +1592,62 @@
 
         window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
-        async function submitSuggestion() {
-            // Ask user to summarize their changes
-            const changesSummary = prompt(
-                'Please summarize the key changes you made:\n\n' +
-                '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
-                '"Added 3 new staff members", "Updated facility closure information", etc.)'
-            );
-            
-            if (!changesSummary || changesSummary.trim() === '') {
-                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
-                return;
-            }
-            
-            // Get the current project data from window.formData
+        function submitSuggestion() {
+            const modal = document.getElementById('suggestion-reason-modal');
+            const summaryTextarea = document.getElementById('suggestion-summary');
+            const errorP = document.getElementById('suggestion-error');
+            const confirmBtn = document.getElementById('suggestion-modal-confirm');
+            const cancelBtn = document.getElementById('suggestion-modal-cancel');
+            const closeBtn = document.getElementById('suggestion-modal-close');
+
+            // Reset state
+            summaryTextarea.value = '';
+            errorP.style.display = 'none';
+            summaryTextarea.style.borderColor = '#d1d5db';
+
+            // Show modal
+            modal.classList.add('active');
+            summaryTextarea.focus();
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+                // Clean up listeners to prevent multiple submissions
+                const newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            };
+
+            // Attach event listeners
+            cancelBtn.onclick = closeModal;
+            closeBtn.onclick = closeModal;
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            confirmBtn.onclick = () => {
+                const summary = summaryTextarea.value.trim();
+                if (summary === '') {
+                    errorP.style.display = 'block';
+                    summaryTextarea.style.borderColor = '#dc2626';
+                    summaryTextarea.focus();
+                } else {
+                    errorP.style.display = 'none';
+                    summaryTextarea.style.borderColor = '#d1d5db';
+                    performSuggestionSubmission(summary);
+                    closeModal();
+                }
+            };
+
+            summaryTextarea.oninput = () => {
+                if (summaryTextarea.value.trim() !== '') {
+                    errorP.style.display = 'none';
+                    summaryTextarea.style.borderColor = '#d1d5db';
+                }
+            };
+        }
+
+        async function performSuggestionSubmission(changesSummary) {
             console.log('🔍 Checking for form data...', {
                 'window.formData exists': !!window.formData,
                 'window.formData value': window.formData
@@ -1692,7 +1757,7 @@
                     },
                     body: JSON.stringify({
                         data: dataToSubmit,
-                        reason: changesSummary.trim(),
+                        reason: changesSummary,
                         projectName: actualProjectName, // Explicit project name
                         metadata: {
                             actualProjectName: actualProjectName,
@@ -2994,6 +3059,16 @@
             setTimeout(window.updateToolbarFacilityInfo, 500);
             setTimeout(window.updateToolbarFacilityInfo, 2000);
             setTimeout(window.updateToolbarFacilityInfo, 5000);
+
+            // Add listener for the referrer submission button
+            const referrerSubmitBtn = document.getElementById('submit-referrer-suggestion-btn');
+            if (referrerSubmitBtn && !referrerSubmitBtn.dataset.listenerAttached) {
+                referrerSubmitBtn.addEventListener('click', () => {
+                    submitSuggestion();
+                });
+                referrerSubmitBtn.dataset.listenerAttached = 'true';
+                console.log('✅ Attached listener to referrer submission button.');
+            }
         });
     </script>
 </body>

@@ -3699,16 +3699,18 @@ function refreshSavedProjectPanels() {
             const date = new Date(project.timestamp || 0);
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const facilityCount = project.data?.facilities?.length || 0;
+            const facilityLabel = project.category === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
             const adminButtons = !IS_SUGGESTION_MODE ? `
                         <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
                         <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
         ` : '';
 
             return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
-                    <div class="project-item-name">${escapeHtmlForAttr(name)}</div>
-                    <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} facilities</small></div>
+                    <div class="project-item-name" title="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</div>
+                    <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} ${facilityLabel}</small></div>
                     <div class="project-item-actions">
                         <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
+                        <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject('${escapeHtmlForAttr(name)}')">Reclassify</button>
                         ${adminButtons}
                     </div>
                 </div>`;
