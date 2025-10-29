@@ -3263,31 +3263,21 @@ function navigateToFacility(index) {
 // ============================================
 function updateToolbarFacilityInfo() {
     const dropdown = document.getElementById('facility-dropdown');
+    const projectNameSpan = document.getElementById('toolbar-project-name');
+
+    // Only proceed if toolbar elements exist (not all pages have the toolbar)
     if (!dropdown) return;
 
-    const projectNameSpan = document.getElementById('toolbar-project-name');
-    const activeTab = document.querySelector('.category-tab.active');
-    const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+    debugLog('🔄 Updating toolbar facility info...', {
+        'formData exists': !!window.formData,
+        'facilities count': window.formData?.facilities?.length || 0,
+        'currentProjectName': window.currentProjectName
+    });
 
-    if (activeCategory === 'referrers') {
-        const consultants = window.formData?.referrerConsultants || [];
+    if (window.formData && window.formData.facilities) {
+        // Clear and populate dropdown
         dropdown.innerHTML = '';
-        consultants.forEach((consultant, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            const consultantName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`;
-            option.textContent = `${index + 1}. ${consultantName}`;
-            dropdown.appendChild(option);
-        });
-        if (typeof window.currentConsultantIndex !== 'undefined') {
-            dropdown.value = window.currentConsultantIndex;
-        }
-        debugLog('✅ Populated toolbar dropdown with', consultants.length, 'consultants');
-    } else {
-        // Handle facilities for companies/locations
-        const facilities = window.formData?.facilities || [];
-        dropdown.innerHTML = '';
-        facilities.forEach((facility, index) => {
+        window.formData.facilities.forEach((facility, index) => {
             const option = document.createElement('option');
             option.value = index;
             const facilityName = facility.identification?.name || `Facility ${index + 1}`;
@@ -3295,27 +3285,30 @@ function updateToolbarFacilityInfo() {
             dropdown.appendChild(option);
         });
 
+        debugLog('✅ Populated dropdown with', window.formData.facilities.length, 'facilities');
+
+        // Set current selection
         if (typeof window.currentFacilityIndex !== 'undefined') {
             dropdown.value = window.currentFacilityIndex;
         }
-        debugLog('✅ Populated toolbar dropdown with', facilities.length, 'facilities');
-    }
 
-    // Sort dropdown options alphabetically by name (works for both facilities and consultants)
-    const options = Array.from(dropdown.options);
-    options.sort((a, b) => {
-        const nameA = a.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
-        const nameB = b.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
-        return nameA.localeCompare(nameB);
-    });
-    dropdown.innerHTML = '';
-    options.forEach(opt => dropdown.appendChild(opt));
-
-    // Reselect current item
-    if (activeCategory === 'referrers') {
-        if (typeof window.currentConsultantIndex !== 'undefined') dropdown.value = window.currentConsultantIndex;
+        // Sort options alphabetically by facility name
+        const options = Array.from(dropdown.options);
+        options.sort((a, b) => {
+            const nameA = a.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+            const nameB = b.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+        // Re-add sorted options
+        dropdown.innerHTML = '';
+        options.forEach(opt => dropdown.appendChild(opt));
+        // Reselect current facility
+        if (typeof window.currentFacilityIndex !== 'undefined') {
+            dropdown.value = window.currentFacilityIndex;
+        }
     } else {
-        if (typeof window.currentFacilityIndex !== 'undefined') dropdown.value = window.currentFacilityIndex;
+        debugLog('⚠️ Could not update toolbar: no formData or facilities');
+        dropdown.innerHTML = '<option>No facilities</option>';
     }
 
     // Update project name
@@ -3325,15 +3318,12 @@ function updateToolbarFacilityInfo() {
 
     // Show/hide remove button
     const removeBtn = document.getElementById('remove-facility-btn-toolbar');
-    if (removeBtn) {
-        let itemCount = 0;
-        if (activeCategory === 'referrers') {
-            itemCount = window.formData?.referrerConsultants?.length || 0;
+    if (removeBtn && window.formData && window.formData.facilities) {
+        if (window.formData.facilities.length > 1) {
+            removeBtn.classList.remove('d-none');
         } else {
-            itemCount = window.formData?.facilities?.length || 0;
+            removeBtn.classList.add('d-none');
         }
-
-        removeBtn.classList.toggle('d-none', itemCount <= 1);
     }
 
     // Update prev/next button states
@@ -3401,18 +3391,9 @@ function initializeToolbarButtons() {
     const facilityDropdown = document.getElementById('facility-dropdown');
     if (facilityDropdown && !facilityDropdown.dataset.listenerAttached) {
         facilityDropdown.addEventListener('change', (e) => {
-            const activeTab = document.querySelector('.category-tab.active');
-            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
             const newIndex = parseInt(e.target.value);
-
-            if (activeCategory === 'referrers') {
-                window.currentConsultantIndex = newIndex;
-                loadConsultantData();
-                updateConsultantsOverview();
-            } else {
-                if (!isNaN(newIndex)) {
-                    navigateToFacility(newIndex);
-                }
+            if (!isNaN(newIndex)) {
+                navigateToFacility(newIndex);
             }
         }, { passive: true });
         facilityDropdown.dataset.listenerAttached = 'true';
@@ -3856,13 +3837,13 @@ function updateLabelsForProjectType() {
     const labels = {
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
-        facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Consultants Overview' },
-        addFacilityButton: { default: 'Add New Facility', referrer: 'Add New Consultant' },
-        addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New Consultant' },
-        currentFacilityLabel: { default: 'Current Facility:', referrer: 'Current Consultant:' },
-        addFacilityToolbar: { default: '➕ Add Facility', referrer: '➕ Add Consultant' },
-        cloneFacilityToolbar: { default: '📋 Clone Facility', referrer: '📋 Clone Consultant' },
-        removeFacilityToolbar: { default: '🗑️ Remove Facility', referrer: '🗑️ Remove Consultant' },
+        facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
+        addFacilityButton: { default: 'Add New Facility', referrer: 'Add New Individual' },
+        addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New Individual' },
+        currentFacilityLabel: { default: 'Current Facility', referrer: 'Current Individual' },
+        addFacilityToolbar: { default: '➕ Add Facility', referrer: '➕ Add Individual' },
+        cloneFacilityToolbar: { default: '📋 Clone Facility', referrer: '📋 Clone Individual' },
+        removeFacilityToolbar: { default: '🗑️ Remove Facility', referrer: '🗑️ Remove Individual' },
         facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name' },
         facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
         facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
@@ -3897,14 +3878,13 @@ function updateLabelsForProjectType() {
 
     // Update TOC and Facility Controls
     setLabelForQuery('.facility-toc .toc-title', labels.facilitiesOverviewTitle[mode]);
-    setLabel('add-facility-main-btn', labels.addFacilityTOC[mode]); // This button is hidden in referrer view, but good to keep consistent
+    setLabel('add-facility-main-btn', labels.addFacilityTOC[mode]);
     setLabelForQuery('.facility-controls strong', `${labels.currentFacilityLabel[mode]}: `);
 
     // Update Toolbar
     setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
     setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
     setLabel('remove-facility-btn-toolbar', labels.removeFacilityToolbar[mode]);
-    setLabel('toolbar-current-item-label', labels.currentFacilityLabel[mode]);
 
     // Update Facility-specific sections
     setLabelForQuery('#identification-section .section-title', labels.facilityIdentificationTitle[mode]);
@@ -4271,24 +4251,10 @@ function attachButtonListeners() {
             const projectName = document.getElementById('project-name')?.value?.trim();
             if (projectName) {
                 saveProjectToCloud(projectName);
-            } else {
+            } else {;
                 showUploadStatus('Please enter a project name', 'error');
-        saveBtn.addEventListener('click', () => {
-            const activeTab = document.querySelector('.category-tab.active');
-            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
-            let projectNameInputId = 'project-name';
-            if (activeCategory === 'referrers') {
-                projectNameInputId = 'referrer-project-name';
             }
         };
-
-            const projectName = document.getElementById(projectNameInputId)?.value?.trim();
-            if (!projectName) {
-                showUploadStatus('Please enter a project name to save.', 'error');
-                return;
-            }
-            saveProjectToCloud(projectName);
-        });
         saveBtn.dataset.listenerAttached = 'true';
     }
 
