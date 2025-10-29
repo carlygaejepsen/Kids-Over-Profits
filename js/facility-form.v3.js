@@ -4383,6 +4383,32 @@ function attachButtonListeners() {
         saveReferrerBtn.dataset.listenerAttached = 'true';
     }
 
+    // Toolbar navigation buttons
+    const prevBtnToolbar = document.getElementById('prev-facility-btn-toolbar');
+    if (prevBtnToolbar && !prevBtnToolbar.dataset.listenerAttached) {
+        prevBtnToolbar.addEventListener('click', () => {
+            const dropdown = document.getElementById('facility-dropdown');
+            if (dropdown && dropdown.selectedIndex > 0) {
+                dropdown.selectedIndex--;
+                dropdown.dispatchEvent(new Event('change'));
+            }
+        });
+        prevBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+    const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
+    if (nextBtnToolbar && !nextBtnToolbar.dataset.listenerAttached) {
+        nextBtnToolbar.addEventListener('click', () => {
+            const dropdown = document.getElementById('facility-dropdown');
+            if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
+                dropdown.selectedIndex++;
+                dropdown.dispatchEvent(new Event('change'));
+            }
+        });
+        nextBtnToolbar.dataset.listenerAttached = 'true';
+    }
+
+
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
     if (copyBtn && !copyBtn.dataset.listenerAttached) {
