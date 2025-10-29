@@ -3766,33 +3766,42 @@ function updateLabelsForProjectType() {
     const activeTab = document.querySelector('.category-tab.active');
     const category = activeTab ? activeTab.dataset.category : 'companies';
 
-
     // Define default and referrer-specific labels
     const labels = {
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
         facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
         addFacilityButton: { default: 'Add New Facility', referrer: 'Add New Individual' },
+        addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New Individual' },
         currentFacilityLabel: { default: 'Current Facility', referrer: 'Current Individual' },
         addFacilityToolbar: { default: '➕ Add Facility', referrer: '➕ Add Individual' },
         cloneFacilityToolbar: { default: '📋 Clone Facility', referrer: '📋 Clone Individual' },
-        removeFacilityToolbar: { default: '🗑️ Remove', referrer: '🗑️ Remove' }, // Stays the same
-        facilityNameLabel: { default: 'Name', referrer: 'Individual\'s Name' },
+        removeFacilityToolbar: { default: '🗑️ Remove Facility', referrer: '🗑️ Remove Individual' },
+        facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name' },
         facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
         facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
-        facilityOperationsTitle: { default: 'Facility Operations', referrer: 'Individual\'s Operations' }
+        facilityOperationsTitle: { default: 'Facility Operations', referrer: 'Individual\'s Operations' },
+        cloneModalTitle: { default: 'Clone Facility', referrer: 'Clone Individual' },
+        cloneModalButton: { default: 'Clone Facility', referrer: 'Clone Individual' }
     };
 
     const setLabel = (elementId, text) => {
         const el = document.getElementById(elementId);
-        if (el) el.textContent = text;
+        if (el) {
+            // Preserve icons if they exist
+            const icon = el.querySelector('span[aria-hidden="true"], i');
+            if (icon) {
+                el.innerHTML = `${icon.outerHTML} ${text}`;
+            } else {
+                el.textContent = text;
+            }
+        }
     };
 
     const setLabelForQuery = (selector, text) => {
         const el = document.querySelector(selector);
         if (el) el.textContent = text;
     };
-
     const mode = (category === 'referrers') ? 'referrer' : 'default';
 
     // Update main section titles
@@ -3802,16 +3811,22 @@ function updateLabelsForProjectType() {
 
     // Update TOC and Facility Controls
     setLabelForQuery('.facility-toc .toc-title', labels.facilitiesOverviewTitle[mode]);
-    setLabelForQuery('#add-facility-main-btn', labels.addFacilityButton[mode]);
+    setLabel('add-facility-main-btn', labels.addFacilityTOC[mode]);
     setLabelForQuery('.facility-controls strong', `${labels.currentFacilityLabel[mode]}: `);
 
     // Update Toolbar
     setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
     setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
+    setLabel('remove-facility-btn-toolbar', labels.removeFacilityToolbar[mode]);
 
     // Update Facility-specific sections
     setLabelForQuery('#identification-section .section-title', labels.facilityIdentificationTitle[mode]);
     setLabelForQuery('label[for="facility-name"]', labels.facilityNameLabel[mode]);
+
+    // Update Clone Modal
+    setLabelForQuery('#clone-facility-modal .modal-title', labels.cloneModalTitle[mode]);
+    setLabel('clone-modal-confirm', labels.cloneModalButton[mode]);
+
 }
 // ============================================
 // FILE IMPORT/EXPORT
