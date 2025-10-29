@@ -140,10 +140,10 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .fixed-toolbar .toolbar-section {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     align-items: center;
-    flex-wrap: nowrap; /* KEEP EVERYTHING ON ONE LINE */
-    overflow-x: auto; /* Allow horizontal scrolling if needed instead of wrapping */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: space-between; /* Distribute groups evenly */
 }
 
 .fixed-toolbar .toolbar-group {
@@ -160,12 +160,6 @@ body:not(.admin-bar) .fixed-toolbar {
     font-size: 13px;
     margin-right: 5px;
     white-space: nowrap;
-}
-
-.fixed-toolbar .toolbar-section,
-.fixed-toolbar .toolbar-group {
-    flex-wrap: nowrap !important; /* Ensure these never wrap on desktop */
-    flex-direction: row !important; /* Always start as a row */
 }
 
 .fixed-toolbar .btn-toolbar {
@@ -2015,15 +2009,11 @@ textarea {
     body {
         padding: 15px;
     }
-
-    body.toolbar-active {
-        padding-top: 190px;
-    }
-
+    
     .fixed-toolbar .toolbar-section {
         flex-direction: column;
         align-items: stretch;
-        flex-wrap: wrap !important; /* Allow wrapping on mobile */
+        gap: 10px;
     }
 
     .fixed-toolbar .toolbar-group {
