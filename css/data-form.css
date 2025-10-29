@@ -162,6 +162,12 @@ body:not(.admin-bar) .fixed-toolbar {
     white-space: nowrap;
 }
 
+.fixed-toolbar .toolbar-section,
+.fixed-toolbar .toolbar-group {
+    flex-wrap: nowrap !important; /* Ensure these never wrap on desktop */
+    flex-direction: row !important; /* Always start as a row */
+}
+
 .fixed-toolbar .btn-toolbar {
     display: inline-flex;
     align-items: center;
@@ -2017,6 +2023,7 @@ textarea {
     .fixed-toolbar .toolbar-section {
         flex-direction: column;
         align-items: stretch;
+        flex-wrap: wrap !important; /* Allow wrapping on mobile */
     }
 
     .fixed-toolbar .toolbar-group {
