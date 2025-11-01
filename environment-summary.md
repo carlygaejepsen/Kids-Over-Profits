@@ -35,3 +35,17 @@ This document outlines the key details of the user's development and server envi
 *   **No Credential Handling:** This automated workspace cannot securely receive, store, or use production credentials (e.g., SSH keys, passwords, VPN profiles). Any sensitive secret shared in chat is immediately discarded and cannot be applied within the container session.
 *   **Isolated Execution:** Actions are confined to the provided project files. The agent cannot initiate direct SSH or SFTP connections to your infrastructure, so production diagnostics must rely on locally available logs, configuration snapshots, or sanitized command outputs supplied by the user.
 *   **HTTP-Only Probing:** While outbound HTTP(S) requests such as `curl` are possible, restrictions like firewalls or authentication gates may prevent successful retrievals, limiting remote validation to publicly accessible endpoints.
+
+## 6. Database Credential Configuration
+
+`api/config.php` now resolves its connection settings from the runtime environment instead of hard-coded literals. Provide the credentials in one of the following ways before loading any of the API scripts (`api/save-master.php`, `api/get-master-data.php`, `api/get-autocomplete.php`, `api/save-suggestion.php`, and `api/process-edit.php`):
+
+1. **WordPress constants:** Define the credentials in `wp-config.php` using either the bespoke `KOP_*` constants or WordPress' core constants. The loader checks them in this order:
+    * Host: `KOP_DB_HOST`, then `DB_HOST`
+    * Database name: `KOP_DB_NAME`, then `DB_NAME`
+    * Username: `KOP_DB_USER`, `KOP_DB_USERNAME`, `DB_USER`, `DB_USERNAME`
+    * Password: `KOP_DB_PASS`, `KOP_DB_PASSWORD`, `DB_PASS`, `DB_PASSWORD`
+2. **Environment variables:** If the constants are unset or empty, ensure the same names exist as environment variables (e.g., `export KOP_DB_PASS=...` for CLI access, or configure them via your hosting control panel).
+3. **Local override file:** When running the API scripts from the command line or another context where WordPress constants and environment variables are unavailable, copy `api/config.php.example` to `api/config.local.php`, update the returned credentials array, and keep the file out of version control (it is ignored via `.gitignore`). The loader only consults this file when the runtime sources above do not provide a value.
+
+When none of the expected values can be found, the API responds with HTTP 500 and a JSON payload describing the missing fields. This makes misconfiguration immediately visible in staging and production logs.
