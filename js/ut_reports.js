@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         .filter(Boolean)
                         .map(file => {
                             const fileName = file.split('/').pop();
-                            return fileName ? `https://kidsoverprofits.org/wp-content/uploads/utah-checklists/${fileName}` : null;
+                            return fileName ? `https://kidsoverprofits.org/wp-content/themes/child/js/data/ut_checklists/${fileName}` : null;
                         })
                         .filter(Boolean)
                     : [];
