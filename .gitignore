@@ -9,6 +9,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Node.js dependencies
+node_modules/
+
 # WordPress files
 wp-config-local.php
 
