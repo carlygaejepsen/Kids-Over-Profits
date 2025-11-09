@@ -5,15 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
+    <!-- Kadence navigation guard is now loaded globally via WordPress functions.php -->
     </head>
 <body>
     <div class="container">
+        <div class="admin-header">
+            <h1>🔐 Admin Facility Data Management</h1>
+            <p>You are in administrator mode. Changes saved here will directly update the master database.</p>
+        </div>
+        
+        <div class="admin-warning">
+            ❗ <strong>Administrator Mode:</strong> Data saved here will directly update the master database. Proceed with caution.
+        </div>
+
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
                 <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
                 <button class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -22,28 +33,274 @@
                 <div id="companies-content" class="category-content">
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
-                        <div class="mb-15">
-                            <select id="project-select" class="input-primary" style="width: 100%;">
-                                <option value="">-- Select a project --</option>
-                            </select>
+                    </div>
+                    <div class="project-management" id="project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-project-btn">New Project</button>
+                                <button class="btn" id="export-all-btn">Export All Projects</button>
+                                <button class="btn" id="generate-report-btn">Generate Report</button>
+                            </div>
                         </div>
                     </div>
+                    <div id="upload-status" style="display: none;"></div>
                 </div>
 
                 <!-- States Content -->
                 <div id="states-content" class="category-content d-none">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
-                        <div class="mb-15">
-                            <select id="location-project-select" class="input-primary" style="width: 100%;">
-                                <option value="">-- Select a location project --</option>
+                    </div>
+                    <div class="project-management location-project-management">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <div class="form-group">
+                            <label>Saved Location Projects</label>
+                            <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                    </div>
+
+                    <!-- Facilities Overview for Locations -->
+                    <div class="facility-toc" id="location-facilities-toc">
+                        <div class="toc-header">
+                            <h2 class="toc-title">Facilities in this Location</h2>
+                            <button class="toc-toggle" id="location-facilities-toc-toggle-btn">🔎</button>
+                        </div>
+                        <div class="toc-content">
+                            <div class="toc-stats" id="location-facilities-toc-stats">Total: 0 facilities</div>
+                            <div class="facility-list" id="location-facilities-list">
+                                <!-- Facility items will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referrers Content -->
+                <div id="referrers-content" class="category-content d-none">
+                    <div class="content-header">
+                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
+                    </div>
+
+                    <div class="project-management" id="referrer-project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
+                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Referrer Projects</label>
+                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-referrer-project-btn">New Project</button>
+                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
+                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
+        <div id="referrer-main-wrapper" style="display: none;">
+
+            <!-- Agency Toggle -->
+            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                    <span>Independent Consultant (not part of an agency):</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>No</span>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
+                            <span id="referrer-agency-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                <span id="referrer-agency-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </div>
+                        <span>Yes</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                    Toggle to "Yes" for independent consultants to hide the agency section.
+                </p>
+            </div>
+
+            <!-- Consultants Overview (Table of Contents) -->
+            <div class="facility-toc" id="consultants-toc">
+                <div class="toc-header">
+                    <h2 class="toc-title">Consultants Overview</h2>
+                    <button class="toc-toggle" id="consultants-toc-toggle-btn">🔎</button>
+                </div>
+                <div class="toc-content">
+                    <div class="toc-stats" id="consultants-toc-stats">Total: 1 consultant</div>
+                    <div class="facility-list" id="consultants-list">
+                        <!-- Consultant items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agency Information Section -->
+            <div class="section expanded" id="referrer-agency-section">
+                <div class="section-header">
+                    <h2 class="section-title">Agency/Group Information</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>Agency/Group Name</label>
+                        <input type="text" id="referrer-agency-name" class="input-form" placeholder="e.g., Educational Consultants Association">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="referrer-agency-city" class="input-form" placeholder="e.g., Los Angeles">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="referrer-agency-state" class="input-form" placeholder="e.g., CA">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" id="referrer-agency-website" class="input-form" placeholder="https://">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Key Personnel</label>
+                        <div class="array-container" data-path="referrerAgency.keyPersonnel"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Agency Notes</label>
+                        <textarea id="referrer-agency-notes" class="input-form" rows="4" placeholder="Add notes about this agency..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Consultants Management Section -->
+            <div class="section expanded" id="referrer-consultants-section">
+                <div class="section-header">
+                    <h2 class="section-title">Individual Consultants</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button class="btn" id="prev-consultant-btn" title="Previous consultant">◀ Previous</button>
+                            <select id="consultant-dropdown" style="min-width: 250px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option>1. New Consultant</option>
                             </select>
+                            <button class="btn" id="next-consultant-btn" title="Next consultant">Next ▶</button>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="add-consultant-btn">➕ Add Consultant</button>
+                            <button class="btn btn-danger d-none" id="remove-consultant-btn">🗑️ Remove Consultant</button>
+                        </div>
+                    </div>
+
+                    <!-- Individual Consultant Form -->
+                    <div id="consultant-form-wrapper">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="consultant-firstname" class="consultant-field" data-field="firstName" placeholder="e.g., John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="consultant-lastname" class="consultant-field" data-field="lastName" placeholder="e.g., Smith">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credentials/Title</label>
+                            <input type="text" id="consultant-credentials" class="consultant-field" data-field="credentials" placeholder="e.g., Licensed Educational Consultant, IECA">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="consultant-city" class="consultant-field" data-field="city" placeholder="e.g., Boston">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" id="consultant-state" class="consultant-field" data-field="state" placeholder="e.g., MA">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="consultant-email" class="consultant-field" data-field="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="consultant-phone" class="consultant-field" data-field="phone" placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Website/Profile</label>
+                            <input type="url" id="consultant-website" class="consultant-field" data-field="website" placeholder="https://">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Professional Affiliations</label>
+                            <div class="array-container" data-path="consultant.affiliations"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Facilities Referred To</label>
+                            <div class="array-container" data-path="consultant.facilitiesReferred"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>School Districts Worked With</label>
+                            <div class="array-container" data-path="consultant.schoolDistricts"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="consultant-notes" class="consultant-field" data-field="notes" rows="4" placeholder="Add notes about this consultant..."></textarea>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Referrer Submission Section -->
+            <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+                <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                    <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save Referrer Project</h2>
+                </div>
+                <div class="section-content" style="display: block;">
+                    <div class="form-group">
+                        <label for="referrer-project-name">Project Name</label>
+                        <input type="text" id="referrer-project-name" placeholder="Enter referrer project name..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="save-master-btn" id="save-referrer-project-btn">
+                            💾 Save Referrer Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        
+
+        <div id="facility-main-wrapper">
         <!-- Facility Table of Contents -->
         <div class="facility-toc" id="facility-toc">
             <div class="toc-header">
@@ -69,16 +326,19 @@
                 <div class="d-flex align-items-center gap-15">
                     <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
                     <span id="current-facility-name" class="text-muted fw-normal"></span>
-                    <div class="d-flex gap-5">
-                        <button class="btn d-none" id="prev-facility-btn" style="padding: 8px 12px;">⬅️ Previous</button>
-                        <button class="btn d-none" id="next-facility-btn" style="padding: 8px 12px;">Next ➡️</button>
-                    </div>
+                    <button class="btn" id="facility-toolbar-toggle">🔽</button>
                 </div>
-                <div class="controls">
-                    <button class="btn" id="add-facility-btn">Add Facility</button>
-                    <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
-                    <button class="btn" id="clone-facility-btn">Clone Facility</button>
-                    <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                <div class="facility-toolbar-expandable" id="facility-toolbar-expandable">
+                    <div class="d-flex gap-5">
+                        <button class="btn d-none" id="prev-facility-btn">⬅️ Previous</button>
+                        <button class="btn d-none" id="next-facility-btn">Next ➡️</button>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" id="add-facility-btn">Add Facility</button>
+                        <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
+                        <button class="btn" id="clone-facility-btn">Clone Facility</button>
+                        <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,14 +423,27 @@
                     </div>
                 </div>
 
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="operator-location">Primary Location</label>
-                        <input type="text" id="operator-location" data-autocomplete-category="location" placeholder="e.g., Waynesboro, TN">
+                        <label for="operator-location-city">City</label>
+                        <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
                     </div>
                     <div class="form-group">
-                        <label for="operator-headquarters">Headquarters</label>
-                        <input type="text" id="operator-headquarters" data-autocomplete-category="location" placeholder="e.g., Nashville, TN">
+                        <label for="operator-location-state">State</label>
+                        <input type="text" id="operator-location-state" placeholder="e.g., TN">
+                    </div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-headquarters-city">City</label>
+                        <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters-state">State</label>
+                        <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
                     </div>
                 </div>
 
@@ -255,6 +528,10 @@
                 <div class="form-group">
                     <label>Other Names</label>
                     <div class="array-container" data-path="identification.otherNames"></div>
+                </div>
+                <div class="form-group">
+                    <label>Known Referrers (Education Consultants / School Districts)</label>
+                    <div class="array-container" data-path="identification.knownReferrers"></div>
                 </div>
             </div>
         </div>
@@ -741,48 +1018,32 @@
             </div>
         </div>
         
+        <!-- Submission Section -->
+        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
+            </div>
+            <div class="section-content" style="display: block;">
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="Enter project name..." style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="save-master-btn" id="save-project-btn">
+                        💾 Save to Master Database
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
                 <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
                 <span class="section-toggle">🔎</span>
             </div>
-            <div class="section-content">
-                <div class="json-output">
-                    <div class="output-header">
-                        <h3>Generated JSON</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
-                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
-                        </div>
-                    </div>
-                    <pre id="json-display">{}</pre>
-                </div>
-                
-                <div class="project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
-                    
-                    <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
-                            <button class="btn" id="load-project-btn">Load Project</button>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved projects</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
+            <div class="section-content" style="display: none;">
+                 <div class="form-group">
                         <label for="file-upload">Import Data Files</label>
                         <input type="file" id="file-upload" accept=".json,.csv,.txt">
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
@@ -798,14 +1059,22 @@
                             <button class="btn" id="clear-all-btn">Clear Form</button>
                         </div>
                     </div>
-                    
-                    <div id="upload-status" style="display: none;"></div>
+                <div class="json-output">
+                    <div class="output-header">
+                        <h3>Generated JSON</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
+                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
+                        </div>
+                    </div>
+                    <pre id="json-display">{}</pre>
                 </div>
+
             </div>
         </div>
     </div>
     
-    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
+    <!-- Clone Facility Modal -->
     <div id="clone-facility-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -813,19 +1082,19 @@
                 <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="current" checked>
-                        Clone to current project (default behavior)
+                        Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="existing">
-                        Clone to existing project
+                        Clone to an existing project
                     </label>
                     <div class="project-select-container" id="existing-project-container" style="display: none;">
                         <select class="project-select" id="existing-project-select">
@@ -837,10 +1106,18 @@
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="new">
-                        Clone to new project
+                        Clone to a new project
                     </label>
                     <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name...">
+                        <div style="margin-top: 12px;">
+                            <label style="display: block; margin-bottom: 6px; color: #6b7280; font-size: 14px;">Category:</label>
+                            <select class="project-select" id="new-project-category-select">
+                                <option value="companies">Companies</option>
+                                <option value="locations">Locations</option>
+                                <option value="referrers">Referrers</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -850,7 +1127,8 @@
             </div>
         </div>
     </div>
-    
+
+        </div>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
@@ -925,7 +1203,7 @@
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
                                 const actualProject = window.currentProjectName || projectName; 
-                                pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
+                                pageTitle.innerHTML = `Admin - ${actualProject}`;
                             }
                         } else {
                             console.warn('formData not found after project load');
@@ -943,42 +1221,36 @@
             }, 100);
         }
 
-        // Category tab switching
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const category = this.dataset.category;
+        // Independent consultant toggle functionality
+        const independentToggle = document.getElementById('referrer-independent-toggle');
+        const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
+        const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
+        const agencySection = document.getElementById('referrer-agency-section');
 
-                // Update active tab
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        function updateAgencySliderAppearance() {
+            if (!agencySliderTrack || !agencySliderKnob || !independentToggle) return;
 
-                // Show/hide content
-                if (category === 'companies') {
-                    document.getElementById('companies-content').classList.remove('d-none');
-                    document.getElementById('states-content').classList.add('d-none');
+            if (independentToggle.checked) {
+                // Independent consultant - toggle is ON
+                agencySliderTrack.style.backgroundColor = '#10b981';
+                agencySliderKnob.style.transform = 'translateX(24px)';
+                if (agencySection) agencySection.style.display = 'none';
+            } else {
+                // Agency-affiliated - toggle is OFF
+                agencySliderTrack.style.backgroundColor = '#e5e7eb';
+                agencySliderKnob.style.transform = 'translateX(0px)';
+                if (agencySection) agencySection.style.display = 'block';
+            }
+        }
 
-                    // Hide private facility toggle for companies view
-                    const toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (toggleSection) toggleSection.style.display = 'none';
-
-                    // Show operator section
-                    const operatorSection = document.getElementById('operator-section');
-                    if (operatorSection) operatorSection.style.display = 'block';
-                } else if (category === 'locations') {
-                    document.getElementById('companies-content').classList.add('d-none');
-                    document.getElementById('states-content').classList.remove('d-none');
-
-                    // Show private facility toggle for locations view
-                    let toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (!toggleSection) {
-                        toggleSection = createPrivateOwnershipToggle();
-                        const categoryNav = document.getElementById('category-navigation');
-                        categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
-                    }
-                    toggleSection.style.display = 'block';
-                }
+        if (agencySliderTrack && independentToggle) {
+            agencySliderTrack.addEventListener('click', function() {
+                independentToggle.checked = !independentToggle.checked;
+                updateAgencySliderAppearance();
             });
-        });
+        }
+
+        window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
@@ -1287,19 +1559,19 @@
                     setState(!section.classList.contains('expanded'));
                 };
 
-                toggle.addEventListener('click', handleToggle);
+                toggle.addEventListener('click', handleToggle, { passive: false });
                 toggle.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                         handleToggle(event);
                     }
-                });
+                }, { passive: false });
 
                 header.addEventListener('click', (event) => {
                     if (event.target.closest('.section-toggle')) {
                         return;
                     }
                     handleToggle(event);
-                });
+                }, { passive: false });
             });
         }
 
@@ -1317,46 +1589,62 @@
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
             
-            let organizerVisible = true;
+            let organizerVisible = false; // Collapsed by default
             
-            // Set initial state - organizer visible by default
-            organizerSection.style.display = 'block';
-            showOrganizerBtn.textContent = '📊 Hide Organizer';
+            // Set initial state - organizer hidden by default
+            organizerSection.style.display = 'none';
+            showOrganizerBtn.textContent = '📊 Data Organizer';
             
             // Toggle organizer visibility
-            showOrganizerBtn.addEventListener('click', () => {
-                organizerVisible = !organizerVisible;
-                organizerSection.style.display = organizerVisible ? 'block' : 'none';
-                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer';
-                
-                if (organizerVisible) {
-                    organizerSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-            
+            if (!showOrganizerBtn.dataset.organizerToggleAttached) {
+                showOrganizerBtn.addEventListener('click', () => {
+                    organizerVisible = !organizerVisible;
+                    organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                    showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
+
+                    if (organizerVisible) {
+                        organizerSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, { passive: true });
+                showOrganizerBtn.dataset.organizerToggleAttached = 'true';
+            }
+
             // Handle organize by selection
-            organizeBySelect.addEventListener('change', () => {
-                const value = organizeBySelect.value;
-                if (value) {
-                    organizeValueGroup.style.display = 'block';
-                    organizeSearchBtn.style.display = 'inline-block';
-                    organizeValueInput.focus();
-                } else {
-                    organizeValueGroup.style.display = 'none';
-                    organizeSearchBtn.style.display = 'none';
-                    clearOrganizerResults();
-                }
-            });
-            
+            if (!organizeBySelect.dataset.organizerChangeAttached) {
+                organizeBySelect.addEventListener('change', () => {
+                    const value = organizeBySelect.value;
+                    if (value) {
+                        organizeValueGroup.style.display = 'block';
+                        organizeSearchBtn.style.display = 'inline-block';
+                        organizeValueInput.focus();
+                    } else {
+                        organizeValueGroup.style.display = 'none';
+                        organizeSearchBtn.style.display = 'none';
+                        clearOrganizerResults();
+                    }
+                }, { passive: true });
+                organizeBySelect.dataset.organizerChangeAttached = 'true';
+            }
+
             // Handle search
-            organizeSearchBtn.addEventListener('click', performOrganizedSearch);
-            organizeValueInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performOrganizedSearch();
-            });
-            
+            if (!organizeSearchBtn.dataset.organizerSearchAttached) {
+                organizeSearchBtn.addEventListener('click', performOrganizedSearch, { passive: true });
+                organizeSearchBtn.dataset.organizerSearchAttached = 'true';
+            }
+
+            if (!organizeValueInput.dataset.organizerKeypressAttached) {
+                organizeValueInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performOrganizedSearch();
+                }, { passive: true });
+                organizeValueInput.dataset.organizerKeypressAttached = 'true';
+            }
+
             // Handle clear
-            organizeClearBtn.addEventListener('click', clearOrganizerResults);
-            
+            if (!organizeClearBtn.dataset.organizerClearAttached) {
+                organizeClearBtn.addEventListener('click', clearOrganizerResults, { passive: true });
+                organizeClearBtn.dataset.organizerClearAttached = 'true';
+            }
+
             function performOrganizedSearch() {
                 const searchType = organizeBySelect.value;
                 const searchValue = organizeValueInput.value.trim();
@@ -1526,32 +1814,45 @@
                 if (results.length === 0) {
                     organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
                 } else {
-                    let html = '';
+                    organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
                         const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
                         const location = result.facility.location || 'Unknown Location';
                         
-                        html += `
-                            <div style="border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;" 
-                                 onmouseover="this.style.backgroundColor='#f8fafc'" 
-                                 onmouseout="this.style.backgroundColor='white'"
-                                 onclick="goToFacility('${result.projectName}', ${result.facilityIndex})">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${escapeHtmlForAttr(facilityName)}</div>
-                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
-                                    ${escapeHtmlForAttr(operator)} • ${escapeHtmlForAttr(location)}
-                                </div>
-                                <div style="font-size: 13px;">
-                                    <strong>Matches:</strong> 
-                                    ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
-                                </div>
-                                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                                    Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
-                                </div>
+                        const resultDiv = document.createElement('div');
+                        resultDiv.style.cssText = "border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;";
+
+                        resultDiv.innerHTML = `
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;"></div>
+                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;"></div>
+                            <div style="font-size: 13px;">
+                                <strong>Matches:</strong> 
+                                ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                                Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
                             </div>
                         `;
+                        // Use textContent to prevent HTML injection issues
+                        resultDiv.children[0].textContent = facilityName;
+                        resultDiv.children[1].textContent = `${operator} • ${location}`;
+
+                        // Add event listeners with the passive option
+                        resultDiv.addEventListener('mouseover', () => {
+                            resultDiv.style.backgroundColor = '#f8fafc';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('mouseout', () => {
+                            resultDiv.style.backgroundColor = 'white';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('click', () => {
+                            goToFacility(result.projectName, result.facilityIndex);
+                        }, { passive: true });
+
+                        organizeMatches.appendChild(resultDiv);
                     });
-                    organizeMatches.innerHTML = html;
                 }
                 
                 organizeResults.style.display = 'block';
@@ -1568,12 +1869,11 @@
             window.goToFacility = function(projectName, facilityIndex) {
                 // Switch to the project if it's different
                 if (window.currentProjectName !== projectName) {
-                    const projectSelect = document.getElementById('project-select');
-                    if (projectSelect) {
-                        projectSelect.value = projectName;
-                        projectSelect.dispatchEvent(new Event('change'));
+                    if (typeof loadProjectAndSync === 'function') {
+                        loadProjectAndSync(projectName);
+                    } else if (typeof loadProject === 'function') {
+                        loadProject(projectName);
                     }
-                    // Note: The project select change event will update window.currentProjectName
                 }
                 
                 // Switch to the facility
@@ -1595,14 +1895,44 @@
             };
         }
         
-        // Initialize data organizer when the page loads
+        let organizerInitialized = false;
+
+        const initializeOrganizerWhenReady = () => {
+            if (organizerInitialized) {
+                return;
+            }
+
+            console.log('🚀 Form is ready. Initializing page-specific components.');
+
+            if (typeof initializeDataOrganizer === 'function') {
+                initializeDataOrganizer();
+            } else {
+                console.warn('initializeDataOrganizer not available on ready.');
+            }
+
+            organizerInitialized = true;
+        };
+
+        const ensureOrganizerInitialization = () => {
+            if (window.formReady) {
+                initializeOrganizerWhenReady();
+            } else if (!organizerInitialized) {
+                document.addEventListener('formReady', initializeOrganizerWhenReady, { once: true });
+            }
+        };
+
+        // Run immediately in case the custom event already fired
+        ensureOrganizerInitialization();
+
+        // Initialize data organizer when the page loads or once the form becomes ready
         window.addEventListener('load', () => {
-            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
-        });
+            ensureOrganizerInitialization();
+        }, { passive: true });
 
         // ============================================
         // FIELD NOTES FUNCTIONALITY
         // ============================================
+        // Note: Field notes functionality has been moved to facility-form.v3.js
         // Note: Field notes functionality has been moved to facility-form.v3.js
         // It is automatically initialized when the form loads
         
@@ -1610,22 +1940,28 @@
         // CATEGORY NAVIGATION (COMPANIES vs STATES)
         // ============================================
         
-        // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
-            // Both dropdowns are always visible, no tab switching required
+            // This function is now primarily handled by the main script,
+            // but we ensure the correct panels are displayed based on the active tab.
+            console.log('Admin page category navigation initialized.');
         }
         
         function populateCompaniesList() {
+            console.log('🎨 Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
+                console.error('operators-list container not found!');
                 return;
             }
-            
+
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
+            console.log('🎨 Projects to render:', projectNames.length, projectNames);
+
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
+                console.log('📭 No projects to display');
                 return;
             }
             
@@ -1647,18 +1983,33 @@
                             </div>
                         </div>`;
             }).join('');
-            
+
             container.innerHTML = projectsHtml;
+            console.log('Projects list rendered successfully');
         }
-        
+
+        function populateOperatorsList() {
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                window.refreshSavedProjectPanels();
+            }
+
+            if (document.getElementById('operators-list')) {
+                populateCompaniesList();
+            }
+        }
+
         function populateLocationsList() {
+            console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
+                console.error('locations-list container not found!');
                 return;
             }
             
             const projectList = projects;
             const projectNames = Object.keys(projectList);
+            
+            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
@@ -1686,6 +2037,7 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
+            console.log('Location projects list rendered successfully');
         }
         
         function escapeHtmlForAttr(text) {
@@ -1693,6 +2045,7 @@
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
+            console.log('🎨 Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error('Container not found:', containerId);
@@ -1730,11 +2083,14 @@
                 }
             });
             
+            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
+
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
                 container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
+                console.log('📭 No filtered projects to display');
                 return;
             }
             
@@ -1758,9 +2114,11 @@
             }).join('');
             
             container.innerHTML = projectsHtml;
+            console.log('Filtered projects list rendered successfully');
         }
         
         function createNewLocationProject(projectName) {
+            console.log('Creating new location project:', projectName);
             
             // Use the project manager to create a new project
             if (window.projectManager && window.projectManager.saveProject) {
@@ -1773,6 +2131,7 @@
                         renderFilteredProjectsList('locations-list', 'locations');
                     }, 500);
                     
+                    console.log('Location project created successfully:', projectName);
                     alert(`Location project "${projectName}" created successfully!`);
                 } catch (error) {
                     console.error('Error creating project:', error);
@@ -1863,10 +2222,12 @@
                     // Restore Operations section for corporate ownership
                     modifyOperationsForPrivateOwnership(false);
                 }
-            });
-            
+            }, { passive: true });
+
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
+                console.log('🧹 Clearing operator fields for private facility mode');
+                
                 // Clear operator section fields
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
@@ -1886,6 +2247,7 @@
                         headquarters: '',
                         website: ''
                     };
+                    console.log('Cleared operator data from formData');
                 }
             }
             
@@ -1974,46 +2336,85 @@
             }
         }
         
-        // Initialize category navigation when page loads
-        window.addEventListener('load', () => {
-            initializeSectionToggles();
+        let adminPageInitialized = false;
 
-            setTimeout(() => {
-                initializeCategoryNavigation();
+        const initializeAdminPage = () => {
+            if (adminPageInitialized) {
+                return;
+            }
 
-                // Populate project select dropdowns (from facility-form.v3.js)
-                // The facility-form.v3.js handles this automatically after cloud load,
-                // but we also try here in case the timing is different
-                if (typeof window.populateProjectSelectDropdowns === 'function') {
-                    window.populateProjectSelectDropdowns();
+            initializeCategoryNavigation();
 
-                    // Retry after cloud data loads
-                    setTimeout(() => {
-                        window.populateProjectSelectDropdowns();
-                    }, 2000);
-                } else {
-                    console.warn('populateProjectSelectDropdowns not available yet');
-                }
-                
-                // Add click handlers for state items
-                document.querySelectorAll('.state-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        // Remove previous selection
-                        document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                        // Add selection to clicked item
-                        this.classList.add('selected');
-                        
-                        const locationName = this.dataset.state;
-                        console.log('Selected location:', locationName);
-                        // TODO: Filter facilities by location
-                    });
-                });
-                
-                // Add functionality for "Add New Operator" button
-                const addOperatorBtn = document.getElementById('add-operator-btn');
-                const newOperatorInput = document.getElementById('new-operator-input');
-                
-                if (addOperatorBtn && newOperatorInput) {
+            // Initialize facility toolbar toggle (defined in facility-form.v3.js)
+            if (typeof window.initializeFacilityToolbarToggle === 'function') {
+                window.initializeFacilityToolbarToggle();
+            }
+
+            // Initialize correct form visibility based on active tab
+            const activeTab = document.querySelector('.category-tab.active');
+            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+            const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+
+            console.log('🚀 Initializing page with active category:', activeCategory);
+
+            if (activeCategory === 'referrers') {
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
+                console.log('✅ Initialized referrers view');
+            } else {
+                // Companies or locations view - show facility forms
+                if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
+                if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
+                console.log('✅ Initialized', activeCategory, 'view');
+            }
+
+            // Refresh saved project panels (from facility-form.v3.js)
+            // facility-form.v3.js handles this automatically after cloud load,
+            // but we also trigger it here in case the timing is different
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                console.log('Calling refreshSavedProjectPanels from data.html');
+                window.refreshSavedProjectPanels();
+
+                // Retry after cloud data loads
+                setTimeout(() => {
+                    window.refreshSavedProjectPanels();
+                }, 2000);
+
+                setTimeout(() => {
+                    window.refreshSavedProjectPanels();
+                }, 5000);
+            } else {
+                console.warn('refreshSavedProjectPanels not available yet');
+            }
+
+            // Add click handlers for state items (delegated to container)
+            const statesList = document.getElementById('states-list');
+            if (statesList && !statesList.dataset.stateClickAttached) {
+                statesList.addEventListener('click', (event) => {
+                    const item = event.target.closest('.state-item');
+                    if (!item || !statesList.contains(item)) {
+                        return;
+                    }
+
+                    // Remove previous selection
+                    statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                    // Add selection to clicked item
+                    item.classList.add('selected');
+
+                    const locationName = item.dataset.state;
+                    console.log('Selected location:', locationName);
+                    // TODO: Filter facilities by location
+                }, { passive: true });
+                statesList.dataset.stateClickAttached = 'true';
+            }
+
+            // Add functionality for "Add New Operator" button
+            const addOperatorBtn = document.getElementById('add-operator-btn');
+            const newOperatorInput = document.getElementById('new-operator-input');
+
+            if (addOperatorBtn && newOperatorInput) {
+                if (!addOperatorBtn.dataset.operatorClickAttached) {
                     addOperatorBtn.addEventListener('click', function() {
                         const operatorName = newOperatorInput.value.trim();
                         if (operatorName) {
@@ -2023,30 +2424,36 @@
                                 currentOperatorField.value = operatorName;
                                 currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
                             }
-                            
+
                             // Clear the input
                             newOperatorInput.value = '';
-                            
+
                             // Refresh the operators list
                             populateOperatorsList();
-                            
+
                             console.log('Added new operator:', operatorName);
                         }
                     });
-                    
-                    // Allow Enter key to add operator
+                    addOperatorBtn.dataset.operatorClickAttached = 'true';
+                }
+
+                // Allow Enter key to add operator
+                if (!newOperatorInput.dataset.operatorKeypressAttached) {
                     newOperatorInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
                             addOperatorBtn.click();
                         }
                     });
+                    newOperatorInput.dataset.operatorKeypressAttached = 'true';
                 }
-                
-                // Add functionality for "Add Location" button
-                const addLocationBtn = document.getElementById('add-location-btn');
-                const newLocationInput = document.getElementById('new-location-input');
-                
-                if (addLocationBtn && newLocationInput) {
+            }
+
+            // Add functionality for "Add Location" button
+            const addLocationBtn = document.getElementById('add-location-btn');
+            const newLocationInput = document.getElementById('new-location-input');
+
+            if (addLocationBtn && newLocationInput) {
+                if (!addLocationBtn.dataset.locationClickAttached) {
                     addLocationBtn.addEventListener('click', function() {
                         const locationName = newLocationInput.value.trim();
                         if (locationName) {
@@ -2059,14 +2466,7 @@
                                 newLocationDiv.dataset.state = locationName;
                                 newLocationDiv.textContent = locationName;
                                 newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
-                                
-                                // Add click handler
-                                newLocationDiv.addEventListener('click', function() {
-                                    document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
-                                    this.classList.add('selected');
-                                    console.log('Selected location:', this.dataset.state);
-                                });
-                                
+
                                 // Insert at the top of the list (after header if present)
                                 const firstStateItem = statesList.querySelector('.state-item');
                                 if (firstStateItem) {
@@ -2074,24 +2474,65 @@
                                 } else {
                                     statesList.appendChild(newLocationDiv);
                                 }
+
+                                // Auto-select the new location
+                                statesList.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
+                                newLocationDiv.classList.add('selected');
+                                console.log('Selected location:', locationName);
                             }
-                            
+
                             // Clear the input
                             newLocationInput.value = '';
-                            
-                            console.log('Added new location:', locationName);
                         }
-                    });
-                    
-                    // Allow Enter key to add location
+                    }, { passive: true });
+                    addLocationBtn.dataset.locationClickAttached = 'true';
+                }
+
+                if (!newLocationInput.dataset.locationKeypressAttached) {
                     newLocationInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
                             addLocationBtn.click();
                         }
                     });
+                    newLocationInput.dataset.locationKeypressAttached = 'true';
                 }
-            }, 1000);
+            }
+
+            // Initialize overview features (functions defined in facility-form.v3.js)
+            if (typeof window.initializeConsultantsTocToggle === 'function') {
+                initializeConsultantsTocToggle();
+            }
+            if (typeof window.initializeConsultantNavigation === 'function') {
+                initializeConsultantNavigation();
+            }
+            if (typeof window.initializeLocationFacilitiesToc === 'function') {
+                initializeLocationFacilitiesToc();
+            }
+
+            adminPageInitialized = true;
+        };
+
+        const ensureAdminPageInitialization = () => {
+            if (window.formReady) {
+                initializeAdminPage();
+            } else if (!adminPageInitialized) {
+                document.addEventListener('formReady', initializeAdminPage, { once: true });
+            }
+        };
+
+        // Kick off initialization immediately in case formReady already fired
+        ensureAdminPageInitialization();
+
+        // Initialize category navigation when page loads
+        window.addEventListener('load', () => {
+            initializeSectionToggles();
+            ensureAdminPageInitialization();
         });
+
+        // Initialize tab-switching for overviews (function defined in facility-form.v3.js)
+        if (typeof window.initializeOverviewTabSwitching === 'function') {
+            initializeOverviewTabSwitching();
+        }
     </script>
 </body>
 </html>

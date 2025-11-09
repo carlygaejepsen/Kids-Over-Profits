@@ -11,14 +11,23 @@ try {
 
     $projects = [];
     foreach ($results as $row) {
-        // We need to reconstruct the project structure that the JavaScript expects
-        $project_data = json_decode($row['json_data'], true);
-        $projects[$row['unique_name']] = [
-            'name' => $row['unique_name'],
-            'data' => $project_data,
-            'timestamp' => $project_data['timestamp'] ?? date('c'), // Fallback timestamp
-            'currentFacilityIndex' => $project_data['currentFacilityIndex'] ?? 0
-        ];
+        // Decode the stored JSON
+        $stored = json_decode($row['json_data'], true);
+
+        // Check if this is the new format (with metadata) or old format (just data)
+        if (isset($stored['data']) && isset($stored['timestamp'])) {
+            // New format: already has the complete project structure
+            $projects[$row['unique_name']] = $stored;
+        } else {
+            // Old format: only has data, need to reconstruct
+            $projects[$row['unique_name']] = [
+                'name' => $row['unique_name'],
+                'data' => $stored,
+                'timestamp' => $stored['timestamp'] ?? date('c'),
+                'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
+                'category' => 'companies'  // Default for legacy projects
+            ];
+        }
     }
 
     echo json_encode(['success' => true, 'projects' => $projects]);

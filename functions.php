@@ -32,6 +32,103 @@ function kadence_child_enqueue_styles() {
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
+/**
+ * Determine whether the current request is for a headerless layout.
+ *
+ * @return bool
+ */
+function kop_is_headerless_layout() {
+    return is_page('data') || is_page('admin-data');
+}
+
+/**
+ * Enqueue Kadence navigation guard script globally to prevent timing issues.
+ * This script intercepts DOM queries and provides smart fallbacks for missing elements.
+ *
+ * The guard is "smart" - it detects headerless pages and applies strict blocking,
+ * but on normal pages it only provides graceful fallbacks for missing elements.
+ */
+function kop_enqueue_kadence_nav_guard() {
+    $guard_script_path = get_stylesheet_directory() . '/js/kadence-nav-guard.js';
+    $guard_script_url = get_stylesheet_directory_uri() . '/js/kadence-nav-guard.js';
+
+    if (file_exists($guard_script_path)) {
+        // Enqueue globally with highest priority (loaded first)
+        wp_enqueue_script(
+            'kadence-nav-guard',
+            $guard_script_url,
+            array(), // No dependencies
+            filemtime($guard_script_path),
+            false // Load in header, before other scripts
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1);
+
+/**
+ * Remove Kadence navigation scripts when the page intentionally renders without a header.
+ */
+function kop_maybe_disable_kadence_navigation() {
+    if (!kop_is_headerless_layout()) {
+        return;
+    }
+
+    // List of Kadence navigation-related script handles to remove
+    $nav_scripts = array(
+        'kadence-navigation',
+        'kadence-navigation-init',
+        'kadence-navigation-mobile',
+        'kadence-header',
+        'kadence-sticky-header'
+    );
+
+    foreach ($nav_scripts as $script_handle) {
+        wp_dequeue_script($script_handle);
+        wp_deregister_script($script_handle);
+    }
+
+    // Access global scripts registry
+    global $wp_scripts;
+
+    if (!($wp_scripts instanceof WP_Scripts)) {
+        $wp_scripts = wp_scripts();
+    }
+
+    // Clear any inline scripts or extra data attached to navigation scripts
+    if ($wp_scripts instanceof WP_Scripts) {
+        foreach ($nav_scripts as $script_handle) {
+            if (isset($wp_scripts->registered[$script_handle])) {
+                $wp_scripts->registered[$script_handle]->extra = array();
+                $wp_scripts->registered[$script_handle]->deps = array();
+            }
+        }
+    }
+}
+
+add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+
+/**
+ * Add inline script to block navigation on headerless pages as early as possible.
+ */
+function kop_add_early_navigation_blocker() {
+    if (!kop_is_headerless_layout()) {
+        return;
+    }
+
+    ?>
+    <script>
+    (function(){
+        window.KADENCE_NAV_DISABLED = true;
+        window.kadenceConfig = window.kadenceConfig || {};
+        window.kadenceConfig.breakPoints = {desktop: 99999};
+    })();
+    </script>
+    <?php
+}
+add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
+
 // =================================================================
 // CUSTOM FUNCTIONS
 // =================================================================
@@ -84,13 +181,24 @@ function kop_get_facilities_database_connection() {
     $use_separate_db = false;
     $facilities_db = null;
 
+    // Try to load credentials from constants first
+    $db_user = defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '';
+    $db_pass = defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '';
+    $db_name = defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '';
+    $db_host = defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost';
+
+    // If constants aren't defined, try to load from api/config.php
+    if (empty($db_user) || empty($db_name)) {
+        $config_path = get_stylesheet_directory() . '/api/config.php';
+        if (file_exists($config_path)) {
+            // Load the config file which sets $db_user, $db_pass, $db_name, $db_host
+            require_once $config_path;
+            // The config.php file sets these variables, so they should now be available
+        }
+    }
+
     try {
-        $facilities_db = new wpdb(
-            defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '',
-            defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '',
-            defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '',
-            defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost'
-        );
+        $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
         $use_separate_db = true;
     } catch (Exception $e) {
         error_log('Failed to connect to facilities database: ' . $e->getMessage());
@@ -142,45 +250,43 @@ function kop_get_facilities_database_connection() {
  *
  * @return string|null Fully qualified table name when found, otherwise null.
  */
-function kop_get_facilities_table_name($connection, $prefix = '') {
+function kop_discover_facilities_master_table($connection, $prefix = '') {
     if (!($connection instanceof wpdb)) {
         return null;
     }
 
-    $explicit_table = defined('KOP_FACILITIES_DB_TABLE') ? KOP_FACILITIES_DB_TABLE : '';
-    $explicit_table = apply_filters('kop_facilities_db_table', $explicit_table, $connection);
+    $candidate_tables = array(
+        'facilities_master',
+        'kop_facilities_master',
+        'facility_projects',
+        'kop_facility_projects',
+        'facility_json_exports',
+        'kop_facility_json_exports',
+    );
 
-    $sanitize_table = function ($table_name) {
-        if (!is_string($table_name) || $table_name === '') {
-            return '';
-        }
+    $prefixes_to_try = array('');
 
-        return preg_match('/^[A-Za-z0-9_\.]+$/', $table_name) === 1 ? $table_name : '';
-    };
-
-    $candidates = array();
-
-    $explicit_table = $sanitize_table($explicit_table);
-
-    if ($explicit_table !== '') {
-        $candidates[] = $explicit_table;
+    if (is_string($prefix) && $prefix !== '') {
+        $prefixes_to_try[] = $prefix;
     }
 
-    $prefix = is_string($prefix) ? $prefix : '';
-
-    if ($prefix !== '') {
-        $candidates[] = $prefix . 'facilities_master';
+    if ($connection->prefix !== null && $connection->prefix !== '') {
+        $prefixes_to_try[] = $connection->prefix;
     }
 
-    $candidates[] = 'facilities_master';
-    $candidates = array_values(array_unique(array_filter($candidates))); // Ensure no empty or duplicate candidates.
+    foreach ($prefixes_to_try as $prefix_candidate) {
+        foreach ($candidate_tables as $table) {
+            $table_name = $prefix_candidate . $table;
 
-    foreach ($candidates as $candidate) {
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table names cannot be parameterised.
-        $table_exists = $connection->get_var($connection->prepare('SHOW TABLES LIKE %s', $candidate));
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from candidate list above.
+            $table_exists = $connection->get_var($connection->prepare(
+                'SHOW TABLES LIKE %s',
+                $table_name
+            ));
 
-        if ($table_exists === $candidate) {
-            return $candidate;
+            if ($table_exists === $table_name) {
+                return $table_name;
+            }
         }
     }
 
@@ -188,40 +294,34 @@ function kop_get_facilities_table_name($connection, $prefix = '') {
 }
 
 /**
- * Fetch facilities projects data directly from the database.
+ * Fetch facilities projects from the database.
  *
- * @return array|WP_Error Structured projects array on success, WP_Error on failure.
+ * @return array|WP_Error Array of projects on success, WP_Error on failure.
  */
 function kop_get_facilities_projects_from_database() {
-    $connection_details = kop_get_facilities_database_connection();
+    $connection = kop_get_facilities_database_connection();
 
-    if (is_wp_error($connection_details)) {
-        return $connection_details;
+    if (is_wp_error($connection)) {
+        return $connection;
     }
 
-    $db_connection = $connection_details['db'];
-    $table_prefix = isset($connection_details['prefix']) ? $connection_details['prefix'] : '';
+    $db_connection = isset($connection['db']) ? $connection['db'] : null;
+    $prefix = isset($connection['prefix']) ? $connection['prefix'] : '';
 
-    $table_name = kop_get_facilities_table_name($db_connection, $table_prefix);
+    if (!($db_connection instanceof wpdb)) {
+        return new WP_Error('kop_facilities_invalid_connection', __('Facilities database connection is invalid.', 'kadence-child'));
+    }
+
+    $table_name = kop_discover_facilities_master_table($db_connection, $prefix);
 
     if ($table_name === null) {
-        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found in the database.', 'kadence-child'));
+        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found.', 'kadence-child'));
     }
 
-    // Fetch the available columns so we can adapt to different table schemas.
-    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name validated earlier.
-    $columns = $db_connection->get_results("SHOW COLUMNS FROM {$table_name}", ARRAY_A);
+    $available_columns = $db_connection->get_col(sprintf('SHOW COLUMNS FROM %s', $table_name));
 
-    if (!is_array($columns) || empty($columns)) {
-        return new WP_Error('kop_facilities_columns_missing', __('Unable to inspect facilities master table columns.', 'kadence-child'));
-    }
-
-    $available_columns = array();
-
-    foreach ($columns as $column) {
-        if (isset($column['Field']) && is_string($column['Field'])) {
-            $available_columns[] = $column['Field'];
-        }
+    if (!is_array($available_columns)) {
+        return new WP_Error('kop_facilities_columns_unavailable', __('Unable to read facilities master columns.', 'kadence-child'));
     }
 
     $select_column = function ($candidates) use ($available_columns) {
@@ -348,40 +448,134 @@ function kop_get_facilities_rest_endpoint_url() {
 }
 
 /**
- * Load facilities data for TTI program index page
+ * Determine whether the current request targets the TTI Program Index page.
+ *
+ * @return bool
+ */
+function kop_is_tti_program_index_context() {
+    if (function_exists('is_page') && is_page(array('tti-program-index'))) {
+        return true;
+    }
+
+    if (function_exists('get_post')) {
+        $post = get_post();
+        if ($post && isset($post->post_name) && $post->post_name === 'tti-program-index') {
+            return true;
+        }
+    }
+
+    if (function_exists('get_post_field')) {
+        $slug = get_post_field('post_name');
+        if (is_string($slug) && $slug === 'tti-program-index') {
+            return true;
+        }
+    }
+
+    if (function_exists('get_queried_object')) {
+        $queried = get_queried_object();
+        if ($queried && isset($queried->post_name) && $queried->post_name === 'tti-program-index') {
+            return true;
+        }
+    }
+
+    global $post;
+    if (isset($post) && isset($post->post_name) && $post->post_name === 'tti-program-index') {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Load facilities data for TTI program index page.
  */
 function load_facilities_data() {
-    // Only load on the TTI program index page
-    if (is_page() && get_post_field('post_name') === 'tti-program-index') {
-        $dataset_urls = kop_get_facility_projects_dataset_urls();
-        $rest_endpoint = kop_get_facilities_rest_endpoint_url();
-
-        $primary_dataset = $rest_endpoint;
-
-        if (empty($primary_dataset) && !empty($dataset_urls)) {
-            $primary_dataset = $dataset_urls[0];
-        }
-        $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
-
-        wp_enqueue_script(
-            'facilities-display',
-            get_stylesheet_directory_uri() . '/js/facilities-display.js',
-            array(),
-            time(), // Force new version to bypass cache
-            true
-        );
-
-        wp_localize_script(
-            'facilities-display',
-            'facilitiesConfig',
-            array(
-                'jsonDataUrl' => $primary_dataset,
-                'jsonFileUrls' => array_values(array_filter(array_unique(array_merge(array($rest_endpoint), $dataset_urls))))
-            )
-        );
+    if (!kop_is_tti_program_index_context()) {
+        return;
     }
+
+    $dataset_urls = kop_get_facility_projects_dataset_urls();
+    $rest_endpoint = kop_get_facilities_rest_endpoint_url();
+
+    $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
+    $script_version = file_exists($script_path) ? filemtime($script_path) : time();
+
+    $primary_dataset = !empty($rest_endpoint) ? $rest_endpoint : '';
+
+    if ($primary_dataset === '' && !empty($dataset_urls)) {
+        $primary_dataset = $dataset_urls[0];
+    }
+
+    wp_enqueue_script(
+        'facilities-display',
+        get_stylesheet_directory_uri() . '/js/facilities-display.js',
+        array(),
+        $script_version,
+        true
+    );
+
+    $json_sources = array();
+
+    if (!empty($rest_endpoint)) {
+        $json_sources[] = $rest_endpoint;
+    }
+
+    if (!empty($dataset_urls)) {
+        $json_sources = array_merge($json_sources, $dataset_urls);
+    }
+
+    wp_localize_script(
+        'facilities-display',
+        'facilitiesConfig',
+        array(
+            'jsonDataUrl' => $primary_dataset,
+            'jsonFileUrls' => array_values(array_filter(array_unique($json_sources)))
+        )
+    );
 }
 add_action('wp_enqueue_scripts', 'load_facilities_data');
+
+/**
+ * Load educational consultant data for the "edcons" page.
+ */
+function load_edcons_data() {
+    // Only run on the 'edcons' page.
+    if (!is_page('edcons')) {
+        return;
+    }
+
+    $dataset_urls = kop_get_facility_projects_dataset_urls();
+    $rest_endpoint = kop_get_facilities_rest_endpoint_url();
+
+    $script_path = get_stylesheet_directory() . '/js/edcons-display.js';
+    if (!file_exists($script_path)) {
+        return;
+    }
+    $script_version = filemtime($script_path);
+
+    wp_enqueue_script(
+        'edcons-display',
+        get_stylesheet_directory_uri() . '/js/edcons-display.js',
+        array(),
+        $script_version,
+        true
+    );
+
+    $json_sources = array();
+    if (!empty($rest_endpoint)) {
+        $json_sources[] = $rest_endpoint;
+    }
+    if (!empty($dataset_urls)) {
+        $json_sources = array_merge($json_sources, $dataset_urls);
+    }
+
+    wp_localize_script(
+        'edcons-display',
+        'edconsConfig',
+        array('jsonFileUrls' => array_values(array_filter(array_unique($json_sources))))
+    );
+}
+add_action('wp_enqueue_scripts', 'load_edcons_data');
 
 function kop_enqueue_report_scripts() {
     $reports = array(

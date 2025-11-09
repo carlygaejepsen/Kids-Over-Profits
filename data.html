@@ -5,6 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Facility Data Suggestions</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
+    <style>
+        /* Hide site header on this page - toolbar replaces it */
+        header.site-header,
+        .site-header,
+        nav.main-navigation,
+        .main-navigation,
+        #masthead,
+        .header-wrapper {
+            display: none !important;
+        }
+
+        /* Modal Styles */
+        .organizer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .organizer-modal.active {
+            display: flex;
+        }
+
+        .organizer-modal-content {
+            background: white;
+            color: #1f2937;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .organizer-modal-header {
+            background: linear-gradient(135deg, #33A7B5 0%, #AEE0ED 100%);
+            color: #000435;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .organizer-modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .organizer-modal-close {
+            background: rgba(0, 4, 53, 0.2);
+            border: none;
+            color: #000435;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+
+        .organizer-modal-close:hover {
+            background: #000080;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .organizer-modal-body {
+            padding: 30px;
+            color: #1f2937;
+        }
+
+        /* Clone Modal Styles */
+        .clone-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clone-modal.active {
+            display: flex;
+        }
+    </style>
+    <!-- Kadence navigation guard is now loaded globally via WordPress functions.php -->
     </head>
 <body>
     <div class="container">
@@ -13,11 +111,6 @@
             <p>Your submissions will be reviewed before being added to the main database</p>
         </div>
         
-        <div class="top-actions-bar">
-            <button class="btn btn-secondary" id="generate-report-btn">📊 Generate Report</button>
-            <button class="btn" onclick="window.open('https://kidsoverprofits.org/data-organizer/', '_blank')" title="Open Data Organizer in new tab">📊 Data Organizer</button>
-        </div>
-
         <div class="admin-warning">
             ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
         </div>
@@ -27,72 +120,316 @@
             <div class="category-tabs">
                 <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
                 <button class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
             <!-- Category contents wrapper -->
             <div class="category-contents-wrapper">
                 <!-- Companies Content -->
-                <div id="companies-content" class="category-content">
+                <div id="companies-content" class="category-content" data-section-views="companies">
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
-                        <p class="info-text" style="margin: 0 0 12px 0;">Select a project to load it into the form below.</p>
-                        <div class="items-list" id="operators-list">
-                            <!-- Operator projects will be populated here -->
+                    </div>
+                    <div class="project-management" id="project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-project-btn">New Project</button>
+                                <button class="btn" id="export-all-btn">Export All Projects</button>
+                                <button class="btn" id="generate-report-btn">Generate Report</button>
+                            </div>
                         </div>
                     </div>
+                    <div id="upload-status" style="display: none;"></div>
                 </div>
-    
+
                 <!-- States Content -->
-                <div id="states-content" class="category-content d-none">
+                <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
-                        <p class="info-text" style="margin: 0 0 12px 0;">Select a location-based project to load it.</p>
-                        <div class="items-list" id="locations-list">
-                            <!-- Location projects will be populated here -->
+                    </div>
+                    <div class="project-management location-project-management">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <div id="project-status-location" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                        <div class="form-group">
+                            <label>Saved Location Projects</label>
+                            <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                            </div>
+                            <div class="form-group" style="text-align: center;">
+                                <label>Project Management</label>
+                                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                    <button class="btn" id="new-project-btn-location">New Project</button>
+                                    <button class="btn" id="export-all-btn-location">Export All Projects</button>
+                                    <button class="btn" id="generate-report-btn-location">Generate Report</button>
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn" id="add-new-location-btn" style="margin-top: 15px;">+ Add New Location Project</button>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                    </div>
+
+                    <!-- Facilities Overview for Locations -->
+                    <div class="facility-toc" id="location-facilities-toc">
+                        <div class="toc-header">
+                            <h2 class="toc-title">Facilities in this Location</h2>
+                            <button class="toc-toggle" id="location-facilities-toc-toggle-btn">🔎</button>
+                        </div>
+                        <div class="toc-content">
+                            <div class="toc-stats" id="location-facilities-toc-stats">Total: 0 facilities</div>
+                            <div class="facility-list" id="location-facilities-list">
+                                <!-- Facility items will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="private-ownership-toggle-section" class="view-hidden" data-section-views="locations">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Privately Owned Facility (not part of a chain):</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>No</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                                    <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Yes</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Referrers Content -->
+                <div id="referrers-content" class="category-content view-hidden" data-section-views="referrers">
+                    <div class="content-header">
+                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
+                    </div>
+
+                    <div class="project-management" id="referrer-project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
+                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Referrer Projects</label>
+                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-referrer-project-btn">New Project</button>
+                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
+                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
+
+            <!-- Agency Toggle -->
+            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                    <span>Independent Consultant (not part of an agency):</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>No</span>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
+                            <span id="referrer-agency-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                <span id="referrer-agency-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                            </span>
+                        </div>
+                        <span>Yes</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                    Toggle to "Yes" for independent consultants to hide the agency section.
+                </p>
+            </div>
+
+            <!-- Consultants Overview (Table of Contents) -->
+            <div class="facility-toc" id="consultants-toc">
+                <div class="toc-header">
+                    <h2 class="toc-title">Consultants Overview</h2>
+                    <button class="toc-toggle" id="consultants-toc-toggle-btn">🔎</button>
+                </div>
+                <div class="toc-content">
+                    <div class="toc-stats" id="consultants-toc-stats">Total: 1 consultant</div>
+                    <div class="facility-list" id="consultants-list">
+                        <!-- Consultant items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agency Information Section -->
+            <div class="section expanded" id="referrer-agency-section">
+                <div class="section-header">
+                    <h2 class="section-title">Agency/Group Information</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>Agency/Group Name</label>
+                        <input type="text" id="referrer-agency-name" class="input-form" placeholder="e.g., Educational Consultants Association">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="referrer-agency-city" class="input-form" placeholder="e.g., Los Angeles">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="referrer-agency-state" class="input-form" placeholder="e.g., CA">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" id="referrer-agency-website" class="input-form" placeholder="https://">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Key Personnel</label>
+                        <div class="array-container" data-path="referrerAgency.keyPersonnel"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Agency Notes</label>
+                        <textarea id="referrer-agency-notes" class="input-form" rows="4" placeholder="Add notes about this agency..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Consultants Management Section -->
+            <div class="section expanded" id="referrer-consultants-section">
+                <div class="section-header">
+                    <h2 class="section-title">Individual Consultants</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <!-- Individual Consultant Form -->
+                    <div id="consultant-form-wrapper">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="consultant-firstname" class="consultant-field" data-field="firstName" placeholder="e.g., John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="consultant-lastname" class="consultant-field" data-field="lastName" placeholder="e.g., Smith">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credentials/Title</label>
+                            <input type="text" id="consultant-credentials" class="consultant-field" data-field="credentials" placeholder="e.g., Licensed Educational Consultant, IECA">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="consultant-city" class="consultant-field" data-field="city" placeholder="e.g., Boston">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" id="consultant-state" class="consultant-field" data-field="state" placeholder="e.g., MA">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="consultant-email" class="consultant-field" data-field="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="consultant-phone" class="consultant-field" data-field="phone" placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Website/Profile</label>
+                            <input type="url" id="consultant-website" class="consultant-field" data-field="website" placeholder="https://">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Professional Affiliations</label>
+                            <div class="array-container" data-path="consultant.affiliations"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Facilities Referred To</label>
+                            <div class="array-container" data-path="consultant.facilitiesReferred"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>School Districts Worked With</label>
+                            <div class="array-container" data-path="consultant.schoolDistricts"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="consultant-notes" class="consultant-field" data-field="notes" rows="4" placeholder="Add notes about this consultant..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Fixed Toolbar -->
+        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations,referrers">
+            <div class="toolbar-header">
+                <div class="toolbar-title">
+                    <strong>📋 Facility Editor</strong>
+                    <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
+                </div>
+                <button class="toolbar-toggle" id="toolbar-toggle-btn" title="Minimize toolbar">−</button>
+            </div>
+            <div class="toolbar-content" id="toolbar-content">
+                <div class="toolbar-section">
+                    <div class="toolbar-group">
+                        <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
+                        <div class="facility-selector">
+                            <button class="btn-toolbar" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <select id="facility-dropdown" class="facility-dropdown"></select>
+                            <button class="btn-toolbar" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                        </div>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar">➕ Add Facility</button>
+                        <button class="btn-toolbar" id="clone-facility-btn-toolbar">📋 Clone</button>
+                        <button class="btn-toolbar btn-danger d-none" id="remove-facility-btn-toolbar">🗑️ Remove</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="btn-toolbar btn-secondary" id="show-organizer-modal-btn">🔍 Search Data</button>
+                        <button class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar">📮 Submit</button>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Facility Table of Contents -->
-        <div class="facility-toc" id="facility-toc">
-            <div class="toc-header">
-                <h2 class="toc-title">Facilities Overview</h2>
-                <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
-            </div>
-            <div class="toc-content">
-                <div class="toc-stats" id="toc-stats">No project loaded</div>
-                <div class="facility-list" id="facility-list"><div class="toc-no-project">Please <a href="#submission-section">create a draft or load a project</a> to see the list of facilities.</div></div>
-                <button class="btn" id="add-facility-main-btn" style="margin-top: 15px;">Add New Facility</button>
-            </div>
-        </div>
-        
-        <!-- Facility Navigation -->
-        <div class="facility-controls">
-            <div class="facility-header">
-                <div class="d-flex align-items-center gap-15">
-                    <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
-                    <span id="current-facility-name" class="text-muted fw-normal"></span>
-                    <div class="d-flex gap-5">
-                        <button class="btn d-none" id="prev-facility-btn" style="padding: 8px 12px;">⬅️ Previous</button>
-                        <button class="btn d-none" id="next-facility-btn" style="padding: 8px 12px;">Next ➡️</button>
-                    </div>
-                </div>
-                <div class="controls">
-                    <button class="btn" id="add-facility-btn">Add Facility</button>
-                    <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
-                    <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
-            </div>
-        </div>
-        
-        <!-- Data Organizer Section -->
-        <div class="section" id="data-organizer-section">
+
+        <div id="facility-main-wrapper"><!-- Start of main wrapper -->
+            <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>
                 <span class="section-toggle">🔎</span>
-            </div>_
+            </div>
             <div class="section-content">
                 <div class="bg-light content-box">
                     <p class="info-text" style="margin: 0;">
@@ -116,15 +453,15 @@
                             <option value="certification">Certification</option>
                         </select>
                     </div>
-                    <div class="form-group" id="organize-value-group" style="display: none;">
+                    <div class="form-group d-none" id="organize-value-group">
                         <label for="organize-value">Search for:</label>
                         <input type="text" id="organize-value" class="input-secondary" placeholder="Type to search...">
                     </div>
                 </div>
                 
                 <div class="mb-15">
-                    <button class="btn" id="organize-search-btn" style="display: none;">🔍 Search</button>
-                    <button class="btn btn-secondary" id="organize-clear-btn" style="display: none;">Clear Results</button>
+                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
                 </div>
                 
                 <div id="organize-results" class="d-none">
@@ -137,6 +474,28 @@
                         <!-- Results will appear here -->
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Operator Information Section -->
+        <div class="section expanded" id="operator-section" data-section-views="companies,locations">
+            <div class="section-header">
+                <h2 class="section-title">Operator Information</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-name">Operator Name</label>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="operator-name" class="input-form" data-autocomplete-category="operator" placeholder="Type operator name...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-current-name">Current Name</label>
+                        <input type="text" id="operator-current-name" class="input-form" data-autocomplete-category="operator" placeholder="Type current operator name...">
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label for="operator-other-names">Other Names</label>
@@ -145,14 +504,27 @@
                     </div>
                 </div>
 
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="operator-location">Primary Location</label>
-                        <input type="text" id="operator-location" data-autocomplete-category="location" placeholder="e.g., Waynesboro, TN">
+                        <label for="operator-location-city">City</label>
+                        <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
                     </div>
                     <div class="form-group">
-                        <label for="operator-headquarters">Headquarters</label>
-                        <input type="text" id="operator-headquarters" data-autocomplete-category="location" placeholder="e.g., Nashville, TN">
+                        <label for="operator-location-state">State</label>
+                        <input type="text" id="operator-location-state" placeholder="e.g., TN">
+                    </div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-headquarters-city">City</label>
+                        <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters-state">State</label>
+                        <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
                     </div>
                 </div>
 
@@ -212,7 +584,7 @@
         </div>
 
         <!-- Identification Section -->
-        <div class="section" id="identification-section">
+        <div class="section" id="identification-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Identification & Names</h2>
                 <span class="section-toggle">🔎</span>
@@ -238,11 +610,15 @@
                     <label>Other Names</label>
                     <div class="array-container" data-path="identification.otherNames"></div>
                 </div>
+                <div class="form-group">
+                    <label>Known Referrers (Education Consultants / School Districts)</label>
+                    <div class="array-container" data-path="identification.knownReferrers"></div>
+                </div>
             </div>
         </div>
 
         <!-- Location Section -->
-        <div class="section" id="location-section">
+        <div class="section" id="location-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Location & Address</h2>
                 <span class="section-toggle">🔎</span>
@@ -260,7 +636,7 @@
         </div>
         
         <!-- Operations Section -->
-        <div class="section" id="operations-section">
+        <div class="section" id="operations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Operations</h2>
                 <span class="section-toggle">🔎</span>
@@ -298,7 +674,7 @@
         </div>
         
         <!-- Staff Section -->
-        <div class="section" id="staff-section">
+        <div class="section" id="staff-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Staff & Links</h2>
                 <span class="section-toggle">🔎</span>
@@ -320,7 +696,7 @@
         </div>
         
         <!-- Facility Details Section -->
-        <div class="section" id="facility-section">
+        <div class="section" id="facility-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Details</h2>
                 <span class="section-toggle">🔎</span>
@@ -360,7 +736,7 @@
         </div>
         
         <!-- Accreditations & Memberships Section -->
-        <div class="section" id="accreditations-section">
+        <div class="section" id="accreditations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Accreditations & Memberships</h2>
                 <span class="section-toggle">🔎</span>
@@ -390,7 +766,7 @@
         </div>
         
         <!-- Resources & Documentation Section -->
-        <div class="section" id="resources-section">
+        <div class="section" id="resources-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Available Resources & Documentation</h2>
                 <span class="section-toggle">🔎</span>
@@ -502,7 +878,7 @@
         </div>
 
         <!-- Treatment Types Section -->
-        <div class="section" id="treatment-section">
+        <div class="section" id="treatment-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Treatment Types</h2>
                 <span class="section-toggle">🔎</span>
@@ -606,7 +982,7 @@
         </div>
 
         <!-- Philosophy Section -->
-        <div class="section" id="philosophy-section">
+        <div class="section" id="philosophy-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Philosophy</h2>
                 <span class="section-toggle">🔎</span>
@@ -670,7 +1046,7 @@
         </div>
 
         <!-- Critical Incidents Section -->
-        <div class="section" id="incidents-section">
+        <div class="section" id="incidents-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Critical Incidents</h2>
                 <span class="section-toggle">🔎</span>
@@ -710,7 +1086,7 @@
         </div>
         
         <!-- General Notes Section -->
-        <div class="section" id="notes-section">
+        <div class="section" id="notes-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">General Notes</h2>
                 <span class="section-toggle">🔎</span>
@@ -724,12 +1100,18 @@
         </div>
         
         <!-- Submission Section -->
-        <div id="submission-section" class="submission-area">
-            <div id="suggestion-status" style="display: none;"></div>
-            <div class="form-group">
-                <button type="button" class="save-master-btn" onclick="submitSuggestion()">
-                    📮 Submit for Review
-                </button>
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers" style="border: 2px solid #1e40af; background: #f8fafc;">
+            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
+            </div>
+            <div class="section-content" style="display: block;">
+                <div id="suggestion-status" style="display: none;"></div>
+
+                <div class="form-group">
+                    <button type="button" class="save-master-btn" onclick="submitSuggestion()">
+                        📮 Submit for Review
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -740,30 +1122,7 @@
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <div class="json-output">
-                    <div class="output-header">
-                        <h3>Generated JSON</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
-                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
-                        </div>
-                    </div>
-                    <pre id="json-display">{}</pre>
-                </div>
-                
-                <div class="project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects & Data Import</h2>
-                    
-                    <div class="form-group">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter a name for your draft..." style="flex: 1; min-width: 200px;">
-                            <button class="btn" id="save-project-btn">💾 Save Draft</button>
-                        </div>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    
-                    <div class="form-group">
+ <div class="form-group">
                         <label for="file-upload">Import Data Files</label>
                         <input type="file" id="file-upload" accept=".json,.csv,.txt">
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
@@ -779,62 +1138,184 @@
                             <button class="btn" id="clear-all-btn">Clear Form</button>
                         </div>
                     </div>
-                    
-                    <div id="upload-status" style="display: none;"></div>
+                <div class="json-output">
+                    <div class="output-header">
+                        <h3>Generated JSON</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
+                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
+                        </div>
+                    </div>
+                    <pre id="json-display">{}</pre>
                 </div>
+
             </div>
         </div>
     </div>
     
-    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
-    <div id="clone-facility-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Clone Facility</h3>
-                <button class="modal-close" id="clone-modal-close">&times;</button>
+    <!-- Clone Facility Modal -->
+    <div id="clone-facility-modal" class="clone-modal">
+        <div class="organizer-modal-content" style="max-width: 600px;">
+            <div class="organizer-modal-header">
+                <h3 style="margin: 0; font-size: 24px; color: #000435;">Clone Facility</h3>
+                <button class="organizer-modal-close" id="clone-modal-close">&times;</button>
             </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="current" checked>
-                        Clone to current project (default behavior)
+            <div class="organizer-modal-body">
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="current" checked style="margin-right: 8px;">
+                        Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="existing">
-                        Clone to existing project
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="existing" style="margin-right: 8px;">
+                        Clone to an existing project
                     </label>
-                    <div class="project-select-container" id="existing-project-container" style="display: none;">
-                        <select class="project-select" id="existing-project-select">
+                    <div class="project-select-container" id="existing-project-container" style="display: none; margin-top: 10px; margin-left: 24px;">
+                        <select class="project-select" id="existing-project-select" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                             <option value="">Select a project...</option>
                         </select>
                     </div>
                 </div>
-                
-                <div class="clone-option">
-                    <label>
-                        <input type="radio" name="clone-destination" value="new">
-                        Clone to new project
+
+                <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <label style="color: #1f2937; cursor: pointer; display: block;">
+                        <input type="radio" name="clone-destination" value="new" style="margin-right: 8px;">
+                        Clone to a new project
                     </label>
-                    <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                    <div class="project-select-container" id="new-project-container" style="display: none; margin-top: 10px; margin-left: 24px;">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
-                <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
+
+                <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="clone-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Clone Facility</button>
+                </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Data Organizer Modal -->
+    <div id="data-organizer-modal" class="organizer-modal">
+        <div class="organizer-modal-content">
+            <div class="organizer-modal-header">
+                <h2>🔍 Search Facility Data</h2>
+                <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body">
+                <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p class="info-text" style="margin: 0; color: #4b5563;">
+                        <strong>🔍 Find all facilities by a specific data point:</strong>
+                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
+                        <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                            <option value="">Select data point...</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="operator">Operator/Company</option>
+                            <option value="location">Location</option>
+                            <option value="programType">Program Type</option>
+                            <option value="status">Operating Status</option>
+                            <option value="year">Opening Year</option>
+                            <option value="accreditation">Accreditation</option>
+                            <option value="certification">Certification</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="organize-value-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Search for:</label>
+                        <input type="text" id="organize-value-modal" class="input-secondary" placeholder="Type to search..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
+                </div>
+
+                <div id="organize-results-modal" class="d-none">
+                    <div class="info-box" style="background: #B6E3D4; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #33A7B5;">
+                        <div id="organize-results-title-modal" class="info-title" style="font-weight: 600; color: #000435; margin-bottom: 5px;"></div>
+                        <div id="organize-results-count-modal" class="info-text" style="color: #000080;"></div>
+                    </div>
+
+                    <div id="organize-matches-modal" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggestion Reason Modal -->
+    <div id="suggestion-reason-modal" class="organizer-modal">
+        <div class="organizer-modal-content" style="max-width: 500px;">
+            <div class="organizer-modal-header">
+                <h2 style="margin: 0; font-size: 22px;">Reason for Submission</h2>
+                <button class="organizer-modal-close" id="suggestion-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body">
+                <p style="margin-top: 0; margin-bottom: 15px; color: #4b5563;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
+                <div class="form-group">
+                    <label for="suggestion-summary" style="font-weight: 600;">Summary of Changes:</label>
+                    <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>
+                    <p id="suggestion-error" style="color: #dc2626; font-size: 13px; display: none; margin-top: 5px;">Please provide a summary of your changes.</p>
+                </div>
+                <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn modal-btn-secondary" id="suggestion-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
+        const viewManagedElements = new Set();
+
+        function registerViewManagedElement(element) {
+            if (!element || !element.dataset || !element.dataset.sectionViews) {
+                return;
+            }
+            viewManagedElements.add(element);
+        }
+
+        function applyViewLayout(category) {
+            viewManagedElements.forEach(element => {
+                const views = element.dataset.sectionViews
+                    .split(',')
+                    .map(view => view.trim())
+                    .filter(Boolean);
+                const shouldShow = views.includes(category);
+                element.classList.toggle('view-hidden', !shouldShow);
+                if (shouldShow) {
+                    element.removeAttribute('aria-hidden');
+                } else {
+                    element.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            if (category === 'referrers' && typeof window.updateAgencySliderAppearance === 'function') {
+                window.updateAgencySliderAppearance();
+            }
+        }
+
+        document.querySelectorAll('[data-section-views]').forEach(registerViewManagedElement);
+
+        const defaultCategoryTab = document.querySelector('.category-tab.active');
+        if (defaultCategoryTab) {
+            applyViewLayout(defaultCategoryTab.dataset.category || 'companies');
+        }
         // Set mode to suggestions
         window.FORM_MODE = 'suggestions';
         
@@ -908,6 +1389,21 @@
                                 const actualProject = window.currentProjectName || projectName;
                                 pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
                             }
+
+                            // Update toolbar facility info after project loads
+                            if (typeof window.updateToolbarFacilityInfo === 'function') {
+                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                                window.updateToolbarFacilityInfo(); // Call immediately
+                                setTimeout(window.updateToolbarFacilityInfo, 100);
+                                setTimeout(window.updateToolbarFacilityInfo, 300);
+                                setTimeout(window.updateToolbarFacilityInfo, 500);
+                                setTimeout(window.updateToolbarFacilityInfo, 1000);
+                            }
+
+                            // Dispatch custom event for project loaded
+                            document.dispatchEvent(new CustomEvent('projectLoaded', {
+                                detail: { projectName: actualCurrentProject || projectName }
+                            }));
                         } else {
                             console.warn('formData not found after project load');
                             if (typeof showUploadStatus === 'function') {
@@ -924,58 +1420,202 @@
             }, 100);
         }
 
-        // Category tab switching
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const category = this.dataset.category;
+        // ============================================
+        // GLOBAL HELPER FUNCTIONS
+        // ============================================
 
-                // Update active tab
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        // Extract data points for search (used by both old organizer and new modal)
+        window.extractDataPointsForSearch = function(facility, type, searchValue) {
+            const matches = [];
+            const searchLower = searchValue.toLowerCase();
 
-                // Show/hide content
-                if (category === 'companies') {
-                    document.getElementById('companies-content').classList.remove('d-none');
-                    document.getElementById('states-content').classList.add('d-none');
-
-                    // Hide private facility toggle for companies view
-                    const toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (toggleSection) toggleSection.style.display = 'none';
-
-                    // Show operator section
-                    const operatorSection = document.getElementById('operator-section');
-                    if (operatorSection) operatorSection.style.display = 'block';
-                } else if (category === 'locations') {
-                    document.getElementById('companies-content').classList.add('d-none');
-                    document.getElementById('states-content').classList.remove('d-none');
-
-                    // Show private facility toggle for locations view
-                    let toggleSection = document.getElementById('private-ownership-toggle-section');
-                    if (!toggleSection) {
-                        toggleSection = createPrivateOwnershipToggle();
-                        const categoryNav = document.getElementById('category-navigation');
-                        categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
+            switch (type) {
+                case 'staff':
+                    if (facility.staff) {
+                        if (facility.staff.administrator) {
+                            facility.staff.administrator.forEach(admin => {
+                                const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
+                                if (adminStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Administrator: ${adminStr}`);
+                                }
+                            });
+                        }
+                        if (facility.staff.notableStaff) {
+                            facility.staff.notableStaff.forEach(staff => {
+                                const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
+                                if (staffStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Notable Staff: ${staffStr}`);
+                                }
+                            });
+                        }
                     }
-                    toggleSection.style.display = 'block';
+                    break;
+
+                case 'operator':
+                    if (facility.identification?.operator &&
+                        facility.identification.operator.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.identification.operator);
+                    }
+                    if (facility.otherOperators) {
+                        facility.otherOperators.forEach(op => {
+                            if (op.toLowerCase().includes(searchLower)) {
+                                matches.push(op);
+                            }
+                        });
+                    }
+                    break;
+
+                case 'location':
+                    if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.location);
+                    }
+                    break;
+
+                case 'programType':
+                    if (facility.facilityDetails?.type &&
+                        facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.facilityDetails.type);
+                    }
+                    break;
+
+                case 'status':
+                    if (facility.operatingPeriod?.status &&
+                        facility.operatingPeriod.status.toLowerCase().includes(searchLower)) {
+                        matches.push(facility.operatingPeriod.status);
+                    }
+                    break;
+
+                case 'year':
+                    if (facility.operatingPeriod?.startYear &&
+                        facility.operatingPeriod.startYear.toString().includes(searchValue)) {
+                        matches.push(`Opened: ${facility.operatingPeriod.startYear}`);
+                    }
+                    if (facility.operatingPeriod?.endYear &&
+                        facility.operatingPeriod.endYear.toString().includes(searchValue)) {
+                        matches.push(`Closed: ${facility.operatingPeriod.endYear}`);
+                    }
+                    break;
+
+                case 'accreditation':
+                    if (facility.accreditations) {
+                        if (facility.accreditations.current) {
+                            facility.accreditations.current.forEach(acc => {
+                                if (acc.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Current: ${acc}`);
+                                }
+                            });
+                        }
+                        if (facility.accreditations.past) {
+                            facility.accreditations.past.forEach(acc => {
+                                if (acc.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Past: ${acc}`);
+                                }
+                            });
+                        }
+                    }
+                    break;
+
+                case 'certification':
+                    if (facility.certifications) {
+                        facility.certifications.forEach(cert => {
+                            if (cert.toLowerCase().includes(searchLower)) {
+                                matches.push(cert);
+                            }
+                        });
+                    }
+                    break;
+            }
+
+            return matches;
+        };
+
+        // Independent consultant toggle functionality
+        const independentToggle = document.getElementById('referrer-independent-toggle');
+        const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
+        const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
+        const agencySection = document.getElementById('referrer-agency-section');
+
+        function updateAgencySliderAppearance() {
+            if (!agencySliderTrack || !agencySliderKnob || !independentToggle) return;
+
+            if (independentToggle.checked) {
+                // Independent consultant - toggle is ON
+                agencySliderTrack.style.backgroundColor = '#10b981';
+                agencySliderKnob.style.transform = 'translateX(24px)';
+                if (agencySection) agencySection.style.display = 'none';
+            } else {
+                // Agency-affiliated - toggle is OFF
+                agencySliderTrack.style.backgroundColor = '#e5e7eb';
+                agencySliderKnob.style.transform = 'translateX(0px)';
+                if (agencySection) agencySection.style.display = 'block';
+            }
+        }
+
+        if (agencySliderTrack && independentToggle) {
+            agencySliderTrack.addEventListener('click', function() {
+                independentToggle.checked = !independentToggle.checked;
+                updateAgencySliderAppearance();
+            });
+        }
+
+        window.updateAgencySliderAppearance = updateAgencySliderAppearance;
+
+        function submitSuggestion() {
+            const modal = document.getElementById('suggestion-reason-modal');
+            const summaryTextarea = document.getElementById('suggestion-summary');
+            const errorP = document.getElementById('suggestion-error');
+            const confirmBtn = document.getElementById('suggestion-modal-confirm');
+            const cancelBtn = document.getElementById('suggestion-modal-cancel');
+            const closeBtn = document.getElementById('suggestion-modal-close');
+
+            // Reset state
+            summaryTextarea.value = '';
+            errorP.style.display = 'none';
+            summaryTextarea.style.borderColor = '#d1d5db';
+
+            // Show modal
+            modal.classList.add('active');
+            summaryTextarea.focus();
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+                // Clean up listeners to prevent multiple submissions
+                const newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            };
+
+            // Attach event listeners
+            cancelBtn.onclick = closeModal;
+            closeBtn.onclick = closeModal;
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
                 }
             });
-        });
 
+            confirmBtn.onclick = () => {
+                const summary = summaryTextarea.value.trim();
+                if (summary === '') {
+                    errorP.style.display = 'block';
+                    summaryTextarea.style.borderColor = '#dc2626';
+                    summaryTextarea.focus();
+                } else {
+                    errorP.style.display = 'none';
+                    summaryTextarea.style.borderColor = '#d1d5db';
+                    performSuggestionSubmission(summary);
+                    closeModal();
+                }
+            };
 
-        async function submitSuggestion() {
-            // Ask user to summarize their changes
-            const changesSummary = prompt(
-                'Please summarize the key changes you made:\n\n' +
-                '(Examples: "Added missing facility location", "Corrected operator founding date", ' +
-                '"Added 3 new staff members", "Updated facility closure information", etc.)'
-            );
-            
-            if (!changesSummary || changesSummary.trim() === '') {
-                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
-                return;
-            }
-            
-            // Get the current project data from window.formData
+            summaryTextarea.oninput = () => {
+                if (summaryTextarea.value.trim() !== '') {
+                    errorP.style.display = 'none';
+                    summaryTextarea.style.borderColor = '#d1d5db';
+                }
+            };
+        }
+
+        async function performSuggestionSubmission(changesSummary) {
             console.log('🔍 Checking for form data...', {
                 'window.formData exists': !!window.formData,
                 'window.formData value': window.formData
@@ -1010,12 +1650,22 @@
                     dataToSubmit.operator = {
                         name: '',
                         currentName: '',
-                        pastNames: [],
                         otherNames: [],
-                        foundingDate: '',
-                        keyPersonnel: [],
-                        headquarters: '',
-                        website: ''
+                    location: '',
+                    locationCity: '',
+                    locationState: '',
+                    headquarters: '',
+                    headquartersCity: '',
+                    headquartersState: '',
+                    founded: '',
+                    operatingPeriod: '',
+                    status: '',
+                    parentCompanies: [],
+                    websites: [],
+                    investors: [],
+                    keyStaff: { ceo: '', founders: [], keyExecutives: [] },
+                    notes: [],
+                    fieldNotes: {}
                     };
                 }
                 
@@ -1040,8 +1690,16 @@
                 console.log('🧹 Operator data cleared for private facility submission');
             }
             
-            // CRITICAL FIX: Ensure the project name is correctly set
-            const actualProjectName = window.currentProjectName || 'Unknown Project';
+            // Determine project name based on active tab
+            const activeTab = document.querySelector('.category-tab.active');
+            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            let actualProjectName;
+
+            if (activeCategory === 'referrers') {
+                actualProjectName = document.getElementById('referrer-project-name')?.value?.trim() || 'Unknown Referrer Project';
+            } else {
+                actualProjectName = window.currentProjectName || 'Unknown Project';
+            }
 
             // Force set the project name in the data being submitted
             dataToSubmit.projectName = actualProjectName;
@@ -1067,7 +1725,7 @@
                     },
                     body: JSON.stringify({
                         data: dataToSubmit,
-                        reason: changesSummary.trim(),
+                        reason: changesSummary,
                         projectName: actualProjectName, // Explicit project name
                         metadata: {
                             actualProjectName: actualProjectName,
@@ -1365,350 +2023,6 @@
             };
         }
 
-        function initializeSectionToggles() {
-            const sections = document.querySelectorAll('.section');
-
-            sections.forEach(section => {
-                const header = section.querySelector('.section-header');
-                const toggle = section.querySelector('.section-toggle');
-                const content = section.querySelector('.section-content');
-
-                if (!header || !toggle || !content) {
-                    return;
-                }
-
-                toggle.setAttribute('role', 'button');
-                toggle.setAttribute('tabindex', '0');
-
-                const setState = (expanded) => {
-                    section.classList.toggle('expanded', expanded);
-                    content.style.display = expanded ? 'block' : 'none';
-                    toggle.setAttribute('aria-expanded', expanded.toString());
-                    toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
-                };
-
-                // Initialize with existing expanded state
-                setState(section.classList.contains('expanded'));
-
-                const handleToggle = (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setState(!section.classList.contains('expanded'));
-                };
-
-                toggle.addEventListener('click', handleToggle);
-                toggle.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        handleToggle(event);
-                    }
-                });
-
-                header.addEventListener('click', (event) => {
-                    if (event.target.closest('.section-toggle')) {
-                        return;
-                    }
-                    handleToggle(event);
-                });
-            });
-        }
-
-        // DATA ORGANIZER FUNCTIONALITY
-        function initializeDataOrganizer() {
-            const showOrganizerBtn = document.getElementById('show-organizer-btn');
-            const organizerSection = document.getElementById('data-organizer-section');
-            const organizeBySelect = document.getElementById('organize-by');
-            const organizeValueGroup = document.getElementById('organize-value-group');
-            const organizeValueInput = document.getElementById('organize-value');
-            const organizeSearchBtn = document.getElementById('organize-search-btn');
-            const organizeClearBtn = document.getElementById('organize-clear-btn');
-            const organizeResults = document.getElementById('organize-results');
-            const organizeResultsTitle = document.getElementById('organize-results-title');
-            const organizeResultsCount = document.getElementById('organize-results-count');
-            const organizeMatches = document.getElementById('organize-matches');
-            
-            let organizerVisible = true;
-            
-            // Set initial state - organizer visible by default
-            organizerSection.style.display = 'block';
-            showOrganizerBtn.textContent = '📊 Hide Organizer';
-            
-            // Toggle organizer visibility
-            showOrganizerBtn.addEventListener('click', () => {
-                organizerVisible = !organizerVisible;
-                organizerSection.style.display = organizerVisible ? 'block' : 'none';
-                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer';
-                
-                if (organizerVisible) {
-                    organizerSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-            
-            // Handle organize by selection
-            organizeBySelect.addEventListener('change', () => {
-                const value = organizeBySelect.value;
-                if (value) {
-                    organizeValueGroup.style.display = 'block';
-                    organizeSearchBtn.style.display = 'inline-block';
-                    organizeValueInput.focus();
-                } else {
-                    organizeValueGroup.style.display = 'none';
-                    organizeSearchBtn.style.display = 'none';
-                    clearOrganizerResults();
-                }
-            });
-            
-            // Handle search
-            organizeSearchBtn.addEventListener('click', performOrganizedSearch);
-            organizeValueInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performOrganizedSearch();
-            });
-            
-            // Handle clear
-            organizeClearBtn.addEventListener('click', clearOrganizerResults);
-            
-            function performOrganizedSearch() {
-                const searchType = organizeBySelect.value;
-                const searchValue = organizeValueInput.value.trim();
-                
-                if (!searchType || !searchValue) {
-                    console.log('Please select a data point type and enter a search value.');
-                    return;
-                }
-                
-                // Get all facilities from all projects
-                if ((!formData || !formData.facilities || formData.facilities.length === 0) && 
-                    (!projects || Object.keys(projects).length === 0)) {
-                    console.log('No data available. Please load or create some facility data first.');
-                    return;
-                }
-                
-                const results = [];
-                
-                // Search through current formData facilities
-                if (formData && formData.facilities) {
-                    formData.facilities.forEach((facility, facilityIndex) => {
-                        const matches = extractDataPointsForSearch(facility, searchType, searchValue);
-                        if (matches.length > 0) {
-                            results.push({
-                                projectName: window.currentProjectName || 'Current Project',
-                                facility: facility,
-                                facilityIndex: facilityIndex,
-                                matches: matches,
-                                operator: formData.operator?.name  // Include operator from project level
-                            });
-                        }
-                    });
-                }
-                
-                // Search through all saved projects
-                Object.keys(projects).forEach(projectName => {
-                    const project = projects[projectName];
-                    if (project && project.data && project.data.facilities) {
-                        project.data.facilities.forEach((facility, facilityIndex) => {
-                            const matches = extractDataPointsForSearch(facility, searchType, searchValue);
-                            if (matches.length > 0) {
-                                results.push({
-                                    projectName: projectName,
-                                    facility: facility,
-                                    facilityIndex: facilityIndex,
-                                    matches: matches,
-                                    operator: project.data.operator?.name  // Include operator from project level
-                                });
-                            }
-                        });
-                    }
-                });
-                
-                displayOrganizerResults(results, searchType, searchValue);
-            }
-            
-            function extractDataPointsForSearch(facility, type, searchValue) {
-                const matches = [];
-                const searchLower = searchValue.toLowerCase();
-                
-                switch (type) {
-                    case 'staff':
-                        if (facility.staff) {
-                            if (facility.staff.administrator) {
-                                facility.staff.administrator.forEach(admin => {
-                                    const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
-                                    if (adminStr.toLowerCase().includes(searchLower)) {
-                                        matches.push(`Administrator: ${adminStr}`);
-                                    }
-                                });
-                            }
-                            if (facility.staff.notableStaff) {
-                                facility.staff.notableStaff.forEach(staff => {
-                                    const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
-                                    if (staffStr.toLowerCase().includes(searchLower)) {
-                                        matches.push(`Notable Staff: ${staffStr}`);
-                                    }
-                                });
-                            }
-                        }
-                        break;
-                        
-                    case 'operator':
-                        if (facility.identification?.operator && 
-                            facility.identification.operator.toLowerCase().includes(searchLower)) {
-                            matches.push(facility.identification.operator);
-                        }
-                        if (facility.otherOperators) {
-                            facility.otherOperators.forEach(op => {
-                                if (op.toLowerCase().includes(searchLower)) {
-                                    matches.push(op);
-                                }
-                            });
-                        }
-                        break;
-                        
-                    case 'location':
-                        if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
-                            matches.push(facility.location);
-                        }
-                        break;
-                        
-                    case 'programType':
-                        if (facility.facilityDetails?.type && 
-                            facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
-                            matches.push(facility.facilityDetails.type);
-                        }
-                        break;
-                        
-                    case 'status':
-                        if (facility.operatingPeriod?.status && 
-                            facility.operatingPeriod.status.toLowerCase().includes(searchLower)) {
-                            matches.push(facility.operatingPeriod.status);
-                        }
-                        break;
-                        
-                    case 'year':
-                        if (facility.operatingPeriod?.startYear && 
-                            facility.operatingPeriod.startYear.toString().includes(searchValue)) {
-                            matches.push(`Opened: ${facility.operatingPeriod.startYear}`);
-                        }
-                        if (facility.operatingPeriod?.endYear && 
-                            facility.operatingPeriod.endYear.toString().includes(searchValue)) {
-                            matches.push(`Closed: ${facility.operatingPeriod.endYear}`);
-                        }
-                        break;
-                        
-                    case 'accreditation':
-                        if (facility.accreditations) {
-                            if (facility.accreditations.current) {
-                                facility.accreditations.current.forEach(acc => {
-                                    if (acc.toLowerCase().includes(searchLower)) {
-                                        matches.push(`Current: ${acc}`);
-                                    }
-                                });
-                            }
-                            if (facility.accreditations.past) {
-                                facility.accreditations.past.forEach(acc => {
-                                    if (acc.toLowerCase().includes(searchLower)) {
-                                        matches.push(`Past: ${acc}`);
-                                    }
-                                });
-                            }
-                        }
-                        break;
-                        
-                    case 'certification':
-                        if (facility.certifications) {
-                            facility.certifications.forEach(cert => {
-                                if (cert.toLowerCase().includes(searchLower)) {
-                                    matches.push(cert);
-                                }
-                            });
-                        }
-                        break;
-                }
-                
-                return matches;
-            }
-            
-            function displayOrganizerResults(results, searchType, searchValue) {
-                const searchTypeLabel = organizeBySelect.options[organizeBySelect.selectedIndex].text;
-                
-                organizeResultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
-                organizeResultsCount.textContent = `Found ${results.length} facilities`;
-                
-                if (results.length === 0) {
-                    organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
-                } else {
-                    let html = '';
-                    results.forEach(result => {
-                        const facilityName = result.facility.identification?.name || 'Unnamed Facility';
-                        const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
-                        const location = result.facility.location || 'Unknown Location';
-                        
-                        html += `
-                            <div style="border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;" 
-                                 onmouseover="this.style.backgroundColor='#f8fafc'" 
-                                 onmouseout="this.style.backgroundColor='white'"
-                                 onclick="goToFacility('${result.projectName}', ${result.facilityIndex})">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${escapeHtmlForAttr(facilityName)}</div>
-                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
-                                    ${escapeHtmlForAttr(operator)} • ${escapeHtmlForAttr(location)}
-                                </div>
-                                <div style="font-size: 13px;">
-                                    <strong>Matches:</strong> 
-                                    ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
-                                </div>
-                                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                                    Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    organizeMatches.innerHTML = html;
-                }
-                
-                organizeResults.style.display = 'block';
-                organizeClearBtn.style.display = 'inline-block';
-            }
-            
-            function clearOrganizerResults() {
-                organizeResults.style.display = 'none';
-                organizeClearBtn.style.display = 'none';
-                organizeValueInput.value = '';
-            }
-            
-            // Function to navigate to a specific facility
-            window.goToFacility = function(projectName, facilityIndex) {
-                // Switch to the project if it's different
-                if (window.currentProjectName !== projectName) {
-                    const projectSelect = document.getElementById('project-select');
-                    if (projectSelect) {
-                        projectSelect.value = projectName;
-                        projectSelect.dispatchEvent(new Event('change'));
-                    }
-                    // Note: The project select change event will update window.currentProjectName
-                }
-                
-                // Switch to the facility
-                currentFacilityIndex = facilityIndex;
-                updateUI();
-                
-                // Hide organizer and scroll to top
-                organizerVisible = false;
-                organizerSection.style.display = 'none';
-                showOrganizerBtn.textContent = '📊 Data Organizer';
-                
-                // Scroll to top of page
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                // Log the navigation
-                setTimeout(() => {
-                    console.log(`Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
-                }, 500);
-            };
-        }
-        
-        // Initialize data organizer when the page loads
-        window.addEventListener('load', () => {
-            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
-        });
-
         // ============================================
         // FIELD NOTES FUNCTIONALITY
         // ============================================
@@ -1732,7 +2046,7 @@
                 console.error('operators-list container not found!');
                 return;
             }
-            
+
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
@@ -1762,11 +2076,21 @@
                             </div>
                         </div>`;
             }).join('');
-            
+
             container.innerHTML = projectsHtml;
             console.log('Projects list rendered successfully');
         }
-        
+
+        function populateOperatorsList() {
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                window.refreshSavedProjectPanels();
+            }
+
+            if (document.getElementById('operators-list')) {
+                populateCompaniesList();
+            }
+        }
+
         function populateLocationsList() {
             console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
@@ -1912,99 +2236,45 @@
             }
         }
         
-        function showStatesSpecificElements() {
-            // Create and show the private ownership toggle if it doesn't exist
-            let toggleSection = document.getElementById('private-ownership-toggle-section');
-            if (!toggleSection) {
-                toggleSection = createPrivateOwnershipToggle();
-                // Insert it right after the category navigation
-                const categoryNav = document.getElementById('category-navigation');
-                categoryNav.parentNode.insertBefore(toggleSection, categoryNav.nextSibling);
-            }
-            toggleSection.style.display = 'block';
-        }
-        
-        function hideStatesSpecificElements() {
-            const toggleSection = document.getElementById('private-ownership-toggle-section');
-            if (toggleSection) {
-                toggleSection.style.display = 'none';
-            }
-            // Always show operator section when in companies view
-            const operatorSection = document.getElementById('operator-section');
-            if (operatorSection) {
-                operatorSection.style.display = 'block';
-            }
-        }
-        
         function createPrivateOwnershipToggle() {
-            const section = document.createElement('div');
-            section.id = 'private-ownership-toggle-section';
-            section.style.cssText = `
-                background: #f8fafc;
-                border: 1px solid #e2e8f0;
-                border-radius: 8px;
-                padding: 15px;
-                margin-bottom: 20px;
-                display: none;
-            `;
-            
-            section.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                    <span>Privately Owned Facility (not part of a chain):</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span>No</span>
-                        <div style="position: relative; display: inline-block;">
-                            <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                            <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                            </span>
-                        </div>
-                        <span>Yes</span>
-                    </div>
-                </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                    Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
-                </p>
-            `;
-            
-            // Add toggle functionality
+            const section = document.getElementById('private-ownership-toggle-section');
+            if (!section) {
+                return null;
+            }
+
+            if (!section.dataset.sectionViews) {
+                section.dataset.sectionViews = 'locations';
+            }
+            registerViewManagedElement(section);
+
+            if (section.dataset.initialized === 'true') {
+                return section;
+            }
+
             const toggle = section.querySelector('#private-ownership-toggle');
             const sliderTrack = section.querySelector('#slider-track');
             const sliderKnob = section.querySelector('#slider-knob');
-            
-            // Make the entire slider clickable
-            sliderTrack.addEventListener('click', function() {
-                toggle.checked = !toggle.checked;
-                updateSliderAppearance();
-                
-                const isPrivate = toggle.checked;
-                const operatorSection = document.getElementById('operator-section');
-                
-                if (isPrivate) {
-                    if (operatorSection) operatorSection.style.display = 'none';
-                    // Clear operator data when switching to private mode
-                    clearOperatorFields();
-                    // Modify Operations section for private ownership
-                    modifyOperationsForPrivateOwnership(true);
-                } else {
-                    if (operatorSection) operatorSection.style.display = 'block';
-                    // Restore Operations section for corporate ownership
-                    modifyOperationsForPrivateOwnership(false);
+
+            const updateSliderAppearance = () => {
+                if (!sliderTrack || !sliderKnob) {
+                    return;
                 }
-            });
-            
-            // Function to clear operator fields when switching to private mode
-            function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
-                
-                // Clear operator section fields
+                if (toggle && toggle.checked) {
+                    sliderTrack.style.backgroundColor = '#10b981';
+                    sliderKnob.style.transform = 'translateX(24px)';
+                } else {
+                    sliderTrack.style.backgroundColor = '#e5e7eb';
+                    sliderKnob.style.transform = 'translateX(0px)';
+                }
+            };
+
+            const clearOperatorFields = () => {
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
                 operatorInputs.forEach(input => {
                     input.value = '';
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                 });
-                
-                // Also clear operator data from formData if available
+
                 if (typeof formData !== 'undefined' && formData && formData.operator) {
                     formData.operator = {
                         name: '',
@@ -2016,20 +2286,57 @@
                         headquarters: '',
                         website: ''
                     };
-                    console.log('Cleared operator data from formData');
                 }
-            }
-            
-            function updateSliderAppearance() {
-                if (toggle.checked) {
-                    sliderTrack.style.backgroundColor = '#10b981';
-                    sliderKnob.style.transform = 'translateX(24px)';
-                } else {
-                    sliderTrack.style.backgroundColor = '#e5e7eb';
-                    sliderKnob.style.transform = 'translateX(0px)';
+            };
+
+            const applyPrivateOwnershipState = (isPrivate) => {
+                const operatorSection = document.getElementById('operator-section');
+                if (operatorSection) {
+                    operatorSection.style.display = isPrivate ? 'none' : '';
+                    if (!isPrivate) {
+                        operatorSection.classList.remove('view-hidden');
+                    }
                 }
+
+                if (isPrivate) {
+                    clearOperatorFields();
+                }
+
+                modifyOperationsForPrivateOwnership(!!isPrivate);
+            };
+
+            const handleToggleChange = () => {
+                const isPrivate = toggle ? toggle.checked : false;
+                updateSliderAppearance();
+                applyPrivateOwnershipState(isPrivate);
+            };
+
+            if (sliderTrack) {
+                sliderTrack.addEventListener('click', () => {
+                    if (toggle) {
+                        toggle.checked = !toggle.checked;
+                        handleToggleChange();
+                    }
+                });
+                sliderTrack.setAttribute('role', 'switch');
+                sliderTrack.setAttribute('tabindex', '0');
+                sliderTrack.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (toggle) {
+                            toggle.checked = !toggle.checked;
+                            handleToggleChange();
+                        }
+                    }
+                });
             }
-            
+
+            if (toggle) {
+                toggle.addEventListener('change', handleToggleChange);
+            }
+
+            updateSliderAppearance();
+            section.dataset.initialized = 'true';
             return section;
         }
         
@@ -2104,29 +2411,50 @@
                 if (otherOwnersGroup) otherOwnersGroup.style.display = 'none';
             }
         }
-        
+
         // Initialize category navigation when page loads
         window.addEventListener('load', () => {
-            initializeSectionToggles();
+            let sectionTogglesInitialized = false;
 
-            setTimeout(() => {
+            const initializeSectionTogglesSafely = () => {
+                if (sectionTogglesInitialized) {
+                    return;
+                }
+
+                if (typeof window.initializeSectionToggles === 'function') {
+                    window.initializeSectionToggles();
+                    sectionTogglesInitialized = true;
+                } else {
+                    console.warn('initializeSectionToggles not available yet; waiting for formReady event');
+                }
+            };
+
+            initializeSectionTogglesSafely();
+
+            const onFormReady = () => {
+                initializeSectionTogglesSafely();
+                console.log('🚀 Form is ready. Initializing category navigation.');
                 initializeCategoryNavigation();
 
-                // Populate project select dropdowns (from facility-form.v3.js)
-                // The facility-form.v3.js handles this automatically after cloud load,
-                // but we also try here in case the timing is different
-                if (typeof window.populateProjectSelectDropdowns === 'function') {
-                    console.log('Calling populateProjectSelectDropdowns from data.html');
-                    window.populateProjectSelectDropdowns();
+                // Refresh saved project panels (from facility-form.v3.js)
+                // facility-form.v3.js handles this after cloud load,
+                // but we also trigger it here in case the timing is different
+                if (typeof window.refreshSavedProjectPanels === 'function') {
+                    console.log('Calling refreshSavedProjectPanels from data.html');
+                    window.refreshSavedProjectPanels();
 
                     // Retry after cloud data loads
                     setTimeout(() => {
-                        window.populateProjectSelectDropdowns();
+                        window.refreshSavedProjectPanels();
                     }, 2000);
+
+                    setTimeout(() => {
+                        window.refreshSavedProjectPanels();
+                    }, 5000);
                 } else {
-                    console.warn('populateProjectSelectDropdowns not available yet');
+                    console.warn('refreshSavedProjectPanels not available yet');
                 }
-                
+
                 // Add click handlers for state items
                 document.querySelectorAll('.state-item').forEach(item => {
                     item.addEventListener('click', function() {
@@ -2134,17 +2462,17 @@
                         document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
                         // Add selection to clicked item
                         this.classList.add('selected');
-                        
+
                         const locationName = this.dataset.state;
                         console.log('Selected location:', locationName);
                         // TODO: Filter facilities by location
                     });
                 });
-                
+
                 // Add functionality for "Add New Operator" button
                 const addOperatorBtn = document.getElementById('add-operator-btn');
                 const newOperatorInput = document.getElementById('new-operator-input');
-                
+
                 if (addOperatorBtn && newOperatorInput) {
                     addOperatorBtn.addEventListener('click', function() {
                         const operatorName = newOperatorInput.value.trim();
@@ -2155,17 +2483,17 @@
                                 currentOperatorField.value = operatorName;
                                 currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));
                             }
-                            
+
                             // Clear the input
                             newOperatorInput.value = '';
-                            
+
                             // Refresh the operators list
                             populateOperatorsList();
-                            
+
                             console.log('Added new operator:', operatorName);
                         }
                     });
-                    
+
                     // Allow Enter key to add operator
                     newOperatorInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
@@ -2173,11 +2501,11 @@
                         }
                     });
                 }
-                
+
                 // Add functionality for "Add Location" button
                 const addLocationBtn = document.getElementById('add-location-btn');
                 const newLocationInput = document.getElementById('new-location-input');
-                
+
                 if (addLocationBtn && newLocationInput) {
                     addLocationBtn.addEventListener('click', function() {
                         const locationName = newLocationInput.value.trim();
@@ -2191,14 +2519,14 @@
                                 newLocationDiv.dataset.state = locationName;
                                 newLocationDiv.textContent = locationName;
                                 newLocationDiv.style.backgroundColor = '#f0f9ff'; // Light blue to indicate it's custom
-                                
+
                                 // Add click handler
                                 newLocationDiv.addEventListener('click', function() {
                                     document.querySelectorAll('.state-item').forEach(state => state.classList.remove('selected'));
                                     this.classList.add('selected');
                                     console.log('Selected location:', this.dataset.state);
                                 });
-                                
+
                                 // Insert at the top of the list (after header if present)
                                 const firstStateItem = statesList.querySelector('.state-item');
                                 if (firstStateItem) {
@@ -2207,14 +2535,14 @@
                                     statesList.appendChild(newLocationDiv);
                                 }
                             }
-                            
+
                             // Clear the input
                             newLocationInput.value = '';
-                            
+
                             console.log('Added new location:', locationName);
                         }
                     });
-                    
+
                     // Allow Enter key to add location
                     newLocationInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
@@ -2222,7 +2550,493 @@
                         }
                     });
                 }
-            }, 1000);
+
+                // REFERRER PROJECT MANAGEMENT
+                // Note: Referrer button event listeners are set up in facility-form.v3.js
+                // via the attachButtonListeners() function. No need to duplicate here.
+            };
+
+            // Check if form is already ready, otherwise wait for formReady event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
+
+            // ============================================
+            // TOOLBAR FUNCTIONALITY
+            // ============================================
+            // Toolbar toggle is now handled in facility-form.v3.js via initializeFixedToolbar()
+
+            // Update facility dropdown and toolbar info (GLOBAL function)
+            window.updateToolbarFacilityInfo = function() {
+                console.log('🔄 Updating toolbar facility info...', {
+                    'formData exists': !!formData,
+                    'facilities count': formData?.facilities?.length || 0,
+                    'currentProjectName': window.currentProjectName
+                });
+
+                const dropdown = document.getElementById('facility-dropdown');
+                const projectNameSpan = document.getElementById('toolbar-project-name');
+
+                if (dropdown && typeof formData !== 'undefined' && formData && formData.facilities) {
+                    // Clear and populate dropdown
+                    dropdown.innerHTML = '';
+                    formData.facilities.forEach((facility, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        const facilityName = facility.identification?.name || `Facility ${index + 1}`;
+                        option.textContent = `${index + 1}. ${facilityName}`;
+                        dropdown.appendChild(option);
+                    });
+
+                    console.log('✅ Populated dropdown with', formData.facilities.length, 'facilities');
+
+                    // Set current selection
+                    if (typeof currentFacilityIndex !== 'undefined') {
+                        dropdown.value = currentFacilityIndex;
+                    }
+
+                    // Sort options alphabetically by facility name
+                    const options = Array.from(dropdown.options);
+                    options.sort((a, b) => {
+                        const nameA = a.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+                        const nameB = b.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
+                        return nameA.localeCompare(nameB);
+                    });
+                    // Re-add sorted options
+                    dropdown.innerHTML = '';
+                    options.forEach(opt => dropdown.appendChild(opt));
+                    // Reselect current facility
+                    if (typeof currentFacilityIndex !== 'undefined') {
+                        dropdown.value = currentFacilityIndex;
+                    }
+                } else {
+                    console.warn('⚠️ Could not update toolbar:', {
+                        'dropdown exists': !!dropdown,
+                        'formData exists': !!formData,
+                        'has facilities': formData?.facilities?.length > 0
+                    });
+                }
+
+                // Update project name
+                if (projectNameSpan && typeof window.currentProjectName !== 'undefined') {
+                    projectNameSpan.textContent = window.currentProjectName ? `(${window.currentProjectName})` : '';
+                }
+
+                // Show/hide remove button
+                const removeBtn = document.getElementById('remove-facility-btn-toolbar');
+                if (removeBtn && typeof formData !== 'undefined' && formData && formData.facilities) {
+                    if (formData.facilities.length > 1) {
+                        removeBtn.classList.remove('d-none');
+                    } else {
+                        removeBtn.classList.add('d-none');
+                    }
+                }
+
+                // Update prev/next button states
+                updateToolbarNavButtons();
+            };
+
+            function updateToolbarNavButtons() {
+                const prevBtn = document.getElementById('prev-facility-btn-toolbar');
+                const nextBtn = document.getElementById('next-facility-btn-toolbar');
+                const dropdown = document.getElementById('facility-dropdown');
+
+                if (prevBtn && nextBtn && dropdown) {
+                    const currentIndex = parseInt(dropdown.value) || 0;
+                    const totalFacilities = dropdown.options.length;
+
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex === totalFacilities - 1;
+
+                    prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+                    nextBtn.style.opacity = currentIndex === totalFacilities - 1 ? '0.5' : '1';
+                }
+            }
+
+            // Facility dropdown change handler
+            const facilityDropdown = document.getElementById('facility-dropdown');
+            if (facilityDropdown) {
+                facilityDropdown.addEventListener('change', (e) => {
+                    const newIndex = parseInt(e.target.value);
+                    if (typeof currentFacilityIndex !== 'undefined' && typeof updateUI === 'function') {
+                        currentFacilityIndex = newIndex;
+                        updateUI();
+                        updateToolbarNavButtons();
+                    }
+                });
+            }
+
+            // Previous/Next facility buttons
+            const prevBtnToolbar = document.getElementById('prev-facility-btn-toolbar');
+            const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
+
+            if (prevBtnToolbar) {
+                prevBtnToolbar.addEventListener('click', () => {
+                    const dropdown = document.getElementById('facility-dropdown');
+                    if (dropdown && dropdown.selectedIndex > 0) {
+                        dropdown.selectedIndex--;
+                        dropdown.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            if (nextBtnToolbar) {
+                nextBtnToolbar.addEventListener('click', () => {
+                    const dropdown = document.getElementById('facility-dropdown');
+                    if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
+                        dropdown.selectedIndex++;
+                        dropdown.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // Add Facility button
+            const addFacilityBtnToolbar = document.getElementById('add-facility-btn-toolbar');
+            if (addFacilityBtnToolbar) {
+                addFacilityBtnToolbar.addEventListener('click', () => {
+                    const originalBtn = document.getElementById('add-facility-btn') || document.getElementById('add-facility-main-btn');
+                    if (originalBtn) {
+                        originalBtn.click();
+                    } else if (typeof addFacility === 'function') {
+                        addFacility();
+                    }
+                    setTimeout(window.updateToolbarFacilityInfo, 100);
+                    setTimeout(window.updateToolbarFacilityInfo, 500);
+                });
+            }
+
+            // Clone Facility button listener is in facility-form.v3.js
+
+            // Remove Facility button
+            const removeFacilityBtnToolbar = document.getElementById('remove-facility-btn-toolbar');
+            if (removeFacilityBtnToolbar) {
+                removeFacilityBtnToolbar.addEventListener('click', () => {
+                    const originalBtn = document.getElementById('remove-facility-btn');
+                    if (originalBtn) {
+                        originalBtn.click();
+                    } else if (typeof removeFacility === 'function') {
+                        if (confirm('Are you sure you want to remove this facility?')) {
+                            removeFacility();
+                        }
+                    }
+                    setTimeout(window.updateToolbarFacilityInfo, 100);
+                    setTimeout(window.updateToolbarFacilityInfo, 500);
+                });
+            }
+
+            // Submit button
+            const submitBtnToolbar = document.getElementById('submit-suggestion-btn-toolbar');
+            if (submitBtnToolbar) {
+                submitBtnToolbar.addEventListener('click', () => {
+                    if (typeof submitSuggestion === 'function') {
+                        submitSuggestion();
+                    }
+                });
+            }
+
+            // ============================================
+            // DATA ORGANIZER MODAL FUNCTIONALITY
+            // ============================================
+
+            const organizerModal = document.getElementById('data-organizer-modal');
+            const organizerModalClose = document.getElementById('organizer-modal-close');
+            const showOrganizerModalBtn = document.getElementById('show-organizer-modal-btn');
+
+            // Open modal
+            if (showOrganizerModalBtn && organizerModal) {
+                showOrganizerModalBtn.addEventListener('click', () => {
+                    organizerModal.classList.add('active');
+                });
+            }
+
+            // Close modal
+            if (organizerModalClose && organizerModal) {
+                organizerModalClose.addEventListener('click', () => {
+                    organizerModal.classList.remove('active');
+                });
+
+                // Close on backdrop click
+                organizerModal.addEventListener('click', (e) => {
+                    if (e.target === organizerModal) {
+                        organizerModal.classList.remove('active');
+                    }
+                });
+            }
+
+            // Wire up modal data organizer search functionality
+            const organizeByModal = document.getElementById('organize-by-modal');
+            const organizeValueModal = document.getElementById('organize-value-modal');
+            const organizeSearchBtnModal = document.getElementById('organize-search-btn-modal');
+            const organizeClearBtnModal = document.getElementById('organize-clear-btn-modal');
+            const organizeResultsModal = document.getElementById('organize-results-modal');
+            const organizeResultsTitleModal = document.getElementById('organize-results-title-modal');
+            const organizeResultsCountModal = document.getElementById('organize-results-count-modal');
+            const organizeMatchesModal = document.getElementById('organize-matches-modal');
+
+            // Add hover effects for modal buttons
+            if (organizeSearchBtnModal) {
+                organizeSearchBtnModal.addEventListener('mouseenter', () => {
+                    organizeSearchBtnModal.style.background = '#000080';
+                });
+                organizeSearchBtnModal.addEventListener('mouseleave', () => {
+                    organizeSearchBtnModal.style.background = '#33A7B5';
+                });
+            }
+
+            if (organizeClearBtnModal) {
+                organizeClearBtnModal.addEventListener('mouseenter', () => {
+                    organizeClearBtnModal.style.background = '#000080';
+                    organizeClearBtnModal.style.color = 'white';
+                });
+                organizeClearBtnModal.addEventListener('mouseleave', () => {
+                    organizeClearBtnModal.style.background = '#FE8088';
+                    organizeClearBtnModal.style.color = '#000435';
+                });
+            }
+
+            // Set up autocomplete for the search value input based on category
+            if (organizeByModal && organizeValueModal) {
+                organizeByModal.addEventListener('change', () => {
+                    const category = organizeByModal.value;
+
+                    // Remove any existing autocomplete
+                    const existingAutocomplete = organizeValueModal.parentElement.querySelector('.autocomplete-list');
+                    if (existingAutocomplete) {
+                        existingAutocomplete.remove();
+                    }
+
+                    // Set up new autocomplete based on category
+                    if (category && typeof window.attachAutocompleteToInput === 'function') {
+                        let dataSource;
+                        let autocompleteCategory;
+
+                        switch (category) {
+                            case 'staff':
+                                dataSource = window.getHumanNames || (() => []);
+                                autocompleteCategory = 'human';
+                                break;
+                            case 'operator':
+                                dataSource = window.getOperatorNames || (() => []);
+                                autocompleteCategory = 'operator';
+                                break;
+                            case 'location':
+                                dataSource = window.getLocationNames || (() => []);
+                                autocompleteCategory = 'location';
+                                break;
+                            case 'programType':
+                                dataSource = window.getProgramTypes || (() => []);
+                                autocompleteCategory = 'programType';
+                                break;
+                            case 'status':
+                                dataSource = window.getStatuses || (() => []);
+                                autocompleteCategory = 'status';
+                                break;
+                            case 'accreditation':
+                                dataSource = window.getAccreditations || (() => []);
+                                autocompleteCategory = 'accreditation';
+                                break;
+                            case 'certification':
+                                dataSource = window.getCertifications || (() => []);
+                                autocompleteCategory = 'certification';
+                                break;
+                        }
+
+                        if (dataSource) {
+                            window.attachAutocompleteToInput(
+                                organizeValueModal,
+                                dataSource,
+                                autocompleteCategory,
+                                (selectedValue) => {
+                                    organizeValueModal.value = selectedValue;
+                                }
+                            );
+                        }
+                    }
+                });
+            }
+
+            if (organizeSearchBtnModal && organizeByModal && organizeValueModal) {
+                organizeSearchBtnModal.addEventListener('click', () => {
+                    const searchType = organizeByModal.value;
+                    const searchValue = organizeValueModal.value.trim();
+
+                    if (!searchType || !searchValue) {
+                        alert('Please select a data point type and enter a search value.');
+                        return;
+                    }
+
+                    performOrganizerSearch(searchType, searchValue, {
+                        resultsContainer: organizeResultsModal,
+                        titleElement: organizeResultsTitleModal,
+                        countElement: organizeResultsCountModal,
+                        matchesElement: organizeMatchesModal,
+                        clearBtn: organizeClearBtnModal,
+                        selectElement: organizeByModal
+                    });
+                });
+
+                // Allow Enter key to search
+                organizeValueModal.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        organizeSearchBtnModal.click();
+                    }
+                });
+            }
+
+            if (organizeClearBtnModal && organizeResultsModal) {
+                organizeClearBtnModal.addEventListener('click', () => {
+                    organizeResultsModal.classList.add('d-none');
+                    organizeClearBtnModal.classList.add('d-none');
+                    organizeValueModal.value = '';
+                });
+            }
+
+            // Unified search function that works for both old and new organizer
+            function performOrganizerSearch(searchType, searchValue, elements) {
+                const results = [];
+
+                // Search through current formData facilities
+                if (formData && formData.facilities) {
+                    formData.facilities.forEach((facility, facilityIndex) => {
+                        const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                        if (matches.length > 0) {
+                            results.push({
+                                projectName: window.currentProjectName || 'Current Project',
+                                facility: facility,
+                                facilityIndex: facilityIndex,
+                                matches: matches,
+                                operator: formData.operator?.name
+                            });
+                        }
+                    });
+                }
+
+                // Search through all saved projects
+                if (typeof projects !== 'undefined') {
+                    Object.keys(projects).forEach(projectName => {
+                        const project = projects[projectName];
+                        if (project && project.data && project.data.facilities) {
+                            project.data.facilities.forEach((facility, facilityIndex) => {
+                                const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                                if (matches.length > 0) {
+                                    results.push({
+                                        projectName: projectName,
+                                        facility: facility,
+                                        facilityIndex: facilityIndex,
+                                        matches: matches,
+                                        operator: project.data.operator?.name
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+
+                displayOrganizerResults(results, searchType, searchValue, elements);
+            }
+
+            function displayOrganizerResults(results, searchType, searchValue, elements) {
+                const searchTypeLabel = elements.selectElement.options[elements.selectElement.selectedIndex].text;
+
+                elements.titleElement.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+                elements.countElement.textContent = `Found ${results.length} facility/facilities`;
+
+                if (results.length === 0) {
+                    elements.matchesElement.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
+                } else {
+                    elements.matchesElement.innerHTML = '';
+                    results.forEach(result => {
+                        const facilityName = result.facility.identification?.name || 'Unnamed Facility';
+                        const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
+                        const location = result.facility.location || 'Unknown Location';
+
+                        const resultDiv = document.createElement('div');
+                        resultDiv.style.cssText = "border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;";
+
+                        resultDiv.innerHTML = `
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;"></div>
+                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;"></div>
+                            <div style="font-size: 13px;">
+                                <strong>Matches:</strong>
+                                ${result.matches.map(match => `<span style="background: #FFF5CB; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #000435; border: 1px solid #B2E102;">${escapeHtml(match)}</span>`).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                                Project: ${escapeHtml(result.projectName)} • Facility #${result.facilityIndex + 1}
+                            </div>
+                        `;
+
+                        resultDiv.children[0].textContent = facilityName;
+                        resultDiv.children[1].textContent = `${operator} • ${location}`;
+
+                        resultDiv.addEventListener('mouseover', () => {
+                            resultDiv.style.backgroundColor = '#f8fafc';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('mouseout', () => {
+                            resultDiv.style.backgroundColor = 'white';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('click', () => {
+                            if (typeof goToFacility === 'function') {
+                                goToFacility(result.projectName, result.facilityIndex);
+                            }
+                            // Close modal after navigation
+                            if (organizerModal) {
+                                organizerModal.classList.remove('active');
+                            }
+                        });
+
+                        elements.matchesElement.appendChild(resultDiv);
+                    });
+                }
+
+                elements.resultsContainer.classList.remove('d-none');
+                elements.clearBtn.classList.remove('d-none');
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Monitor for UI updates and refresh toolbar
+            const originalUpdateUI = window.updateUI;
+            if (typeof originalUpdateUI === 'function') {
+                window.updateUI = function() {
+                    originalUpdateUI.apply(this, arguments);
+                    setTimeout(window.updateToolbarFacilityInfo, 50);
+                };
+            }
+
+            // Listen for custom events that might signal data changes
+            document.addEventListener('facilityChanged', () => {
+                console.log('📡 Facility changed event detected');
+                setTimeout(window.updateToolbarFacilityInfo, 100);
+            });
+
+            document.addEventListener('projectLoaded', () => {
+                console.log('📡 Project loaded event detected');
+                setTimeout(window.updateToolbarFacilityInfo, 100);
+                setTimeout(window.updateToolbarFacilityInfo, 500);
+            });
+
+            // Initial toolbar update
+            setTimeout(window.updateToolbarFacilityInfo, 500);
+            setTimeout(window.updateToolbarFacilityInfo, 2000);
+            setTimeout(window.updateToolbarFacilityInfo, 5000);
+
+            // Add listener for the referrer submission button
+            const referrerSubmitBtn = document.getElementById('submit-referrer-suggestion-btn');
+            if (referrerSubmitBtn && !referrerSubmitBtn.dataset.listenerAttached) {
+                referrerSubmitBtn.addEventListener('click', () => {
+                    submitSuggestion();
+                });
+                referrerSubmitBtn.dataset.listenerAttached = 'true';
+                console.log('✅ Attached listener to referrer submission button.');
+            }
         });
     </script>
 </body>

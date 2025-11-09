@@ -19,6 +19,248 @@ body {
     padding: 20px;
 }
 
+/* ============================================
+   FIXED ADMIN TOOLBAR
+   ============================================ */
+body.toolbar-active {
+    padding-top: 120px; /* 32px admin bar + ~88px compact toolbar */
+}
+
+body.toolbar-active:not(.admin-bar) {
+    padding-top: 88px; /* Just compact toolbar, no admin bar */
+}
+
+body.toolbar-minimized {
+    padding-top: 80px; /* 32px admin bar + 48px minimized toolbar header */
+}
+
+body.toolbar-minimized:not(.admin-bar) {
+    padding-top: 48px; /* Just minimized toolbar header */
+}
+
+.fixed-toolbar {
+    position: fixed;
+    top: 32px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999; /* Below WP admin bar (99999) but above page content */
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+body:not(.admin-bar) .fixed-toolbar {
+    top: 0;
+}
+
+.fixed-toolbar .toolbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 12px;
+    min-height: 48px; /* Ensure consistent height */
+    position: relative;
+}
+
+.fixed-toolbar .toolbar-title {
+    color: #FFFFFF;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none; /* Don't block clicks */
+}
+
+.fixed-toolbar .toolbar-toggle {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #B2E102;
+    color: #000080;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer !important;
+    font-size: 22px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 100000; /* ABOVE EVERYTHING including WP admin bar */
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.fixed-toolbar .toolbar-toggle:hover {
+    background: #FFF5CB;
+    border-color: #B2E102;
+    transform: scale(1.05);
+}
+
+.fixed-toolbar .toolbar-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Facility Selector - keep arrows inline with dropdown */
+.fixed-toolbar .facility-selector {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.fixed-toolbar .facility-dropdown {
+    min-width: 200px;
+    max-width: 300px;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000435;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.fixed-toolbar .facility-selector .btn-toolbar {
+    width: 32px;
+    padding: 6px;
+}
+
+.fixed-toolbar .toolbar-content {
+    padding: 8px 15px;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    max-height: 1000px;
+}
+
+.fixed-toolbar .toolbar-section {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: space-between; /* Distribute groups evenly */
+}
+
+.fixed-toolbar .toolbar-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0; /* Prevent groups from shrinking */
+    white-space: nowrap; /* Keep content on one line */
+}
+
+.fixed-toolbar .toolbar-label {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.fixed-toolbar .btn-toolbar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000435;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.fixed-toolbar .btn-toolbar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.fixed-toolbar .btn-toolbar.btn-primary {
+    background: #000080;
+    color: #FFFFFF;
+    border-color: #FE8088;
+}
+
+.fixed-toolbar .btn-toolbar.btn-primary:hover {
+    background: #33A7B5;
+}
+
+.fixed-toolbar .btn-toolbar.btn-secondary {
+    background: #FFF5CB;
+    color: #000435;
+    border-color: #B2E102;
+}
+
+.fixed-toolbar .btn-toolbar.btn-secondary:hover {
+    background: #ECF385;
+}
+
+.fixed-toolbar .btn-toolbar.btn-success {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border-color: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-success:hover {
+    background: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-danger {
+    background: #FE8088;
+    color: #000435;
+    border-color: #000080;
+}
+
+.fixed-toolbar .btn-toolbar.btn-danger:hover {
+    background: #EF9034;
+}
+
+.fixed-toolbar.minimized {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fixed-toolbar.minimized .toolbar-header {
+    border-bottom: none;
+}
+
+.fixed-toolbar.minimized .toolbar-toggle {
+    background: #EF9034 !important;
+    color: #FFFFFF !important;
+    border-color: #B2E102 !important;
+    pointer-events: auto !important; /* Force clickable */
+    cursor: pointer !important;
+}
+
+.fixed-toolbar.minimized .toolbar-content {
+    /* Don't use display:none - it breaks the toggle! */
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    opacity: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    line-height: 0 !important;
+}
+
+.fixed-toolbar.minimized .btn-toolbar {
+    box-shadow: none;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -54,6 +296,7 @@ body {
     border-radius: 8px;
     margin-bottom: 25px;
     text-align: center;
+    border: 3px solid #FE8088; /* Coral Pink outline */
 }
 
 .admin-header h1 {
@@ -148,7 +391,7 @@ body {
 }
 
 .category-content, .facility-toc {
-    background: #AEE0ED; /* Powder Blue */
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%); /* White to Soft Pastel Yellow */
     border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     padding: 15px;
@@ -158,6 +401,10 @@ body {
 
 .category-content.d-none {
     display: none;
+}
+
+.view-hidden {
+    display: none !important;
 }
 
 .content-header h3 {
@@ -194,6 +441,62 @@ body {
 }
 
 /* ============================================
+   PROJECT MANAGEMENT SECTIONS
+   ============================================ */
+.project-management {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.project-management h2 {
+    text-align: center;
+    color: #000435 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 20px 0 !important;
+}
+
+.project-management .form-group {
+    text-align: center;
+}
+
+.project-management .form-group label {
+    text-align: center;
+    display: block;
+    width: 100%;
+    font-weight: 700;
+    color: #000435;
+}
+
+.project-management .btn {
+    margin: 5px;
+}
+
+/* Project status text - highlighted */
+#project-status,
+#project-status-location,
+#referrer-project-status,
+#upload-status {
+    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
+    color: #000435; /* Midnight Blue for contrast */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-align: center;
+    margin: 15px auto;
+    max-width: 600px;
+    border: 2px solid #B2E102; /* Chartreuse */
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.4);
+}
+
+/* Saved project lists - centered */
+#company-saved-projects-list,
+#location-saved-projects-list,
+#referrer-saved-projects-list {
+    text-align: center;
+}
+
+/* ============================================
    FACILITY TABLE OF CONTENTS
    ============================================ */
 .facility-toc {
@@ -220,23 +523,23 @@ body {
 }
 
 .toc-toggle {
-    background: white;
-    color: #33A7B5; /* Teal */
-    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
+    border: 2px solid #FE8088; /* Coral Pink */
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.2);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
 }
 
 .toc-toggle:hover {
-    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
-    border-color: #B2E102; /* Chartreuse */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    border-color: #FE8088; /* Coral Pink */
     transform: scale(1.05);
-    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.3);
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 8px rgba(254, 128, 136, 0.3);
 }
 
 .toc-content {
@@ -265,6 +568,77 @@ body {
     box-shadow: 0 2px 6px rgba(252, 142, 214, 0.2);
 }
 
+.facility-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    border: 2px solid #F2EEDF; /* Sand / Warm Ivory */
+    border-radius: 8px;
+    color: #000435; /* Midnight Blue for high contrast */
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.facility-item:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.facility-item:hover {
+    border-color: #33A7B5; /* Teal */
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.25);
+    transform: translateY(-1px);
+}
+
+.facility-item:focus {
+    outline: none;
+}
+
+.facility-item:focus-visible {
+    outline: 3px solid #33A7B5; /* Teal */
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(51, 167, 181, 0.2);
+}
+
+.facility-item.active {
+    border-color: #000080; /* Navy Blue */
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    box-shadow: 0 4px 14px rgba(0, 0, 128, 0.25);
+}
+
+.facility-item-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    color: #FFFFFF;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 4, 53, 0.25);
+}
+
+.facility-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.facility-item-name {
+    font-weight: 600;
+    color: #000435; /* Midnight Blue */
+    font-size: 15px;
+}
+
+.facility-item-details {
+    color: #1f2937; /* Dark Slate */
+    font-size: 13px;
+}
+
 .toc-no-project {
     padding: 20px;
     text-align: center;
@@ -286,11 +660,29 @@ body {
 
 .facility-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
     color: #000435; /* Midnight Blue for readability */
+}
+
+.facility-header > .d-flex:first-child {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.facility-toolbar-expandable {
+    display: none;
+}
+
+.facility-toolbar-expandable > .d-flex,
+.facility-toolbar-expandable > .controls {
+    margin-top: 10px;
+}
+
+#facility-toolbar-toggle {
+    min-width: auto;
+    padding: 4px 8px;
+    font-size: 16px;
 }
 
 .controls {
@@ -308,6 +700,11 @@ body {
     color: #6b7280;
     font-weight: 400;
     font-style: italic;
+}
+
+#prev-facility-btn,
+#next-facility-btn {
+    padding: 8px 12px;
 }
 
 /* ============================================
@@ -632,22 +1029,24 @@ textarea {
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
+    white-space: nowrap; /* Prevent text from wrapping */
+    min-width: fit-content; /* Ensure button is wide enough for content */
 }
 
 .btn:hover {
-    background: #2b8a95; /* Darker Teal */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn:active {
@@ -655,20 +1054,23 @@ textarea {
 }
 
 .btn-danger {
-    background: #d63638; /* Red */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-danger:hover {
-    background: #b91c1c; /* Darker Red */
-    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn-secondary {
-    background: #FE8088; /* Coral Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-secondary:hover {
-    background: #fa5f69; /* Darker Coral Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 .btn-inline {
@@ -676,36 +1078,36 @@ textarea {
     font-size: 13px;
 }
 
-/* Plus Button for Adding Items Inline - vibrant teal button with glow */
+/* Plus Button for Adding Items Inline - matches admin header */
 .add-plus-btn {
     width: 28px;
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: linear-gradient(135deg, #33A7B5 0%, #2b8a95 100%); /* Teal gradient */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     font-size: 16px;
     font-weight: 700;
     flex: 0 0 28px; /* Prevent stretching */
     border-radius: 4px;
-    border: 2px solid #B2E102; /* Chartreuse */
+    border: 2px solid #FE8088; /* Coral Pink */
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
     transition: all 0.2s ease;
 }
 
 .add-plus-btn:hover {
-    background: linear-gradient(135deg, #2b8a95 0%, #1f6c75 100%); /* Darker Teal gradient */
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(178, 225, 2, 0.3);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(254, 128, 136, 0.3);
     transform: scale(1.1);
 }
 
-/* Add Item Button (at bottom of arrays) - orange button with glow */
+/* Add Item Button (at bottom of arrays) - matches admin header */
 .add-item-btn {
     padding: 8px 16px;
     margin-top: 8px;
-    background: linear-gradient(135deg, #FE8088 0%, #fa5f69 100%); /* Coral Pink gradient */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    border: 2px solid #FE8088; /* Coral Pink */
     border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
@@ -713,12 +1115,12 @@ textarea {
     transition: all 0.15s ease;
     display: inline-block;
     width: auto;
-    box-shadow: 0 2px 6px rgba(254, 128, 136, 0.3);
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .add-item-btn:hover {
-    background: linear-gradient(135deg, #fa5f69 0%, #f84652 100%); /* Darker Coral Pink gradient */
-    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.5), 0 0 12px rgba(252, 142, 214, 0.3);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.5), 0 0 12px rgba(254, 128, 136, 0.3);
     transform: translateY(-1px);
 }
 
@@ -944,38 +1346,42 @@ textarea {
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 600;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
 }
 
 .project-item-load {
-    background: #33A7B5; /* Teal */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 
 .project-item-load:hover {
-    background: #2b8a95; /* Darker Teal */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-rename {
-    background: #EF9034; /* Orange */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-rename:hover {
-    background: #d97706; /* Darker Orange */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(239, 144, 52, 0.3);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-delete {
-    background: #d63638; /* Red */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-delete:hover {
-    background: #b91c1c; /* Darker Red */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 
 .projects-empty {
@@ -1077,11 +1483,9 @@ textarea {
 
 .copy-btn {
     padding: 8px 14px;
-    background: #6b7280;
-    padding: 8px 14px; /* Using btn-secondary styles */
-    background: #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
@@ -1090,8 +1494,8 @@ textarea {
 }
 
 .copy-btn:hover {
-    background: #4b5563;
-    background: #fa74c8; /* Darker Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
 }
 
 #json-display {
@@ -1117,14 +1521,19 @@ textarea {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    display: flex;
+    display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 
+.modal.active {
+    display: flex !important; /* Show when active class is added */
+}
+
 .modal-content {
     background: white;
+    color: #1f2937;
     border-radius: 12px;
     max-width: 500px;
     width: 90%;
@@ -1171,6 +1580,7 @@ textarea {
 
 .modal-body {
     padding: 20px;
+    color: #1f2937;
 }
 
 .modal-footer {
@@ -1183,39 +1593,38 @@ textarea {
 
 .modal-btn {
     padding: 10px 20px;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    color: white;
 }
 
 .modal-btn-primary {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy Blue */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .modal-btn-primary:hover {
-    background: linear-gradient(135deg, #000080 0%, #000435 100%); /* Navy Blue to Midnight Blue */
-    box-shadow: 0 4px 10px rgba(0, 0, 128, 0.4);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
 }
 
 .modal-btn-secondary {
-    background: linear-gradient(135deg, #F2EEDF 0%, #e5e7eb 100%); /* Sand to gray */
-    color: #000080;
-    border: 1px solid #d1d5db;
-    background: #FC8ED6; /* Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .modal-btn-secondary:hover {
-    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-    border-color: #9ca3af;
-    background: #fa74c8; /* Darker Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
 }
 
@@ -1225,20 +1634,21 @@ textarea {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%); /* Coral Pink to Bubblegum Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 8px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3);
 }
 
 .save-master-btn:hover {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.5), 0 0 16px rgba(254, 128, 136, 0.3);
 }
 
 .save-master-btn:active {
@@ -1296,9 +1706,9 @@ textarea {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #000080;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
-    border: none;
+    border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 4px;
     font-size: 14px;
     font-weight: 700;
@@ -1308,7 +1718,8 @@ textarea {
 }
 
 .field-note-btn:hover {
-    background: #000435;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 
 .field-note-btn.has-note {
@@ -1452,14 +1863,19 @@ textarea {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    display: flex;
+    display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 
+.modal.active {
+    display: flex !important; /* Show when active class is added */
+}
+
 .modal-content {
     background: #FFFFFF;
+    color: #1f2937;
     border-radius: 12px;
     max-width: 500px;
     width: 90%;
@@ -1506,6 +1922,7 @@ textarea {
 
 .modal-body {
     padding: 20px;
+    color: #1f2937;
 }
 
 .modal-footer {
@@ -1581,6 +1998,527 @@ textarea {
 .scroll-container::-webkit-scrollbar-thumb:hover,
 #json-display::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+}
+
+/* ============================================
+   MOBILE / SMALL SCREEN RESPONSIVE STYLES
+   ============================================ */
+
+/* Tablets and smaller - changed from 1024px to 768px */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+    
+    .fixed-toolbar .toolbar-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .fixed-toolbar .toolbar-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Mobile phones and narrow screens */
+@media (max-width: 640px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    body.toolbar-active {
+        padding-top: 200px;
+    }
+
+    .container {
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    /* Fixed Toolbar Mobile */
+    .fixed-toolbar .toolbar-header {
+        padding: 10px 15px;
+        flex-wrap: wrap;
+    }
+
+    .fixed-toolbar .toolbar-title {
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .fixed-toolbar .toolbar-content {
+        padding: 10px 15px;
+    }
+
+    .fixed-toolbar .toolbar-section {
+        gap: 10px;
+    }
+
+    .fixed-toolbar .toolbar-group {
+        gap: 8px;
+    }
+
+    .fixed-toolbar .toolbar-label {
+        font-size: 13px;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    /* Header */
+    .admin-header {
+        padding: 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 20px;
+    }
+
+    .admin-header p {
+        font-size: 14px;
+    }
+
+    /* Category Tabs - Stack Vertically */
+    .category-navigation {
+        padding: 10px;
+    }
+
+    .category-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .category-tab {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    /* Table of Contents */
+    .toc-header {
+        padding: 12px 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .toc-title {
+        font-size: 16px;
+        flex: 1;
+    }
+
+    .toc-content {
+        padding: 12px;
+    }
+
+    .facility-list {
+        max-height: 200px;
+        padding: 10px;
+    }
+
+    /* Facility Controls - Stack Everything */
+    .facility-controls {
+        padding: 15px;
+    }
+
+    .facility-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .facility-header h2 {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .controls .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* Sections */
+    .section {
+        margin-bottom: 15px;
+    }
+
+    .section-header {
+        padding: 12px 15px;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .section-content {
+        padding: 15px;
+    }
+
+    /* Form Elements */
+    .form-row,
+    .form-row-3 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    textarea,
+    select,
+    .input-form,
+    .input-primary,
+    .input-secondary {
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    textarea {
+        min-height: 80px;
+    }
+
+    /* Autocomplete */
+    .autocomplete-wrapper {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .autocomplete-dropdown {
+        max-height: 180px;
+        font-size: 13px;
+    }
+
+    .autocomplete-item {
+        padding: 10px;
+    }
+
+    /* Array Items - Stack on Mobile */
+    .array-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .array-item input,
+    .array-item textarea {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .array-input {
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .array-input-role,
+    .array-input-name {
+        flex: 1;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Buttons on Mobile - Full Width and Stacked */
+    .array-item .field-note-btn,
+    .array-item .add-plus-btn,
+    .array-item .remove-btn {
+        align-self: stretch;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 36px !important;
+        font-size: 14px;
+        order: 10;
+    }
+
+    .btn {
+        padding: 12px 16px;
+        font-size: 14px;
+        width: auto; /* Changed from 100% to auto to prevent narrowing in flex containers */
+        min-width: 80px; /* Minimum width to prevent vertical text wrapping */
+        flex-shrink: 0; /* Prevent buttons from shrinking below min-width */
+    }
+
+    /* Only apply full width to buttons that are not in flex containers */
+    .controls .btn,
+    .project-management .btn,
+    .form-group > .btn {
+        width: 100%;
+    }
+
+    .btn-inline {
+        padding: 10px 14px;
+        font-size: 13px;
+        min-width: 70px;
+    }
+
+    .add-item-btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* Project Management */
+    .project-management h2 {
+        font-size: 16px !important;
+    }
+
+    .project-management .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    /* Project Items - Full Width Buttons */
+    .project-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .project-item-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .project-item-btn {
+        width: 100%;
+        padding: 10px 16px;
+        font-size: 13px;
+        justify-content: center;
+    }
+
+    /* Status Messages */
+    #project-status,
+    #project-status-location,
+    #referrer-project-status,
+    #upload-status {
+        padding: 10px 15px;
+        font-size: 13px;
+        margin: 12px auto;
+    }
+
+    .upload-status {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    /* Modal on Mobile */
+    .modal-content {
+        width: 95%;
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 15px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 12px 16px;
+    }
+
+    /* JSON Display */
+    #json-display {
+        font-size: 11px;
+        padding: 15px;
+        max-height: 300px;
+    }
+
+    .output-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .copy-btn {
+        width: 100%;
+    }
+
+    /* Save Button */
+    .save-master-btn {
+        font-size: 15px;
+        padding: 14px;
+    }
+
+    /* Top Actions Bar */
+    .top-actions-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .top-actions-bar .btn {
+        width: 100%;
+    }
+
+    /* Content Headers */
+    .content-header .d-flex {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .content-header .input-primary {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .content-header .btn-inline {
+        width: 100%;
+    }
+
+    /* Field Notes on Mobile */
+    .note-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .note-textarea {
+        min-height: 60px;
+    }
+
+    .remove-note-btn {
+        width: 100%;
+        height: 36px;
+    }
+
+    .array-item-notes {
+        margin: 8px 0 12px 0;
+    }
+
+    /* Consultant navigation - make it wrap on mobile */
+    #referrer-consultants-section .section-content > div[style*="display: flex"] {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    #referrer-consultants-section .section-content > div[style*="display: flex"] > div {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    /* Consultant dropdown - make it responsive */
+    #consultant-dropdown {
+        min-width: 150px !important;
+        max-width: 100% !important;
+        flex: 1 1 auto !important;
+    }
+
+    /* Consultant navigation buttons */
+    #prev-consultant-btn,
+    #next-consultant-btn,
+    #add-consultant-btn,
+    #remove-consultant-btn {
+        min-width: 90px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* General rule: Any flex container with buttons should wrap on mobile */
+    div[style*="display: flex"] {
+        flex-wrap: wrap !important;
+    }
+
+    /* Ensure button groups have proper spacing */
+    div[style*="display: flex"][style*="gap"] {
+        gap: 8px !important;
+    }
+
+    /* Make select dropdowns responsive in flex containers */
+    select[style*="min-width"] {
+        min-width: 120px !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 375px) {
+    body {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .container {
+        padding: 12px;
+    }
+
+    .admin-header h1 {
+        font-size: 18px;
+    }
+
+    .section-title,
+    .toc-title {
+        font-size: 15px;
+    }
+
+    .category-tab {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .btn,
+    .controls .btn {
+        font-size: 13px;
+        padding: 10px 14px;
+        min-width: 70px; /* Ensure buttons don't become too narrow */
+    }
+
+    /* Consultant navigation on very small screens */
+    #prev-consultant-btn,
+    #next-consultant-btn {
+        min-width: 80px !important;
+    }
+
+    #consultant-dropdown {
+        min-width: 120px !important;
+    }
+
+    input,
+    textarea,
+    select {
+        font-size: 13px;
+    }
 }
 
 /* ============================================

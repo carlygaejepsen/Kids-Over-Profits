@@ -32,6 +32,7 @@ $categoryAliases = [
     'humans' => 'human',
     'people' => 'human',
     'staff' => 'human',
+    'referrers' => 'referrer',
     'facilitytype' => 'type',
     'facilitytypes' => 'type',
     'types' => 'type',
@@ -66,6 +67,7 @@ $allowedCategories = [
     'operator',
     'facility',
     'human',
+    'referrer',
     'type',
     'status',
     'gender',
@@ -291,6 +293,23 @@ function collect_human_values(array $data, array &$set)
     }
 }
 
+function collect_referrer_values(array $data, array &$set)
+{
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $identification = $facility['identification'] ?? [];
+        if (is_array($identification)) {
+            add_values($set, $identification['knownReferrers'] ?? []);
+        }
+    }
+}
+
 function collect_type_values(array $data, array &$set)
 {
     if (empty($data['facilities']) || !is_array($data['facilities'])) {
@@ -504,6 +523,9 @@ function collect_values_for_category($category, array $data, array &$set)
             break;
         case 'human':
             collect_human_values($data, $set);
+            break;
+        case 'referrer':
+            collect_referrer_values($data, $set);
             break;
         case 'type':
             collect_type_values($data, $set);

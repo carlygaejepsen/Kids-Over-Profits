@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const letter = e.target.dataset.letter;
                 renderFacilitiesForLetter(letter);
             }
-        });
+        }, { passive: false });
     }
 
     function renderFacilitiesForLetter(letter) {

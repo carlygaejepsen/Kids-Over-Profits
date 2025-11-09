@@ -5,15 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin - Facility Data Management</title>
     <link rel="stylesheet" href="https://kidsoverprofits.org/wp-content/themes/child/css/data-form.css">
+    <script>
+        // Prevent WordPress from loading comment-reply script
+        window.addComment = {
+            moveForm: function() { return false; }
+        };
+
+        // Prevent Kadence navigation from initializing
+        // This stops navigation.min.js errors when header elements don't exist
+        window.kadenceConfig = window.kadenceConfig || {};
+        window.kadenceConfig.breakPoints = window.kadenceConfig.breakPoints || {};
+        window.kadenceConfig.breakPoints.desktop = 99999; // Disable mobile breakpoint
+
+        // Create a stub to prevent navigation initialization errors
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override any Kadence navigation initialization
+            if (window.kadence && window.kadence.initNavigation) {
+                window.kadence.initNavigation = function() {
+                    console.log('Kadence navigation disabled on this page');
+                };
+            }
+        });
+
+        // Early interception: prevent the script from finding navigation elements
+        (function() {
+            var originalQuerySelector = document.querySelector;
+            var originalQuerySelectorAll = document.querySelectorAll;
+
+            // List of selectors the Kadence nav script looks for
+            var blockedSelectors = [
+                '#main-navigation',
+                '.main-navigation',
+                '#site-navigation',
+                '.site-navigation',
+                '#primary-navigation',
+                'nav[role="navigation"]'
+            ];
+
+            document.querySelector = function(selector) {
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return null; // Return null for navigation selectors
+                }
+                return originalQuerySelector.apply(this, arguments);
+            };
+
+            document.querySelectorAll = function(selector) {
+                if (blockedSelectors.some(blocked => selector && selector.includes(blocked))) {
+                    return []; // Return empty array for navigation selectors
+                }
+                return originalQuerySelectorAll.apply(this, arguments);
+            };
+        })();
+    </script>
     </head>
 <body>
     <div class="container">
+        <div class="admin-header">
+            <h1>🔐 Admin Facility Data Management</h1>
+            <p>You are in administrator mode. Changes saved here will directly update the master database.</p>
+        </div>
+        
+        <div class="admin-warning">
+            ❗ <strong>Administrator Mode:</strong> Data saved here will directly update the master database. Proceed with caution.
+        </div>
+
         
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
                 <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
                 <button class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -23,6 +85,25 @@
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
                     </div>
+                    <div class="project-management" id="project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Saved Projects</label>
+                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-project-btn">New Project</button>
+                                <button class="btn" id="export-all-btn">Export All Projects</button>
+                                <button class="btn" id="generate-report-btn">Generate Report</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="upload-status" style="display: none;"></div>
                 </div>
 
                 <!-- States Content -->
@@ -30,72 +111,183 @@
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
                     </div>
+                    <div class="project-management location-project-management">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <div class="form-group">
+                            <label>Saved Location Projects</label>
+                            <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Projects Loader Panel -->
-        <div class="projects-loader-panel" id="projects-loader-panel">
-            <div id="company-projects-panel" class="project-panel active">
-                <div class="project-management" id="project-panel-inner">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
-
-                    <div class="form-group" style="border: 2px solid #1e40af; background: #f8fafc; padding: 15px; border-radius: 8px;">
-                        <label>Project Management</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                            <input type="text" id="project-name" placeholder="Enter project name..." style="flex: 1; min-width: 200px;">
-                            <button class="btn btn-primary" id="save-project-btn">💾 Save to Master</button>
-                            <button class="btn" id="load-project-btn">Load Project</button>
-                            <button class="btn" id="new-project-btn">New Project</button>
-                            <button class="btn" id="export-all-btn">Export All Projects</button>
-                            <button class="btn" id="generate-report-btn">Generate Report</button>
-                        </div>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                <!-- Referrers Content -->
+                <div id="referrers-content" class="category-content d-none">
+                    <div class="content-header">
+                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
+                </div>
 
+                    <div class="project-management" id="referrer-project-panel-inner">
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
+                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                    </div>
                     <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        <label>Saved Referrer Projects</label>
+                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <label>Project Management</label>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="new-referrer-project-btn">New Project</button>
+                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
+                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="file-upload">Import Data Files</label>
-                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                    <!-- Referrer Type Toggle -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Referrer Type:</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>Group/Agency</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="referrer-type-toggle" style="display: none;">
+                                    <span id="referrer-slider-track" style="display: block; width: 48px; height: 24px; background-color: #10b981; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="referrer-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Individual</span>
+                            </div>
+                        </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Upload JSON or CSV files. JSON files will load directly into the form.
+                            Toggle to track an organization/agency or an individual consultant.
                         </p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="json-paste">Or Paste JSON Data</label>
-                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button class="btn" id="import-json-btn">Import JSON</button>
-                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                    <!-- Group/Agency Form -->
+                    <div id="referrer-group-form" style="display: block;">
+                        <div class="section expanded">
+                            <div class="section-header">
+                                <h2 class="section-title">Group/Agency Information</h2>
+                                <span class="section-toggle">🔎</span>
+                            </div>
+                            <div class="section-content">
+                                <div class="form-group">
+                                    <label>Agency/Organization Name</label>
+                                    <input type="text" id="referrer-group-name" placeholder="e.g., Educational Consulting Associates">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" id="referrer-group-city" placeholder="e.g., Los Angeles">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input type="text" id="referrer-group-state" placeholder="e.g., CA">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Website</label>
+                                    <input type="text" id="referrer-group-website" placeholder="https://">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea id="referrer-group-address" rows="3" placeholder="Full address..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Year Founded</label>
+                                    <input type="text" id="referrer-group-founded" placeholder="e.g., 1995">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Professional Affiliations / Memberships</label>
+                                    <div class="array-container" data-path="referrerGroup.affiliations"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    <textarea id="referrer-group-notes" rows="4" placeholder="Additional information about this organization..."></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="upload-status" style="display: none;"></div>
-                </div>
-            </div>
-            <div id="location-projects-panel" class="project-panel d-none">
-                <div class="project-management location-project-management">
-                    <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
-                    <div class="form-group">
-                        <label>Saved Location Projects</label>
-                        <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                    <!-- Individual Form -->
+                    <div id="referrer-individual-form" style="display: none;">
+                        <div class="section expanded">
+                            <div class="section-header">
+                                <h2 class="section-title">Individual Information</h2>
+                                <span class="section-toggle">🔎</span>
+                            </div>
+                            <div class="section-content">
+                                <div class="form-group">
+                                    <label>Person's Name</label>
+                                    <input type="text" id="referrer-individual-name" data-autocomplete-category="human" placeholder="e.g., Jane Smith">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Current Role</label>
+                                        <input type="text" id="referrer-individual-role" placeholder="e.g., Educational Consultant">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="referrer-individual-status">
+                                            <option value="">Select status...</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Retired">Retired</option>
+                                            <option value="Deceased">Deceased</option>
+                                            <option value="Unknown">Unknown</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Education / Credentials</label>
+                                    <textarea id="referrer-individual-education" rows="3" placeholder="Degrees, licenses, certifications..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Past TTI Jobs / Positions</label>
+                                    <div class="array-container" data-path="referrerIndividual.pastTTIJobs"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Known Referrals (Facilities Referred To)</label>
+                                    <div class="array-container" data-path="referrerIndividual.knownReferrals"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Professional Affiliations / Memberships</label>
+                                    <div class="array-container" data-path="referrerIndividual.affiliations"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Lawsuits & Scandals</label>
+                                    <textarea id="referrer-individual-lawsuits" rows="4" placeholder="Document any legal issues, scandals, or controversies..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Additional Notes</label>
+                                    <textarea id="referrer-individual-notes" rows="4" placeholder="Any other relevant information..."></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                        Location projects appear automatically when their titles match a known state or country.
-                    </p>
                 </div>
             </div>
         </div>
 
+        <div id="facility-main-wrapper">
         <!-- Facility Table of Contents -->
         <div class="facility-toc" id="facility-toc">
             <div class="toc-header">
@@ -215,14 +407,27 @@
                     </div>
                 </div>
 
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="operator-location">Primary Location</label>
-                        <input type="text" id="operator-location" data-autocomplete-category="location" placeholder="e.g., Waynesboro, TN">
+                        <label for="operator-location-city">City</label>
+                        <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
                     </div>
                     <div class="form-group">
-                        <label for="operator-headquarters">Headquarters</label>
-                        <input type="text" id="operator-headquarters" data-autocomplete-category="location" placeholder="e.g., Nashville, TN">
+                        <label for="operator-location-state">State</label>
+                        <input type="text" id="operator-location-state" placeholder="e.g., TN">
+                    </div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operator-headquarters-city">City</label>
+                        <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters-state">State</label>
+                        <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
                     </div>
                 </div>
 
@@ -307,6 +512,10 @@
                 <div class="form-group">
                     <label>Other Names</label>
                     <div class="array-container" data-path="identification.otherNames"></div>
+                </div>
+                <div class="form-group">
+                    <label>Known Referrers (Education Consultants / School Districts)</label>
+                    <div class="array-container" data-path="identification.knownReferrers"></div>
                 </div>
             </div>
         </div>
@@ -793,13 +1002,47 @@
             </div>
         </div>
         
+        <!-- Submission Section -->
+        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+            <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
+            </div>
+            <div class="section-content" style="display: block;">
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="Enter project name..." style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="save-master-btn" id="save-project-btn">
+                        💾 Save to Master Database
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
                 <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
                 <span class="section-toggle">🔎</span>
             </div>
-            <div class="section-content">
+            <div class="section-content" style="display: none;">
+                 <div class="form-group">
+                        <label for="file-upload">Import Data Files</label>
+                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Upload JSON or CSV files. JSON files will load directly into the form.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="json-paste">Or Paste JSON Data</label>
+                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" id="import-json-btn">Import JSON</button>
+                            <button class="btn" id="clear-all-btn">Clear Form</button>
+                        </div>
+                    </div>
                 <div class="json-output">
                     <div class="output-header">
                         <h3>Generated JSON</h3>
@@ -815,7 +1058,7 @@
         </div>
     </div>
     
-    <!-- Clone Facility Modal (Hidden in suggestions mode) -->
+    <!-- Clone Facility Modal -->
     <div id="clone-facility-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -823,19 +1066,19 @@
                 <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose where to clone the current facility:</p>
+                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="current" checked>
-                        Clone to current project (default behavior)
+                        Clone to the current project (<strong><span id="clone-current-project-name"></span></strong>)
                     </label>
                 </div>
                 
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="existing">
-                        Clone to existing project
+                        Clone to an existing project
                     </label>
                     <div class="project-select-container" id="existing-project-container" style="display: none;">
                         <select class="project-select" id="existing-project-select">
@@ -847,10 +1090,10 @@
                 <div class="clone-option">
                     <label>
                         <input type="radio" name="clone-destination" value="new">
-                        Clone to new project
+                        Clone to a new project
                     </label>
                     <div class="project-select-container" id="new-project-container" style="display: none;">
-                        <input type="text" class="new-project-input" id="new-project-name" placeholder="Enter new project name...">
+                        <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name...">
                     </div>
                 </div>
             </div>
@@ -860,7 +1103,8 @@
             </div>
         </div>
     </div>
-    
+
+        </div>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-report-generator.js"></script>
     <script type="module" src="https://kidsoverprofits.org/wp-content/themes/child/js/facility-form.v3.js"></script>
     <script>
@@ -935,7 +1179,7 @@
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
                                 const actualProject = window.currentProjectName || projectName; 
-                                pageTitle.innerHTML = `📊 Facility Data Entry - ${actualProject}`;
+                                pageTitle.innerHTML = `Admin - ${actualProject}`;
                             }
                         } else {
                             console.warn('formData not found after project load');
@@ -964,26 +1208,27 @@
 
                 const companiesContent = document.getElementById('companies-content');
                 const statesContent = document.getElementById('states-content');
-                if (companiesContent && statesContent) {
+                const referrersContent = document.getElementById('referrers-content');
+
+                if (companiesContent && statesContent && referrersContent) {
+                    // Hide all content sections first
+                    companiesContent.classList.add('d-none');
+                    statesContent.classList.add('d-none');
+                    referrersContent.classList.add('d-none');
+
+                    // Show the selected category
                     if (category === 'companies') {
                         companiesContent.classList.remove('d-none');
-                        statesContent.classList.add('d-none');
-                    } else {
-                        companiesContent.classList.add('d-none');
+                    } else if (category === 'locations') {
                         statesContent.classList.remove('d-none');
+                    } else if (category === 'referrers') {
+                        referrersContent.classList.remove('d-none');
                     }
                 }
 
-                const companyPanel = document.getElementById('company-projects-panel');
-                const locationPanel = document.getElementById('location-projects-panel');
-                if (companyPanel && locationPanel) {
-                    if (category === 'locations') {
-                        companyPanel.classList.add('d-none');
-                        locationPanel.classList.remove('d-none');
-                    } else {
-                        locationPanel.classList.add('d-none');
-                        companyPanel.classList.remove('d-none');
-                    }
+                const facilityWrapper = document.getElementById('facility-main-wrapper');
+                if (facilityWrapper) {
+                    facilityWrapper.style.display = category === 'referrers' ? 'none' : '';
                 }
 
                 if (typeof window.refreshSavedProjectPanels === 'function') {
@@ -1014,6 +1259,46 @@
                 }
             });
         });
+
+        // Referrer type toggle functionality
+        const referrerTypeToggle = document.getElementById('referrer-type-toggle');
+        const referrerSliderTrack = document.getElementById('referrer-slider-track');
+        const referrerSliderKnob = document.getElementById('referrer-slider-knob');
+        const referrerGroupForm = document.getElementById('referrer-group-form');
+        const referrerIndividualForm = document.getElementById('referrer-individual-form');
+
+        function applyReferrerToggleState(isIndividual) {
+            if (!referrerSliderTrack || !referrerSliderKnob || !referrerTypeToggle || !referrerGroupForm || !referrerIndividualForm) {
+                return;
+            }
+
+            referrerTypeToggle.checked = !!isIndividual;
+
+            if (referrerTypeToggle.checked) {
+                referrerSliderTrack.style.backgroundColor = '#3b82f6';
+                referrerSliderKnob.style.transform = 'translateX(24px)';
+                referrerGroupForm.style.display = 'none';
+                referrerIndividualForm.style.display = 'block';
+            } else {
+                referrerSliderTrack.style.backgroundColor = '#10b981';
+                referrerSliderKnob.style.transform = 'translateX(0px)';
+                referrerGroupForm.style.display = 'block';
+                referrerIndividualForm.style.display = 'none';
+            }
+        }
+
+        if (referrerSliderTrack && referrerTypeToggle && referrerGroupForm && referrerIndividualForm) {
+            referrerSliderTrack.addEventListener('click', function() {
+                const newState = !referrerTypeToggle.checked;
+                applyReferrerToggleState(newState);
+
+                if (typeof window.handleReferrerTypeToggle === 'function') {
+                    window.handleReferrerTypeToggle(newState ? 'individual' : 'group');
+                }
+            });
+        }
+
+        window.applyReferrerToggleState = applyReferrerToggleState;
 
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
@@ -1352,17 +1637,17 @@
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
             
-            let organizerVisible = true;
+            let organizerVisible = false; // Collapsed by default
             
-            // Set initial state - organizer visible by default
-            organizerSection.style.display = 'block';
-            showOrganizerBtn.textContent = '📊 Hide Organizer';
+            // Set initial state - organizer hidden by default
+            organizerSection.style.display = 'none';
+            showOrganizerBtn.textContent = '📊 Data Organizer';
             
             // Toggle organizer visibility
             showOrganizerBtn.addEventListener('click', () => {
                 organizerVisible = !organizerVisible;
                 organizerSection.style.display = organizerVisible ? 'block' : 'none';
-                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer';
+                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
                 
                 if (organizerVisible) {
                     organizerSection.scrollIntoView({ behavior: 'smooth' });
@@ -1561,32 +1846,45 @@
                 if (results.length === 0) {
                     organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
                 } else {
-                    let html = '';
+                    organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
                         const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
                         const location = result.facility.location || 'Unknown Location';
                         
-                        html += `
-                            <div style="border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;" 
-                                 onmouseover="this.style.backgroundColor='#f8fafc'" 
-                                 onmouseout="this.style.backgroundColor='white'"
-                                 onclick="goToFacility('${result.projectName}', ${result.facilityIndex})">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${escapeHtmlForAttr(facilityName)}</div>
-                                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
-                                    ${escapeHtmlForAttr(operator)} • ${escapeHtmlForAttr(location)}
-                                </div>
-                                <div style="font-size: 13px;">
-                                    <strong>Matches:</strong> 
-                                    ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
-                                </div>
-                                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                                    Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
-                                </div>
+                        const resultDiv = document.createElement('div');
+                        resultDiv.style.cssText = "border-bottom: 1px solid #e2e8f0; padding: 15px; cursor: pointer; transition: background-color 0.2s;";
+
+                        resultDiv.innerHTML = `
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;"></div>
+                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;"></div>
+                            <div style="font-size: 13px;">
+                                <strong>Matches:</strong> 
+                                ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
+                            </div>
+                            <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                                Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
                             </div>
                         `;
+                        // Use textContent to prevent HTML injection issues
+                        resultDiv.children[0].textContent = facilityName;
+                        resultDiv.children[1].textContent = `${operator} • ${location}`;
+
+                        // Add event listeners with the passive option
+                        resultDiv.addEventListener('mouseover', () => {
+                            resultDiv.style.backgroundColor = '#f8fafc';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('mouseout', () => {
+                            resultDiv.style.backgroundColor = 'white';
+                        }, { passive: true });
+
+                        resultDiv.addEventListener('click', () => {
+                            goToFacility(result.projectName, result.facilityIndex);
+                        });
+
+                        organizeMatches.appendChild(resultDiv);
                     });
-                    organizeMatches.innerHTML = html;
                 }
                 
                 organizeResults.style.display = 'block';
@@ -1631,12 +1929,28 @@
         
         // Initialize data organizer when the page loads
         window.addEventListener('load', () => {
-            setTimeout(initializeDataOrganizer, 1000); // Wait for other initialization
+            // This function waits for the main form script to signal it's ready
+            const onFormReady = () => {
+                console.log('🚀 Form is ready. Initializing page-specific components.');
+                if (typeof initializeDataOrganizer === 'function') {
+                    initializeDataOrganizer();
+                } else {
+                    console.warn('initializeDataOrganizer not available on ready.');
+                }
+            };
+
+            // Check if the form is already ready, otherwise wait for the custom event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
 
         // ============================================
         // FIELD NOTES FUNCTIONALITY
         // ============================================
+        // Note: Field notes functionality has been moved to facility-form.v3.js
         // Note: Field notes functionality has been moved to facility-form.v3.js
         // It is automatically initialized when the form loads
         
@@ -1644,10 +1958,10 @@
         // CATEGORY NAVIGATION (COMPANIES vs STATES)
         // ============================================
         
-        // Both categories now visible side by side - no switching needed
         function initializeCategoryNavigation() {
-            // Both dropdowns are always visible, no tab switching required
-            console.log('Category navigation initialized - both views visible');
+            // This function is now primarily handled by the main script,
+            // but we ensure the correct panels are displayed based on the active tab.
+            console.log('Admin page category navigation initialized.');
         }
         
         function populateCompaniesList() {
@@ -1657,7 +1971,7 @@
                 console.error('operators-list container not found!');
                 return;
             }
-            
+
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
@@ -1687,11 +2001,21 @@
                             </div>
                         </div>`;
             }).join('');
-            
+
             container.innerHTML = projectsHtml;
             console.log('Projects list rendered successfully');
         }
-        
+
+        function populateOperatorsList() {
+            if (typeof window.refreshSavedProjectPanels === 'function') {
+                window.refreshSavedProjectPanels();
+            }
+
+            if (document.getElementById('operators-list')) {
+                populateCompaniesList();
+            }
+        }
+
         function populateLocationsList() {
             console.log('🎨 Rendering location projects list...');
             const container = document.getElementById('locations-list');
@@ -2034,7 +2358,7 @@
         window.addEventListener('load', () => {
             initializeSectionToggles();
 
-            setTimeout(() => {
+            const onFormReady = () => {
                 initializeCategoryNavigation();
 
                 // Refresh saved project panels (from facility-form.v3.js)
@@ -2151,7 +2475,14 @@
                         }
                     });
                 }
-            }, 1000);
+            };
+
+            // Check if the form is already ready, otherwise wait for the custom event
+            if (window.formReady) {
+                onFormReady();
+            } else {
+                document.addEventListener('formReady', onFormReady, { once: true });
+            }
         });
     </script>
 </body>
