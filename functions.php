@@ -691,10 +691,27 @@ function enqueue_facility_form_script() {
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
+    $dependencies = array('jquery');
+
+    $module_relative_path = '/js/db-form/dist/db-form.bundle.js';
+    $module_file_path = get_stylesheet_directory() . $module_relative_path;
+
+    if (file_exists($module_file_path)) {
+        wp_enqueue_script(
+            'kop-db-form-runtime',
+            get_stylesheet_directory_uri() . $module_relative_path,
+            array(),
+            filemtime($module_file_path),
+            true
+        );
+
+        $dependencies[] = 'kop-db-form-runtime';
+    }
+
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery'),
+        $dependencies,
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
