@@ -13,11 +13,18 @@ if (!defined('ABSPATH')) {
  */
 function kadence_child_enqueue_styles() {
     // Enqueue parent theme stylesheet
+    $kadence_parent_style_path = get_template_directory() . '/style.css';
+    $kadence_parent_style_version = null;
+
+    if (file_exists($kadence_parent_style_path)) {
+        $kadence_parent_style_version = filemtime($kadence_parent_style_path);
+    }
+
     wp_enqueue_style(
         'kadence-parent-style',
         get_template_directory_uri() . '/style.css',
         array(),
-        wp_get_theme()->get('Version')
+        $kadence_parent_style_version
     );
 
     // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
@@ -691,10 +698,27 @@ function enqueue_facility_form_script() {
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
+    $dependencies = array('jquery');
+
+    $module_relative_path = '/js/db-form/dist/db-form.bundle.js';
+    $module_file_path = get_stylesheet_directory() . $module_relative_path;
+
+    if (file_exists($module_file_path)) {
+        wp_enqueue_script(
+            'kop-db-form-runtime',
+            get_stylesheet_directory_uri() . $module_relative_path,
+            array(),
+            filemtime($module_file_path),
+            true
+        );
+
+        $dependencies[] = 'kop-db-form-runtime';
+    }
+
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery'),
+        $dependencies,
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );

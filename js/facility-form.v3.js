@@ -6,174 +6,208 @@
 // ============================================
 // CONSTANTS & CONFIGURATION
 // ============================================
-const SCRIPT_BUILD_VERSION = 'facility-form.v3.sql-autocomplete.2025-10-15.notes';
-if (typeof window !== 'undefined') {
-    window.KOP_FACILITY_FORM_VERSION = SCRIPT_BUILD_VERSION;
-}
+const runtimeWindow = typeof window !== 'undefined' ? window : undefined;
+const dbFormNamespace = runtimeWindow?.KOP_DB_FORM || null;
 
-const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
-
-function getResolverEndpoint(filename, fallback) {
-    if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
-        return window.KOP_API.getEndpoint(filename);
+const createFacilityFormConfig = (() => {
+    if (dbFormNamespace && typeof dbFormNamespace.createFacilityFormConfig === 'function') {
+        return dbFormNamespace.createFacilityFormConfig;
     }
 
-    return fallback;
-}
-
-function resolveApiUrl(path, bases) {
-    if (!path) return '';
-    if (/^https?:\/\//i.test(path)) {
-        return path;
-    }
-
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    const baseCandidates = Array.isArray(bases)
-        ? bases
-        : (bases ? [bases] : []);
-
-    for (const candidate of baseCandidates) {
-        if (typeof candidate !== 'string') {
-            continue;
+    function getResolverEndpoint(filename, fallback, localWindow) {
+        if (localWindow && localWindow.KOP_API && typeof localWindow.KOP_API.getEndpoint === 'function') {
+            return localWindow.KOP_API.getEndpoint(filename);
         }
 
-        const normalizedBase = candidate.replace(/\/$/, '');
+        return fallback;
+    }
 
-        if (!normalizedBase) {
-            continue;
+    function resolveApiUrl(path, bases) {
+        if (!path) return '';
+        if (/^https?:\/\//i.test(path)) {
+            return path;
         }
 
-        return `${normalizedBase}${normalizedPath}`;
+        const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+        const baseCandidates = Array.isArray(bases)
+            ? bases
+            : (bases ? [bases] : []);
+
+        for (const candidate of baseCandidates) {
+            if (typeof candidate !== 'string') {
+                continue;
+            }
+
+            const normalizedBase = candidate.replace(/\/$/, '');
+
+            if (!normalizedBase) {
+                continue;
+            }
+
+            return `${normalizedBase}${normalizedPath}`;
+        }
+
+        return normalizedPath;
     }
 
-    return normalizedPath;
-}
+    function isTruthyFlag(value) {
+        if (typeof value === 'boolean') {
+            return value;
+        }
 
-const explicitBase = FACILITY_FORM_CONFIG.apiBase;
-const fallbackBases = FACILITY_FORM_CONFIG.apiBaseFallbacks;
+        if (typeof value === 'string') {
+            const normalized = value.trim().toLowerCase();
+            if (!normalized) {
+                return false;
+            }
 
-const apiBaseCandidates = [];
+            return ['1', 'true', 'yes', 'on', 'enable', 'enabled'].includes(normalized);
+        }
 
-if (Array.isArray(explicitBase)) {
-    apiBaseCandidates.push(...explicitBase);
-} else if (typeof explicitBase === 'string' && explicitBase) {
-    apiBaseCandidates.push(explicitBase);
-}
-
-if (Array.isArray(fallbackBases)) {
-    apiBaseCandidates.push(...fallbackBases);
-}
-
-if (typeof window !== 'undefined' && Array.isArray(window.KOP_THEME_BASES)) {
-    apiBaseCandidates.push(...window.KOP_THEME_BASES);
-}
-
-if (!apiBaseCandidates.length && typeof window !== 'undefined' && window.location && window.location.origin) {
-    apiBaseCandidates.push(window.location.origin);
-}
-
-const normalizedApiBases = Array.from(new Set(
-    apiBaseCandidates
-        .map((base) => (typeof base === 'string' ? base.trim() : ''))
-        .filter(Boolean)
-        .map((base) => base.replace(/\/$/, ''))
-        .filter(Boolean)
-));
-
-const defaultApiPaths = {
-    SAVE_PROJECT:
-        FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
-        getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
-    LOAD_PROJECTS:
-        FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
-        getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
-    AUTOCOMPLETE:
-        FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
-        FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php')
-};
-
-const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
-    acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBases);
-    return acc;
-}, {});
-
-const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
-    ? FACILITY_FORM_CONFIG.mode
-    : (typeof window !== 'undefined' && typeof window.FORM_MODE === 'string' ? window.FORM_MODE : 'master');
-
-const FORM_MODE = typeof resolvedFormMode === 'string'
-    ? resolvedFormMode.toLowerCase()
-    : 'master';
-
-const IS_SUGGESTION_MODE = FORM_MODE === 'suggestions';
-
-const fallbackProjectsConfigValues = Array.isArray(FACILITY_FORM_CONFIG.fallbackProjectsUrls)
-    ? FACILITY_FORM_CONFIG.fallbackProjectsUrls.slice()
-    : [];
-
-if (typeof FACILITY_FORM_CONFIG.fallbackProjectsUrl === 'string' && FACILITY_FORM_CONFIG.fallbackProjectsUrl.trim()) {
-    fallbackProjectsConfigValues.unshift(FACILITY_FORM_CONFIG.fallbackProjectsUrl);
-}
-
-const FALLBACK_PROJECTS_URL_CANDIDATES = Array.from(new Set(
-    fallbackProjectsConfigValues
-        .map((value) => (typeof value === 'string' ? value.trim() : ''))
-        .filter(Boolean)
-        .map((value) => resolveApiUrl(value, normalizedApiBases))
-        .filter(Boolean)
-));
-
-const FALLBACK_PROJECTS_URL = FALLBACK_PROJECTS_URL_CANDIDATES.length
-    ? FALLBACK_PROJECTS_URL_CANDIDATES[0]
-    : null;
-
-function isTruthyFlag(value) {
-    if (typeof value === 'boolean') {
-        return value;
+        return false;
     }
 
-    if (typeof value === 'string') {
-        const normalized = value.trim().toLowerCase();
-        if (!normalized) {
+    return function legacyCreateFacilityFormConfig(fallbackWindow = runtimeWindow) {
+        const FACILITY_FORM_CONFIG = fallbackWindow?.KOP_FACILITY_FORM_CONFIG || {};
+
+        const explicitBase = FACILITY_FORM_CONFIG.apiBase;
+        const fallbackBases = FACILITY_FORM_CONFIG.apiBaseFallbacks;
+
+        const apiBaseCandidates = [];
+
+        if (Array.isArray(explicitBase)) {
+            apiBaseCandidates.push(...explicitBase);
+        } else if (typeof explicitBase === 'string' && explicitBase) {
+            apiBaseCandidates.push(explicitBase);
+        }
+
+        if (Array.isArray(fallbackBases)) {
+            apiBaseCandidates.push(...fallbackBases);
+        }
+
+        if (fallbackWindow && Array.isArray(fallbackWindow.KOP_THEME_BASES)) {
+            apiBaseCandidates.push(...fallbackWindow.KOP_THEME_BASES);
+        }
+
+        if (!apiBaseCandidates.length && fallbackWindow && fallbackWindow.location && fallbackWindow.location.origin) {
+            apiBaseCandidates.push(fallbackWindow.location.origin);
+        }
+
+        const normalizedApiBases = Array.from(new Set(
+            apiBaseCandidates
+                .map((base) => (typeof base === 'string' ? base.trim() : ''))
+                .filter(Boolean)
+                .map((base) => base.replace(/\/$/, ''))
+                .filter(Boolean)
+        ));
+
+        const defaultApiPaths = {
+            SAVE_PROJECT:
+                FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
+                getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php', fallbackWindow),
+            LOAD_PROJECTS:
+                FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
+                getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php', fallbackWindow),
+            AUTOCOMPLETE:
+                FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
+                FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
+                getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php', fallbackWindow)
+        };
+
+        const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
+            acc[key] = resolveApiUrl(defaultApiPaths[key], normalizedApiBases);
+            return acc;
+        }, {});
+
+        const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
+            ? FACILITY_FORM_CONFIG.mode
+            : (fallbackWindow && typeof fallbackWindow.FORM_MODE === 'string' ? fallbackWindow.FORM_MODE : 'master');
+
+        const FORM_MODE = typeof resolvedFormMode === 'string'
+            ? resolvedFormMode.toLowerCase()
+            : 'master';
+
+        const IS_SUGGESTION_MODE = FORM_MODE === 'suggestions';
+
+        const fallbackProjectsConfigValues = Array.isArray(FACILITY_FORM_CONFIG.fallbackProjectsUrls)
+            ? FACILITY_FORM_CONFIG.fallbackProjectsUrls.slice()
+            : [];
+
+        if (typeof FACILITY_FORM_CONFIG.fallbackProjectsUrl === 'string' && FACILITY_FORM_CONFIG.fallbackProjectsUrl.trim()) {
+            fallbackProjectsConfigValues.unshift(FACILITY_FORM_CONFIG.fallbackProjectsUrl);
+        }
+
+        const FALLBACK_PROJECTS_URL_CANDIDATES = Array.from(new Set(
+            fallbackProjectsConfigValues
+                .map((value) => (typeof value === 'string' ? value.trim() : ''))
+                .filter(Boolean)
+                .map((value) => resolveApiUrl(value, normalizedApiBases))
+                .filter(Boolean)
+        ));
+
+        const FALLBACK_PROJECTS_URL = FALLBACK_PROJECTS_URL_CANDIDATES.length
+            ? FALLBACK_PROJECTS_URL_CANDIDATES[0]
+            : null;
+
+        const DEBUG_LOGGING_ENABLED = (() => {
+            if (isTruthyFlag(FACILITY_FORM_CONFIG.debugLogging)) {
+                return true;
+            }
+
+            if (isTruthyFlag(FACILITY_FORM_CONFIG.debug)) {
+                return true;
+            }
+
+            if (fallbackWindow) {
+                if (isTruthyFlag(fallbackWindow.KOP_FACILITY_FORM_DEBUG)) {
+                    return true;
+                }
+
+                try {
+                    if (fallbackWindow.localStorage && isTruthyFlag(fallbackWindow.localStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                        return true;
+                    }
+
+                    if (fallbackWindow.sessionStorage && isTruthyFlag(fallbackWindow.sessionStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                        return true;
+                    }
+                } catch (storageFlagError) {
+                    // Ignore storage errors caused by privacy settings
+                }
+            }
+
             return false;
-        }
+        })();
 
-        return ['1', 'true', 'yes', 'on', 'enable', 'enabled'].includes(normalized);
-    }
-
-    return false;
-}
-
-const DEBUG_LOGGING_ENABLED = (() => {
-    if (isTruthyFlag(FACILITY_FORM_CONFIG.debugLogging)) {
-        return true;
-    }
-
-    if (isTruthyFlag(FACILITY_FORM_CONFIG.debug)) {
-        return true;
-    }
-
-    if (typeof window !== 'undefined') {
-        if (isTruthyFlag(window.KOP_FACILITY_FORM_DEBUG)) {
-            return true;
-        }
-
-        try {
-            if (window.localStorage && isTruthyFlag(window.localStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
-                return true;
-            }
-
-            if (window.sessionStorage && isTruthyFlag(window.sessionStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
-                return true;
-            }
-        } catch (storageFlagError) {
-            // Ignore storage errors caused by privacy settings
-        }
-    }
-
-    return false;
+        return {
+            SCRIPT_BUILD_VERSION: 'facility-form.v3.sql-autocomplete.2025-10-15.notes',
+            FACILITY_FORM_CONFIG,
+            API_ENDPOINTS,
+            FORM_MODE,
+            IS_SUGGESTION_MODE,
+            FALLBACK_PROJECTS_URL,
+            FALLBACK_PROJECTS_URL_CANDIDATES,
+            normalizedApiBases,
+            DEBUG_LOGGING_ENABLED
+        };
+    };
 })();
+
+const {
+    SCRIPT_BUILD_VERSION,
+    FACILITY_FORM_CONFIG,
+    API_ENDPOINTS,
+    FORM_MODE,
+    IS_SUGGESTION_MODE,
+    FALLBACK_PROJECTS_URL,
+    FALLBACK_PROJECTS_URL_CANDIDATES,
+    normalizedApiBases,
+    DEBUG_LOGGING_ENABLED
+} = createFacilityFormConfig(runtimeWindow);
+
+if (runtimeWindow) {
+    runtimeWindow.KOP_FACILITY_FORM_VERSION = SCRIPT_BUILD_VERSION;
+}
 
 function debugLog(...args) {
     if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
@@ -220,7 +254,9 @@ function logActiveFacilityFormConfigOnce() {
     }
 }
 
-const DEFAULT_FACILITY_TYPES = [
+const defaultConstants = dbFormNamespace?.constants || {};
+
+const DEFAULT_FACILITY_TYPES = defaultConstants.DEFAULT_FACILITY_TYPES || [
     'Residential Treatment Center (RTC)',
     'Therapeutic Boarding School',
     'Wilderness Therapy Program',
@@ -240,7 +276,7 @@ const DEFAULT_FACILITY_TYPES = [
     'Other'
 ];
 
-const DEFAULT_OPERATORS = [
+const DEFAULT_OPERATORS = defaultConstants.DEFAULT_OPERATORS || [
     'Sequel Youth & Family Services',
     'Vivant Behavioral Health',
     'The Brown Schools',
@@ -263,7 +299,7 @@ const DEFAULT_OPERATORS = [
     'Family Help & Wellness'
 ];
 
-const DEFAULT_STAFF_ROLES = [
+const DEFAULT_STAFF_ROLES = defaultConstants.DEFAULT_STAFF_ROLES || [
     'Administrator',
     'Director',
     'CEO',
