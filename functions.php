@@ -13,11 +13,18 @@ if (!defined('ABSPATH')) {
  */
 function kadence_child_enqueue_styles() {
     // Enqueue parent theme stylesheet
+    $kadence_parent_style_path = get_template_directory() . '/style.css';
+    $kadence_parent_style_version = null;
+
+    if (file_exists($kadence_parent_style_path)) {
+        $kadence_parent_style_version = filemtime($kadence_parent_style_path);
+    }
+
     wp_enqueue_style(
         'kadence-parent-style',
         get_template_directory_uri() . '/style.css',
         array(),
-        wp_get_theme()->get('Version')
+        $kadence_parent_style_version
     );
 
     // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
