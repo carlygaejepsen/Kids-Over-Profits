@@ -8,18 +8,27 @@
  * The `config.php` file is ignored by Git to protect your secrets.
  */
 
-// Database configuration
-$db_host = 'localhost';
-$db_name = 'kidsover_suggestions';
-$db_user = 'kidsover_dani';
-$db_pass = 'YOUR_DATABASE_PASSWORD_HERE';
+/**
+ * Option 1: expose credentials via WordPress constants or environment variables
+ * -----------------------------------------------------------------------------
+ * Define KOP_DB_* (or DB_*) constants in wp-config.php or export matching
+ * environment variables. The runtime loader in api/config.php will discover
+ * them automatically.
+ */
 
-// Backwards-compatible variable names used by older scripts
-$host = $db_host;
-$dbname = $db_name;
-$username = $db_user;
-$password = $db_pass;
+/**
+ * Option 2: create config.local.php for standalone usage
+ * ------------------------------------------------------
+ * If you need these scripts to run without WordPress bootstrapping (e.g. when
+ * executing them directly from the command line), copy this file to
+ * `config.local.php` and update the values below. The loader prefers
+ * constants/environment variables, but will fall back to the entries returned
+ * from this file when present.
+ */
 
-// The rest of the file (PDO connection) remains the same in your actual config.php
-
-?>
+return [
+    'host' => 'localhost',
+    'name' => 'kidsover_suggestions',
+    'user' => 'kidsover_dani',
+    'pass' => 'YOUR_DATABASE_PASSWORD_HERE',
+];
