@@ -117,6 +117,44 @@ add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 
 /**
+ * Suppress the wp_is_block_theme() doing_it_wrong notice on the login screen only.
+ *
+ * WordPress calls wp_is_block_theme() during login rendering even though this child theme is
+ * intentionally not block-based. The notice is useful elsewhere, so we only disable it while the
+ * login form is being prepared.
+ *
+ * @param bool   $trigger       Whether to trigger the notice.
+ * @param string $function_name The function that triggered the notice.
+ * @param string $message       The message for the notice.
+ * @param string $version       The version associated with the notice.
+ *
+ * @return bool
+ */
+function kop_suppress_wp_is_block_theme_notice($trigger, $function_name, $message, $version) {
+    if ($function_name === 'wp_is_block_theme') {
+        return false;
+    }
+
+    return $trigger;
+}
+
+/**
+ * Register the wp_is_block_theme() notice suppression during login bootstrap only.
+ */
+function kop_register_login_wp_is_block_theme_notice_suppression() {
+    add_filter('doing_it_wrong_trigger_error', 'kop_suppress_wp_is_block_theme_notice', 10, 4);
+}
+add_action('login_init', 'kop_register_login_wp_is_block_theme_notice_suppression');
+
+/**
+ * Ensure the wp_is_block_theme() notice suppression never leaks into front-end/admin requests.
+ */
+function kop_restore_doing_it_wrong_trigger_error_behavior() {
+    remove_filter('doing_it_wrong_trigger_error', 'kop_suppress_wp_is_block_theme_notice', 10);
+}
+add_action('after_setup_theme', 'kop_restore_doing_it_wrong_trigger_error_behavior', 100);
+
+/**
  * Add inline script to block navigation on headerless pages as early as possible.
  */
 function kop_add_early_navigation_blocker() {
