@@ -9,29 +9,21 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueue parent theme styles
+ * Workaround for WordPress 6.8.0 wp_is_block_theme early call issue
+ * Suppress the "called incorrectly" notice for wp_is_block_theme during theme initialization.
+ * This is a known issue in WP 6.8.0 with the Kadence parent theme.
+ */
+add_filter('doing_it_wrong_trigger_error', function($trigger, $function_name) {
+    if ('wp_is_block_theme' === $function_name) {
+        return false;
+    }
+    return $trigger;
+}, 10, 2);
+
+/**
+ * Enqueue child theme styles (parent theme handles its own styles)
  */
 function kadence_child_enqueue_styles() {
-    // Avoid early block theme check in WP 6.8+ by ensuring theme is fully set up
-    if (!did_action('after_setup_theme')) {
-        return;
-    }
-
-    // Enqueue parent theme stylesheet
-    $kadence_parent_style_path = get_template_directory() . '/style.css';
-    $kadence_parent_style_version = null;
-
-    if (file_exists($kadence_parent_style_path)) {
-        $kadence_parent_style_version = filemtime($kadence_parent_style_path);
-    }
-
-    wp_enqueue_style(
-        'kadence-parent-style',
-        get_template_directory_uri() . '/style.css',
-        array(),
-        $kadence_parent_style_version
-    );
-
     // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
     if (is_page('data') || is_page('admin-data')) {
         wp_enqueue_style(
@@ -42,7 +34,7 @@ function kadence_child_enqueue_styles() {
         );
     }
 }
-add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
+add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
 
 /**
  * Determine whether the current request is for a headerless layout.

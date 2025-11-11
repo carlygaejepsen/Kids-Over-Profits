@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php --version:*)",
+      "Bash(php -l:*)",
+      "Bash(php test-wp-fix.php:*)",
+      "Bash(php test-enqueue-logic.php:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
