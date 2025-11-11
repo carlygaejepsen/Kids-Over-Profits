@@ -12,6 +12,11 @@ if (!defined('ABSPATH')) {
  * Enqueue parent theme styles
  */
 function kadence_child_enqueue_styles() {
+    // Avoid early block theme check in WP 6.8+ by ensuring theme is fully set up
+    if (!did_action('after_setup_theme')) {
+        return;
+    }
+
     // Enqueue parent theme stylesheet
     $kadence_parent_style_path = get_template_directory() . '/style.css';
     $kadence_parent_style_version = null;
