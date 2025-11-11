@@ -9,18 +9,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Workaround for WordPress 6.8.0 wp_is_block_theme early call issue
- * Suppress the "called incorrectly" notice for wp_is_block_theme during theme initialization.
- * This is a known issue in WP 6.8.0 with the Kadence parent theme.
- */
-add_filter('doing_it_wrong_trigger_error', function($trigger, $function_name) {
-    if ('wp_is_block_theme' === $function_name) {
-        return false;
-    }
-    return $trigger;
-}, 10, 2);
-
-/**
  * Enqueue child theme styles (parent theme handles its own styles)
  */
 function kadence_child_enqueue_styles() {
