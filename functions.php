@@ -9,9 +9,24 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueue child theme styles (parent theme handles its own styles)
+ * Enqueue parent theme styles
  */
 function kadence_child_enqueue_styles() {
+    // Enqueue parent theme stylesheet
+    $kadence_parent_style_path = get_template_directory() . '/style.css';
+    $kadence_parent_style_version = null;
+
+    if (file_exists($kadence_parent_style_path)) {
+        $kadence_parent_style_version = filemtime($kadence_parent_style_path);
+    }
+
+    wp_enqueue_style(
+        'kadence-parent-style',
+        get_template_directory_uri() . '/style.css',
+        array(),
+        $kadence_parent_style_version
+    );
+
     // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
     if (is_page('data') || is_page('admin-data')) {
         wp_enqueue_style(
@@ -22,7 +37,7 @@ function kadence_child_enqueue_styles() {
         );
     }
 }
-add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles', 20);
+add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
 /**
  * Determine whether the current request is for a headerless layout.
