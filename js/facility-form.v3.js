@@ -5415,6 +5415,9 @@ window.navigateToFacility = navigateToFacility;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
+window.initializeAutocompleteFields = initializeAutocompleteFields;
+window.invalidateAggregatedData = invalidateAggregatedData;
+window.normalizeProjectData = normalizeProjectData;
 window.initializeSectionToggles = initializeSectionToggles;
 
 // ============================================
