@@ -4547,21 +4547,25 @@ async function initializeForm() {
     debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
-    // Load custom data from localStorage (backup only)
-    loadCustomDataFromLocalStorage();
-    
-    // Load all projects from cloud
-    await loadAllProjectsFromCloud();
-    
+    // Load custom data from localStorage (backup only) - from db-form-loader.js
+    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
+        window.KOP_FormLoader.loadCustomDataFromLocalStorage();
+    }
+
+    // Load all projects from cloud - from db-form-loader.js
+    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
+        await window.KOP_FormLoader.loadAllProjectsFromCloud();
+    }
+
     // Initialize form data if needed
     if (!window.formData) {
         window.formData = createNewProjectData();
     }
-    
+
     // Attach all event listeners
     attachFieldListeners();
     attachButtonListeners();
-    
+
     // Initialize array containers
     document.querySelectorAll('.array-container').forEach(container => {
         const path = container.dataset.path;
@@ -4571,10 +4575,10 @@ async function initializeForm() {
             renderArray(container, path, array);
         }
     });
-    
+
     // Initialize autocomplete fields
     initializeAutocompleteFields();
-    
+
     initializeCategoryTabs();
     // Update all UI
     window.updateAllUI();

@@ -687,6 +687,21 @@ function enqueue_facility_form_script() {
         array(),
         filemtime(get_stylesheet_directory() . '/css/data-form.css')
     );
+
+    // Enqueue the DB form loader first (handles data loading)
+    $loader_relative_path = '/js/db-form-loader.js';
+    $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
+    $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
+
+    wp_enqueue_script(
+        'db-form-loader',
+        $loader_uri,
+        array('jquery'),
+        file_exists($loader_file_path) ? filemtime($loader_file_path) : time(),
+        true
+    );
+
+    // Enqueue the main facility form script (depends on loader)
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
@@ -694,7 +709,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery'),
+        array('jquery', 'db-form-loader'), // Now depends on the loader
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
@@ -703,8 +718,9 @@ function enqueue_facility_form_script() {
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
 
     // This makes PHP variables available to your JavaScript file
+    // Note: This is localized to the loader script, not the main form script
     wp_localize_script(
-        'facility-form-script',
+        'db-form-loader',
         'KOP_FACILITY_FORM_CONFIG',
         array(
             'fallbackProjectsUrl' => $fallback_url,
