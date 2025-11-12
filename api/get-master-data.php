@@ -17,6 +17,16 @@ try {
         // Check if this is the new format (with metadata) or old format (just data)
         if (isset($stored['data']) && isset($stored['timestamp'])) {
             // New format: already has the complete project structure
+            // Ensure name field is set correctly
+            $stored['name'] = $stored['name'] ?? $row['unique_name'];
+            // Ensure category is set
+            if (!isset($stored['category'])) {
+                $stored['category'] = 'companies'; // Default category
+            }
+            // Ensure currentFacilityIndex is set
+            if (!isset($stored['currentFacilityIndex'])) {
+                $stored['currentFacilityIndex'] = 0;
+            }
             $projects[$row['unique_name']] = $stored;
         } else {
             // Old format: only has data, need to reconstruct
@@ -25,7 +35,7 @@ try {
                 'data' => $stored,
                 'timestamp' => $stored['timestamp'] ?? date('c'),
                 'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => 'companies'  // Default for legacy projects
+                'category' => $stored['category'] ?? 'companies'  // Default for legacy projects
             ];
         }
     }

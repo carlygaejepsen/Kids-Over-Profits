@@ -374,12 +374,16 @@
         try {
             showUploadStatus('Loading projects from cloud...', 'info');
 
+            debugLog('Fetching from endpoint:', API_ENDPOINTS.LOAD_PROJECTS);
             const response = await fetch(API_ENDPOINTS.LOAD_PROJECTS);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                debugLog('Response error:', response.status, errorText);
+                throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
             }
 
             const result = await response.json();
+            debugLog('Received result:', result);
 
             if (result.success && result.projects) {
                 window.projects = result.projects;
@@ -467,5 +471,7 @@
     };
 
     debugLog('✅ DB Form Loader initialized');
+    debugLog('📍 API Endpoints:', API_ENDPOINTS);
+    debugLog('📂 Fallback URLs:', FALLBACK_PROJECTS_URL_CANDIDATES);
 
 })();

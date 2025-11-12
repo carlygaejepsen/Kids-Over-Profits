@@ -3900,6 +3900,7 @@ function updateLabelsForProjectType() {
 
     // Define default and referrer-specific labels
     const labels = {
+        toolbarTitle: { default: '📋 Facility Editor', referrer: '📋 Referrer Editor' },
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
         facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
@@ -3947,6 +3948,8 @@ function updateLabelsForProjectType() {
     setLabelForQuery('.facility-controls strong', `${labels.currentFacilityLabel[mode]}: `);
 
     // Update Toolbar
+    setLabelForQuery('.toolbar-title strong', labels.toolbarTitle[mode]);
+    setLabel('toolbar-current-item-label', `${labels.currentFacilityLabel[mode]}:`);
     setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
     setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
     setLabel('remove-facility-btn-toolbar', labels.removeFacilityToolbar[mode]);
@@ -4547,14 +4550,42 @@ async function initializeForm() {
     debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
+    // Wait for loader to be available
+    if (typeof window.KOP_FormLoader === 'undefined') {
+        console.warn('⚠️ KOP_FormLoader not found, waiting for it to load...');
+        // Wait up to 2 seconds for the loader
+        for (let i = 0; i < 20; i++) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.KOP_FormLoader !== 'undefined') {
+                debugLog('✅ KOP_FormLoader loaded successfully');
+                break;
+            }
+        }
+
+        if (typeof window.KOP_FormLoader === 'undefined') {
+            console.error('❌ KOP_FormLoader failed to load after 2 seconds');
+            showUploadStatus('Failed to load data loader module', 'error');
+            return;
+        }
+    }
+
     // Load custom data from localStorage (backup only) - from db-form-loader.js
-    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
+    if (typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
         window.KOP_FormLoader.loadCustomDataFromLocalStorage();
+    } else {
+        console.error('❌ loadCustomDataFromLocalStorage not available');
     }
 
     // Load all projects from cloud - from db-form-loader.js
-    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
-        await window.KOP_FormLoader.loadAllProjectsFromCloud();
+    if (typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
+        try {
+            await window.KOP_FormLoader.loadAllProjectsFromCloud();
+        } catch (error) {
+            console.error('❌ Error loading projects:', error);
+            showUploadStatus('Error loading projects: ' + error.message, 'error');
+        }
+    } else {
+        console.error('❌ loadAllProjectsFromCloud not available');
     }
 
     // Initialize form data if needed
