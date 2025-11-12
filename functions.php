@@ -773,6 +773,69 @@ function enqueue_facility_form_script() {
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
 /**
+ * Enqueue TTI Article Processor scripts
+ */
+function enqueue_tti_processor_scripts() {
+    // Only load on the TTI processor page template
+    if (!is_page_template('page-tti-processor.php')) {
+        return;
+    }
+
+    // Enqueue Tailwind CSS
+    wp_enqueue_style(
+        'tailwind-css',
+        'https://cdn.tailwindcss.com',
+        array(),
+        time(),
+        'all'
+    );
+
+    // Enqueue React
+    wp_enqueue_script(
+        'react',
+        'https://unpkg.com/react@18/umd/react.development.js',
+        array(),
+        '18.0.0',
+        true
+    );
+
+    // Enqueue React-DOM (depends on React)
+    wp_enqueue_script(
+        'react-dom',
+        'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
+        array('react'),
+        '18.0.0',
+        true
+    );
+
+    // Enqueue Lucide React Icons
+    wp_enqueue_script(
+        'lucide-react',
+        'https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js',
+        array('react'),
+        time(),
+        true
+    );
+
+    // Enqueue Babel Standalone for JSX
+    wp_enqueue_script(
+        'babel-standalone',
+        'https://unpkg.com/@babel/standalone/babel.min.js',
+        array(),
+        time(),
+        true
+    );
+
+    // Enqueue the main TTI processor script (inline or separate file)
+    $tti_script_relative_path = '/api/page-tti-processor.php';
+    $tti_script_file_path = get_stylesheet_directory() . $tti_script_relative_path;
+    
+    // Note: page-tti-processor.php should be converted to a template file
+    // For now, ensure its scripts load after React and Babel
+}
+add_action('wp_enqueue_scripts', 'enqueue_tti_processor_scripts');
+
+/**
  * Add approval page to admin menu
  */
 function add_approval_page_to_menu() {

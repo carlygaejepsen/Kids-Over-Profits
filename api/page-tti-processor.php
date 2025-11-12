@@ -4,14 +4,8 @@
  * Description: A standalone page template for the TTI processing tool.
  */
 
-get_header(); // Loads your site's navigation and CSS
+get_header(); // Loads your site's navigation, CSS, and enqueued scripts
 ?>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 <div id="tti-main-container" class="w-full max-w-4xl mx-auto my-10 px-4">
     <div id="tti-tool-root">Loading Processor...</div>
