@@ -3,8 +3,11 @@
 // Handles loading projects from cloud, fallback datasets, and localStorage
 // ============================================
 
-(function() {
+// Execute immediately to ensure availability
+(function(window, document) {
     'use strict';
+
+    console.log('[DB Loader] Script started loading...');
 
     // ============================================
     // CONFIGURATION & CONSTANTS
@@ -470,8 +473,11 @@
         debugLog
     };
 
-    debugLog('✅ DB Form Loader initialized');
+    console.log('[DB Loader] ✅ DB Form Loader initialized');
     debugLog('📍 API Endpoints:', API_ENDPOINTS);
     debugLog('📂 Fallback URLs:', FALLBACK_PROJECTS_URL_CANDIDATES);
 
-})();
+    // Mark as ready
+    window.KOP_LOADER_READY = true;
+
+})(window, document);

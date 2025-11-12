@@ -99,7 +99,8 @@ if ($action === 'rename') {
 // Handle action
 if ($action === 'delete') {
     try {
-        $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE projectName = :projectName");
+        // Use correct column name: unique_name, not projectName
+        $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         if ($stmt->rowCount() > 0) {
             echo json_encode([

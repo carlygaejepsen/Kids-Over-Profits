@@ -13,6 +13,9 @@ if (typeof window !== 'undefined') {
 
 const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
 
+// Helper to get API_ENDPOINTS from the loader
+const getAPIEndpoints = () => window.KOP_FormLoader?.API_ENDPOINTS || {};
+
 function getResolverEndpoint(filename, fallback) {
     if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
         return window.KOP_API.getEndpoint(filename);
@@ -1086,6 +1089,7 @@ function createAutocomplete(input, getDataFunction, category) {
         createAutocomplete._pendingFetch = setTimeout(async () => {
             const q = encodeURIComponent(value);
             const params = `?category=${encodeURIComponent(category)}&q=${q}`;
+            const API_ENDPOINTS = getAPIEndpoints();
             const remoteUrl = API_ENDPOINTS.AUTOCOMPLETE + params;
 
             try {
@@ -1780,6 +1784,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
                 action: 'delete'
             };
 
+            const API_ENDPOINTS = getAPIEndpoints();
             const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1887,6 +1892,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
         };
 
         const payloadSize = JSON.stringify(payload).length;
+        const API_ENDPOINTS = getAPIEndpoints();
         debugLog('Payload size:', payloadSize, 'characters');
         debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
 
@@ -3032,6 +3038,10 @@ function renderArray(container, path, items) {
 }
 
 function loadOperatorData() {
+    if (!window.formData) {
+        debugLog('⚠️ loadOperatorData: formData not ready yet');
+        return;
+    }
     if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
     const operator = window.formData.operator;
 
@@ -4550,42 +4560,63 @@ async function initializeForm() {
     debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
-    // Wait for loader to be available
-    if (typeof window.KOP_FormLoader === 'undefined') {
-        console.warn('⚠️ KOP_FormLoader not found, waiting for it to load...');
-        // Wait up to 2 seconds for the loader
-        for (let i = 0; i < 20; i++) {
+    // Wait for loader to be available (with better diagnostics)
+    if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
+        console.warn('⚠️ KOP_FormLoader not ready, waiting...', {
+            'KOP_FormLoader exists': typeof window.KOP_FormLoader !== 'undefined',
+            'KOP_LOADER_READY': window.KOP_LOADER_READY
+        });
+
+        // Wait up to 5 seconds for the loader
+        for (let i = 0; i < 50; i++) {
             await new Promise(resolve => setTimeout(resolve, 100));
-            if (typeof window.KOP_FormLoader !== 'undefined') {
-                debugLog('✅ KOP_FormLoader loaded successfully');
+            if (typeof window.KOP_FormLoader !== 'undefined' && window.KOP_LOADER_READY) {
+                debugLog('✅ KOP_FormLoader loaded successfully after', i * 100, 'ms');
                 break;
             }
         }
 
-        if (typeof window.KOP_FormLoader === 'undefined') {
-            console.error('❌ KOP_FormLoader failed to load after 2 seconds');
+        if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
+            console.error('❌ KOP_FormLoader failed to load after 5 seconds');
+            console.error('Debug info:', {
+                'window.KOP_FormLoader': window.KOP_FormLoader,
+                'window.KOP_LOADER_READY': window.KOP_LOADER_READY,
+                'window.KOP_FACILITY_FORM_CONFIG': window.KOP_FACILITY_FORM_CONFIG
+            });
             showUploadStatus('Failed to load data loader module', 'error');
-            return;
+
+            // Don't completely fail - try to continue with limited functionality
+            console.warn('⚠️ Continuing with limited functionality...');
+            window.projects = {};
         }
     }
 
     // Load custom data from localStorage (backup only) - from db-form-loader.js
-    if (typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
+    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
         window.KOP_FormLoader.loadCustomDataFromLocalStorage();
     } else {
         console.error('❌ loadCustomDataFromLocalStorage not available');
+        // Initialize empty arrays as fallback
+        window.customOperators = window.customOperators || [];
+        window.customFacilityNames = window.customFacilityNames || [];
+        window.customHumanNames = window.customHumanNames || [];
+        window.customReferrers = window.customReferrers || [];
     }
 
     // Load all projects from cloud - from db-form-loader.js
-    if (typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
+    if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
         try {
             await window.KOP_FormLoader.loadAllProjectsFromCloud();
         } catch (error) {
             console.error('❌ Error loading projects:', error);
             showUploadStatus('Error loading projects: ' + error.message, 'error');
+            // Ensure projects object exists even if loading failed
+            window.projects = window.projects || {};
         }
     } else {
         console.error('❌ loadAllProjectsFromCloud not available');
+        // Ensure projects object exists
+        window.projects = window.projects || {};
     }
 
     // Initialize form data if needed
@@ -5938,9 +5969,12 @@ window.addEventListener('load', () => {
 
     setTimeout(() => {
         try {
-            if (typeof window.updateAllUI === 'function') {
+            // Only update UI if formData is ready
+            if (window.formData && typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
                 debugLog('✅ facility-form.v3.js: updateAllUI re-run on load (once)');
+            } else {
+                debugLog('⚠️ Skipping updateAllUI on load - formData not ready');
             }
         } catch (e) {
             console.error('❌ facility-form.v3.js: error during load-time UI verification', e);
