@@ -740,6 +740,35 @@ function enqueue_facility_form_script() {
         'KOP_FACILITY_FORM_CONFIG',
         $config
     );
+
+    // Enqueue page-specific scripts based on slug
+    if (is_page('data')) {
+        // Suggestions page - loads data-page.js
+        $data_page_relative_path = '/js/data-page.js';
+        $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
+        $data_page_uri = get_stylesheet_directory_uri() . $data_page_relative_path;
+
+        wp_enqueue_script(
+            'data-page-script',
+            $data_page_uri,
+            array('jquery', 'facility-form-script'), // Depends on main form script
+            file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
+            true
+        );
+    } elseif (is_page('data-admin')) {
+        // Admin page - loads admin-data-page.js
+        $admin_page_relative_path = '/js/admin-data-page.js';
+        $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
+        $admin_page_uri = get_stylesheet_directory_uri() . $admin_page_relative_path;
+
+        wp_enqueue_script(
+            'admin-data-page-script',
+            $admin_page_uri,
+            array('jquery', 'facility-form-script'), // Depends on main form script
+            file_exists($admin_page_file_path) ? filemtime($admin_page_file_path) : time(),
+            true
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
