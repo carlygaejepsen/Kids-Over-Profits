@@ -1,4 +1,114 @@
 // ============================================
+// VIEW MANAGEMENT SYSTEM
+// ============================================
+
+(() => {
+    const viewManagedElements = [];
+    let activeViewLayout = null;
+
+    function registerViewManagedElement(element, views, options = {}) {
+        if (!element) {
+            return;
+        }
+
+        const viewList = Array.isArray(views)
+            ? views
+            : String(views || '')
+                .split(',')
+                .map(view => view.trim().toLowerCase())
+                .filter(Boolean);
+
+        const hiddenClasses = Array.isArray(options.hiddenClasses) && options.hiddenClasses.length
+            ? options.hiddenClasses
+            : ['view-hidden'];
+
+        if (!element.dataset.originalDisplay) {
+            element.dataset.originalDisplay = element.style.display || '';
+        }
+
+        viewManagedElements.push({
+            element,
+            views: viewList,
+            hiddenClasses,
+            toggleDisplay: options.toggleDisplay !== false
+        });
+    }
+
+    function applyViewLayout(viewName) {
+        const normalizedView = typeof viewName === 'string' && viewName.trim()
+            ? viewName.trim().toLowerCase()
+            : 'companies';
+
+        if (normalizedView === activeViewLayout && normalizedView !== 'referrers') {
+            return;
+        }
+
+        activeViewLayout = normalizedView;
+
+        viewManagedElements.forEach(item => {
+            const shouldShow = !item.views.length || item.views.includes(normalizedView);
+
+            if (shouldShow) {
+                if (item.toggleDisplay) {
+                    item.element.style.display = item.dataset.originalDisplay || '';
+                }
+                item.hiddenClasses.forEach(cls => cls && item.element.classList.remove(cls));
+            } else {
+                if (item.toggleDisplay) {
+                    item.element.style.display = 'none';
+                }
+                item.hiddenClasses.forEach(cls => cls && item.element.classList.add(cls));
+            }
+        });
+    }
+
+    window.registerViewManagedElement = registerViewManagedElement;
+    window.applyViewLayout = applyViewLayout;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const managedNodes = document.querySelectorAll('[data-section-views]');
+        managedNodes.forEach(node => {
+            const views = node.dataset.sectionViews || '';
+            const hiddenClasses = ['view-hidden'];
+            if (node.classList.contains('d-none')) {
+                hiddenClasses.push('d-none');
+            }
+            registerViewManagedElement(node, views, { hiddenClasses });
+        });
+
+        const syncLayoutWithActiveTab = () => {
+            const activeTab = document.querySelector('.category-tab.active');
+            const rawCategory = activeTab ? activeTab.dataset.category : 'companies';
+            applyViewLayout(rawCategory === 'states' ? 'locations' : rawCategory);
+        };
+
+        const tabsContainer = document.querySelector('.category-tabs');
+        if (tabsContainer && !tabsContainer.dataset.viewLayoutBound) {
+            tabsContainer.addEventListener('click', () => {
+                setTimeout(syncLayoutWithActiveTab, 0);
+            });
+            tabsContainer.dataset.viewLayoutBound = 'true';
+        }
+
+        const patchHandleReferrerToggle = () => {
+            if (typeof window.handleReferrerToggle === 'function' && !window.handleReferrerToggle.__viewLayoutPatched) {
+                const original = window.handleReferrerToggle;
+                window.handleReferrerToggle = function patchedHandleReferrerToggle(...args) {
+                    const result = original.apply(this, args);
+                    syncLayoutWithActiveTab();
+                    return result;
+                };
+                window.handleReferrerToggle.__viewLayoutPatched = true;
+            }
+        };
+
+        patchHandleReferrerToggle();
+        document.addEventListener('formReady', patchHandleReferrerToggle, { once: true });
+        setTimeout(syncLayoutWithActiveTab, 0);
+    });
+})();
+
+// ============================================
 // ADMIN DATA PAGE FUNCTIONALITY
 // Page-specific scripts for admin-data.html (data-admin slug)
 // ============================================
@@ -73,8 +183,17 @@
                             // Also update the page title or some indicator
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName; 
+                                const actualProject = window.currentProjectName || projectName;
                                 pageTitle.innerHTML = `Admin - ${actualProject}`;
+                            }
+
+                            if (typeof window.updateToolbarFacilityInfo === 'function') {
+                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                                window.updateToolbarFacilityInfo();
+                                setTimeout(window.updateToolbarFacilityInfo, 100);
+                                setTimeout(window.updateToolbarFacilityInfo, 300);
+                                setTimeout(window.updateToolbarFacilityInfo, 500);
+                                setTimeout(window.updateToolbarFacilityInfo, 1000);
                             }
                         } else {
                             console.warn('formData not found after project load');
@@ -675,7 +794,9 @@
                 
                 return matches;
             }
-            
+
+            window.extractDataPointsForSearch = extractDataPointsForSearch;
+
             function displayOrganizerResults(results, searchType, searchValue) {
                 const searchTypeLabel = organizeBySelect.options[organizeBySelect.selectedIndex].text;
                 

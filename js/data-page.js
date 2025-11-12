@@ -1,4 +1,115 @@
 // ============================================
+// VIEW MANAGEMENT SYSTEM
+// ============================================
+
+(() => {
+    const viewManagedElements = [];
+    let activeViewLayout = null;
+
+    function registerViewManagedElement(element, views, options = {}) {
+        if (!element) {
+            return;
+        }
+
+        const viewList = Array.isArray(views)
+            ? views
+            : String(views || '')
+                .split(',')
+                .map(view => view.trim().toLowerCase())
+                .filter(Boolean);
+
+        const hiddenClasses = Array.isArray(options.hiddenClasses) && options.hiddenClasses.length
+            ? options.hiddenClasses
+            : ['view-hidden'];
+
+        if (!element.dataset.originalDisplay) {
+            element.dataset.originalDisplay = element.style.display || '';
+        }
+
+        viewManagedElements.push({
+            element,
+            views: viewList,
+            hiddenClasses,
+            toggleDisplay: options.toggleDisplay !== false
+        });
+    }
+
+    function applyViewLayout(viewName) {
+        const normalizedView = typeof viewName === 'string' && viewName.trim()
+            ? viewName.trim().toLowerCase()
+            : 'companies';
+
+        if (normalizedView === activeViewLayout && normalizedView !== 'referrers') {
+            // Allow referrers to reapply in case of toggles that alter nested forms.
+            return;
+        }
+
+        activeViewLayout = normalizedView;
+
+        viewManagedElements.forEach(item => {
+            const shouldShow = !item.views.length || item.views.includes(normalizedView);
+
+            if (shouldShow) {
+                if (item.toggleDisplay) {
+                    item.element.style.display = item.dataset.originalDisplay || '';
+                }
+                item.hiddenClasses.forEach(cls => cls && item.element.classList.remove(cls));
+            } else {
+                if (item.toggleDisplay) {
+                    item.element.style.display = 'none';
+                }
+                item.hiddenClasses.forEach(cls => cls && item.element.classList.add(cls));
+            }
+        });
+    }
+
+    window.registerViewManagedElement = registerViewManagedElement;
+    window.applyViewLayout = applyViewLayout;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const managedNodes = document.querySelectorAll('[data-section-views]');
+        managedNodes.forEach(node => {
+            const views = node.dataset.sectionViews || '';
+            const hiddenClasses = ['view-hidden'];
+            if (node.classList.contains('d-none')) {
+                hiddenClasses.push('d-none');
+            }
+            registerViewManagedElement(node, views, { hiddenClasses });
+        });
+
+        const syncLayoutWithActiveTab = () => {
+            const activeTab = document.querySelector('.category-tab.active');
+            const rawCategory = activeTab ? activeTab.dataset.category : 'companies';
+            applyViewLayout(rawCategory === 'states' ? 'locations' : rawCategory);
+        };
+
+        const tabsContainer = document.querySelector('.category-tabs');
+        if (tabsContainer && !tabsContainer.dataset.viewLayoutBound) {
+            tabsContainer.addEventListener('click', () => {
+                setTimeout(syncLayoutWithActiveTab, 0);
+            });
+            tabsContainer.dataset.viewLayoutBound = 'true';
+        }
+
+        const patchHandleReferrerToggle = () => {
+            if (typeof window.handleReferrerToggle === 'function' && !window.handleReferrerToggle.__viewLayoutPatched) {
+                const original = window.handleReferrerToggle;
+                window.handleReferrerToggle = function patchedHandleReferrerToggle(...args) {
+                    const result = original.apply(this, args);
+                    syncLayoutWithActiveTab();
+                    return result;
+                };
+                window.handleReferrerToggle.__viewLayoutPatched = true;
+            }
+        };
+
+        patchHandleReferrerToggle();
+        document.addEventListener('formReady', patchHandleReferrerToggle, { once: true });
+        setTimeout(syncLayoutWithActiveTab, 0);
+    });
+})();
+
+// ============================================
 // DATA PAGE FUNCTIONALITY
 // Page-specific scripts for data.html (data slug - suggestions mode)
 // ============================================
@@ -73,8 +184,17 @@
                             // Also update the page title or some indicator
                             const pageTitle = document.querySelector('h1');
                             if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName; 
+                                const actualProject = window.currentProjectName || projectName;
                                 pageTitle.innerHTML = `Admin - ${actualProject}`;
+                            }
+
+                            if (typeof window.updateToolbarFacilityInfo === 'function') {
+                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                                window.updateToolbarFacilityInfo();
+                                setTimeout(window.updateToolbarFacilityInfo, 100);
+                                setTimeout(window.updateToolbarFacilityInfo, 300);
+                                setTimeout(window.updateToolbarFacilityInfo, 500);
+                                setTimeout(window.updateToolbarFacilityInfo, 1000);
                             }
                         } else {
                             console.warn('formData not found after project load');
@@ -93,6 +213,296 @@
         }
 
         // Independent consultant toggle functionality
+        let suggestionSubmissionInProgress = false;
+
+        function ensureSuggestionButtonBinding() {
+            const toolbarButton = document.getElementById('submit-suggestion-btn-toolbar');
+            if (toolbarButton && !toolbarButton.dataset.suggestionBound) {
+                toolbarButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    submitSuggestion();
+                });
+                toolbarButton.dataset.suggestionBound = 'true';
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', ensureSuggestionButtonBinding, { once: true });
+        } else {
+            ensureSuggestionButtonBinding();
+        }
+
+        document.addEventListener('formReady', ensureSuggestionButtonBinding, { once: true });
+
+        async function performSuggestionSubmission(changesSummary) {
+            const trimmedSummary = (changesSummary || '').trim();
+
+            if (!trimmedSummary) {
+                showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
+                return false;
+            }
+
+            if (suggestionSubmissionInProgress) {
+                console.warn('Suggestion submission already in progress; ignoring duplicate request.');
+                return false;
+            }
+
+            const currentFormData = window.formData;
+
+            if (!currentFormData) {
+                console.error('❌ No formData found for submission', {
+                    formData: window.formData,
+                    projects: window.projects ? Object.keys(window.projects) : 'undefined',
+                    currentProjectName: window.currentProjectName
+                });
+
+                if (window.projects && Object.keys(window.projects).length > 0) {
+                    showSuggestionStatus('❌ Error: No project loaded. Please load a project from the list or create a new project before submitting.', 'error');
+                } else {
+                    showSuggestionStatus('❌ Error: The form data is still initializing. Please wait a moment and try again.', 'error');
+                }
+
+                return false;
+            }
+
+            suggestionSubmissionInProgress = true;
+            showSuggestionStatus('📤 Preparing your suggestion for submission...', 'info');
+
+            let dataToSubmit;
+
+            try {
+                dataToSubmit = JSON.parse(JSON.stringify(currentFormData));
+            } catch (error) {
+                console.error('❌ Failed to clone form data for submission', error);
+                showSuggestionStatus('❌ Error: Unable to prepare your data for submission. Please try again.', 'error');
+                suggestionSubmissionInProgress = false;
+                return false;
+            }
+
+            const privateToggle = document.getElementById('private-ownership-toggle');
+            if (privateToggle && privateToggle.checked) {
+                console.log('🔒 Private facility mode detected - clearing operator data before submission');
+
+                if (dataToSubmit.operator) {
+                    dataToSubmit.operator = {
+                        name: '',
+                        currentName: '',
+                        pastNames: [],
+                        otherNames: [],
+                        foundingDate: '',
+                        keyPersonnel: [],
+                        headquarters: '',
+                        website: ''
+                    };
+                }
+
+                if (Array.isArray(dataToSubmit.facilities)) {
+                    dataToSubmit.facilities.forEach(facility => {
+                        if (facility && facility.operator) {
+                            facility.operator = {
+                                name: '',
+                                currentName: '',
+                                pastNames: [],
+                                otherNames: [],
+                                foundingDate: '',
+                                keyPersonnel: [],
+                                headquarters: '',
+                                website: ''
+                            };
+                        }
+                    });
+                }
+
+                console.log('🧹 Operator data cleared for private facility submission');
+            }
+
+            const projectNameInput = document.getElementById('project-name');
+            const activeTab = document.querySelector('.category-tab.active');
+            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;
+
+            const actualProjectName = (
+                window.currentProjectName ||
+                dataToSubmit.projectName ||
+                dataToSubmit.name ||
+                (projectNameInput ? projectNameInput.value.trim() : '') ||
+                'Unknown Project'
+            );
+
+            dataToSubmit.projectName = actualProjectName;
+            dataToSubmit.name = actualProjectName;
+
+            console.log('📤 Submitting changes for project:', actualProjectName, {
+                facilityCount,
+                facilities: dataToSubmit.facilities?.map(f => f?.identification?.name || 'Unnamed Facility') || []
+            });
+
+            try {
+                const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: dataToSubmit,
+                        reason: trimmedSummary,
+                        projectName: actualProjectName,
+                        metadata: {
+                            actualProjectName,
+                            submittedFrom: 'data.html suggestions form',
+                            timestamp: new Date().toISOString(),
+                            facilityCount,
+                            activeCategory
+                        }
+                    })
+                });
+
+                let result = null;
+                try {
+                    result = await response.json();
+                } catch (parseError) {
+                    console.error('❌ Failed to parse suggestion submission response', parseError);
+                }
+
+                if (!response.ok || !result || !result.success) {
+                    const errorMessage = result?.error || response.statusText || 'Failed to submit suggestion';
+                    showSuggestionStatus(`❌ Error: ${errorMessage}`, 'error');
+                    return false;
+                }
+
+                showSuggestionStatus(`☑️ Suggestion submitted successfully for "${actualProjectName}"! It will be reviewed before being added to the database.`, 'success');
+
+                document.dispatchEvent(new CustomEvent('suggestionSubmitted', {
+                    detail: {
+                        projectName: actualProjectName,
+                        summary: trimmedSummary,
+                        response: result
+                    }
+                }));
+
+                return true;
+            } catch (error) {
+                console.error('❌ Error while submitting suggestion', error);
+                showSuggestionStatus(`❌ Error: ${error.message}`, 'error');
+                return false;
+            } finally {
+                suggestionSubmissionInProgress = false;
+            }
+        }
+
+        function submitSuggestion() {
+            const modal = document.getElementById('suggestion-reason-modal');
+            const summaryInput = document.getElementById('suggestion-summary');
+            const errorMessage = document.getElementById('suggestion-error');
+            const cancelButton = document.getElementById('suggestion-modal-cancel');
+            const confirmButton = document.getElementById('suggestion-modal-confirm');
+            const closeButton = document.getElementById('suggestion-modal-close');
+
+            if (!modal || !summaryInput || !cancelButton || !confirmButton) {
+                console.warn('Suggestion modal not available; falling back to prompt workflow.');
+                const fallbackSummary = window.prompt(
+                    'Please summarize the key changes you made:\n\n' +
+                    '(Examples: "Added missing facility location", "Corrected operator founding date", "Added 3 new staff members", "Updated facility closure information", etc.)'
+                );
+
+                if (!fallbackSummary || !fallbackSummary.trim()) {
+                    showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
+                    return;
+                }
+
+                performSuggestionSubmission(fallbackSummary);
+                return;
+            }
+
+            const defaultConfirmText = confirmButton.dataset.originalText || confirmButton.textContent;
+            confirmButton.dataset.originalText = defaultConfirmText;
+
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+
+            modal.classList.add('active');
+
+            function cleanup() {
+                confirmButton.removeEventListener('click', handleConfirm);
+                cancelButton.removeEventListener('click', handleCancel);
+                if (closeButton) {
+                    closeButton.removeEventListener('click', handleClose);
+                }
+                modal.removeEventListener('keydown', handleKeydown);
+            }
+
+            function hideModal() {
+                modal.classList.remove('active');
+                cleanup();
+            }
+
+            async function handleConfirm(event) {
+                event.preventDefault();
+
+                if (errorMessage) {
+                    errorMessage.style.display = 'none';
+                }
+
+                const summary = summaryInput.value.trim();
+                if (!summary) {
+                    if (errorMessage) {
+                        errorMessage.style.display = 'block';
+                    }
+                    summaryInput.focus();
+                    return;
+                }
+
+                confirmButton.disabled = true;
+                confirmButton.textContent = 'Submitting...';
+
+                const success = await performSuggestionSubmission(summary);
+
+                confirmButton.disabled = false;
+                confirmButton.textContent = defaultConfirmText;
+
+                if (success) {
+                    summaryInput.value = '';
+                    hideModal();
+                } else if (errorMessage) {
+                    errorMessage.style.display = 'block';
+                    summaryInput.focus();
+                }
+            }
+
+            function handleCancel(event) {
+                event.preventDefault();
+                hideModal();
+            }
+
+            function handleClose(event) {
+                event.preventDefault();
+                hideModal();
+            }
+
+            function handleKeydown(event) {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    hideModal();
+                } else if ((event.key === 'Enter' || event.key === 'NumpadEnter') && (event.metaKey || event.ctrlKey)) {
+                    event.preventDefault();
+                    handleConfirm(event);
+                }
+            }
+
+            confirmButton.addEventListener('click', handleConfirm);
+            cancelButton.addEventListener('click', handleCancel);
+            if (closeButton) {
+                closeButton.addEventListener('click', handleClose);
+            }
+            modal.addEventListener('keydown', handleKeydown);
+
+            setTimeout(() => summaryInput.focus(), 50);
+        }
+
+        window.submitSuggestion = submitSuggestion;
+        window.performSuggestionSubmission = performSuggestionSubmission;
+
         const independentToggle = document.getElementById('referrer-independent-toggle');
         const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
         const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
@@ -675,7 +1085,9 @@
                 
                 return matches;
             }
-            
+
+            window.extractDataPointsForSearch = extractDataPointsForSearch;
+
             function displayOrganizerResults(results, searchType, searchValue) {
                 const searchTypeLabel = organizeBySelect.options[organizeBySelect.selectedIndex].text;
                 
