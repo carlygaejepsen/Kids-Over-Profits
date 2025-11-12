@@ -5890,9 +5890,19 @@ window.addNoteButtons = addNoteButtons;
 // ============================================
 
 // Initialize on DOMContentLoaded
+// Log script execution
+console.log('[Facility Form] Script started executing');
+console.log('[Facility Form] Checking loader:', {
+    'KOP_FormLoader exists': typeof window.KOP_FormLoader !== 'undefined',
+    'KOP_LOADER_READY': window.KOP_LOADER_READY,
+    'KOP_FACILITY_FORM_CONFIG': window.KOP_FACILITY_FORM_CONFIG
+});
+
 if (document.readyState === 'loading') {
+    console.log('[Facility Form] DOM still loading, waiting for DOMContentLoaded');
     document.addEventListener('DOMContentLoaded', initializeForm);
 } else {
+    console.log('[Facility Form] DOM already loaded, calling initializeForm immediately');
     initializeForm();
 }
 

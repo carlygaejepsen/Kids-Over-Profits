@@ -693,6 +693,14 @@ function enqueue_facility_form_script() {
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
     $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
 
+    // Debug: Log the file path
+    error_log('KOP Loader path check: ' . $loader_file_path);
+    error_log('KOP Loader exists: ' . (file_exists($loader_file_path) ? 'YES' : 'NO'));
+
+    if (!file_exists($loader_file_path)) {
+        error_log('ERROR: db-form-loader.js not found at: ' . $loader_file_path);
+    }
+
     wp_enqueue_script(
         'db-form-loader',
         $loader_uri,
@@ -719,14 +727,18 @@ function enqueue_facility_form_script() {
 
     // This makes PHP variables available to your JavaScript file
     // Note: This is localized to the loader script, not the main form script
+    $config = array(
+        'fallbackProjectsUrl' => $fallback_url,
+        'fallbackProjectsUrls' => $dataset_urls,
+        'apiBase' => home_url()
+    );
+
+    error_log('KOP Config being localized: ' . json_encode($config));
+
     wp_localize_script(
         'db-form-loader',
         'KOP_FACILITY_FORM_CONFIG',
-        array(
-            'fallbackProjectsUrl' => $fallback_url,
-            'fallbackProjectsUrls' => $dataset_urls,
-            'apiBase' => home_url()
-        )
+        $config
     );
 }
 add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
