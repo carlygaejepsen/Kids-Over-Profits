@@ -674,7 +674,7 @@ function enqueue_facility_form_script() {
     // Check if the page content contains our unique form identifier.
     // This makes the script loading dynamic to any page with the form.
     $is_data_form_page = (
-        is_page('data') || (isset($post) && has_shortcode($post->post_content, 'facility_form'))
+        kop_is_headerless_layout() || (isset($post) && has_shortcode($post->post_content, 'facility_form'))
     );
 
     if (!$is_data_form_page) {
