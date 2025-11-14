@@ -802,6 +802,35 @@ function enqueue_news_processor_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
 
 /**
+ * Enqueue the wiki editor generator assets when its template is used.
+ */
+function kop_enqueue_wiki_editor_assets() {
+    if (!is_page_template('page-wiki-editor.php')) {
+        return;
+    }
+
+    $style_relative = '/css/wiki-editor.css';
+    $style_path = get_stylesheet_directory() . $style_relative;
+    wp_enqueue_style(
+        'kop-wiki-editor-style',
+        get_stylesheet_directory_uri() . $style_relative,
+        array(),
+        file_exists($style_path) ? filemtime($style_path) : time()
+    );
+
+    $script_relative = '/js/wiki-editor.js';
+    $script_path = get_stylesheet_directory() . $script_relative;
+    wp_enqueue_script(
+        'kop-wiki-editor-script',
+        get_stylesheet_directory_uri() . $script_relative,
+        array(),
+        file_exists($script_path) ? filemtime($script_path) : time(),
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');
+
+/**
  * Add approval page to admin menu
  */
 function add_approval_page_to_menu() {

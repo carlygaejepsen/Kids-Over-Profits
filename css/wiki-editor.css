@@ -1,0 +1,183 @@
+.wiki-editor-page {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.wiki-editor-page .wiki-editor-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.wiki-editor-page h1,
+.wiki-editor-page h2 {
+    color: #1a1a1b;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.wiki-editor-page h1 {
+    text-align: center;
+}
+
+.wiki-editor-page h4 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.wiki-editor-page form {
+    display: flex;
+    flex-direction: column;
+}
+
+.wiki-editor-page fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+}
+
+.wiki-editor-page legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0079d3;
+    padding: 0 10px;
+}
+
+.wiki-editor-page label {
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.wiki-editor-page input[type="text"],
+.wiki-editor-page textarea,
+.wiki-editor-page select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.wiki-editor-page textarea {
+    resize: vertical;
+}
+
+.wiki-editor-page hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+.wiki-editor-page button#generateBtn {
+    background-color: #0079d3;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background-color 0.2s ease;
+}
+
+.wiki-editor-page button#generateBtn:hover {
+    background-color: #005fa3;
+}
+
+.wiki-editor-page .add-btn {
+    background-color: #2e8b57;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s ease;
+}
+
+.wiki-editor-page .add-btn:hover {
+    background-color: #256d44;
+}
+
+.wiki-editor-page .form-adder {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.wiki-editor-page .form-adder label {
+    margin-top: 10px;
+}
+
+.wiki-editor-page .list-preview {
+    margin-top: 15px;
+    background: #f6f7f8;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    min-height: 40px;
+}
+
+.wiki-editor-page .list-preview-item {
+    font-size: 0.9rem;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wiki-editor-page .list-preview-item:last-child {
+    border-bottom: none;
+}
+
+.wiki-editor-page .list-preview-item button {
+    background: #c82333;
+    color: #fff;
+    border: none;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.wiki-editor-page #outputCode {
+    width: 100%;
+    height: 400px;
+    background-color: #f6f7f8;
+    border-color: #ddd;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.wiki-editor-page #copyBtn {
+    background-color: #4caf50;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.wiki-editor-page #copyBtn:hover {
+    background-color: #45a049;
+}
