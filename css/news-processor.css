@@ -1,0 +1,353 @@
+.news-processor-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #b6e3d4, #aee0ed);
+    padding: 2rem;
+}
+
+.news-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.news-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.news-header {
+    background: linear-gradient(to right, #33a7b5, #000080);
+    color: white;
+    padding: 2rem;
+}
+
+.news-header h1 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+}
+
+.news-header p {
+    color: #aee0ed;
+    margin: 0;
+}
+
+.news-section {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.news-section-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: #f9fafb;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.news-section-header:hover {
+    background: #f3f4f6;
+}
+
+.news-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.news-icon {
+    font-size: 1.25rem;
+}
+
+.news-section-title h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.news-count {
+    font-size: 0.875rem;
+    color: #6b7280;
+    background: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+}
+
+.news-chevron {
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.news-section-content {
+    display: none;
+    padding: 1.5rem;
+}
+
+.news-section-content.active {
+    display: block;
+}
+
+.news-form-group {
+    margin-bottom: 1rem;
+}
+
+.news-form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.news-input, .news-textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    outline-color: #33a7b5;
+}
+
+.news-textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.news-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .news-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.news-input-with-save {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.news-input-with-save .news-input,
+.news-input-with-save .news-textarea {
+    flex: 1;
+}
+
+.news-save-btn {
+    padding: 0.5rem 0.75rem;
+    background-color: #ecf385;
+    color: #000000;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    height: fit-content;
+}
+
+.news-save-btn:hover {
+    background-color: #d9e070;
+}
+
+.news-saved-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.news-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #b6e3d4;
+    color: #000000;
+    font-size: 0.75rem;
+    border-radius: 9999px;
+}
+
+.news-tag-remove {
+    background: none;
+    border: none;
+    color: #33a7b5;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    margin-left: 0.25rem;
+}
+
+.news-tag-remove:hover {
+    color: #000080;
+}
+
+.news-warnings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .news-warnings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.news-warning-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #f9fafb;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.news-warning-btn:hover {
+    background: #f3f4f6;
+}
+
+.news-warning-btn.active {
+    background-color: #fe8088;
+    border-color: #fe8088;
+    color: #ffffff;
+}
+
+.news-info-box {
+    background-color: #aee0ed;
+    border-left: 4px solid #33a7b5;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+}
+
+.news-info-box strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #000435;
+}
+
+.news-info-box ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #000435;
+}
+
+.news-info-box li {
+    margin-bottom: 0.25rem;
+}
+
+.news-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.news-checkbox-group input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #33a7b5;
+}
+
+.news-checkbox-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin: 0;
+    cursor: pointer;
+}
+
+.news-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.news-type-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.news-type-btn:hover {
+    background: #f9fafb;
+}
+
+.news-type-btn.active {
+    background-color: #000080;
+    border-color: #000080;
+    color: #ffffff;
+}
+
+.news-type-form {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.news-type-form h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 1rem 0;
+}
+
+.news-footer {
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.news-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.news-btn:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.news-btn-primary {
+    background: linear-gradient(to right, #33a7b5, #000080);
+}
+
+.news-btn-secondary {
+    background: linear-gradient(to right, #ef9034, #fe8088);
+}
+
+.news-btn-clear {
+    background: #6b7280;
+}
+
+.news-btn-clear:hover {
+    background: #4b5563;
+}
+
+

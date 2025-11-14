@@ -1,0 +1,623 @@
+(function() {
+    const STORAGE_KEY = 'news_processor_data';
+    const SAVED_VALUES_KEY = 'news_processor_saved_values';
+    
+    const formData = {
+        title: '', author: '', publicationDate: '', publicationName: '', url: '',
+        facilities: '', staff: '', survivors: '', contentWarnings: [],
+        summary: '', alternateTitle: '', needsAlternateTitle: false,
+        articleType: '', plaintiffs: '', defendants: '', legalRep: '',
+        dateFiled: '', jurisdiction: '', pressReleases: '', relatedCoverage: '',
+        staffMemberName: '', arrestFacilityName: '', misconductDates: '',
+        charges: '', caseStatus: '', closureFacilityName: '', closureLocation: '',
+        closureDate: '', closureContext: '', corporateFacilityNames: '',
+        corporateLocation: '', keyPersonnel: '', ownership: ''
+    };
+
+    const savedValues = {
+        authors: [], publications: [], facilities: [],
+        staff: [], jurisdictions: [], legalReps: []
+    };
+
+    const contentWarnings = [
+        'Physical Restraint', 'Chemical Restraint', 'Seclusion', 'Humiliating Punishments',
+        'Child Sexual Abuse', 'Child-on-Child CSA', 'Graphic Descriptions of Assaults or Injuries',
+        'Peer Violence', 'Child Death', 'Suicide', 'Self-harm', 'Substance Abuse',
+        'Victim Blaming', 'Spiritual Abuse', 'Racism', 'Homophobia', 'Transphobia',
+        'Hate Crimes', 'Slurs', 'Autism-Specific Abuse', 'Food Restriction',
+        'Unsanitary Conditions', 'Medical Neglect', 'Eating Disorders', 'Conversion Therapy',
+        'Forced Labor', 'Involuntary Transport', 'Law Enforcement Abuse'
+    ];
+
+    const articleTypes = [
+        { value: 'lawsuit', label: 'Lawsuit Article' },
+        { value: 'event', label: 'Specific Event Article' },
+        { value: 'expose', label: 'Exposé or Survivor Account' },
+        { value: 'arrest', label: 'Staff Arrest Article' },
+        { value: 'closure', label: 'Facility Closure Article' },
+        { value: 'corporate', label: 'Corporate Change Article' },
+        { value: 'general', label: 'General News Article' }
+    ];
+
+    // LocalStorage functions
+    function saveToLocalStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+            localStorage.setItem(SAVED_VALUES_KEY, JSON.stringify(savedValues));
+        } catch (e) {
+            console.error('Failed to save to localStorage:', e);
+        }
+    }
+
+    function loadFromLocalStorage() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const storedValues = localStorage.getItem(SAVED_VALUES_KEY);
+            
+            if (stored) {
+                Object.assign(formData, JSON.parse(stored));
+            }
+            
+            if (storedValues) {
+                Object.assign(savedValues, JSON.parse(storedValues));
+            }
+        } catch (e) {
+            console.error('Failed to load from localStorage:', e);
+        }
+    }
+
+    function clearLocalStorage() {
+        if (confirm('Are you sure you want to clear the form? This will also clear all saved values.')) {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(SAVED_VALUES_KEY);
+            location.reload();
+        }
+    }
+
+    // Initialize
+    function init() {
+        loadFromLocalStorage();
+        setupSectionToggles();
+        setupFormInputs();
+        setupContentWarnings();
+        setupArticleTypes();
+        setupSaveButtons();
+        setupExportButtons();
+        setupAlnewstle();
+        setupClearButton();
+        restoreFormState();
+        restoreSavedValues();
+    }
+
+    function restoreFormState() {
+        Object.keys(formData).forEach(key => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) {
+                if (input.type === 'checkbox') {
+                    input.checked = formData[key];
+                } else {
+                    input.value = formData[key] || '';
+                }
+            }
+        });
+
+        // Restore content warnings
+        formData.contentWarnings.forEach(warning => {
+            const btn = Array.from(document.querySelectorAll('.news-warning-btn'))
+                .find(b => b.textContent === warning);
+            if (btn) btn.classList.add('active');
+        });
+        updateWarningsCount();
+
+        // Restore article type
+        if (formData.articleType) {
+            const typeBtn = Array.from(document.querySelectorAll('.news-type-btn'))
+                .find(b => b.dataset.value === formData.articleType);
+            if (typeBtn) {
+                typeBtn.classList.add('active');
+                showTypeSpecificForm(formData.articleType);
+            }
+        }
+
+        // Restore alt title visibility
+        if (formData.needsAlternateTitle) {
+            document.getElementById('alnewstleGroup').style.display = 'block';
+        }
+    }
+
+    function restoreSavedValues() {
+        Object.keys(savedValues).forEach(category => {
+            updateSavedTags(category);
+            updateDatalist(category);
+        });
+    }
+
+    function setupSectionToggles() {
+        document.querySelectorAll('.news-section-header').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const section = this.dataset.section;
+                const content = document.getElementById('section-' + section);
+                const chevron = this.querySelector('.news-chevron');
+                
+                if (content.classList.contains('active')) {
+                    content.classList.remove('active');
+                    chevron.textContent = '▶';
+                } else {
+                    content.classList.add('active');
+                    chevron.textContent = '▼';
+                }
+            });
+        });
+    }
+
+    function setupFormInputs() {
+        document.querySelectorAll('input, textarea').forEach(input => {
+            const name = input.name;
+            if (name) {
+                input.addEventListener('input', function() {
+                    if (this.type === 'checkbox') {
+                        formData[name] = this.checked;
+                    } else {
+                        formData[name] = this.value;
+                    }
+                    saveToLocalStorage();
+                });
+            }
+        });
+    }
+
+    function setupContentWarnings() {
+        const container = document.getElementById('warnings-container');
+        contentWarnings.forEach(warning => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'news-warning-btn';
+            btn.textContent = warning;
+            btn.addEventListener('click', function() {
+                const idx = formData.contentWarnings.indexOf(warning);
+                if (idx > -1) {
+                    formData.contentWarnings.splice(idx, 1);
+                    this.classList.remove('active');
+                } else {
+                    formData.contentWarnings.push(warning);
+                    this.classList.add('active');
+                }
+                updateWarningsCount();
+                saveToLocalStorage();
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function updateWarningsCount() {
+        document.getElementById('warnings-count').textContent = formData.contentWarnings.length;
+    }
+
+    function setupArticleTypes() {
+        const container = document.getElementById('article-types');
+        articleTypes.forEach(type => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'news-type-btn';
+            btn.textContent = type.label;
+            btn.dataset.value = type.value;
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.news-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                formData.articleType = type.value;
+                showTypeSpecificForm(type.value);
+                saveToLocalStorage();
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function showTypeSpecificForm(type) {
+        const container = document.getElementById('type-specific-forms');
+        container.innerHTML = '';
+        
+        if (type === 'lawsuit') {
+            container.innerHTML = `
+                <div class="news-type-form">
+                    <h3>Lawsuit Details</h3>
+                    <div class="news-grid-2">
+                        <div class="news-form-group">
+                            <label>Plaintiffs</label>
+                            <input type="text" name="plaintiffs" class="news-input" value="${formData.plaintiffs || ''}">
+                        </div>
+                        <div class="news-form-group">
+                            <label>Defendants</label>
+                            <input type="text" name="defendants" class="news-input" value="${formData.defendants || ''}">
+                        </div>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Legal Representation</label>
+                        <div class="news-input-with-save">
+                            <input type="text" name="legalRep" class="news-input" list="legalReps-list" value="${formData.legalRep || ''}">
+                            <datalist id="legalReps-list"></datalist>
+                            <button class="news-save-btn" data-save="legalReps" data-field="legalRep">💾</button>
+                        </div>
+                        <div class="news-saved-tags" data-category="legalReps"></div>
+                    </div>
+                    <div class="news-grid-2">
+                        <div class="news-form-group">
+                            <label>Date Filed</label>
+                            <input type="date" name="dateFiled" class="news-input" value="${formData.dateFiled || ''}">
+                        </div>
+                        <div class="news-form-group">
+                            <label>Jurisdiction</label>
+                            <div class="news-input-with-save">
+                                <input type="text" name="jurisdiction" class="news-input" list="jurisdictions-list" value="${formData.jurisdiction || ''}">
+                                <datalist id="jurisdictions-list"></datalist>
+                                <button class="news-save-btn" data-save="jurisdictions" data-field="jurisdiction">💾</button>
+                            </div>
+                            <div class="news-saved-tags" data-category="jurisdictions"></div>
+                        </div>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Press Releases (URLs)</label>
+                        <textarea name="pressReleases" class="news-textarea" rows="2" placeholder="One URL per line">${formData.pressReleases || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'event') {
+            container.innerHTML = `
+                <div class="news-type-form">
+                    <h3>Event Details</h3>
+                    <div class="news-form-group">
+                        <label>Related Coverage (URLs)</label>
+                        <textarea name="relatedCoverage" class="news-textarea" rows="3" placeholder="One URL per line">${formData.relatedCoverage || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'arrest') {
+            container.innerHTML = `
+                <div class="news-type-form">
+                    <h3>Arrest Details</h3>
+                    <div class="news-grid-2">
+                        <div class="news-form-group">
+                            <label>Staff Member Name</label>
+                            <input type="text" name="staffMemberName" class="news-input" value="${formData.staffMemberName || ''}">
+                        </div>
+                        <div class="news-form-group">
+                            <label>Facility Name</label>
+                            <input type="text" name="arrestFacilityName" class="news-input" value="${formData.arrestFacilityName || ''}">
+                        </div>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Date(s) of Alleged Misconduct</label>
+                        <input type="text" name="misconductDates" class="news-input" value="${formData.misconductDates || ''}">
+                    </div>
+                    <div class="news-form-group">
+                        <label>Charges</label>
+                        <textarea name="charges" class="news-textarea" rows="2">${formData.charges || ''}</textarea>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Case Status</label>
+                        <input type="text" name="caseStatus" class="news-input" placeholder="e.g., awaiting trial, convicted" value="${formData.caseStatus || ''}">
+                    </div>
+                </div>
+            `;
+        } else if (type === 'closure') {
+            container.innerHTML = `
+                <div class="news-type-form">
+                    <h3>Closure Details</h3>
+                    <div class="news-grid-2">
+                        <div class="news-form-group">
+                            <label>Facility Name</label>
+                            <input type="text" name="closureFacilityName" class="news-input" value="${formData.closureFacilityName || ''}">
+                        </div>
+                        <div class="news-form-group">
+                            <label>Location (City, State)</label>
+                            <input type="text" name="closureLocation" class="news-input" value="${formData.closureLocation || ''}">
+                        </div>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Date of Closure</label>
+                        <input type="date" name="closureDate" class="news-input" value="${formData.closureDate || ''}">
+                    </div>
+                    <div class="news-form-group">
+                        <label>Context/Reason</label>
+                        <textarea name="closureContext" class="news-textarea" rows="3">${formData.closureContext || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'corporate') {
+            container.innerHTML = `
+                <div class="news-type-form">
+                    <h3>Corporate Change Details</h3>
+                    <div class="news-form-group">
+                        <label>Facility Name(s)</label>
+                        <textarea name="corporateFacilityNames" class="news-textarea" rows="2" placeholder="Include old and new names for rebrand/merger">${formData.corporateFacilityNames || ''}</textarea>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Location (City, State)</label>
+                        <input type="text" name="corporateLocation" class="news-input" value="${formData.corporateLocation || ''}">
+                    </div>
+                    <div class="news-form-group">
+                        <label>Key Personnel</label>
+                        <textarea name="keyPersonnel" class="news-textarea" rows="2" placeholder="Names of executives or staff central to the change">${formData.keyPersonnel || ''}</textarea>
+                    </div>
+                    <div class="news-form-group">
+                        <label>Ownership/Funding</label>
+                        <textarea name="ownership" class="news-textarea" rows="2" placeholder="Owners, parent companies, funders, or key stakeholders">${formData.ownership || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+        
+        setupFormInputs();
+        // Restore saved values for dynamically added fields
+        updateSavedTags('legalReps');
+        updateDatalist('legalReps');
+        updateSavedTags('jurisdictions');
+        updateDatalist('jurisdictions');
+    }
+
+    function setupSaveButtons() {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('news-save-btn')) {
+                const category = e.target.dataset.save;
+                const field = e.target.dataset.field;
+                const value = formData[field];
+                
+                if (value && value.trim()) {
+                    if (field === 'facilities' || field === 'staff') {
+                        const lines = value.split('\n').filter(l => l.trim());
+                        lines.forEach(line => saveValue(category, line.trim()));
+                    } else {
+                        saveValue(category, value.trim());
+                    }
+                }
+            }
+            
+            if (e.target.classList.contains('news-tag-remove')) {
+                const category = e.target.dataset.category;
+                const value = e.target.dataset.value;
+                removeValue(category, value);
+            }
+        });
+    }
+
+    function saveValue(category, value) {
+        if (!savedValues[category].includes(value)) {
+            savedValues[category].push(value);
+            updateSavedTags(category);
+            updateDatalist(category);
+            saveToLocalStorage();
+        }
+    }
+
+    function removeValue(category, value) {
+        const idx = savedValues[category].indexOf(value);
+        if (idx > -1) {
+            savedValues[category].splice(idx, 1);
+            updateSavedTags(category);
+            updateDatalist(category);
+            saveToLocalStorage();
+        }
+    }
+
+    function updateSavedTags(category) {
+        const container = document.querySelector(`.news-saved-tags[data-category="${category}"]`);
+        if (!container) return;
+        
+        container.innerHTML = '';
+        savedValues[category].forEach(value => {
+            const tag = document.createElement('span');
+            tag.className = 'news-tag';
+            tag.innerHTML = `
+                ${value}
+                <button type="button" class="news-tag-remove" data-category="${category}" data-value="${value}">×</button>
+            `;
+            container.appendChild(tag);
+        });
+    }
+
+    function updateDatalist(category) {
+        const datalist = document.getElementById(category + '-list');
+        if (!datalist) return;
+        
+        datalist.innerHTML = '';
+        savedValues[category].forEach(value => {
+            const option = document.createElement('option');
+            option.value = value;
+            datalist.appendChild(option);
+        });
+    }
+
+    function setupAlnewstle() {
+        document.getElementById('needsAlnewstle').addEventListener('change', function() {
+            formData.needsAlternateTitle = this.checked;
+            document.getElementById('alnewstleGroup').style.display = this.checked ? 'block' : 'none';
+            saveToLocalStorage();
+        });
+    }
+
+    function setupClearButton() {
+        document.getElementById('clear-form').addEventListener('click', clearLocalStorage);
+    }
+
+    function setupExportButtons() {
+        document.getElementById('export-json').addEventListener('click', () => exportData('json'));
+        document.getElementById('export-text').addEventListener('click', () => exportData('text'));
+    }
+
+    function exportData(format) {
+        const output = {
+            basicDetails: {
+                title: formData.title,
+                author: formData.author,
+                publicationDate: formData.publicationDate,
+                publicationName: formData.publicationName,
+                url: formData.url,
+                facilities: formData.facilities.split('\n').filter(f => f.trim()),
+                staff: formData.staff.split('\n').filter(s => s.trim()),
+                survivors: formData.survivors.split('\n').filter(s => s.trim())
+            },
+            contentWarnings: formData.contentWarnings,
+            summary: {
+                text: formData.summary,
+                alternateTitle: formData.needsAlternateTitle ? formData.alternateTitle : null
+            },
+            articleType: formData.articleType
+        };
+
+        if (formData.articleType === 'lawsuit') {
+            output.lawsuitDetails = {
+                plaintiffs: formData.plaintiffs,
+                defendants: formData.defendants,
+                legalRepresentation: formData.legalRep,
+                dateFiled: formData.dateFiled,
+                jurisdiction: formData.jurisdiction,
+                pressReleases: formData.pressReleases.split('\n').filter(p => p.trim())
+            };
+        } else if (formData.articleType === 'event') {
+            output.eventDetails = {
+                relatedCoverage: formData.relatedCoverage.split('\n').filter(r => r.trim())
+            };
+        } else if (formData.articleType === 'arrest') {
+            output.arrestDetails = {
+                staffMemberName: formData.staffMemberName,
+                facilityName: formData.arrestFacilityName,
+                misconductDates: formData.misconductDates,
+                charges: formData.charges,
+                caseStatus: formData.caseStatus
+            };
+        } else if (formData.articleType === 'closure') {
+            output.closureDetails = {
+                facilityName: formData.closureFacilityName,
+                location: formData.closureLocation,
+                closureDate: formData.closureDate,
+                context: formData.closureContext
+            };
+        } else if (formData.articleType === 'corporate') {
+            output.corporateDetails = {
+                facilityNames: formData.corporateFacilityNames,
+                location: formData.corporateLocation,
+                keyPersonnel: formData.keyPersonnel,
+                ownership: formData.ownership
+            };
+        }
+
+        if (format === 'json') {
+            downloadFile(JSON.stringify(output, null, 2), 'application/json', 'json');
+        } else {
+            downloadFile(generateTextReport(output), 'text/plain', 'txt');
+        }
+    }
+
+    function generateTextReport(output) {
+        let text = '='.repeat(60) + '\n';
+        text += 'news NEWS ARTICLE PROCESSING REPORT\n';
+        text += '='.repeat(60) + '\n\n';
+        
+        text += '--- BASIC DETAILS ---\n';
+        text += `Title: ${formData.title}\n`;
+        if (formData.needsAlternateTitle && formData.alternateTitle) {
+            text += `Alternate Title: ${formData.alternateTitle}\n`;
+        }
+        text += `Author: ${formData.author}\n`;
+        text += `Publication: ${formData.publicationName}\n`;
+        text += `Date: ${formData.publicationDate}\n`;
+        text += `URL: ${formData.url}\n\n`;
+        
+        if (output.basicDetails.facilities.length > 0) {
+            text += 'news Facilities/Companies:\n';
+            output.basicDetails.facilities.forEach(f => text += `  - ${f}\n`);
+            text += '\n';
+        }
+        
+        if (output.basicDetails.staff.length > 0) {
+            text += 'Staff/Owners:\n';
+            output.basicDetails.staff.forEach(s => text += `  - ${s}\n`);
+            text += '\n';
+        }
+        
+        if (output.basicDetails.survivors.length > 0) {
+            text += 'Survivors Mentioned:\n';
+            output.basicDetails.survivors.forEach(s => text += `  - ${s}\n`);
+            text += '\n';
+        }
+        
+        if (formData.contentWarnings.length > 0) {
+            text += '--- CONTENT WARNINGS ---\n';
+            formData.contentWarnings.forEach(w => text += `  - ${w}\n`);
+            text += '\n';
+        }
+        
+        text += '--- SUMMARY ---\n';
+        text += `${formData.summary}\n\n`;
+        
+        if (formData.articleType) {
+            text += '--- ARTICLE TYPE ---\n';
+            const typeLabel = articleTypes.find(t => t.value === formData.articleType)?.label || formData.articleType;
+            text += `${typeLabel}\n\n`;
+            
+            if (formData.articleType === 'lawsuit' && output.lawsuitDetails) {
+                text += '--- LAWSUIT DETAILS ---\n';
+                if (formData.plaintiffs) text += `Plaintiffs: ${formData.plaintiffs}\n`;
+                if (formData.defendants) text += `Defendants: ${formData.defendants}\n`;
+                if (formData.legalRep) text += `Legal Representation: ${formData.legalRep}\n`;
+                if (formData.dateFiled) text += `Date Filed: ${formData.dateFiled}\n`;
+                if (formData.jurisdiction) text += `Jurisdiction: ${formData.jurisdiction}\n`;
+                if (output.lawsuitDetails.pressReleases.length > 0) {
+                    text += 'Press Releases:\n';
+                    output.lawsuitDetails.pressReleases.forEach(p => text += `  - ${p}\n`);
+                }
+                text += '\n';
+            } else if (formData.articleType === 'event' && output.eventDetails) {
+                text += '--- EVENT DETAILS ---\n';
+                if (output.eventDetails.relatedCoverage.length > 0) {
+                    text += 'Related Coverage:\n';
+                    output.eventDetails.relatedCoverage.forEach(r => text += `  - ${r}\n`);
+                }
+                text += '\n';
+            } else if (formData.articleType === 'arrest' && output.arrestDetails) {
+                text += '--- ARREST DETAILS ---\n';
+                if (formData.staffMemberName) text += `Staff Member: ${formData.staffMemberName}\n`;
+                if (formData.arrestFacilityName) text += `Facility: ${formData.arrestFacilityName}\n`;
+                if (formData.misconductDates) text += `Date(s) of Misconduct: ${formData.misconductDates}\n`;
+                if (formData.charges) text += `Charges: ${formData.charges}\n`;
+                if (formData.caseStatus) text += `Case Status: ${formData.caseStatus}\n`;
+                text += '\n';
+            } else if (formData.articleType === 'closure' && output.closureDetails) {
+                text += '--- CLOSURE DETAILS ---\n';
+                if (formData.closureFacilityName) text += `Facility: ${formData.closureFacilityName}\n`;
+                if (formData.closureLocation) text += `Location: ${formData.closureLocation}\n`;
+                if (formData.closureDate) text += `Closure Date: ${formData.closureDate}\n`;
+                if (formData.closureContext) text += `Context: ${formData.closureContext}\n`;
+                text += '\n';
+            } else if (formData.articleType === 'corporate' && output.corporateDetails) {
+                text += '--- CORPORATE CHANGE DETAILS ---\n';
+                if (formData.corporateFacilityNames) text += `Facility Name(s): ${formData.corporateFacilityNames}\n`;
+                if (formData.corporateLocation) text += `Location: ${formData.corporateLocation}\n`;
+                if (formData.keyPersonnel) text += `Key Personnel: ${formData.keyPersonnel}\n`;
+                if (formData.ownership) text += `Ownership/Funding: ${formData.ownership}\n`;
+                text += '\n';
+            }
+        }
+        
+        text += '='.repeat(60) + '\n';
+        text += `Generated: ${new Date().toLocaleString()}\n`;
+        text += '='.repeat(60);
+        
+        return text;
+    }
+
+    function downloadFile(content, mimeType, extension) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `news-article-${Date.now()}.${extension}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+})();
+
