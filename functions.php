@@ -506,6 +506,16 @@ function load_facilities_data() {
         $primary_dataset = $dataset_urls[0];
     }
 
+    $reports_style_path = get_stylesheet_directory() . '/css/facility-reports.css';
+    if (file_exists($reports_style_path)) {
+        wp_enqueue_style(
+            'kop-facility-reports-style',
+            get_stylesheet_directory_uri() . '/css/facility-reports.css',
+            array(),
+            filemtime($reports_style_path)
+        );
+    }
+
     wp_enqueue_script(
         'facilities-display',
         get_stylesheet_directory_uri() . '/js/facilities-display.js',
@@ -628,6 +638,16 @@ function kop_enqueue_report_scripts() {
             $script_full_path = get_stylesheet_directory() . $config['script_path'];
             if (!file_exists($script_full_path)) {
                 continue;
+            }
+
+            $reports_style_path = get_stylesheet_directory() . '/css/facility-reports.css';
+            if (file_exists($reports_style_path)) {
+                wp_enqueue_style(
+                    'kop-facility-reports-style',
+                    get_stylesheet_directory_uri() . '/css/facility-reports.css',
+                    array(),
+                    filemtime($reports_style_path)
+                );
             }
 
             wp_enqueue_script(
