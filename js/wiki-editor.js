@@ -211,6 +211,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
             };
 
+            // --- Helper: Ensure trailing period for fragments ---
+            const ensureSentence = (text) => {
+                const trimmed = (text || '').trim();
+                if (!trimmed) return '';
+                return /[.!?]"?$/.test(trimmed) ? trimmed : `${trimmed}.`;
+            };
+
+            const roleVerb = (roleText) => {
+                const value = (roleText || '').toLowerCase();
+                return /\b(former|previous|ex[\s-])/.test(value) ? 'was' : 'is';
+            };
+
             // --- Build History Section ---
             let historySection = '';
             const historySentences = [];
@@ -265,8 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let staffSection;
             if (staffMembers.length > 0) {
                 staffSection = staffMembers.map(s => {
-                    const bioPart = s.bio ? ` ${escapeMarkdown(s.bio)}` : '';
-                    return `**${escapeMarkdown(s.name)}** is the ${escapeMarkdown(s.role)}.${bioPart}`.trim();
+                    const roleText = escapeMarkdown(s.role);
+                    const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
+                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(roleText)} ${articleRole}`);
+                    const bioSentence = ensureSentence(escapeMarkdown(s.bio || ''));
+                    return [roleSentence, bioSentence].filter(Boolean).join(' ');
                 }).join('\n\n');
             } else {
                 staffSection = getPlaceholder('Founders and Notable Staff', programName);
