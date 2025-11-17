@@ -690,9 +690,9 @@ function kop_enqueue_report_scripts() {
 add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 
 /**
- * Load facility form script
+ * Load data form script
  */
-function enqueue_facility_form_script() {
+function enqueue_data_form_script() {
     // Only run on singular pages (posts, pages), not on archive pages.
     if (!is_singular()) {
         return;
@@ -702,7 +702,7 @@ function enqueue_facility_form_script() {
     // Check if the page content contains our unique form identifier.
     // This makes the script loading dynamic to any page with the form.
     $is_data_form_page = (
-        kop_is_headerless_layout() || (isset($post) && has_shortcode($post->post_content, 'facility_form'))
+        kop_is_headerless_layout() || (isset($post) && has_shortcode($post->post_content, 'data_form'))
     );
 
     if (!$is_data_form_page) {
@@ -737,13 +737,13 @@ function enqueue_facility_form_script() {
         true
     );
 
-    // Enqueue the main facility form script (depends on loader)
+    // Enqueue the main data form script (depends on loader)
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
     wp_enqueue_script(
-        'facility-form-script',
+        'data-form-script',
         $script_uri,
         array('jquery', 'db-form-loader'), // Now depends on the loader
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
@@ -765,7 +765,7 @@ function enqueue_facility_form_script() {
 
     wp_localize_script(
         'db-form-loader',
-        'KOP_FACILITY_FORM_CONFIG',
+        'KOP_DATA_FORM_CONFIG',
         $config
     );
 
@@ -779,7 +779,7 @@ function enqueue_facility_form_script() {
         wp_enqueue_script(
             'data-page-script',
             $data_page_uri,
-            array('jquery', 'facility-form-script'), // Depends on main form script
+            array('jquery', 'data-form-script'), // Depends on main form script
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
@@ -792,13 +792,13 @@ function enqueue_facility_form_script() {
         wp_enqueue_script(
             'admin-data-page-script',
             $admin_page_uri,
-            array('jquery', 'facility-form-script'), // Depends on main form script
+            array('jquery', 'data-form-script'), // Depends on main form script
             file_exists($admin_page_file_path) ? filemtime($admin_page_file_path) : time(),
             true
         );
     }
 }
-add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
+add_action('wp_enqueue_scripts', 'enqueue_data_form_script');
 
 /**
  * Enqueue News Article Processor scripts

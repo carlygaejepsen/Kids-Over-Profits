@@ -1,9 +1,9 @@
-# Facility Form Template Setup
+# Data Form Template Setup
 
-## Completed: Proper WordPress Template Structure for facility-form.v3.js
+## Completed: Proper WordPress Template Structure for data-form.v3.js
 
 ### Problem
-The WordPress templates `page-data.php` and `page-admin-data.php` only contained minimal HTML containers, but `facility-form.v3.js` expected the full form structure to be present on page load.
+The WordPress templates `page-data.php` and `page-admin-data.php` only contained minimal HTML containers, but the data form JavaScript expected the full form structure to be present on page load.
 
 ### Solution
 Created a proper template system that includes the complete HTML structure required by the JavaScript.
@@ -11,19 +11,19 @@ Created a proper template system that includes the complete HTML structure requi
 ## Files Created
 
 ### 1. Template Fragments
-- **[templates/facility-form-public.php](templates/facility-form-public.php)** (75KB)
-  - Contains complete HTML structure for public facility data submission form
-  - Extracted from `data.html` (lines 11-1183)
+- **[templates/data-form-public.php](templates/data-form-public.php)** (75KB)
+  - Contains complete HTML structure for public data submission form
+  - Extracted from `data.html` (lines 11-1182)
   - Includes all required elements:
     - Category navigation tabs
     - Project management sections
-    - Facility forms for Companies, Locations, and Referrers
+    - Data forms for Companies, Locations, and Referrers
     - All form sections (Identification, Location, Operations, Staff, etc.)
     - Modal dialogs for cloning and data organization
     - Submission section for suggestions
 
-- **[templates/facility-form-admin.php](templates/facility-form-admin.php)** (68KB)
-  - Contains complete HTML structure for admin facility data management
+- **[templates/data-form-admin.php](templates/data-form-admin.php)** (68KB)
+  - Contains complete HTML structure for admin data management
   - Extracted from `admin-data.html` (lines 11-1131)
   - Same structure as public form but with admin-specific text and saving to master database
 
@@ -33,15 +33,15 @@ Created a proper template system that includes the complete HTML structure requi
 ```php
 <?php
 /**
- * Template Name: Facility Data Submission Form
+ * Template Name: Data Form Submission
  *
- * Public-facing form for submitting facility data suggestions.
+ * Public-facing form for submitting data suggestions.
  */
 
 get_header();
 
-// Load the complete HTML structure that facility-form.v3.js expects
-require get_stylesheet_directory() . '/templates/facility-form-public.php';
+// Load the complete HTML structure that the data form expects
+require get_stylesheet_directory() . '/templates/data-form-public.php';
 
 get_footer();
 ```
@@ -50,15 +50,15 @@ get_footer();
 ```php
 <?php
 /**
- * Template Name: Admin Facility Data Form
+ * Template Name: Admin Data Form
  *
- * Administrator form for direct facility data entry and management.
+ * Administrator form for direct data entry and management.
  */
 
 get_header();
 
-// Load the complete HTML structure that facility-form.v3.js expects
-require get_stylesheet_directory() . '/templates/facility-form-admin.php';
+// Load the complete HTML structure that the data form expects
+require get_stylesheet_directory() . '/templates/data-form-admin.php';
 
 get_footer();
 ```
@@ -75,11 +75,11 @@ The enqueue system in [functions.php](functions.php) is properly configured:
 Loaded in this order for data form templates:
 1. **jQuery** (WordPress core)
 2. **db-form-loader.js** (lines 732-738) - Handles data loading
-3. **facility-form.v3.js** (lines 741-751) - Main form functionality
+3. **facility-form.v3.js** (lines 741-751) - Main form functionality (enqueued as 'data-form-script')
 4. **data-page.js** OR **admin-data-page.js** (lines 773-799) - Page-specific logic
 
 ### Configuration
-JavaScript receives configuration via `KOP_FACILITY_FORM_CONFIG`:
+JavaScript receives configuration via `KOP_DATA_FORM_CONFIG`:
 ```javascript
 {
     fallbackProjectsUrl: '...',
@@ -88,7 +88,7 @@ JavaScript receives configuration via `KOP_FACILITY_FORM_CONFIG`:
 }
 ```
 
-## HTML Elements Required by facility-form.v3.js
+## HTML Elements Required by the Data Form
 
 The template files now include all required elements:
 
@@ -104,16 +104,16 @@ The template files now include all required elements:
 - `#referrer-saved-projects-list` - Saved referrer projects
 
 ### Main Wrappers
-- `#facility-main-wrapper` - Facility form sections
+- `#facility-main-wrapper` - Data form sections
 - `#referrer-main-wrapper` - Referrer-specific sections
 
 ### Form Sections
 - `#operator-section` - Operator information
-- `#identification-section` - Facility identification
+- `#identification-section` - Data identification
 - `#location-section` - Location and address
 - `#operations-section` - Operating period
 - `#staff-section` - Staff information
-- `#facility-section` - Facility details
+- `#facility-section` - Details
 - `#accreditations-section` - Accreditations
 - `#resources-section` - Resources available
 - `#treatment-section` - Treatment types
@@ -123,16 +123,16 @@ The template files now include all required elements:
 - `#submission-section` - Submission controls
 
 ### Form Fields
-- `#facility-name` - Main facility name input
+- `#facility-name` - Main name input
 - `#operator-name` - Operator name input
 - `#project-name` - Project name for saving
 - `#referrer-project-name` - Referrer project name
-- `.facility-field` - Auto-binding facility fields
+- `.facility-field` - Auto-binding data fields
 - `.array-container` - Dynamic array field containers
 - `.autocomplete-wrapper` - Autocomplete inputs
 
 ### Modals
-- `#clone-facility-modal` - Clone facility dialog
+- `#clone-facility-modal` - Clone dialog
 - `#data-organizer-modal` - Data search/organization
 - `#suggestion-reason-modal` - Submission reason input
 
@@ -160,7 +160,7 @@ All form templates use the centralized color system from [css/colors.css](css/co
 
 To verify the setup works:
 1. Create a new page in WordPress
-2. Select "Facility Data Submission Form" or "Admin Facility Data Form" as the page template
+2. Select "Data Form Submission" or "Admin Data Form" as the page template
 3. View the page - you should see the complete form with all sections
 4. The JavaScript should initialize and bind to all form elements
 5. Project management, data loading, and form submission should all function correctly

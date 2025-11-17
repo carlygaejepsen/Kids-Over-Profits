@@ -213,3 +213,109 @@
     border-color: #000080;
     box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
 }
+
+/* Import Section Styles */
+.wiki-editor-page .import-section {
+    margin-bottom: 30px;
+}
+
+.wiki-editor-page .toggle-import-btn {
+    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 20px;
+    border: 2px solid #33A7B5;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    display: block;
+    margin: 0 auto;
+}
+
+.wiki-editor-page .toggle-import-btn:hover {
+    box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
+    transform: translateY(-1px);
+}
+
+.wiki-editor-page .import-panel {
+    margin-top: 20px;
+    background-color: #FFF5CB; /* Soft Pastel Yellow */
+    border: 2px solid #B2E102; /* Chartreuse */
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.wiki-editor-page .import-panel h3 {
+    color: #000080; /* Navy Blue */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.wiki-editor-page .import-panel p {
+    color: #000435; /* Midnight Blue */
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .import-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    border: 2px solid #B6E3D4; /* Mint Green */
+    border-radius: 5px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.9rem;
+    background-color: #FFFFFF;
+    resize: vertical;
+}
+
+.wiki-editor-page .import-textarea:focus {
+    outline: none;
+    border-color: #33A7B5; /* Teal */
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
+}
+
+.wiki-editor-page .import-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: flex-end;
+}
+
+.wiki-editor-page .import-btn {
+    background-color: #B2E102; /* Chartreuse */
+    color: #000435; /* Midnight Blue */
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 2px solid #B2E102;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wiki-editor-page .import-btn:hover {
+    background-color: #33A7B5; /* Teal */
+    border-color: #33A7B5;
+    color: #FFFFFF;
+}
+
+.wiki-editor-page .cancel-btn {
+    background-color: #FFFFFF;
+    color: #000435; /* Midnight Blue */
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 2px solid #AEE0ED; /* Powder Blue */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wiki-editor-page .cancel-btn:hover {
+    background-color: #FE8088; /* Coral Pink */
+    border-color: #FE8088;
+    color: #FFFFFF;
+}

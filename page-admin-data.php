@@ -1,13 +1,13 @@
 <?php
 /**
- * Template Name: Admin Facility Data Form
+ * Template Name: Admin Data Form
  *
- * Administrator form for direct facility data entry and management.
+ * Administrator form for direct data entry and management.
  */
 
 get_header();
 
-// Load the complete HTML structure that facility-form.v3.js expects
-require get_stylesheet_directory() . '/templates/facility-form-admin.php';
+// Load the complete HTML structure that the data form expects
+require get_stylesheet_directory() . '/templates/data-form-admin.php';
 
 get_footer();

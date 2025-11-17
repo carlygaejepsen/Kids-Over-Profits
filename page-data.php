@@ -1,13 +1,13 @@
 <?php
 /**
- * Template Name: Facility Data Submission Form
+ * Template Name: Data Form Submission
  *
- * Public-facing form for submitting facility data suggestions.
+ * Public-facing form for submitting data suggestions.
  */
 
 get_header();
 
-// Load the complete HTML structure that facility-form.v3.js expects
-require get_stylesheet_directory() . '/templates/facility-form-public.php';
+// Load the complete HTML structure that the data form expects
+require get_stylesheet_directory() . '/templates/data-form-public.php';
 
 get_footer();
