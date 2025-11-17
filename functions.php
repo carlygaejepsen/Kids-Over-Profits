@@ -20,28 +20,25 @@ function kadence_child_enqueue_styles() {
         wp_get_theme()->get('Version')
     );
 
-    // Enqueue centralized color palette (loaded before all other custom styles)
-    wp_enqueue_style(
-        'kop-colors',
-        get_stylesheet_directory_uri() . '/css/colors.css',
-        array(),
-        filemtime(get_stylesheet_directory() . '/css/colors.css')
-    );
-
-    // Enqueue data form stylesheet on the data form template pages
+    // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
     if (is_page_template('page-data.php') || is_page_template('page-admin-data.php')) {
-        wp_enqueue_style(
-            'kop-data-form-style',
-            get_stylesheet_directory_uri() . '/css/data-form.css',
-            array('kop-colors'),
-            filemtime(get_stylesheet_directory() . '/css/data-form.css')
-        );
+        $style_path = get_stylesheet_directory() . '/css/data-form.css';
+        if (file_exists($style_path)) {
+            wp_enqueue_style(
+                'kop-data-form-style',
+                get_stylesheet_directory_uri() . '/css/data-form.css',
+                array('kadence-parent-style'),
+                filemtime($style_path)
+            );
+        }
     }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
 /**
  * Determine whether the current request is for a headerless layout.
+ * This is used to conditionally remove the default theme header/footer
+ * when the data form pages are being displayed.
  *
  * @return bool
  */
@@ -519,7 +516,7 @@ function load_facilities_data() {
         wp_enqueue_style(
             'kop-facility-reports-style',
             get_stylesheet_directory_uri() . '/css/facility-reports.css',
-            array('kop-colors'),
+            array(),
             filemtime($reports_style_path)
         );
     }
@@ -530,8 +527,7 @@ function load_facilities_data() {
         array(),
         $script_version,
         true
-    );
-
+);
     $json_sources = array();
 
     if (!empty($rest_endpoint)) {
@@ -653,7 +649,7 @@ function kop_enqueue_report_scripts() {
                 wp_enqueue_style(
                     'kop-facility-reports-style',
                     get_stylesheet_directory_uri() . '/css/facility-reports.css',
-                    array('kop-colors'),
+                    array(),
                     filemtime($reports_style_path)
                 );
             }
@@ -690,9 +686,9 @@ function kop_enqueue_report_scripts() {
 add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 
 /**
- * Load data form script
+ * Load facility form script
  */
-function enqueue_data_form_script() {
+function enqueue_facility_form_script() {
     // Only run on singular pages (posts, pages), not on archive pages.
     if (!is_singular()) {
         return;
@@ -701,18 +697,17 @@ function enqueue_data_form_script() {
     global $post;
     // Check if the page content contains our unique form identifier.
     // This makes the script loading dynamic to any page with the form.
-    $is_data_form_page = (
-        kop_is_headerless_layout() || (isset($post) && has_shortcode($post->post_content, 'data_form'))
-    );
+    $is_data_form_page = (is_object($post) && strpos($post->post_content, '[facility_form]') !== false);
 
     if (!$is_data_form_page) {
         return;
     }
+
     // Enqueue the shared data form stylesheet
     wp_enqueue_style(
         'kop-data-form-style',
         get_stylesheet_directory_uri() . '/css/data-form.css',
-        array('kop-colors'),
+        array(),
         filemtime(get_stylesheet_directory() . '/css/data-form.css')
     );
 
@@ -737,13 +732,13 @@ function enqueue_data_form_script() {
         true
     );
 
-    // Enqueue the main data form script (depends on loader)
+    // Enqueue the main facility form script (depends on loader)
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
     wp_enqueue_script(
-        'data-form-script',
+        'facility-form-script',
         $script_uri,
         array('jquery', 'db-form-loader'), // Now depends on the loader
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
@@ -753,24 +748,22 @@ function enqueue_data_form_script() {
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
 
-    // This makes PHP variables available to your JavaScript file
     // Note: This is localized to the loader script, not the main form script
     $config = array(
         'fallbackProjectsUrl' => $fallback_url,
         'fallbackProjectsUrls' => $dataset_urls,
         'apiBase' => home_url()
     );
-
     error_log('KOP Config being localized: ' . json_encode($config));
 
     wp_localize_script(
         'db-form-loader',
-        'KOP_DATA_FORM_CONFIG',
+        'KOP_FACILITY_FORM_CONFIG',
         $config
     );
 
-    // Enqueue page-specific scripts based on template
-    if (is_page_template('page-data.php')) {
+    // Enqueue page-specific scripts based on slug
+    if (is_page('data')) {
         // Suggestions page - loads data-page.js
         $data_page_relative_path = '/js/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -779,11 +772,11 @@ function enqueue_data_form_script() {
         wp_enqueue_script(
             'data-page-script',
             $data_page_uri,
-            array('jquery', 'data-form-script'), // Depends on main form script
+            array('jquery', 'facility-form-script'), // Depends on main form script
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page_template('page-admin-data.php')) {
+    } elseif (is_page('admin-data')) {
         // Admin page - loads admin-data-page.js
         $admin_page_relative_path = '/js/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
@@ -792,13 +785,13 @@ function enqueue_data_form_script() {
         wp_enqueue_script(
             'admin-data-page-script',
             $admin_page_uri,
-            array('jquery', 'data-form-script'), // Depends on main form script
+            array('jquery', 'facility-form-script'), // Depends on main form script
             file_exists($admin_page_file_path) ? filemtime($admin_page_file_path) : time(),
             true
         );
     }
 }
-add_action('wp_enqueue_scripts', 'enqueue_data_form_script');
+add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
 /**
  * Enqueue News Article Processor scripts
@@ -807,16 +800,16 @@ function enqueue_news_processor_scripts() {
     if (!is_page_template('page-news-processor.php')) {
         return;
     }
-
+    
     $style_relative = '/css/news-processor.css';
     $style_path = get_stylesheet_directory() . $style_relative;
     wp_enqueue_style(
         'news-processor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array('kop-colors'),
+        array(),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
-
+    
     $script_relative = '/js/news-processor.js';
     $script_path = get_stylesheet_directory() . $script_relative;
     wp_enqueue_script(
@@ -842,7 +835,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_style(
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array('kop-colors'),
+        array(),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
 
@@ -868,8 +861,8 @@ function add_approval_page_to_menu() {
         'manage_options',                    // Capability (admin only)
         'approve-facility-edits',            // Menu slug
         'render_approval_page_iframe',       // Callback function
-        'dashicons-yes-alt',                 // Icon
-        25                                   // Position
+        'dashi',                 // Icon
+        6
     );
 }
 add_action('admin_menu', 'add_approval_page_to_menu');
@@ -1018,9 +1011,9 @@ class AnonymousDocPortal {
             );
             
             wp_enqueue_style(
-                'anonymous-portal-css',
-                get_stylesheet_directory_uri() . '/css/anonymous-portal.css',
-                array('kop-colors'),
+                'anonymous-portal-css', 
+                get_stylesheet_directory_uri() . '/css/anonymous-portal.css', 
+                array(), 
                 file_exists($css_path) ? filemtime($css_path) : '1.0'
             );
             
@@ -1044,10 +1037,7 @@ class AnonymousDocPortal {
         <div id="anonymous-doc-portal" class="anonymous-portal-container">
             <div class="portal-header">
                 <h2><?php echo esc_html($atts['title']); ?></h2>
-                <p class="portal-description"><?php echo esc_html($atts['description']); ?></p>
-            </div>
-            
-            <div class="upload-area" id="upload-area">
+                <p class="por id="upload-area">
                 <div class="upload-content">
                     <h3>Drop files here or click to browse</h3>
                     <p>Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG, ZIP</p>
