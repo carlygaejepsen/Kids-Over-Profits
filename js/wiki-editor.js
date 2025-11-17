@@ -627,11 +627,16 @@ ${relatedMediaSection}
                 setValue('natsapStatus', natsapMatch[0].replace(/^.*?\s/, ''));
             }
 
-            // Extract address
-            const addressMatch = historySection.match(/located at \[([^\]]+)\]\(([^)]+)\)/i);
+            // Extract address (allow variations like "located at/as/in")
+            const addressMatch = historySection.match(/located\s+(?:at|as|in)\s+\[([^\]]+)\]\(([^)]+)\)/i);
             if (addressMatch) {
                 setValue('mainAddress', addressMatch[1]);
                 setValue('addressLink', addressMatch[2]);
+            } else {
+                const addressTextMatch = historySection.match(/located\s+(?:at|as|in)\s+([^.\n]+)/i);
+                if (addressTextMatch) {
+                    setValue('mainAddress', addressTextMatch[1].trim());
+                }
             }
 
             // Extract accrediting body
@@ -665,6 +670,21 @@ ${relatedMediaSection}
                     });
                 }
             });
+
+            // Fallback: handle paragraph-style entries without leading bullets
+            const staffParagraphs = staffSection.split(/\n\n+/).filter(p => p.trim().startsWith('**'));
+            staffParagraphs.forEach(block => {
+                const normalized = block.replace(/^\*\s*/, '').trim();
+                const match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)$/is);
+                if (match) {
+                    staffMembers.push({
+                        name: match[1].trim(),
+                        role: match[2].trim(),
+                        bio: (match[3] || '').trim()
+                    });
+                }
+            });
+
             renderList(staffMembers, 'staffListOutput', item => `<strong>${item.name}</strong> - ${item.role}`);
         }
 
