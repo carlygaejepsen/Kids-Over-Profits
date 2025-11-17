@@ -858,14 +858,17 @@ ${relatedMediaSection}
             'Survivor and Parent Testimonials'
         ]);
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-            const lines = testimoniesSection.split('\n').filter(l => l.trim().length > 0);
-            lines.forEach(line => {
-                const cleaned = line.replace(/^\s*[*-]\s*/, '').trim();
-                const unbolded = cleaned.replace(/^\*\*(.*)\*\*$/, '$1').trim();
+            const blocks = testimoniesSection.split(/\n{2,}/).filter(l => l.trim().length > 0);
+            blocks.forEach(block => {
+                const cleaned = block
+                    .replace(/^\s*[*-]\s*/, '') // drop list markers
+                    .replace(/^\s*\*\*([^*]+)\*\*\s*/, '$1 ') // drop leading bold on date/type
+                    .replace(/\n+/g, ' ') // flatten multiline entries
+                    .trim();
                 // Match formats like:
                 // 10/29/2020: (SURVIVOR) "quote" - [Source](url)
                 // (PARENT) "quote" - [Source](url)
-                const match = unbolded.match(/^(?:(.+?):\s+)?\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                const match = cleaned.match(/^(?:(.+?):\s+)?\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     testimonies.push({
                         date: match[1] ? match[1].trim() : '',
