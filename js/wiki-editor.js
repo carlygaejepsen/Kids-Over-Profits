@@ -671,29 +671,38 @@ ${relatedMediaSection}
         // Parse Staff section
         const staffSection = getSection(markdown, 'Founders and Notable Staff');
         if (staffSection && !staffSection.includes('No information is known')) {
-            const staffLines = staffSection.split('\n').filter(line => line.trim().startsWith('*'));
+            const addStaff = (name, role, bio) => {
+                if (!name || !role) return;
+                staffMembers.push({
+                    name: name.trim(),
+                    role: role.trim(),
+                    bio: (bio || '').trim()
+                });
+            };
+
+            const staffLines = staffSection.split('\n').filter(line =>
+                line.trim().startsWith('*') || line.trim().startsWith('-')
+            );
             staffLines.forEach(line => {
-                const match = line.match(/\*\s+\*\*([^*]+)\*\*\s+is the\s+([^\.]+)\.\s*(.*)/);
+                const match = line.match(/^[*-]\s+\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)/i);
                 if (match) {
-                    staffMembers.push({
-                        name: match[1].trim(),
-                        role: match[2].trim(),
-                        bio: match[3].trim()
-                    });
+                    addStaff(match[1], match[2], match[3]);
                 }
             });
 
-            // Fallback: handle paragraph-style entries without leading bullets
+            // Paragraph or line blocks starting with the name in bold
             const staffParagraphs = staffSection.split(/\n\n+/).filter(p => p.trim().startsWith('**'));
             staffParagraphs.forEach(block => {
-                const normalized = block.replace(/^\*\s*/, '').trim();
-                const match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)$/is);
+                const normalized = block.replace(/^[*-]\s*/, '').trim();
+                let match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)$/is);
                 if (match) {
-                    staffMembers.push({
-                        name: match[1].trim(),
-                        role: match[2].trim(),
-                        bio: (match[3] || '').trim()
-                    });
+                    addStaff(match[1], match[2], match[3]);
+                } else {
+                    // Fallback: capture role until first sentence end
+                    match = normalized.match(/^\*\*([^*]+)\*\*\s+([^\.]+)\.\s*(.*)$/is);
+                    if (match) {
+                        addStaff(match[1], match[2], match[3]);
+                    }
                 }
             });
 
