@@ -694,11 +694,8 @@ function enqueue_facility_form_script() {
         return;
     }
 
-    global $post;
-    // Check if the page content contains our unique form identifier.
-    // This makes the script loading dynamic to any page with the form.
-    $is_data_form_page = (is_object($post) && strpos($post->post_content, '[facility_form]') !== false);
-
+    // Use the robust template check instead of a shortcode or slug check.
+    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php');
     if (!$is_data_form_page) {
         return;
     }
