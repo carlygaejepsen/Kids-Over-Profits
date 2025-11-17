@@ -80,6 +80,8 @@ get_header();
                     <input type="text" id="staffName">
                     <label for="staffRole">Role:</label>
                     <input type="text" id="staffRole">
+                    <label for="staffPreviousRoles">Previous roles at other facilities (one per line):</label>
+                    <textarea id="staffPreviousRoles" rows="3" placeholder="e.g., Program Director at SunHawk Academy&#10;Counselor at Spring Mountain Treatment Center"></textarea>
                     <label for="staffBio">Bio/Details (can include Markdown links):</label>
                     <textarea id="staffBio" rows="3" placeholder="e.g., Previously worked at [Another Program](link)..."></textarea>
                     <button type="button" class="add-btn" id="addStaffBtn">Add Staff Member</button>

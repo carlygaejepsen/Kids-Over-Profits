@@ -88,11 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const name = document.getElementById('staffName').value.trim();
             const role = document.getElementById('staffRole').value.trim();
+            const previousRolesRaw = document.getElementById('staffPreviousRoles').value.trim();
             const bio = document.getElementById('staffBio').value.trim();
             if (name && role) {
-                staffMembers.push({ name, role, bio });
-                renderList(staffMembers, 'staffListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}`);
-                clearInputs(['staffName', 'staffRole', 'staffBio']);
+                const previousRoles = previousRolesRaw
+                    ? previousRolesRaw.split('\n').map(r => r.trim()).filter(Boolean)
+                    : [];
+                staffMembers.push({ name, role, bio, previousRoles });
+                renderList(staffMembers, 'staffListOutput', item => {
+                    const previous = item.previousRoles && item.previousRoles.length
+                        ? `<div class="staff-prev">Prev: ${escapeHtml(item.previousRoles.join('; '))}</div>`
+                        : '';
+                    return `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}${previous}`;
+                });
+                clearInputs(['staffName', 'staffRole', 'staffBio', 'staffPreviousRoles']);
             } else {
                 alert('Please enter at least a name and role.');
             }
@@ -280,8 +289,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const roleText = escapeMarkdown(s.role);
                     const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
                     const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(roleText)} ${articleRole}`);
+                    const previousSentence = (s.previousRoles && s.previousRoles.length)
+                        ? ensureSentence(`Previously worked at ${joinWithAnd(s.previousRoles.map(pr => escapeMarkdown(pr)))}`)
+                        : '';
                     const bioSentence = ensureSentence(escapeMarkdown(s.bio || ''));
-                    return [roleSentence, bioSentence].filter(Boolean).join(' ');
+                    return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
                 }).join('\n\n');
             } else {
                 staffSection = getPlaceholder('Founders and Notable Staff', programName);
