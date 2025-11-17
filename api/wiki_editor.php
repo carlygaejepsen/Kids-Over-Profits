@@ -13,6 +13,20 @@ get_header();
         <h1>TTI Wiki Entry Generator</h1>
         <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
 
+        <!-- Import Panel -->
+        <div class="import-section">
+            <button type="button" id="toggleImportBtn" class="toggle-import-btn">📥 Import from Reddit Markdown</button>
+            <div id="importPanel" class="import-panel" style="display: none;">
+                <h3>Import Existing Reddit Markdown</h3>
+                <p>Paste your existing Reddit wiki markdown below to populate the form fields automatically.</p>
+                <textarea id="importTextarea" class="import-textarea" placeholder="Paste your Reddit markdown here..."></textarea>
+                <div class="import-controls">
+                    <button type="button" id="cancelImportBtn" class="cancel-btn">Cancel</button>
+                    <button type="button" id="importBtn" class="import-btn">Import</button>
+                </div>
+            </div>
+        </div>
+
         <form id="wikiForm">
             <fieldset>
                 <legend>Basic Information</legend>
