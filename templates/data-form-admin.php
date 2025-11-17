@@ -1118,4 +1118,81 @@
         </div>
     </div>
 
+    <!-- Data Organizer Modal -->
+    <div id="data-organizer-modal" class="organizer-modal">
+        <div class="organizer-modal-content">
+            <div class="organizer-modal-header">
+                <h2>dY"? Search Facility Data</h2>
+                <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body">
+                <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p class="info-text" style="margin: 0; color: #4b5563;">
+                        <strong>dY"? Find all facilities by a specific data point:</strong>
+                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
+                        <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                            <option value="">Select data point...</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="operator">Operator/Company</option>
+                            <option value="location">Location</option>
+                            <option value="programType">Program Type</option>
+                            <option value="status">Operating Status</option>
+                            <option value="year">Opening Year</option>
+                            <option value="accreditation">Accreditation</option>
+                            <option value="certification">Certification</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="organize-value-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Search for:</label>
+                        <input type="text" id="organize-value-modal" class="input-secondary" placeholder="Type to search..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">dY"? Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
+                </div>
+
+                <div id="organize-results-modal" class="d-none">
+                    <div class="info-box" style="background: #B6E3D4; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #33A7B5;">
+                        <div id="organize-results-title-modal" class="info-title" style="font-weight: 600; color: #000435; margin-bottom: 5px;"></div>
+                        <div id="organize-results-count-modal" class="info-text" style="color: #000080;"></div>
+                    </div>
+
+                    <div id="organize-matches-modal" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggestion Reason Modal -->
+    <div id="suggestion-reason-modal" class="organizer-modal">
+        <div class="organizer-modal-content" style="max-width: 500px;">
+            <div class="organizer-modal-header">
+                <h2 style="margin: 0; font-size: 22px;">Reason for Submission</h2>
+                <button class="organizer-modal-close" id="suggestion-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body">
+                <p style="margin-top: 0; margin-bottom: 15px; color: #4b5563;">Please briefly summarize the changes you made. This helps us review your submission more quickly.</p>
+                <div class="form-group">
+                    <label for="suggestion-summary" style="font-weight: 600;">Summary of Changes:</label>
+                    <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>
+                    <p id="suggestion-error" style="color: #dc2626; font-size: 13px; display: none; margin-top: 5px;">Please provide a summary of your changes.</p>
+                </div>
+                <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn modal-btn-secondary" id="suggestion-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
         </div>

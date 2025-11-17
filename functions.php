@@ -759,8 +759,8 @@ function enqueue_facility_form_script() {
         $config
     );
 
-    // Enqueue page-specific scripts based on slug
-    if (is_page('data')) {
+    // Enqueue page-specific scripts based on template (slug fallback for legacy pages)
+    if (is_page_template('page-data.php') || is_page('data')) {
         // Suggestions page - loads data-page.js
         $data_page_relative_path = '/js/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -773,7 +773,7 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page('admin-data')) {
+    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data')) {
         // Admin page - loads admin-data-page.js
         $admin_page_relative_path = '/js/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
@@ -818,6 +818,71 @@ function enqueue_news_processor_scripts() {
     );
 }
 add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
+
+/**
+ * Enqueue TTI Processor (React article processor) scripts and styles
+ */
+function enqueue_tti_processor_scripts() {
+    if (!is_page_template('page-tti-processor.php')) {
+        return;
+    }
+    
+    // Enqueue React and React-DOM from CDN
+    wp_enqueue_script(
+        'react',
+        'https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.production.min.js',
+        array(),
+        '18.2.0',
+        true
+    );
+    
+    wp_enqueue_script(
+        'react-dom',
+        'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.production.min.js',
+        array('react'),
+        '18.2.0',
+        true
+    );
+    
+    // Enqueue Lucide React icons
+    wp_enqueue_script(
+        'lucide-react',
+        'https://cdn.jsdelivr.net/npm/lucide@latest',
+        array(),
+        'latest',
+        true
+    );
+    
+    // Enqueue Babel standalone for JSX transformation
+    wp_enqueue_script(
+        'babel-standalone',
+        'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js',
+        array(),
+        '7.23.5',
+        true
+    );
+    
+    // Enqueue Tailwind CSS for styling
+    wp_enqueue_style(
+        'tailwind-css',
+        'https://cdn.tailwindcss.com',
+        array(),
+        'latest'
+    );
+    
+    // Enqueue page-specific styles if they exist
+    $style_relative = '/css/tti-processor.css';
+    $style_path = get_stylesheet_directory() . $style_relative;
+    if (file_exists($style_path)) {
+        wp_enqueue_style(
+            'tti-processor-style',
+            get_stylesheet_directory_uri() . $style_relative,
+            array('tailwind-css'),
+            filemtime($style_path)
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_tti_processor_scripts', 10);
 
 /**
  * Enqueue the wiki editor generator assets when its template is used.
@@ -1034,7 +1099,7 @@ class AnonymousDocPortal {
         <div id="anonymous-doc-portal" class="anonymous-portal-container">
             <div class="portal-header">
                 <h2><?php echo esc_html($atts['title']); ?></h2>
-                <p class="por id="upload-area">
+                <div id="upload-area">
                 <div class="upload-content">
                     <h3>Drop files here or click to browse</h3>
                     <p>Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG, ZIP</p>

@@ -279,6 +279,24 @@
                             <label>Notes</label>
                             <textarea id="consultant-notes" class="consultant-field" data-field="notes" rows="4" placeholder="Add notes about this consultant..."></textarea>
                         </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Referrer Submission Section -->
+            <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+                <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                    <h2 class="section-title" style="color: white; pointer-events: none;">dY'_ Save Referrer Project</h2>
+                </div>
+                <div class="section-content" style="display: block;">
+                    <div class="form-group">
+                        <label for="referrer-project-name">Project Name</label>
+                        <input type="text" id="referrer-project-name" placeholder="Enter referrer project name..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="save-master-btn" id="save-referrer-project-btn">
+                            dY'_ Save Referrer Project
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1169,4 +1187,3 @@
             </div>
         </div>
     </div>
-
