@@ -565,6 +565,14 @@ ${relatedMediaSection}
             return result;
         };
 
+        const getSectionAny = (markdown, titles) => {
+            for (const title of titles) {
+                const section = getSection(markdown, title);
+                if (section) return section;
+            }
+            return '';
+        };
+
         // Parse header
         const headerMatch = markdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+(.+)$/m);
         console.log('Header match:', headerMatch);
@@ -669,7 +677,12 @@ ${relatedMediaSection}
         }
 
         // Parse Staff section
-        const staffSection = getSection(markdown, 'Founders and Notable Staff');
+        const staffSection = getSectionAny(markdown, [
+            'Founders and Notable Staff',
+            'Founders & Notable Staff',
+            'Notable Staff',
+            'Founders'
+        ]);
         if (staffSection && !staffSection.includes('No information is known')) {
             const addStaff = (name, role, bio) => {
                 if (!name || !role) return;
@@ -837,7 +850,13 @@ ${relatedMediaSection}
         }
 
         // Parse Testimonies section
-        const testimoniesSection = getSection(markdown, 'Survivor Testimonies');
+        const testimoniesSection = getSectionAny(markdown, [
+            'Survivor Testimonies',
+            'Survivor/Parent Testimonials',
+            'Survivor/Parent Testimonies',
+            'Survivor Testimonials',
+            'Survivor and Parent Testimonials'
+        ]);
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
             const lines = testimoniesSection.split('\n').filter(l => l.trim().length > 0);
             lines.forEach(line => {
