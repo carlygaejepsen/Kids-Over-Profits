@@ -1,6 +1,6 @@
 .news-processor-wrapper {
     min-height: 100vh;
-    background: linear-gradient(to bottom right, #b6e3d4, #aee0ed);
+    background: linear-gradient(to bottom right, #B6E3D4, #AEE0ED); /* Mint Green to Powder Blue */
     padding: 2rem;
 }
 
@@ -10,15 +10,16 @@
 }
 
 .news-card {
-    background: white;
+    background: #FFFFFF; /* White */
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 68, 53, 0.1);
     overflow: hidden;
+    border: 2px solid #B6E3D4; /* Mint Green */
 }
 
 .news-header {
-    background: linear-gradient(to right, #33a7b5, #000080);
-    color: white;
+    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+    color: #FFFFFF; /* White */
     padding: 2rem;
 }
 
@@ -26,15 +27,16 @@
     font-size: 1.875rem;
     font-weight: bold;
     margin: 0 0 0.5rem 0;
+    color: #FFFFFF;
 }
 
 .news-header p {
-    color: #aee0ed;
+    color: #AEE0ED; /* Powder Blue */
     margin: 0;
 }
 
 .news-section {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #B6E3D4; /* Mint Green */
 }
 
 .news-section-header {
@@ -43,14 +45,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: #f9fafb;
+    background: #FFF5CB; /* Soft Pastel Yellow */
     border: none;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .news-section-header:hover {
-    background: #f3f4f6;
+    background: #ECF385; /* Pale Spring Yellow */
 }
 
 .news-section-title {
@@ -61,31 +63,34 @@
 
 .news-icon {
     font-size: 1.25rem;
+    color: #33A7B5; /* Teal */
 }
 
 .news-section-title h2 {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #000080; /* Navy Blue */
     margin: 0;
 }
 
 .news-count {
     font-size: 0.875rem;
-    color: #6b7280;
-    background: white;
+    color: #000435; /* Midnight Blue */
+    background: #FFFFFF; /* White */
     padding: 0.25rem 0.5rem;
     border-radius: 9999px;
+    border: 1px solid #B6E3D4; /* Mint Green */
 }
 
 .news-chevron {
-    color: #6b7280;
+    color: #33A7B5; /* Teal */
     font-size: 1rem;
 }
 
 .news-section-content {
     display: none;
     padding: 1.5rem;
+    background: #FFFFFF; /* White */
 }
 
 .news-section-content.active {
@@ -100,17 +105,25 @@
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: #000435; /* Midnight Blue */
     margin-bottom: 0.25rem;
 }
 
 .news-input, .news-textarea {
     width: 100%;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
+    border: 2px solid #B6E3D4; /* Mint Green */
     border-radius: 0.375rem;
     font-size: 1rem;
-    outline-color: #33a7b5;
+    background-color: #FFFFFF;
+    color: #000435; /* Midnight Blue */
+    transition: border-color 0.2s ease;
+}
+
+.news-input:focus, .news-textarea:focus {
+    outline: none;
+    border-color: #33A7B5; /* Teal */
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
 }
 
 .news-textarea {
@@ -142,18 +155,21 @@
 
 .news-save-btn {
     padding: 0.5rem 0.75rem;
-    background-color: #ecf385;
-    color: #000000;
-    border: none;
+    background-color: #B2E102; /* Chartreuse */
+    color: #000435; /* Midnight Blue */
+    border: 2px solid #B2E102;
     border-radius: 0.375rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: 600;
+    transition: all 0.2s;
     flex-shrink: 0;
     height: fit-content;
 }
 
 .news-save-btn:hover {
-    background-color: #d9e070;
+    background-color: #33A7B5; /* Teal */
+    border-color: #33A7B5;
+    color: #FFFFFF;
 }
 
 .news-saved-tags {
@@ -168,16 +184,17 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.25rem 0.5rem;
-    background-color: #b6e3d4;
-    color: #000000;
+    background-color: #B6E3D4; /* Mint Green */
+    color: #000435; /* Midnight Blue */
     font-size: 0.75rem;
     border-radius: 9999px;
+    border: 1px solid #33A7B5; /* Teal */
 }
 
 .news-tag-remove {
     background: none;
     border: none;
-    color: #33a7b5;
+    color: #FE8088; /* Coral Pink */
     cursor: pointer;
     font-size: 1rem;
     line-height: 1;
@@ -186,7 +203,7 @@
 }
 
 .news-tag-remove:hover {
-    color: #000080;
+    color: #FC8ED6; /* Bubblegum Pink */
 }
 
 .news-warnings-grid {
@@ -204,28 +221,30 @@
 .news-warning-btn {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
-    border: 1px solid #d1d5db;
+    border: 2px solid #AEE0ED; /* Powder Blue */
     border-radius: 0.375rem;
-    background: #f9fafb;
-    color: #374151;
+    background: #FFFFFF; /* White */
+    color: #000435; /* Midnight Blue */
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
+    font-weight: 500;
 }
 
 .news-warning-btn:hover {
-    background: #f3f4f6;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    border-color: #33A7B5; /* Teal */
 }
 
 .news-warning-btn.active {
-    background-color: #fe8088;
-    border-color: #fe8088;
-    color: #ffffff;
+    background-color: #FE8088; /* Coral Pink */
+    border-color: #FE8088;
+    color: #FFFFFF;
 }
 
 .news-info-box {
-    background-color: #aee0ed;
-    border-left: 4px solid #33a7b5;
+    background-color: #AEE0ED; /* Powder Blue */
+    border-left: 4px solid #33A7B5; /* Teal */
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 0.375rem;
@@ -234,13 +253,13 @@
 .news-info-box strong {
     display: block;
     margin-bottom: 0.5rem;
-    color: #000435;
+    color: #000435; /* Midnight Blue */
 }
 
 .news-info-box ul {
     margin: 0;
     padding-left: 1.5rem;
-    color: #000435;
+    color: #000435; /* Midnight Blue */
 }
 
 .news-info-box li {
@@ -257,13 +276,13 @@
 .news-checkbox-group input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
-    accent-color: #33a7b5;
+    accent-color: #33A7B5; /* Teal */
 }
 
 .news-checkbox-group label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: #000435; /* Midnight Blue */
     margin: 0;
     cursor: pointer;
 }
@@ -278,41 +297,43 @@
 .news-type-btn {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    border: 1px solid #d1d5db;
+    border: 2px solid #B6E3D4; /* Mint Green */
     border-radius: 0.375rem;
-    background: white;
-    color: #374151;
+    background: #FFFFFF; /* White */
+    color: #000435; /* Midnight Blue */
     cursor: pointer;
+    font-weight: 500;
     transition: all 0.2s;
 }
 
 .news-type-btn:hover {
-    background: #f9fafb;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    border-color: #33A7B5; /* Teal */
 }
 
 .news-type-btn.active {
-    background-color: #000080;
+    background-color: #000080; /* Navy Blue */
     border-color: #000080;
-    color: #ffffff;
+    color: #FFFFFF;
 }
 
 .news-type-form {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 2px solid #AEE0ED; /* Powder Blue */
 }
 
 .news-type-form h3 {
     font-size: 1rem;
     font-weight: 600;
-    color: #374151;
+    color: #000080; /* Navy Blue */
     margin: 0 0 1rem 0;
 }
 
 .news-footer {
     padding: 1.5rem;
-    background: #f9fafb;
-    border-top: 1px solid #e5e7eb;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    border-top: 2px solid #B6E3D4; /* Mint Green */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
@@ -322,32 +343,37 @@
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 600;
-    border: none;
+    border: 2px solid transparent;
     border-radius: 0.375rem;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: white;
+    box-shadow: 0 2px 4px rgba(0, 68, 53, 0.1);
+    color: #FFFFFF; /* White */
 }
 
 .news-btn:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px rgba(0, 68, 53, 0.2);
+    transform: translateY(-1px);
 }
 
 .news-btn-primary {
-    background: linear-gradient(to right, #33a7b5, #000080);
+    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+    border-color: #000080;
 }
 
 .news-btn-secondary {
-    background: linear-gradient(to right, #ef9034, #fe8088);
+    background: linear-gradient(to right, #EF9034, #FE8088); /* Orange to Coral Pink */
+    border-color: #EF9034;
 }
 
 .news-btn-clear {
-    background: #6b7280;
+    background: #000435; /* Midnight Blue */
+    border-color: #000435;
 }
 
 .news-btn-clear:hover {
-    background: #4b5563;
+    background: #000080; /* Navy Blue */
+    border-color: #000080;
 }
 
 

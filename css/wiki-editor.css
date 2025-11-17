@@ -1,7 +1,7 @@
 .wiki-editor-page {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    background-color: #F2EEDF; /* Sand / Warm Ivory */
+    color: #000435; /* Midnight Blue */
     line-height: 1.6;
     padding: 20px;
 }
@@ -9,16 +9,17 @@
 .wiki-editor-page .wiki-editor-container {
     max-width: 900px;
     margin: 0 auto;
-    background-color: #ffffff;
+    background-color: #FFFFFF; /* White */
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 68, 53, 0.1);
+    border: 2px solid #B6E3D4; /* Mint Green */
 }
 
 .wiki-editor-page h1,
 .wiki-editor-page h2 {
-    color: #1a1a1b;
-    border-bottom: 2px solid #eee;
+    color: #000080; /* Navy Blue */
+    border-bottom: 3px solid #33A7B5; /* Teal */
     padding-bottom: 10px;
 }
 
@@ -29,6 +30,7 @@
 .wiki-editor-page h4 {
     margin-top: 15px;
     margin-bottom: 5px;
+    color: #000080; /* Navy Blue */
 }
 
 .wiki-editor-page form {
@@ -37,17 +39,17 @@
 }
 
 .wiki-editor-page fieldset {
-    border: 1px solid #ddd;
+    border: 2px solid #AEE0ED; /* Powder Blue */
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    background-color: #fafafa;
+    background-color: #FFF5CB; /* Soft Pastel Yellow */
 }
 
 .wiki-editor-page legend {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #0079d3;
+    color: #33A7B5; /* Teal */
     padding: 0 10px;
 }
 
@@ -56,6 +58,7 @@
     margin-top: 15px;
     margin-bottom: 5px;
     display: block;
+    color: #000435; /* Midnight Blue */
 }
 
 .wiki-editor-page input[type="text"],
@@ -63,11 +66,21 @@
 .wiki-editor-page select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 2px solid #B6E3D4; /* Mint Green */
     border-radius: 5px;
     box-sizing: border-box;
     font-family: inherit;
     font-size: 1rem;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s ease;
+}
+
+.wiki-editor-page input[type="text"]:focus,
+.wiki-editor-page textarea:focus,
+.wiki-editor-page select:focus {
+    outline: none;
+    border-color: #33A7B5; /* Teal */
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
 }
 
 .wiki-editor-page textarea {
@@ -76,47 +89,51 @@
 
 .wiki-editor-page hr {
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 2px solid #AEE0ED; /* Powder Blue */
     margin: 20px 0;
 }
 
 .wiki-editor-page button#generateBtn {
-    background-color: #0079d3;
-    color: #fff;
+    background-color: #33A7B5; /* Teal */
+    color: #FFFFFF;
     font-size: 1.1rem;
     font-weight: 700;
     padding: 14px 20px;
-    border: none;
+    border: 2px solid #33A7B5;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 25px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .wiki-editor-page button#generateBtn:hover {
-    background-color: #005fa3;
+    background-color: #000080; /* Navy Blue */
+    border-color: #000080;
+    box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
 }
 
 .wiki-editor-page .add-btn {
-    background-color: #2e8b57;
-    color: #fff;
+    background-color: #B6E3D4; /* Mint Green */
+    color: #000435; /* Midnight Blue */
     font-size: 0.9rem;
     font-weight: 600;
     padding: 10px 15px;
-    border: none;
+    border: 2px solid #33A7B5; /* Teal border */
     border-radius: 5px;
     cursor: pointer;
     margin-top: 15px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .wiki-editor-page .add-btn:hover {
-    background-color: #256d44;
+    background-color: #33A7B5; /* Teal */
+    color: #FFFFFF;
+    border-color: #000080; /* Navy Blue */
 }
 
 .wiki-editor-page .form-adder {
-    background: #fff;
-    border: 1px solid #eee;
+    background: #FFFFFF;
+    border: 2px solid #B2E102; /* Chartreuse accent border */
     border-radius: 5px;
     padding: 15px;
 }
@@ -127,8 +144,8 @@
 
 .wiki-editor-page .list-preview {
     margin-top: 15px;
-    background: #f6f7f8;
-    border: 1px dashed #ccc;
+    background: #AEE0ED; /* Powder Blue */
+    border: 2px dashed #33A7B5; /* Teal */
     border-radius: 5px;
     padding: 10px;
     min-height: 40px;
@@ -137,10 +154,13 @@
 .wiki-editor-page .list-preview-item {
     font-size: 0.9rem;
     padding: 8px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #B6E3D4; /* Mint Green */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #FFFFFF;
+    margin-bottom: 5px;
+    border-radius: 3px;
 }
 
 .wiki-editor-page .list-preview-item:last-child {
@@ -148,36 +168,48 @@
 }
 
 .wiki-editor-page .list-preview-item button {
-    background: #c82333;
-    color: #fff;
-    border: none;
+    background: #FE8088; /* Coral Pink */
+    color: #FFFFFF;
+    border: 2px solid #FE8088;
     font-size: 0.8rem;
     padding: 4px 8px;
     border-radius: 3px;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wiki-editor-page .list-preview-item button:hover {
+    background: #FC8ED6; /* Bubblegum Pink */
+    border-color: #FC8ED6;
 }
 
 .wiki-editor-page #outputCode {
     width: 100%;
     height: 400px;
-    background-color: #f6f7f8;
-    border-color: #ddd;
+    background-color: #ECF385; /* Pale Spring Yellow */
+    border: 2px solid #33A7B5; /* Teal */
+    border-radius: 5px;
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9rem;
     margin-top: 10px;
+    padding: 12px;
+    color: #000435; /* Midnight Blue */
 }
 
 .wiki-editor-page #copyBtn {
-    background-color: #4caf50;
-    color: #fff;
+    background-color: #EF9034; /* Orange */
+    color: #FFFFFF;
     font-weight: 600;
     padding: 12px 20px;
-    border: none;
+    border: 2px solid #EF9034;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    transition: all 0.2s ease;
 }
 
 .wiki-editor-page #copyBtn:hover {
-    background-color: #45a049;
+    background-color: #000080; /* Navy Blue */
+    border-color: #000080;
+    box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
 }

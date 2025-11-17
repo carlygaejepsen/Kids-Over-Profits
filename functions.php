@@ -20,12 +20,20 @@ function kadence_child_enqueue_styles() {
         wp_get_theme()->get('Version')
     );
 
-    // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
-    if (is_page('data') || is_page('admin-data')) {
+    // Enqueue centralized color palette (loaded before all other custom styles)
+    wp_enqueue_style(
+        'kop-colors',
+        get_stylesheet_directory_uri() . '/css/colors.css',
+        array(),
+        filemtime(get_stylesheet_directory() . '/css/colors.css')
+    );
+
+    // Enqueue data form stylesheet on the data form template pages
+    if (is_page_template('page-data.php') || is_page_template('page-admin-data.php')) {
         wp_enqueue_style(
             'kop-data-form-style',
             get_stylesheet_directory_uri() . '/css/data-form.css',
-            array(),
+            array('kop-colors'),
             filemtime(get_stylesheet_directory() . '/css/data-form.css')
         );
     }
@@ -38,7 +46,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * @return bool
  */
 function kop_is_headerless_layout() {
-    return is_page('data') || is_page('admin-data');
+    return is_page_template('page-data.php') || is_page_template('page-admin-data.php');
 }
 
 /**
@@ -511,7 +519,7 @@ function load_facilities_data() {
         wp_enqueue_style(
             'kop-facility-reports-style',
             get_stylesheet_directory_uri() . '/css/facility-reports.css',
-            array(),
+            array('kop-colors'),
             filemtime($reports_style_path)
         );
     }
@@ -645,7 +653,7 @@ function kop_enqueue_report_scripts() {
                 wp_enqueue_style(
                     'kop-facility-reports-style',
                     get_stylesheet_directory_uri() . '/css/facility-reports.css',
-                    array(),
+                    array('kop-colors'),
                     filemtime($reports_style_path)
                 );
             }
@@ -704,7 +712,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_style(
         'kop-data-form-style',
         get_stylesheet_directory_uri() . '/css/data-form.css',
-        array(),
+        array('kop-colors'),
         filemtime(get_stylesheet_directory() . '/css/data-form.css')
     );
 
@@ -761,8 +769,8 @@ function enqueue_facility_form_script() {
         $config
     );
 
-    // Enqueue page-specific scripts based on slug
-    if (is_page('data')) {
+    // Enqueue page-specific scripts based on template
+    if (is_page_template('page-data.php')) {
         // Suggestions page - loads data-page.js
         $data_page_relative_path = '/js/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -775,7 +783,7 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page('admin-data')) {
+    } elseif (is_page_template('page-admin-data.php')) {
         // Admin page - loads admin-data-page.js
         $admin_page_relative_path = '/js/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
@@ -805,7 +813,7 @@ function enqueue_news_processor_scripts() {
     wp_enqueue_style(
         'news-processor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
 
@@ -834,7 +842,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_style(
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
 
@@ -1010,9 +1018,9 @@ class AnonymousDocPortal {
             );
             
             wp_enqueue_style(
-                'anonymous-portal-css', 
-                get_stylesheet_directory_uri() . '/css/anonymous-portal.css', 
-                array(), 
+                'anonymous-portal-css',
+                get_stylesheet_directory_uri() . '/css/anonymous-portal.css',
+                array('kop-colors'),
                 file_exists($css_path) ? filemtime($css_path) : '1.0'
             );
             

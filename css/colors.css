@@ -1,0 +1,44 @@
+/**
+ * Kids Over Profits - Color Palette
+ *
+ * Centralized color definitions from AGENTS.md
+ * These CSS custom properties ensure consistent color usage across all templates.
+ */
+
+:root {
+    /* Primary Campaign Colors */
+    --kop-soft-pastel-yellow: #FFF5CB;
+    --kop-mint-green: #B6E3D4;
+    --kop-teal: #33A7B5;
+    --kop-navy-blue: #000080;
+    --kop-midnight-blue: #000435;
+    --kop-orange: #EF9034;
+    --kop-white: #FFFFFF;
+    --kop-chartreuse: #B2E102;
+    --kop-pale-spring-yellow: #ECF385;
+    --kop-coral-pink: #FE8088;
+    --kop-sand: #F2EEDF;
+    --kop-powder-blue: #AEE0ED;
+    --kop-bubblegum-pink: #FC8ED6;
+
+    /* Semantic Color Aliases */
+    --kop-bg-primary: var(--kop-sand);
+    --kop-bg-secondary: var(--kop-white);
+    --kop-bg-accent: var(--kop-soft-pastel-yellow);
+
+    --kop-text-primary: var(--kop-midnight-blue);
+    --kop-text-secondary: var(--kop-navy-blue);
+
+    --kop-border-primary: var(--kop-mint-green);
+    --kop-border-secondary: var(--kop-powder-blue);
+    --kop-border-accent: var(--kop-chartreuse);
+
+    --kop-button-primary: var(--kop-teal);
+    --kop-button-primary-hover: var(--kop-navy-blue);
+    --kop-button-accent: var(--kop-orange);
+    --kop-button-success: var(--kop-mint-green);
+    --kop-button-danger: var(--kop-coral-pink);
+
+    --kop-focus-color: var(--kop-teal);
+    --kop-focus-shadow: rgba(51, 167, 181, 0.1);
+}
