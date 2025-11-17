@@ -693,11 +693,17 @@ ${relatedMediaSection}
                 });
             };
 
+            const cleanStaffBlock = (text) => text
+                .replace(/^[*-]\s*/, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
             const staffLines = staffSection.split('\n').filter(line =>
                 line.trim().startsWith('*') || line.trim().startsWith('-')
             );
             staffLines.forEach(line => {
-                const match = line.match(/^[*-]\s+\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)/i);
+                const normalized = cleanStaffBlock(line);
+                const match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.?\s*(.*)$/i);
                 if (match) {
                     addStaff(match[1], match[2], match[3]);
                 }
@@ -706,16 +712,14 @@ ${relatedMediaSection}
             // Paragraph or line blocks starting with the name in bold
             const staffParagraphs = staffSection.split(/\n\n+/).filter(p => p.trim().startsWith('**'));
             staffParagraphs.forEach(block => {
-                const normalized = block.replace(/^[*-]\s*/, '').trim();
-                let match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.\s*(.*)$/is);
+                const normalized = cleanStaffBlock(block);
+                let match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.?\s*(.*)$/i);
                 if (match) {
                     addStaff(match[1], match[2], match[3]);
                 } else {
                     // Fallback: capture role until first sentence end
-                    match = normalized.match(/^\*\*([^*]+)\*\*\s+([^\.]+)\.\s*(.*)$/is);
-                    if (match) {
-                        addStaff(match[1], match[2], match[3]);
-                    }
+                    match = normalized.match(/^\*\*([^*]+)\*\*\s+([^\.]+)\.?\s*(.*)$/i);
+                    if (match) addStaff(match[1], match[2], match[3]);
                 }
             });
 
@@ -863,6 +867,7 @@ ${relatedMediaSection}
                 const cleaned = block
                     .replace(/^\s*[*-]\s*/, '') // drop list markers
                     .replace(/^\s*\*\*([^*]+)\*\*\s*/, '$1 ') // drop leading bold on date/type
+                    .replace(/\*\*/g, '') // remove stray bold markers mid-line
                     .replace(/\n+/g, ' ') // flatten multiline entries
                     .trim();
                 // Match formats like:
