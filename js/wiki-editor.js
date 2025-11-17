@@ -264,54 +264,60 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Build Staff Section ---
             let staffSection;
             if (staffMembers.length > 0) {
-                staffSection = staffMembers.map(s => `* **${escapeMarkdown(s.name)}** is the ${escapeMarkdown(s.role)}. ${s.bio ? escapeMarkdown(s.bio) : ''}`).join('\n');
+                staffSection = staffMembers.map(s => {
+                    const bioPart = s.bio ? ` ${escapeMarkdown(s.bio)}` : '';
+                    return `**${escapeMarkdown(s.name)}** is the ${escapeMarkdown(s.role)}.${bioPart}`.trim();
+                }).join('\n\n');
             } else {
                 staffSection = getPlaceholder('Founders and Notable Staff', programName);
             }
 
             // --- Build Structure Section ---
             let structureSection = '';
-            const levelDesc = vals.levelSystemDesc ? `Like many other behavior-modification programs, ${escapeMarkdown(programName)} uses ${vals.levelSystemDesc}. The levels are:\n\n` : '';
-            const levelList = programLevels.map(l => `* **"${escapeMarkdown(l.name)}"** - ${escapeMarkdown(l.desc)}`).join('\n\n');
-            const structureMisc = vals.structureMisc ? `\n\n${vals.structureMisc}` : '';
-
-            if (levelDesc || levelList || structureMisc) {
-                structureSection = `${levelDesc}${levelList}${structureMisc}`;
-            } else {
-                structureSection = getPlaceholder('Program Structure', programName);
+            const structureParts = [];
+            if (vals.levelSystemDesc) {
+                structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses ${escapeMarkdown(vals.levelSystemDesc)}. The levels are:`);
             }
+            const levelList = programLevels.length > 0
+                ? programLevels.map(l => `- ${escapeMarkdown(l.name)}${l.desc ? ` — ${escapeMarkdown(l.desc)}` : ''}`).join('\n')
+                : '';
+            if (levelList) structureParts.push(levelList);
+            if (vals.structureMisc) structureParts.push(vals.structureMisc);
+            structureSection = structureParts.length > 0 ? structureParts.join('\n\n') : getPlaceholder('Program Structure', programName);
 
             // --- Build Rules & Punishments Section ---
             let rulesSection = '';
+            const rulesParts = [];
             const rulesList = processSimpleList(vals.rulesList);
-            const rulesHeader = rulesList ? `${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n` : '';
-            const punishmentsDesc = vals.punishmentsDesc ? `\n\n${vals.punishmentsDesc}` : '';
-
-            if (rulesList || punishmentsDesc) {
-                rulesSection = `${rulesHeader}${rulesList}${punishmentsDesc}`;
-            } else {
-                rulesSection = getPlaceholder('Rules and Punishments', programName);
+            if (rulesList) {
+                rulesParts.push(`${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n${rulesList.replace(/^\*/gm, '-')}`);
             }
+            if (vals.punishmentsDesc) {
+                rulesParts.push(vals.punishmentsDesc);
+            }
+            rulesSection = rulesParts.length > 0 ? rulesParts.join('\n\n') : getPlaceholder('Rules and Punishments', programName);
 
             // --- Build Abuse Section ---
             let abuseSection = '';
-            const mainComplaints = vals.mainComplaints ? `Many survivors have reported that abuse and neglect have occurred at ${escapeMarkdown(programName)}. The main complaints are of ${vals.mainComplaints}.` : '';
-            const otherAllegationsList = processSimpleList(vals.otherAllegationsList);
-            const otherAllegationsHeader = otherAllegationsList ? `\n\nOther allegations of abuse and neglect which have been reported by survivors include but are not limited to:\n\n` : '';
-            const lawsuits = vals.lawsuits ? `\n\n${vals.lawsuits}` : '';
-
-            if (mainComplaints || otherAllegationsList || lawsuits) {
-                abuseSection = `${mainComplaints}${otherAllegationsHeader}${otherAllegationsList}${lawsuits}`;
-            } else {
-                abuseSection = getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
+            const abuseParts = [];
+            if (vals.mainComplaints) {
+                abuseParts.push(`Many survivors have reported that abuse and neglect have occurred at ${escapeMarkdown(programName)}. The main complaints are of ${vals.mainComplaints}.`);
             }
+            const otherAllegationsList = processSimpleList(vals.otherAllegationsList);
+            if (otherAllegationsList) {
+                abuseParts.push(`Other allegations of abuse and neglect which have been reported by survivors include but are not limited to:\n\n${otherAllegationsList.replace(/^\*/gm, '-')}`);
+            }
+            if (vals.lawsuits) {
+                abuseParts.push(vals.lawsuits);
+            }
+            abuseSection = abuseParts.length > 0 ? abuseParts.join('\n\n') : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
 
             // --- Build Media Section (Combined) ---
-            const mediaList = processSimpleList(vals.mediaInfo);
+            const mediaList = processSimpleList(vals.mediaInfo).replace(/^\*/gm, '-');
             const newsList = newsArticles.map(a => {
                 let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
                 if (sourceDate) sourceDate = ` (${sourceDate})`;
-                return `* [${escapeMarkdown(a.title)}](${a.url})${sourceDate}`;
+                return `- [${escapeMarkdown(a.title)}](${a.url})${sourceDate}`;
             }).join('\n');
             const combinedMedia = [mediaList, newsList].filter(Boolean).join('\n\n');
             const mediaSection = combinedMedia || getPlaceholder('In the Media', programName);
@@ -321,8 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (testimonies.length > 0) {
                 testimoniesSection = testimonies.map(t => {
                     const datePart = t.date ? `${t.date}: ` : '';
-                    return `* ${datePart}(${t.type}) "${escapeMarkdown(t.quote)}" - [${escapeMarkdown(t.source)}](${t.url})`;
-                }).join('\n');
+                    return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - [${escapeMarkdown(t.source)}](${t.url})`;
+                }).join('\n\n');
             } else {
                 testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
             }
@@ -330,62 +336,64 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Build Related Media Section ---
             let relatedMediaSection;
             if (relatedMedia.length > 0) {
-                relatedMediaSection = relatedMedia.map(m => `* [${escapeMarkdown(m.title)}](${m.url})`).join('\n');
+                relatedMediaSection = relatedMedia.map(m => `- [${escapeMarkdown(m.title)}](${m.url})`).join('\n\n');
             } else {
                 relatedMediaSection = getPlaceholder('Related Media', programName);
             }
 
+            const headerLine = `#**${escapeMarkdown(programName)}** (${vals.yearsActive || '[Years Active]'}) ${vals.cityState || '[City, ST]'}`;
+            const sectionBreak = '\n***\n\n';
+
             // --- Assemble Final Output ---
             const output = `
-## ${escapeMarkdown(programName)} (${vals.yearsActive || '[Years Active]'}) ${vals.cityState || '[City, ST]'}
-
+${headerLine}
 *${vals.programType || '[Program Type]'}*
 
----
+***
 
-### History and Background Information
+##**History and Background Information**
 
 ${historySection}
 
----
+***
 
-### Founders and Notable Staff
+##**Founders and Notable Staff**
 
 ${staffSection}
 
----
+***
 
-### Program Structure
+##**Program Structure**
 
 ${structureSection}
 
----
+***
 
-### Rules and Punishments
+##**Rules and Punishments**
 
 ${rulesSection}
 
----
+***
 
-### Abuse/Neglect Allegations and Lawsuits
+##**Abuse/Neglect Allegations and Lawsuits**
 
 ${abuseSection}
 
----
+***
 
-### In the Media
+##**In the Media**
 
 ${mediaSection}
 
----
+***
 
-### Survivor Testimonies
+##**Survivor Testimonies**
 
 ${testimoniesSection}
 
----
+***
 
-### Related Media
+##**Related Media**
 
 ${relatedMediaSection}
             `;
@@ -483,6 +491,10 @@ ${relatedMediaSection}
                 return;
             }
 
+            console.log('=== IMPORT DEBUG ===');
+            console.log('Markdown length:', markdown.length);
+            console.log('First 200 characters:', markdown.substring(0, 200));
+
             try {
                 parseAndPopulate(markdown);
                 alert('Import successful! Form fields have been populated. Review and edit as needed.');
@@ -498,6 +510,7 @@ ${relatedMediaSection}
 
     // --- PARSER FUNCTION ---
     function parseAndPopulate(markdown) {
+        console.log('parseAndPopulate called');
         staffMembers = [];
         programLevels = [];
         newsArticles = [];
@@ -507,25 +520,37 @@ ${relatedMediaSection}
         // Helper to safely set element values
         const setValue = (id, value) => {
             const el = document.getElementById(id);
-            if (el) el.value = value;
+            if (el) {
+                el.value = value;
+                console.log(`Set ${id} = "${value}"`);
+            } else {
+                console.warn(`Element not found: ${id}`);
+            }
         };
 
+        const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
         const getSection = (markdown, sectionTitle) => {
-            const regex = new RegExp(`###\\s+${sectionTitle}\\s*\\n([\\s\\S]*?)(?=\\n###|$)`, 'i');
+            const regex = new RegExp(`^#{1,6}\\s*\\**${escapeRegex(sectionTitle)}\\**\\s*\\n([\\s\\S]*?)(?=^#{1,6}\\s*\\**[^\\n]+\\**\\s*$|\\z)`, 'im');
             const match = markdown.match(regex);
-            return match ? match[1].trim() : '';
+            const result = match ? match[1].trim() : '';
+            console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
+            return result;
         };
 
         // Parse header
-        const headerMatch = markdown.match(/##\s+(.+?)\s+\(([^)]+)\)\s+(.+)/);
+        const headerMatch = markdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+(.+)$/m);
+        console.log('Header match:', headerMatch);
         if (headerMatch) {
             setValue('programName', headerMatch[1].trim());
             setValue('yearsActive', headerMatch[2].trim());
             setValue('cityState', headerMatch[3].trim());
+        } else {
+            console.warn('No header match found. Looking for pattern: ## ProgramName (Years) City, ST');
         }
 
         // Parse program type
-        const typeMatch = markdown.match(/##.*\n\s*\*([^*]+)\*/);
+        const typeMatch = markdown.match(/^\s*\*([^*]+)\*\s*$/m);
         if (typeMatch) {
             setValue('programType', typeMatch[1].trim());
         }
