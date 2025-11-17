@@ -839,16 +839,24 @@ ${relatedMediaSection}
         // Parse Testimonies section
         const testimoniesSection = getSection(markdown, 'Survivor Testimonies');
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-            const testimonyMatches = testimoniesSection.matchAll(/\*\s+(?:([^:]+):\s+)?\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/g);
-            for (const match of testimonyMatches) {
-                testimonies.push({
-                    date: match[1] ? match[1].trim() : '',
-                    type: match[2].trim(),
-                    quote: match[3].trim(),
-                    source: match[4].trim(),
-                    url: match[5].trim()
-                });
-            }
+            const lines = testimoniesSection.split('\n').filter(l => l.trim().length > 0);
+            lines.forEach(line => {
+                const cleaned = line.replace(/^\s*[*-]\s*/, '').trim();
+                const unbolded = cleaned.replace(/^\*\*(.*)\*\*$/, '$1').trim();
+                // Match formats like:
+                // 10/29/2020: (SURVIVOR) "quote" - [Source](url)
+                // (PARENT) "quote" - [Source](url)
+                const match = unbolded.match(/^(?:(.+?):\s+)?\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                if (match) {
+                    testimonies.push({
+                        date: match[1] ? match[1].trim() : '',
+                        type: match[2].trim(),
+                        quote: match[3].trim(),
+                        source: match[4].trim(),
+                        url: match[5].trim()
+                    });
+                }
+            });
             renderList(testimonies, 'testimonyListOutput', item => `<strong>(${item.type})</strong> ${item.quote.substring(0, 30)}... [${item.source}]`);
         }
 
