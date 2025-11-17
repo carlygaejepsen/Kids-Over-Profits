@@ -204,27 +204,62 @@ document.addEventListener('DOMContentLoaded', () => {
                     .join('\n');
             };
 
+            // --- Helper: Join With "and" for natural sentences ---
+            const joinWithAnd = (items) => {
+                if (items.length === 1) return items[0];
+                if (items.length === 2) return `${items[0]} and ${items[1]}`;
+                return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+            };
+
             // --- Build History Section ---
             let historySection = '';
-            const historyParts = [];
-            if (vals.yearFounded) historyParts.push(`${escapeMarkdown(programName)} is a ${escapeMarkdown(vals.programType || '[program type]')} founded in ${vals.yearFounded}.`);
-            if (vals.ownerName) historyParts.push(`The program was [originally/currently] owned by ${createLink(vals.ownerName, vals.ownerLink)}.`);
-            if (vals.ageRange) historyParts.push(`It is marketed as a [program's marketing claims] for teenagers aged ${vals.ageRange}.`);
-            if (vals.diagnosesList) historyParts.push(`${escapeMarkdown(programName)} states that it enrolls teenagers with the following diagnoses/behaviors: ${vals.diagnosesList.split(',').map(item => `"${escapeMarkdown(item.trim())}"`).join(', ')}.`);
+            const historySentences = [];
 
-            const stayTuitionNatsap = [];
-            if (vals.avgStay) stayTuitionNatsap.push(`The average length of stay is reported to be around ${vals.avgStay}, but may be [Details on stay length].`);
-            if (vals.tuition) stayTuitionNatsap.push(`The tuition is reported to be ${vals.tuition}.`);
-            if (vals.natsapStatus) stayTuitionNatsap.push(`${escapeMarkdown(programName)} ${vals.natsapStatus}.`);
-            if (stayTuitionNatsap.length > 0) historyParts.push(stayTuitionNatsap.join(' '));
+            const descriptorParts = [];
+            if (vals.programType) descriptorParts.push(`a ${escapeMarkdown(vals.programType)}`);
+            if (vals.yearFounded) descriptorParts.push(`founded in ${escapeMarkdown(vals.yearFounded)}`);
+            if (vals.cityState) descriptorParts.push(`based in ${escapeMarkdown(vals.cityState)}`);
+            if (descriptorParts.length > 0) {
+                historySentences.push(`${escapeMarkdown(programName)} is ${joinWithAnd(descriptorParts)}.`);
+            }
 
-            const addressAccrediting = [];
-            if (vals.mainAddress) addressAccrediting.push(`The main office of ${escapeMarkdown(programName)} is located at ${createLink(vals.mainAddress, vals.addressLink)}.`);
-            if (vals.accreditingBody) addressAccrediting.push(`${escapeMarkdown(programName)} is accredited through the ${createLink(vals.accreditingBody, vals.accreditingBodyLink)}. [Add any disclaimers about the accrediting body, if applicable].`);
-            if (addressAccrediting.length > 0) historyParts.push(addressAccrediting.join('\n\n'));
+            if (vals.ownerName) {
+                historySentences.push(`${escapeMarkdown(programName)} is owned by ${createLink(vals.ownerName, vals.ownerLink)}.`);
+            }
 
-            if (vals.historyMisc) historyParts.push(vals.historyMisc);
-            historySection = historyParts.length > 0 ? historyParts.join('\n\n') : getPlaceholder('History and Background Information', programName);
+            const audienceParts = [];
+            if (vals.ageRange) audienceParts.push(`serves young people aged ${escapeMarkdown(vals.ageRange)}`);
+            if (vals.diagnosesList) {
+                const diagnoses = vals.diagnosesList.split(',')
+                    .map(item => item.trim())
+                    .filter(Boolean)
+                    .map(item => `"${escapeMarkdown(item)}"`).join(', ');
+                if (diagnoses) {
+                    audienceParts.push(`lists ${diagnoses} as target diagnoses or behaviors`);
+                }
+            }
+            if (audienceParts.length > 0) {
+                historySentences.push(`The program ${joinWithAnd(audienceParts)}.`);
+            }
+
+            const operationsParts = [];
+            if (vals.avgStay) operationsParts.push(`reports an average length of stay of around ${escapeMarkdown(vals.avgStay)}`);
+            if (vals.tuition) operationsParts.push(`reports tuition of ${escapeMarkdown(vals.tuition)}`);
+            if (vals.natsapStatus) operationsParts.push(escapeMarkdown(vals.natsapStatus));
+            if (operationsParts.length > 0) {
+                historySentences.push(`It ${joinWithAnd(operationsParts)}.`);
+            }
+
+            if (vals.mainAddress) {
+                historySentences.push(`The main office is located at ${createLink(vals.mainAddress, vals.addressLink)}.`);
+            }
+
+            if (vals.accreditingBody) {
+                historySentences.push(`The program is accredited by the ${createLink(vals.accreditingBody, vals.accreditingBodyLink)}.`);
+            }
+
+            if (vals.historyMisc) historySentences.push(vals.historyMisc);
+            historySection = historySentences.length > 0 ? historySentences.join('\n\n') : getPlaceholder('History and Background Information', programName);
 
             // --- Build Staff Section ---
             let staffSection;
