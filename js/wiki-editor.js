@@ -684,12 +684,13 @@ ${relatedMediaSection}
             'Founders'
         ]);
         if (staffSection && !staffSection.includes('No information is known')) {
-            const addStaff = (name, role, bio) => {
+            const addStaff = (name, role, bio, previousRoles) => {
                 if (!name || !role) return;
                 staffMembers.push({
                     name: name.trim(),
                     role: role.trim(),
-                    bio: (bio || '').trim()
+                    bio: (bio || '').trim(),
+                    previousRoles: previousRoles || []
                 });
             };
 
@@ -698,32 +699,55 @@ ${relatedMediaSection}
                 .replace(/\s+/g, ' ')
                 .trim();
 
-            const staffLines = staffSection.split('\n').filter(line =>
-                line.trim().startsWith('*') || line.trim().startsWith('-')
-            );
-            staffLines.forEach(line => {
-                const normalized = cleanStaffBlock(line);
-                const match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.?\s*(.*)$/i);
-                if (match) {
-                    addStaff(match[1], match[2], match[3]);
-                }
+            // Parse paragraph blocks (separated by double newlines)
+            const staffParagraphs = staffSection.split(/\n\n+/).filter(p => {
+                const trimmed = p.trim();
+                return trimmed.startsWith('**') || trimmed.startsWith('* **') || trimmed.startsWith('- **');
             });
 
-            // Paragraph or line blocks starting with the name in bold
-            const staffParagraphs = staffSection.split(/\n\n+/).filter(p => p.trim().startsWith('**'));
             staffParagraphs.forEach(block => {
                 const normalized = cleanStaffBlock(block);
-                let match = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\.?\s*(.*)$/i);
-                if (match) {
-                    addStaff(match[1], match[2], match[3]);
-                } else {
-                    // Fallback: capture role until first sentence end
-                    match = normalized.match(/^\*\*([^*]+)\*\*\s+([^\.]+)\.?\s*(.*)$/i);
-                    if (match) addStaff(match[1], match[2], match[3]);
+
+                // Extract name and role pattern: **Name** is/was [the] role.
+                const nameRoleMatch = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\./i);
+                if (!nameRoleMatch) return;
+
+                const name = nameRoleMatch[1].trim();
+                const role = nameRoleMatch[2].trim();
+
+                // Extract previous roles if present
+                const previousRoles = [];
+                const prevRolesMatch = normalized.match(/Previously worked (?:at|as)\s+([^\.]+)\./i);
+                if (prevRolesMatch) {
+                    const prevText = prevRolesMatch[1];
+                    // Split by commas, semicolons, or "and"
+                    const roles = prevText.split(/(?:,\s*(?:and\s+)?|;\s*|(?:\s+and\s+))/);
+                    roles.forEach(r => {
+                        const cleaned = r.trim();
+                        if (cleaned) previousRoles.push(cleaned);
+                    });
                 }
+
+                // Extract bio (everything after the role sentence, excluding the previous roles sentence)
+                let bio = '';
+                const sentences = normalized.split(/\.\s+/);
+                const bioSentences = sentences.slice(1).filter(s =>
+                    !s.match(/Previously worked (?:at|as)/i) && s.trim().length > 0
+                );
+                if (bioSentences.length > 0) {
+                    bio = bioSentences.join('. ').trim();
+                    if (bio && !bio.endsWith('.')) bio += '.';
+                }
+
+                addStaff(name, role, bio, previousRoles);
             });
 
-            renderList(staffMembers, 'staffListOutput', item => `<strong>${item.name}</strong> - ${item.role}`);
+            renderList(staffMembers, 'staffListOutput', item => {
+                const previous = item.previousRoles && item.previousRoles.length
+                    ? `<div class="staff-prev">Prev: ${escapeHtml(item.previousRoles.join('; '))}</div>`
+                    : '';
+                return `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}${previous}`;
+            });
         }
 
         // Parse Structure section
@@ -817,32 +841,45 @@ ${relatedMediaSection}
             const mediaLines = [];
 
             lines.forEach(line => {
-                if (line.trim().startsWith('* [')) {
-                    // This is a news article with a link
-                    const match = line.match(/\*\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:\(([^)]+)\))?/);
-                    if (match) {
-                        const title = match[1];
-                        const url = match[2];
-                        const sourceDate = match[3] || '';
+                const trimmed = line.trim();
+                if (!trimmed) return;
 
-                        // Try to split source and date
-                        let source = '';
-                        let date = '';
-                        if (sourceDate) {
-                            const parts = sourceDate.split(',').map(p => p.trim());
-                            if (parts.length === 2) {
-                                source = parts[0];
-                                date = parts[1];
+                // Pattern 1: * [Article Title](url) (Source, Date)
+                // Pattern 2: - [Article Title](url) (Source, Date)
+                let match = trimmed.match(/^[*-]\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:\(([^)]+)\))?/);
+                if (match) {
+                    const title = match[1].trim();
+                    const url = match[2].trim();
+                    const sourceDate = match[3] || '';
+
+                    // Try to split source and date
+                    let source = '';
+                    let date = '';
+                    if (sourceDate) {
+                        const parts = sourceDate.split(',').map(p => p.trim());
+                        if (parts.length === 2) {
+                            source = parts[0];
+                            date = parts[1];
+                        } else if (parts.length === 1) {
+                            // Could be either source or date - try to detect
+                            if (/\d{1,2}\/\d{1,2}\/\d{2,4}|\d{4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i.test(parts[0])) {
+                                date = parts[0];
                             } else {
-                                source = sourceDate;
+                                source = parts[0];
                             }
                         }
-
-                        newsArticles.push({ title, url, source, date });
                     }
-                } else if (line.trim().startsWith('*')) {
-                    // This is general media info
-                    mediaLines.push(line.replace(/^\*\s*/, '').trim());
+
+                    newsArticles.push({ title, url, source, date });
+                    return;
+                }
+
+                // Pattern 3: * General media text (not a link)
+                if (trimmed.startsWith('*') || trimmed.startsWith('-')) {
+                    const text = trimmed.replace(/^[*-]\s*/, '').trim();
+                    if (text && !text.startsWith('[')) {
+                        mediaLines.push(text);
+                    }
                 }
             });
 
@@ -850,7 +887,7 @@ ${relatedMediaSection}
                 setValue('mediaInfo', mediaLines.join('\n'));
             }
 
-            renderList(newsArticles, 'articleListOutput', item => `<strong>${item.title}</strong> (${item.source || 'No Source'})`);
+            renderList(newsArticles, 'articleListOutput', item => `<strong>${escapeHtml(item.title)}</strong> (${escapeHtml(item.source || 'No Source')})`);
         }
 
         // Parse Testimonies section
@@ -862,42 +899,106 @@ ${relatedMediaSection}
             'Survivor and Parent Testimonials'
         ]);
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-            const blocks = testimoniesSection.split(/\n{2,}/).filter(l => l.trim().length > 0);
+            // Split by double newlines or single newlines with bold markers
+            const blocks = testimoniesSection.split(/\n\n+|\n(?=\*\*)/);
+
             blocks.forEach(block => {
-                const cleaned = block
+                const trimmed = block.trim();
+                if (!trimmed || trimmed.length === 0) return;
+
+                const cleaned = trimmed
                     .replace(/^\s*[*-]\s*/, '') // drop list markers
-                    .replace(/^\s*\*\*([^*]+)\*\*\s*/, '$1 ') // drop leading bold on date/type
-                    .replace(/\*\*/g, '') // remove stray bold markers mid-line
                     .replace(/\n+/g, ' ') // flatten multiline entries
                     .trim();
-                // Match formats like:
-                // 10/29/2020: (SURVIVOR) "quote" - [Source](url)
-                // (PARENT) "quote" - [Source](url)
-                const match = cleaned.match(/^(?:(.+?):\s+)?\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+
+                // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
+                let match = cleaned.match(/^\*\*(.+?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     testimonies.push({
-                        date: match[1] ? match[1].trim() : '',
-                        type: match[2].trim(),
+                        date: match[1].trim(),
+                        type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
                         source: match[4].trim(),
                         url: match[5].trim()
                     });
+                    return;
+                }
+
+                // Pattern 2: **(TYPE)** "quote" - [Source](url)
+                match = cleaned.match(/^\*\*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                if (match) {
+                    testimonies.push({
+                        date: '',
+                        type: match[1].trim().toUpperCase(),
+                        quote: match[2].trim(),
+                        source: match[3].trim(),
+                        url: match[4].trim()
+                    });
+                    return;
+                }
+
+                // Pattern 3: Date: (TYPE) "quote" - [Source](url) (no bold)
+                match = cleaned.match(/^(.+?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                if (match) {
+                    testimonies.push({
+                        date: match[1].trim(),
+                        type: match[2].trim().toUpperCase(),
+                        quote: match[3].trim(),
+                        source: match[4].trim(),
+                        url: match[5].trim()
+                    });
+                    return;
+                }
+
+                // Pattern 4: (TYPE) "quote" - [Source](url) (no date, no bold)
+                match = cleaned.match(/^\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                if (match) {
+                    testimonies.push({
+                        date: '',
+                        type: match[1].trim().toUpperCase(),
+                        quote: match[2].trim(),
+                        source: match[3].trim(),
+                        url: match[4].trim()
+                    });
                 }
             });
-            renderList(testimonies, 'testimonyListOutput', item => `<strong>(${item.type})</strong> ${item.quote.substring(0, 30)}... [${item.source}]`);
+
+            renderList(testimonies, 'testimonyListOutput', item => {
+                const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
+                return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`;
+            });
         }
 
         // Parse Related Media section
         const relatedMediaSection = getSection(markdown, 'Related Media');
         if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
-            const mediaMatches = relatedMediaSection.matchAll(/\*\s+\[([^\]]+)\]\(([^)]+)\)/g);
-            for (const match of mediaMatches) {
-                relatedMedia.push({
-                    title: match[1].trim(),
-                    url: match[2].trim()
-                });
-            }
-            renderList(relatedMedia, 'mediaListOutput', item => `[${item.title}]`);
+            const lines = relatedMediaSection.split('\n');
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+
+                // Pattern 1: * [Title](url) or - [Title](url)
+                let match = trimmed.match(/^[*-]\s+\[([^\]]+)\]\(([^)]+)\)/);
+                if (match) {
+                    relatedMedia.push({
+                        title: match[1].trim(),
+                        url: match[2].trim()
+                    });
+                    return;
+                }
+
+                // Pattern 2: [Title](url) without bullet
+                match = trimmed.match(/^\[([^\]]+)\]\(([^)]+)\)/);
+                if (match) {
+                    relatedMedia.push({
+                        title: match[1].trim(),
+                        url: match[2].trim()
+                    });
+                }
+            });
+
+            renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
         }
     }
 
