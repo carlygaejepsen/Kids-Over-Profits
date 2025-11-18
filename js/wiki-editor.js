@@ -558,18 +558,24 @@ ${relatedMediaSection}
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         const getSection = (markdown, sectionTitle) => {
-            // Match section header and capture content until next section header or end
-            // Format: ##**Section Title**
+            // Simple approach: find ##**Title** and capture until next ## or end
             const escapedTitle = escapeRegex(sectionTitle);
+
+            // Build pattern to match section header with various formats:
+            // ##**Title**, ## **Title**, ##Title, etc.
+            const headerPattern = `##\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
+
+            // Capture everything after header until next ## section or end of string
             const regex = new RegExp(
-                `^#{1,6}\\*{0,2}${escapedTitle}\\*{0,2}\\s*$[\\r\\n]+([\\s\\S]*?)(?=^#{1,6}\\*{0,2}[^\\n]+\\*{0,2}\\s*$|$)`,
-                'gim'
+                headerPattern + '\\n([\\s\\S]*?)(?=\\n##|$)',
+                'i'
             );
-            const match = regex.exec(markdown);
+
+            const match = markdown.match(regex);
             let result = match ? match[1].trim() : '';
 
             // Remove trailing *** separator if present
-            result = result.replace(/\n?\*\*\*\s*$/, '').trim();
+            result = result.replace(/\*\*\*\s*$/, '').trim();
 
             console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
             return result;
