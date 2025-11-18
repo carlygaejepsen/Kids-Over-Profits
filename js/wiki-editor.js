@@ -558,9 +558,19 @@ ${relatedMediaSection}
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         const getSection = (markdown, sectionTitle) => {
-            const regex = new RegExp(`^#{1,6}\\s*\\**${escapeRegex(sectionTitle)}\\**\\s*\\n([\\s\\S]*?)(?=^#{1,6}\\s*\\**[^\\n]+\\**\\s*$|\\z)`, 'im');
-            const match = markdown.match(regex);
-            const result = match ? match[1].trim() : '';
+            // Match section header and capture content until next section header or end
+            // Format: ##**Section Title**
+            const escapedTitle = escapeRegex(sectionTitle);
+            const regex = new RegExp(
+                `^#{1,6}\\*{0,2}${escapedTitle}\\*{0,2}\\s*$[\\r\\n]+([\\s\\S]*?)(?=^#{1,6}\\*{0,2}[^\\n]+\\*{0,2}\\s*$|$)`,
+                'gim'
+            );
+            const match = regex.exec(markdown);
+            let result = match ? match[1].trim() : '';
+
+            // Remove trailing *** separator if present
+            result = result.replace(/\n?\*\*\*\s*$/, '').trim();
+
             console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
             return result;
         };
@@ -708,19 +718,22 @@ ${relatedMediaSection}
             staffParagraphs.forEach(block => {
                 const normalized = cleanStaffBlock(block);
 
-                // Extract name and role pattern: **Name** is/was [the] role.
-                const nameRoleMatch = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was)\s+(?:the\s+)?([^\.]+)\./i);
+                // Extract name and role pattern: **Name** is/was/worked as [the] role.
+                // Handle patterns like: "is the Founder", "was Program Director", "worked as the Assistant"
+                const nameRoleMatch = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was|worked\s+as)\s+(?:the\s+)?([^\.]+)\./i);
                 if (!nameRoleMatch) return;
 
                 const name = nameRoleMatch[1].trim();
                 const role = nameRoleMatch[2].trim();
 
-                // Extract previous roles if present
+                // Extract previous roles if present - look for multiple patterns
                 const previousRoles = [];
-                const prevRolesMatch = normalized.match(/Previously worked (?:at|as)\s+([^\.]+)\./i);
+
+                // Pattern 1: "Previously worked at/as X"
+                let prevRolesMatch = normalized.match(/(?:Previously|She previously|He previously)\s+worked\s+(?:at|as|in the same position at)\s+([^\.]+)\./i);
                 if (prevRolesMatch) {
                     const prevText = prevRolesMatch[1];
-                    // Split by commas, semicolons, or "and"
+                    // Split by "and" or commas
                     const roles = prevText.split(/(?:,\s*(?:and\s+)?|;\s*|(?:\s+and\s+))/);
                     roles.forEach(r => {
                         const cleaned = r.trim();
@@ -728,12 +741,29 @@ ${relatedMediaSection}
                     });
                 }
 
-                // Extract bio (everything after the role sentence, excluding the previous roles sentence)
+                // Pattern 2: "Before founding X, [Name] worked as..."
+                if (previousRoles.length === 0) {
+                    prevRolesMatch = normalized.match(/Before\s+(?:founding|starting)\s+[^,]+,\s+[^\.]+?\s+worked\s+(?:at|as)\s+([^\.]+)\./i);
+                    if (prevRolesMatch) {
+                        const prevText = prevRolesMatch[1];
+                        const roles = prevText.split(/(?:,\s*(?:and\s+)?|;\s*|\s+with\s+)/);
+                        roles.forEach(r => {
+                            const cleaned = r.trim();
+                            if (cleaned) previousRoles.push(cleaned);
+                        });
+                    }
+                }
+
+                // Extract bio (everything after the role sentence, excluding the previous roles sentences)
                 let bio = '';
                 const sentences = normalized.split(/\.\s+/);
-                const bioSentences = sentences.slice(1).filter(s =>
-                    !s.match(/Previously worked (?:at|as)/i) && s.trim().length > 0
-                );
+                const bioSentences = sentences.slice(1).filter(s => {
+                    const trimmed = s.trim();
+                    // Exclude previous roles sentences and empty strings
+                    return trimmed.length > 0 &&
+                           !s.match(/(?:Previously|She previously|He previously)\s+worked\s+(?:at|as|in)/i) &&
+                           !s.match(/Before\s+(?:founding|starting)/i);
+                });
                 if (bioSentences.length > 0) {
                     bio = bioSentences.join('. ').trim();
                     if (bio && !bio.endsWith('.')) bio += '.';
@@ -751,7 +781,11 @@ ${relatedMediaSection}
         }
 
         // Parse Structure section
-        const structureSection = getSection(markdown, 'Program Structure');
+        const structureSection = getSectionAny(markdown, [
+            'Program Structure',
+            'Structure',
+            'Program Model'
+        ]);
         if (structureSection && !structureSection.includes('No information is known')) {
             // Extract level system description
             const levelDescMatch = structureSection.match(/uses ([^\.]+level[^\.]+)/i);
@@ -759,15 +793,51 @@ ${relatedMediaSection}
                 setValue('levelSystemDesc', levelDescMatch[1].trim());
             }
 
-            // Extract individual levels
-            const levelMatches = structureSection.matchAll(/\*\s+\*\*"([^"]+)"\*\*\s*-\s*([^\n*]+)/g);
-            for (const match of levelMatches) {
-                programLevels.push({
-                    name: match[1].trim(),
-                    desc: match[2].trim()
-                });
-            }
-            renderList(programLevels, 'levelListOutput', item => `<strong>"${item.name}"</strong>`);
+            // Extract individual levels - handle multiple formats
+            // Format 1: * **"Name"** - Description (generated format)
+            // Format 2: - Name — Description (with em dash)
+            // Format 3: - Name (simple format)
+            // Format 4: * Name (simple format)
+
+            const lines = structureSection.split('\n');
+            lines.forEach(line => {
+                const trimmed = line.trim();
+
+                // Format 1: * **"Name"** - Description or - **"Name"** — Description
+                let match = trimmed.match(/^[*-]\s+\*\*"([^"]+)"\*\*\s*[—\-]\s*(.+)$/);
+                if (match) {
+                    programLevels.push({
+                        name: match[1].trim(),
+                        desc: match[2].trim()
+                    });
+                    return;
+                }
+
+                // Format 2: - Name — Description or - Name - Description
+                match = trimmed.match(/^[*-]\s+([^—\-]+?)\s*[—\-]\s*(.+)$/);
+                if (match && !match[1].includes('*')) {
+                    programLevels.push({
+                        name: match[1].trim(),
+                        desc: match[2].trim()
+                    });
+                    return;
+                }
+
+                // Format 3: - Name or * Name (simple, no description)
+                match = trimmed.match(/^[*-]\s+([^—\-\n]+)$/);
+                if (match && !match[1].includes('*') && match[1].trim().length > 0) {
+                    // Only add if it looks like a level name (short, capitalized)
+                    const name = match[1].trim();
+                    if (name.length < 50 && /^[A-Z]/.test(name)) {
+                        programLevels.push({
+                            name: name,
+                            desc: ''
+                        });
+                    }
+                }
+            });
+
+            renderList(programLevels, 'levelListOutput', item => `<strong>"${escapeHtml(item.name)}"</strong>`);
 
             // Extract misc structure info
             const structureLines = structureSection.split('\n\n');
@@ -780,30 +850,48 @@ ${relatedMediaSection}
         }
 
         // Parse Rules section
-        const rulesSection = getSection(markdown, 'Rules and Punishments');
+        const rulesSection = getSectionAny(markdown, [
+            'Rules and Punishments',
+            'Rules & Punishments',
+            'Rules/Punishments',
+            'Punishments'
+        ]);
         if (rulesSection && !rulesSection.includes('No information is known')) {
-            // Extract rules list
-            const rulesMatch = rulesSection.match(/Some of these rules include:\s*\n((?:\*[^\n]+\n?)+)/i);
+            // Extract rules list - handle both * and - bullets
+            const rulesMatch = rulesSection.match(/Some of these rules include:\s*\n((?:[*-][^\n]+\n?)+)/i);
             if (rulesMatch) {
                 const rulesList = rulesMatch[1]
                     .split('\n')
-                    .filter(line => line.trim().startsWith('*'))
-                    .map(line => line.replace(/^\*\s*/, '').trim())
+                    .filter(line => {
+                        const trimmed = line.trim();
+                        return trimmed.startsWith('*') || trimmed.startsWith('-');
+                    })
+                    .map(line => line.replace(/^[*-]\s*/, '').trim())
+                    .filter(Boolean)
                     .join('\n');
                 setValue('rulesList', rulesList);
             }
 
             // Extract punishments description
-            const punishmentLines = rulesSection.split('\n\n').filter(para =>
-                !para.includes('Some of these rules include') && !para.trim().startsWith('*')
-            );
+            const punishmentLines = rulesSection.split('\n\n').filter(para => {
+                const trimmed = para.trim();
+                return !para.includes('Some of these rules include') &&
+                       !trimmed.startsWith('*') &&
+                       !trimmed.startsWith('-') &&
+                       trimmed.length > 0;
+            });
             if (punishmentLines.length > 0) {
                 setValue('punishmentsDesc', punishmentLines.join('\n\n').trim());
             }
         }
 
         // Parse Abuse section
-        const abuseSection = getSection(markdown, 'Abuse/Neglect Allegations and Lawsuits');
+        const abuseSection = getSectionAny(markdown, [
+            'Abuse/Neglect Allegations and Lawsuits',
+            'Abuse Allegations',
+            'Abuse/Neglect Allegations',
+            'Allegations and Lawsuits'
+        ]);
         if (abuseSection && !abuseSection.includes('No information is known')) {
             // Extract main complaints
             const complaintsMatch = abuseSection.match(/main complaints are of ([^\.]+)/i);
@@ -811,31 +899,42 @@ ${relatedMediaSection}
                 setValue('mainComplaints', complaintsMatch[1].trim());
             }
 
-            // Extract other allegations list
-            const allegationsMatch = abuseSection.match(/Other allegations[^\n]+:\s*\n((?:\*[^\n]+\n?)+)/i);
+            // Extract other allegations list - handle both * and - bullets
+            const allegationsMatch = abuseSection.match(/Other allegations[^\n]+:\s*\n((?:[*-][^\n]+\n?)+)/i);
             if (allegationsMatch) {
                 const allegationsList = allegationsMatch[1]
                     .split('\n')
-                    .filter(line => line.trim().startsWith('*'))
-                    .map(line => line.replace(/^\*\s*/, '').trim())
+                    .filter(line => {
+                        const trimmed = line.trim();
+                        return trimmed.startsWith('*') || trimmed.startsWith('-');
+                    })
+                    .map(line => line.replace(/^[*-]\s*/, '').trim())
+                    .filter(Boolean)
                     .join('\n');
                 setValue('otherAllegationsList', allegationsList);
             }
 
             // Extract lawsuits
-            const lawsuitLines = abuseSection.split('\n\n').filter(para =>
-                !para.includes('main complaints are') &&
-                !para.includes('Other allegations') &&
-                !para.trim().startsWith('*') &&
-                para.trim().length > 0
-            );
+            const lawsuitLines = abuseSection.split('\n\n').filter(para => {
+                const trimmed = para.trim();
+                return !para.includes('main complaints are') &&
+                       !para.includes('Other allegations') &&
+                       !trimmed.startsWith('*') &&
+                       !trimmed.startsWith('-') &&
+                       trimmed.length > 0;
+            });
             if (lawsuitLines.length > 0) {
                 setValue('lawsuits', lawsuitLines.join('\n\n').trim());
             }
         }
 
         // Parse Media section
-        const mediaSection = getSection(markdown, 'In the Media');
+        const mediaSection = getSectionAny(markdown, [
+            'In the Media',
+            'Media',
+            'In the Media & News',
+            'In the Media and News'
+        ]);
         if (mediaSection && !mediaSection.includes('No information is known')) {
             const lines = mediaSection.split('\n');
             const mediaLines = [];
