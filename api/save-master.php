@@ -48,13 +48,14 @@ if (!$request) {
     exit;
 }
 
-$action = $request['action'] ?? 'save';
-$projectName = $request['projectName'] ?? null;
-$newProjectName = $request['newProjectName'] ?? null;
-$data = $request['data'] ?? null;
-$category = $request['category'] ?? 'companies';
-$currentFacilityIndex = $request['currentFacilityIndex'] ?? 0;
-$timestamp = $request['timestamp'] ?? date('c');
+// Set defaults for all expected variables to prevent undefined errors
+$action = isset($request['action']) ? $request['action'] : 'save';
+$projectName = isset($request['projectName']) ? $request['projectName'] : null;
+$newProjectName = isset($request['newProjectName']) ? $request['newProjectName'] : null;
+$data = isset($request['data']) ? $request['data'] : null;
+$category = isset($request['category']) ? $request['category'] : 'companies';
+$currentFacilityIndex = isset($request['currentFacilityIndex']) ? intval($request['currentFacilityIndex']) : 0;
+$timestamp = isset($request['timestamp']) ? $request['timestamp'] : date('c');
 
 // Validate project name
 if (!$projectName) {
