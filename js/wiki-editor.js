@@ -715,65 +715,80 @@ ${relatedMediaSection}
                 .replace(/\s+/g, ' ')
                 .trim();
 
-            // Parse paragraph blocks (separated by double newlines)
+            // Split by blank lines to get individual staff entries
             const staffParagraphs = staffSection.split(/\n\n+/).filter(p => {
                 const trimmed = p.trim();
-                return trimmed.startsWith('**') || trimmed.startsWith('* **') || trimmed.startsWith('- **');
+                return trimmed.startsWith('**');
             });
 
             staffParagraphs.forEach(block => {
                 const normalized = cleanStaffBlock(block);
 
-                // Extract name and role pattern: **Name** is/was/worked as [the] role.
-                // Handle patterns like: "is the Founder", "was Program Director", "worked as the Assistant"
-                const nameRoleMatch = normalized.match(/^\*\*([^*]+)\*\*\s+(?:is|was|worked\s+as)\s+(?:the\s+)?([^\.]+)\./i);
-                if (!nameRoleMatch) return;
+                // Extract name from **Name** at the start
+                const nameMatch = normalized.match(/^\*\*([^*]+)\*\*/);
+                if (!nameMatch) return;
 
-                const name = nameRoleMatch[1].trim();
-                const role = nameRoleMatch[2].trim();
+                const name = nameMatch[1].trim();
 
-                // Extract previous roles if present - look for multiple patterns
+                // Extract role from first sentence - be flexible with verb phrases
+                // Patterns: "is the X", "was the X", "currently works as", "works as", "served as"
+                const roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:is|was|currently\s+works\s+as|works\s+as|served\s+as|serves\s+as)(?:\s+(?:the|a|an))?\s+([^\.]+)\./i);
+                if (!roleMatch) return;
+
+                const role = roleMatch[1].trim();
+
+                // Extract previous roles - look for work history patterns
                 const previousRoles = [];
 
-                // Pattern 1: "Previously worked at/as X"
-                let prevRolesMatch = normalized.match(/(?:Previously|She previously|He previously)\s+worked\s+(?:at|as|in the same position at)\s+([^\.]+)\./i);
-                if (prevRolesMatch) {
-                    const prevText = prevRolesMatch[1];
-                    // Split by "and" or commas
-                    const roles = prevText.split(/(?:,\s*(?:and\s+)?|;\s*|(?:\s+and\s+))/);
-                    roles.forEach(r => {
-                        const cleaned = r.trim();
-                        if (cleaned) previousRoles.push(cleaned);
-                    });
+                // Pattern: "Previously, X worked as Y at Z"
+                const prevMatches = normalized.matchAll(/(?:Previously|She previously|He previously),?\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?(?:\s+in\s+\d{4})?[\.]/gi);
+                for (const match of prevMatches) {
+                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
                 }
 
-                // Pattern 2: "Before founding X, [Name] worked as..."
-                if (previousRoles.length === 0) {
-                    prevRolesMatch = normalized.match(/Before\s+(?:founding|starting)\s+[^,]+,\s+[^\.]+?\s+worked\s+(?:at|as)\s+([^\.]+)\./i);
-                    if (prevRolesMatch) {
-                        const prevText = prevRolesMatch[1];
-                        const roles = prevText.split(/(?:,\s*(?:and\s+)?|;\s*|\s+with\s+)/);
-                        roles.forEach(r => {
-                            const cleaned = r.trim();
-                            if (cleaned) previousRoles.push(cleaned);
-                        });
+                // Pattern: "She/He then worked as Y at Z"
+                const thenMatches = normalized.matchAll(/(?:She|He)\s+then\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
+                for (const match of thenMatches) {
+                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
+                }
+
+                // Pattern: "After this, X worked as Y at Z"
+                const afterMatches = normalized.matchAll(/After\s+this,\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
+                for (const match of afterMatches) {
+                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
+                }
+
+                // Pattern: "began her/his career...as Y at Z"
+                const beganMatches = normalized.matchAll(/(?:began|started)\s+(?:her|his)\s+career[^\.]*?\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
+                for (const match of beganMatches) {
+                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
+                }
+
+                // Pattern: "Before founding X, Y worked as Z"
+                const beforeMatches = normalized.matchAll(/Before\s+(?:founding|starting)\s+[^,]+,\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)(?:\s+at\s+([^\.]+?))?[\.]/gi);
+                for (const match of beforeMatches) {
+                    if (match[2]) {
+                        previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
+                    } else {
+                        previousRoles.push(match[1].trim());
                     }
                 }
 
-                // Extract bio (everything after the role sentence, excluding the previous roles sentences)
-                let bio = '';
-                const sentences = normalized.split(/\.\s+/);
-                const bioSentences = sentences.slice(1).filter(s => {
+                // Extract bio - everything after first sentence, excluding work history sentences
+                const firstSentenceEnd = normalized.indexOf('.') + 1;
+                const remainingText = normalized.substring(firstSentenceEnd).trim();
+                const sentences = remainingText.split(/\.\s+/);
+                const bioSentences = sentences.filter(s => {
                     const trimmed = s.trim();
-                    // Exclude previous roles sentences and empty strings
-                    return trimmed.length > 0 &&
-                           !s.match(/(?:Previously|She previously|He previously)\s+worked\s+(?:at|as|in)/i) &&
-                           !s.match(/Before\s+(?:founding|starting)/i);
+                    if (trimmed.length === 0) return false;
+                    // Exclude sentences that are about work history
+                    if (/(?:worked|began|started|served)\s+(?:as|at|her|his)/i.test(trimmed)) return false;
+                    if (/(?:Previously|She|He)\s+(?:then|previously)/i.test(trimmed)) return false;
+                    if (/After\s+this/i.test(trimmed)) return false;
+                    if (/Before\s+(?:founding|starting)/i.test(trimmed)) return false;
+                    return true;
                 });
-                if (bioSentences.length > 0) {
-                    bio = bioSentences.join('. ').trim();
-                    if (bio && !bio.endsWith('.')) bio += '.';
-                }
+                const bio = bioSentences.join('. ').trim();
 
                 addStaff(name, role, bio, previousRoles);
             });

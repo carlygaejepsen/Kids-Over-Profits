@@ -286,7 +286,7 @@
             <!-- Referrer Submission Section -->
             <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
                 <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                    <h2 class="section-title" style="color: white; pointer-events: none;">dY'_ Save Referrer Project</h2>
+                    <h2 class="section-title" style="color: white; pointer-events: none;">📮 Save Referrer Project</h2>
                 </div>
                 <div class="section-content" style="display: block;">
                     <div class="form-group">
@@ -295,7 +295,7 @@
                     </div>
                     <div class="form-group">
                         <button type="button" class="save-master-btn" id="save-referrer-project-btn">
-                            dY'_ Save Referrer Project
+                            📮 Save Referrer Project
                         </button>
                     </div>
                 </div>
@@ -1062,8 +1062,9 @@
 
             </div>
         </div>
-    </div>
-    
+    </div><!-- End of facility-main-wrapper -->
+    </div><!-- End of container -->
+
     <!-- Clone Facility Modal -->
     <div id="clone-facility-modal" class="clone-modal">
         <div class="organizer-modal-content" style="max-width: 600px;">
