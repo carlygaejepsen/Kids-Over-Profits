@@ -192,21 +192,28 @@ function kop_get_facilities_database_connection() {
     $db_name = defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '';
     $db_host = defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost';
 
-    // If constants aren't defined, try to load from api/config.php
+    // If constants aren't defined, try to load from api/config.local.php (not config.php which is for API endpoints)
     if (empty($db_user) || empty($db_name)) {
-        $config_path = get_stylesheet_directory() . '/api/config.php';
-        if (file_exists($config_path)) {
-            // Load the config file which sets $db_user, $db_pass, $db_name, $db_host
-            require_once $config_path;
-            // The config.php file sets these variables, so they should now be available
+        $config_local_path = get_stylesheet_directory() . '/api/config.local.php';
+        if (file_exists($config_local_path)) {
+            $localConfig = include $config_local_path;
+            if (is_array($localConfig)) {
+                $db_host = $localConfig['host'] ?? $localConfig['db_host'] ?? $db_host;
+                $db_name = $localConfig['name'] ?? $localConfig['db_name'] ?? $db_name;
+                $db_user = $localConfig['user'] ?? $localConfig['username'] ?? $localConfig['db_user'] ?? $db_user;
+                $db_pass = $localConfig['pass'] ?? $localConfig['password'] ?? $localConfig['db_pass'] ?? $db_pass;
+            }
         }
     }
 
-    try {
-        $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
-        $use_separate_db = true;
-    } catch (Exception $e) {
-        error_log('Failed to connect to facilities database: ' . $e->getMessage());
+    // Only try to connect if we have credentials
+    if (!empty($db_user) && !empty($db_name)) {
+        try {
+            $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
+            $use_separate_db = true;
+        } catch (Exception $e) {
+            error_log('Failed to connect to facilities database: ' . $e->getMessage());
+        }
     }
 
     $connection = array(
@@ -701,11 +708,14 @@ function enqueue_facility_form_script() {
     }
 
     // Enqueue the shared data form stylesheet
+    $style_path = get_stylesheet_directory() . '/css/data-form.css';
+    $style_version = file_exists($style_path) ? filemtime($style_path) : time();
+
     wp_enqueue_style(
         'kop-data-form-style',
         get_stylesheet_directory_uri() . '/css/data-form.css',
         array(),
-        filemtime(get_stylesheet_directory() . '/css/data-form.css')
+        $style_version
     );
 
     // Enqueue the DB form loader first (handles data loading)
