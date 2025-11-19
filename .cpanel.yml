@@ -15,6 +15,7 @@ deployment:
     - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp -R templates $DEPLOYPATH 2>/dev/null || true
     - /bin/cp *.php $DEPLOYPATH 2>/dev/null || true
     - /bin/cp *.html $DEPLOYPATH 2>/dev/null || true
 
