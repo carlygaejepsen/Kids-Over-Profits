@@ -569,8 +569,8 @@ ${relatedMediaSection}
             const headerPattern = `##\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
 
             // Capture everything after header until next ## section or end of string
-            const regex = new RegExp(
-                headerPattern + '\\n([\\s\\S]*?)(?=\\n##|$)',
+            const regex = new RegExp( // Look for header, then capture until the next header OR a section break (***) OR end of string
+                headerPattern + '\\n([\\s\\S]*?)(?=\\n##|\\n\\*\\*\\*|$)',
                 'i'
             );
 
@@ -578,7 +578,7 @@ ${relatedMediaSection}
             let result = match ? match[1].trim() : '';
 
             // Remove trailing *** separator if present
-            result = result.replace(/\*\*\*\s*$/, '').trim();
+            result = result.replace(/^\*\*\*|(?:\r\n|\n|\r)?\*\*\*$/g, '').trim();
 
             console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
             return result;
