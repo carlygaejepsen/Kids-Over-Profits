@@ -1119,7 +1119,7 @@ ${relatedMediaSection}
                 }
 
                 // Pattern 1b: **Date: (TYPE)** "quote" - Source (no link)
-                match = cleaned.match(/^(?:**)?(.+?):s*(([^)]+))(?:**)?s+"([^\"]+)"s*-s*(?![)(.+)$/i);
+                match = cleaned.match(/^\*\*(.+?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*(.+)$/i);
                 if (match) {
                     console.log('  ✓ Matched pattern 1b (Date+Type, no link)');
                     testimonies.push({
