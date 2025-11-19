@@ -2325,6 +2325,13 @@ function loadProject(projectName) { // Note: This function is now asynchronous
         setTimeout(() => {
             const projectCategory = determineProjectCategory(projectName); // Define category inside the timeout scope
             window.currentProjectName = projectName;
+            
+            debugLog('📥 Loading project data structure:', {
+                'projectName': projectName,
+                'projectObject': window.projects[projectName],
+                'projectData': window.projects[projectName].data
+            });
+            
             if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
                 window.formData = deepClone(window.projects[projectName].data);
             } else {
@@ -3103,6 +3110,13 @@ function loadReferrerData() {
 
     const agency = window.formData.referrerAgency || createDefaultReferrerGroup();
 
+    debugLog('📋 loadReferrerData called', {
+        'currentProject': window.currentProjectName,
+        'referrerAgency': agency,
+        'referrerIndividual': window.formData.referrerIndividual,
+        'referrerConsultants': window.formData.referrerConsultants
+    });
+
     const groupFieldMap = [
         { ids: ['referrer-group-name', 'referrer-agency-name'], key: 'name' },
         { ids: ['referrer-group-city', 'referrer-agency-city'], key: 'city' },
@@ -3118,6 +3132,7 @@ function loadReferrerData() {
             const el = document.getElementById(id);
             if (el) {
                 el.value = agency[key] || '';
+                debugLog(`  ✓ Set ${id} = "${agency[key] || ''}"`);
             }
         });
     });
@@ -3145,6 +3160,7 @@ function loadReferrerData() {
 
     const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
+    debugLog('📋 Consultant data:', consultant);
 
     const consultantName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ');
     const individualFieldMap = [
