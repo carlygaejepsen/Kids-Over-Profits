@@ -1118,6 +1118,20 @@ ${relatedMediaSection}
                     return;
                 }
 
+                // Pattern 1b: **Date: (TYPE)** "quote" - Source (no link)
+                match = cleaned.match(/^(?:**)?(.+?):s*(([^)]+))(?:**)?s+"([^\"]+)"s*-s*(?![)(.+)$/i);
+                if (match) {
+                    console.log('  ✓ Matched pattern 1b (Date+Type, no link)');
+                    testimonies.push({
+                        date: match[1].trim(),
+                        type: match[2].trim().toUpperCase(),
+                        quote: match[3].trim(),
+                        source: match[4].trim(),
+                        url: ''
+                    });
+                    return;
+                }
+
                 // Pattern 3: Date: (TYPE) "quote" - [Source](url) (no bold)
                 match = cleaned.match(/^(.+?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
