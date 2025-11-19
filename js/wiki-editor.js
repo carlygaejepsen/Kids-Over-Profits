@@ -593,7 +593,7 @@ ${relatedMediaSection}
         };
 
         // Parse header
-        const headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+(.+)$/m);
+        const headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+([^\r\n]+)/m);
         console.log('Header match:', headerMatch);
         if (headerMatch) {
             setValue('programName', headerMatch[1].trim());
@@ -742,7 +742,7 @@ ${relatedMediaSection}
 
                 // Extract role from first sentence - be flexible with verb phrases
                 // Patterns: "is the X", "was the X", "currently works as", "works as", "served as"
-                let roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:is|was|currently\s+works\s+as|works\s+as|served\s+as|serves\s+as)(?:\s+(?:the|a|an))?\s+([^\.]+)\./i);
+                let roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:was|is)\s+(?:the|a|an)?\s+([^\.]+)\./i);
 
                 let role = '';
                 if (roleMatch) {
@@ -755,8 +755,8 @@ ${relatedMediaSection}
                         role = fallbackMatch[1].trim();
                         console.log(`  → Role (fallback): "${role}"`);
                     } else {
-                        // If still no match, use empty role but still add the person
-                        console.warn(`  → Could not extract role for: ${name}, using "Staff Member"`);
+                        // If still no match, use a default role but still add the person
+                        console.warn(`  → Could not extract role for: ${name}, using default "Staff Member"`);
                         role = 'Staff Member';
                     }
                 }
@@ -973,7 +973,7 @@ ${relatedMediaSection}
             }
 
             // Extract other allegations list - handle both * and - bullets
-            const allegationsMatch = abuseSection.match(/Other allegations[^\n]+:\s*\n((?:[*-][^\n]+\n?)+)/i);
+            const allegationsMatch = abuseSection.match(/reported by survivors included:\s*\n((?:[*-][^\n]+\n?)+)/i);
             if (allegationsMatch) {
                 const allegationsList = allegationsMatch[1]
                     .split('\n')
@@ -1073,7 +1073,8 @@ ${relatedMediaSection}
         console.log('Testimonies section:', testimoniesSection ? `Found (${testimoniesSection.length} chars)` : 'Not found');
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
             // Split by double newlines or single newlines with bold markers
-            const blocks = testimoniesSection.split(/\n\n+|\n(?=\*\*)/);
+            // Split by double newlines. This is more robust for varying formats.
+            const blocks = testimoniesSection.split(/\n\n+/);
             console.log(`Testimonies split into ${blocks.length} blocks`);
 
             blocks.forEach((block, idx) => {
@@ -1091,7 +1092,7 @@ ${relatedMediaSection}
                 console.log(`Testimony block ${idx + 1}:`, cleaned.substring(0, 80));
 
                 // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
-                let match = cleaned.match(/^\*\*(.+?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                let match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 1 (Date+Type)`);
                     testimonies.push({
@@ -1119,7 +1120,7 @@ ${relatedMediaSection}
                 }
 
                 // Pattern 1b: **Date: (TYPE)** "quote" - Source (no link)
-                match = cleaned.match(/^\*\*(.+?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*(.+)$/i);
+                match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*([^\(\[]+)$/i);
                 if (match) {
                     console.log('  ✓ Matched pattern 1b (Date+Type, no link)');
                     testimonies.push({
@@ -1133,7 +1134,7 @@ ${relatedMediaSection}
                 }
 
                 // Pattern 3: Date: (TYPE) "quote" - [Source](url) (no bold)
-                match = cleaned.match(/^(.+?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                match = cleaned.match(/^(.*?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 3 (Date+Type, no bold)`);
                     testimonies.push({
