@@ -23,7 +23,13 @@ if ($env_path) {
             list($key, $value) = explode('=', $line, 2);
             $key = trim($key);
             $value = trim($value);
-            
+
+            // Remove quotes if present (handles both single and double quotes)
+            if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+                (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+                $value = substr($value, 1, -1);
+            }
+
             // Only set if not already defined
             if (!getenv($key)) {
                 putenv("$key=$value");
