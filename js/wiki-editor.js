@@ -799,6 +799,7 @@ ${relatedMediaSection}
                     : '';
                 return `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}${previous}`;
             });
+            console.log(`✓ Parsed ${staffMembers.length} staff members`);
         }
 
         // Parse Structure section
@@ -824,8 +825,19 @@ ${relatedMediaSection}
             lines.forEach(line => {
                 const trimmed = line.trim();
 
+                // Format 0: **Name:** Description (bold name with colon - MOST COMMON)
+                // Examples: **Green:** Description, **Phase 1:** Description
+                let match = trimmed.match(/^\*\*([^:*]+):\*\*\s*(.*)$/);
+                if (match) {
+                    programLevels.push({
+                        name: match[1].trim(),
+                        desc: match[2].trim()
+                    });
+                    return;
+                }
+
                 // Format 1: * **"Name"** - Description or - **"Name"** — Description
-                let match = trimmed.match(/^[*-]\s+\*\*"([^"]+)"\*\*\s*[—\-]\s*(.+)$/);
+                match = trimmed.match(/^[*-]\s+\*\*"([^"]+)"\*\*\s*[—\-]\s*(.+)$/);
                 if (match) {
                     programLevels.push({
                         name: match[1].trim(),
@@ -859,6 +871,7 @@ ${relatedMediaSection}
             });
 
             renderList(programLevels, 'levelListOutput', item => `<strong>"${escapeHtml(item.name)}"</strong>`);
+            console.log(`✓ Parsed ${programLevels.length} program levels`);
 
             // Extract misc structure info
             const structureLines = structureSection.split('\n\n');
@@ -1029,6 +1042,9 @@ ${relatedMediaSection}
                 const cleaned = trimmed
                     .replace(/^\s*[*-]\s*/, '') // drop list markers
                     .replace(/\n+/g, ' ') // flatten multiline entries
+                    // Normalize quotes and dashes
+                    .replace(/[""]/g, '"') // smart quotes to straight quotes
+                    .replace(/[–—]/g, '-') // en-dash and em-dash to hyphen
                     .trim();
 
                 // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
@@ -1087,6 +1103,7 @@ ${relatedMediaSection}
                 const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
                 return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`;
             });
+            console.log(`✓ Parsed ${testimonies.length} testimonies`);
         }
 
         // Parse Related Media section
