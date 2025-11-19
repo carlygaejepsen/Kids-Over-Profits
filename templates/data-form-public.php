@@ -1066,13 +1066,13 @@
     </div><!-- End of container -->
 
     <!-- Clone Facility Modal -->
-    <div id="clone-facility-modal" class="clone-modal">
-        <div class="organizer-modal-content" style="max-width: 600px;">
-            <div class="organizer-modal-header">
-                <h3 style="margin: 0; font-size: 24px; color: #000435;">Clone Facility</h3>
-                <button class="organizer-modal-close" id="clone-modal-close">&times;</button>
+    <div id="clone-facility-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Clone Facility</h3>
+                <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
-            <div class="organizer-modal-body">
+            <div class="modal-body">
                 <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
 
                 <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
@@ -1103,11 +1103,10 @@
                         <input type="text" class="new-project-input" id="new-project-name-input" placeholder="Enter new project name..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                     </div>
                 </div>
-
-                <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
-                    <button class="modal-btn modal-btn-primary" id="clone-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Clone Facility</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
             </div>
         </div>
     </div>
