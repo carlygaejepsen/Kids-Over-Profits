@@ -544,6 +544,9 @@ ${relatedMediaSection}
         testimonies = [];
         relatedMedia = [];
 
+        // Normalize newlines so regex parsing works with Windows CRLF input
+        const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
         // Helper to safely set element values
         const setValue = (id, value) => {
             const el = document.getElementById(id);
@@ -557,7 +560,7 @@ ${relatedMediaSection}
 
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-        const getSection = (markdown, sectionTitle) => {
+        const getSection = (source, sectionTitle) => {
             // Simple approach: find ##**Title** and capture until next ## or end
             const escapedTitle = escapeRegex(sectionTitle);
 
@@ -571,7 +574,7 @@ ${relatedMediaSection}
                 'i'
             );
 
-            const match = markdown.match(regex);
+            const match = source.match(regex);
             let result = match ? match[1].trim() : '';
 
             // Remove trailing *** separator if present
@@ -581,16 +584,16 @@ ${relatedMediaSection}
             return result;
         };
 
-        const getSectionAny = (markdown, titles) => {
+        const getSectionAny = (source, titles) => {
             for (const title of titles) {
-                const section = getSection(markdown, title);
+                const section = getSection(source, title);
                 if (section) return section;
             }
             return '';
         };
 
         // Parse header
-        const headerMatch = markdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+(.+)$/m);
+        const headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+(.+)$/m);
         console.log('Header match:', headerMatch);
         if (headerMatch) {
             setValue('programName', headerMatch[1].trim());
@@ -601,13 +604,13 @@ ${relatedMediaSection}
         }
 
         // Parse program type
-        const typeMatch = markdown.match(/^\s*\*([^*]+)\*\s*$/m);
+        const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
         if (typeMatch) {
             setValue('programType', typeMatch[1].trim());
         }
 
         // Parse History section
-        const historySection = getSection(markdown, 'History and Background Information');
+        const historySection = getSection(normalizedMarkdown, 'History and Background Information');
         if (historySection) {
             const yearFoundedMatch = historySection.match(/founded in (\d{4})/i);
             if (yearFoundedMatch) {
@@ -693,7 +696,7 @@ ${relatedMediaSection}
         }
 
         // Parse Staff section
-        const staffSection = getSectionAny(markdown, [
+        const staffSection = getSectionAny(normalizedMarkdown, [
             'Founders and Notable Staff',
             'Founders & Notable Staff',
             'Notable Staff',
@@ -824,7 +827,7 @@ ${relatedMediaSection}
         }
 
         // Parse Structure section
-        const structureSection = getSectionAny(markdown, [
+        const structureSection = getSectionAny(normalizedMarkdown, [
             'Program Structure',
             'Structure',
             'Program Model'
@@ -920,7 +923,7 @@ ${relatedMediaSection}
         }
 
         // Parse Rules section
-        const rulesSection = getSectionAny(markdown, [
+        const rulesSection = getSectionAny(normalizedMarkdown, [
             'Rules and Punishments',
             'Rules & Punishments',
             'Rules/Punishments',
@@ -956,7 +959,7 @@ ${relatedMediaSection}
         }
 
         // Parse Abuse section
-        const abuseSection = getSectionAny(markdown, [
+        const abuseSection = getSectionAny(normalizedMarkdown, [
             'Abuse/Neglect Allegations and Lawsuits',
             'Abuse Allegations',
             'Abuse/Neglect Allegations',
@@ -999,7 +1002,7 @@ ${relatedMediaSection}
         }
 
         // Parse Media section
-        const mediaSection = getSectionAny(markdown, [
+        const mediaSection = getSectionAny(normalizedMarkdown, [
             'In the Media',
             'Media',
             'In the Media & News',
@@ -1060,7 +1063,7 @@ ${relatedMediaSection}
         }
 
         // Parse Testimonies section
-        const testimoniesSection = getSectionAny(markdown, [
+        const testimoniesSection = getSectionAny(normalizedMarkdown, [
             'Survivor Testimonies',
             'Survivor/Parent Testimonials',
             'Survivor/Parent Testimonies',
@@ -1154,7 +1157,7 @@ ${relatedMediaSection}
         }
 
         // Parse Related Media section
-        const relatedMediaSection = getSection(markdown, 'Related Media');
+        const relatedMediaSection = getSection(normalizedMarkdown, 'Related Media');
         console.log('Related Media section:', relatedMediaSection ? `Found (${relatedMediaSection.length} chars)` : 'Not found');
         if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
             const lines = relatedMediaSection.split('\n');
