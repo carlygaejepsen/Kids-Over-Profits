@@ -1,5 +1,37 @@
 <?php
 // Database configuration
+// Load .env file first to make environment variables available
+$env_path = null;
+$current = __DIR__;
+for ($i = 0; $i < 6; $i++) {
+    $current = dirname($current);
+    if (file_exists($current . '/.env')) {
+        $env_path = $current . '/.env';
+        break;
+    }
+}
+
+if ($env_path) {
+    // Load .env file and set environment variables
+    $env_lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($env_lines as $line) {
+        // Skip comments
+        if (strpos(trim($line), '#') === 0) continue;
+        
+        // Parse KEY=VALUE lines
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+            
+            // Only set if not already defined
+            if (!getenv($key)) {
+                putenv("$key=$value");
+            }
+        }
+    }
+}
+
 // Load WordPress first so we have access to wp-config.php constants
 $wp_config_path = null;
 $current = __DIR__;
