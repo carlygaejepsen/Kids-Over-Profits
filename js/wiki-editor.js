@@ -699,6 +699,7 @@ ${relatedMediaSection}
             'Notable Staff',
             'Founders'
         ]);
+        console.log('Staff section raw content:', staffSection ? `Found (${staffSection.length} chars)` : 'Not found');
         if (staffSection && !staffSection.includes('No information is known')) {
             const addStaff = (name, role, bio, previousRoles) => {
                 if (!name || !role) return;
@@ -720,22 +721,42 @@ ${relatedMediaSection}
                 const trimmed = p.trim();
                 return trimmed.startsWith('**');
             });
+            console.log(`Staff split into ${staffParagraphs.length} paragraphs starting with **`);
 
-            staffParagraphs.forEach(block => {
+            staffParagraphs.forEach((block, idx) => {
                 const normalized = cleanStaffBlock(block);
+                console.log(`Staff paragraph ${idx + 1}:`, normalized.substring(0, 100));
 
                 // Extract name from **Name** at the start
                 const nameMatch = normalized.match(/^\*\*([^*]+)\*\*/);
-                if (!nameMatch) return;
+                if (!nameMatch) {
+                    console.warn(`  → No name match for paragraph ${idx + 1}`);
+                    return;
+                }
 
                 const name = nameMatch[1].trim();
+                console.log(`  → Found name: "${name}"`);
 
                 // Extract role from first sentence - be flexible with verb phrases
                 // Patterns: "is the X", "was the X", "currently works as", "works as", "served as"
-                const roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:is|was|currently\s+works\s+as|works\s+as|served\s+as|serves\s+as)(?:\s+(?:the|a|an))?\s+([^\.]+)\./i);
-                if (!roleMatch) return;
+                let roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:is|was|currently\s+works\s+as|works\s+as|served\s+as|serves\s+as)(?:\s+(?:the|a|an))?\s+([^\.]+)\./i);
 
-                const role = roleMatch[1].trim();
+                let role = '';
+                if (roleMatch) {
+                    role = roleMatch[1].trim();
+                    console.log(`  → Role (pattern match): "${role}"`);
+                } else {
+                    // Fallback: try to extract anything after the name until first period
+                    const fallbackMatch = normalized.match(/^\*\*[^*]+\*\*\s+([^\.]+)\./);
+                    if (fallbackMatch) {
+                        role = fallbackMatch[1].trim();
+                        console.log(`  → Role (fallback): "${role}"`);
+                    } else {
+                        // If still no match, use empty role but still add the person
+                        console.warn(`  → Could not extract role for: ${name}, using "Staff Member"`);
+                        role = 'Staff Member';
+                    }
+                }
 
                 // Extract previous roles - look for work history patterns
                 const previousRoles = [];
@@ -825,7 +846,7 @@ ${relatedMediaSection}
             lines.forEach(line => {
                 const trimmed = line.trim();
 
-                // Format 0: **Name:** Description (bold name with colon - MOST COMMON)
+                // Format 0a: **Name:** Description (bold name with colon)
                 // Examples: **Green:** Description, **Phase 1:** Description
                 let match = trimmed.match(/^\*\*([^:*]+):\*\*\s*(.*)$/);
                 if (match) {
@@ -833,6 +854,21 @@ ${relatedMediaSection}
                         name: match[1].trim(),
                         desc: match[2].trim()
                     });
+                    return;
+                }
+
+                // Format 0b: **Name** (bold name without colon - just the level name)
+                // Examples: **Green**, **Phase 1**, **Yellow**
+                match = trimmed.match(/^\*\*([^*]+)\*\*$/);
+                if (match) {
+                    const name = match[1].trim();
+                    // Only add if it looks like a level name (short, starts with capital or number)
+                    if (name.length < 50 && /^[A-Z0-9]/.test(name)) {
+                        programLevels.push({
+                            name: name,
+                            desc: ''
+                        });
+                    }
                     return;
                 }
 
@@ -1031,11 +1067,13 @@ ${relatedMediaSection}
             'Survivor Testimonials',
             'Survivor and Parent Testimonials'
         ]);
+        console.log('Testimonies section:', testimoniesSection ? `Found (${testimoniesSection.length} chars)` : 'Not found');
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
             // Split by double newlines or single newlines with bold markers
             const blocks = testimoniesSection.split(/\n\n+|\n(?=\*\*)/);
+            console.log(`Testimonies split into ${blocks.length} blocks`);
 
-            blocks.forEach(block => {
+            blocks.forEach((block, idx) => {
                 const trimmed = block.trim();
                 if (!trimmed || trimmed.length === 0) return;
 
@@ -1047,9 +1085,12 @@ ${relatedMediaSection}
                     .replace(/[–—]/g, '-') // en-dash and em-dash to hyphen
                     .trim();
 
+                console.log(`Testimony block ${idx + 1}:`, cleaned.substring(0, 80));
+
                 // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
                 let match = cleaned.match(/^\*\*(.+?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
+                    console.log(`  → Matched pattern 1 (Date+Type)`);
                     testimonies.push({
                         date: match[1].trim(),
                         type: match[2].trim().toUpperCase(),
@@ -1063,6 +1104,7 @@ ${relatedMediaSection}
                 // Pattern 2: **(TYPE)** "quote" - [Source](url)
                 match = cleaned.match(/^\*\*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
+                    console.log(`  → Matched pattern 2 (Type only)`);
                     testimonies.push({
                         date: '',
                         type: match[1].trim().toUpperCase(),
@@ -1076,6 +1118,7 @@ ${relatedMediaSection}
                 // Pattern 3: Date: (TYPE) "quote" - [Source](url) (no bold)
                 match = cleaned.match(/^(.+?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
+                    console.log(`  → Matched pattern 3 (Date+Type, no bold)`);
                     testimonies.push({
                         date: match[1].trim(),
                         type: match[2].trim().toUpperCase(),
@@ -1089,6 +1132,7 @@ ${relatedMediaSection}
                 // Pattern 4: (TYPE) "quote" - [Source](url) (no date, no bold)
                 match = cleaned.match(/^\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
+                    console.log(`  → Matched pattern 4 (Type only, no bold)`);
                     testimonies.push({
                         date: '',
                         type: match[1].trim().toUpperCase(),
@@ -1096,7 +1140,10 @@ ${relatedMediaSection}
                         source: match[3].trim(),
                         url: match[4].trim()
                     });
+                    return;
                 }
+
+                console.warn(`  → No pattern matched for block ${idx + 1}`);
             });
 
             renderList(testimonies, 'testimonyListOutput', item => {
@@ -1108,6 +1155,7 @@ ${relatedMediaSection}
 
         // Parse Related Media section
         const relatedMediaSection = getSection(markdown, 'Related Media');
+        console.log('Related Media section:', relatedMediaSection ? `Found (${relatedMediaSection.length} chars)` : 'Not found');
         if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
             const lines = relatedMediaSection.split('\n');
 
@@ -1136,6 +1184,7 @@ ${relatedMediaSection}
             });
 
             renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
+            console.log(`✓ Parsed ${relatedMedia.length} related media items`);
         }
     }
 
