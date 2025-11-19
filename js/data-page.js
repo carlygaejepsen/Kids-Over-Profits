@@ -51,7 +51,7 @@
 
             if (shouldShow) {
                 if (item.toggleDisplay) {
-                    item.element.style.display = item.dataset.originalDisplay || '';
+                    item.element.style.display = item.element.dataset.originalDisplay || '';
                 }
                 item.hiddenClasses.forEach(cls => cls && item.element.classList.remove(cls));
             } else {
@@ -869,6 +869,12 @@
             const organizeResultsTitle = document.getElementById('organize-results-title');
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
+            
+            // Exit early if required elements don't exist
+            if (!showOrganizerBtn || !organizerSection) {
+                console.warn('Data Organizer elements not found in DOM');
+                return;
+            }
             
             let organizerVisible = false; // Collapsed by default
             

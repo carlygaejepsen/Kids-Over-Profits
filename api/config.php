@@ -1,5 +1,21 @@
 <?php
 // Database configuration
+// Load WordPress first so we have access to wp-config.php constants
+$wp_config_path = null;
+$current = __DIR__;
+for ($i = 0; $i < 5; $i++) {
+    $current = dirname($current);
+    if (file_exists($current . '/wp-config.php')) {
+        $wp_config_path = $current . '/wp-config.php';
+        break;
+    }
+}
+
+if ($wp_config_path && !defined('ABSPATH')) {
+    // Load wp-config.php to get database constants
+    require_once $wp_config_path;
+}
+
 if (!function_exists('kop_get_db_config_value')) {
     /**
      * Resolve a database configuration value from predefined constants or environment variables.
