@@ -166,6 +166,14 @@ try {
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed', 'details' => $e->getMessage()]);
+
+    // Log detailed error to server error log for debugging (secure)
+    error_log("DB Connection Failed - Host: $db_host, DB: $db_name, User: $db_user, Error: " . $e->getMessage());
+
+    // Only show sanitized error to client (no sensitive info)
+    echo json_encode([
+        'error' => 'Database connection failed',
+        'details' => 'Please check server error logs for details'
+    ]);
     exit;
 }
