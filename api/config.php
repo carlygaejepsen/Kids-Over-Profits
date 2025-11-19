@@ -64,20 +64,39 @@ if (!function_exists('kop_emit_db_config_error')) {
     }
 }
 
-$db_host = kop_get_db_config_value(['KOP_DB_HOST', 'DB_HOST']);
-$db_name = kop_get_db_config_value(['KOP_DB_NAME', 'DB_NAME']);
-$db_user = kop_get_db_config_value(['KOP_DB_USER', 'KOP_DB_USERNAME', 'DB_USER', 'DB_USERNAME']);
-$db_pass = kop_get_db_config_value(['KOP_DB_PASS', 'KOP_DB_PASSWORD', 'DB_PASS', 'DB_PASSWORD']);
+$db_host = null;
+$db_name = null;
+$db_user = null;
+$db_pass = null;
 
+// Prefer local override config when present so we can point the API at a
+// suggestions-only database even when WordPress defines DB_* constants.
 $localConfigPath = __DIR__ . '/config.local.php';
 if (file_exists($localConfigPath)) {
     $localConfig = include $localConfigPath;
     if (is_array($localConfig)) {
-        $db_host = $db_host ?? ($localConfig['host'] ?? $localConfig['db_host'] ?? null);
-        $db_name = $db_name ?? ($localConfig['name'] ?? $localConfig['db_name'] ?? null);
-        $db_user = $db_user ?? ($localConfig['user'] ?? $localConfig['username'] ?? $localConfig['db_user'] ?? null);
-        $db_pass = $db_pass ?? ($localConfig['pass'] ?? $localConfig['password'] ?? $localConfig['db_pass'] ?? null);
+        $db_host = $localConfig['host'] ?? $localConfig['db_host'] ?? null;
+        $db_name = $localConfig['name'] ?? $localConfig['db_name'] ?? null;
+        $db_user = $localConfig['user'] ?? $localConfig['username'] ?? $localConfig['db_user'] ?? null;
+        $db_pass = $localConfig['pass'] ?? $localConfig['password'] ?? $localConfig['db_pass'] ?? null;
     }
+}
+
+// Fall back to WordPress constants/env vars only if local overrides are missing.
+if ($db_host === null) {
+    $db_host = kop_get_db_config_value(['KOP_DB_HOST', 'DB_HOST']);
+}
+
+if ($db_name === null) {
+    $db_name = kop_get_db_config_value(['KOP_DB_NAME', 'DB_NAME']);
+}
+
+if ($db_user === null) {
+    $db_user = kop_get_db_config_value(['KOP_DB_USER', 'KOP_DB_USERNAME', 'DB_USER', 'DB_USERNAME']);
+}
+
+if ($db_pass === null) {
+    $db_pass = kop_get_db_config_value(['KOP_DB_PASS', 'KOP_DB_PASSWORD', 'DB_PASS', 'DB_PASSWORD']);
 }
 
 $missing = [];
