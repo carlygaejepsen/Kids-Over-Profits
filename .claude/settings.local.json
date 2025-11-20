@@ -7,7 +7,8 @@
       "Bash(test:*)",
       "Bash(php -l:*)",
       "Bash(node -c:*)",
-      "Bash(NUL)"
+      "Bash(NUL)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

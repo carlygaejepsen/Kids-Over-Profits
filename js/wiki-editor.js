@@ -715,7 +715,9 @@ ${relatedMediaSection}
             };
 
             const cleanStaffBlock = (text) => text
-                .replace(/^[*-]\s*/, '')
+                // Only strip bullet markers when they are followed by whitespace,
+                // so regular bold names like **Name** stay intact.
+                .replace(/^\s*[-*]\s+(?=\S)/, '')
                 .replace(/\s+/g, ' ')
                 .trim();
 
@@ -1082,7 +1084,8 @@ ${relatedMediaSection}
                 if (!trimmed || trimmed.length === 0) return;
 
                 const cleaned = trimmed
-                    .replace(/^\s*[*-]\s*/, '') // drop list markers
+                    // Drop bullet markers only if followed by whitespace
+                    .replace(/^\s*[-*]\s+(?=\S)/, '')
                     .replace(/\n+/g, ' ') // flatten multiline entries
                     // Normalize quotes and dashes
                     .replace(/[""]/g, '"') // smart quotes to straight quotes
