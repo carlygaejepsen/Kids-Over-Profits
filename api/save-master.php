@@ -48,7 +48,12 @@ if (!$request) {
     exit;
 }
 
+// Use PDO connection from config.php
+// Load this BEFORE extracting variables to avoid WordPress variable conflicts
+require_once __DIR__ . '/config.php';
+
 // Set defaults for all expected variables to prevent undefined errors
+// These are defined AFTER config.php to prevent WordPress from overwriting them
 $action = isset($request['action']) ? $request['action'] : 'save';
 $projectName = isset($request['projectName']) ? $request['projectName'] : null;
 $newProjectName = isset($request['newProjectName']) ? $request['newProjectName'] : null;
@@ -65,10 +70,6 @@ if (!$projectName) {
     ]);
     exit;
 }
-
-
-// Use PDO connection from config.php
-require_once __DIR__ . '/config.php';
 
 if ($action === 'rename') {
     if (!$projectName || !$newProjectName) {
