@@ -39,9 +39,13 @@ try {
     }
     
     // Validate that we have some meaningful data
-    if (empty($data['operator']['name']) && empty($data['facilities'][0]['identification']['name'])) {
+    $hasOperator = !empty($data['operator']['name']);
+    $hasFacility = !empty($data['facilities'][0]['identification']['name']);
+    $hasReferrer = !empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']);
+
+    if (!$hasOperator && !$hasFacility && !$hasReferrer) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Please provide at least an operator name or facility name']);
+        echo json_encode(['success' => false, 'error' => 'Please provide at least an operator name, facility name, or referrer name']);
         exit;
     }
     
@@ -65,14 +69,34 @@ try {
     }
     // Fallback to old logic only if no project name is provided
     else {
+        // Try operator name
         if (!empty($data['operator']['name'])) {
             $master_id = $data['operator']['name'];
         }
+        // Try facility name
         if (!empty($data['facilities'][0]['identification']['name'])) {
             if ($master_id) {
                 $master_id .= ' - ' . $data['facilities'][0]['identification']['name'];
             } else {
                 $master_id = $data['facilities'][0]['identification']['name'];
+            }
+        }
+        // Try referrer agency name
+        if (!empty($data['referrerAgency']['name'])) {
+            $master_id = $data['referrerAgency']['name'];
+        }
+        // Try referrer consultant name
+        if (!empty($data['referrerConsultants'][0]['firstName']) || !empty($data['referrerConsultants'][0]['lastName'])) {
+            $consultantName = trim(
+                ($data['referrerConsultants'][0]['firstName'] ?? '') . ' ' .
+                ($data['referrerConsultants'][0]['lastName'] ?? '')
+            );
+            if (!empty($consultantName)) {
+                if ($master_id) {
+                    $master_id .= ' - ' . $consultantName;
+                } else {
+                    $master_id = $consultantName;
+                }
             }
         }
     }
