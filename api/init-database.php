@@ -75,12 +75,31 @@ CREATE TABLE IF NOT EXISTS `suggested_edits` (
 SQL;
 
     $pdo->exec($createSuggestionsTableSQL);
-    
+
+    // ============================================
+    // Create referrers_master table (separate from facilities)
+    // ============================================
+    $createReferrersTableSQL = <<<SQL
+CREATE TABLE IF NOT EXISTS `referrers_master` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unique_name` varchar(255) NOT NULL UNIQUE COMMENT 'Referrer project identifier (agency/consultant name)',
+  `json_data` longtext NOT NULL COMMENT 'JSON-encoded referrer data including agency and consultants',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name` (`unique_name`),
+  KEY `updated_at` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Referrer database - stores education consultants and agencies'
+SQL;
+
+    $pdo->exec($createReferrersTableSQL);
+
     $result = [
         'success' => true,
         'message' => 'Database initialization complete',
         'tables_created' => [
             'facilities_master' => 'Master facility data storage',
+            'referrers_master' => 'Referrer/consultant data storage',
             'suggested_edits' => 'Public suggestion queue'
         ],
         'next_steps' => [

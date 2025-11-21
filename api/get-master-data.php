@@ -5,9 +5,17 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
-    $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
-    $stmt->execute();
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Query both facilities_master and referrers_master tables
+    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+    $stmt1->execute();
+    $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
+    $stmt2->execute();
+    $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+    // Merge both result sets
+    $results = array_merge($facilitiesResults, $referrersResults);
 
     $projects = [];
     foreach ($results as $row) {

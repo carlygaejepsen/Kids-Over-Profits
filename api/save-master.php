@@ -101,18 +101,28 @@ if ($action === 'rename') {
 // Handle action
 if ($action === 'delete') {
     try {
-        // Use correct column name: unique_name, not projectName
+        // Try deleting from both tables (referrers and facilities)
+        $deletedFromFacilities = false;
+        $deletedFromReferrers = false;
+
         $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
-        if ($stmt->rowCount() > 0) {
+        $deletedFromFacilities = $stmt->rowCount() > 0;
+
+        $stmt = $pdo->prepare("DELETE FROM referrers_master WHERE unique_name = :projectName");
+        $stmt->execute([':projectName' => $projectName]);
+        $deletedFromReferrers = $stmt->rowCount() > 0;
+
+        if ($deletedFromFacilities || $deletedFromReferrers) {
+            $fromTable = $deletedFromReferrers ? 'referrers_master' : 'facilities_master';
             echo json_encode([
                 'success' => true,
-                'message' => "Project '$projectName' deleted from master database"
+                'message' => "Project '$projectName' deleted from {$fromTable}"
             ]);
         } else {
             echo json_encode([
                 'success' => false,
-                'error' => 'Project not found in master database'
+                'error' => 'Project not found in any database table'
             ]);
         }
     } catch (PDOException $e) {
@@ -147,21 +157,24 @@ if ($action === 'save') {
     // Encode the complete project structure as a JSON string
     $jsonData = json_encode($projectStructure);
 
+    // Determine which table to use based on category
+    $tableName = ($category === 'referrers') ? 'referrers_master' : 'facilities_master';
+
     // SQL to insert or update the project data based on projectName
     // The identifier column is `unique_name` and the data column is `json_data`.
-    $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at) 
-            VALUES (:unique_name, :json_data, NOW()) 
+    $sql = "INSERT INTO {$tableName} (unique_name, json_data, updated_at)
+            VALUES (:unique_name, :json_data, NOW())
             ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':unique_name', $projectName);
         $stmt->bindValue(':json_data', $jsonData);
-        
+
         $stmt->execute();
         echo json_encode([
             'success' => true,
-            'message' => "Project '$projectName' saved to master database"
+            'message' => "Project '$projectName' saved to {$tableName}"
         ]);
     } catch (PDOException $e) {
         echo json_encode([
