@@ -319,23 +319,30 @@ function loadReferrerData() {
         debugLog('📋 Consultant data:', consultant);
     }
 
-    const consultantName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ');
-    const individualFieldMap = [
-        { ids: ['referrer-individual-name'], value: consultantName },
-        { ids: ['referrer-individual-role'], value: consultant.role || '' },
-        { ids: ['referrer-individual-status'], value: consultant.status || '' },
-        { ids: ['referrer-individual-education'], value: consultant.education || consultant.credentials || '' },
-        { ids: ['referrer-individual-lawsuits'], value: consultant.lawsuits || '' },
-        { ids: ['referrer-individual-notes'], value: consultant.notes || '' },
-    ];
+    // Load consultant fields automatically using data-field attributes (like facilities do)
+    // This matches the HTML structure with class="consultant-field" data-field="firstName" etc.
+    document.querySelectorAll('.consultant-field').forEach(field => {
+        const fieldName = field.dataset.field;
+        if (fieldName) {
+            // Get value from consultant object
+            let value = consultant[fieldName];
 
-    individualFieldMap.forEach(({ ids, value }) => {
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.value = value;
+            // Handle special cases
+            if (fieldName === 'credentials' && !value) {
+                value = consultant.education; // Fallback to education
             }
-        });
+
+            // Set field value
+            if (field.type === 'checkbox') {
+                field.checked = !!value;
+            } else {
+                field.value = value ?? '';
+            }
+
+            if (typeof debugLog === 'function') {
+                debugLog(`  ✓ Set consultant field ${fieldName} = "${value || ''}"`);
+            }
+        }
     });
 
     if (!Array.isArray(consultant.pastTTIJobs)) {
