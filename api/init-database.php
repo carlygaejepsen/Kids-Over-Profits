@@ -82,7 +82,7 @@ SQL;
     $createReferrersTableSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS `referrers_master` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `unique_name` varchar(255) NOT NULL UNIQUE COMMENT 'Referrer project identifier (agency/consultant name)',
+  `unique_name` varchar(255) NOT NULL COMMENT 'Referrer project identifier (agency/consultant name)',
   `json_data` longtext NOT NULL COMMENT 'JSON-encoded referrer data including agency and consultants',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
