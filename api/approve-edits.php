@@ -93,19 +93,48 @@ function render_diff($diff) {
                         <?php
                         $new_data = json_decode($suggestion['edited_json_data'], true);
                         $master_id = $suggestion['master_id'];
+
+                        // Check both facilities_master and referrers_master tables
                         $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ?");
                         $stmt->execute([$master_id]);
                         $original_data = $stmt->fetchColumn();
+
+                        // If not found in facilities, try referrers
+                        if (!$original_data) {
+                            $stmt = $pdo->prepare("SELECT json_data FROM referrers_master WHERE unique_name = ?");
+                            $stmt->execute([$master_id]);
+                            $original_data = $stmt->fetchColumn();
+                        }
+
                         $old_data = $original_data ? json_decode($original_data, true) : [];
-                        
+
                         $diff = json_diff($old_data, $new_data);
-                        
+
+                        // Determine display names based on data type (facility vs referrer)
                         $operator_name = $new_data['operator']['name'] ?? 'N/A';
                         $facility_name = $new_data['facilities'][0]['identification']['name'] ?? 'N/A';
+                        $referrer_agency = $new_data['referrerAgency']['name'] ?? '';
+                        $referrer_consultant = '';
+                        if (!empty($new_data['referrerConsultants'][0]['firstName']) || !empty($new_data['referrerConsultants'][0]['lastName'])) {
+                            $referrer_consultant = trim(
+                                ($new_data['referrerConsultants'][0]['firstName'] ?? '') . ' ' .
+                                ($new_data['referrerConsultants'][0]['lastName'] ?? '')
+                            );
+                        }
                         ?>
                         <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
-                        <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
-                        <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
+                        <?php if ($operator_name !== 'N/A'): ?>
+                            <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
+                        <?php endif; ?>
+                        <?php if ($facility_name !== 'N/A'): ?>
+                            <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($referrer_agency)): ?>
+                            <p><strong>Referrer Agency:</strong> <?php echo htmlspecialchars($referrer_agency); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($referrer_consultant)): ?>
+                            <p><strong>Referrer Consultant:</strong> <?php echo htmlspecialchars($referrer_consultant); ?></p>
+                        <?php endif; ?>
                         <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
                         <div class="diff">
                             <?php echo render_diff($diff); ?>

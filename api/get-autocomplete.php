@@ -568,6 +568,7 @@ try {
 
     $sources = [
         "SELECT json_data AS payload FROM facilities_master",
+        "SELECT json_data AS payload FROM referrers_master",
         "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
     ];
 

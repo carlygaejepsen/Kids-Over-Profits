@@ -84,7 +84,7 @@ try {
     }
 
     if ($action === 'approve') {
-        // Insert or update in facilities_master table
+        // Insert or update in facilities_master or referrers_master table
         $master_id = isset($submission['master_id']) ? $submission['master_id'] : null;
         $json_data = isset($submission['edited_json_data']) ? $submission['edited_json_data'] : null;
 
@@ -95,25 +95,32 @@ try {
             exit;
         }
 
+        // Determine which table to use based on data structure
+        $decoded_data = json_decode($json_data, true);
+        $isReferrer = !empty($decoded_data['referrerAgency']['name']) ||
+                      !empty($decoded_data['referrerConsultants'][0]['firstName']) ||
+                      !empty($decoded_data['referrerConsultants'][0]['lastName']);
+        $tableName = $isReferrer ? 'referrers_master' : 'facilities_master';
+
         // If master_id is empty, insert a new row with NULL unique_name
         if ($master_id) {
-            // Check if record exists by unique_name
-            $checkStmt = $pdo->prepare("SELECT id FROM facilities_master WHERE unique_name = ? LIMIT 1");
+            // Check if record exists by unique_name in the appropriate table
+            $checkStmt = $pdo->prepare("SELECT id FROM {$tableName} WHERE unique_name = ? LIMIT 1");
             $checkStmt->execute([$master_id]);
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
             if ($exists) {
                 // Update existing record
-                $updateStmt = $pdo->prepare("UPDATE facilities_master SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
+                $updateStmt = $pdo->prepare("UPDATE {$tableName} SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
                 $updateStmt->execute([$json_data, $master_id]);
             } else {
                 // Insert new record with provided unique_name
-                $insertStmt = $pdo->prepare("INSERT INTO facilities_master (unique_name, json_data) VALUES (?, ?)");
+                $insertStmt = $pdo->prepare("INSERT INTO {$tableName} (unique_name, json_data) VALUES (?, ?)");
                 $insertStmt->execute([$master_id, $json_data]);
             }
         } else {
             // Insert a completely new master record (unique_name left NULL)
-            $insertStmt = $pdo->prepare("INSERT INTO facilities_master (json_data) VALUES (?)");
+            $insertStmt = $pdo->prepare("INSERT INTO {$tableName} (json_data) VALUES (?)");
             $insertStmt->execute([$json_data]);
         }
 
