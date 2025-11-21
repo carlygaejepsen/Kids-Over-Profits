@@ -521,8 +521,16 @@ function attachReferrerFieldListeners() {
                     window.formData.referrerConsultants[consultantIndex] = createDefaultReferrerIndividual();
                 }
                 window.formData.referrerConsultants[consultantIndex][fieldName] = e.target.value;
+
+                // Update fullName when firstName or lastName changes
+                if (fieldName === 'firstName' || fieldName === 'lastName') {
+                    const consultant = window.formData.referrerConsultants[consultantIndex];
+                    consultant.fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim();
+                }
+
                 if (typeof updateJSON === 'function') updateJSON();
                 if (typeof autoSave === 'function') autoSave();
+                if (typeof updateConsultantsOverview === 'function') updateConsultantsOverview();
             }, { passive: true });
             field.dataset.listenerAttached = 'true';
         }
