@@ -82,6 +82,12 @@ get_header();
                     <input type="text" id="staffRole">
                     <label for="staffBio">Bio/Details (can include Markdown links):</label>
                     <textarea id="staffBio" rows="3" placeholder="e.g., Previously worked at [Another Program](link)..."></textarea>
+                    <label for="staffPreviousRoles">Previous Roles (one per line):</label>
+                    <textarea id="staffPreviousRoles" rows="2" placeholder="e.g., Clinical Director at Another Campus"></textarea>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="staffIsFormer">
+                        <span>Mark as former/previous staff member</span>
+                    </label>
                     <button type="button" class="add-btn" id="addStaffBtn">Add Staff Member</button>
                 </div>
                 <div class="list-preview" id="staffListOutput"></div>
@@ -181,7 +187,10 @@ get_header();
         <h2>Generated Wiki Code</h2>
         <p>Copy the text below and paste it directly into the Reddit wiki editor.</p>
         <textarea id="outputCode" readonly></textarea>
-        <button type="button" id="copyBtn">Copy to Clipboard</button>
+        <div class="output-actions">
+            <button type="button" id="convertPastBtn">Convert to Past Tense</button>
+            <button type="button" id="copyBtn">Copy to Clipboard</button>
+        </div>
     </div>
 </div>
 

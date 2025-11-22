@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let testimonies = [];
     let relatedMedia = [];
 
+    const staffNameInput = document.getElementById('staffName');
+    const staffRoleInput = document.getElementById('staffRole');
+    const staffBioInput = document.getElementById('staffBio');
+    const staffPreviousRolesInput = document.getElementById('staffPreviousRoles');
+    const staffIsFormerInput = document.getElementById('staffIsFormer');
+    const addStaffBtn = document.getElementById('addStaffBtn');
+    let editingStaffIndex = null;
+
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
         const emptyHtml = '<p style="color:#999;">No items added yet</p>';
@@ -26,10 +34,146 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     initializeEmptyLists();
 
+    function getStaffPreviousRolesFromInput() {
+        if (!staffPreviousRolesInput || !staffPreviousRolesInput.value) {
+            return [];
+        }
+        return staffPreviousRolesInput.value
+            .split(/\r?\n|,/)
+            .map(role => role.trim())
+            .filter(Boolean);
+    }
+
+    function resetStaffForm() {
+        if (staffNameInput) staffNameInput.value = '';
+        if (staffRoleInput) staffRoleInput.value = '';
+        if (staffBioInput) staffBioInput.value = '';
+        if (staffPreviousRolesInput) staffPreviousRolesInput.value = '';
+        if (staffIsFormerInput) staffIsFormerInput.checked = false;
+        editingStaffIndex = null;
+        if (addStaffBtn) {
+            addStaffBtn.textContent = 'Add Staff Member';
+        }
+    }
+
+    function startEditStaffMember(index) {
+        const member = staffMembers[index];
+        if (!member) return;
+        editingStaffIndex = index;
+        if (staffNameInput) staffNameInput.value = member.name || '';
+        if (staffRoleInput) staffRoleInput.value = member.role || '';
+        if (staffBioInput) staffBioInput.value = member.bio || '';
+        if (staffPreviousRolesInput) staffPreviousRolesInput.value = (member.previousRoles || []).join('\n');
+        if (staffIsFormerInput) staffIsFormerInput.checked = !!member.isFormer;
+        if (addStaffBtn) addStaffBtn.textContent = 'Save Staff Member';
+        if (staffNameInput) staffNameInput.focus();
+    }
+
+    function removeStaffMember(index) {
+        if (index < 0 || index >= staffMembers.length) return;
+        staffMembers.splice(index, 1);
+        if (editingStaffIndex !== null) {
+            if (editingStaffIndex === index) {
+                resetStaffForm();
+            } else if (editingStaffIndex > index) {
+                editingStaffIndex -= 1;
+            }
+        }
+        renderStaffList();
+    }
+
+    function renderStaffList() {
+        const container = document.getElementById('staffListOutput');
+        if (!container) return;
+        container.innerHTML = '';
+        if (!staffMembers.length) {
+            container.innerHTML = '<p style="color:#999;">No items added yet</p>';
+            return;
+        }
+
+        staffMembers.forEach((member, index) => {
+            const item = document.createElement('div');
+            item.className = 'list-preview-item staff-preview-item';
+
+            const summary = document.createElement('div');
+            summary.className = 'staff-summary';
+            const nameStrong = document.createElement('strong');
+            nameStrong.textContent = member.name || '';
+            summary.appendChild(nameStrong);
+
+            const roleSpan = document.createElement('span');
+            roleSpan.className = 'staff-role';
+            roleSpan.textContent = ` — ${member.role || ''}`;
+            summary.appendChild(roleSpan);
+
+            if (member.isFormer) {
+                const status = document.createElement('span');
+                status.className = 'staff-status';
+                status.textContent = 'Former';
+                summary.appendChild(status);
+            }
+
+            item.appendChild(summary);
+
+            if (member.previousRoles && member.previousRoles.length) {
+                const prev = document.createElement('div');
+                prev.className = 'staff-prev';
+                prev.textContent = `Prev: ${member.previousRoles.join('; ')}`;
+                item.appendChild(prev);
+            }
+
+            if (member.bio) {
+                const bio = document.createElement('div');
+                bio.className = 'staff-bio';
+                bio.textContent = member.bio;
+                item.appendChild(bio);
+            }
+
+            const actions = document.createElement('div');
+            actions.className = 'staff-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => startEditStaffMember(index));
+            actions.appendChild(editBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-btn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => removeStaffMember(index));
+            actions.appendChild(removeBtn);
+
+            item.appendChild(actions);
+            container.appendChild(item);
+        });
+    }
+
+    renderStaffList();
+
     // --- Helper: Get Placeholder Text ---
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
         return `No information is known about ${category} at ${name}. If you attended ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain8910.`;
+    };
+
+    // --- Helper: Normalize/Sanitize URLs for Markdown ---
+    const sanitizeUrl = (input) => {
+        if (!input) return '';
+        let url = input.trim();
+        if (!url) return '';
+
+        const isRelativePath = url.startsWith('/');
+        if (url.startsWith('//')) {
+            url = `https:${url}`;
+        } else if (!isRelativePath && !/^[a-z]+:\/\//i.test(url)) {
+            url = url.startsWith('www.') ? `https://${url}` : `https://${url}`;
+        }
+
+        url = url.replace(/\s+/g, '%20');
+        url = url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+        return url;
     };
 
     // --- Helper: Render a Preview List ---
@@ -82,29 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Add Button: Staff ---
-    const addStaffBtn = document.getElementById('addStaffBtn');
     if (addStaffBtn) {
         addStaffBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const name = document.getElementById('staffName').value.trim();
-            const role = document.getElementById('staffRole').value.trim();
-            const previousRolesRaw = document.getElementById('staffPreviousRoles').value.trim();
-            const bio = document.getElementById('staffBio').value.trim();
-            if (name && role) {
-                const previousRoles = previousRolesRaw
-                    ? previousRolesRaw.split('\n').map(r => r.trim()).filter(Boolean)
-                    : [];
-                staffMembers.push({ name, role, bio, previousRoles });
-                renderList(staffMembers, 'staffListOutput', item => {
-                    const previous = item.previousRoles && item.previousRoles.length
-                        ? `<div class="staff-prev">Prev: ${escapeHtml(item.previousRoles.join('; '))}</div>`
-                        : '';
-                    return `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}${previous}`;
-                });
-                clearInputs(['staffName', 'staffRole', 'staffBio', 'staffPreviousRoles']);
-            } else {
+            const name = staffNameInput ? staffNameInput.value.trim() : '';
+            const role = staffRoleInput ? staffRoleInput.value.trim() : '';
+            const bio = staffBioInput ? staffBioInput.value.trim() : '';
+            const previousRoles = getStaffPreviousRolesFromInput();
+            const isFormer = staffIsFormerInput ? staffIsFormerInput.checked : false;
+
+            if (!name || !role) {
                 alert('Please enter at least a name and role.');
+                return;
             }
+
+            const staffData = { name, role, bio, previousRoles, isFormer };
+
+            if (editingStaffIndex !== null) {
+                staffMembers[editingStaffIndex] = staffData;
+            } else {
+                staffMembers.push(staffData);
+            }
+
+            renderStaffList();
+            resetStaffForm();
         });
     }
 
@@ -131,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addArticleBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const title = document.getElementById('articleTitle').value.trim();
-            const url = document.getElementById('articleUrl').value.trim();
+            const url = sanitizeUrl(document.getElementById('articleUrl').value);
             const source = document.getElementById('articleSource').value.trim();
             const date = document.getElementById('articleDate').value.trim();
             if (title && url) {
@@ -153,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = document.getElementById('testimonyType').value;
             const quote = document.getElementById('testimonyQuote').value.trim();
             const source = document.getElementById('testimonySource').value.trim();
-            const url = document.getElementById('testimonyUrl').value.trim();
+            const url = sanitizeUrl(document.getElementById('testimonyUrl').value);
             if (quote && source && url) {
                 testimonies.push({ date, type, quote, source, url });
                 renderList(testimonies, 'testimonyListOutput', item => `<strong>(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`);
@@ -170,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addMediaBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const title = document.getElementById('mediaTitle').value.trim();
-            const url = document.getElementById('mediaUrl').value.trim();
+            const url = sanitizeUrl(document.getElementById('mediaUrl').value);
             if (title && url) {
                 relatedMedia.push({ title, url });
                 renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
@@ -183,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- MAIN GENERATE BUTTON ---
     const generateBtn = document.getElementById('generateBtn');
+    const outputCode = document.getElementById('outputCode');
     if (generateBtn) {
         generateBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -200,8 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Helper: Create Link ---
             const createLink = (text, url) => {
                 if (!text) return '';
-                if (!url) return escapeMarkdown(text);
-                return `[${escapeMarkdown(text)}](${url})`;
+                const safeUrl = sanitizeUrl(url);
+                if (!safeUrl) return escapeMarkdown(text);
+                return `[${escapeMarkdown(text)}](${safeUrl})`;
             };
 
             // --- Helper: Process Simple List from Textarea ---
@@ -227,10 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return /[.!?]"?$/.test(trimmed) ? trimmed : `${trimmed}.`;
             };
 
-            const roleVerb = (roleText) => {
-                const value = (roleText || '').toLowerCase();
-                return /\b(former|previous|ex[\s-])/.test(value) ? 'was' : 'is';
-            };
+    const roleVerb = (staffMember) => {
+        if (!staffMember) return 'is';
+        if (staffMember.isFormer) return 'was';
+        const value = (staffMember.role || '').toLowerCase();
+        return /\b(former|previous|ex[\s-])/.test(value) ? 'was' : 'is';
+    };
 
             // --- Build History Section ---
             let historySection = '';
@@ -288,7 +437,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 staffSection = staffMembers.map(s => {
                     const roleText = escapeMarkdown(s.role);
                     const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
-                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(roleText)} ${articleRole}`);
+                    const descriptor = s.isFormer
+                        ? articleRole.replace(/^the\s+/i, 'the former ')
+                        : articleRole;
+                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(s)} ${descriptor}`);
                     const previousSentence = (s.previousRoles && s.previousRoles.length)
                         ? ensureSentence(`Previously worked at ${joinWithAnd(s.previousRoles.map(pr => escapeMarkdown(pr)))}`)
                         : '';
@@ -344,7 +496,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const newsList = newsArticles.map(a => {
                 let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
                 if (sourceDate) sourceDate = ` (${sourceDate})`;
-                return `- [${escapeMarkdown(a.title)}](${a.url})${sourceDate}`;
+                const safeUrl = sanitizeUrl(a.url);
+                const linkText = safeUrl ? `[${escapeMarkdown(a.title)}](${safeUrl})` : escapeMarkdown(a.title);
+                return `- ${linkText}${sourceDate}`;
             }).join('\n');
             const combinedMedia = [mediaList, newsList].filter(Boolean).join('\n\n');
             const mediaSection = combinedMedia || getPlaceholder('In the Media', programName);
@@ -354,7 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (testimonies.length > 0) {
                 testimoniesSection = testimonies.map(t => {
                     const datePart = t.date ? `${t.date}: ` : '';
-                    return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - [${escapeMarkdown(t.source)}](${t.url})`;
+                    const safeUrl = sanitizeUrl(t.url);
+                    const sourceLink = safeUrl ? `[${escapeMarkdown(t.source)}](${safeUrl})` : escapeMarkdown(t.source);
+                    return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - ${sourceLink}`;
                 }).join('\n\n');
             } else {
                 testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
@@ -363,7 +519,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Build Related Media Section ---
             let relatedMediaSection;
             if (relatedMedia.length > 0) {
-                relatedMediaSection = relatedMedia.map(m => `- [${escapeMarkdown(m.title)}](${m.url})`).join('\n\n');
+                relatedMediaSection = relatedMedia.map(m => {
+                    const safeUrl = sanitizeUrl(m.url);
+                    const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
+                    return `- ${linkText}`;
+                }).join('\n\n');
             } else {
                 relatedMediaSection = getPlaceholder('Related Media', programName);
             }
@@ -425,7 +585,6 @@ ${testimoniesSection}
 ${relatedMediaSection}
             `;
 
-            const outputCode = document.getElementById('outputCode');
             if (outputCode) {
                 outputCode.value = output.trim();
                 outputCode.focus();
@@ -439,7 +598,6 @@ ${relatedMediaSection}
     if (copyBtn) {
         copyBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const outputCode = document.getElementById('outputCode');
             if (!outputCode || !outputCode.value) {
                 alert('Please generate the code first!');
                 return;
@@ -477,6 +635,71 @@ ${relatedMediaSection}
                     alert('Copy failed. Please select and copy manually.');
                 }
             });
+        });
+    }
+
+    const matchCaseReplacement = (source, replacement) => {
+        if (!source) return replacement;
+        if (source === source.toUpperCase()) {
+            return replacement.toUpperCase();
+        }
+        if (source[0] === source[0].toUpperCase()) {
+            return replacement.charAt(0).toUpperCase() + replacement.slice(1);
+        }
+        return replacement;
+    };
+
+    const convertToPastTense = (text) => {
+        if (!text) return text;
+        const replacements = [
+            { pattern: /\bis located\b/gi, replacement: 'was located' },
+            { pattern: /\bis based\b/gi, replacement: 'was based' },
+            { pattern: /\bis owned\b/gi, replacement: 'was owned' },
+            { pattern: /\bis operated\b/gi, replacement: 'was operated' },
+            { pattern: /\bis accredited\b/gi, replacement: 'was accredited' },
+            { pattern: /\bis\b/gi, replacement: 'was' },
+            { pattern: /\bare\b/gi, replacement: 'were' },
+            { pattern: /\bhas\b/gi, replacement: 'had' },
+            { pattern: /\bhave\b/gi, replacement: 'had' },
+            { pattern: /\breports\b/gi, replacement: 'reported' },
+            { pattern: /\bserves\b/gi, replacement: 'served' },
+            { pattern: /\blists\b/gi, replacement: 'listed' },
+            { pattern: /\bincludes\b/gi, replacement: 'included' },
+            { pattern: /\bprovides\b/gi, replacement: 'provided' },
+            { pattern: /\boffers\b/gi, replacement: 'offered' },
+            { pattern: /\bmaintains\b/gi, replacement: 'maintained' },
+            { pattern: /\buses\b/gi, replacement: 'used' },
+            { pattern: /\butilizes\b/gi, replacement: 'utilized' },
+            { pattern: /\boperates\b/gi, replacement: 'operated' },
+            { pattern: /\bruns\b/gi, replacement: 'ran' },
+            { pattern: /\bcontinues\b/gi, replacement: 'continued' },
+            { pattern: /\bexists\b/gi, replacement: 'existed' },
+            { pattern: /\bremains\b/gi, replacement: 'remained' }
+        ];
+
+        let updated = text;
+        replacements.forEach(({ pattern, replacement }) => {
+            updated = updated.replace(pattern, (match) => matchCaseReplacement(match, replacement));
+        });
+        return updated;
+    };
+
+    const convertPastBtn = document.getElementById('convertPastBtn');
+    if (convertPastBtn) {
+        convertPastBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!outputCode || !outputCode.value.trim()) {
+                alert('Please generate the wiki entry before converting tenses.');
+                return;
+            }
+            outputCode.value = convertToPastTense(outputCode.value);
+            const originalText = convertPastBtn.textContent;
+            convertPastBtn.textContent = 'Converted to Past';
+            convertPastBtn.disabled = true;
+            setTimeout(() => {
+                convertPastBtn.textContent = originalText;
+                convertPastBtn.disabled = false;
+            }, 1500);
         });
     }
 
@@ -543,6 +766,8 @@ ${relatedMediaSection}
         newsArticles = [];
         testimonies = [];
         relatedMedia = [];
+        resetStaffForm();
+        renderStaffList();
 
         // Normalize newlines so regex parsing works with Windows CRLF input
         const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -623,7 +848,7 @@ ${relatedMediaSection}
                 if (!name) return false;
                 setValue('ownerName', name.trim());
                 if (link) {
-                    setValue('ownerLink', link.trim());
+                    setValue('ownerLink', sanitizeUrl(link));
                 }
                 return true;
             };
@@ -724,7 +949,7 @@ ${relatedMediaSection}
             const addressMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+\[([^\]]+)\]\(([^)]+)\)/i);
             if (addressMatch) {
                 setValue('mainAddress', addressMatch[1]);
-                setValue('addressLink', addressMatch[2]);
+                setValue('addressLink', sanitizeUrl(addressMatch[2]));
             } else {
                 const addressTextMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+([^\.\n]+)/i);
                 if (addressTextMatch) {
@@ -736,7 +961,7 @@ ${relatedMediaSection}
             const accreditMatch = normalizedHistory.match(/accredited through the \[([^\]]+)\]\(([^)]+)\)/i);
             if (accreditMatch) {
                 setValue('accreditingBody', accreditMatch[1]);
-                setValue('accreditingBodyLink', accreditMatch[2]);
+                setValue('accreditingBodyLink', sanitizeUrl(accreditMatch[2]));
             }
 
             const historyParagraphs = historySection.split('\n\n')
@@ -758,11 +983,14 @@ ${relatedMediaSection}
         if (staffSection && !staffSection.includes('No information is known')) {
             const addStaff = (name, role, bio, previousRoles) => {
                 if (!name || !role) return;
+                const normalizedRole = role.trim();
+                const isFormer = /\b(former|previous|ex[\s-])/i.test(normalizedRole.toLowerCase());
                 staffMembers.push({
                     name: name.trim(),
-                    role: role.trim(),
+                    role: normalizedRole,
                     bio: (bio || '').trim(),
-                    previousRoles: previousRoles || []
+                    previousRoles: previousRoles || [],
+                    isFormer
                 });
             };
 
@@ -871,13 +1099,10 @@ ${relatedMediaSection}
                 addStaff(name, role, bio, previousRoles);
             });
 
-            renderList(staffMembers, 'staffListOutput', item => {
-                const previous = item.previousRoles && item.previousRoles.length
-                    ? `<div class="staff-prev">Prev: ${escapeHtml(item.previousRoles.join('; '))}</div>`
-                    : '';
-                return `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.role)}${previous}`;
-            });
+            renderStaffList();
             console.log(`✓ Parsed ${staffMembers.length} staff members`);
+        } else {
+            renderStaffList();
         }
 
         // Parse Structure section
@@ -1082,7 +1307,7 @@ ${relatedMediaSection}
                 let match = trimmed.match(/^[*-]\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:\(([^)]+)\))?/);
                 if (match) {
                     const title = match[1].trim();
-                    const url = match[2].trim();
+                    const url = sanitizeUrl(match[2].trim());
                     const sourceDate = match[3] || '';
 
                     // Try to split source and date
@@ -1162,7 +1387,7 @@ ${relatedMediaSection}
                         type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
                         source: match[4].trim(),
-                        url: match[5].trim()
+                        url: sanitizeUrl(match[5].trim())
                     });
                     return;
                 }
@@ -1176,7 +1401,7 @@ ${relatedMediaSection}
                         type: match[1].trim().toUpperCase(),
                         quote: match[2].trim(),
                         source: match[3].trim(),
-                        url: match[4].trim()
+                        url: sanitizeUrl(match[4].trim())
                     });
                     return;
                 }
@@ -1204,7 +1429,7 @@ ${relatedMediaSection}
                         type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
                         source: match[4].trim(),
-                        url: match[5].trim()
+                        url: sanitizeUrl(match[5].trim())
                     });
                     return;
                 }
@@ -1218,7 +1443,7 @@ ${relatedMediaSection}
                         type: match[1].trim().toUpperCase(),
                         quote: match[2].trim(),
                         source: match[3].trim(),
-                        url: match[4].trim()
+                        url: sanitizeUrl(match[4].trim())
                     });
                     return;
                 }
@@ -1248,7 +1473,7 @@ ${relatedMediaSection}
                 if (match) {
                     relatedMedia.push({
                         title: match[1].trim(),
-                        url: match[2].trim()
+                        url: sanitizeUrl(match[2].trim())
                     });
                     return;
                 }
@@ -1258,7 +1483,7 @@ ${relatedMediaSection}
                 if (match) {
                     relatedMedia.push({
                         title: match[1].trim(),
-                        url: match[2].trim()
+                        url: sanitizeUrl(match[2].trim())
                     });
                 }
             });
