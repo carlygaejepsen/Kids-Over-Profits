@@ -4105,6 +4105,72 @@ function downloadJSON() {
     URL.revokeObjectURL(url);
 }
 
+function buildProjectExport(categories) {
+    const projects = window.projects || {};
+    const allowed = Array.isArray(categories) && categories.length ? new Set(categories) : null;
+
+    return Object.fromEntries(
+        Object.entries(projects).filter(([_, project]) => {
+            const category = project?.category || 'companies';
+            return !allowed || allowed.has(category);
+        })
+    );
+}
+
+function exportProjectsToFile({ categories = null, filename } = {}) {
+    const filtered = buildProjectExport(categories);
+    const count = Object.keys(filtered).length;
+
+    if (!count) {
+        const label = categories && categories.length ? categories.join(', ') : 'any';
+        showUploadStatus(`No ${label} projects available to export.`, 'error');
+        return;
+    }
+
+    const payload = {
+        exportedAt: new Date().toISOString(),
+        categories: categories && categories.length ? categories : ['all'],
+        projectCount: count,
+        projects: filtered
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || `projects-export-${(categories && categories.length ? categories.join('-') : 'all')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showUploadStatus(`Exported ${count} project(s).`, 'success');
+}
+
+function generateProjectsReport({ categories = null, filename } = {}) {
+    const filtered = buildProjectExport(categories);
+    const count = Object.keys(filtered).length;
+
+    if (!count) {
+        const label = categories && categories.length ? categories.join(', ') : 'any';
+        showUploadStatus(`No ${label} projects available to include in the report.`, 'error');
+        return;
+    }
+
+    const payload = {
+        generatedAt: new Date().toISOString(),
+        categories: categories && categories.length ? categories : ['all'],
+        projectCount: count,
+        projects: filtered
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || `projects-report-${(categories && categories.length ? categories.join('-') : 'all')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showUploadStatus(`Generated report for ${count} project(s).`, 'success');
+}
+
 // ============================================
 // EVENT LISTENER ATTACHMENT
 // ============================================
@@ -4342,14 +4408,7 @@ function attachButtonListeners() {
     const exportAllBtn = document.getElementById('export-all-btn');
     if (exportAllBtn && !exportAllBtn.dataset.listenerAttached) {
         exportAllBtn.onclick = () => {
-            const dataStr = JSON.stringify(window.projects || {}, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'all-projects-export.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            exportProjectsToFile({ filename: 'projects-export-all.json' });
         };
         exportAllBtn.dataset.listenerAttached = 'true';
     }
@@ -4357,11 +4416,7 @@ function attachButtonListeners() {
     const generateReportBtn = document.getElementById('generate-report-btn');
     if (generateReportBtn && !generateReportBtn.dataset.listenerAttached) {
         generateReportBtn.onclick = () => {
-            if (typeof generateReport === 'function') {
-                generateReport();
-            } else {
-                alert('Report generation is not available yet.');
-            }
+            generateProjectsReport({ filename: 'projects-report-all.json' });
         };
         generateReportBtn.dataset.listenerAttached = 'true';
     }
@@ -4376,15 +4431,7 @@ function attachButtonListeners() {
     const exportAllBtnLocation = document.getElementById('export-all-btn-location');
     if (exportAllBtnLocation && !exportAllBtnLocation.dataset.listenerAttached) {
         exportAllBtnLocation.onclick = () => {
-            // Export all projects as JSON
-            const dataStr = JSON.stringify(window.projects || {}, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'all-projects-export.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            exportProjectsToFile({ categories: ['locations'], filename: 'projects-export-locations.json' });
         };
         exportAllBtnLocation.dataset.listenerAttached = 'true';
     }
@@ -4392,11 +4439,7 @@ function attachButtonListeners() {
     const generateReportBtnLocation = document.getElementById('generate-report-btn-location');
     if (generateReportBtnLocation && !generateReportBtnLocation.dataset.listenerAttached) {
         generateReportBtnLocation.onclick = () => {
-            if (typeof generateReport === 'function') {
-                generateReport();
-            } else {
-                alert('Report generation is not available yet.');
-            }
+            generateProjectsReport({ categories: ['locations'], filename: 'projects-report-locations.json' });
         };
         generateReportBtnLocation.dataset.listenerAttached = 'true';
     }
@@ -4410,14 +4453,7 @@ function attachButtonListeners() {
     const exportReferrerBtn = document.getElementById('export-referrer-projects-btn');
     if (exportReferrerBtn && !exportReferrerBtn.dataset.listenerAttached) {
         exportReferrerBtn.onclick = () => {
-            const dataStr = JSON.stringify(window.projects || {}, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'all-projects-export.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            exportProjectsToFile({ categories: ['referrers'], filename: 'projects-export-referrers.json' });
         };
         exportReferrerBtn.dataset.listenerAttached = 'true';
     }
@@ -4425,11 +4461,7 @@ function attachButtonListeners() {
     const generateReferrerReportBtn = document.getElementById('generate-referrer-report-btn');
     if (generateReferrerReportBtn && !generateReferrerReportBtn.dataset.listenerAttached) {
         generateReferrerReportBtn.onclick = () => {
-            if (typeof generateReport === 'function') {
-                generateReport();
-            } else {
-                alert('Report generation is not available yet.');
-            }
+            generateProjectsReport({ categories: ['referrers'], filename: 'projects-report-referrers.json' });
         };
         generateReferrerReportBtn.dataset.listenerAttached = 'true';
     }
