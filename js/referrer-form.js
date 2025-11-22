@@ -167,9 +167,19 @@ function ensureReferrerDataStructures() {
         if (!Array.isArray(merged.pastTTIJobs)) {
             merged.pastTTIJobs = [];
         }
-        if (!merged.fullName) {
-            const fullName = [merged.firstName, merged.lastName].filter(Boolean).join(' ');
-            merged.fullName = fullName;
+        const mergedNameCandidates = [
+            (merged.fullName || '').trim(),
+            (merged.name || '').trim(),
+            [merged.firstName, merged.lastName].filter(Boolean).join(' ').trim()
+        ].filter(Boolean);
+        if (mergedNameCandidates.length) {
+            const bestName = mergedNameCandidates.reduce((winner, candidate) => candidate.length > winner.length ? candidate : winner, '');
+            merged.fullName = bestName;
+            if (!merged.firstName && !merged.lastName) {
+                const parts = bestName.split(/\s+/);
+                merged.firstName = parts.shift() || '';
+                merged.lastName = parts.join(' ');
+            }
         }
         if (!merged.education && merged.credentials) {
             merged.education = merged.credentials;
@@ -317,6 +327,22 @@ function loadReferrerData() {
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
         debugLog('📋 Consultant data:', consultant);
+    }
+
+    // Normalize name parts so UI never collapses to a single-letter fullName
+    const mergedNameCandidates = [
+        (consultant.fullName || '').trim(),
+        (consultant.name || '').trim(),
+        [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim()
+    ].filter(Boolean);
+    if (mergedNameCandidates.length) {
+        const bestName = mergedNameCandidates.reduce((winner, candidate) => candidate.length > winner.length ? candidate : winner, '');
+        consultant.fullName = bestName;
+        if (!consultant.firstName && !consultant.lastName) {
+            const parts = bestName.split(/\s+/);
+            consultant.firstName = parts.shift() || '';
+            consultant.lastName = parts.join(' ');
+        }
     }
 
     // Load consultant fields automatically using data-field attributes (like facilities do)

@@ -2188,9 +2188,20 @@ function ensureReferrerDataStructures() {
         if (!Array.isArray(merged.pastTTIJobs)) {
             merged.pastTTIJobs = [];
         }
-        if (!merged.fullName) {
-            const fullName = [merged.firstName, merged.lastName].filter(Boolean).join(' ');
-            merged.fullName = fullName;
+        const mergedNameCandidates = [
+            (merged.fullName || '').trim(),
+            (merged.name || '').trim(),
+            [merged.firstName, merged.lastName].filter(Boolean).join(' ').trim()
+        ].filter(Boolean);
+        if (mergedNameCandidates.length) {
+            // Pick the longest candidate so we don't collapse to a single letter
+            const bestName = mergedNameCandidates.reduce((winner, candidate) => candidate.length > winner.length ? candidate : winner, '');
+            merged.fullName = bestName;
+            if (!merged.firstName && !merged.lastName) {
+                const parts = bestName.split(/\s+/);
+                merged.firstName = parts.shift() || '';
+                merged.lastName = parts.join(' ');
+            }
         }
         if (!merged.education && merged.credentials) {
             merged.education = merged.credentials;
@@ -5353,6 +5364,41 @@ window.initializeSectionToggles = initializeSectionToggles;
 // CONSULTANTS OVERVIEW (for Referrers view)
 // ============================================
 
+function getConsultantDisplayName(consultant, index) {
+    if (!consultant) {
+        return `Consultant ${index + 1}`;
+    }
+
+    const fullName = (consultant.fullName || '').trim();
+    const nameField = (consultant.name || '').trim();
+    const firstLast = [consultant.firstName, consultant.lastName].map(part => (part || '').trim()).filter(Boolean).join(' ').trim();
+
+    // Prefer the longest available string so a 1-letter fullName doesn't win
+    const candidates = [fullName, nameField, firstLast].filter(Boolean);
+    const best = candidates.reduce((winner, candidate) => {
+        if (!winner) return candidate;
+        return candidate.length > winner.length ? candidate : winner;
+    }, '');
+
+    const displayName = best || `Consultant ${index + 1}`;
+
+    // Backfill missing name parts to keep downstream code consistent
+    if (!consultant.fullName && best) {
+        consultant.fullName = best;
+    }
+    if (!consultant.firstName && !consultant.lastName && best) {
+        const parts = best.split(/\s+/);
+        if (parts.length > 1) {
+            consultant.firstName = parts.shift();
+            consultant.lastName = parts.join(' ');
+        } else {
+            consultant.firstName = best;
+        }
+    }
+
+    return displayName;
+}
+
 function updateConsultantsOverview() {
     const consultantsList = document.getElementById('consultants-list');
     const consultantsStats = document.getElementById('consultants-toc-stats');
@@ -5382,16 +5428,7 @@ function updateConsultantsOverview() {
         });
 
         // Build full name - try multiple possible keys
-        let fullName = '';
-        if (consultant.fullName && consultant.fullName.trim()) {
-            fullName = consultant.fullName;
-        } else if (consultant.firstName || consultant.lastName) {
-            fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim();
-        }
-        
-        if (!fullName) {
-            fullName = `Consultant ${index + 1}`;
-        }
+        const fullName = getConsultantDisplayName(consultant, index);
 
         // Build location
         const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || 'Location not specified';
@@ -5453,10 +5490,8 @@ function loadConsultantData() {
         return;
     }
 
-    // Ensure fullName is built if not already set
-    if (!consultant.fullName && (consultant.firstName || consultant.lastName)) {
-        consultant.fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim();
-    }
+    // Ensure fullName is built if not already set (prefer longest available name)
+    getConsultantDisplayName(consultant, window.currentConsultantIndex);
 
     // Load basic fields - map from input IDs to consultant data keys
     const fields = {
@@ -5504,17 +5539,7 @@ function updateConsultantDropdown() {
     dropdown.innerHTML = '';
 
     consultants.forEach((consultant, index) => {
-        // Build full name from first/last name, checking multiple possible keys
-        let fullName = '';
-        if (consultant.fullName && consultant.fullName.trim()) {
-            fullName = consultant.fullName;
-        } else if (consultant.firstName || consultant.lastName) {
-            fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim();
-        }
-        
-        if (!fullName) {
-            fullName = `Consultant ${index + 1}`;
-        }
+        const fullName = getConsultantDisplayName(consultant, index);
 
         const option = document.createElement('option');
         option.value = index;
