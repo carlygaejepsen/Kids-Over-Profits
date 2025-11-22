@@ -1527,7 +1527,8 @@ function initializeNoteControls() {
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'note-add-btn field-note-btn';
-            addBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+            addBtn.textContent = '+';
+            addBtn.setAttribute('aria-label', 'Add note');
             addBtn.dataset.noteEventAttached = 'true'; // Note: cannot be passive
             addBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2954,7 +2955,8 @@ function renderArray(container, path, items) {
             const addNoteBtn = document.createElement('button');
             addNoteBtn.type = 'button';
             addNoteBtn.className = 'note-add-btn field-note-btn';
-            addNoteBtn.innerHTML = '<span aria-hidden="true">＋</span><span class="sr-only">Add note</span>';
+            addNoteBtn.textContent = '+';
+            addNoteBtn.setAttribute('aria-label', 'Add note');
             addNoteBtn.addEventListener('click', (e) => { // Note: cannot be passive
                 e.preventDefault();
                 e.stopImmediatePropagation();
