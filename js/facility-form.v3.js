@@ -13,8 +13,24 @@ if (typeof window !== 'undefined') {
 
 const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
 
-// Helper to get API_ENDPOINTS from the loader
-const getAPIEndpoints = () => window.KOP_FormLoader?.API_ENDPOINTS || {};
+// Helper to get API_ENDPOINTS from the loader (merged with our fallbacks below)
+let API_ENDPOINT_FALLBACKS = {};
+const getAPIEndpoints = () => {
+    const loaderEndpoints = window.KOP_FormLoader?.API_ENDPOINTS || {};
+
+    const saveMaster = loaderEndpoints.SAVE_MASTER || loaderEndpoints.SAVE_PROJECT || API_ENDPOINT_FALLBACKS.SAVE_MASTER;
+    const saveSuggestion = loaderEndpoints.SAVE_SUGGESTION || loaderEndpoints.SAVE_PROJECT_SUGGESTION || API_ENDPOINT_FALLBACKS.SAVE_SUGGESTION || saveMaster;
+    const loadProjects = loaderEndpoints.LOAD_PROJECTS || API_ENDPOINT_FALLBACKS.LOAD_PROJECTS;
+    const autocomplete = loaderEndpoints.AUTOCOMPLETE || loaderEndpoints.SUGGESTIONS || API_ENDPOINT_FALLBACKS.AUTOCOMPLETE;
+
+    return {
+        SAVE_MASTER: saveMaster,
+        SAVE_SUGGESTION: saveSuggestion,
+        SAVE_PROJECT: (typeof window !== 'undefined' && window.FORM_MODE === 'suggestions') ? saveSuggestion : saveMaster,
+        LOAD_PROJECTS: loadProjects,
+        AUTOCOMPLETE: autocomplete
+    };
+};
 
 function getResolverEndpoint(filename, fallback) {
     if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
@@ -83,10 +99,16 @@ const normalizedApiBases = Array.from(new Set(
         .filter(Boolean)
 ));
 
+const DEFAULT_SAVE_MASTER = FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
+    getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php');
+
+const DEFAULT_SAVE_SUGGESTION = FACILITY_FORM_CONFIG.endpoints?.SAVE_SUGGESTION ||
+    FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT_SUGGESTION ||
+    getResolverEndpoint('save-suggestion.php', '/wp-content/themes/child/api/save-suggestion.php');
+
 const defaultApiPaths = {
-    SAVE_PROJECT:
-        FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
-        getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
+    SAVE_MASTER: DEFAULT_SAVE_MASTER,
+    SAVE_SUGGESTION: DEFAULT_SAVE_SUGGESTION,
     LOAD_PROJECTS:
         FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
         getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
@@ -101,6 +123,13 @@ const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
     return acc;
 }, {});
 
+API_ENDPOINT_FALLBACKS = {
+    SAVE_MASTER: API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
+    SAVE_SUGGESTION: API_ENDPOINTS.SAVE_SUGGESTION || API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
+    LOAD_PROJECTS: API_ENDPOINTS.LOAD_PROJECTS,
+    AUTOCOMPLETE: API_ENDPOINTS.AUTOCOMPLETE
+};
+
 const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
     ? FACILITY_FORM_CONFIG.mode
     : (typeof window !== 'undefined' && typeof window.FORM_MODE === 'string' ? window.FORM_MODE : 'master');
@@ -110,6 +139,13 @@ const FORM_MODE = typeof resolvedFormMode === 'string'
     : 'master';
 
 const IS_SUGGESTION_MODE = FORM_MODE === 'suggestions';
+
+function isSuggestionMode() {
+    if (typeof window !== 'undefined' && typeof window.FORM_MODE === 'string') {
+        return window.FORM_MODE.toLowerCase() === 'suggestions';
+    }
+    return IS_SUGGESTION_MODE;
+}
 
 const fallbackProjectsConfigValues = Array.isArray(FACILITY_FORM_CONFIG.fallbackProjectsUrls)
     ? FACILITY_FORM_CONFIG.fallbackProjectsUrls.slice()
@@ -1864,7 +1900,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
         return false;
     }
 
-    if (IS_SUGGESTION_MODE) {
+    if (isSuggestionMode()) {
         window.currentProjectName = projectName;
 
         const saved = persistProjectLocally(projectName, {
@@ -1993,7 +2029,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
 }
 
 function autoSave() {
-    if (IS_SUGGESTION_MODE) {
+    if (isSuggestionMode()) {
         clearTimeout(window.autoSaveTimer);
         window.autoSaveTimer = setTimeout(() => {
             if (!window.currentProjectName) {
@@ -2622,7 +2658,7 @@ async function recategorizeProject(projectName) {
     window.projects[projectName].category = normalizedCategory;
 
     // Persist the change
-    if (IS_SUGGESTION_MODE) {
+    if (isSuggestionMode()) {
         persistProjectLocally(projectName);
         showUploadStatus(`✅ Project "${projectName}" reclassified to "${normalizedCategory}" in your local drafts.`, 'success');
     } else {
@@ -3333,7 +3369,7 @@ function updateTableOfContents() {
     if (!window.currentProjectName) {
         if (tocStats) tocStats.textContent = 'No project loaded';
         if (facilityList) {
-            if (IS_SUGGESTION_MODE) {
+            if (isSuggestionMode()) {
                 facilityList.innerHTML = `
                     <div class="toc-no-project">Please <a href="#submission-section">create a draft or load a project</a> to see the list of facilities.</div>
                 `;
@@ -3674,7 +3710,7 @@ async function performClone(targetProjectName, targetCategory = null) {
     }
 
     // Persist the changes
-    if (IS_SUGGESTION_MODE) {
+    if (isSuggestionMode()) {
         persistProjectLocally(targetProjectName);
         alert(`✅ Facility cloned to project "${targetProjectName}" and saved as a local draft.`);
     } else {
@@ -3909,7 +3945,7 @@ function refreshSavedProjectPanels() {
             const facilityLabel = determineProjectCategory(name) === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
             
             // Admin-only buttons
-            const adminButtons = IS_SUGGESTION_MODE ? '' : `
+            const adminButtons = isSuggestionMode() ? '' : `
                         <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject('${escapeHtmlForAttr(name)}')">Reclassify</button>
                         <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
                         <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
