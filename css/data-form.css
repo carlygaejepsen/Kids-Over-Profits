@@ -23,19 +23,19 @@ body {
    FIXED ADMIN TOOLBAR
    ============================================ */
 body.toolbar-active {
-    padding-top: 120px; /* 32px admin bar + ~88px compact toolbar */
+    padding-top: 96px; /* 32px admin bar + compact toolbar */
 }
 
 body.toolbar-active:not(.admin-bar) {
-    padding-top: 88px; /* Just compact toolbar, no admin bar */
+    padding-top: 64px; /* Just compact toolbar, no admin bar */
 }
 
 body.toolbar-minimized {
-    padding-top: 80px; /* 32px admin bar + 48px minimized toolbar header */
+    padding-top: 64px; /* 32px admin bar + condensed toolbar header */
 }
 
 body.toolbar-minimized:not(.admin-bar) {
-    padding-top: 48px; /* Just minimized toolbar header */
+    padding-top: 40px; /* Just minimized toolbar header */
 }
 
 .fixed-toolbar {
@@ -59,17 +59,17 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 15px;
+    padding: 6px 12px;
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    gap: 12px;
-    min-height: 48px; /* Ensure consistent height */
+    gap: 10px;
+    min-height: 44px; /* Ensure consistent height */
     position: relative;
 }
 
 .fixed-toolbar .toolbar-title {
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -80,11 +80,11 @@ body:not(.admin-bar) .fixed-toolbar {
     background: rgba(255, 255, 255, 0.9);
     border: 2px solid #B2E102;
     color: #000080;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 6px;
     cursor: pointer !important;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     transition: all 0.2s ease;
     display: flex;
@@ -116,49 +116,53 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .facility-dropdown {
-    min-width: 200px;
-    max-width: 300px;
-    padding: 6px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    min-width: 170px;
+    max-width: 240px;
+    padding: 5px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.95);
     color: #000435;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
 }
 
 .fixed-toolbar .facility-selector .btn-toolbar {
-    width: 32px;
-    padding: 6px;
+    width: 28px;
+    padding: 5px;
 }
 
 .fixed-toolbar .toolbar-content {
-    padding: 8px 15px;
+    padding: 6px 12px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 10px;
+    align-items: flex-start;
     flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    justify-content: space-between; /* Distribute groups evenly */
+    justify-content: flex-start;
 }
 
 .fixed-toolbar .toolbar-group {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     flex-shrink: 0; /* Prevent groups from shrinking */
     white-space: nowrap; /* Keep content on one line */
+    padding: 4px 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
 }
 
 .fixed-toolbar .toolbar-label {
     color: #FFFFFF;
     font-weight: 600;
-    font-size: 13px;
-    margin-right: 5px;
+    font-size: 12px;
+    margin-right: 4px;
     white-space: nowrap;
 }
 
@@ -167,8 +171,8 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    padding: 6px 8px;
-    font-size: 13px;
+    padding: 5px 8px;
+    font-size: 12px;
     font-weight: 600;
     border-radius: 4px;
     border: 2px solid transparent;
@@ -196,13 +200,13 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary {
-    background: #FFF5CB;
-    color: #000435;
+    background: #ECF385;
+    color: #0b1130;
     border-color: #B2E102;
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: #ECF385;
+    background: #FFF5CB;
 }
 
 .fixed-toolbar .btn-toolbar.btn-success {
@@ -216,13 +220,13 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger {
-    background: #FE8088;
-    color: #000435;
-    border-color: #000080;
+    background: #C81E1E; /* deeper red for contrast */
+    color: #FFFFFF;
+    border-color: #7A0F0F;
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger:hover {
-    background: #EF9034;
+    background: #a41818;
 }
 
 .fixed-toolbar.minimized {

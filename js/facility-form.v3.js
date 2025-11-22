@@ -3335,6 +3335,7 @@ window.updateAllUI = function() {
     loadOperatorData();
     loadReferrerData();
     loadFacilityData();
+    ensureLocationProjectsFromFacilities();
     updateFacilityControls();
     updateTableOfContents();
     updateJSON();
@@ -3883,6 +3884,36 @@ const COUNTRY_NAMES = [
 
 const US_STATE_SET = new Set(US_STATE_NAMES);
 const COUNTRY_SET = new Set(COUNTRY_NAMES);
+
+function ensureLocationProjectsFromFacilities() {
+    if (!window.formData || !Array.isArray(window.formData.facilities)) return;
+    if (!window.projects) window.projects = {};
+
+    const states = new Set();
+    window.formData.facilities.forEach((facility = {}) => {
+        const rawLocation = facility.location || '';
+        const parsed = parseCityState(rawLocation);
+        const state = (facility.locationState || parsed.state || '').trim();
+        if (state) {
+            states.add(state.toUpperCase());
+        }
+    });
+
+    states.forEach((stateName) => {
+        if (!window.projects[stateName]) {
+            const locationProject = createNewProjectData();
+            locationProject.facilities = [];
+            window.projects[stateName] = {
+                name: stateName,
+                data: locationProject,
+                timestamp: new Date().toISOString(),
+                category: 'locations'
+            };
+        } else if (!window.projects[stateName].category) {
+            window.projects[stateName].category = 'locations';
+        }
+    });
+}
 
 function determineProjectCategory(name = '') {
     // First, check if the project has stored category metadata
