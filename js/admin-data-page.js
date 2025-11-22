@@ -568,6 +568,7 @@
         // DATA ORGANIZER FUNCTIONALITY
         function initializeDataOrganizer() {
             const showOrganizerBtn = document.getElementById('show-organizer-btn');
+            const showOrganizerModalBtn = document.getElementById('show-organizer-modal-btn');
             const organizerSection = document.getElementById('data-organizer-section');
             const organizeBySelect = document.getElementById('organize-by');
             const organizeValueGroup = document.getElementById('organize-value-group');
@@ -599,6 +600,19 @@
                     }
                 }, { passive: true });
                 showOrganizerBtn.dataset.organizerToggleAttached = 'true';
+            }
+
+            if (showOrganizerModalBtn && !showOrganizerModalBtn.dataset.organizerToggleAttached) {
+                showOrganizerModalBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    organizerVisible = true;
+                    organizerSection.style.display = 'block';
+                    if (showOrganizerBtn) {
+                        showOrganizerBtn.textContent = '📊 Hide Organizer';
+                    }
+                    organizerSection.scrollIntoView({ behavior: 'smooth' });
+                }, { passive: false });
+                showOrganizerModalBtn.dataset.organizerToggleAttached = 'true';
             }
 
             // Handle organize by selection

@@ -871,11 +871,11 @@
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
             
-            // Exit early if required elements don't exist
-            if (!showOrganizerBtn || !organizerSection) {
-                console.warn('Data Organizer elements not found in DOM');
-                return;
-            }
+        // Exit early if the organizer container is missing
+        if (!organizerSection) {
+            console.warn('Data Organizer elements not found in DOM');
+            return;
+        }
             
         let organizerVisible = false; // Collapsed by default
         
