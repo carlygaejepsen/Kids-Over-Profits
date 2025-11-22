@@ -858,7 +858,8 @@
 
         // DATA ORGANIZER FUNCTIONALITY
         function initializeDataOrganizer() {
-            const showOrganizerBtn = document.getElementById('show-organizer-btn');
+        const showOrganizerBtn = document.getElementById('show-organizer-btn');
+        const showOrganizerModalBtn = document.getElementById('show-organizer-modal-btn');
             const organizerSection = document.getElementById('data-organizer-section');
             const organizeBySelect = document.getElementById('organize-by');
             const organizeValueGroup = document.getElementById('organize-value-group');
@@ -876,25 +877,40 @@
                 return;
             }
             
-            let organizerVisible = false; // Collapsed by default
-            
-            // Set initial state - organizer hidden by default
-            organizerSection.style.display = 'none';
+        let organizerVisible = false; // Collapsed by default
+        
+        // Set initial state - organizer hidden by default
+        organizerSection.style.display = 'none';
+        if (showOrganizerBtn) {
             showOrganizerBtn.textContent = '📊 Data Organizer';
-            
-            // Toggle organizer visibility
-            if (!showOrganizerBtn.dataset.organizerToggleAttached) {
-                showOrganizerBtn.addEventListener('click', () => {
-                    organizerVisible = !organizerVisible;
-                    organizerSection.style.display = organizerVisible ? 'block' : 'none';
-                    showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
+        }
+        
+        // Toggle organizer visibility
+        if (showOrganizerBtn && !showOrganizerBtn.dataset.organizerToggleAttached) {
+            showOrganizerBtn.addEventListener('click', () => {
+                organizerVisible = !organizerVisible;
+                organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
 
-                    if (organizerVisible) {
-                        organizerSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, { passive: true });
-                showOrganizerBtn.dataset.organizerToggleAttached = 'true';
-            }
+                if (organizerVisible) {
+                    organizerSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, { passive: true });
+            showOrganizerBtn.dataset.organizerToggleAttached = 'true';
+        }
+
+        if (showOrganizerModalBtn && !showOrganizerModalBtn.dataset.organizerToggleAttached) {
+            showOrganizerModalBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                organizerVisible = true;
+                organizerSection.style.display = 'block';
+                if (showOrganizerBtn) {
+                    showOrganizerBtn.textContent = '📊 Hide Organizer';
+                }
+                organizerSection.scrollIntoView({ behavior: 'smooth' });
+            }, { passive: false });
+            showOrganizerModalBtn.dataset.organizerToggleAttached = 'true';
+        }
 
             // Handle organize by selection
             if (!organizeBySelect.dataset.organizerChangeAttached) {

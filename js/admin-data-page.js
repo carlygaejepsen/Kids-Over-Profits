@@ -583,10 +583,12 @@
             
             // Set initial state - organizer hidden by default
             organizerSection.style.display = 'none';
-            showOrganizerBtn.textContent = '📊 Data Organizer';
+            if (showOrganizerBtn) {
+                showOrganizerBtn.textContent = '📊 Data Organizer';
+            }
             
             // Toggle organizer visibility
-            if (!showOrganizerBtn.dataset.organizerToggleAttached) {
+            if (showOrganizerBtn && !showOrganizerBtn.dataset.organizerToggleAttached) {
                 showOrganizerBtn.addEventListener('click', () => {
                     organizerVisible = !organizerVisible;
                     organizerSection.style.display = organizerVisible ? 'block' : 'none';
