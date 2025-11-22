@@ -3791,21 +3791,30 @@ function sortFacilities() {
     autoSave();
 }
 
+// Debounce flag to prevent double-clicking navigation buttons
+let isNavigating = false;
+
 function previousFacility() {
+    if (isNavigating) return;
     if (window.currentFacilityIndex > 0) {
+        isNavigating = true;
         window.currentFacilityIndex--;
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        setTimeout(() => { isNavigating = false; }, 100);
     }
 }
 
 function nextFacility() {
+    if (isNavigating) return;
     if (window.currentFacilityIndex < window.formData.facilities.length - 1) {
+        isNavigating = true;
         window.currentFacilityIndex++;
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        setTimeout(() => { isNavigating = false; }, 100);
     }
 }
 

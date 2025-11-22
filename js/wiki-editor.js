@@ -611,87 +611,139 @@ ${relatedMediaSection}
 
         // Parse History section
         const historySection = getSection(normalizedMarkdown, 'History and Background Information');
-        if (historySection) {
-            const yearFoundedMatch = historySection.match(/founded in (\d{4})/i);
+        if (historySection && !historySection.includes('No information is known')) {
+            const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
+
+            const yearFoundedMatch = normalizedHistory.match(/founded in (\d{4})/i);
             if (yearFoundedMatch) {
-                const yearEl = document.getElementById('yearFounded');
-                if (yearEl) yearEl.value = yearFoundedMatch[1];
+                setValue('yearFounded', yearFoundedMatch[1].trim());
             }
 
-            // Extract owner
-            const ownerMatch = historySection.match(/owned by \[([^\]]+)\]\(([^)]+)\)/i);
-            if (ownerMatch) {
-                const ownerNameEl = document.getElementById('ownerName');
-                const ownerLinkEl = document.getElementById('ownerLink');
-                if (ownerNameEl) ownerNameEl.value = ownerMatch[1];
-                if (ownerLinkEl) ownerLinkEl.value = ownerMatch[2];
-            } else {
-                const simpleOwnerMatch = historySection.match(/owned by ([^\.\n]+)/i);
-                if (simpleOwnerMatch) {
-                    setValue('ownerName', simpleOwnerMatch[1].trim());
+            const assignOwner = (name, link) => {
+                if (!name) return false;
+                setValue('ownerName', name.trim());
+                if (link) {
+                    setValue('ownerLink', link.trim());
+                }
+                return true;
+            };
+
+            let ownerCaptured = false;
+            const ownerPatternsWithLinks = [
+                /owned by \[([^\]]+)\]\(([^)]+)\)/i,
+                /operated by \[([^\]]+)\]\(([^)]+)\)/i,
+                /run by \[([^\]]+)\]\(([^)]+)\)/i,
+                /part of \[([^\]]+)\]\(([^)]+)\)/i,
+                /was\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center))/i
+            ];
+            for (const pattern of ownerPatternsWithLinks) {
+                const match = normalizedHistory.match(pattern);
+                if (match && assignOwner(match[1], match[2])) {
+                    ownerCaptured = true;
+                    break;
+                }
+            }
+            if (!ownerCaptured) {
+                const ownerTextPatterns = [
+                    /owned by ([^.\n]+)/i,
+                    /operated by ([^.\n]+)/i,
+                    /run by ([^.\n]+)/i,
+                    /part of ([^.\n]+)/i,
+                    /was\s+(?:an?|the)?\s*([^.\n]+?)\s+(?:behavior|residential|therapeutic|treatment)[^.\n]*program/i
+                ];
+                for (const pattern of ownerTextPatterns) {
+                    const match = normalizedHistory.match(pattern);
+                    if (match && assignOwner(match[1])) {
+                        break;
+                    }
                 }
             }
 
-            // Extract age range
-            const ageMatch = historySection.match(/aged (\d+-\d+)/i);
-            if (ageMatch) {
-                setValue('ageRange', ageMatch[1]);
+            const agePatterns = [
+                /aged?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
+                /ages?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
+                /age range\s+(?:of\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
+                /serves\s+[^.\n]*?ages?\s+(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
+                /aged?\s+(\d{1,2})\s*\+/i
+            ];
+            for (const pattern of agePatterns) {
+                const match = normalizedHistory.match(pattern);
+                if (match) {
+                    const normalizedRange = match[2]
+                        ? `${match[1]}-${match[2]}`
+                        : `${match[1]}+`;
+                    setValue('ageRange', normalizedRange);
+                    break;
+                }
             }
 
-            // Extract diagnoses
-            const diagnosesMatch = historySection.match(/diagnoses\/behaviors:\s*([^\n]+)/i);
-            if (diagnosesMatch) {
-                const diagnoses = diagnosesMatch[1]
-                    .replace(/"/g, '')
-                    .replace(/\./g, '')
+            const diagnosisSnippets = [];
+            const pushDiagnosis = (text) => {
+                const cleaned = (text || '')
+                    .replace(/["*_]/g, '')
+                    .replace(/\s+/g, ' ')
                     .trim();
-                setValue('diagnosesList', diagnoses);
+                if (cleaned) {
+                    diagnosisSnippets.push(cleaned.replace(/\.$/, ''));
+                }
+            };
+            const diagnosisPatterns = [
+                /diagnoses\/behaviors:\s*([^\n]+)/i,
+                /any of the following:\s*([^\.]+)\./i,
+                /specializes? in treating\s+([^\.]+?)(?:\.|, but)/i,
+                /specialized in treating\s+([^\.]+?)(?:\.|, but)/i,
+                /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i
+            ];
+            diagnosisPatterns.forEach(pattern => {
+                const match = normalizedHistory.match(pattern);
+                if (match && match[1]) {
+                    pushDiagnosis(match[1]);
+                }
+            });
+            if (diagnosisSnippets.length > 0) {
+                const uniqueDiagnoses = Array.from(new Set(diagnosisSnippets));
+                setValue('diagnosesList', uniqueDiagnoses.join('; '));
             }
 
-            // Extract average stay
-            const stayMatch = historySection.match(/average length of stay[^0-9]*(\d+[^,\.\n]+)/i);
+            const stayMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+[^,\.\n]+)/i);
             if (stayMatch) {
                 setValue('avgStay', stayMatch[1].trim());
             }
 
-            // Extract tuition
-            const tuitionMatch = historySection.match(/tuition[^$]*(\$[^\.\n]+)/i);
+            const tuitionMatch = normalizedHistory.match(/tuition[^$]*(\$[^\.\n]+)/i);
             if (tuitionMatch) {
                 setValue('tuition', tuitionMatch[1].trim());
             }
 
-            // Extract NATSAP status
-            const natsapMatch = historySection.match(/NATSAP[^\.\n]+/i);
+            const natsapMatch = normalizedHistory.match(/(NATSAP[^\.\n]+)/i);
             if (natsapMatch) {
-                setValue('natsapStatus', natsapMatch[0].replace(/^.*?\s/, ''));
+                setValue('natsapStatus', natsapMatch[1].trim());
             }
 
             // Extract address (allow variations like "located at/as/in")
-            const addressMatch = historySection.match(/located\s+(?:at|as|in)\s+\[([^\]]+)\]\(([^)]+)\)/i);
+            const addressMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+\[([^\]]+)\]\(([^)]+)\)/i);
             if (addressMatch) {
                 setValue('mainAddress', addressMatch[1]);
                 setValue('addressLink', addressMatch[2]);
             } else {
-                const addressTextMatch = historySection.match(/located\s+(?:at|as|in)\s+([^.\n]+)/i);
+                const addressTextMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+([^\.\n]+)/i);
                 if (addressTextMatch) {
                     setValue('mainAddress', addressTextMatch[1].trim());
                 }
             }
 
             // Extract accrediting body
-            const accreditMatch = historySection.match(/accredited through the \[([^\]]+)\]\(([^)]+)\)/i);
+            const accreditMatch = normalizedHistory.match(/accredited through the \[([^\]]+)\]\(([^)]+)\)/i);
             if (accreditMatch) {
                 setValue('accreditingBody', accreditMatch[1]);
                 setValue('accreditingBodyLink', accreditMatch[2]);
             }
 
-            // Extract misc history (everything that doesn't match specific patterns)
-            const historyLines = historySection.split('\n\n');
-            const miscLines = historyLines.filter(line => {
-                return !line.match(/founded in|owned by|aged|diagnoses|length of stay|tuition|NATSAP|located at|accredited through/i);
-            });
-            if (miscLines.length > 0) {
-                setValue('historyMisc', miscLines.join('\n\n'));
+            const historyParagraphs = historySection.split('\n\n')
+                .map(line => line.trim())
+                .filter(line => line && !line.includes('No information is known'));
+            if (historyParagraphs.length > 0) {
+                setValue('historyMisc', historyParagraphs.join('\n\n'));
             }
         }
 
@@ -832,11 +884,16 @@ ${relatedMediaSection}
         const structureSection = getSectionAny(normalizedMarkdown, [
             'Program Structure',
             'Structure',
-            'Program Model'
+            'Program Model',
+            'Level System',
+            'Level Systems',
+            'Phase System',
+            'Phases',
+            'Program Phases'
         ]);
         if (structureSection && !structureSection.includes('No information is known')) {
             // Extract level system description
-            const levelDescMatch = structureSection.match(/uses ([^\.]+level[^\.]+)/i);
+            const levelDescMatch = structureSection.match(/(?:uses|used|utilizes|utilized|implements|implemented)\s+([^\.]*level[^\.]+)/i);
             if (levelDescMatch) {
                 setValue('levelSystemDesc', levelDescMatch[1].trim());
             }
@@ -915,12 +972,14 @@ ${relatedMediaSection}
             console.log(`✓ Parsed ${programLevels.length} program levels`);
 
             // Extract misc structure info
-            const structureLines = structureSection.split('\n\n');
-            const miscStructure = structureLines.filter(line =>
-                !line.includes('uses a level') && !line.includes('The levels are:') && !line.trim().startsWith('*')
-            ).join('\n\n');
-            if (miscStructure) {
-                setValue('structureMisc', miscStructure.trim());
+            const miscStructureParts = structureSection.split('\n\n')
+                .map(block => block.split('\n')
+                    .filter(line => !line.trim().match(/^[*-]\s+/))
+                    .join('\n')
+                    .trim())
+                .filter(block => block && !block.includes('No information is known'));
+            if (miscStructureParts.length > 0) {
+                setValue('structureMisc', miscStructureParts.join('\n\n'));
             }
         }
 
