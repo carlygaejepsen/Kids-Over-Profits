@@ -1,3 +1,24 @@
+<?php
+    // Ensure required assets are present when this template renders.
+    $kop_theme_dir = get_stylesheet_directory();
+    $kop_theme_uri = get_stylesheet_directory_uri();
+
+    if (function_exists('wp_enqueue_style')) {
+        $data_form_css = $kop_theme_dir . '/css/data-form.css';
+        wp_enqueue_style(
+            'kop-data-form',
+            $kop_theme_uri . '/css/data-form.css',
+            array(),
+            file_exists($data_form_css) ? filemtime($data_form_css) : null
+        );
+    }
+
+    if (function_exists('wp_enqueue_script')) {
+        wp_enqueue_script('facility-form-script');
+        wp_enqueue_script('admin-data-page-script');
+    }
+?>
+
     <div class="container">
         <div class="admin-header">
             <h1>🔐 Admin Facility Data Management</h1>
@@ -20,7 +41,7 @@
             <!-- Category contents wrapper -->
             <div class="category-contents-wrapper">
                 <!-- Companies Content -->
-                <div id="companies-content" class="category-content">
+                <div id="companies-content" class="category-content" data-section-views="companies">
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
                     </div>
@@ -46,7 +67,7 @@
                 </div>
 
                 <!-- States Content -->
-                <div id="states-content" class="category-content d-none">
+                <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
                     </div>
@@ -77,7 +98,7 @@
                 </div>
 
                 <!-- Referrers Content -->
-                <div id="referrers-content" class="category-content d-none">
+                <div id="referrers-content" class="category-content view-hidden" data-section-views="referrers">
                     <div class="content-header">
                         <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
@@ -106,7 +127,7 @@
         </div>
 
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
-        <div id="referrer-main-wrapper" style="display: none;">
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers" style="display: none;">
 
             <!-- Agency Toggle -->
             <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -143,7 +164,7 @@
             </div>
 
             <!-- Agency Information Section -->
-            <div class="section expanded" id="referrer-agency-section">
+            <div class="section expanded" id="referrer-agency-section" data-section-views="referrers">
                 <div class="section-header">
                     <h2 class="section-title">Agency/Group Information</h2>
                     <span class="section-toggle">🔎</span>
@@ -183,7 +204,7 @@
             </div>
 
             <!-- Individual Consultants Management Section -->
-            <div class="section expanded" id="referrer-consultants-section">
+            <div class="section expanded" id="referrer-consultants-section" data-section-views="referrers">
                 <div class="section-header">
                     <h2 class="section-title">Individual Consultants</h2>
                     <span class="section-toggle">🔎</span>
@@ -271,7 +292,7 @@
             </div>
 
             <!-- Referrer Submission Section -->
-            <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+            <div class="section expanded" id="referrer-submission-section" data-section-views="referrers" style="border: 2px solid #1e40af; background: #f8fafc;">
                 <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                     <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save Referrer Project</h2>
                 </div>
@@ -290,7 +311,7 @@
 
         </div>
 
-        <div id="facility-main-wrapper">
+        <div id="facility-main-wrapper" data-section-views="companies,locations">
         <!-- Facility Table of Contents -->
         <div class="facility-toc" id="facility-toc">
             <div class="toc-header">
@@ -387,7 +408,7 @@
         </div>
         
         <!-- Operator Information Section -->
-        <div class="section expanded" id="operator-section">
+        <div class="section expanded" id="operator-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Operator Information</h2>
                 <span class="section-toggle">🔎</span>
@@ -493,7 +514,7 @@
         </div>
 
         <!-- Identification Section -->
-        <div class="section" id="identification-section">
+        <div class="section" id="identification-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Identification & Names</h2>
                 <span class="section-toggle">🔎</span>
@@ -527,7 +548,7 @@
         </div>
 
         <!-- Location Section -->
-        <div class="section" id="location-section">
+        <div class="section" id="location-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Location & Address</h2>
                 <span class="section-toggle">🔎</span>
@@ -545,7 +566,7 @@
         </div>
         
         <!-- Operations Section -->
-        <div class="section" id="operations-section">
+        <div class="section" id="operations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Operations</h2>
                 <span class="section-toggle">🔎</span>
@@ -583,7 +604,7 @@
         </div>
         
         <!-- Staff Section -->
-        <div class="section" id="staff-section">
+        <div class="section" id="staff-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Staff & Links</h2>
                 <span class="section-toggle">🔎</span>
@@ -605,7 +626,7 @@
         </div>
         
         <!-- Facility Details Section -->
-        <div class="section" id="facility-section">
+        <div class="section" id="facility-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Facility Details</h2>
                 <span class="section-toggle">🔎</span>
@@ -645,7 +666,7 @@
         </div>
         
         <!-- Accreditations & Memberships Section -->
-        <div class="section" id="accreditations-section">
+        <div class="section" id="accreditations-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Accreditations & Memberships</h2>
                 <span class="section-toggle">🔎</span>
@@ -675,7 +696,7 @@
         </div>
         
         <!-- Resources & Documentation Section -->
-        <div class="section" id="resources-section">
+        <div class="section" id="resources-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Available Resources & Documentation</h2>
                 <span class="section-toggle">🔎</span>
@@ -787,7 +808,7 @@
         </div>
 
         <!-- Treatment Types Section -->
-        <div class="section" id="treatment-section">
+        <div class="section" id="treatment-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Treatment Types</h2>
                 <span class="section-toggle">🔎</span>
@@ -891,7 +912,7 @@
         </div>
 
         <!-- Philosophy Section -->
-        <div class="section" id="philosophy-section">
+        <div class="section" id="philosophy-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Philosophy</h2>
                 <span class="section-toggle">🔎</span>
@@ -955,7 +976,7 @@
         </div>
 
         <!-- Critical Incidents Section -->
-        <div class="section" id="incidents-section">
+        <div class="section" id="incidents-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">Critical Incidents</h2>
                 <span class="section-toggle">🔎</span>
@@ -995,7 +1016,7 @@
         </div>
         
         <!-- General Notes Section -->
-        <div class="section" id="notes-section">
+        <div class="section" id="notes-section" data-section-views="companies,locations">
             <div class="section-header">
                 <h2 class="section-title">General Notes</h2>
                 <span class="section-toggle">🔎</span>
@@ -1009,7 +1030,7 @@
         </div>
         
         <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
             </div>

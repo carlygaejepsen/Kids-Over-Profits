@@ -861,6 +861,8 @@
         const showOrganizerBtn = document.getElementById('show-organizer-btn');
         const showOrganizerModalBtn = document.getElementById('show-organizer-modal-btn');
             const organizerSection = document.getElementById('data-organizer-section');
+            const organizerModal = document.getElementById('data-organizer-modal');
+            const organizerModalClose = document.getElementById('organizer-modal-close');
             const organizeBySelect = document.getElementById('organize-by');
             const organizeValueGroup = document.getElementById('organize-value-group');
             const organizeValueInput = document.getElementById('organize-value');
@@ -870,29 +872,61 @@
             const organizeResultsTitle = document.getElementById('organize-results-title');
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
+            const announceOrganizerStatus = (message, type = 'info') => {
+                if (typeof showSuggestionStatus === 'function') {
+                    showSuggestionStatus(message, type);
+                } else if (typeof showUploadStatus === 'function') {
+                    showUploadStatus(message, type);
+                } else {
+                    console.log(`[${type}] ${message}`);
+                }
+            };
             
         // Exit early if the organizer container is missing
-        if (!organizerSection) {
+        if (!organizerSection && !organizerModal) {
             console.warn('Data Organizer elements not found in DOM');
-            return;
+            return false;
         }
             
         let organizerVisible = false; // Collapsed by default
         
         // Set initial state - organizer hidden by default
-        organizerSection.style.display = 'none';
+        if (organizerSection) {
+            organizerSection.style.display = 'none';
+        }
         if (showOrganizerBtn) {
             showOrganizerBtn.textContent = '📊 Data Organizer';
         }
+        
+        const showOrganizerArea = () => {
+            if (organizerModal) {
+                organizerModal.classList.add('active');
+            } else if (organizerSection) {
+                organizerVisible = true;
+                organizerSection.style.display = 'block';
+                organizerSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        const hideOrganizerArea = () => {
+            if (organizerModal) {
+                organizerModal.classList.remove('active');
+            } else if (organizerSection) {
+                organizerVisible = false;
+                organizerSection.style.display = 'none';
+            }
+        };
         
         // Toggle organizer visibility
         if (showOrganizerBtn && !showOrganizerBtn.dataset.organizerToggleAttached) {
             showOrganizerBtn.addEventListener('click', () => {
                 organizerVisible = !organizerVisible;
-                organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                if (organizerSection) {
+                    organizerSection.style.display = organizerVisible ? 'block' : 'none';
+                }
                 showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
 
-                if (organizerVisible) {
+                if (organizerVisible && organizerSection) {
                     organizerSection.scrollIntoView({ behavior: 'smooth' });
                 }
             }, { passive: true });
@@ -902,14 +936,26 @@
         if (showOrganizerModalBtn && !showOrganizerModalBtn.dataset.organizerToggleAttached) {
             showOrganizerModalBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                organizerVisible = true;
-                organizerSection.style.display = 'block';
+                showOrganizerArea();
                 if (showOrganizerBtn) {
                     showOrganizerBtn.textContent = '📊 Hide Organizer';
                 }
-                organizerSection.scrollIntoView({ behavior: 'smooth' });
             }, { passive: false });
             showOrganizerModalBtn.dataset.organizerToggleAttached = 'true';
+        }
+
+        if (organizerModalClose && organizerModal && !organizerModalClose.dataset.organizerCloseAttached) {
+            organizerModalClose.addEventListener('click', hideOrganizerArea, { passive: true });
+            organizerModalClose.dataset.organizerCloseAttached = 'true';
+        }
+
+        if (organizerModal && !organizerModal.dataset.organizerBackdropAttached) {
+            organizerModal.addEventListener('click', (e) => {
+                if (e.target === organizerModal) {
+                    hideOrganizerArea();
+                }
+            }, { passive: true });
+            organizerModal.dataset.organizerBackdropAttached = 'true';
         }
 
             // Handle organize by selection
@@ -951,24 +997,32 @@
             function performOrganizedSearch() {
                 const searchType = organizeBySelect.value;
                 const searchValue = organizeValueInput.value.trim();
+                const activeFormData = typeof formData !== 'undefined' ? formData : window.formData;
+                const projectStore = (typeof projects !== 'undefined' && projects) ? projects : (window.projects || {});
                 
                 if (!searchType || !searchValue) {
-                    console.log('Please select a data point type and enter a search value.');
+                    announceOrganizerStatus('Select a data point and enter a search value, then click Search.', 'error');
+                    if (organizeValueInput) {
+                        organizeValueInput.focus();
+                    }
                     return;
                 }
                 
                 // Get all facilities from all projects
-                if ((!formData || !formData.facilities || formData.facilities.length === 0) && 
-                    (!projects || Object.keys(projects).length === 0)) {
-                    console.log('No data available. Please load or create some facility data first.');
+                const hasFormData = Boolean(activeFormData && Array.isArray(activeFormData.facilities) && activeFormData.facilities.length);
+                const hasProjects = Boolean(projectStore && Object.keys(projectStore).length);
+                if (!hasFormData && !hasProjects) {
+                    announceOrganizerStatus('No facility data is loaded yet. Load a project or add facilities before searching.', 'error');
+                    showOrganizerArea();
                     return;
                 }
                 
+                announceOrganizerStatus(`Searching for "${searchValue}"...`, 'info');
                 const results = [];
                 
                 // Search through current formData facilities
-                if (formData && formData.facilities) {
-                    formData.facilities.forEach((facility, facilityIndex) => {
+                if (activeFormData && activeFormData.facilities) {
+                    activeFormData.facilities.forEach((facility, facilityIndex) => {
                         const matches = extractDataPointsForSearch(facility, searchType, searchValue);
                         if (matches.length > 0) {
                             results.push({
@@ -983,8 +1037,8 @@
                 }
                 
                 // Search through all saved projects
-                Object.keys(projects).forEach(projectName => {
-                    const project = projects[projectName];
+                Object.keys(projectStore || {}).forEach(projectName => {
+                    const project = projectStore[projectName];
                     if (project && project.data && project.data.facilities) {
                         project.data.facilities.forEach((facility, facilityIndex) => {
                             const matches = extractDataPointsForSearch(facility, searchType, searchValue);
@@ -1001,6 +1055,11 @@
                     }
                 });
                 
+                if (results.length === 0) {
+                    announceOrganizerStatus(`No matches found for "${searchValue}".`, 'warning');
+                } else {
+                    announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
+                }
                 displayOrganizerResults(results, searchType, searchValue);
             }
             
@@ -1187,8 +1246,12 @@
                 
                 // Hide organizer and scroll to top
                 organizerVisible = false;
-                organizerSection.style.display = 'none';
-                showOrganizerBtn.textContent = '📊 Data Organizer';
+                if (organizerSection) {
+                    organizerSection.style.display = 'none';
+                }
+                if (showOrganizerBtn) {
+                    showOrganizerBtn.textContent = '📊 Data Organizer';
+                }
                 
                 // Scroll to top of page
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1200,22 +1263,25 @@
             };
         }
         
+        return true;
+        
         let organizerInitialized = false;
 
         const initializeOrganizerWhenReady = () => {
-            if (organizerInitialized) {
+            if (organizerInitialized || document.readyState === 'loading') {
                 return;
             }
 
             console.log('🚀 Form is ready. Initializing page-specific components.');
 
             if (typeof initializeDataOrganizer === 'function') {
-                initializeDataOrganizer();
+                const didInit = initializeDataOrganizer();
+                if (didInit !== false) {
+                    organizerInitialized = true;
+                }
             } else {
                 console.warn('initializeDataOrganizer not available on ready.');
             }
-
-            organizerInitialized = true;
         };
 
         const ensureOrganizerInitialization = () => {
@@ -1226,12 +1292,18 @@
             }
         };
 
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeOrganizerWhenReady, { once: true });
+        } else {
+            initializeOrganizerWhenReady();
+        }
+
         // Run immediately in case the custom event already fired
         ensureOrganizerInitialization();
 
         // Initialize data organizer when the page loads or once the form becomes ready
         window.addEventListener('load', () => {
-            ensureOrganizerInitialization();
+            initializeOrganizerWhenReady();
         }, { passive: true });
 
         // ============================================
