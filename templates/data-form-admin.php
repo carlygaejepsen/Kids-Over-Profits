@@ -349,13 +349,14 @@
                         <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
                         <button class="btn" id="clone-facility-btn">Clone Facility</button>
                         <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
+                        <button class="btn btn-secondary" id="show-organizer-modal-btn">🔍 Search Data</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Data Organizer Section -->
-        <div class="section" id="data-organizer-section">
+        <div class="section" id="data-organizer-section" data-section-views="companies,locations,referrers">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>
                 <span class="section-toggle">🔎</span>
@@ -1193,6 +1194,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Ensure referrer-specific array fields render even if the main loader misses them.
+        document.addEventListener('formReady', () => {
+            const getActiveConsultant = () => {
+                const consultants = window.formData?.referrerConsultants || [];
+                const idx = window.currentConsultantIndex ?? 0;
+                return consultants[idx] || consultants[0] || {};
+            };
+
+            const ensureReferrerArray = (path, value) => {
+                const container = document.querySelector(`[data-path="${path}"]`);
+                if (!container || typeof renderArray !== 'function') {
+                    return;
+                }
+                const data = Array.isArray(value) ? value : [];
+                renderArray(container, path, data);
+            };
+
+            const consultant = getActiveConsultant();
+            ensureReferrerArray('consultant.facilitiesReferred', consultant.facilitiesReferred);
+            ensureReferrerArray('consultant.schoolDistricts', consultant.schoolDistricts);
+        }, { once: true });
+    </script>
 
     <!-- Suggestion Reason Modal -->
     <div id="suggestion-reason-modal" class="organizer-modal">
