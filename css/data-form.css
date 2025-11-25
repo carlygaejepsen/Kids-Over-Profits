@@ -870,8 +870,10 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .section-toggle {
+    color: #FFFFFF;
     font-size: 20px;
     transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
 .section.expanded .section-toggle {

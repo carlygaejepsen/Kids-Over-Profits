@@ -856,6 +856,18 @@
             });
         }
 
+        // Fallback to make sure toggles are always bound even if updateAllUI didn't run yet
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSectionToggles, { once: true });
+        } else {
+            initializeSectionToggles();
+        }
+
+        // Re-bind after the main form bootstraps in case sections are injected later
+        document.addEventListener('formReady', () => {
+            setTimeout(initializeSectionToggles, 0);
+        }, { once: true });
+
         // DATA ORGANIZER FUNCTIONALITY
         function initializeDataOrganizer() {
         const showOrganizerBtn = document.getElementById('show-organizer-btn');

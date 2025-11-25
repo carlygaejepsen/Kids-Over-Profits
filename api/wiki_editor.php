@@ -113,8 +113,18 @@ get_header();
                 <legend>Rules and Punishments</legend>
                 <label for="rulesList">Rules (one rule per line):</label>
                 <textarea id="rulesList" name="rulesList" rows="6" placeholder="e.g., No swearing, foul or abusive language"></textarea>
-                <label for="punishmentsDesc">Punishments (Paragraphs):</label>
-                <textarea id="punishmentsDesc" name="punishmentsDesc" rows="4" placeholder="e.g., The 'stone circle' is used as punishment... The program also uses a 'code of silence'..."></textarea>
+                <hr>
+                <h4>Punishments</h4>
+                <div class="form-adder">
+                    <label for="punishmentName">Punishment Name/Type:</label>
+                    <input type="text" id="punishmentName" placeholder="e.g., Stone Circle, Code of Silence, Loss of Privileges">
+                    <label for="punishmentDesc">Description:</label>
+                    <textarea id="punishmentDesc" rows="3" placeholder="e.g., Students are required to sit in a circle of stones for hours without speaking or moving..."></textarea>
+                    <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
+                </div>
+                <div class="list-preview" id="punishmentListOutput"></div>
+                <label for="punishmentsMisc">Additional Punishment Details (optional):</label>
+                <textarea id="punishmentsMisc" name="punishmentsMisc" rows="3" placeholder="Any other relevant information about the punishment system..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -123,8 +133,24 @@ get_header();
                 <input type="text" id="mainComplaints" name="mainComplaints" placeholder="e.g., emotional abuse, medical neglect, LGBTQ+ harassment">
                 <label for="otherAllegationsList">Other Allegations (one allegation per line):</label>
                 <textarea id="otherAllegationsList" name="otherAllegationsList" rows="5" placeholder="e.g., deprivation of sleep"></textarea>
-                <label for="lawsuits">Lawsuits (Paragraphs):</label>
-                <textarea id="lawsuits" name="lawsuits" rows="8" placeholder="e.g., In [Year], [Plaintiff(s)] sued the program alleging..."></textarea>
+                <hr>
+                <h4>Lawsuits</h4>
+                <div class="form-adder">
+                    <label for="lawsuitYear">Year:</label>
+                    <input type="text" id="lawsuitYear" placeholder="e.g., 2018">
+                    <label for="lawsuitPlaintiff">Plaintiff(s):</label>
+                    <input type="text" id="lawsuitPlaintiff" placeholder="e.g., John Doe, Jane Smith">
+                    <label for="lawsuitAllegations">Allegations:</label>
+                    <textarea id="lawsuitAllegations" rows="3" placeholder="e.g., physical abuse, false imprisonment, negligence"></textarea>
+                    <label for="lawsuitOutcome">Outcome (optional):</label>
+                    <input type="text" id="lawsuitOutcome" placeholder="e.g., settled out of court, case dismissed, awarded $X">
+                    <label for="lawsuitDetails">Additional Details (optional):</label>
+                    <textarea id="lawsuitDetails" rows="2" placeholder="e.g., The lawsuit also named the parent company..."></textarea>
+                    <button type="button" class="add-btn" id="addLawsuitBtn">Add Lawsuit</button>
+                </div>
+                <div class="list-preview" id="lawsuitListOutput"></div>
+                <label for="lawsuitsMisc">Additional Lawsuit Information (optional):</label>
+                <textarea id="lawsuitsMisc" name="lawsuitsMisc" rows="3" placeholder="Any other relevant information about lawsuits or legal actions..."></textarea>
             </fieldset>
 
             <fieldset>

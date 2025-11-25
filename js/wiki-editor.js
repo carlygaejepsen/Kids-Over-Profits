@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Data Storage ---
     let staffMembers = [];
     let programLevels = [];
+    let punishments = [];
+    let lawsuits = [];
     let newsArticles = [];
     let testimonies = [];
     let relatedMedia = [];
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
         const emptyHtml = '<p style="color:#999;">No items added yet</p>';
-        const listIds = ['staffListOutput', 'levelListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput'];
+        const listIds = ['staffListOutput', 'levelListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput'];
         listIds.forEach(id => {
             const element = document.getElementById(id);
             if (element && !element.innerHTML.trim()) {
@@ -270,6 +272,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Add Button: Punishments ---
+    const addPunishmentBtn = document.getElementById('addPunishmentBtn');
+    if (addPunishmentBtn) {
+        addPunishmentBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('punishmentName').value.trim();
+            const desc = document.getElementById('punishmentDesc').value.trim();
+            if (name && desc) {
+                punishments.push({ name, desc });
+                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
+                clearInputs(['punishmentName', 'punishmentDesc']);
+            } else {
+                alert('Please enter a punishment name and description.');
+            }
+        });
+    }
+
+    // --- Add Button: Lawsuits ---
+    const addLawsuitBtn = document.getElementById('addLawsuitBtn');
+    if (addLawsuitBtn) {
+        addLawsuitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const year = document.getElementById('lawsuitYear').value.trim();
+            const plaintiff = document.getElementById('lawsuitPlaintiff').value.trim();
+            const allegations = document.getElementById('lawsuitAllegations').value.trim();
+            const outcome = document.getElementById('lawsuitOutcome').value.trim();
+            const details = document.getElementById('lawsuitDetails').value.trim();
+
+            if (year && plaintiff && allegations) {
+                lawsuits.push({ year, plaintiff, allegations, outcome, details });
+                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
+                clearInputs(['lawsuitYear', 'lawsuitPlaintiff', 'lawsuitAllegations', 'lawsuitOutcome', 'lawsuitDetails']);
+            } else {
+                alert('Please enter at least the year, plaintiff(s), and allegations.');
+            }
+        });
+    }
+
     // --- Add Button: Articles ---
     const addArticleBtn = document.getElementById('addArticleBtn');
     if (addArticleBtn) {
@@ -471,9 +511,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rulesList) {
                 rulesParts.push(`${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n${rulesList.replace(/^\*/gm, '-')}`);
             }
-            if (vals.punishmentsDesc) {
-                rulesParts.push(vals.punishmentsDesc);
+
+            // Build punishment descriptions from structured data
+            if (punishments.length > 0) {
+                const punishmentDescriptions = punishments.map(p => {
+                    return `**${escapeMarkdown(p.name)}**: ${escapeMarkdown(p.desc)}`;
+                }).join('\n\n');
+                rulesParts.push(`The program uses various punishments to enforce compliance:\n\n${punishmentDescriptions}`);
             }
+
+            // Add any additional misc punishment details
+            if (vals.punishmentsMisc) {
+                rulesParts.push(vals.punishmentsMisc);
+            }
+
             rulesSection = rulesParts.length > 0 ? rulesParts.join('\n\n') : getPlaceholder('Rules and Punishments', programName);
 
             // --- Build Abuse Section ---
@@ -486,9 +537,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (otherAllegationsList) {
                 abuseParts.push(`Other allegations of abuse and neglect which have been reported by survivors include but are not limited to:\n\n${otherAllegationsList.replace(/^\*/gm, '-')}`);
             }
-            if (vals.lawsuits) {
-                abuseParts.push(vals.lawsuits);
+
+            // Build lawsuit descriptions from structured data
+            if (lawsuits.length > 0) {
+                const lawsuitDescriptions = lawsuits.map(lawsuit => {
+                    let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} sued ${escapeMarkdown(programName)} alleging ${escapeMarkdown(lawsuit.allegations)}.`;
+
+                    if (lawsuit.outcome) {
+                        sentence += ` The lawsuit ${escapeMarkdown(lawsuit.outcome)}.`;
+                    }
+
+                    if (lawsuit.details) {
+                        sentence += ` ${escapeMarkdown(lawsuit.details)}`;
+                    }
+
+                    return sentence;
+                }).join('\n\n');
+                abuseParts.push(lawsuitDescriptions);
             }
+
+            // Add any additional misc lawsuit details
+            if (vals.lawsuitsMisc) {
+                abuseParts.push(vals.lawsuitsMisc);
+            }
+
             abuseSection = abuseParts.length > 0 ? abuseParts.join('\n\n') : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
 
             // --- Build Media Section (Combined) ---
@@ -763,6 +835,8 @@ ${relatedMediaSection}
         console.log('parseAndPopulate called');
         staffMembers = [];
         programLevels = [];
+        punishments = [];
+        lawsuits = [];
         newsArticles = [];
         testimonies = [];
         relatedMedia = [];
@@ -1231,16 +1305,33 @@ ${relatedMediaSection}
                 setValue('rulesList', rulesList);
             }
 
-            // Extract punishments description
+            // Extract structured punishments - format: **Name**: Description
+            const punishmentBlocks = rulesSection.match(/\*\*([^*:]+):\*\*\s*([^\n]+)/g);
+            if (punishmentBlocks) {
+                punishmentBlocks.forEach(block => {
+                    const match = block.match(/\*\*([^*:]+):\*\*\s*(.+)/);
+                    if (match) {
+                        punishments.push({
+                            name: match[1].trim(),
+                            desc: match[2].trim()
+                        });
+                    }
+                });
+                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
+            }
+
+            // Extract misc punishment text (paragraphs that don't match structured format)
             const punishmentLines = rulesSection.split('\n\n').filter(para => {
                 const trimmed = para.trim();
                 return !para.includes('Some of these rules include') &&
+                       !para.includes('uses various punishments') &&
+                       !trimmed.match(/^\*\*[^*:]+:\*\*/) &&
                        !trimmed.startsWith('*') &&
                        !trimmed.startsWith('-') &&
                        trimmed.length > 0;
             });
             if (punishmentLines.length > 0) {
-                setValue('punishmentsDesc', punishmentLines.join('\n\n').trim());
+                setValue('punishmentsMisc', punishmentLines.join('\n\n').trim());
             }
         }
 
@@ -1273,17 +1364,56 @@ ${relatedMediaSection}
                 setValue('otherAllegationsList', allegationsList);
             }
 
-            // Extract lawsuits
+            // Extract structured lawsuits
+            // Pattern: "In YEAR, PLAINTIFF sued PROGRAM alleging ALLEGATIONS. The lawsuit OUTCOME. DETAILS"
+            const lawsuitParagraphs = abuseSection.split('\n\n');
+            lawsuitParagraphs.forEach(para => {
+                const trimmed = para.trim();
+
+                // Look for lawsuit pattern
+                const lawsuitMatch = trimmed.match(/In (\d{4}),\s*([^s]+?)\s+sued[^a]*alleging\s+([^\.]+)\./i);
+                if (lawsuitMatch) {
+                    const year = lawsuitMatch[1].trim();
+                    const plaintiff = lawsuitMatch[2].trim();
+                    const allegations = lawsuitMatch[3].trim();
+
+                    // Try to extract outcome
+                    let outcome = '';
+                    const outcomeMatch = trimmed.match(/The lawsuit ([^\.]+)\./i);
+                    if (outcomeMatch) {
+                        outcome = outcomeMatch[1].trim();
+                    }
+
+                    // Extract remaining details (everything after outcome or allegations)
+                    let details = '';
+                    if (outcomeMatch) {
+                        const afterOutcome = trimmed.substring(trimmed.indexOf(outcomeMatch[0]) + outcomeMatch[0].length).trim();
+                        details = afterOutcome;
+                    } else {
+                        const afterAllegations = trimmed.substring(trimmed.indexOf(lawsuitMatch[0]) + lawsuitMatch[0].length).trim();
+                        details = afterAllegations;
+                    }
+
+                    lawsuits.push({ year, plaintiff, allegations, outcome, details });
+                }
+            });
+
+            if (lawsuits.length > 0) {
+                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
+            }
+
+            // Extract misc lawsuit text (paragraphs that don't match structured format)
             const lawsuitLines = abuseSection.split('\n\n').filter(para => {
                 const trimmed = para.trim();
                 return !para.includes('main complaints are') &&
                        !para.includes('Other allegations') &&
+                       !trimmed.match(/^In \d{4},/) &&
                        !trimmed.startsWith('*') &&
                        !trimmed.startsWith('-') &&
                        trimmed.length > 0;
             });
             if (lawsuitLines.length > 0) {
-                setValue('lawsuits', lawsuitLines.join('\n\n').trim());
+                setValue('lawsuitsMisc', lawsuitLines.join('\n\n').trim());
             }
         }
 
