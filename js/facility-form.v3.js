@@ -3335,7 +3335,9 @@ window.updateAllUI = function() {
     loadOperatorData();
     loadReferrerData();
     loadFacilityData();
+    ensureAllStateLocationProjects();
     ensureLocationProjectsFromFacilities();
+    syncProjectsIntoLocationMirrors();
     updateFacilityControls();
     updateTableOfContents();
     updateJSON();
@@ -3912,6 +3914,95 @@ function ensureLocationProjectsFromFacilities() {
         } else if (!window.projects[stateName].category) {
             window.projects[stateName].category = 'locations';
         }
+    });
+}
+
+function ensureAllStateLocationProjects() {
+    if (!window.projects) {
+        window.projects = {};
+    }
+
+    US_STATE_NAMES.forEach((stateName) => {
+        if (!window.projects[stateName]) {
+            const emptyLocation = createNewProjectData();
+            emptyLocation.facilities = [];
+            window.projects[stateName] = {
+                name: stateName,
+                data: emptyLocation,
+                timestamp: new Date().toISOString(),
+                category: 'locations'
+            };
+        } else if (!window.projects[stateName].category) {
+            window.projects[stateName].category = 'locations';
+        }
+    });
+}
+
+function getProjectStates(projectData = {}) {
+    const states = new Set();
+
+    // Facilities states
+    (projectData.facilities || []).forEach((facility = {}) => {
+        const parsed = parseCityState(facility.location || '');
+        const state = (facility.locationState || parsed.state || '').trim();
+        if (state) {
+            states.add(state.toUpperCase());
+        }
+    });
+
+    // Referrer agency state
+    if (projectData.referrerAgency?.state) {
+        states.add(String(projectData.referrerAgency.state).trim().toUpperCase());
+    }
+
+    // Individual consultant state
+    if (projectData.referrerIndividual?.state) {
+        states.add(String(projectData.referrerIndividual.state).trim().toUpperCase());
+    }
+
+    // Consultant list states
+    (projectData.referrerConsultants || []).forEach((consultant = {}) => {
+        if (consultant.state) {
+            states.add(String(consultant.state).trim().toUpperCase());
+        }
+    });
+
+    // Operator HQ state (if tracked)
+    if (projectData.operator?.state) {
+        states.add(String(projectData.operator.state).trim().toUpperCase());
+    }
+
+    return Array.from(states).filter(Boolean);
+}
+
+function syncProjectsIntoLocationMirrors() {
+    if (!window.projects || typeof deepClone !== 'function') {
+        return;
+    }
+
+    ensureAllStateLocationProjects();
+
+    Object.entries(window.projects).forEach(([name, project]) => {
+        if (!project || project.category === 'locations') {
+            return;
+        }
+
+        const stateList = getProjectStates(project.data || {});
+        if (!stateList.length) {
+            return;
+        }
+
+        stateList.forEach((stateName) => {
+            const mirrorName = `${stateName} - ${name}`;
+            if (!window.projects[mirrorName]) {
+                window.projects[mirrorName] = {
+                    name: mirrorName,
+                    data: deepClone(project.data || {}),
+                    timestamp: new Date().toISOString(),
+                    category: 'locations'
+                };
+            }
+        });
     });
 }
 
