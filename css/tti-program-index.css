@@ -1,4 +1,8 @@
 /* =================================================================
+   TTI PROGRAM INDEX - Dedicated Styles
+   ================================================================= */
+
+/* =================================================================
    GLOBAL & SHARED STYLES
    ================================================================= */
 
@@ -31,32 +35,23 @@ details[open] > summary .open-text {
 }
 
 /* =================================================================
-   FACILITY REPORT VIEWER (JAVASCRIPT)
+   TTI PROGRAM INDEX CONTAINER
    ================================================================= */
 
-.facility-report-container {
+.tti-program-index-wrapper {
     font-family: sans-serif;
     font-size: 16px;
     line-height: 1.6;
 }
 
-.facility-report-container h1,
-.facility-report-container h2,
-.facility-report-container h4 {
+.tti-program-index-wrapper h1,
+.tti-program-index-wrapper h2,
+.tti-program-index-wrapper h4 {
     font-family: sans-serif;
     margin: 0;
 }
 
 /* --- Alphabet Filter (Navy Blue Theme) --- */
-.facility-report-container .alphabet-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 2em;
-    padding-bottom: 1.5em;
-    border-bottom: 1px solid #dddddd;
-}
-
 #alphabet-filter {
     display: flex;
     flex-wrap: wrap;
@@ -66,7 +61,7 @@ details[open] > summary .open-text {
     border-bottom: 1px solid #dddddd;
 }
 
-#alphabet-filter a {
+#alphabet-filter button {
     padding: 8px 15px;
     text-decoration: none;
     background-color: #00004d;
@@ -75,12 +70,17 @@ details[open] > summary .open-text {
     border-radius: 4px;
     font-weight: bold;
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
-#alphabet-filter a.active {
-    background-color: #00004d;
+#alphabet-filter button:hover {
+    background-color: #000066;
+}
+
+#alphabet-filter button.active {
+    background-color: #000066;
     color: #ffffff;
-    border-color: #dddddd;
+    border-color: #00004d;
 }
 
 /* Force facility card text to be black */
@@ -114,242 +114,6 @@ details[open] > summary .open-text {
     color: #888888 !important;
 }
 
-/*------------------------------------------------------------
-INSPECTIONS
------------------------------------------------------------------*/
-/* --- Main Facility Box --- */
-.facility-report-container .facility-box {
-    background-color: #00004d;
-    color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 8px;
-    padding: 20px;
-    width: auto;
-    transition: transform 0.2s ease;
-    cursor: pointer;
-}
-
-.facility-report-container .facility-header {
-    cursor: pointer;
-    padding: 20px;
-    border-radius: 6px;
-    position: relative;
-    list-style: " ";
-}
-
-.facility-report-container .facility-header h1 {
-    font-size: 1.5em;
-    font-weight: bold;
-    background-color: #00004d;
-    color: #ffffff;
-    margin-bottom: 5px;
-}
-
-.facility-report-container .facility-header h2 {
-    font-size: 1.1em;
-    font-weight: normal;
-    color: #ffffff;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-/* Style the facility details paragraph */
-.facility-report-container .facility-details {
-    color: #ffffff;
-    margin: 8px 0 0 0;
-}
-
-/* ---=============================================
-Inspection Details
-===================================================--- */
-.facility-report-container .inspections-container {
-    padding-top: 15px;
-    border-top: 1px solid #dddddd;
-    margin-top: 15px;
-}
-
-.facility-report-container .inspection-box {
-    border-radius: 3px;
-    margin-top: 1em;
-}
-
-.facility-report-container .inspection-box-clean {
-    background-color: #ffffff;
-    color: #000000;
-    border: 1px solid #dddddd;
-}
-
-.facility-report-container .inspection-box-clean .inspection-header {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 1em;
-    font-weight: 600;
-    border-bottom: 1px solid #dddddd;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative;
-}
-
-.facility-report-container .inspection-box-violation {
-    background-color: #ff6600;
-    color: #ffffff;
-    padding: 15px;
-    border: 1px solid #dddddd;
-}
-
-.facility-report-container .inspection-box-violation .inspection-header {
-    background-color: #ff6600;
-    color: #ffffff;
-    padding: 0 0 15px 0;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative;
-}
-
-.facility-report-container .inspection-box-violation .inspection-content {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 1em;
-    border-radius: 4px;
-}
-
-.facility-report-container .deficiency-box {
-    background-color: #ffffff;
-    color: #000000;
-    border: 1px solid #dddddd;
-}
-
-.facility-report-container .inspection-content {
-    padding: 1em;
-}
-
-/* Style the inspection details block */
-.facility-report-container .inspection-details-block {
-    background-color: #ffffff;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    color: #000000;
-}
-
-.facility-report-container .inspection-details-block strong {
-    color: #000000;
-    font-weight: 600;
-}
-
-/* Style narrative and findings sections */
-.facility-report-container .narrative-section,
-.facility-report-container .findings-section {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 4px;
-}
-
-.facility-report-container .narrative-section h4,
-.facility-report-container .findings-section h4 {
-    color: #000000;
-    margin: 0 0 10px 0;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.facility-report-container .narrative-section p,
-.facility-report-container .findings-section p {
-    color: #000000;
-    margin: 0;
-    line-height: 1.5;
-}
-
-/* Style the no violations section */
-.facility-report-container .no-violations {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    color: #000000;
-    padding: 20px;
-    margin: 15px 0;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.facility-report-container .no-violations p {
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: 600;
-}
-
-/* Style violation/deficiency boxes */
-.facility-report-container .violation-box {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    overflow: hidden;
-}
-
-.facility-report-container .deficiency-header {
-    background-color: #fff;
-    color: #000;
-    padding: 12px 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative;
-}
-
-.facility-report-container .deficiency-content {
-    padding: 15px;
-    background-color: #ffffff;
-}
-
-.facility-report-container .deficiency-content strong {
-    display: block;
-    color: #000000;
-    font-size: 0.9em;
-    font-weight: 600;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.facility-report-container .deficiency-content p {
-    margin: 0 0 15px 0;
-    padding: 10px;
-    background-color: #ffffff;
-    border-left: 3px solid #ff6600;
-    border-radius: 3px;
-    line-height: 1.5;
-    color: #000000;
-}
-
-.facility-report-container .deficiency-content p:last-child {
-    margin-bottom: 0;
-}
-
-/* Section heading improvements */
-.facility-report-container h4 {
-    color: #000000;
-    font-weight: 600;
-    font-size: 1.1em;
-    margin: 20px 0 10px 0;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #dddddd;
-}
-
-/* Error message styling */
-.facility-report-container .error {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 20px;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    text-align: center;
-    margin: 20px 0;
-}
-
 /* =================================================================
    FACILITY DIRECTORY
    ================================================================= */
@@ -378,73 +142,6 @@ Inspection Details
 
 .facility-card.status-unknown {
     border-color: #cccccc;
-}
-
-/* =================================================================
-   TABLE OF CONTENTS (COMPLETE)
-   ================================================================= */
-
-.widget_toc,
-.widget[id*="toc"],
-.widget[class*="toc"] {
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #000000;
-}
-
-.toc_title,
-.ez-toc-title,
-.lwptoc_header {
-    margin: 0 !important;
-    padding: 0.25em 0.5em !important;
-    font-size: 1em !important;
-    line-height: 1.2 !important;
-    color: #000000 !important;
-}
-
-.widget_toc ul,
-.widget[id*="toc"] ul,
-.widget[class*="toc"] ul {
-    margin: 0 !important;
-    padding-left: 1em !important;
-}
-
-.widget_toc li,
-.widget[id*="toc"] li,
-.widget[class*="toc"] li {
-    margin: 0 !important;
-    padding: 0.1em 0 !important;
-    line-height: 1.3 !important;
-}
-
-.widget_toc ol,
-.widget[id*="toc"] ol,
-.widget[class*="toc"] ol {
-    list-style: none !important;
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-}
-
-.sidebar .ez_toc_widget-container:not(.ez-toc-collapsed),
-.ez-toc:not(.ez-toc-collapsed) {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.sidebar .ez_toc_widget-container.ez-toc-collapsed,
-.ez-toc.ez-toc-collapsed {
-    max-height: none;
-    height: auto;
-    overflow: hidden;
-}
-
-.ez-toc-toggle {
-    background-color: #ffffff !important;
-    background-clip: padding-box !important;
-    background-image: none !important;
-    color: #000000 !important;
-    border: 1px solid #000000 !important;
 }
 
 /* =================================================================
@@ -481,16 +178,6 @@ Inspection Details
 
 .controls input {
     width: 300px;
-}
-
-.facility-card {
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 6px;
-    background-color: #ffffff;
-    color: #000000;
-    border: 5px solid #e0e0e0;
-    transition: none;
 }
 
 .facility-name {
@@ -616,12 +303,6 @@ details.operator-section[open] .operator-content-scrollable {
     flex-shrink: 0;
 }
 
-.facility-report-container .report-header {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-}
-
 .operator-header {
     color: #ffffff;
     padding: 12px;
@@ -713,7 +394,7 @@ details[open] > summary.operator-header::after {
 /* ==========================================================
 CONTROLS
 ================================================================*/
-.facility-report-container .controls {
+.tti-program-index-wrapper .controls {
     grid-column: 1 / -1;
     margin-bottom: 10px;
     padding: 15px;
@@ -721,24 +402,20 @@ CONTROLS
     border-radius: 6px;
 }
 
-.facility-report-container .alphabet-filter {
-    order: 1;
-}
-
-.facility-report-container .controls input[type="text"] {
+.tti-program-index-wrapper .controls input[type="text"] {
     flex: 1;
     max-width: 400px;
     padding: 8px 12px;
-    cursor: pointer;
+    cursor: text;
 }
 
-.facility-report-container .controls select {
+.tti-program-index-wrapper .controls select {
     min-width: 180px;
     padding: 8px 12px;
     cursor: pointer;
 }
 
-.facility-report-container .controls button {
+.tti-program-index-wrapper .controls button {
     padding: 8px 16px;
     white-space: nowrap;
     cursor: pointer;
@@ -753,40 +430,31 @@ CONTROLS
 RESPONSIVE
 ===============================================================*/
 @media (max-width: 768px) {
-    .facility-report-container .facility-box {
-        padding: 15px;
-        margin-bottom: 15px;
+    .facilities-database {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        padding: 5px;
+        gap: 10px;
     }
 
-    .facility-report-container .facility-header {
-        padding: 15px;
+    .operator-section,
+    details.operator-section:not([open]),
+    details.operator-section[open] {
+        width: 100%;
+        min-width: 180px;
     }
 
-    .facility-report-container .facility-header h1 {
-        font-size: 1.3em;
-    }
-
-    .facility-report-container .alphabet-filter {
+    #alphabet-filter {
         gap: 4px;
         padding-bottom: 1em;
     }
 
-    .facility-report-container .alphabet-filter {
+    #alphabet-filter button {
         padding: 6px 10px;
         font-size: 0.9em;
     }
 
-    .facility-report-container a:link { color: #dddddd; }
-    .facility-report-container a:visited { color: #dddddd; }
-
-    .facility-report-container .inspection-content {
-        padding: 0.8em;
+    .controls input {
+        width: 100%;
+        max-width: 100%;
     }
-}
-
-/* =================================================================
-   AUTOCOMPLETE
-   ================================================================= */
-.autocomplete-item.highlighted {
-    background-color: #e5e7eb;
 }
