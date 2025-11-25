@@ -970,10 +970,10 @@
                     console.log(`Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
                 }, 500);
             };
+
+            return true;
         }
-        
-        return true;
-        
+
         let organizerInitialized = false;
 
         const initializeOrganizerWhenReady = () => {
