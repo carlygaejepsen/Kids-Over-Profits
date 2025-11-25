@@ -2303,6 +2303,22 @@ function resolvePathTarget(path) {
         return { scope, normalizedPath, target };
     }
 
+    if (path.startsWith('consultant.')) {
+        ensureReferrerDataStructures();
+        scope = 'consultant';
+        normalizedPath = path.replace('consultant.', '');
+        target = window.formData.referrerIndividual;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerAgency.')) {
+        ensureReferrerDataStructures();
+        scope = 'referrerAgency';
+        normalizedPath = path.replace('referrerAgency.', '');
+        target = window.formData.referrerAgency;
+        return { scope, normalizedPath, target };
+    }
+
     scope = 'facility';
     normalizedPath = path;
     if (!Array.isArray(window.formData.facilities) || !window.formData.facilities.length) {

@@ -390,7 +390,7 @@ function loadReferrerData() {
     const individualArrays = [
         { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
         { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
-        { path: 'referrerIndividual.affiliations', data: consultant.affiliations },
+        { path: 'consultant.affiliations', data: consultant.affiliations },
         { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
         { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
     ];
