@@ -465,6 +465,12 @@ function kop_get_facilities_rest_endpoint_url() {
  * @return bool
  */
 function kop_is_tti_program_index_context() {
+    // Check if using the page template (preferred method)
+    if (is_page_template('page-tti-program-index.php')) {
+        return true;
+    }
+
+    // Fallback to slug check for backwards compatibility
     if (function_exists('is_page') && is_page(array('tti-program-index'))) {
         return true;
     }
@@ -500,8 +506,15 @@ function kop_is_tti_program_index_context() {
 
 /**
  * Load facilities data for TTI program index page.
+ * NOTE: This function is now disabled for pages using the page-tti-program-index.php template,
+ * as they now use the full data form instead of the read-only display.
  */
 function load_facilities_data() {
+    // Skip if using the page template (which uses the full data form)
+    if (is_page_template('page-tti-program-index.php')) {
+        return;
+    }
+
     if (!kop_is_tti_program_index_context()) {
         return;
     }
@@ -702,7 +715,7 @@ function enqueue_facility_form_script() {
     }
 
     // Use the robust template check instead of a shortcode or slug check.
-    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php');
+    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php') || is_page_template('page-tti-program-index.php');
     if (!$is_data_form_page) {
         return;
     }
@@ -809,8 +822,8 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data')) {
-        // Admin page - loads admin-data-page.js
+    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
+        // Admin page and TTI Program Index - loads admin-data-page.js
         $admin_page_relative_path = '/js/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
         $admin_page_uri = get_stylesheet_directory_uri() . $admin_page_relative_path;

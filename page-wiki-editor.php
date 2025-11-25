@@ -45,32 +45,109 @@ get_header();
 
             <fieldset>
                 <legend>History and Background Information</legend>
-                <label for="yearFounded">Year Founded:</label>
-                <input type="text" id="yearFounded" name="yearFounded" placeholder="e.g., 1989">
-                <label for="ownerName">Original/Current Owner:</label>
-                <input type="text" id="ownerName" name="ownerName" placeholder="e.g., Aspen Education Group">
-                <label for="ownerLink">Owner Wiki Link (if any):</label>
-                <input type="text" id="ownerLink" name="ownerLink" placeholder="e.g., /r/troubledteens/wiki/index/aspeneducation">
-                <label for="ageRange">Age Range:</label>
-                <input type="text" id="ageRange" name="ageRange" placeholder="e.g., 13-17">
-                <label for="diagnosesList">Diagnoses/Behaviors (comma-separated):</label>
-                <input type="text" id="diagnosesList" name="diagnosesList" placeholder="e.g., Abuse, Adjustment Disorder, Anxiety...">
-                <label for="avgStay">Average Length of Stay:</label>
-                <input type="text" id="avgStay" name="avgStay" placeholder="e.g., 100 days">
-                <label for="tuition">Tuition:</label>
-                <input type="text" id="tuition" name="tuition" placeholder="e.g., more than $40,000">
-                <label for="natsapStatus">NATSAP Status:</label>
-                <input type="text" id="natsapStatus" name="natsapStatus" placeholder="e.g., has been a NATSAP member since 1999">
-                <label for="mainAddress">Main Office Address:</label>
-                <input type="text" id="mainAddress" name="mainAddress" placeholder="e.g., 280 N 300 E, Escalante, UT 84726">
-                <label for="addressLink">Google Maps Link for Address:</label>
-                <input type="text" id="addressLink" name="addressLink" placeholder="e.g., https://www.google.com/maps/...">
-                <label for="accreditingBody">Accrediting Body:</label>
-                <input type="text" id="accreditingBody" name="accreditingBody" placeholder="e.g., Northwest Accreditation Commission (NWAC)">
-                <label for="accreditingBodyLink">Accrediting Body Wiki Link (if any):</label>
-                <input type="text" id="accreditingBodyLink" name="accreditingBodyLink" placeholder="e.g., /r/troubledteens/wiki/index/naas">
-                <label for="historyMisc">Other History/Background Details (Paragraphs):</label>
-                <textarea id="historyMisc" name="historyMisc" rows="6" placeholder="Add any other info here, like details on other campuses, program philosophy, changes in ownership, etc."></textarea>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="yearFounded">Year Founded:</label>
+                        <input type="text" id="yearFounded" name="yearFounded" placeholder="e.g., 1989">
+                    </div>
+                    <div class="field-group">
+                        <label for="ageRange">Age Range:</label>
+                        <input type="text" id="ageRange" name="ageRange" placeholder="e.g., 13-17">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="ownerName">Owner/Operator:</label>
+                        <input type="text" id="ownerName" name="ownerName" placeholder="e.g., Aspen Education Group">
+                    </div>
+                    <div class="field-group">
+                        <label for="ownerLink">Owner Wiki Link:</label>
+                        <input type="text" id="ownerLink" name="ownerLink" placeholder="e.g., /r/troubledteens/wiki/...">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="avgStay">Avg. Stay:</label>
+                        <input type="text" id="avgStay" name="avgStay" placeholder="e.g., 100 days">
+                    </div>
+                    <div class="field-group">
+                        <label for="tuition">Tuition:</label>
+                        <input type="text" id="tuition" name="tuition" placeholder="e.g., $40,000+">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="natsapMember">NATSAP Member?</label>
+                        <select id="natsapMember" name="natsapMember">
+                            <option value="">Unknown</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="former">Former Member</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="natsapYear">NATSAP Since:</label>
+                        <input type="text" id="natsapYear" name="natsapYear" placeholder="e.g., 1999">
+                    </div>
+                </div>
+                <label for="diagnosesList">Target Diagnoses/Behaviors (comma-separated):</label>
+                <input type="text" id="diagnosesList" name="diagnosesList" placeholder="e.g., Anxiety, Depression, ADHD, ODD">
+                <div class="field-row">
+                    <div class="field-group flex-2">
+                        <label for="mainAddress">Main Address:</label>
+                        <input type="text" id="mainAddress" name="mainAddress" placeholder="e.g., 280 N 300 E, Escalante, UT 84726">
+                    </div>
+                    <div class="field-group">
+                        <label for="addressLink">Google Maps Link:</label>
+                        <input type="text" id="addressLink" name="addressLink" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="accreditingBody">Accrediting Body:</label>
+                        <input type="text" id="accreditingBody" name="accreditingBody" placeholder="e.g., NWAC">
+                    </div>
+                    <div class="field-group">
+                        <label for="accreditingBodyLink">Accreditor Wiki Link:</label>
+                        <input type="text" id="accreditingBodyLink" name="accreditingBodyLink" placeholder="e.g., /r/troubledteens/wiki/...">
+                    </div>
+                </div>
+                <hr>
+                <h4>Additional Locations / Campuses</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="campusName">Campus Name:</label>
+                            <input type="text" id="campusName" placeholder="e.g., Girls Campus">
+                        </div>
+                        <div class="field-group">
+                            <label for="campusLocation">Location:</label>
+                            <input type="text" id="campusLocation" placeholder="e.g., Cedar City, UT">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addCampusBtn">Add Campus</button>
+                </div>
+                <div class="list-preview" id="campusListOutput"></div>
+                <hr>
+                <h4>Ownership Changes</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="ownerChangeYear">Year:</label>
+                            <input type="text" id="ownerChangeYear" placeholder="e.g., 2015">
+                        </div>
+                        <div class="field-group">
+                            <label for="ownerChangePrevious">Previous Owner:</label>
+                            <input type="text" id="ownerChangePrevious" placeholder="e.g., Aspen Education">
+                        </div>
+                        <div class="field-group">
+                            <label for="ownerChangeNew">New Owner:</label>
+                            <input type="text" id="ownerChangeNew" placeholder="e.g., Sequel Youth">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addOwnerChangeBtn">Add Ownership Change</button>
+                </div>
+                <div class="list-preview" id="ownerChangeListOutput"></div>
             </fieldset>
 
             <fieldset>
@@ -95,36 +172,208 @@ get_header();
 
             <fieldset>
                 <legend>Program Structure</legend>
-                <label for="levelSystemDesc">Level System Description:</label>
-                <input type="text" id="levelSystemDesc" name="levelSystemDesc" placeholder="e.g., a level-system consisting of four levels">
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="levelSystemType">Level/Phase System:</label>
+                        <select id="levelSystemType" name="levelSystemType">
+                            <option value="">None/Unknown</option>
+                            <option value="level">Level System</option>
+                            <option value="phase">Phase System</option>
+                            <option value="point">Point System</option>
+                            <option value="tier">Tier System</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="levelCount">Number of Levels/Phases:</label>
+                        <input type="text" id="levelCount" name="levelCount" placeholder="e.g., 4">
+                    </div>
+                </div>
+                <h4>Level/Phase Details</h4>
                 <div class="form-adder">
-                    <label for="levelName">Level Name:</label>
-                    <input type="text" id="levelName">
-                    <label for="levelDesc">Level Description:</label>
-                    <textarea id="levelDesc" rows="3" placeholder="e.g., Conditions of this level, rules, requirements to advance."></textarea>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="levelName">Level Name:</label>
+                            <input type="text" id="levelName" placeholder="e.g., Orientation, Level 1">
+                        </div>
+                        <div class="field-group">
+                            <label for="levelDuration">Typical Duration:</label>
+                            <input type="text" id="levelDuration" placeholder="e.g., 2 weeks">
+                        </div>
+                    </div>
+                    <label for="levelPrivileges">Privileges Earned (comma-separated):</label>
+                    <input type="text" id="levelPrivileges" placeholder="e.g., phone calls, letters, outdoor time">
+                    <label for="levelRestrictions">Restrictions (comma-separated):</label>
+                    <input type="text" id="levelRestrictions" placeholder="e.g., no talking, no eye contact, constant supervision">
                     <button type="button" class="add-btn" id="addLevelBtn">Add Level</button>
                 </div>
                 <div class="list-preview" id="levelListOutput"></div>
-                <label for="structureMisc">Other Structure Details (e.g., Education):</label>
-                <textarea id="structureMisc" name="structureMisc" rows="4" placeholder="e.g., Additionally, survivors have reported that the educational component..."></textarea>
+                <hr>
+                <h4>Education</h4>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="educationType">Education Provided:</label>
+                        <select id="educationType" name="educationType">
+                            <option value="">Unknown</option>
+                            <option value="accredited">Accredited On-Site School</option>
+                            <option value="online">Online/Computer-Based</option>
+                            <option value="packet">Packet-Based/Worksheets</option>
+                            <option value="limited">Limited/Sporadic</option>
+                            <option value="none">None Provided</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="educationAccreditor">School Accreditor:</label>
+                        <input type="text" id="educationAccreditor" name="educationAccreditor" placeholder="e.g., Cognia, NWAC">
+                    </div>
+                </div>
+                <hr>
+                <h4>Therapy/Treatment</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="therapyType">Therapy Type:</label>
+                            <select id="therapyType">
+                                <option value="individual">Individual Therapy</option>
+                                <option value="group">Group Therapy</option>
+                                <option value="family">Family Therapy</option>
+                                <option value="cbt">CBT</option>
+                                <option value="dbt">DBT</option>
+                                <option value="emdr">EMDR</option>
+                                <option value="equine">Equine Therapy</option>
+                                <option value="art">Art Therapy</option>
+                                <option value="wilderness">Wilderness Therapy</option>
+                                <option value="attack">Attack Therapy/Confrontation</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label for="therapyFrequency">Frequency:</label>
+                            <input type="text" id="therapyFrequency" placeholder="e.g., weekly, daily">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addTherapyBtn">Add Therapy Type</button>
+                </div>
+                <div class="list-preview" id="therapyListOutput"></div>
             </fieldset>
 
             <fieldset>
                 <legend>Rules and Punishments</legend>
-                <label for="rulesList">Rules (one rule per line):</label>
-                <textarea id="rulesList" name="rulesList" rows="6" placeholder="e.g., No swearing, foul or abusive language"></textarea>
-                <label for="punishmentsDesc">Punishments (Paragraphs):</label>
-                <textarea id="punishmentsDesc" name="punishmentsDesc" rows="4" placeholder="e.g., The 'stone circle' is used as punishment... The program also uses a 'code of silence'..."></textarea>
+                <h4>Rules</h4>
+                <div class="form-adder">
+                    <label for="ruleName">Rule:</label>
+                    <input type="text" id="ruleName" placeholder="e.g., No talking without permission">
+                    <button type="button" class="add-btn" id="addRuleBtn">Add Rule</button>
+                </div>
+                <div class="list-preview" id="ruleListOutput"></div>
+                <hr>
+                <h4>Punishments</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="punishmentName">Name:</label>
+                            <input type="text" id="punishmentName" placeholder="e.g., Stone Circle">
+                        </div>
+                        <div class="field-group">
+                            <label for="punishmentType">Type:</label>
+                            <select id="punishmentType">
+                                <option value="physical">Physical</option>
+                                <option value="isolation">Isolation</option>
+                                <option value="restriction">Restriction</option>
+                                <option value="humiliation">Humiliation</option>
+                                <option value="labor">Labor/Work</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label for="punishmentAction">What happens:</label>
+                    <input type="text" id="punishmentAction" placeholder="e.g., student sits motionless for hours">
+                    <label for="punishmentTrigger">Triggered by:</label>
+                    <input type="text" id="punishmentTrigger" placeholder="e.g., talking without permission, rule violations">
+                    <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
+                </div>
+                <div class="list-preview" id="punishmentListOutput"></div>
             </fieldset>
 
             <fieldset>
                 <legend>Abuse/Neglect Allegations and Lawsuits</legend>
-                <label for="mainComplaints">Main Complaints (comma-separated):</label>
+                <label for="mainComplaints">Main Complaint Types (comma-separated):</label>
                 <input type="text" id="mainComplaints" name="mainComplaints" placeholder="e.g., emotional abuse, medical neglect, LGBTQ+ harassment">
-                <label for="otherAllegationsList">Other Allegations (one allegation per line):</label>
-                <textarea id="otherAllegationsList" name="otherAllegationsList" rows="5" placeholder="e.g., deprivation of sleep"></textarea>
-                <label for="lawsuits">Lawsuits (Paragraphs):</label>
-                <textarea id="lawsuits" name="lawsuits" rows="8" placeholder="e.g., In [Year], [Plaintiff(s)] sued the program alleging..."></textarea>
+                <hr>
+                <h4>Specific Allegations</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="allegationType">Type:</label>
+                            <select id="allegationType">
+                                <option value="physical">Physical Abuse</option>
+                                <option value="emotional">Emotional Abuse</option>
+                                <option value="sexual">Sexual Abuse</option>
+                                <option value="medical">Medical Neglect</option>
+                                <option value="educational">Educational Neglect</option>
+                                <option value="isolation">Improper Isolation</option>
+                                <option value="restraint">Improper Restraints</option>
+                                <option value="food">Food Deprivation</option>
+                                <option value="sleep">Sleep Deprivation</option>
+                                <option value="lgbtq">LGBTQ+ Discrimination</option>
+                                <option value="religious">Religious Coercion</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="field-group flex-2">
+                            <label for="allegationDetail">Specific Detail:</label>
+                            <input type="text" id="allegationDetail" placeholder="e.g., students forced to exercise until vomiting">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addAllegationBtn">Add Allegation</button>
+                </div>
+                <div class="list-preview" id="allegationListOutput"></div>
+                <hr>
+                <h4>Lawsuits</h4>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="lawsuitYear">Year Filed:</label>
+                            <input type="text" id="lawsuitYear" placeholder="e.g., 2018">
+                        </div>
+                        <div class="field-group">
+                            <label for="lawsuitPlaintiff">Plaintiff(s):</label>
+                            <input type="text" id="lawsuitPlaintiff" placeholder="e.g., John Doe">
+                        </div>
+                        <div class="field-group">
+                            <label for="lawsuitDefendant">Defendant(s):</label>
+                            <input type="text" id="lawsuitDefendant" placeholder="e.g., program name, owner">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="lawsuitClaims">Claims (comma-separated):</label>
+                            <input type="text" id="lawsuitClaims" placeholder="e.g., negligence, assault, false imprisonment">
+                        </div>
+                        <div class="field-group">
+                            <label for="lawsuitOutcome">Outcome:</label>
+                            <select id="lawsuitOutcome">
+                                <option value="">Unknown/Pending</option>
+                                <option value="settled">Settled</option>
+                                <option value="dismissed">Dismissed</option>
+                                <option value="plaintiff">Plaintiff Won</option>
+                                <option value="defendant">Defendant Won</option>
+                                <option value="ongoing">Ongoing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="lawsuitAmount">Settlement/Award Amount:</label>
+                            <input type="text" id="lawsuitAmount" placeholder="e.g., $500,000, undisclosed">
+                        </div>
+                        <div class="field-group">
+                            <label for="lawsuitCourt">Court/Jurisdiction:</label>
+                            <input type="text" id="lawsuitCourt" placeholder="e.g., Utah District Court">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addLawsuitBtn">Add Lawsuit</button>
+                </div>
+                <div class="list-preview" id="lawsuitListOutput"></div>
             </fieldset>
 
             <fieldset>

@@ -87,6 +87,44 @@
     resize: vertical;
 }
 
+/* Field Row Layouts for Short Inputs */
+.wiki-editor-page .field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.wiki-editor-page .field-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.wiki-editor-page .field-group.flex-2 {
+    flex: 2;
+    min-width: 250px;
+}
+
+.wiki-editor-page .field-group label {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.wiki-editor-page .field-group input[type="text"],
+.wiki-editor-page .field-group select {
+    padding: 10px;
+}
+
+@media (max-width: 600px) {
+    .wiki-editor-page .field-row {
+        flex-direction: column;
+    }
+    .wiki-editor-page .field-group {
+        min-width: 100%;
+    }
+}
+
 .wiki-editor-page hr {
     border: 0;
     border-top: 2px solid #AEE0ED; /* Powder Blue */

@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let newsArticles = [];
     let testimonies = [];
     let relatedMedia = [];
+    let campuses = [];
+    let ownershipChanges = [];
+    let rules = [];
+    let allegations = [];
+    let therapies = [];
 
     const staffNameInput = document.getElementById('staffName');
     const staffRoleInput = document.getElementById('staffRole');
@@ -26,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
         const emptyHtml = '<p style="color:#999;">No items added yet</p>';
-        const listIds = ['staffListOutput', 'levelListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput'];
+        const listIds = ['staffListOutput', 'levelListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput'];
         listIds.forEach(id => {
             const element = document.getElementById(id);
             if (element && !element.innerHTML.trim()) {
@@ -260,14 +265,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addLevelBtn) {
         addLevelBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const name = document.getElementById('levelName').value.trim();
-            const desc = document.getElementById('levelDesc').value.trim();
-            if (name && desc) {
-                programLevels.push({ name, desc });
-                renderList(programLevels, 'levelListOutput', item => `<strong>"${escapeHtml(item.name)}"</strong>`);
-                clearInputs(['levelName', 'levelDesc']);
+            const name = document.getElementById('levelName')?.value.trim() || '';
+            const duration = document.getElementById('levelDuration')?.value.trim() || '';
+            const privileges = document.getElementById('levelPrivileges')?.value.trim() || '';
+            const restrictions = document.getElementById('levelRestrictions')?.value.trim() || '';
+            if (name) {
+                programLevels.push({ name, duration, privileges, restrictions });
+                renderList(programLevels, 'levelListOutput', item => `<strong>${escapeHtml(item.name)}</strong>${item.duration ? ` (${escapeHtml(item.duration)})` : ''}`);
+                clearInputs(['levelName', 'levelDuration', 'levelPrivileges', 'levelRestrictions']);
             } else {
-                alert('Please enter a level name and description.');
+                alert('Please enter at least a level name.');
             }
         });
     }
@@ -277,14 +284,55 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addPunishmentBtn) {
         addPunishmentBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const name = document.getElementById('punishmentName').value.trim();
-            const desc = document.getElementById('punishmentDesc').value.trim();
-            if (name && desc) {
-                punishments.push({ name, desc });
-                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
-                clearInputs(['punishmentName', 'punishmentDesc']);
+            const name = document.getElementById('punishmentName')?.value.trim() || '';
+            const type = document.getElementById('punishmentType')?.value || 'other';
+            const action = document.getElementById('punishmentAction')?.value.trim() || '';
+            const trigger = document.getElementById('punishmentTrigger')?.value.trim() || '';
+            if (name && action) {
+                punishments.push({ name, type, action, trigger });
+                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.action).substring(0, 40)}...`);
+                clearInputs(['punishmentName', 'punishmentAction', 'punishmentTrigger']);
             } else {
-                alert('Please enter a punishment name and description.');
+                alert('Please enter at least a punishment name and what happens.');
+            }
+        });
+    }
+
+    // --- Add Button: Rules ---
+    const addRuleBtn = document.getElementById('addRuleBtn');
+    if (addRuleBtn) {
+        addRuleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const ruleName = document.getElementById('ruleName')?.value.trim() || '';
+            if (ruleName) {
+                rules.push({ name: ruleName });
+                renderList(rules, 'ruleListOutput', item => escapeHtml(item.name));
+                clearInputs(['ruleName']);
+            } else {
+                alert('Please enter a rule.');
+            }
+        });
+    }
+
+    // --- Add Button: Allegations ---
+    const addAllegationBtn = document.getElementById('addAllegationBtn');
+    if (addAllegationBtn) {
+        addAllegationBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = document.getElementById('allegationType')?.value || 'other';
+            const detail = document.getElementById('allegationDetail')?.value.trim() || '';
+            if (detail) {
+                allegations.push({ type, detail });
+                const typeLabels = {
+                    physical: 'Physical Abuse', emotional: 'Emotional Abuse', sexual: 'Sexual Abuse',
+                    medical: 'Medical Neglect', educational: 'Educational Neglect', isolation: 'Improper Isolation',
+                    restraint: 'Improper Restraints', food: 'Food Deprivation', sleep: 'Sleep Deprivation',
+                    lgbtq: 'LGBTQ+ Discrimination', religious: 'Religious Coercion', other: 'Other'
+                };
+                renderList(allegations, 'allegationListOutput', item => `<strong>${escapeHtml(typeLabels[item.type] || item.type)}</strong>: ${escapeHtml(item.detail).substring(0, 40)}...`);
+                clearInputs(['allegationDetail']);
+            } else {
+                alert('Please enter a specific detail for the allegation.');
             }
         });
     }
@@ -294,19 +342,76 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addLawsuitBtn) {
         addLawsuitBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const year = document.getElementById('lawsuitYear').value.trim();
-            const plaintiff = document.getElementById('lawsuitPlaintiff').value.trim();
-            const allegations = document.getElementById('lawsuitAllegations').value.trim();
-            const outcome = document.getElementById('lawsuitOutcome').value.trim();
-            const details = document.getElementById('lawsuitDetails').value.trim();
+            const year = document.getElementById('lawsuitYear')?.value.trim() || '';
+            const plaintiff = document.getElementById('lawsuitPlaintiff')?.value.trim() || '';
+            const defendant = document.getElementById('lawsuitDefendant')?.value.trim() || '';
+            const claims = document.getElementById('lawsuitClaims')?.value.trim() || '';
+            const outcome = document.getElementById('lawsuitOutcome')?.value || '';
+            const amount = document.getElementById('lawsuitAmount')?.value.trim() || '';
+            const court = document.getElementById('lawsuitCourt')?.value.trim() || '';
 
-            if (year && plaintiff && allegations) {
-                lawsuits.push({ year, plaintiff, allegations, outcome, details });
-                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
-                clearInputs(['lawsuitYear', 'lawsuitPlaintiff', 'lawsuitAllegations', 'lawsuitOutcome', 'lawsuitDetails']);
+            if (year && plaintiff && claims) {
+                lawsuits.push({ year, plaintiff, defendant, claims, outcome, amount, court });
+                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong> vs. ${escapeHtml(item.defendant || 'program')}`);
+                clearInputs(['lawsuitYear', 'lawsuitPlaintiff', 'lawsuitDefendant', 'lawsuitClaims', 'lawsuitAmount', 'lawsuitCourt']);
+                const outcomeSelect = document.getElementById('lawsuitOutcome');
+                if (outcomeSelect) outcomeSelect.value = '';
             } else {
-                alert('Please enter at least the year, plaintiff(s), and allegations.');
+                alert('Please enter at least the year, plaintiff(s), and claims.');
             }
+        });
+    }
+
+    // --- Add Button: Campuses ---
+    const addCampusBtn = document.getElementById('addCampusBtn');
+    if (addCampusBtn) {
+        addCampusBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('campusName')?.value.trim() || '';
+            const location = document.getElementById('campusLocation')?.value.trim() || '';
+            if (name && location) {
+                campuses.push({ name, location });
+                renderList(campuses, 'campusListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.location)}`);
+                clearInputs(['campusName', 'campusLocation']);
+            } else {
+                alert('Please enter a campus name and location.');
+            }
+        });
+    }
+
+    // --- Add Button: Ownership Changes ---
+    const addOwnerChangeBtn = document.getElementById('addOwnerChangeBtn');
+    if (addOwnerChangeBtn) {
+        addOwnerChangeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const year = document.getElementById('ownerChangeYear')?.value.trim() || '';
+            const previous = document.getElementById('ownerChangePrevious')?.value.trim() || '';
+            const newOwner = document.getElementById('ownerChangeNew')?.value.trim() || '';
+            if (year && (previous || newOwner)) {
+                ownershipChanges.push({ year, previous, newOwner });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`);
+                clearInputs(['ownerChangeYear', 'ownerChangePrevious', 'ownerChangeNew']);
+            } else {
+                alert('Please enter a year and at least one owner name.');
+            }
+        });
+    }
+
+    // --- Add Button: Therapy Types ---
+    const addTherapyBtn = document.getElementById('addTherapyBtn');
+    if (addTherapyBtn) {
+        addTherapyBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = document.getElementById('therapyType')?.value || 'other';
+            const frequency = document.getElementById('therapyFrequency')?.value.trim() || '';
+            const typeLabels = {
+                individual: 'Individual Therapy', group: 'Group Therapy', family: 'Family Therapy',
+                cbt: 'CBT', dbt: 'DBT', emdr: 'EMDR', equine: 'Equine Therapy', art: 'Art Therapy',
+                wilderness: 'Wilderness Therapy', attack: 'Attack Therapy/Confrontation', other: 'Other'
+            };
+            therapies.push({ type, frequency, label: typeLabels[type] || type });
+            renderList(therapies, 'therapyListOutput', item => `<strong>${escapeHtml(item.label)}</strong>${item.frequency ? ` (${escapeHtml(item.frequency)})` : ''}`);
+            clearInputs(['therapyFrequency']);
         });
     }
 
@@ -434,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (vals.ownerName) {
-                historySentences.push(`${escapeMarkdown(programName)} is owned by ${createLink(vals.ownerName, vals.ownerLink)}.`);
+                historySentences.push(`The program is owned and operated by ${createLink(vals.ownerName, vals.ownerLink)}.`);
             }
 
             const audienceParts = [];
@@ -455,7 +560,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const operationsParts = [];
             if (vals.avgStay) operationsParts.push(`reports an average length of stay of around ${escapeMarkdown(vals.avgStay)}`);
             if (vals.tuition) operationsParts.push(`reports tuition of ${escapeMarkdown(vals.tuition)}`);
-            if (vals.natsapStatus) operationsParts.push(escapeMarkdown(vals.natsapStatus));
+            // Build NATSAP status sentence from dropdown + year
+            if (vals.natsapMember === 'yes' && vals.natsapYear) {
+                operationsParts.push(`has been a NATSAP member since ${escapeMarkdown(vals.natsapYear)}`);
+            } else if (vals.natsapMember === 'yes') {
+                operationsParts.push(`is a NATSAP member`);
+            } else if (vals.natsapMember === 'former') {
+                operationsParts.push(`is a former NATSAP member`);
+            } else if (vals.natsapMember === 'no') {
+                operationsParts.push(`is not a NATSAP member`);
+            }
             if (operationsParts.length > 0) {
                 historySentences.push(`It ${joinWithAnd(operationsParts)}.`);
             }
@@ -468,7 +582,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 historySentences.push(`The program is accredited by the ${createLink(vals.accreditingBody, vals.accreditingBodyLink)}.`);
             }
 
-            if (vals.historyMisc) historySentences.push(vals.historyMisc);
+            // Generate sentences for additional campuses
+            if (campuses.length > 0) {
+                const campusList = campuses.map(c => `${escapeMarkdown(c.name)} in ${escapeMarkdown(c.location)}`);
+                historySentences.push(`The program also operates additional locations including ${joinWithAnd(campusList)}.`);
+            }
+
+            // Generate sentences for ownership changes
+            if (ownershipChanges.length > 0) {
+                ownershipChanges.forEach(change => {
+                    if (change.previous && change.newOwner) {
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program changed ownership from ${escapeMarkdown(change.previous)} to ${escapeMarkdown(change.newOwner)}.`);
+                    } else if (change.newOwner) {
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program was acquired by ${escapeMarkdown(change.newOwner)}.`);
+                    } else if (change.previous) {
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, ${escapeMarkdown(change.previous)} divested from the program.`);
+                    }
+                });
+            }
+
             historySection = historySentences.length > 0 ? historySentences.join('\n\n') : getPlaceholder('History and Background Information', programName);
 
             // --- Build Staff Section ---
@@ -494,35 +626,94 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Build Structure Section ---
             let structureSection = '';
             const structureParts = [];
-            if (vals.levelSystemDesc) {
-                structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses ${escapeMarkdown(vals.levelSystemDesc)}. The levels are:`);
+
+            // Build level system description from dropdown selections
+            const levelSystemTypes = { level: 'level system', phase: 'phase system', point: 'point system', tier: 'tier system' };
+            if (vals.levelSystemType && vals.levelCount) {
+                structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType} consisting of ${escapeMarkdown(vals.levelCount)} ${vals.levelSystemType === 'phase' ? 'phases' : 'levels'}.`);
+            } else if (vals.levelSystemType) {
+                structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType}.`);
             }
-            const levelList = programLevels.length > 0
-                ? programLevels.map(l => `- ${escapeMarkdown(l.name)}${l.desc ? ` — ${escapeMarkdown(l.desc)}` : ''}`).join('\n')
-                : '';
-            if (levelList) structureParts.push(levelList);
-            if (vals.structureMisc) structureParts.push(vals.structureMisc);
+
+            // Build level descriptions from structured data
+            if (programLevels.length > 0) {
+                const levelDescriptions = programLevels.map(l => {
+                    let desc = `**${escapeMarkdown(l.name)}**`;
+                    if (l.duration) desc += ` (typically ${escapeMarkdown(l.duration)})`;
+                    desc += ':';
+                    const details = [];
+                    if (l.restrictions) {
+                        const restrictionList = l.restrictions.split(',').map(r => r.trim()).filter(Boolean);
+                        if (restrictionList.length > 0) {
+                            details.push(`Restrictions include ${joinWithAnd(restrictionList.map(r => escapeMarkdown(r)))}.`);
+                        }
+                    }
+                    if (l.privileges) {
+                        const privilegeList = l.privileges.split(',').map(p => p.trim()).filter(Boolean);
+                        if (privilegeList.length > 0) {
+                            details.push(`Privileges earned include ${joinWithAnd(privilegeList.map(p => escapeMarkdown(p)))}.`);
+                        }
+                    }
+                    return desc + (details.length ? ' ' + details.join(' ') : ' No specific details available.');
+                }).join('\n\n');
+                structureParts.push(levelDescriptions);
+            }
+
+            // Build education section from dropdowns
+            const educationTypes = {
+                accredited: 'an accredited on-site school',
+                online: 'online or computer-based education',
+                packet: 'packet-based or worksheet education',
+                limited: 'limited or sporadic educational instruction',
+                none: 'no formal educational instruction'
+            };
+            if (vals.educationType) {
+                let eduSentence = `The program provides ${educationTypes[vals.educationType] || vals.educationType}`;
+                if (vals.educationAccreditor) {
+                    eduSentence += `, accredited by ${escapeMarkdown(vals.educationAccreditor)}`;
+                }
+                eduSentence += '.';
+                structureParts.push(eduSentence);
+            }
+
+            // Build therapy section from structured data
+            if (therapies.length > 0) {
+                const therapyDescriptions = therapies.map(t => {
+                    return t.frequency ? `${t.label} (${escapeMarkdown(t.frequency)})` : t.label;
+                });
+                structureParts.push(`The program offers ${joinWithAnd(therapyDescriptions)}.`);
+            }
+
             structureSection = structureParts.length > 0 ? structureParts.join('\n\n') : getPlaceholder('Program Structure', programName);
 
             // --- Build Rules & Punishments Section ---
             let rulesSection = '';
             const rulesParts = [];
-            const rulesList = processSimpleList(vals.rulesList);
-            if (rulesList) {
-                rulesParts.push(`${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n${rulesList.replace(/^\*/gm, '-')}`);
+
+            // Build rules list from structured data
+            if (rules.length > 0) {
+                const rulesList = rules.map(r => `- ${escapeMarkdown(r.name)}`).join('\n');
+                rulesParts.push(`${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n${rulesList}`);
             }
 
             // Build punishment descriptions from structured data
             if (punishments.length > 0) {
+                const punishmentTypes = {
+                    physical: 'physical', isolation: 'isolation-based', restriction: 'restriction-based',
+                    humiliation: 'humiliation-based', labor: 'labor-based', other: ''
+                };
                 const punishmentDescriptions = punishments.map(p => {
-                    return `**${escapeMarkdown(p.name)}**: ${escapeMarkdown(p.desc)}`;
+                    let sentence = `**${escapeMarkdown(p.name)}**`;
+                    const typeDesc = punishmentTypes[p.type];
+                    if (typeDesc) sentence += ` is a ${typeDesc} punishment where`;
+                    else sentence += ` is a punishment where`;
+                    sentence += ` ${escapeMarkdown(p.action)}`;
+                    if (p.trigger) {
+                        sentence += `. This punishment is typically used for ${escapeMarkdown(p.trigger)}`;
+                    }
+                    return ensureSentence(sentence);
                 }).join('\n\n');
                 rulesParts.push(`The program uses various punishments to enforce compliance:\n\n${punishmentDescriptions}`);
-            }
-
-            // Add any additional misc punishment details
-            if (vals.punishmentsMisc) {
-                rulesParts.push(vals.punishmentsMisc);
             }
 
             rulesSection = rulesParts.length > 0 ? rulesParts.join('\n\n') : getPlaceholder('Rules and Punishments', programName);
@@ -531,34 +722,55 @@ document.addEventListener('DOMContentLoaded', () => {
             let abuseSection = '';
             const abuseParts = [];
             if (vals.mainComplaints) {
-                abuseParts.push(`Many survivors have reported that abuse and neglect have occurred at ${escapeMarkdown(programName)}. The main complaints are of ${vals.mainComplaints}.`);
+                abuseParts.push(`Many survivors have reported that abuse and neglect have occurred at ${escapeMarkdown(programName)}. The main complaints are of ${escapeMarkdown(vals.mainComplaints)}.`);
             }
-            const otherAllegationsList = processSimpleList(vals.otherAllegationsList);
-            if (otherAllegationsList) {
-                abuseParts.push(`Other allegations of abuse and neglect which have been reported by survivors include but are not limited to:\n\n${otherAllegationsList.replace(/^\*/gm, '-')}`);
+
+            // Build allegations from structured data
+            if (allegations.length > 0) {
+                const allegationTypeLabels = {
+                    physical: 'physical abuse', emotional: 'emotional abuse', sexual: 'sexual abuse',
+                    medical: 'medical neglect', educational: 'educational neglect', isolation: 'improper isolation',
+                    restraint: 'improper restraints', food: 'food deprivation', sleep: 'sleep deprivation',
+                    lgbtq: 'LGBTQ+ discrimination', religious: 'religious coercion', other: 'other abuse'
+                };
+                // Group allegations by type
+                const groupedAllegations = {};
+                allegations.forEach(a => {
+                    const typeLabel = allegationTypeLabels[a.type] || a.type;
+                    if (!groupedAllegations[typeLabel]) groupedAllegations[typeLabel] = [];
+                    groupedAllegations[typeLabel].push(a.detail);
+                });
+                const allegationsList = Object.entries(groupedAllegations).map(([type, details]) => {
+                    return `- **${type}**: ${details.map(d => escapeMarkdown(d)).join('; ')}`;
+                }).join('\n');
+                abuseParts.push(`Specific allegations of abuse and neglect reported by survivors include:\n\n${allegationsList}`);
             }
 
             // Build lawsuit descriptions from structured data
             if (lawsuits.length > 0) {
+                const outcomeLabels = {
+                    settled: 'was settled', dismissed: 'was dismissed', plaintiff: 'was decided in favor of the plaintiff',
+                    defendant: 'was decided in favor of the defendant', ongoing: 'is still ongoing'
+                };
                 const lawsuitDescriptions = lawsuits.map(lawsuit => {
-                    let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} sued ${escapeMarkdown(programName)} alleging ${escapeMarkdown(lawsuit.allegations)}.`;
+                    const defendant = lawsuit.defendant || programName;
+                    let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
+                    if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
+                    sentence += ` alleging ${escapeMarkdown(lawsuit.claims)}.`;
 
-                    if (lawsuit.outcome) {
-                        sentence += ` The lawsuit ${escapeMarkdown(lawsuit.outcome)}.`;
-                    }
-
-                    if (lawsuit.details) {
-                        sentence += ` ${escapeMarkdown(lawsuit.details)}`;
+                    if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
+                        sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
+                        if (lawsuit.amount) {
+                            sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
+                        }
+                        sentence += '.';
+                    } else if (lawsuit.amount) {
+                        sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
                     }
 
                     return sentence;
                 }).join('\n\n');
                 abuseParts.push(lawsuitDescriptions);
-            }
-
-            // Add any additional misc lawsuit details
-            if (vals.lawsuitsMisc) {
-                abuseParts.push(vals.lawsuitsMisc);
             }
 
             abuseSection = abuseParts.length > 0 ? abuseParts.join('\n\n') : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
