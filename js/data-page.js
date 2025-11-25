@@ -1262,9 +1262,6 @@
                 }, 500);
             };
         }
-        
-        return true;
-        
         let organizerInitialized = false;
 
         const initializeOrganizerWhenReady = () => {
