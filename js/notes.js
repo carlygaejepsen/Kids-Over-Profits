@@ -1088,6 +1088,9 @@ function syncFieldNotes(facilityData) {
     }
 }
 
+// Export noteFieldRegistry globally for backward compatibility with facility-form.v3.js
+window.noteFieldRegistry = noteFieldRegistry;
+
 // Export functions for use in other modules
 window.NotesModule = {
     // Core functions
@@ -1118,7 +1121,10 @@ window.NotesModule = {
 
     // State accessors (for debugging/testing)
     getNoteFieldRegistry: () => noteFieldRegistry,
-    setNoteFieldRegistry: (value) => { noteFieldRegistry = value; },
+    setNoteFieldRegistry: (value) => {
+        noteFieldRegistry = value;
+        window.noteFieldRegistry = value; // Keep global in sync
+    },
     getAllFacilityNotes: () => allFacilityNotes,
     setAllFacilityNotes: (value) => { allFacilityNotes = value; }
 };

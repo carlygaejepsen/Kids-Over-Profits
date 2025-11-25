@@ -328,6 +328,8 @@ const DEFAULT_STAFF_ROLES = [
 // GLOBAL STATE
 // ============================================
 let projects = {};
+let isUpdatingUI = false; // Flag to prevent autoSave during programmatic UI updates
+let isSaveInProgress = false; // Flag to prevent overlapping saves
 let currentProjectName = null;
 let currentFacilityIndex = 0;
 let formData = null;
@@ -382,7 +384,8 @@ const CACHE_CATEGORY_MAP = {
     operatingperiod: 'operatingPeriods'
 };
 
-let noteFieldRegistry = [];
+// noteFieldRegistry is now managed by the notes module (notes.js)
+// The notes module exports it globally as window.noteFieldRegistry
 
 function invalidateAggregatedData(category = null) {
     if (!category) {
@@ -1191,7 +1194,8 @@ function createAutocomplete(input, getDataFunction, category) {
     }, { passive: true });
 
     input.addEventListener('focus', () => {
-        if (input.value.trim()) {
+        // Only trigger autocomplete dropdown if not during a programmatic UI update
+        if (input.value.trim() && !isUpdatingUI) {
             input.dispatchEvent(new Event('input'));
         }
     }, { passive: true });
@@ -1512,11 +1516,11 @@ function renderFieldNotes(container, scope, key) {
 }
 
 function renderAllFieldNotes() {
-    if (!Array.isArray(noteFieldRegistry)) {
+    if (!Array.isArray(window.noteFieldRegistry)) {
         return;
     }
 
-    noteFieldRegistry.forEach(entry => {
+    window.noteFieldRegistry.forEach(entry => {
         if (!entry) {
             return;
         }
@@ -1527,14 +1531,14 @@ function renderAllFieldNotes() {
 
 function initializeNoteControls() {
     // Preserve existing array item entries (those with keys containing a dot followed by a number like "staff.administrator.0")
-    const arrayItemEntries = (noteFieldRegistry || []).filter(entry => {
+    const arrayItemEntries = (window.noteFieldRegistry || []).filter(entry => {
         if (!entry || !entry.key) return false;
         // Keep entries that look like array items (e.g., "path.0", "path.1", etc.)
         return /\.\d+$/.test(entry.key);
     });
 
     // Reset registry but keep array item entries
-    noteFieldRegistry = [...arrayItemEntries];
+    window.noteFieldRegistry = [...arrayItemEntries];
 
     document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
         if (field.closest('.array-item')) {
@@ -1608,8 +1612,8 @@ function initializeNoteControls() {
             }
         }
 
-        if (!noteFieldRegistry.some(entry => entry && entry.container === container)) {
-            noteFieldRegistry.push({ scope, key, container });
+        if (!window.noteFieldRegistry.some(entry => entry && entry.container === container)) {
+            window.noteFieldRegistry.push({ scope, key, container });
         }
     });
 
@@ -2029,6 +2033,12 @@ async function saveProjectToCloud(projectName, action = 'save') {
 }
 
 function autoSave() {
+    // Skip autoSave if we're in the middle of a programmatic UI update
+    if (isUpdatingUI) {
+        debugLog('⏸️ autoSave skipped - UI update in progress');
+        return;
+    }
+
     if (isSuggestionMode()) {
         clearTimeout(window.autoSaveTimer);
         window.autoSaveTimer = setTimeout(() => {
@@ -2047,8 +2057,18 @@ function autoSave() {
     if (window.currentProjectName) {
         // Debounced auto-save to cloud
         clearTimeout(window.autoSaveTimer);
-        window.autoSaveTimer = setTimeout(() => {
-            saveProjectToCloud(window.currentProjectName);
+        window.autoSaveTimer = setTimeout(async () => {
+            // Prevent overlapping saves
+            if (isSaveInProgress) {
+                debugLog('⏸️ Save skipped - another save already in progress');
+                return;
+            }
+            isSaveInProgress = true;
+            try {
+                await saveProjectToCloud(window.currentProjectName);
+            } finally {
+                isSaveInProgress = false;
+            }
         }, 2000);
     }
 }
@@ -2794,11 +2814,11 @@ function renderArray(container, path, items) {
         return;
     }
 
-    if (!Array.isArray(noteFieldRegistry)) {
-        noteFieldRegistry = [];
+    if (!Array.isArray(window.noteFieldRegistry)) {
+        window.noteFieldRegistry = [];
     } else {
         const pathPrefix = `${path}.`;
-        noteFieldRegistry = noteFieldRegistry.filter(entry => {
+        window.noteFieldRegistry = window.noteFieldRegistry.filter(entry => {
             if (!entry || !entry.key) {
                 return false;
             }
@@ -3045,7 +3065,7 @@ function renderArray(container, path, items) {
             noteWrapper.appendChild(notesContainer);
 
             // Register this container so it can be rendered
-            noteFieldRegistry.push({ scope: scopeForNotes, key: noteKey, container: notesContainer });
+            window.noteFieldRegistry.push({ scope: scopeForNotes, key: noteKey, container: notesContainer });
         }
 
         container.appendChild(itemDiv);
@@ -3348,31 +3368,38 @@ function loadFacilityData() {
 }
 
 window.updateAllUI = function() {
-    loadOperatorData();
-    loadReferrerData();
-    loadFacilityData();
-    rebuildLocationAggregates();
-    updateFacilityControls();
-    updateTableOfContents();
-    updateJSON();
-    renderSavedProjectsList();
-    initializeSectionToggles();
-    updateProjectStatus();
-    initializeAutocompleteFields();
-    updateLabelsForProjectType(window.currentProjectName || '');
-    initializeNoteControls();
-    updateToolbarFacilityInfo(); // Update toolbar when UI updates
+    // Set flag to prevent autoSave during UI update
+    isUpdatingUI = true;
+    try {
+        loadOperatorData();
+        loadReferrerData();
+        loadFacilityData();
+        rebuildLocationAggregates();
+        updateFacilityControls();
+        updateTableOfContents();
+        updateJSON();
+        renderSavedProjectsList();
+        initializeSectionToggles();
+        updateProjectStatus();
+        initializeAutocompleteFields();
+        updateLabelsForProjectType(window.currentProjectName || '');
+        initializeNoteControls();
+        updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
-    // Ensure referrer consultant UI stays in sync when loading referrer projects
-    const activeTab = document.querySelector('.category-tab.active');
-    if (activeTab && activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
-        window.updateConsultantsUI();
-    }
+        // Ensure referrer consultant UI stays in sync when loading referrer projects
+        const activeTab = document.querySelector('.category-tab.active');
+        if (activeTab && activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
+            window.updateConsultantsUI();
+        }
 
-    // Reinitialize autocomplete for facility status field
-    const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
-    if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
-        createAutocomplete(facilityStatusField, getAllStatuses, 'status');
+        // Reinitialize autocomplete for facility status field
+        const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
+        if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
+            createAutocomplete(facilityStatusField, getAllStatuses, 'status');
+        }
+    } finally {
+        // Clear flag after a short delay to allow any triggered events to complete
+        setTimeout(() => { isUpdatingUI = false; }, 100);
     }
 };
 
