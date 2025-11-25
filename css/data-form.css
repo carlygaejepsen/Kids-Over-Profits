@@ -13,8 +13,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #FFFFFF; /* White text for contrast on navy */
-    background: #000080; /* Navy Blue */
+    color: #000435; /* Midnight text for contrast */
+    background: #F2EEDF; /* Sand / Warm Ivory */
     margin: 0;
     padding: 20px;
 }
@@ -24,6 +24,128 @@ body {
    ============================================ */
 body.toolbar-active {
     padding-top: 96px; /* 32px admin bar + compact toolbar */
+}
+
+/* ============================================
+   PUBLIC/PAGE OVERRIDES FOR ACCESSIBLE CONTRAST
+   ============================================ */
+
+/* Base container: warm ivory background with midnight text */
+.container {
+    background: #F2EEDF;
+    color: #000435;
+}
+
+.admin-header h1,
+.admin-header p,
+.admin-warning {
+    color: #000435;
+}
+
+.admin-warning {
+    background: #FFF5CB;
+    border: 2px solid #33A7B5;
+}
+
+.category-tabs .category-tab {
+    background: #B6E3D4;
+    color: #000435;
+    border: 1px solid #33A7B5;
+}
+
+.category-tabs .category-tab.active {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border-color: #000435;
+}
+
+.section {
+    background: #FFFFFF;
+    border: 1px solid #000435;
+}
+
+.section-header {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border-bottom: 1px solid #000435;
+}
+
+.section-title {
+    color: #FFFFFF;
+}
+
+.section-toggle {
+    color: #FFFFFF;
+}
+
+.content-box,
+.info-box,
+.facility-toc,
+.facility-controls {
+    background: #FFF5CB;
+    border: 1px solid #000435;
+    color: #000435;
+}
+
+label,
+.section .section-title,
+.content-header h3 {
+    color: #000435;
+}
+
+.input-form,
+.input-secondary,
+textarea,
+select {
+    background: #FFFFFF;
+    color: #000435;
+    border: 1px solid #000435;
+}
+
+.input-form:focus,
+.input-secondary:focus,
+textarea:focus,
+select:focus {
+    border-color: #33A7B5;
+    box-shadow: 0 0 0 2px rgba(51, 167, 181, 0.25);
+}
+
+.btn {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border: 1px solid #000435;
+}
+
+.btn:hover,
+.btn:focus {
+    background: #000435;
+    color: #FFFFFF;
+}
+
+.btn-secondary {
+    background: #000435;
+    color: #FFFFFF;
+    border-color: #000435;
+}
+
+.btn-danger,
+.save-master-btn {
+    background: #FE8088;
+    color: #000435;
+    border: 1px solid #000435;
+}
+
+.btn-primary,
+.btn-success,
+.save-suggestion-btn {
+    background: #33A7B5;
+    color: #FFFFFF;
+    border: 1px solid #000435;
+}
+
+.info-text,
+.text-muted {
+    color: #000435;
 }
 
 body.toolbar-active:not(.admin-bar) {
@@ -43,7 +165,7 @@ body.toolbar-minimized:not(.admin-bar) {
     top: 32px;
     left: 0;
     right: 0;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000435 0%, #33A7B5 100%);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 9999; /* Below WP admin bar (99999) but above page content */
     transition: box-shadow 0.3s ease;
@@ -60,8 +182,8 @@ body:not(.admin-bar) .fixed-toolbar {
     justify-content: space-between;
     align-items: center;
     padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 4, 53, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
     gap: 10px;
     min-height: 44px; /* Ensure consistent height */
     position: relative;
@@ -77,9 +199,9 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .toolbar-toggle {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #B2E102;
-    color: #000080;
+    background: #FFFFFF;
+    border: 2px solid #000435;
+    color: #000435;
     width: 30px;
     height: 30px;
     border-radius: 6px;
@@ -99,7 +221,7 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .fixed-toolbar .toolbar-toggle:hover {
     background: #FFF5CB;
-    border-color: #B2E102;
+    border-color: #33A7B5;
     transform: scale(1.05);
 }
 
@@ -190,33 +312,34 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary {
-    background: #000080;
-    color: #FFFFFF;
-    border-color: #FE8088;
+    background: #33A7B5;
+    color: #000435;
+    border-color: #000435;
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary:hover {
-    background: #33A7B5;
+    background: #000435;
+    color: #FFFFFF;
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary {
-    background: #ECF385;
-    color: #0b1130;
-    border-color: #B2E102;
+    background: #FFF5CB;
+    color: #000435;
+    border-color: #000435;
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: #FFF5CB;
+    background: #B6E3D4;
 }
 
 .fixed-toolbar .btn-toolbar.btn-success {
     background: #33A7B5;
     color: #FFFFFF;
-    border-color: #000080;
+    border-color: #000435;
 }
 
 .fixed-toolbar .btn-toolbar.btn-success:hover {
-    background: #000080;
+    background: #000435;
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger {
@@ -371,7 +494,7 @@ body:not(.admin-bar) .fixed-toolbar {
     font-weight: 600;
     border: 2px solid transparent;
     background: transparent;
-    color: #6b7280;
+    color: #000435;
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.2s ease;
@@ -701,7 +824,7 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 #current-facility-name {
-    color: #6b7280;
+    color: #000435;
     font-weight: 400;
     font-style: italic;
 }
@@ -925,7 +1048,7 @@ textarea {
 .autocomplete-no-results {
     padding: 12px;
     text-align: center;
-    color: #9ca3af;
+    color: #000435;
     font-size: 13px;
     font-style: italic;
 }
@@ -933,7 +1056,7 @@ textarea {
 .autocomplete-loading {
     padding: 12px;
     text-align: center;
-    color: #6b7280;
+    color: #000435;
     font-size: 13px;
 }
 
@@ -1229,7 +1352,7 @@ textarea {
 }
 
 .text-muted {
-    color: #6b7280;
+    color: #000435;
 }
 
 .italic {
@@ -1331,13 +1454,13 @@ textarea {
 
 .project-item-date {
     font-size: 12px;
-    color: #6b7280;
+    color: #000435;
     line-height: 1.3;
 }
 
 .project-item-date small {
     font-size: 11px;
-    color: #9ca3af;
+    color: #000435;
 }
 
 .project-item-actions {
@@ -1391,7 +1514,7 @@ textarea {
 .projects-empty {
     text-align: center;
     padding: 20px 15px;
-    color: #9ca3af;
+    color: #000435;
     font-size: 13px;
     line-height: 1.5;
 }
@@ -1564,7 +1687,7 @@ textarea {
     background: none;
     border: none;
     font-size: 28px;
-    color: #6b7280;
+    color: #000435;
     cursor: pointer;
     padding: 0;
     width: 32px;
@@ -1906,7 +2029,7 @@ textarea {
     background: none;
     border: none;
     font-size: 28px;
-    color: #6b7280;
+    color: #000435;
     cursor: pointer;
     padding: 0;
     width: 32px;
@@ -2001,7 +2124,7 @@ textarea {
 .items-list::-webkit-scrollbar-thumb:hover,
 .scroll-container::-webkit-scrollbar-thumb:hover,
 #json-display::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
+    background: #000435;
 }
 
 /* ============================================
