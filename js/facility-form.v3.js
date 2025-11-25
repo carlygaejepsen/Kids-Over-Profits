@@ -3335,9 +3335,7 @@ window.updateAllUI = function() {
     loadOperatorData();
     loadReferrerData();
     loadFacilityData();
-    ensureAllStateLocationProjects();
-    ensureLocationProjectsFromFacilities();
-    syncProjectsIntoLocationMirrors();
+    rebuildLocationAggregates();
     updateFacilityControls();
     updateTableOfContents();
     updateJSON();
@@ -3975,34 +3973,75 @@ function getProjectStates(projectData = {}) {
     return Array.from(states).filter(Boolean);
 }
 
-function syncProjectsIntoLocationMirrors() {
+function rebuildLocationAggregates() {
     if (!window.projects || typeof deepClone !== 'function') {
         return;
     }
 
+    const stateBuckets = {};
+    const registerState = (state) => {
+        if (!state) return;
+        const normalized = state.trim().toUpperCase();
+        if (!normalized) return;
+        if (!stateBuckets[normalized]) {
+            stateBuckets[normalized] = { facilities: [], referrers: [] };
+        }
+    };
+
+    // Collect facilities and referrers from every non-location project
+    Object.entries(window.projects).forEach(([projectName, project]) => {
+        if (!project || project.category === 'locations') return;
+        const data = project.data || {};
+
+        // Facilities
+        (data.facilities || []).forEach((facility = {}) => {
+            const parsed = parseCityState(facility.location || '');
+            const state = (facility.locationState || parsed.state || '').trim();
+            if (!state) return;
+            registerState(state);
+            const clone = deepClone(facility);
+            clone.sourceProject = projectName;
+            stateBuckets[state.toUpperCase()].facilities.push(clone);
+        });
+
+        // Referrer consultants/individuals
+        const refConsultants = Array.isArray(data.referrerConsultants) ? data.referrerConsultants : [];
+        refConsultants.forEach((consultant = {}) => {
+            const state = (consultant.state || '').trim();
+            if (!state) return;
+            registerState(state);
+            const clone = deepClone(consultant);
+            clone.sourceProject = projectName;
+            stateBuckets[state.toUpperCase()].referrers.push(clone);
+        });
+
+        const refInd = data.referrerIndividual || null;
+        if (refInd && refInd.state) {
+            registerState(refInd.state);
+            const clone = deepClone(refInd);
+            clone.sourceProject = projectName;
+            stateBuckets[refInd.state.trim().toUpperCase()].referrers.push(clone);
+        }
+    });
+
+    // Ensure every US state project exists, then overwrite with the aggregated data
     ensureAllStateLocationProjects();
 
-    Object.entries(window.projects).forEach(([name, project]) => {
-        if (!project || project.category === 'locations') {
-            return;
-        }
+    Object.keys(window.projects).forEach((projectName) => {
+        const isStateProject = US_STATE_SET.has(projectName.toUpperCase());
+        if (!isStateProject) return;
 
-        const stateList = getProjectStates(project.data || {});
-        if (!stateList.length) {
-            return;
-        }
+        const bucket = stateBuckets[projectName.toUpperCase()] || { facilities: [], referrers: [] };
+        const aggregated = createNewProjectData();
+        aggregated.facilities = bucket.facilities;
+        aggregated.referrerConsultants = bucket.referrers;
 
-        stateList.forEach((stateName) => {
-            const mirrorName = `${stateName} - ${name}`;
-            if (!window.projects[mirrorName]) {
-                window.projects[mirrorName] = {
-                    name: mirrorName,
-                    data: deepClone(project.data || {}),
-                    timestamp: new Date().toISOString(),
-                    category: 'locations'
-                };
-            }
-        });
+        window.projects[projectName] = {
+            name: projectName,
+            data: aggregated,
+            timestamp: new Date().toISOString(),
+            category: 'locations'
+        };
     });
 }
 
