@@ -10,7 +10,7 @@ Welcome! This repository powers the **Kids Over Profits** WordPress child theme.
 - **Local development context:** Historically maintained from Windows at `c:\\Users\\daniu\\OneDrive\\Documents\\GitHub\\Kids-Over-Profits`.
 - **Access constraints:** No production credentials live in the repo; automation must work only with the checked-in files.
 
-For more operational background, consult `environment-summary.md`, `troubleshooting-summary.md`, and `ca-reports.html`.
+For more operational background, consult `environment-summary.md` and other documentation files in the repository.
 
 ## Repository Layout
 
@@ -43,9 +43,17 @@ This repository contains a full-stack data management application built within a
 -   **`css/`**: Contains the stylesheets for the project.
     -   **`css/data-form.css`**: This file provides all the styling for the facility data entry form, ensuring a consistent and user-friendly interface. It covers everything from layout and typography to button styles and responsive design.
 
--   **`data/`**: This directory holds a static HTML export of the WordPress page with the slug `data`, which provides the facility submission interface. It also contains various JSON data files used by the reporting pages.
+-   **`templates/`**: Contains PHP template files that are loaded into WordPress pages via shortcodes or page templates.
+    -   **`templates/data-form-admin.php`**: The administrator data entry interface template, loaded into WordPress pages for privileged users who can directly modify the master database.
+    -   **`templates/data-form-public.php`**: The public suggestion interface template, loaded into WordPress pages for contributors who submit data for review before it's added to the master database.
 
--   **`tti-program-index`**: An HTML file that serves as the content for the main TTI Program Index page in WordPress. It contains the placeholder `<div id="facilities-container"></div>` where the `facilities-display.js` script renders the database.
+-   **`data/`**: This directory contains various JSON data files used by the reporting pages and can serve as fallback datasets when the API is unavailable.
+
+-   **WordPress Pages**: All active pages are now PHP-based WordPress pages that load templates or shortcodes:
+    -   The admin data form uses the `data-form-admin.php` template
+    -   The public suggestion form uses the `data-form-public.php` template
+    -   The TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `facilities-display.js` renders the database
+    -   Other pages are created as standard WordPress pages with embedded shortcodes or custom page templates
 
 -   **`style.css`**: The main stylesheet for the child theme, which primarily contains theme header information and can be used for global style overrides.
 

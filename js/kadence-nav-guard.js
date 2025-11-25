@@ -17,7 +17,7 @@
     // Flag to track if guard is active
     window.KADENCE_NAV_GUARD_ACTIVE = true;
 
-    // Check if this is a headerless layout (data pages)
+    // Check if this is a headerless layout (tti-data-submission page only)
     // Use a function to avoid accessing document.body before it exists
     function isHeaderlessPage() {
         if (window.KADENCE_NAV_DISABLED) {
@@ -27,27 +27,24 @@
         var pathname = (window.location && window.location.pathname) || '';
 
         if (pathname) {
-            var normalizedPath = pathname.replace(/\/index\.php$/, '');
+            var normalizedPath = pathname.replace(/\/index\.php$/, '').replace(/\/$/, '');
 
-            if (normalizedPath === '/data' ||
-                normalizedPath === '/data/' ||
-                normalizedPath === '/admin-data' ||
-                normalizedPath === '/admin-data/' ||
-                normalizedPath.indexOf('data.html') !== -1 ||
-                normalizedPath.indexOf('admin-data.html') !== -1) {
+            // Only activate on tti-data-submission page
+            if (normalizedPath === '/tti-data-submission' ||
+                normalizedPath.indexOf('/tti-data-submission') !== -1) {
                 return true;
             }
         }
 
         if (document.body) {
-            if (document.body.classList.contains('page-data') ||
-                document.body.classList.contains('page-admin-data')) {
+            // Check for tti-data-submission page body class
+            if (document.body.classList.contains('page-tti-data-submission')) {
                 return true;
             }
 
             var bodyClasses = document.body.className || '';
-            if (bodyClasses.indexOf('page-slug-data') !== -1 ||
-                bodyClasses.indexOf('page-slug-admin-data') !== -1) {
+            if (bodyClasses.indexOf('page-slug-tti-data-submission') !== -1 ||
+                bodyClasses.indexOf('tti-data-submission') !== -1) {
                 return true;
             }
         }
@@ -223,6 +220,16 @@
     }
 
     function ensureNavigationShell() {
+        // Only activate on tti-data-submission page
+        if (!isHeaderlessPage()) {
+            logDebug('Not on tti-data-submission page, guard inactive.');
+            stopEnsureTimer();
+            stopBodyObserver();
+            stopNeutraliseLoop();
+            window.KADENCE_NAV_GUARD_ACTIVE = false;
+            return;
+        }
+
         if (hasRealKadenceHeader()) {
             stopEnsureTimer();
             stopBodyObserver();

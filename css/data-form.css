@@ -1758,6 +1758,134 @@ textarea {
 }
 
 /* ============================================
+   REPORT MODAL CONTENT STYLES
+   ============================================ */
+#report-modal .modal-content {
+    background: #FFFFFF;
+}
+
+.report-header {
+    border-bottom: 3px solid #33A7B5;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.report-title {
+    font-size: 24px;
+    color: #33A7B5;
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+
+.report-meta {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.report-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.report-section:last-child {
+    border-bottom: none;
+}
+
+.report-section .section-title {
+    font-size: 18px;
+    color: #33A7B5;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    background: transparent;
+}
+
+.report-section .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.report-section .info-item {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.report-section .info-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.report-section .info-value {
+    color: #1f2937;
+}
+
+.report-section .facility-card {
+    background: #f9fafb;
+    border-left: 4px solid #33A7B5;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 0 8px 8px 0;
+}
+
+.report-section .facility-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.report-section .list-section {
+    margin-top: 12px;
+}
+
+.report-section .list-title {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.report-section .list-items {
+    margin: 0;
+    padding-left: 20px;
+    color: #1f2937;
+}
+
+.report-section .list-items li {
+    padding: 3px 0;
+    font-size: 14px;
+}
+
+.report-section .subsection-title {
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 600;
+    margin: 15px 0 10px 0;
+}
+
+@media (max-width: 768px) {
+    .report-section .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-section .info-item {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .report-section .info-label {
+        min-width: auto;
+    }
+}
+
+/* ============================================
    SAVE/SUBMIT BUTTON
    ============================================ */
 .save-master-btn {

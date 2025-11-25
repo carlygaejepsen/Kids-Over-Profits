@@ -752,7 +752,20 @@ function enqueue_facility_form_script() {
         true
     );
 
-    // Enqueue the main facility form script (depends on loader and referrer module)
+    // Enqueue the notes module (depends on loader and referrer module)
+    $notes_script_relative_path = '/js/notes.js';
+    $notes_script_file_path = get_stylesheet_directory() . $notes_script_relative_path;
+    $notes_script_uri = get_stylesheet_directory_uri() . $notes_script_relative_path;
+
+    wp_enqueue_script(
+        'notes-module-script',
+        $notes_script_uri,
+        array('jquery', 'db-form-loader', 'referrer-form-script'),
+        file_exists($notes_script_file_path) ? filemtime($notes_script_file_path) : time(),
+        true
+    );
+
+    // Enqueue the main facility form script (depends on loader, referrer module, and notes module)
     $script_relative_path = '/js/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
@@ -760,7 +773,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'db-form-loader', 'referrer-form-script'), // Now depends on referrer module
+        array('jquery', 'db-form-loader', 'referrer-form-script', 'notes-module-script'), // Now depends on notes module too
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
