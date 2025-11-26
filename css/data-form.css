@@ -930,7 +930,151 @@ body:not(.admin-bar) .fixed-toolbar {
     margin-bottom: 20px;
 }
 
+/* ========================================
+   MOBILE TOOLBAR OPTIMIZATIONS
+   ======================================== */
+
+/* Mobile toolbar optimizations for screens <= 768px */
 @media (max-width: 768px) {
+    /* Reduce toolbar header padding */
+    .fixed-toolbar .toolbar-header {
+        padding: 4px 8px;
+        min-height: 38px;
+    }
+
+    /* Make toolbar title smaller */
+    .fixed-toolbar .toolbar-title {
+        font-size: 12px;
+    }
+
+    /* Hide project name on mobile to save space */
+    .fixed-toolbar .toolbar-title #toolbar-project-name {
+        display: none;
+    }
+
+    /* Reduce toolbar content padding */
+    .fixed-toolbar .toolbar-content {
+        padding: 4px 8px;
+    }
+
+    /* Reduce gaps between groups */
+    .fixed-toolbar .toolbar-section {
+        gap: 6px;
+    }
+
+    /* More compact toolbar groups */
+    .fixed-toolbar .toolbar-group {
+        gap: 4px;
+        padding: 3px 4px;
+    }
+
+    /* Hide "Current Facility:" label on mobile */
+    .fixed-toolbar .toolbar-label {
+        display: none;
+    }
+
+    /* Make facility dropdown more compact */
+    .fixed-toolbar .facility-dropdown {
+        min-width: 120px;
+        max-width: 160px;
+        font-size: 11px;
+        padding: 4px 6px;
+    }
+
+    /* Smaller navigation buttons */
+    .fixed-toolbar .facility-selector .btn-toolbar {
+        width: 26px;
+        padding: 4px;
+        font-size: 11px;
+    }
+
+    /* Compact toolbar buttons */
+    .fixed-toolbar .btn-toolbar {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+
+    /* Stack toolbar groups vertically on very small screens */
+    @media (max-width: 480px) {
+        .fixed-toolbar .toolbar-section {
+            flex-direction: column;
+            gap: 4px;
+            align-items: stretch;
+        }
+
+        .fixed-toolbar .toolbar-group {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Icon-only buttons on very small screens */
+        .fixed-toolbar .btn-toolbar {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* Shorten button text on mobile */
+        #add-facility-btn-toolbar::after {
+            content: "➕ Add";
+        }
+        #add-facility-btn-toolbar {
+            font-size: 0;
+        }
+        #add-facility-btn-toolbar::after {
+            font-size: 11px;
+        }
+
+        #clone-facility-btn-toolbar::after {
+            content: "📋";
+        }
+        #clone-facility-btn-toolbar {
+            font-size: 0;
+        }
+        #clone-facility-btn-toolbar::after {
+            font-size: 14px;
+        }
+
+        #remove-facility-btn-toolbar::after {
+            content: "🗑️";
+        }
+        #remove-facility-btn-toolbar {
+            font-size: 0;
+        }
+        #remove-facility-btn-toolbar::after {
+            font-size: 14px;
+        }
+
+        #show-organizer-modal-btn::after {
+            content: "🔍";
+        }
+        #show-organizer-modal-btn {
+            font-size: 0;
+        }
+        #show-organizer-modal-btn::after {
+            font-size: 14px;
+        }
+
+        #submit-suggestion-btn-toolbar::after {
+            content: "📮";
+        }
+        #submit-suggestion-btn-toolbar {
+            font-size: 0;
+        }
+        #submit-suggestion-btn-toolbar::after {
+            font-size: 14px;
+        }
+
+        /* Make facility selector full width */
+        .fixed-toolbar .facility-selector {
+            width: 100%;
+        }
+
+        .fixed-toolbar .facility-dropdown {
+            flex: 1;
+            max-width: none;
+        }
+    }
+
     .form-row,
     .form-row-3 {
         grid-template-columns: 1fr;
