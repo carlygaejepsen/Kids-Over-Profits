@@ -3772,16 +3772,33 @@ function updateTableOfContents() {
     if (tocStats) tocStats.textContent = `Total: ${total} facilit${total === 1 ? 'y' : 'ies'}`;
     if (facilityList) {
         facilityList.innerHTML = '';
-        window.formData.facilities?.forEach((facility, index) => {
+
+        // Create array with facility data and original index, then sort alphabetically
+        const facilitiesWithIndex = window.formData.facilities?.map((facility, index) => ({
+            facility,
+            originalIndex: index,
+            name: facility.identification?.name || 'Unnamed Facility'
+        })) || [];
+
+        // Sort alphabetically by name (case-insensitive)
+        facilitiesWithIndex.sort((a, b) => {
+            const nameA = a.name.toLowerCase();
+            const nameB = b.name.toLowerCase();
+            if (nameA === 'unnamed facility' && nameB !== 'unnamed facility') return 1;
+            if (nameB === 'unnamed facility' && nameA !== 'unnamed facility') return -1;
+            return nameA.localeCompare(nameB);
+        });
+
+        // Display facilities in alphabetical order
+        facilitiesWithIndex.forEach(({ facility, originalIndex, name }, alphabeticalIndex) => {
             const item = document.createElement('div');
-            item.className = `facility-item ${index === window.currentFacilityIndex ? 'active' : ''}`;
-            const name = facility.identification?.name || 'Unnamed Facility';
-            item.innerHTML = `<span class="facility-name ${name === 'Unnamed Facility' ? 'empty' : ''}">${escapeHtmlForAttr(name)}</span><span class="facility-index">${index + 1}</span>`;
+            item.className = `facility-item ${originalIndex === window.currentFacilityIndex ? 'active' : ''}`;
+            item.innerHTML = `<span class="facility-name ${name === 'Unnamed Facility' ? 'empty' : ''}">${escapeHtmlForAttr(name)}</span><span class="facility-index">${alphabeticalIndex + 1}</span>`;
             item.tabIndex = 0;
-            const accessibleFacilityName = name !== 'Unnamed Facility' ? name : `Facility ${index + 1}`;
+            const accessibleFacilityName = name !== 'Unnamed Facility' ? name : `Facility ${alphabeticalIndex + 1}`;
             item.setAttribute('role', 'button');
             item.setAttribute('aria-label', `View ${accessibleFacilityName}`);
-            const goToFacility = () => navigateToFacility(index);
+            const goToFacility = () => navigateToFacility(originalIndex);
             item.addEventListener('click', goToFacility);
             item.addEventListener('keydown', function(event) { // Note: cannot be passive
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -3839,34 +3856,34 @@ function updateToolbarFacilityInfo() {
     });
 
     if (window.formData && window.formData.facilities) {
-        // Clear and populate dropdown
+        // Create array with facility data and original index
+        const facilitiesWithIndex = window.formData.facilities.map((facility, index) => ({
+            facility,
+            originalIndex: index,
+            name: facility.identification?.name || 'Unnamed Facility'
+        }));
+
+        // Sort alphabetically by name (case-insensitive, unnamed facilities last)
+        facilitiesWithIndex.sort((a, b) => {
+            const nameA = a.name.toLowerCase();
+            const nameB = b.name.toLowerCase();
+            if (nameA === 'unnamed facility' && nameB !== 'unnamed facility') return 1;
+            if (nameB === 'unnamed facility' && nameA !== 'unnamed facility') return -1;
+            return nameA.localeCompare(nameB);
+        });
+
+        // Clear and populate dropdown with alphabetically sorted facilities
         dropdown.innerHTML = '';
-        window.formData.facilities.forEach((facility, index) => {
+        facilitiesWithIndex.forEach(({ facility, originalIndex, name }, alphabeticalIndex) => {
             const option = document.createElement('option');
-            option.value = index;
-            const facilityName = facility.identification?.name || `Facility ${index + 1}`;
-            option.textContent = `${index + 1}. ${facilityName}`;
+            option.value = originalIndex;
+            option.textContent = `${alphabeticalIndex + 1}. ${name}`;
             dropdown.appendChild(option);
         });
 
-        debugLog('✅ Populated dropdown with', window.formData.facilities.length, 'facilities');
+        debugLog('✅ Populated dropdown with', window.formData.facilities.length, 'facilities (alphabetically sorted)');
 
         // Set current selection
-        if (typeof window.currentFacilityIndex !== 'undefined') {
-            dropdown.value = window.currentFacilityIndex;
-        }
-
-        // Sort options alphabetically by facility name
-        const options = Array.from(dropdown.options);
-        options.sort((a, b) => {
-            const nameA = a.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
-            const nameB = b.textContent.replace(/^\d+\.\s*/, '').toLowerCase();
-            return nameA.localeCompare(nameB);
-        });
-        // Re-add sorted options
-        dropdown.innerHTML = '';
-        options.forEach(opt => dropdown.appendChild(opt));
-        // Reselect current facility
         if (typeof window.currentFacilityIndex !== 'undefined') {
             dropdown.value = window.currentFacilityIndex;
         }
