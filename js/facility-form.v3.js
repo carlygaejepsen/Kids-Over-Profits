@@ -430,7 +430,350 @@ function deepClone(obj) {
 }
 
 function getNestedValue(obj, path) {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => {
+        if (!current) return undefined;
+
+        // Try exact match first
+        if (current[key] !== undefined) {
+            return current[key];
+        }
+
+        // Try common variations
+        const variations = [
+            key,                                    // original key
+            key.toLowerCase(),                      // lowercase
+            key.toUpperCase(),                      // uppercase
+            key.charAt(0).toUpperCase() + key.slice(1), // capitalize first letter
+            key.charAt(0).toLowerCase() + key.slice(1), // lowercase first letter
+            key.replace(/_/g, ''),                  // remove underscores
+            key.replace(/-/g, ''),                  // remove hyphens
+            toCamelCase(key),                       // camelCase version
+            toSnakeCase(key),                       // snake_case version
+        ];
+
+        // Try each variation
+        for (const variant of variations) {
+            if (current[variant] !== undefined) {
+                return current[variant];
+            }
+        }
+
+        return undefined;
+    }, obj);
+}
+
+// Helper function to convert to camelCase
+function toCamelCase(str) {
+    return str.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
+}
+
+// Helper function to convert to snake_case
+function toSnakeCase(str) {
+    return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
+}
+
+// Normalize project data to handle different field name variations
+function normalizeProjectData(data) {
+    if (!data || typeof data !== 'object') return data;
+
+    // Helper to get value trying different key variations
+    const getValue = (obj, ...keys) => {
+        for (const key of keys) {
+            if (obj && obj[key] !== undefined) return obj[key];
+        }
+        return undefined;
+    };
+
+    // Helper to normalize an object's keys
+    const normalizeObject = (obj, fieldMap) => {
+        if (!obj) return obj;
+        const normalized = { ...obj };
+
+        Object.entries(fieldMap).forEach(([targetKey, sourceKeys]) => {
+            const value = getValue(obj, ...sourceKeys);
+            if (value !== undefined && normalized[targetKey] === undefined) {
+                normalized[targetKey] = value;
+            }
+        });
+
+        return normalized;
+    };
+
+    // Normalize operator data
+    if (data.operator) {
+        data.operator = normalizeObject(data.operator, {
+            name: ['name', 'Name', 'companyName', 'company_name', 'operatorName', 'operator_name'],
+            currentName: ['currentName', 'current_name', 'CurrentName'],
+            location: ['location', 'Location'],
+            locationCity: ['locationCity', 'location_city', 'city'],
+            locationState: ['locationState', 'location_state', 'state'],
+            headquarters: ['headquarters', 'Headquarters', 'hq'],
+            headquartersCity: ['headquartersCity', 'headquarters_city'],
+            headquartersState: ['headquartersState', 'headquarters_state'],
+            founded: ['founded', 'Founded', 'foundedYear', 'founded_year'],
+            operatingPeriod: ['operatingPeriod', 'operating_period', 'OperatingPeriod'],
+            status: ['status', 'Status'],
+            notes: ['notes', 'Notes'],
+            otherNames: ['otherNames', 'other_names', 'aliases', 'alternateNames'],
+            parentCompanies: ['parentCompanies', 'parent_companies', 'parents'],
+            websites: ['websites', 'Websites', 'urls'],
+            investors: ['investors', 'Investors']
+        });
+
+        // Normalize array fields to ensure they're arrays
+        ['otherNames', 'parentCompanies', 'websites', 'investors'].forEach(field => {
+            if (data.operator[field] && !Array.isArray(data.operator[field])) {
+                // Convert string to array
+                if (typeof data.operator[field] === 'string') {
+                    data.operator[field] = [data.operator[field]];
+                } else {
+                    data.operator[field] = [];
+                }
+            } else if (!data.operator[field]) {
+                data.operator[field] = [];
+            }
+        });
+
+        // Normalize nested keyStaff
+        if (data.operator.keyStaff) {
+            data.operator.keyStaff = normalizeObject(data.operator.keyStaff, {
+                ceo: ['ceo', 'CEO', 'chiefExecutiveOfficer'],
+                founders: ['founders', 'Founders'],
+                keyExecutives: ['keyExecutives', 'key_executives', 'executives']
+            });
+
+            // Ensure keyStaff arrays are actually arrays
+            ['founders', 'keyExecutives'].forEach(field => {
+                if (data.operator.keyStaff[field] && !Array.isArray(data.operator.keyStaff[field])) {
+                    if (typeof data.operator.keyStaff[field] === 'string') {
+                        data.operator.keyStaff[field] = [data.operator.keyStaff[field]];
+                    } else {
+                        data.operator.keyStaff[field] = [];
+                    }
+                } else if (!data.operator.keyStaff[field]) {
+                    data.operator.keyStaff[field] = [];
+                }
+            });
+        } else {
+            // Create keyStaff if it doesn't exist
+            data.operator.keyStaff = {
+                ceo: '',
+                founders: [],
+                keyExecutives: []
+            };
+        }
+    }
+
+    // Normalize facilities array
+    if (Array.isArray(data.facilities)) {
+        data.facilities = data.facilities.map(facility => {
+            const normalized = { ...facility };
+
+            // Normalize identification
+            if (normalized.identification) {
+                normalized.identification = normalizeObject(normalized.identification, {
+                    name: ['name', 'Name', 'facilityName', 'facility_name'],
+                    currentName: ['currentName', 'current_name', 'CurrentName'],
+                    currentOperator: ['currentOperator', 'current_operator', 'CurrentOperator'],
+                    otherNames: ['otherNames', 'other_names', 'aliases'],
+                    pastNames: ['pastNames', 'past_names', 'formerNames'],
+                    knownReferrers: ['knownReferrers', 'known_referrers', 'referrers']
+                });
+            }
+
+            // Normalize facilityDetails
+            if (normalized.facilityDetails) {
+                normalized.facilityDetails = normalizeObject(normalized.facilityDetails, {
+                    type: ['type', 'Type', 'facilityType', 'facility_type'],
+                    capacity: ['capacity', 'Capacity'],
+                    currentCensus: ['currentCensus', 'current_census', 'census'],
+                    gender: ['gender', 'Gender'],
+                    ageRange: ['ageRange', 'age_range', 'AgeRange']
+                });
+            }
+
+            // Normalize operatingPeriod
+            if (normalized.operatingPeriod) {
+                normalized.operatingPeriod = normalizeObject(normalized.operatingPeriod, {
+                    startYear: ['startYear', 'start_year', 'opened'],
+                    endYear: ['endYear', 'end_year', 'closed'],
+                    status: ['status', 'Status'],
+                    notes: ['notes', 'Notes']
+                });
+            }
+
+            // Normalize staff
+            if (normalized.staff) {
+                normalized.staff = normalizeObject(normalized.staff, {
+                    administrator: ['administrator', 'Administrator', 'administrators'],
+                    notableStaff: ['notableStaff', 'notable_staff', 'NotableStaff', 'staff']
+                });
+            }
+
+            // Normalize accreditations
+            if (normalized.accreditations) {
+                normalized.accreditations = normalizeObject(normalized.accreditations, {
+                    current: ['current', 'Current', 'currentAccreditations'],
+                    past: ['past', 'Past', 'pastAccreditations', 'former']
+                });
+            }
+
+            // Normalize location fields
+            normalized.location = getValue(normalized, 'location', 'Location');
+            normalized.address = getValue(normalized, 'address', 'Address');
+
+            // Ensure array fields are actually arrays
+            const arrayFields = ['otherOperators', 'memberships', 'certifications', 'licensing', 'profileLinks', 'notes'];
+            arrayFields.forEach(field => {
+                if (normalized[field] && !Array.isArray(normalized[field])) {
+                    if (typeof normalized[field] === 'string') {
+                        normalized[field] = [normalized[field]];
+                    } else {
+                        normalized[field] = [];
+                    }
+                } else if (!normalized[field]) {
+                    normalized[field] = [];
+                }
+            });
+
+            // Ensure nested array fields are arrays
+            if (normalized.identification) {
+                ['otherNames', 'pastNames', 'knownReferrers'].forEach(field => {
+                    if (normalized.identification[field] && !Array.isArray(normalized.identification[field])) {
+                        if (typeof normalized.identification[field] === 'string') {
+                            normalized.identification[field] = [normalized.identification[field]];
+                        } else {
+                            normalized.identification[field] = [];
+                        }
+                    } else if (!normalized.identification[field]) {
+                        normalized.identification[field] = [];
+                    }
+                });
+            }
+
+            if (normalized.operatingPeriod && normalized.operatingPeriod.notes) {
+                if (!Array.isArray(normalized.operatingPeriod.notes)) {
+                    if (typeof normalized.operatingPeriod.notes === 'string') {
+                        normalized.operatingPeriod.notes = [normalized.operatingPeriod.notes];
+                    } else {
+                        normalized.operatingPeriod.notes = [];
+                    }
+                }
+            } else if (normalized.operatingPeriod) {
+                normalized.operatingPeriod.notes = [];
+            }
+
+            if (normalized.staff) {
+                ['administrator', 'notableStaff'].forEach(field => {
+                    if (normalized.staff[field] && !Array.isArray(normalized.staff[field])) {
+                        if (typeof normalized.staff[field] === 'string') {
+                            normalized.staff[field] = [normalized.staff[field]];
+                        } else {
+                            normalized.staff[field] = [];
+                        }
+                    } else if (!normalized.staff[field]) {
+                        normalized.staff[field] = [];
+                    }
+                });
+            }
+
+            if (normalized.accreditations) {
+                ['current', 'past'].forEach(field => {
+                    if (normalized.accreditations[field] && !Array.isArray(normalized.accreditations[field])) {
+                        if (typeof normalized.accreditations[field] === 'string') {
+                            normalized.accreditations[field] = [normalized.accreditations[field]];
+                        } else {
+                            normalized.accreditations[field] = [];
+                        }
+                    } else if (!normalized.accreditations[field]) {
+                        normalized.accreditations[field] = [];
+                    }
+                });
+            }
+
+            if (normalized.resources && normalized.resources.notes) {
+                if (!Array.isArray(normalized.resources.notes)) {
+                    if (typeof normalized.resources.notes === 'string') {
+                        normalized.resources.notes = [normalized.resources.notes];
+                    } else {
+                        normalized.resources.notes = [];
+                    }
+                }
+            } else if (normalized.resources) {
+                normalized.resources.notes = [];
+            }
+
+            return normalized;
+        });
+    }
+
+    // Normalize referrer agency/group data
+    if (data.referrerAgency) {
+        data.referrerAgency = normalizeObject(data.referrerAgency, {
+            name: ['name', 'Name', 'organizationName', 'organization_name'],
+            city: ['city', 'City'],
+            state: ['state', 'State'],
+            website: ['website', 'Website', 'url'],
+            address: ['address', 'Address'],
+            founded: ['founded', 'Founded'],
+            notes: ['notes', 'Notes'],
+            affiliations: ['affiliations', 'Affiliations']
+        });
+
+        // Ensure affiliations is an array
+        if (data.referrerAgency.affiliations && !Array.isArray(data.referrerAgency.affiliations)) {
+            if (typeof data.referrerAgency.affiliations === 'string') {
+                data.referrerAgency.affiliations = [data.referrerAgency.affiliations];
+            } else {
+                data.referrerAgency.affiliations = [];
+            }
+        } else if (!data.referrerAgency.affiliations) {
+            data.referrerAgency.affiliations = [];
+        }
+    }
+
+    // Normalize referrer group (alternative field)
+    if (data.referrerGroup) {
+        data.referrerGroup = normalizeObject(data.referrerGroup, {
+            name: ['name', 'Name', 'organizationName', 'organization_name'],
+            city: ['city', 'City'],
+            state: ['state', 'State'],
+            website: ['website', 'Website', 'url'],
+            address: ['address', 'Address'],
+            founded: ['founded', 'Founded'],
+            notes: ['notes', 'Notes'],
+            affiliations: ['affiliations', 'Affiliations']
+        });
+
+        // Ensure affiliations is an array
+        if (data.referrerGroup.affiliations && !Array.isArray(data.referrerGroup.affiliations)) {
+            if (typeof data.referrerGroup.affiliations === 'string') {
+                data.referrerGroup.affiliations = [data.referrerGroup.affiliations];
+            } else {
+                data.referrerGroup.affiliations = [];
+            }
+        } else if (!data.referrerGroup.affiliations) {
+            data.referrerGroup.affiliations = [];
+        }
+    }
+
+    // Normalize consultants array
+    if (Array.isArray(data.referrerConsultants)) {
+        data.referrerConsultants = data.referrerConsultants.map(consultant => {
+            return normalizeObject(consultant, {
+                name: ['name', 'Name', 'fullName', 'full_name'],
+                title: ['title', 'Title'],
+                city: ['city', 'City'],
+                state: ['state', 'State'],
+                website: ['website', 'Website', 'url'],
+                email: ['email', 'Email'],
+                phone: ['phone', 'Phone', 'phoneNumber'],
+                notes: ['notes', 'Notes']
+            });
+        });
+    }
+
+    return data;
 }
 
 function setNestedValue(obj, path, value) {
@@ -2436,7 +2779,7 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             });
             
             if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
-                window.formData = deepClone(window.projects[projectName].data);
+                window.formData = normalizeProjectData(deepClone(window.projects[projectName].data));
             } else {
                 window.formData = createNewProjectData();
             }
@@ -3196,7 +3539,7 @@ function loadOperatorData() {
     const operatorNotes = document.getElementById('operator-notes');
     if (operatorNotes) operatorNotes.value = operator.notes || '';
 
-    const arrayPaths = ['operator.parentCompanies', 'operator.websites', 'operator.keyStaff.founders', 'operator.keyStaff.keyExecutives', 'operator.investors'];
+    const arrayPaths = ['operator.otherNames', 'operator.parentCompanies', 'operator.websites', 'operator.keyStaff.founders', 'operator.keyStaff.keyExecutives', 'operator.investors'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {
