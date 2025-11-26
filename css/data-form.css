@@ -1003,6 +1003,32 @@ body:not(.admin-bar) .fixed-toolbar {
 
     /* Short labels on mobile (640px and below) - saves horizontal space */
     @media (max-width: 640px) {
+        /* 2-column grid layout for button groups */
+        .fixed-toolbar .toolbar-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+        }
+
+        /* Facility selector spans both columns */
+        .fixed-toolbar .toolbar-group:first-child {
+            grid-column: 1 / -1;
+        }
+
+        /* Button groups each take one column */
+        .fixed-toolbar .toolbar-group:nth-child(2),
+        .fixed-toolbar .toolbar-group:nth-child(3) {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Make all buttons full width within their column */
+        .fixed-toolbar .toolbar-group:not(:first-child) .btn-toolbar {
+            width: 100%;
+            justify-content: center;
+        }
+
         /* Replace full text with short labels */
         #add-facility-btn-toolbar {
             font-size: 0;
@@ -1042,39 +1068,6 @@ body:not(.admin-bar) .fixed-toolbar {
         #submit-suggestion-btn-toolbar::after {
             content: "📮 Submit";
             font-size: 10px;
-        }
-    }
-
-    /* Keep horizontal layout but wrap to 2 rows on very small screens */
-    @media (max-width: 420px) {
-        /* Allow wrapping instead of full stacking - saves vertical space */
-        .fixed-toolbar .toolbar-section {
-            flex-wrap: wrap;
-            gap: 2px;
-        }
-
-        .fixed-toolbar .toolbar-group {
-            flex-shrink: 1;
-        }
-
-        /* First group (facility selector) takes full width */
-        .fixed-toolbar .toolbar-group:first-child {
-            flex-basis: 100%;
-        }
-
-        /* Make facility dropdown flexible */
-        .fixed-toolbar .facility-selector {
-            flex: 1;
-        }
-
-        .fixed-toolbar .facility-dropdown {
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* Other groups share remaining space */
-        .fixed-toolbar .toolbar-group:not(:first-child) {
-            flex: 1 1 auto;
         }
     }
 
