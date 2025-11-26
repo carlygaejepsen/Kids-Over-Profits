@@ -813,6 +813,10 @@
             const sections = document.querySelectorAll('.section');
 
             sections.forEach(section => {
+                // Prevent re-initialization
+                if (section.dataset.toggleInit === 'true') return;
+                section.dataset.toggleInit = 'true';
+
                 const header = section.querySelector('.section-header');
                 const toggle = section.querySelector('.section-toggle');
                 const content = section.querySelector('.section-content');

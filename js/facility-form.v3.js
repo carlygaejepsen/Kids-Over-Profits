@@ -4385,12 +4385,29 @@ function exportProjectsToFile({ categories = null, filename } = {}) {
 }
 
 function generateProjectsReport({ categories = null, filename } = {}) {
-    // Show report for current project's formData, displayed in a popup modal
-    const data = window.formData;
-    
-    if (!data) {
-        showUploadStatus('No project data available. Please load or create a project first.', 'error');
-        return;
+    // Show report for projects, filtered by category if specified
+    let projectsToReport;
+
+    if (categories && categories.length > 0) {
+        // Filter projects by category
+        const filtered = buildProjectExport(categories);
+        projectsToReport = Object.values(filtered);
+
+        if (projectsToReport.length === 0) {
+            const categoryLabel = categories.join(', ');
+            showUploadStatus(`No ${categoryLabel} projects available to generate report.`, 'error');
+            return;
+        }
+    } else {
+        // Use current project's formData
+        const data = window.formData;
+
+        if (!data) {
+            showUploadStatus('No project data available. Please load or create a project first.', 'error');
+            return;
+        }
+
+        projectsToReport = [data];
     }
 
     // Create or get existing report modal
@@ -4466,19 +4483,49 @@ function generateProjectsReport({ categories = null, filename } = {}) {
 
     // Generate report content
     const reportBody = document.getElementById('report-modal-body');
-    reportBody.innerHTML = generateReportHTML(data);
+
+    if (projectsToReport.length === 1) {
+        // Single project report
+        reportBody.innerHTML = generateReportHTML(projectsToReport[0]);
+    } else {
+        // Multiple projects report
+        const categoryLabel = categories ? categories.join(', ').toUpperCase() : 'ALL PROJECTS';
+        let multiReportHTML = `
+            <div class="report-header">
+                <h1 class="report-title">${categoryLabel} Report</h1>
+                <div class="report-meta">Generated: ${new Date().toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                })} | Total Projects: ${projectsToReport.length}</div>
+            </div>
+        `;
+
+        projectsToReport.forEach((project, index) => {
+            multiReportHTML += `
+                <div style="page-break-before: ${index > 0 ? 'always' : 'auto'}; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #e5e7eb;">
+                    ${generateReportHTML(project, true)}
+                </div>
+            `;
+        });
+
+        reportBody.innerHTML = multiReportHTML;
+    }
 
     // Update modal title
     const modalTitle = modal.querySelector('.modal-title');
     if (modalTitle) {
-        modalTitle.textContent = window.currentProjectName ? `Report: ${window.currentProjectName}` : 'Project Report';
+        if (categories && categories.length > 0) {
+            const categoryLabel = categories.join(', ').toUpperCase();
+            modalTitle.textContent = `${categoryLabel} Report (${projectsToReport.length} project${projectsToReport.length > 1 ? 's' : ''})`;
+        } else {
+            modalTitle.textContent = window.currentProjectName ? `Report: ${window.currentProjectName}` : 'Project Report';
+        }
     }
 
     // Show modal
     modal.classList.add('active');
 }
 
-function generateReportHTML(data) {
+function generateReportHTML(data, skipHeader = false) {
     const escapeHtml = (text) => {
         if (!text) return '';
         const div = document.createElement('div');
@@ -4495,14 +4542,14 @@ function generateReportHTML(data) {
         if (!items || !Array.isArray(items) || items.length === 0) return '';
         const filteredItems = items.filter(item => item && (typeof item === 'string' ? item.trim() : true));
         if (filteredItems.length === 0) return '';
-        
+
         const listItems = filteredItems.map(item => {
             if (typeof item === 'object' && item.name) {
                 return `<li>${item.role ? `<strong>${escapeHtml(item.role)}:</strong> ` : ''}${escapeHtml(item.name)}</li>`;
             }
             return `<li>${escapeHtml(String(item))}</li>`;
         }).join('');
-        
+
         return `
             <div class="list-section">
                 <div class="list-title">${escapeHtml(title)}</div>
@@ -4511,14 +4558,31 @@ function generateReportHTML(data) {
         `;
     };
 
-    let html = `
-        <div class="report-header">
-            <h1 class="report-title">${escapeHtml(window.currentProjectName || 'Project Data Report')}</h1>
-            <div class="report-meta">Generated: ${new Date().toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-            })}</div>
-        </div>
-    `;
+    let html = '';
+
+    if (!skipHeader) {
+        html = `
+            <div class="report-header">
+                <h1 class="report-title">${escapeHtml(window.currentProjectName || 'Project Data Report')}</h1>
+                <div class="report-meta">Generated: ${new Date().toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                })}</div>
+            </div>
+        `;
+    } else {
+        // For multi-project reports, add a project identifier
+        const projectName = data.operator?.name ||
+                          data.operator?.currentName ||
+                          data.referrerAgency?.organizationName ||
+                          data.referrerAgency?.name ||
+                          data.projectName ||
+                          'Unnamed Project';
+        html += `
+            <div class="report-header" style="margin-bottom: 20px;">
+                <h2 class="report-title" style="font-size: 24px;">${escapeHtml(projectName)}</h2>
+            </div>
+        `;
+    }
 
     // Operator Section
     const op = data.operator;

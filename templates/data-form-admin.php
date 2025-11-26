@@ -1144,13 +1144,13 @@
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content">
             <div class="organizer-modal-header">
-                <h2>dY"? Search Facility Data</h2>
+                <h2>🔍 Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
             </div>
             <div class="organizer-modal-body">
                 <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                     <p class="info-text" style="margin: 0; color: #4b5563;">
-                        <strong>dY"? Find all facilities by a specific data point:</strong>
+                        <strong>🔍 Find all facilities by a specific data point:</strong>
                         Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
                     </p>
                 </div>
@@ -1177,7 +1177,7 @@
                 </div>
 
                 <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">dY"? Search</button>
+                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
                     <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
                 </div>
 

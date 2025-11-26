@@ -1,9 +1,8 @@
     <div class="container">
         <div class="admin-header">
             <h1>📮 Submit Facility Data Suggestions</h1>
-            <p>Your submissions will be reviewed before being added to the main database</p>
         </div>
-        
+
         <div class="admin-warning">
             ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
         </div>
@@ -325,7 +324,6 @@
                     <div class="toolbar-group">
                         <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
                         <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone this facility">📋 Clone</button>
-                        <button class="btn-toolbar btn-danger d-none" id="remove-facility-btn-toolbar" title="Remove this facility">🗑️ Remove</button>
                     </div>
                     <div class="toolbar-group">
                         <button class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍 Search Data</button>

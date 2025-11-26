@@ -442,6 +442,9 @@ function clearSearch() {
     filterFacilities();
 }
 
+// Expose to global scope for inline onclick handlers
+window.clearSearch = clearSearch;
+
 function setupAlphabetFilter() {
     const alphabetFilter = document.getElementById('alphabet-filter');
     if (!alphabetFilter) return;
@@ -463,6 +466,9 @@ function filterByLetter(letter) {
         filterFacilities();
     }
 }
+
+// Expose to global scope for inline onclick handlers
+window.filterByLetter = filterByLetter;
 
 function setupEventListeners() {
     // Setup search input
@@ -598,6 +604,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await decodeResponseAsJson(response);
                 console.log('Facilities script: data loaded successfully from', candidateUrl);
                 displayFacilities(data, 'facilities-container');
+
+                // Re-setup event listeners after data is loaded to ensure they work
+                setupEventListeners();
+
                 return;
             } catch (candidateError) {
                 console.warn('Facilities script: failed to load dataset from', candidateUrl, candidateError);

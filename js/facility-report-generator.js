@@ -1,7 +1,12 @@
 // Add this to your facility-form.js or include it separately
 
 function generateHTMLReport() {
-    const reportWindow = window.open('', '_blank');
+    const reportWindow = window.open('', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
+
+    if (!reportWindow) {
+        alert('Popup blocked! Please allow popups for this site and try again.');
+        return;
+    }
 
     const html = `
 <!DOCTYPE html>
@@ -164,6 +169,7 @@ function generateHTMLReport() {
             display: flex;
             gap: 10px;
             justify-content: center;
+            z-index: 999999;
         }
 
         .btn {
@@ -198,8 +204,29 @@ function generateHTMLReport() {
 <body>
     <div class="actions no-print">
         <button class="btn" onclick="window.print()">Print / Save as PDF</button>
-        <button class="btn btn-secondary" onclick="window.close()">Close</button>
+        <button class="btn btn-secondary" onclick="closeReport()">Close</button>
     </div>
+
+    <script>
+        function closeReport() {
+            // Try to close the window
+            window.close();
+
+            // If window.close() didn't work (blocked by browser), show a message
+            setTimeout(function() {
+                if (!window.closed) {
+                    alert('Please close this window manually using your browser controls (or press Alt+F4 / Cmd+W)');
+                }
+            }, 100);
+        }
+
+        // Allow ESC key to close
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReport();
+            }
+        });
+    </script>
 
     <div class="report-container">
         <div class="report-header">
@@ -224,6 +251,11 @@ function generateHTMLReport() {
 
     reportWindow.document.write(html);
     reportWindow.document.close();
+
+    // Bring the window to front and focus it
+    setTimeout(() => {
+        reportWindow.focus();
+    }, 100);
 }
 
 function generateOperatorSection() {
@@ -274,6 +306,8 @@ function generateFacilitiesSection() {
                 ${generateFacilityDetails(facility)}
                 ${generateFacilityOperations(facility)}
                 ${generateFacilityAccreditations(facility)}
+                ${generateFacilityResources(facility)}
+                ${generateFacilityNotes(facility)}
             </div>
         `;
     }).join('');
@@ -290,12 +324,17 @@ function generateFacilityBasicInfo(facility) {
     const id = facility.identification;
     if (!id) return '';
 
+    // Combine otherNames and pastNames
+    const allNames = [...(id.otherNames || []), ...(id.pastNames || [])];
+    const uniqueNames = [...new Set(allNames)];
+
     return `
         <div class="info-grid">
             ${id.currentName ? `<div class="info-item"><span class="info-label">Current Name:</span><span class="info-value">${escapeHtml(id.currentName)}</span></div>` : ''}
             ${id.currentOperator ? `<div class="info-item"><span class="info-label">Current Operator:</span><span class="info-value">${escapeHtml(id.currentOperator)}</span></div>` : ''}
         </div>
-        ${renderList('Other Names', id.otherNames)}
+        ${renderList('Other Names', uniqueNames)}
+        ${renderList('Known Referrers', id.knownReferrers)}
     `;
 }
 
@@ -376,6 +415,56 @@ function generateFacilityAccreditations(facility) {
     `;
 }
 
+function generateFacilityResources(facility) {
+    if (!facility.resources) return '';
+
+    const resources = [];
+    const resourceMap = {
+        'hasNews': 'News',
+        'hasPressReleases': 'Press Releases',
+        'hasInspections': 'Inspections',
+        'hasStateReports': 'State Reports',
+        'hasRegulatoryFilings': 'Regulatory Filings',
+        'hasLawsuits': 'Lawsuits',
+        'hasSettlements': 'Settlements',
+        'hasViolations': 'Violations',
+        'hasResearch': 'Research',
+        'hasFinancial': 'Financial',
+        'hasNATSAP': 'NATSAP Profile',
+        'hasWebsite': 'Website Screenshots',
+        'hasOther': 'Other'
+    };
+
+    Object.keys(resourceMap).forEach(key => {
+        if (facility.resources[key] === true) {
+            resources.push(resourceMap[key]);
+        }
+    });
+
+    if (facility.resources.customResources && facility.resources.customResources.length > 0) {
+        resources.push(...facility.resources.customResources);
+    }
+
+    if (resources.length === 0 && (!facility.resources.notes || facility.resources.notes.length === 0)) {
+        return '';
+    }
+
+    return `
+        <div class="subsection-title">Resources Available</div>
+        ${resources.length > 0 ? `<p>${resources.map(r => escapeHtml(r)).join(', ')}</p>` : ''}
+        ${renderList('Resource Notes', facility.resources.notes)}
+    `;
+}
+
+function generateFacilityNotes(facility) {
+    if (!facility.notes || facility.notes.length === 0) return '';
+
+    return `
+        <div class="subsection-title">Facility Notes</div>
+        ${renderList('Notes', facility.notes)}
+    `;
+}
+
 function renderList(title, items) {
     if (!items || items.length === 0) return '';
 
@@ -399,11 +488,18 @@ function renderStaffList(title, staffArray) {
             name = staff;
             role = '';
         } else if (staff && typeof staff === 'object') {
-            name = staff.name || '';
-            role = staff.role || '';
+            // Try multiple possible field names for the name
+            name = staff.name || staff.Name || staff.fullName || staff.firstName ||
+                   (staff.firstName && staff.lastName ? `${staff.firstName} ${staff.lastName}` : '') ||
+                   JSON.stringify(staff); // Fallback to show the object data
+            role = staff.role || staff.Role || staff.title || staff.Title || staff.position || staff.Position || '';
+        } else {
+            // Fallback for unexpected types
+            name = String(staff);
+            role = '';
         }
 
-        if (!name) return '';
+        if (!name || name === '{}' || name === '[object Object]') return '';
 
         return `
             <div class="staff-item">
