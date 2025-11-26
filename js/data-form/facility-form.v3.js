@@ -262,27 +262,10 @@ function logActiveFacilityFormConfigOnce() {
 // ============================================
 // DEFAULT VALUES - Delegated to autocomplete.js module
 // These constants are now defined in autocomplete.js and exported globally.
-// Keeping references here for backward compatibility.
+// We reference them via window to avoid redeclaration errors.
 // ============================================
-const DEFAULT_FACILITY_TYPES = window.DEFAULT_FACILITY_TYPES || [
-    'Residential Treatment Center (RTC)',
-    'Therapeutic Boarding School',
-    'Wilderness Therapy Program',
-    'Other'
-];
-
-const DEFAULT_OPERATORS = window.DEFAULT_OPERATORS || [
-    'Sequel Youth & Family Services',
-    'Embark Behavioral Health',
-    'Acadia Healthcare',
-    'Other'
-];
-
-const DEFAULT_STAFF_ROLES = window.DEFAULT_STAFF_ROLES || [
-    'Administrator',
-    'Director',
-    'Other'
-];
+// Note: DEFAULT_FACILITY_TYPES, DEFAULT_OPERATORS, DEFAULT_STAFF_ROLES
+// are now available via window.DEFAULT_FACILITY_TYPES etc. from autocomplete.js
 
 // ============================================
 // GLOBAL STATE
