@@ -368,6 +368,34 @@ function toSnakeCase(str) {
     return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
 }
 
+// Helper function to parse "City, State" strings into separate components
+function parseCityState(str) {
+    if (!str || typeof str !== 'string') {
+        return { city: '', state: '' };
+    }
+    const trimmed = str.trim();
+    if (!trimmed) {
+        return { city: '', state: '' };
+    }
+    // Split on comma and extract city/state
+    const parts = trimmed.split(',').map(p => p.trim());
+    if (parts.length >= 2) {
+        return { city: parts[0], state: parts.slice(1).join(', ').trim() };
+    }
+    // No comma - could be just a city or state, return as city
+    return { city: trimmed, state: '' };
+}
+
+// Helper function to combine city and state into "City, State" format
+function combineCityState(city, state) {
+    const c = (city || '').trim();
+    const s = (state || '').trim();
+    if (c && s) {
+        return `${c}, ${s}`;
+    }
+    return c || s || '';
+}
+
 // Normalize project data to handle different field name variations
 // Also ensures default structures exist for all required fields
 function normalizeProjectData(data) {
