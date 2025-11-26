@@ -441,26 +441,34 @@
                 </div>
 
                 <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
-                <div class="form-row">
+                <div class="form-row-3">
                     <div class="form-group">
                         <label for="operator-location-city">City</label>
                         <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
                     </div>
                     <div class="form-group">
-                        <label for="operator-location-state">State</label>
+                        <label for="operator-location-state">State / Province</label>
                         <input type="text" id="operator-location-state" placeholder="e.g., TN">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-location-country">Country</label>
+                        <input type="text" id="operator-location-country" placeholder="e.g., USA (leave blank for US)">
                     </div>
                 </div>
 
                 <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
-                <div class="form-row">
+                <div class="form-row-3">
                     <div class="form-group">
                         <label for="operator-headquarters-city">City</label>
                         <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
                     </div>
                     <div class="form-group">
-                        <label for="operator-headquarters-state">State</label>
+                        <label for="operator-headquarters-state">State / Province</label>
                         <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
+                    </div>
+                    <div class="form-group">
+                        <label for="operator-headquarters-country">Country</label>
+                        <input type="text" id="operator-headquarters-country" placeholder="e.g., USA (leave blank for US)">
                     </div>
                 </div>
 
@@ -477,7 +485,7 @@
 
                 <div class="form-group">
                     <label for="operator-status">Status</label>
-                    <input type="text" id="operator-status" data-autocomplete-category="status" placeholder="Type status (Active, Acquired, Merged, Defunct, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <input type="text" id="operator-status" class="input-wide" data-autocomplete-category="status" placeholder="Active, Acquired, Merged, Defunct, etc.">
                 </div>
                 
                 <div class="form-group">
@@ -530,7 +538,7 @@
                     <div class="form-group">
                         <label>Name</label>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="facility-name" data-autocomplete-category="facility" placeholder="Type facility name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <input type="text" id="facility-name" data-autocomplete-category="facility" placeholder="Type facility name...">
                         </div>
                     </div>
                     <div class="form-group">
@@ -560,13 +568,47 @@
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
+                <!-- International Program Toggle -->
+                <div id="international-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                        <span>International Program:</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span>No</span>
+                            <div style="position: relative; display: inline-block;">
+                                <input type="checkbox" id="international-program-toggle" class="facility-field" data-field="isInternational" style="display: none;">
+                                <span id="international-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                    <span id="international-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                </span>
+                            </div>
+                            <span>Yes</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                        Toggle to "Yes" for programs outside the United States to show Country field instead of State.
+                    </p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" class="facility-field" data-field="locationDetails.city" placeholder="e.g., Salt Lake City">
+                    </div>
+                    <div class="form-group" id="state-field-group">
+                        <label>State</label>
+                        <input type="text" class="facility-field" data-field="locationDetails.state" data-autocomplete-category="location" placeholder="e.g., UT">
+                    </div>
+                    <div class="form-group" id="country-field-group" style="display: none;">
+                        <label>Country</label>
+                        <input type="text" class="facility-field" data-field="locationDetails.country" data-autocomplete-category="country" placeholder="e.g., Mexico">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" class="facility-field" data-field="location">
+                    <label>Full Location (Legacy)</label>
+                    <input type="text" class="facility-field" data-field="location" placeholder="City, State or City, Country">
                 </div>
                 <div class="form-group">
                     <label>Address</label>
-                    <textarea class="facility-field" data-field="address" rows="3"></textarea>
+                    <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
                 </div>
             </div>
         </div>
@@ -596,7 +638,7 @@
                 </div>
                 <div class="form-group">
                     <label>Current Status</label>
-                    <input type="text" class="facility-field" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Type status (Open, Closed, Transferred, etc.)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <input type="text" class="facility-field input-wide" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Open, Closed, Transferred, etc.">
                 </div>
                 <div class="form-group">
                     <label>Years of Operation</label>
@@ -640,8 +682,8 @@
             <div class="section-content">
                 <div class="form-group">
                     <label>Program Type</label>
-                    <div class="autocomplete-wrapper">
-                        <input type="text" id="facility-type" placeholder="Type facility type..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <div class="autocomplete-wrapper" style="max-width: 400px;">
+                        <input type="text" id="facility-type" data-autocomplete-category="type" placeholder="Type facility type...">
                     </div>
                 </div>
                 <div class="form-row">
@@ -665,7 +707,7 @@
                     </div>
                     <div class="form-group">
                         <label>Gender</label>
-                        <input type="text" class="facility-field" data-field="facilityDetails.gender" placeholder="Type gender (Male, Female, Co-ed)..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <input type="text" class="facility-field" data-field="facilityDetails.gender" data-autocomplete-category="gender" placeholder="Male, Female, Co-ed...">
                     </div>
                 </div>
             </div>

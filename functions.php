@@ -54,8 +54,8 @@ function kop_is_headerless_layout() {
  * but on normal pages it only provides graceful fallbacks for missing elements.
  */
 function kop_enqueue_kadence_nav_guard() {
-    $guard_script_path = get_stylesheet_directory() . '/js/kadence-nav-guard.js';
-    $guard_script_url = get_stylesheet_directory_uri() . '/js/kadence-nav-guard.js';
+    $guard_script_path = get_stylesheet_directory() . '/js/data-form/kadence-nav-guard.js';
+    $guard_script_url = get_stylesheet_directory_uri() . '/js/data-form/kadence-nav-guard.js';
 
     if (file_exists($guard_script_path)) {
         // Enqueue globally with highest priority (loaded first)
@@ -522,7 +522,7 @@ function load_facilities_data() {
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $rest_endpoint = kop_get_facilities_rest_endpoint_url();
 
-    $script_path = get_stylesheet_directory() . '/js/facilities-display.js';
+    $script_path = get_stylesheet_directory() . '/js/inspections/facilities-display.js';
     $script_version = file_exists($script_path) ? filemtime($script_path) : time();
 
     $primary_dataset = !empty($rest_endpoint) ? $rest_endpoint : '';
@@ -543,7 +543,7 @@ function load_facilities_data() {
 
     wp_enqueue_script(
         'facilities-display',
-        get_stylesheet_directory_uri() . '/js/facilities-display.js',
+        get_stylesheet_directory_uri() . '/js/inspections/facilities-display.js',
         array(),
         $script_version,
         true
@@ -615,43 +615,43 @@ function kop_enqueue_report_scripts() {
     $reports = array(
         'ca-reports' => array(
             'script_handle' => 'ca-reports-script',
-            'script_path'   => '/js/ca-reports.js',
+            'script_path'   => '/js/inspections/ca-reports.js',
             'data_object'   => 'caReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/ccl*.json',
         ),
         'ut-reports' => array(
             'script_handle' => 'ut-reports-script',
-            'script_path'   => '/js/ut_reports.js',
+            'script_path'   => '/js/inspections/ut_reports.js',
             'data_object'   => 'utReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/ut_*.json',
         ),
         'az-reports' => array(
             'script_handle' => 'az-reports-script',
-            'script_path'   => '/js/az_reports.js',
+            'script_path'   => '/js/inspections/az_reports.js',
             'data_object'   => 'azReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/az_reports/*.json',
         ),
         'tx-reports' => array(
             'script_handle' => 'tx-reports-script',
-            'script_path'   => '/js/tx_reports.js',
+            'script_path'   => '/js/inspections/tx_reports.js',
             'data_object'   => 'txReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/tx_reports.json',
         ),
         'mt-reports' => array(
             'script_handle' => 'mt-reports-script',
-            'script_path'   => '/js/mt_reports.js',
+            'script_path'   => '/js/inspections/mt_reports.js',
             'data_object'   => 'mtReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/mt_reports.json',
         ),
         'ct-reports' => array(
             'script_handle' => 'ct-reports-script',
-            'script_path'   => '/js/ct_reports.js',
+            'script_path'   => '/js/inspections/ct_reports.js',
             'data_object'   => 'ctReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/ct_reports.json',
         ),
         'wa-reports' => array(
             'script_handle' => 'wa-reports-script',
-            'script_path'   => '/js/wa_reports.js',
+            'script_path'   => '/js/inspections/wa_reports.js',
             'data_object'   => 'waReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/wa_reports.json',
         ),
@@ -732,7 +732,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the DB form loader first (handles data loading)
-    $loader_relative_path = '/js/db-form-loader.js';
+    $loader_relative_path = '/js/data-form/db-form-loader.js';
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
     $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
 
@@ -753,7 +753,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the referrer form module (depends on loader)
-    $referrer_script_relative_path = '/js/referrer-form.js';
+    $referrer_script_relative_path = '/js/data-form/referrer-form.js';
     $referrer_script_file_path = get_stylesheet_directory() . $referrer_script_relative_path;
     $referrer_script_uri = get_stylesheet_directory_uri() . $referrer_script_relative_path;
 
@@ -766,7 +766,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the notes module (depends on loader and referrer module)
-    $notes_script_relative_path = '/js/notes.js';
+    $notes_script_relative_path = '/js/data-form/notes.js';
     $notes_script_file_path = get_stylesheet_directory() . $notes_script_relative_path;
     $notes_script_uri = get_stylesheet_directory_uri() . $notes_script_relative_path;
 
@@ -778,15 +778,28 @@ function enqueue_facility_form_script() {
         true
     );
 
-    // Enqueue the main facility form script (depends on loader, referrer module, and notes module)
-    $script_relative_path = '/js/facility-form.v3.js';
+    // Enqueue the autocomplete module (depends on loader)
+    $autocomplete_script_relative_path = '/js/autocomplete.js';
+    $autocomplete_script_file_path = get_stylesheet_directory() . $autocomplete_script_relative_path;
+    $autocomplete_script_uri = get_stylesheet_directory_uri() . $autocomplete_script_relative_path;
+
+    wp_enqueue_script(
+        'autocomplete-module-script',
+        $autocomplete_script_uri,
+        array('jquery', 'db-form-loader'),
+        file_exists($autocomplete_script_file_path) ? filemtime($autocomplete_script_file_path) : time(),
+        true
+    );
+
+    // Enqueue the main facility form script (depends on loader, referrer module, notes module, and autocomplete module)
+    $script_relative_path = '/js/data-form/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'db-form-loader', 'referrer-form-script', 'notes-module-script'), // Now depends on notes module too
+        array('jquery', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
@@ -811,7 +824,7 @@ function enqueue_facility_form_script() {
     // Enqueue page-specific scripts based on template (slug fallback for legacy pages)
     if (is_page_template('page-data.php') || is_page('data')) {
         // Suggestions page - loads data-page.js
-        $data_page_relative_path = '/js/data-page.js';
+        $data_page_relative_path = '/js/data-form/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
         $data_page_uri = get_stylesheet_directory_uri() . $data_page_relative_path;
 
@@ -824,7 +837,7 @@ function enqueue_facility_form_script() {
         );
     } elseif (is_page_template('page-admin-data.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
         // Admin page and TTI Program Index - loads admin-data-page.js
-        $admin_page_relative_path = '/js/admin-data-page.js';
+        $admin_page_relative_path = '/js/data-form/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
         $admin_page_uri = get_stylesheet_directory_uri() . $admin_page_relative_path;
 

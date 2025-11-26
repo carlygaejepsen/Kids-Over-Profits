@@ -533,6 +533,63 @@
 
         window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
+        // ============================================
+        // INTERNATIONAL PROGRAM TOGGLE
+        // ============================================
+        const internationalToggle = document.getElementById('international-program-toggle');
+        const internationalSliderTrack = document.getElementById('international-slider-track');
+        const internationalSliderKnob = document.getElementById('international-slider-knob');
+        const stateFieldGroup = document.getElementById('state-field-group');
+        const countryFieldGroup = document.getElementById('country-field-group');
+
+        function updateInternationalSliderAppearance() {
+            if (!internationalSliderTrack || !internationalSliderKnob || !internationalToggle) return;
+
+            if (internationalToggle.checked) {
+                // International program - toggle is ON, show Country field
+                internationalSliderTrack.style.backgroundColor = '#33A7B5'; // Teal
+                internationalSliderKnob.style.transform = 'translateX(24px)';
+                if (stateFieldGroup) stateFieldGroup.style.display = 'none';
+                if (countryFieldGroup) countryFieldGroup.style.display = 'block';
+            } else {
+                // US program - toggle is OFF, show State field
+                internationalSliderTrack.style.backgroundColor = '#e5e7eb';
+                internationalSliderKnob.style.transform = 'translateX(0px)';
+                if (stateFieldGroup) stateFieldGroup.style.display = 'block';
+                if (countryFieldGroup) countryFieldGroup.style.display = 'none';
+            }
+
+            // Sync with formData if available
+            if (window.formData) {
+                window.formData.isInternational = internationalToggle.checked;
+            }
+        }
+
+        function applyInternationalToggleState(isInternational) {
+            if (!internationalToggle) return;
+            internationalToggle.checked = !!isInternational;
+            updateInternationalSliderAppearance();
+        }
+
+        if (internationalSliderTrack && internationalToggle) {
+            internationalSliderTrack.addEventListener('click', function() {
+                internationalToggle.checked = !internationalToggle.checked;
+                updateInternationalSliderAppearance();
+                // Trigger change event for form tracking
+                internationalToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        }
+
+        window.updateInternationalSliderAppearance = updateInternationalSliderAppearance;
+        window.applyInternationalToggleState = applyInternationalToggleState;
+
+        // Initialize on form ready
+        document.addEventListener('formReady', () => {
+            if (window.formData && typeof window.formData.isInternational !== 'undefined') {
+                applyInternationalToggleState(window.formData.isInternational);
+            }
+        }, { once: true });
+
         function showSuggestionStatus(message, type) {
             const statusDiv = document.getElementById('suggestion-status');
             statusDiv.className = `upload-status ${type}`;

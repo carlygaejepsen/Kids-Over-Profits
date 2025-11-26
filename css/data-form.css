@@ -1116,6 +1116,163 @@ textarea[data-field$=".notes"] {
     width: 100% !important;
 }
 
+/* ============================================
+   SMART FIELD SIZING BY CONTENT TYPE
+   Normalize input widths based on expected content
+   ============================================ */
+
+/* EXTRA SMALL: 80px - Ages, single numbers */
+input[data-field*="ageRange.min"],
+input[data-field*="ageRange.max"],
+input[data-field*="min-age"],
+input[data-field*="max-age"] {
+    max-width: 80px;
+    width: 80px;
+}
+
+/* SMALL: 100px - Capacities, census counts */
+input[data-field*="capacity"],
+input[data-field*="currentCensus"],
+input[data-field*="census"] {
+    max-width: 100px;
+    width: 100px;
+}
+
+/* SMALL-MEDIUM: 120px - Years (4-digit) */
+input[data-field*="startYear"],
+input[data-field*="endYear"],
+input[data-field*=".year"],
+input[id*="founded"],
+input[id$="-founded"],
+input[type="number"][placeholder*="e.g., 19"],
+input[type="number"][placeholder*="e.g., 20"] {
+    max-width: 120px;
+    width: 120px;
+}
+
+/* MEDIUM-SMALL: 150px - Gender, short status values */
+input[data-field*="gender"],
+input[data-field*=".gender"] {
+    max-width: 150px;
+}
+
+/* MEDIUM: 200px - State abbreviations, operating periods */
+input[id*="-state"],
+input[data-field*=".state"],
+input[id*="state"][placeholder*="e.g.,"],
+input[data-field*="operatingPeriod.status"],
+input[data-field*="yearsOfOperation"],
+input[id*="-period"],
+input[id*="period"][data-autocomplete-category] {
+    max-width: 200px;
+}
+
+/* MEDIUM-LARGE: 250px - Cities */
+input[id*="-city"],
+input[data-field*=".city"],
+input[id*="city"][placeholder*="e.g.,"] {
+    max-width: 250px;
+}
+
+/* STANDARD: 350px - Names, common text fields */
+input[data-field*="name"],
+input[data-field*="Name"],
+input[id*="-name"],
+input[data-autocomplete-category="operator"],
+input[data-autocomplete-category="facility"],
+input[data-autocomplete-category="human"],
+input[id*="operator-name"],
+input[id*="facility-name"],
+input[id="operator-ceo"] {
+    max-width: 350px;
+}
+
+/* WIDE: 450px - Websites, emails, longer text */
+input[type="url"],
+input[type="email"],
+input[id*="website"],
+input[data-field*="website"],
+input[data-field*="email"],
+input[id*="-email"] {
+    max-width: 450px;
+}
+
+/* FULL WIDTH: 100% - Addresses, locations, status fields with long placeholders */
+textarea[data-field="address"],
+textarea[data-field*=".address"],
+input[data-field="location"],
+input[data-field*=".location"]:not([id*="city"]):not([id*="state"]),
+input[id="operator-status"],
+input[data-autocomplete-category="status"][style*="width: 100%"] {
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Array container inputs - let them fill available space */
+.array-container input,
+.array-item input {
+    max-width: none;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Override for array inputs that have specific sizing needs */
+.array-input {
+    max-width: 350px;
+}
+
+/* Wider array inputs for accreditations, memberships, etc. (longer text expected) */
+[data-path="accreditations.current"] .array-input,
+[data-path="accreditations.past"] .array-input,
+[data-path="memberships"] .array-input,
+[data-path="certifications"] .array-input,
+[data-path="licensing"] .array-input,
+[data-path="identification.otherNames"] .array-input,
+[data-path="identification.knownReferrers"] .array-input,
+[data-path="operator.parentCompanies"] .array-input,
+[data-path="operator.websites"] .array-input,
+[data-path="profileLinks"] .array-input,
+[data-path*="affiliations"] .array-input {
+    max-width: 500px;
+}
+
+/* URL/website arrays should be even wider */
+[data-path*="websites"] .array-input,
+[data-path*="profileLinks"] .array-input,
+[data-path*="Links"] .array-input {
+    max-width: 600px;
+}
+
+/* Ensure inputs in form-row respect their column sizing */
+.form-row input,
+.form-row select,
+.form-row-3 input,
+.form-row-3 select {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* But allow nested sizing overrides within rows */
+.form-row input[data-field*="ageRange"],
+.form-row-3 input[data-field*="ageRange"] {
+    max-width: 80px;
+    width: 80px;
+}
+
+.form-row input[data-field*="capacity"],
+.form-row-3 input[data-field*="capacity"],
+.form-row input[data-field*="census"],
+.form-row-3 input[data-field*="census"] {
+    max-width: 100px;
+    width: 100px;
+}
+
+.form-row input[type="number"][data-field*="Year"],
+.form-row-3 input[type="number"][data-field*="Year"] {
+    max-width: 120px;
+    width: 120px;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -1508,6 +1665,36 @@ textarea {
 
 .italic {
     font-style: italic;
+}
+
+/* ============================================
+   INPUT WIDTH UTILITY CLASSES
+   ============================================ */
+.input-xs {
+    max-width: 80px !important;
+    width: 80px !important;
+}
+
+.input-sm {
+    max-width: 120px !important;
+    width: 120px !important;
+}
+
+.input-md {
+    max-width: 200px !important;
+}
+
+.input-lg {
+    max-width: 350px !important;
+}
+
+.input-wide {
+    max-width: 450px !important;
+}
+
+.input-full {
+    max-width: 100% !important;
+    width: 100% !important;
 }
 
 .bg-light {

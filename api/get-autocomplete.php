@@ -220,19 +220,43 @@ function collect_operator_values(array $data, array &$set)
 
 function collect_facility_values(array $data, array &$set)
 {
-    if (empty($data['facilities']) || !is_array($data['facilities'])) {
-        return;
+    // Collect from facilities array
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = $facility['identification'] ?? [];
+            if (is_array($identification)) {
+                add_value($set, $identification['name'] ?? null);
+                add_value($set, $identification['currentName'] ?? null);
+                add_values($set, $identification['otherNames'] ?? []);
+            }
+        }
     }
 
-    foreach ($data['facilities'] as $facility) {
-        if (!is_array($facility)) {
-            continue;
+    // Collect from referrer consultants' facilitiesReferred (shared autocomplete)
+    if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $consultant) {
+            if (!is_array($consultant)) {
+                continue;
+            }
+            add_values($set, $consultant['facilitiesReferred'] ?? []);
         }
-        $identification = $facility['identification'] ?? [];
-        if (is_array($identification)) {
-            add_value($set, $identification['name'] ?? null);
-            add_value($set, $identification['currentName'] ?? null);
-            add_values($set, $identification['otherNames'] ?? []);
+    }
+
+    // Also check referrerIndividual for facilitiesReferred
+    if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
+        add_values($set, $data['referrerIndividual']['facilitiesReferred'] ?? []);
+    }
+
+    // Check referrer array entries
+    if (!empty($data['referrer']) && is_array($data['referrer'])) {
+        foreach ($data['referrer'] as $referrerEntry) {
+            if (!is_array($referrerEntry)) {
+                continue;
+            }
+            add_values($set, $referrerEntry['facilitiesReferred'] ?? []);
         }
     }
 }
@@ -295,17 +319,71 @@ function collect_human_values(array $data, array &$set)
 
 function collect_referrer_values(array $data, array &$set)
 {
-    if (empty($data['facilities']) || !is_array($data['facilities'])) {
-        return;
+    // Collect from facility knownReferrers
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = $facility['identification'] ?? [];
+            if (is_array($identification)) {
+                add_values($set, $identification['knownReferrers'] ?? []);
+            }
+        }
     }
 
-    foreach ($data['facilities'] as $facility) {
-        if (!is_array($facility)) {
-            continue;
+    // Collect referrer agency name
+    if (!empty($data['referrerAgency']) && is_array($data['referrerAgency'])) {
+        add_value($set, $data['referrerAgency']['name'] ?? null);
+    }
+
+    // Also check referrerGroup (alias)
+    if (!empty($data['referrerGroup']) && is_array($data['referrerGroup'])) {
+        add_value($set, $data['referrerGroup']['name'] ?? null);
+    }
+
+    // Collect from referrer consultants
+    if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $consultant) {
+            if (!is_array($consultant)) {
+                continue;
+            }
+            // Build full name from firstName + lastName or use fullName
+            $fullName = $consultant['fullName'] ?? null;
+            if (!$fullName) {
+                $firstName = trim($consultant['firstName'] ?? '');
+                $lastName = trim($consultant['lastName'] ?? '');
+                if ($firstName || $lastName) {
+                    $fullName = trim("$firstName $lastName");
+                }
+            }
+            add_value($set, $fullName);
         }
-        $identification = $facility['identification'] ?? [];
-        if (is_array($identification)) {
-            add_values($set, $identification['knownReferrers'] ?? []);
+    }
+
+    // Also check referrerIndividual
+    if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
+        $individual = $data['referrerIndividual'];
+        $fullName = $individual['fullName'] ?? null;
+        if (!$fullName) {
+            $firstName = trim($individual['firstName'] ?? '');
+            $lastName = trim($individual['lastName'] ?? '');
+            if ($firstName || $lastName) {
+                $fullName = trim("$firstName $lastName");
+            }
+        }
+        add_value($set, $fullName);
+    }
+
+    // Check referrer array entries
+    if (!empty($data['referrer']) && is_array($data['referrer'])) {
+        foreach ($data['referrer'] as $referrerEntry) {
+            if (!is_array($referrerEntry)) {
+                continue;
+            }
+            add_value($set, $referrerEntry['agency'] ?? null);
+            add_value($set, $referrerEntry['individual'] ?? null);
+            add_value($set, $referrerEntry['name'] ?? null);
         }
     }
 }

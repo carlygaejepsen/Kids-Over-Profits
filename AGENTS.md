@@ -34,11 +34,20 @@ This repository contains a full-stack data management application built within a
         -   **`approve-edits.php`**: Provides the frontend UI for the admin approval page, which uses `process-edit.php` to perform its actions.
 
 -   **`js/`**: Contains the client-side JavaScript files that power the site's interactive features.
-    -   **`js/facility-form.v3.js`**: The core script for the admin data entry form. It manages dynamic fields, validation, and communication with the backend API.
-    -   **`js/facilities-display.js`**: Renders the public-facing, searchable directory of all facilities. It fetches data from the API and injects it into the `tti-program-index` page.
+    -   **`js/data-form/`**: Scripts related to the facility data entry form.
+        -   **`js/data-form/facility-form.v3.js`**: The core script for the admin data entry form. It manages dynamic fields, validation, and communication with the backend API.
+        -   **`js/data-form/db-form-loader.js`**: Handles data loading and project management for the form.
+        -   **`js/data-form/facility-report-generator.js`**: A utility for admins to generate a clean, printable HTML report from the data currently loaded in the facility form.
+        -   **`js/data-form/notes.js`**: Manages facility notes functionality.
+        -   **`js/data-form/referrer-form.js`**: Handles referrer data entry and management.
+        -   **`js/data-form/kadence-nav-guard.js`**: Prevents Kadence theme navigation conflicts on data form pages.
+        -   **`js/data-form/admin-data-page.js`**: Admin-specific page functionality.
+        -   **`js/data-form/data-page.js`**: Public suggestion page functionality.
+    -   **`js/inspections/`**: State inspection report scripts.
+        -   **`js/inspections/facilities-display.js`**: Renders the public-facing, searchable directory of all facilities. It fetches data from the API and injects it into the `tti-program-index` page.
+        -   **`js/inspections/ca-reports.js`**, **`js/inspections/tx_reports.js`**, **`js/inspections/az_reports.js`**, etc.: State-specific report pages.
     -   **`js/anonymous-portal.js`**: Powers the frontend of the secure, anonymous document submission page, handling file uploads and user interaction.
-    -   **`js/facility-report-generator.js`**: A utility for admins to generate a clean, printable HTML report from the data currently loaded in the facility form.
-    -   Other scripts in this directory power the various state-specific report pages (e.g., `ca-reports.js`, `tx_reports.js`).
+    -   **`js/autocomplete.js`**: Provides autocomplete functionality for form fields.
 
 -   **`css/`**: Contains the stylesheets for the project.
     -   **`css/data-form.css`**: This file provides all the styling for the facility data entry form, ensuring a consistent and user-friendly interface. It covers everything from layout and typography to button styles and responsive design.
@@ -52,7 +61,7 @@ This repository contains a full-stack data management application built within a
 -   **WordPress Pages**: All active pages are now PHP-based WordPress pages that load templates or shortcodes:
     -   The admin data form uses the `data-form-admin.php` template
     -   The public suggestion form uses the `data-form-public.php` template
-    -   The TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `facilities-display.js` renders the database
+    -   The TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `js/inspections/facilities-display.js` renders the database
     -   Other pages are created as standard WordPress pages with embedded shortcodes or custom page templates
 
 -   **`style.css`**: The main stylesheet for the child theme, which primarily contains theme header information and can be used for global style overrides.

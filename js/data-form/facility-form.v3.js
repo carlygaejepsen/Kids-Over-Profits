@@ -259,68 +259,28 @@ function logActiveFacilityFormConfigOnce() {
     }
 }
 
-const DEFAULT_FACILITY_TYPES = [
+// ============================================
+// DEFAULT VALUES - Delegated to autocomplete.js module
+// These constants are now defined in autocomplete.js and exported globally.
+// Keeping references here for backward compatibility.
+// ============================================
+const DEFAULT_FACILITY_TYPES = window.DEFAULT_FACILITY_TYPES || [
     'Residential Treatment Center (RTC)',
     'Therapeutic Boarding School',
     'Wilderness Therapy Program',
-    'Long-term Wilderness Program',
-    'Boot Camp',
-    'Behavior Modification Program',
-    'Therapeutic Group Home',
-    'Specialty Boarding School',
-    'Psychiatric Hospital',
-    'Juvenile Detention Center',
-    'Adventure Therapy Program',
-    'Emotional Growth Boarding School',
-    'Ranch Program',
-    'Military-Style Academy',
-    'Fundamentalist Religious Program',
-    'Qualified Residential Treatment Program (QRTP)',
     'Other'
 ];
 
-const DEFAULT_OPERATORS = [
+const DEFAULT_OPERATORS = window.DEFAULT_OPERATORS || [
     'Sequel Youth & Family Services',
-    'Vivant Behavioral Health',
-    'The Brown Schools',
-    'CEDU',
-    'Rite of Passage',
-    'TrueCore Behavioral Services',
-    'Correctional Services Corporation',
-    'Youth Services International',
-    'Youth Opportunity Investments',
-    'Sequel TSI',
-    'Three Springs Inc.',
-    'Universal Health Services',
-    'Wayne Halfway House',
     'Embark Behavioral Health',
     'Acadia Healthcare',
-    'CRC Health Group',
-    'Altior Healthcare',
-    'Aspen Education Group',
-    'Eckerd Connects',
-    'Family Help & Wellness'
+    'Other'
 ];
 
-const DEFAULT_STAFF_ROLES = [
+const DEFAULT_STAFF_ROLES = window.DEFAULT_STAFF_ROLES || [
     'Administrator',
     'Director',
-    'CEO',
-    'President',
-    'Counselor',
-    'Therapist',
-    'Teacher',
-    'Nurse',
-    'Medical Director',
-    'Case Manager',
-    'Supervisor',
-    'Staff',
-    'Founder',
-    'Key Executive',
-    'Board Member',
-    'Program Director',
-    'Clinical Director',
-    'Admissions Director',
     'Other'
 ];
 
@@ -335,23 +295,28 @@ let currentFacilityIndex = 0;
 let formData = null;
 
 // Custom data from localStorage (backup only)
-let customOperators = [];
-let customFacilityNames = [];
-let customHumanNames = [];
-let customReferrers = [];
-let customFacilityTypes = [];
-let customCertifications = [];
-let customAccreditations = [];
-let customMemberships = [];
-let customLicensing = [];
-let customInvestors = [];
-let customStaffRoles = [];
-let customStatuses = [];
-let customGenders = [];
-let customLocations = [];
-let customOperatingPeriods = [];
+// These are now managed by the autocomplete module but we keep references for compatibility
+let customOperators = window.customOperators || [];
+let customFacilityNames = window.customFacilityNames || [];
+let customHumanNames = window.customHumanNames || [];
+let customReferrers = window.customReferrers || [];
+let customFacilityTypes = window.customFacilityTypes || [];
+let customCertifications = window.customCertifications || [];
+let customAccreditations = window.customAccreditations || [];
+let customMemberships = window.customMemberships || [];
+let customLicensing = window.customLicensing || [];
+let customInvestors = window.customInvestors || [];
+let customStaffRoles = window.customStaffRoles || [];
+let customStatuses = window.customStatuses || [];
+let customGenders = window.customGenders || [];
+let customLocations = window.customLocations || [];
+let customOperatingPeriods = window.customOperatingPeriods || [];
 
-// Cached aggregated values (built from all projects) to prevent repeated heavy recomputation.
+// ============================================
+// AGGREGATED DATA CACHE - Delegated to autocomplete.js module
+// The aggregatedDataCache, CACHE_CATEGORY_MAP, and invalidateAggregatedData
+// are now defined in autocomplete.js. Keeping minimal references for compatibility.
+// ============================================
 const aggregatedDataCache = {
     operators: null,
     facilityNames: null,
@@ -387,7 +352,16 @@ const CACHE_CATEGORY_MAP = {
 // noteFieldRegistry is now managed by the notes module (notes.js)
 // The notes module exports it globally as window.noteFieldRegistry
 
+// invalidateAggregatedData is now delegated to the autocomplete module
+// Keeping a local reference for backward compatibility
 function invalidateAggregatedData(category = null) {
+    // Delegate to autocomplete module if available
+    if (typeof window.invalidateAggregatedData === 'function' && window.invalidateAggregatedData !== invalidateAggregatedData) {
+        window.invalidateAggregatedData(category);
+        return;
+    }
+    
+    // Fallback implementation
     if (!category) {
         Object.keys(aggregatedDataCache).forEach(key => {
             aggregatedDataCache[key] = null;
@@ -1032,626 +1006,85 @@ function attachCustomValueRecorder(input, category) {
 }
 
 // ============================================
-// DATA AGGREGATION (across all projects)
+// DATA AGGREGATION - Delegated to autocomplete.js module
+// All data aggregation functions (getAllOperators, getAllFacilityNames, etc.)
+// are now defined in autocomplete.js and exported globally.
+// These wrapper functions delegate to the module for backward compatibility.
 // ============================================
+
 function getAllOperators() {
-    if (!aggregatedDataCache.operators) {
-        const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
-
-        Object.values(projects).forEach(project => {
-            if (project.data?.operator?.name) operators.add(project.data.operator.name);
-            if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
-            if (project.data?.operator?.otherNames) {
-                project.data.operator.otherNames.forEach(name => operators.add(name));
-            }
-
-            project.data?.facilities?.forEach(facility => {
-                if (facility.identification?.currentOperator) {
-                    operators.add(facility.identification.currentOperator);
-                }
-                facility.otherOperators?.forEach(op => operators.add(op));
-            });
-        });
-
-        aggregatedDataCache.operators = Array.from(operators).filter(op => op && op.trim()).sort();
-    }
-
-    return aggregatedDataCache.operators;
+    return window.getAllOperators ? window.getAllOperators() : [];
 }
 
 function getAllFacilityNames() {
-    if (!aggregatedDataCache.facilityNames) {
-        const names = new Set(customFacilityNames);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                if (facility.identification?.name) names.add(facility.identification.name);
-                if (facility.identification?.currentName) names.add(facility.identification.currentName);
-                facility.identification?.otherNames?.forEach(name => names.add(name));
-            });
-        });
-
-        aggregatedDataCache.facilityNames = Array.from(names).filter(n => n && n.trim()).sort();
-    }
-
-    return aggregatedDataCache.facilityNames;
+    return window.getAllFacilityNames ? window.getAllFacilityNames() : [];
 }
 
 function getAllHumanNames() {
-    if (!aggregatedDataCache.humanNames) {
-        const names = new Set(customHumanNames);
-
-        Object.values(projects).forEach(project => {
-            // Operator staff
-            if (project.data?.operator?.keyStaff) {
-                const ks = project.data.operator.keyStaff;
-                if (ks.ceo) names.add(ks.ceo);
-                ks.founders?.forEach(f => {
-                    const name = typeof f === 'string' ? f : f?.name;
-                    if (name) names.add(name);
-                });
-                ks.keyExecutives?.forEach(e => {
-                    const name = typeof e === 'string' ? e : e?.name;
-                    if (name) names.add(name);
-                });
-            }
-
-            // Facility staff
-            project.data?.facilities?.forEach(facility => {
-                facility.staff?.administrator?.forEach(admin => {
-                    const name = typeof admin === 'string' ? admin : admin?.name;
-                    if (name) names.add(name);
-                });
-                facility.staff?.notableStaff?.forEach(staff => {
-                    const name = typeof staff === 'string' ? staff : staff?.name;
-                    if (name) names.add(name);
-                });
-            });
-        });
-
-        aggregatedDataCache.humanNames = Array.from(names).filter(n => n && typeof n === 'string' && n.trim()).sort();
-    }
-
-    return aggregatedDataCache.humanNames;
+    return window.getAllHumanNames ? window.getAllHumanNames() : [];
 }
 
 function getAllReferrers() {
-    if (!aggregatedDataCache.referrers) {
-        const referrers = new Set(customReferrers || []);
-
-        Object.values(projects || {}).forEach(project => {
-            // Collect from facility projects' knownReferrers fields
-            project.data?.facilities?.forEach(facility => {
-                facility.identification?.knownReferrers?.forEach(ref => {
-                    if (ref && typeof ref === 'string') {
-                        referrers.add(ref);
-                    }
-                });
-            });
-
-            // Collect from referrer projects themselves
-            if (project.category === 'referrers' && project.data) {
-                // Add referrer agency name
-                if (project.data.referrerAgency?.name) {
-                    referrers.add(project.data.referrerAgency.name);
-                }
-
-                // Add individual consultant names
-                if (Array.isArray(project.data.referrerConsultants)) {
-                    project.data.referrerConsultants.forEach(consultant => {
-                        if (consultant) {
-                            // Use fullName if available, otherwise construct from firstName + lastName
-                            const name = consultant.fullName ||
-                                [consultant.firstName, consultant.lastName].filter(Boolean).join(' ');
-                            if (name && name.trim()) {
-                                referrers.add(name.trim());
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-        aggregatedDataCache.referrers = Array.from(referrers).filter(r => r && typeof r === 'string' && r.trim()).sort();
-    }
-
-    return aggregatedDataCache.referrers;
+    return window.getAllReferrers ? window.getAllReferrers() : [];
 }
 
 function getAllFacilityTypes() {
-    if (!aggregatedDataCache.facilityTypes) {
-        const types = new Set([...DEFAULT_FACILITY_TYPES, ...customFacilityTypes]);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                if (facility.facilityDetails?.type) {
-                    types.add(facility.facilityDetails.type);
-                }
-            });
-        });
-
-        aggregatedDataCache.facilityTypes = Array.from(types).filter(t => t && t.trim()).sort();
-    }
-
-    return aggregatedDataCache.facilityTypes;
+    return window.getAllFacilityTypes ? window.getAllFacilityTypes() : [];
 }
 
 function getAllStaffRoles() {
-    if (!aggregatedDataCache.staffRoles) {
-        const roles = new Set([...DEFAULT_STAFF_ROLES, ...customStaffRoles]);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                facility.staff?.administrator?.forEach(admin => {
-                    const role = typeof admin === 'string' ? '' : admin.role;
-                    if (role) roles.add(role);
-                });
-                facility.staff?.notableStaff?.forEach(staff => {
-                    const role = typeof staff === 'string' ? '' : staff.role;
-                    if (role) roles.add(role);
-                });
-            });
-        });
-
-        aggregatedDataCache.staffRoles = Array.from(roles).filter(r => r && r.trim()).sort();
-    }
-
-    return aggregatedDataCache.staffRoles;
+    return window.getAllStaffRoles ? window.getAllStaffRoles() : [];
 }
 
 function getAllCertifications() {
-    if (!aggregatedDataCache.certifications) {
-        const certs = new Set(customCertifications);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                facility.certifications?.forEach(cert => certs.add(cert));
-            });
-        });
-
-        aggregatedDataCache.certifications = Array.from(certs).filter(c => c && c.trim()).sort();
-    }
-
-    return aggregatedDataCache.certifications;
+    return window.getAllCertifications ? window.getAllCertifications() : [];
 }
 
 function getAllAccreditations() {
-    if (!aggregatedDataCache.accreditations) {
-        const accreds = new Set(customAccreditations);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                facility.accreditations?.current?.forEach(acc => accreds.add(acc));
-                facility.accreditations?.past?.forEach(acc => accreds.add(acc));
-            });
-        });
-
-        aggregatedDataCache.accreditations = Array.from(accreds).filter(a => a && a.trim()).sort();
-    }
-
-    return aggregatedDataCache.accreditations;
+    return window.getAllAccreditations ? window.getAllAccreditations() : [];
 }
 
 function getAllMemberships() {
-    if (!aggregatedDataCache.memberships) {
-        const memberships = new Set(customMemberships);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                facility.memberships?.forEach(m => memberships.add(m));
-            });
-        });
-
-        aggregatedDataCache.memberships = Array.from(memberships).filter(m => m && m.trim()).sort();
-    }
-
-    return aggregatedDataCache.memberships;
+    return window.getAllMemberships ? window.getAllMemberships() : [];
 }
 
 function getAllLocations() {
-    if (!aggregatedDataCache.locations) {
-        const locations = new Set(customLocations);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                if (facility.location) locations.add(facility.location);
-            });
-        });
-
-        aggregatedDataCache.locations = Array.from(locations).filter(l => l && l.trim()).sort();
-    }
-
-    return aggregatedDataCache.locations;
+    return window.getAllLocations ? window.getAllLocations() : [];
 }
 
 function getAllStatuses() {
-    if (!aggregatedDataCache.statuses) {
-        const statuses = new Set([...customStatuses, 'Active', 'Closed', 'Acquired', 'Merged', 'Defunct', 'Transferred', 'Open']);
-
-        Object.values(projects).forEach(project => {
-            if (project.data?.operator?.status) statuses.add(project.data.operator.status);
-            project.data?.facilities?.forEach(facility => {
-                if (facility.operatingPeriod?.status) statuses.add(facility.operatingPeriod.status);
-            });
-        });
-
-        aggregatedDataCache.statuses = Array.from(statuses).filter(s => s && s.trim()).sort();
-    }
-
-    return aggregatedDataCache.statuses;
+    return window.getAllStatuses ? window.getAllStatuses() : [];
 }
 
 function getAllGenders() {
-    if (!aggregatedDataCache.genders) {
-        const genders = new Set([...customGenders, 'Male', 'Female', 'Co-ed', 'All Genders']);
-
-        Object.values(projects).forEach(project => {
-            project.data?.facilities?.forEach(facility => {
-                if (facility.facilityDetails?.gender) genders.add(facility.facilityDetails.gender);
-            });
-        });
-
-        aggregatedDataCache.genders = Array.from(genders).filter(g => g && g.trim()).sort();
-    }
-
-    return aggregatedDataCache.genders;
+    return window.getAllGenders ? window.getAllGenders() : [];
 }
 
 function getAllOperatingPeriods() {
-    if (!aggregatedDataCache.operatingPeriods) {
-        const periods = new Set(customOperatingPeriods);
-
-        Object.values(projects).forEach(project => {
-            if (project.data?.operator?.operatingPeriod) {
-                periods.add(project.data.operator.operatingPeriod);
-            }
-
-            project.data?.facilities?.forEach(facility => {
-                const years = facility.operatingPeriod?.yearsOfOperation;
-                if (years) periods.add(years);
-            });
-        });
-
-        aggregatedDataCache.operatingPeriods = Array.from(periods).filter(p => p && p.trim()).sort();
-    }
-
-    return aggregatedDataCache.operatingPeriods;
+    return window.getAllOperatingPeriods ? window.getAllOperatingPeriods() : [];
 }
 
 // ============================================
-// AUTOCOMPLETE DROPDOWN SYSTEM (IMPROVED)
+// AUTOCOMPLETE - Delegated to autocomplete.js module
+// The createAutocomplete and initializeAutocompleteFields functions
+// are now defined in autocomplete.js and exported globally.
+// These wrapper functions delegate to the module for backward compatibility.
 // ============================================
+
 function createAutocomplete(input, getDataFunction, category) {
-    // FIX #2: Prevent double-initialization
-    if (input.dataset.autocompleteInit === 'true') {
-        debugLog('✅ Autocomplete already initialized for', input.id || input.name);
-        return;
+    if (window.createAutocomplete && window.createAutocomplete !== createAutocomplete) {
+        return window.createAutocomplete(input, getDataFunction, category);
     }
-
-    // Disable browser's native autocomplete/datalist
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('autocorrect', 'off');
-    input.setAttribute('autocapitalize', 'off');
-    input.setAttribute('spellcheck', 'false');
-
-    // Check if wrapper already exists
-    let wrapper = input.closest('.autocomplete-wrapper');
-    if (!wrapper) {
-        wrapper = document.createElement('div');
-        wrapper.className = 'autocomplete-wrapper';
-        input.parentNode.insertBefore(wrapper, input);
-        wrapper.appendChild(input);
-    }
-
-    // Check if dropdown already exists
-    let dropdown = wrapper.querySelector('.autocomplete-dropdown');
-    if (!dropdown) {
-        dropdown = document.createElement('div');
-        dropdown.className = 'autocomplete-dropdown';
-        wrapper.appendChild(dropdown);
-    }
-
-    let currentFocus = -1;
-    let abortController = null; // FIX #2: For cancelling pending requests
-    let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
-    let preventBlur = false; // Flag to prevent blur from closing dropdown during selection
-
-    function commitSelection(value, options = {}) {
-        const { shouldRefocus = false } = options;
-        if (typeof value !== 'string') {
-            return;
-        }
-
-        // Set flag BEFORE any value changes to prevent input event from triggering
-        isCommittingSelection = true;
-
-        // Clear any pending autocomplete fetch to prevent dropdown from re-showing
-        if (createAutocomplete._pendingFetch) {
-            clearTimeout(createAutocomplete._pendingFetch);
-            createAutocomplete._pendingFetch = null;
-        }
-
-        // Hide dropdown immediately
-        hideDropdown();
-        currentFocus = -1;
-
-        // Now set the value
-        input.value = value;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-
-        // Reset flag after a short delay
-        setTimeout(() => {
-            isCommittingSelection = false;
-        }, 150);
-
-        if (shouldRefocus) {
-            // Use timeout to ensure dropdown has fully closed before refocusing
-            setTimeout(() => input.focus(), 0);
-        }
-    }
-
-    function renderSuggestionContent(target, suggestion, query) {
-        const suggestionText = typeof suggestion === 'string'
-            ? suggestion
-            : (suggestion === null || suggestion === undefined ? '' : String(suggestion));
-        const queryText = typeof query === 'string'
-            ? query
-            : (query === null || query === undefined ? '' : String(query));
-        const normalizedQuery = queryText.toLowerCase();
-        const normalizedSuggestion = suggestionText.toLowerCase();
-        const matchIndex = normalizedSuggestion.indexOf(normalizedQuery);
-
-        target.textContent = '';
-
-        if (!normalizedQuery || matchIndex === -1) {
-            target.textContent = suggestionText;
-            return;
-        }
-
-        const before = suggestionText.substring(0, matchIndex);
-        const match = suggestionText.substring(matchIndex, matchIndex + queryText.length);
-        const after = suggestionText.substring(matchIndex + queryText.length);
-
-        if (before) {
-            target.appendChild(document.createTextNode(before));
-        }
-
-        const strong = document.createElement('strong');
-        strong.textContent = match;
-        target.appendChild(strong);
-
-        if (after) {
-            target.appendChild(document.createTextNode(after));
-        }
-    }
-
-    function showDropdown(items) {
-        dropdown.innerHTML = '';
-        dropdown.style.display = 'block';
-        dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
-
-        if (items.length === 0) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'autocomplete-item';
-            emptyDiv.textContent = 'No matches found';
-            emptyDiv.style.color = '#9ca3af';
-            emptyDiv.dataset.placeholder = 'true';
-            dropdown.appendChild(emptyDiv);
-            return;
-        }
-
-        items.forEach((item) => {
-            const div = document.createElement('div');
-            div.className = 'autocomplete-item';
-            const suggestionText = typeof item === 'string'
-                ? item
-                : (item === null || item === undefined ? '' : String(item));
-            div.dataset.value = suggestionText;
-
-            renderSuggestionContent(div, suggestionText, input.value);
-
-            // Use mousedown to fire BEFORE blur event (which hides dropdown)
-            div.addEventListener('mousedown', () => {
-                preventBlur = true; // Prevent blur from hiding dropdown
-                commitSelection(suggestionText, { shouldRefocus: false });
-                setTimeout(() => { preventBlur = false; }, 100);
-            });
-
-            dropdown.appendChild(div);
-        });
-    }
-
-    function hideDropdown() {
-        dropdown.style.display = 'none';
-        currentFocus = -1;
-    }
-    
-    input.addEventListener('input', () => {
-        // Skip if we're committing a selection (prevents dropdown from re-showing)
-        if (isCommittingSelection) {
-            return;
-        }
-
-        const value = input.value.trim();
-        if (!value) {
-            hideDropdown();
-            return;
-        }
-        // Merge local items with remote suggestions (debounced)
-        const localItems = (typeof getDataFunction === 'function') ? getDataFunction() : [];
-        const localFiltered = localItems.filter(item => item.toLowerCase().includes(value.toLowerCase()));
-
-        showDropdown(localFiltered);
-
-        // FIX #2: Cancel any pending remote fetch
-        if (abortController) {
-            abortController.abort();
-        }
-
-        // Debounced remote fetch with improved error handling
-        if (createAutocomplete._pendingFetch) clearTimeout(createAutocomplete._pendingFetch);
-        createAutocomplete._pendingFetch = setTimeout(async () => {
-            const q = encodeURIComponent(value);
-            const params = `?category=${encodeURIComponent(category)}&q=${q}`;
-            const API_ENDPOINTS = getAPIEndpoints();
-            const remoteUrl = API_ENDPOINTS.AUTOCOMPLETE + params;
-
-            try {
-                // FIX #2: Create new AbortController for this request
-                abortController = new AbortController();
-
-                const resp = await fetch(remoteUrl, {
-                    cache: 'no-store',
-                    signal: abortController.signal
-                });
-
-                if (!resp.ok) {
-                    console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
-                    return; // Keep showing local items
-                }
-
-                const contentType = resp.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
-                    return; // Keep showing local items
-                }
-
-                const json = await resp.json();
-                if (json && json.success && Array.isArray(json.values)) {
-                    const merged = Array.from(new Set([...localFiltered, ...json.values]));
-                    showDropdown(merged);
-                    debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
-                } else {
-                    console.warn('⚠️ Autocomplete API returned unexpected format:', json);
-                }
-            } catch (e) {
-                if (e.name === 'AbortError') {
-                    // Request was cancelled, ignore silently
-                    return;
-                }
-                console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
-                // Keep showing local items on error
-            }
-        }, 300); // Increased from 220ms to 300ms for better performance
-    }, { passive: true });
-
-    input.addEventListener('focus', () => {
-        // Only trigger autocomplete dropdown if not during a programmatic UI update
-        if (input.value.trim() && !isUpdatingUI) {
-            input.dispatchEvent(new Event('input'));
-        }
-    }, { passive: true });
-
-    input.addEventListener('blur', () => {
-        setTimeout(() => {
-            if (!preventBlur) {
-                hideDropdown();
-            }
-        }, 200);
-    }, { passive: true });
-
-    input.addEventListener('keydown', (e) => {
-        const items = dropdown.querySelectorAll('.autocomplete-item');
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            currentFocus++;
-            if (currentFocus >= items.length) currentFocus = 0;
-            setActive(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            currentFocus--;
-            if (currentFocus < 0) currentFocus = items.length - 1;
-            setActive(items);
-        } else if (e.key === 'Enter' || e.key === 'Tab') {
-            const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
-            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
-            const isTab = e.key === 'Tab';
-
-            const maybePreventDefault = () => {
-                if (!isTab) {
-                    e.preventDefault();
-                }
-            };
-
-            if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
-                maybePreventDefault();
-                commitSelection(items[currentFocus].dataset.value);
-            } else if (hasVisibleOptions) {
-                maybePreventDefault();
-                commitSelection(actionableItems[0].dataset.value);
-            } else if (input.value.trim() && category) {
-                const trimmedValue = input.value.trim();
-                addCustomValue(category, trimmedValue);
-                maybePreventDefault();
-                commitSelection(trimmedValue);
-            } else if (!isTab) {
-                e.preventDefault();
-            }
-
-            if (isTab && dropdown.style.display !== 'none') {
-                hideDropdown();
-            }
-        } else if (e.key === 'Escape') {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            hideDropdown();
-            isCommittingSelection = false; // Reset flag
-            return; // Exit early - don't process further
-        }
-    }, { passive: false });
-    
-    function setActive(items) {
-        items.forEach((item, index) => {
-            if (index === currentFocus) {
-                item.classList.add('active');
-                item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('active');
-            }
-        });
-    }
-
-    // FIX #2: Mark as initialized to prevent double-initialization
-    input.dataset.autocompleteInit = 'true';
-    debugLog('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
+    // Autocomplete module not loaded - skip initialization
+    console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
 }
 
 function initializeAutocompleteFields() {
-    const categoryFunctions = {
-        operator: getAllOperators,
-        facility: getAllFacilityNames,
-        human: getAllHumanNames,
-        referrer: getAllReferrers,
-        type: getAllFacilityTypes,
-        status: getAllStatuses,
-        gender: getAllGenders,
-        location: getAllLocations,
-        membership: getAllMemberships,
-        accreditation: getAllAccreditations,
-        certification: getAllCertifications,
-        licensing: () => Array.from(customLicensing),
-        investor: () => Array.from(customInvestors),
-        role: getAllStaffRoles,
-        operatingperiod: getAllOperatingPeriods
-    };
-
-    document.querySelectorAll('input[type="text"][data-autocomplete-category]:not(.array-input)').forEach(field => {
-        if (field.dataset.autocompleteInit === 'true') {
-            return;
-        }
-
-        const category = field.dataset.autocompleteCategory;
-        const dataFunction = categoryFunctions[category];
-
-        if (typeof dataFunction === 'function') {
-            createAutocomplete(field, dataFunction, category);
-        } else {
-            console.warn('⚠️ No autocomplete data provider configured for category', category, field);
-        }
-    });
+    if (window.initializeAutocompleteFields && window.initializeAutocompleteFields !== initializeAutocompleteFields) {
+        return window.initializeAutocompleteFields();
+    }
+    // Autocomplete module not loaded - skip initialization
+    console.warn('[Facility Form] Autocomplete module not loaded, skipping initializeAutocompleteFields');
 }
 
 function initializeSectionToggles() {
