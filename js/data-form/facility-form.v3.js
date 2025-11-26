@@ -277,85 +277,24 @@ let currentProjectName = null;
 let currentFacilityIndex = 0;
 let formData = null;
 
-// Custom data from localStorage (backup only)
-// These are now managed by the autocomplete module but we keep references for compatibility
-let customOperators = window.customOperators || [];
-let customFacilityNames = window.customFacilityNames || [];
-let customHumanNames = window.customHumanNames || [];
-let customReferrers = window.customReferrers || [];
-let customFacilityTypes = window.customFacilityTypes || [];
-let customCertifications = window.customCertifications || [];
-let customAccreditations = window.customAccreditations || [];
-let customMemberships = window.customMemberships || [];
-let customLicensing = window.customLicensing || [];
-let customInvestors = window.customInvestors || [];
-let customStaffRoles = window.customStaffRoles || [];
-let customStatuses = window.customStatuses || [];
-let customGenders = window.customGenders || [];
-let customLocations = window.customLocations || [];
-let customOperatingPeriods = window.customOperatingPeriods || [];
+// Custom data is now managed by the autocomplete.js module
+// Access via window.customOperators, window.customFacilityNames, etc.
 
 // ============================================
 // AGGREGATED DATA CACHE - Delegated to autocomplete.js module
 // The aggregatedDataCache, CACHE_CATEGORY_MAP, and invalidateAggregatedData
-// are now defined in autocomplete.js. Keeping minimal references for compatibility.
+// are now defined in autocomplete.js. No need to redeclare here.
 // ============================================
-const aggregatedDataCache = {
-    operators: null,
-    facilityNames: null,
-    humanNames: null,
-    referrers: null,
-    facilityTypes: null,
-    staffRoles: null,
-    certifications: null,
-    accreditations: null,
-    memberships: null,
-    locations: null,
-    statuses: null,
-    genders: null,
-    operatingPeriods: null
-};
-
-const CACHE_CATEGORY_MAP = {
-    operator: 'operators',
-    facility: 'facilityNames',
-    human: 'humanNames',
-    referrer: 'referrers',
-    type: 'facilityTypes',
-    role: 'staffRoles',
-    certification: 'certifications',
-    accreditation: 'accreditations',
-    membership: 'memberships',
-    location: 'locations',
-    status: 'statuses',
-    gender: 'genders',
-    operatingperiod: 'operatingPeriods'
-};
-
 // noteFieldRegistry is now managed by the notes module (notes.js)
 // The notes module exports it globally as window.noteFieldRegistry
 
-// invalidateAggregatedData is now delegated to the autocomplete module
-// Keeping a local reference for backward compatibility
+// invalidateAggregatedData - delegate to autocomplete module
 function invalidateAggregatedData(category = null) {
-    // Delegate to autocomplete module if available
     if (typeof window.invalidateAggregatedData === 'function' && window.invalidateAggregatedData !== invalidateAggregatedData) {
-        window.invalidateAggregatedData(category);
-        return;
+        return window.invalidateAggregatedData(category);
     }
-    
-    // Fallback implementation
-    if (!category) {
-        Object.keys(aggregatedDataCache).forEach(key => {
-            aggregatedDataCache[key] = null;
-        });
-        return;
-    }
-
-    const cacheKey = CACHE_CATEGORY_MAP[category];
-    if (cacheKey) {
-        aggregatedDataCache[cacheKey] = null;
-    }
+    // Autocomplete module not loaded - cannot invalidate cache
+    debugLog('[Facility Form] Cannot invalidate cache - autocomplete module not loaded');
 }
 
 // Make globals available
@@ -430,8 +369,20 @@ function toSnakeCase(str) {
 }
 
 // Normalize project data to handle different field name variations
+// Also ensures default structures exist for all required fields
 function normalizeProjectData(data) {
-    if (!data || typeof data !== 'object') return data;
+    // Handle null/undefined data - create default structure
+    if (!data) {
+        return typeof createNewProjectData === 'function' ? createNewProjectData() : {
+            operator: { name: "", otherNames: [], websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] }, notes: [] },
+            facilities: [],
+            referrerAgency: typeof createDefaultReferrerGroup === 'function' ? createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} },
+            referrerConsultants: [typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], fieldNotes: {} }],
+            fieldNotes: {}
+        };
+    }
+    
+    if (typeof data !== 'object') return data;
 
     // Helper to get value trying different key variations
     const getValue = (obj, ...keys) => {
@@ -730,6 +681,61 @@ function normalizeProjectData(data) {
         });
     }
 
+    // Ensure default structures exist (merged from previous duplicate function)
+    if (!data.operator) {
+        data.operator = {
+            name: "", currentName: "", otherNames: [], location: "", headquarters: "",
+            founded: "", operatingPeriod: "", status: "", parentCompanies: [],
+            websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
+            notes: []
+        };
+    }
+
+    if (!data.facilities || !Array.isArray(data.facilities)) {
+        data.facilities = [];
+    }
+
+    if (!data.referrerAgency || typeof data.referrerAgency !== 'object') {
+        data.referrerAgency = typeof createDefaultReferrerGroup === 'function' ? createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} };
+    } else {
+        const defaults = typeof createDefaultReferrerGroup === 'function' ? createDefaultReferrerGroup() : {};
+        data.referrerAgency = Object.assign(defaults, data.referrerAgency);
+        if (!Array.isArray(data.referrerAgency.keyPersonnel)) {
+            data.referrerAgency.keyPersonnel = [];
+        }
+        if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
+            data.referrerAgency.fieldNotes = {};
+        }
+    }
+
+    if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
+        const defaultIndividual = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], fieldNotes: {} };
+        data.referrerConsultants = [defaultIndividual];
+    } else {
+        data.referrerConsultants = data.referrerConsultants.map(consultant => {
+            const defaults = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : {};
+            const merged = Object.assign(defaults, consultant || {});
+            if (!Array.isArray(merged.affiliations)) merged.affiliations = [];
+            if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
+            if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
+            if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
+            return merged;
+        });
+    }
+
+    if (typeof data.isIndependentConsultant === 'undefined') {
+        data.isIndependentConsultant = false;
+    }
+
+    if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
+        data.fieldNotes = {};
+    }
+
+    // Build referrer entries from the data
+    if (typeof buildReferrerEntries === 'function') {
+        data.referrer = buildReferrerEntries(data);
+    }
+
     return data;
 }
 
@@ -757,109 +763,19 @@ function showUploadStatus(message, type) {
     }
 }
 
-function normalizeProjectData(data) {
-    if (!data) return createNewProjectData();
-
-    if (!data.operator) {
-        data.operator = {
-            name: "", currentName: "", otherNames: [], location: "", headquarters: "",
-            founded: "", operatingPeriod: "", status: "", parentCompanies: [],
-            websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
-            notes: []
-        };
-    }
-
-    if (!data.facilities || !Array.isArray(data.facilities)) {
-        data.facilities = [];
-    }
-
-    if (!data.referrerAgency || typeof data.referrerAgency !== 'object') {
-        data.referrerAgency = createDefaultReferrerGroup();
-    } else {
-        data.referrerAgency = Object.assign(createDefaultReferrerGroup(), data.referrerAgency);
-        if (!Array.isArray(data.referrerAgency.keyPersonnel)) {
-            data.referrerAgency.keyPersonnel = [];
-        }
-        if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
-            data.referrerAgency.fieldNotes = {};
-        }
-    }
-
-    if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
-        data.referrerConsultants = [createDefaultReferrerIndividual()];
-    } else {
-        data.referrerConsultants = data.referrerConsultants.map(consultant => {
-            const defaults = createDefaultReferrerIndividual();
-            const merged = Object.assign(defaults, consultant || {});
-            if (!Array.isArray(merged.affiliations)) merged.affiliations = [];
-            if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
-            if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
-            if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
-            return merged;
-        });
-    }
-
-    if (typeof data.isIndependentConsultant === 'undefined') {
-        data.isIndependentConsultant = false;
-    }
-
-    if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
-        data.fieldNotes = {};
-    }
-
-    data.referrer = buildReferrerEntries(data);
-
-    return data;
-}
+// NOTE: normalizeProjectData function is defined earlier in this file (around line 372)
+// It handles both field name normalization AND default structure initialization
+// The following function was removed as it was a duplicate that shadowed the first definition
 
 // ============================================
-// LOCALSTORAGE BACKUP FUNCTIONS
+// LOCALSTORAGE BACKUP FUNCTIONS - Delegated to autocomplete.js and db-form-loader.js
 // ============================================
 function loadCustomDataFromLocalStorage() {
-    // Helper to deduplicate and clean arrays
-    const dedupe = (arr) => [...new Set(arr.filter(v => v && v.trim()).map(v => v.trim()))];
-
-    try {
-        customOperators = dedupe(JSON.parse(localStorage.getItem('customOperators') || '[]'));
-        customFacilityNames = dedupe(JSON.parse(localStorage.getItem('customFacilityNames') || '[]'));
-        customHumanNames = dedupe(JSON.parse(localStorage.getItem('customHumanNames') || '[]'));
-        customReferrers = dedupe(JSON.parse(localStorage.getItem('customReferrers') || '[]'));
-        customFacilityTypes = dedupe(JSON.parse(localStorage.getItem('customFacilityTypes') || '[]'));
-        customCertifications = dedupe(JSON.parse(localStorage.getItem('customCertifications') || '[]'));
-        customAccreditations = dedupe(JSON.parse(localStorage.getItem('customAccreditations') || '[]'));
-        customMemberships = dedupe(JSON.parse(localStorage.getItem('customMemberships') || '[]'));
-        customLicensing = dedupe(JSON.parse(localStorage.getItem('customLicensing') || '[]'));
-        customInvestors = dedupe(JSON.parse(localStorage.getItem('customInvestors') || '[]'));
-        customStaffRoles = dedupe(JSON.parse(localStorage.getItem('customStaffRoles') || '[]'));
-        customStatuses = dedupe(JSON.parse(localStorage.getItem('customStatuses') || '[]'));
-        customGenders = dedupe(JSON.parse(localStorage.getItem('customGenders') || '[]'));
-        customLocations = dedupe(JSON.parse(localStorage.getItem('customLocations') || '[]'));
-        customOperatingPeriods = dedupe(JSON.parse(localStorage.getItem('customOperatingPeriods') || '[]'));
-    } catch (e) {
-        console.warn('Failed to load custom data from localStorage:', e);
+    // Delegate to form loader if available
+    if (window.KOP_FormLoader && typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
+        return window.KOP_FormLoader.loadCustomDataFromLocalStorage();
     }
-
-    // Save the cleaned, deduplicated values back to localStorage
-    try {
-        localStorage.setItem('customOperators', JSON.stringify(customOperators));
-        localStorage.setItem('customFacilityNames', JSON.stringify(customFacilityNames));
-        localStorage.setItem('customHumanNames', JSON.stringify(customHumanNames));
-        localStorage.setItem('customReferrers', JSON.stringify(customReferrers));
-        localStorage.setItem('customFacilityTypes', JSON.stringify(customFacilityTypes));
-        localStorage.setItem('customCertifications', JSON.stringify(customCertifications));
-        localStorage.setItem('customAccreditations', JSON.stringify(customAccreditations));
-        localStorage.setItem('customMemberships', JSON.stringify(customMemberships));
-        localStorage.setItem('customLicensing', JSON.stringify(customLicensing));
-        localStorage.setItem('customInvestors', JSON.stringify(customInvestors));
-        localStorage.setItem('customStaffRoles', JSON.stringify(customStaffRoles));
-        localStorage.setItem('customStatuses', JSON.stringify(customStatuses));
-        localStorage.setItem('customGenders', JSON.stringify(customGenders));
-        localStorage.setItem('customLocations', JSON.stringify(customLocations));
-        localStorage.setItem('customOperatingPeriods', JSON.stringify(customOperatingPeriods));
-    } catch (e) {
-        console.warn('Failed to save cleaned data to localStorage:', e);
-    }
-
+    // Fallback - just invalidate cache so fresh data is pulled
     invalidateAggregatedData();
 }
 
@@ -872,120 +788,22 @@ function saveToLocalStorage(key, value) {
 }
 
 function addCustomValue(category, value) {
-    const trimmedValue = value?.trim();
-    if (!trimmedValue) return false;
-
-    let array;
-    let key;
-    
-    switch(category) {
-        case 'operator':
-            array = customOperators;
-            key = 'customOperators';
-            break;
-        case 'facility':
-            array = customFacilityNames;
-            key = 'customFacilityNames';
-            break;
-        case 'human':
-            array = customHumanNames;
-            key = 'customHumanNames';
-            break;
-        case 'referrer':
-            array = customReferrers;
-            key = 'customReferrers';
-            break;
-        case 'type':
-            array = customFacilityTypes;
-            key = 'customFacilityTypes';
-            break;
-        case 'certification':
-            array = customCertifications;
-            key = 'customCertifications';
-            break;
-        case 'accreditation':
-            array = customAccreditations;
-            key = 'customAccreditations';
-            break;
-        case 'membership':
-            array = customMemberships;
-            key = 'customMemberships';
-            break;
-        case 'licensing':
-            array = customLicensing;
-            key = 'customLicensing';
-            break;
-        case 'investor':
-            array = customInvestors;
-            key = 'customInvestors';
-            break;
-        case 'role':
-            array = customStaffRoles;
-            key = 'customStaffRoles';
-            break;
-        case 'status':
-            array = customStatuses;
-            key = 'customStatuses';
-            break;
-        case 'gender':
-            array = customGenders;
-            key = 'customGenders';
-            break;
-        case 'location':
-            array = customLocations;
-            key = 'customLocations';
-            break;
-        case 'operatingperiod':
-            array = customOperatingPeriods;
-            key = 'customOperatingPeriods';
-            break;
-        default:
-            return false;
+    // Delegate to autocomplete module if available
+    if (window.addCustomValue && window.addCustomValue !== addCustomValue) {
+        return window.addCustomValue(category, value);
     }
-    
-    if (!array.includes(trimmedValue)) {
-        array.push(trimmedValue);
-        saveToLocalStorage(key, array);
-        invalidateAggregatedData(category);
-        return true;
-    }
-
+    // Fallback - just return false if module not loaded
+    console.warn('[Facility Form] addCustomValue - autocomplete module not loaded');
     return false;
 }
 
 function attachCustomValueRecorder(input, category) {
-    if (!input || !category) {
-        return;
+    // Delegate to autocomplete module if available
+    if (window.attachCustomValueRecorder && window.attachCustomValueRecorder !== attachCustomValueRecorder) {
+        return window.attachCustomValueRecorder(input, category);
     }
-
-    const recorderKey = 'customValueRecorder';
-    if (input.dataset && input.dataset[recorderKey] === category) {
-        return;
-    }
-
-    const recordValue = () => {
-        const trimmed = input.value?.trim();
-        if (!trimmed) {
-            return;
-        }
-
-        if (input.dataset && input.dataset.customValueRecorderLast === trimmed) {
-            return;
-        }
-
-        addCustomValue(category, trimmed);
-
-        if (input.dataset) {
-            input.dataset.customValueRecorderLast = trimmed;
-        }
-    };
-
-    input.addEventListener('change', recordValue, { passive: true });
-    input.addEventListener('blur', recordValue, { passive: true });
-
-    if (input.dataset) {
-        input.dataset[recorderKey] = category;
-    }
+    // Fallback - skip if module not loaded
+    debugLog('[Facility Form] attachCustomValueRecorder - autocomplete module not loaded');
 }
 
 // ============================================
@@ -1117,266 +935,61 @@ function initializeSectionToggles() {
 }
 
 // ============================================
-// FIELD NOTE CONTROLS
+// FIELD NOTE CONTROLS - Delegated to notes.js module
+// These wrapper functions delegate to the module for backward compatibility.
 // ============================================
+
 function ensureFieldNotesStore(scope, createIfMissing = true) {
-    if (!window.formData) {
-        return null;
+    if (window.NotesModule && typeof window.NotesModule.ensureFieldNotesStore === 'function') {
+        return window.NotesModule.ensureFieldNotesStore(scope, createIfMissing);
     }
-
-    if (scope === 'operator') {
-        if (!window.formData.operator) {
-            return null;
-        }
-        if (!window.formData.operator.fieldNotes) {
-            if (!createIfMissing) {
-                return null;
-            }
-            window.formData.operator.fieldNotes = {};
-        }
-        return window.formData.operator.fieldNotes;
-    }
-
-    if (scope === 'facility') {
-        const facility = window.formData.facilities?.[window.currentFacilityIndex];
-        if (!facility) {
-            return null;
-        }
-        if (!facility.fieldNotes) {
-            if (!createIfMissing) {
-                return null;
-            }
-            facility.fieldNotes = {};
-        }
-        return facility.fieldNotes;
-    }
-
-    if (scope === 'referrerGroup') {
-        ensureReferrerDataStructures();
-        if (!window.formData.referrerGroup.fieldNotes) {
-            if (!createIfMissing) {
-                return null;
-            }
-            window.formData.referrerGroup.fieldNotes = {};
-        }
-        return window.formData.referrerGroup.fieldNotes;
-    }
-
-    if (scope === 'referrerIndividual') {
-        ensureReferrerDataStructures();
-        if (!window.formData.referrerIndividual.fieldNotes) {
-            if (!createIfMissing) {
-                return null;
-            }
-            window.formData.referrerIndividual.fieldNotes = {};
-        }
-        return window.formData.referrerIndividual.fieldNotes;
-    }
-
-    if (!window.formData.fieldNotes) {
-        if (!createIfMissing) {
-            return null;
-        }
-        window.formData.fieldNotes = {};
-    }
+    // Minimal fallback
+    if (!window.formData) return null;
+    if (!window.formData.fieldNotes) window.formData.fieldNotes = {};
     return window.formData.fieldNotes;
 }
 
 function getFieldNotes(scope, key, createIfMissing = false) {
-    const store = ensureFieldNotesStore(scope, createIfMissing);
-    if (!store) {
-        return [];
+    if (window.NotesModule && typeof window.NotesModule.getFieldNotes === 'function') {
+        return window.NotesModule.getFieldNotes(scope, key, createIfMissing);
     }
-
-    if (!Object.prototype.hasOwnProperty.call(store, key)) {
-        if (!createIfMissing) {
-            return [];
-        }
-        store[key] = [];
-    }
-
-    const notes = store[key];
-    if (!Array.isArray(notes)) {
-        const normalized = [];
-        if (notes !== null && notes !== undefined && `${notes}`.trim() !== '') {
-            normalized.push(`${notes}`);
-        }
-        store[key] = normalized;
-        return normalized;
-    }
-
-    return notes;
+    return [];
 }
 
 function addFieldNote(scope, key) {
-    const notes = getFieldNotes(scope, key, true);
-    notes.push('');
-    updateJSON();
-    autoSave();
-    renderAllFieldNotes();
+    if (window.NotesModule && typeof window.NotesModule.addFieldNote === 'function') {
+        return window.NotesModule.addFieldNote(scope, key);
+    }
 }
 
 function updateFieldNote(scope, key, index, value) {
-    const notes = getFieldNotes(scope, key, true);
-    if (index >= 0 && index < notes.length) {
-        notes[index] = value;
-        updateJSON();
-        autoSave();
+    if (window.NotesModule && typeof window.NotesModule.updateFieldNote === 'function') {
+        return window.NotesModule.updateFieldNote(scope, key, index, value);
     }
 }
 
 function removeFieldNote(scope, key, index) {
-    const notes = getFieldNotes(scope, key, true);
-    if (index >= 0 && index < notes.length) {
-        notes.splice(index, 1);
-        updateJSON();
-        autoSave();
-        renderAllFieldNotes();
+    if (window.NotesModule && typeof window.NotesModule.removeFieldNote === 'function') {
+        return window.NotesModule.removeFieldNote(scope, key, index);
     }
 }
 
 function renderFieldNotes(container, scope, key) {
-    if (!container) {
-        return;
+    if (window.NotesModule && typeof window.NotesModule.renderFieldNotes === 'function') {
+        return window.NotesModule.renderFieldNotes(container, scope, key);
     }
-
-    const notes = getFieldNotes(scope, key, false);
-    container.innerHTML = '';
-
-    if (!notes.length) {
-        return;
-    }
-
-    notes.forEach((note, index) => {
-        const row = document.createElement('div');
-        row.className = 'note-row';
-
-        const textarea = document.createElement('textarea');
-        textarea.className = 'note-textarea';
-        textarea.placeholder = 'Add supporting notes...';
-        textarea.rows = 3;
-        textarea.value = note || '';
-        textarea.addEventListener('input', () => {
-            updateFieldNote(scope, key, index, textarea.value);
-        }, { passive: true });
-
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'remove-note-btn';
-        removeBtn.textContent = '−';
-        removeBtn.addEventListener('click', () => {
-            removeFieldNote(scope, key, index);
-        }, { passive: true });
-
-        row.appendChild(textarea);
-        row.appendChild(removeBtn);
-        container.appendChild(row);
-    });
 }
 
 function renderAllFieldNotes() {
-    if (!Array.isArray(window.noteFieldRegistry)) {
-        return;
+    if (window.NotesModule && typeof window.NotesModule.renderAllFieldNotes === 'function') {
+        return window.NotesModule.renderAllFieldNotes();
     }
-
-    window.noteFieldRegistry.forEach(entry => {
-        if (!entry) {
-            return;
-        }
-        const { scope, key, container } = entry;
-        renderFieldNotes(container, scope, key);
-    });
 }
 
 function initializeNoteControls() {
-    // Preserve existing array item entries (those with keys containing a dot followed by a number like "staff.administrator.0")
-    const arrayItemEntries = (window.noteFieldRegistry || []).filter(entry => {
-        if (!entry || !entry.key) return false;
-        // Keep entries that look like array items (e.g., "path.0", "path.1", etc.)
-        return /\.\d+$/.test(entry.key);
-    });
-
-    // Reset registry but keep array item entries
-    window.noteFieldRegistry = [...arrayItemEntries];
-
-    document.querySelectorAll('[data-note-scope][data-note-key]').forEach(field => {
-        if (field.closest('.array-item')) {
-            return;
-        }
-
-        const scope = field.dataset.noteScope;
-        const key = field.dataset.noteKey;
-        const group = field.closest('.form-group') || field.closest('.checkbox-group');
-
-        if (!group || !scope || !key) {
-            return;
-        }
-
-        const isCheckbox = field.type === 'checkbox';
-
-        // Skip checkboxes entirely - they use the new note system from data.html
-        if (isCheckbox) {
-            return;
-        }
-        let container = group.querySelector('.field-notes');
-        let controls = group.querySelector('.note-controls');
-
-        if (!controls) {
-            // Create the + button
-            const addBtn = document.createElement('button');
-            addBtn.type = 'button';
-            addBtn.className = 'note-add-btn field-note-btn';
-            addBtn.textContent = '+';
-            addBtn.setAttribute('aria-label', 'Add note');
-            addBtn.dataset.noteEventAttached = 'true'; // Note: cannot be passive
-            addBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                addFieldNote(scope, key);
-            });
-
-            // Insert button after the field (inline)
-            field.parentNode.insertBefore(addBtn, field.nextSibling);
-
-            // Create notes container (goes below field and button)
-            container = document.createElement('div');
-            container.className = 'field-notes';
-
-            controls = document.createElement('div');
-            controls.className = 'note-controls';
-            controls.appendChild(container);
-            group.appendChild(controls);
-
-            // Add class to form-group for proper layout
-            group.classList.add('has-note-button');
-
-            field.dataset.noteInit = 'true';
-        } else {
-            // Controls exist, make sure container reference is correct
-            if (!container) {
-                container = controls.querySelector('.field-notes');
-            }
-            // Check if button needs event listener (shouldn't happen, but defensive)
-            const addBtn = controls.querySelector('.note-add-btn');
-            if (addBtn && !addBtn.dataset.noteEventAttached) {
-                addBtn.dataset.noteEventAttached = 'true'; // Note: cannot be passive
-                addBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    addFieldNote(scope, key);
-                });
-            }
-            if (field.dataset.noteInit !== 'true') {
-                field.dataset.noteInit = 'true';
-            }
-        }
-
-        if (!window.noteFieldRegistry.some(entry => entry && entry.container === container)) {
-            window.noteFieldRegistry.push({ scope, key, container });
-        }
-    });
-
-    renderAllFieldNotes();
+    if (window.NotesModule && typeof window.NotesModule.initializeNoteControls === 'function') {
+        return window.NotesModule.initializeNoteControls();
+    }
 }
 
 // ============================================
@@ -1834,217 +1447,57 @@ function autoSave() {
 
 window.autoSave = autoSave;
 
+// ============================================
+// REFERRER FUNCTIONS - Delegated to referrer-form.js module
+// These wrapper functions delegate to the module for backward compatibility.
+// ============================================
+
 function createDefaultReferrerGroup() {
+    if (window.createDefaultReferrerGroup && window.createDefaultReferrerGroup !== createDefaultReferrerGroup) {
+        return window.createDefaultReferrerGroup();
+    }
+    // Fallback implementation
     return {
-        name: "",
-        city: "",
-        state: "",
-        website: "",
-        address: "",
-        founded: "",
-        affiliations: [],
-        keyPersonnel: [],
-        notes: "",
-        fieldNotes: {}
+        name: "", city: "", state: "", website: "", address: "", founded: "",
+        affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {}
     };
 }
 
 function createDefaultReferrerIndividual() {
+    if (window.createDefaultReferrerIndividual && window.createDefaultReferrerIndividual !== createDefaultReferrerIndividual) {
+        return window.createDefaultReferrerIndividual();
+    }
+    // Fallback implementation
     return {
-        firstName: "",
-        lastName: "",
-        fullName: "",
-        role: "",
-        status: "",
-        education: "",
-        credentials: "",
-        city: "",
-        state: "",
-        email: "",
-        phone: "",
-        website: "",
-        affiliations: [],
-        facilitiesReferred: [],
-        knownReferrals: [],
-        pastTTIJobs: [],
-        schoolDistricts: [],
-        lawsuits: "",
-        notes: "",
-        fieldNotes: {}
+        firstName: "", lastName: "", fullName: "", role: "", status: "",
+        education: "", credentials: "", city: "", state: "", email: "", phone: "",
+        website: "", affiliations: [], facilitiesReferred: [], knownReferrals: [],
+        pastTTIJobs: [], schoolDistricts: [], lawsuits: "", notes: "", fieldNotes: {}
     };
 }
 
-function buildReferrerEntries(formData) {
-    const source = formData || {};
-    const agency = (source.referrerAgency && typeof source.referrerAgency === 'object')
-        ? source.referrerAgency
-        : createDefaultReferrerGroup();
-
-    const rawKeyPersonnel = Array.isArray(agency.keyPersonnel) ? agency.keyPersonnel : [];
-    const keyPersonnel = rawKeyPersonnel
-        .map(person => (typeof person === 'string' ? person.trim() : ''))
-        .filter(person => person);
-
-    const dataTemplate = {};
-    keyPersonnel.forEach((person, index) => {
-        dataTemplate[`referrerAgency.keyPersonnel.${index}`] = [person];
-    });
-
-    const cloneTemplate = () => {
-        const clone = {};
-        Object.entries(dataTemplate).forEach(([key, value]) => {
-            clone[key] = Array.isArray(value) ? value.slice() : value;
-        });
-        return clone;
-    };
-
-    const consultants = Array.isArray(source.referrerConsultants) ? source.referrerConsultants : [];
-    const agencyName = (agency.name || '').trim();
-
-    if (!consultants.length) {
-        return [{
-            name: agencyName,
-            data: cloneTemplate(),
-            referrerAgency: {
-                keyPersonnel: keyPersonnel.slice()
-            },
-            consultant: {
-                affiliations: [],
-                facilitiesReferred: [],
-                schoolDistricts: []
-            }
-        }];
+function buildReferrerEntries(formDataArg) {
+    if (window.buildReferrerEntries && window.buildReferrerEntries !== buildReferrerEntries) {
+        return window.buildReferrerEntries(formDataArg);
     }
-
-    return consultants.map(consultant => {
-        const affiliations = Array.isArray(consultant?.affiliations) ? consultant.affiliations.filter(item => item !== undefined && item !== null) : [];
-        const facilities = Array.isArray(consultant?.facilitiesReferred) ? consultant.facilitiesReferred.filter(item => item !== undefined && item !== null) : [];
-        const districts = Array.isArray(consultant?.schoolDistricts) ? consultant.schoolDistricts.filter(item => item !== undefined && item !== null) : [];
-        const consultantName = [consultant?.firstName, consultant?.lastName]
-            .map(part => (typeof part === 'string' ? part.trim() : ''))
-            .filter(Boolean)
-            .join(' ');
-
-        return {
-            name: agencyName || consultantName,
-            data: cloneTemplate(),
-            referrerAgency: {
-                keyPersonnel: keyPersonnel.slice()
-            },
-            consultant: {
-                affiliations: affiliations.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
-                facilitiesReferred: facilities.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
-                schoolDistricts: districts.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim())
-            }
-        };
-    });
-}
-
-function combineCityState(city, state) {
-    const trimmedCity = (city || "").trim();
-    const trimmedState = (state || "").trim();
-
-    if (trimmedCity && trimmedState) {
-        return `${trimmedCity}, ${trimmedState}`;
-    }
-
-    return trimmedCity || trimmedState || "";
-}
-
-function parseCityState(value) {
-    if (!value || typeof value !== 'string') {
-        return { city: "", state: "" };
-    }
-
-    const parts = value.split(',');
-    if (parts.length === 1) {
-        return { city: value.trim(), state: "" };
-    }
-
-    const city = parts.shift().trim();
-    const state = parts.join(',').trim();
-    return { city, state };
+    // Fallback - return empty array
+    return [];
 }
 
 function ensureReferrerDataStructures() {
-    if (!window.formData) {
-        return;
+    if (window.ensureReferrerDataStructures && window.ensureReferrerDataStructures !== ensureReferrerDataStructures) {
+        return window.ensureReferrerDataStructures();
     }
-
-    const legacyAgency = window.formData.referrerAgency || window.formData.referrerGroup || {};
-    const agency = Object.assign(createDefaultReferrerGroup(), legacyAgency);
-    if (!Array.isArray(agency.affiliations)) {
-        agency.affiliations = [];
+    // Minimal fallback implementation
+    if (!window.formData) return;
+    if (!window.formData.referrerAgency) {
+        window.formData.referrerAgency = createDefaultReferrerGroup();
     }
-    if (!Array.isArray(agency.keyPersonnel)) {
-        agency.keyPersonnel = [];
-    }
-    window.formData.referrerAgency = agency;
-    window.formData.referrerGroup = agency;
-
+    window.formData.referrerGroup = window.formData.referrerAgency;
     if (!Array.isArray(window.formData.referrerConsultants)) {
-        window.formData.referrerConsultants = [];
+        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
     }
-
-    // Merge legacy single referrerIndividual objects into the consultants array
-    if (window.formData.referrerIndividual && window.formData.referrerConsultants.length === 0) {
-        window.formData.referrerConsultants.push(window.formData.referrerIndividual);
-    }
-
-    window.formData.referrerConsultants = window.formData.referrerConsultants.map((consultant) => {
-        const merged = Object.assign(createDefaultReferrerIndividual(), consultant || {});
-        if (!Array.isArray(merged.affiliations)) {
-            merged.affiliations = [];
-        }
-        if (!Array.isArray(merged.knownReferrals)) {
-            merged.knownReferrals = Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
-        }
-        // Keep legacy facilitiesReferred array in sync with new knownReferrals field
-        merged.facilitiesReferred = merged.knownReferrals;
-        if (!Array.isArray(merged.pastTTIJobs)) {
-            merged.pastTTIJobs = [];
-        }
-        const mergedNameCandidates = [
-            (merged.fullName || '').trim(),
-            (merged.name || '').trim(),
-            [merged.firstName, merged.lastName].filter(Boolean).join(' ').trim()
-        ].filter(Boolean);
-        if (mergedNameCandidates.length) {
-            // Pick the longest candidate so we don't collapse to a single letter
-            const bestName = mergedNameCandidates.reduce((winner, candidate) => candidate.length > winner.length ? candidate : winner, '');
-            merged.fullName = bestName;
-            if (!merged.firstName && !merged.lastName) {
-                const parts = bestName.split(/\s+/);
-                merged.firstName = parts.shift() || '';
-                merged.lastName = parts.join(' ');
-            }
-        }
-        if (!merged.education && merged.credentials) {
-            merged.education = merged.credentials;
-        }
-        return merged;
-    });
-
-    if (window.formData.referrerConsultants.length === 0) {
-        window.formData.referrerConsultants.push(createDefaultReferrerIndividual());
-    }
-
-    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0) {
-        window.currentConsultantIndex = 0;
-    }
-    if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
-        window.currentConsultantIndex = 0;
-    }
-
-    const activeConsultant = window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
-    window.formData.referrerConsultants[window.currentConsultantIndex] = activeConsultant;
-    window.formData.referrerIndividual = activeConsultant;
-
-    if (!window.formData.referrerType) {
-        window.formData.referrerType = window.formData.isIndependentConsultant ? 'individual' : 'group';
-    }
-
-    window.formData.referrer = buildReferrerEntries(window.formData);
+    window.formData.referrerIndividual = window.formData.referrerConsultants[0];
 }
 
 function resolvePathTarget(path) {
