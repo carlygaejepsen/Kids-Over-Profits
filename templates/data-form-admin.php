@@ -79,7 +79,12 @@
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                        <div class="form-group" style="text-align: center; margin-top: 15px;">
+                            <button class="btn" id="rebuild-locations-btn" style="background: #059669; color: white;">🔄 Rebuild All Location Projects</button>
+                            <p style="margin-top: 8px; color: #6b7280; font-size: 12px;">Scans all company/referrer projects and rebuilds location aggregates</p>
+                        </div>
+                        <div id="rebuild-status" style="display: none; margin-top: 10px; padding: 10px; border-radius: 6px;"></div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects are automatically updated when you save company or referrer projects. </p>
                     </div>
 
                     <!-- Facilities Overview for Locations -->

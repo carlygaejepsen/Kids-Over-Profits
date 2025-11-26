@@ -1775,6 +1775,78 @@
                 initializeLocationFacilitiesToc();
             }
 
+            // Add handler for Rebuild Location Projects button
+            const rebuildLocationsBtn = document.getElementById('rebuild-locations-btn');
+            if (rebuildLocationsBtn && !rebuildLocationsBtn.dataset.rebuildClickAttached) {
+                rebuildLocationsBtn.addEventListener('click', async function() {
+                    const rebuildStatus = document.getElementById('rebuild-status');
+                    
+                    // Confirm action
+                    if (!confirm('This will rebuild all location projects from existing company and referrer data. Continue?')) {
+                        return;
+                    }
+                    
+                    // Show loading status
+                    rebuildLocationsBtn.disabled = true;
+                    rebuildLocationsBtn.textContent = '⏳ Rebuilding...';
+                    if (rebuildStatus) {
+                        rebuildStatus.style.display = 'block';
+                        rebuildStatus.style.background = '#e0f2fe';
+                        rebuildStatus.style.color = '#0369a1';
+                        rebuildStatus.textContent = '🔄 Processing all projects...';
+                    }
+                    
+                    try {
+                        // Get API endpoint
+                        const API_ENDPOINTS = typeof getAPIEndpoints === 'function' ? getAPIEndpoints() : {};
+                        const saveEndpoint = API_ENDPOINTS.SAVE_PROJECT || 
+                            (window.KOP_FACILITY_FORM_CONFIG?.apiBase || '') + '/api/save-master.php';
+                        
+                        const response = await fetch(saveEndpoint, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                projectName: '__rebuild__',
+                                action: 'rebuild-locations'
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            if (rebuildStatus) {
+                                rebuildStatus.style.background = '#dcfce7';
+                                rebuildStatus.style.color = '#166534';
+                                rebuildStatus.innerHTML = `✅ ${result.message}<br><small>Refresh to see updated location projects.</small>`;
+                            }
+                            
+                            // Log details
+                            console.log('Location rebuild details:', result.details);
+                            
+                            // Reload projects to show updates
+                            if (typeof window.loadProjectsFromServer === 'function') {
+                                setTimeout(() => {
+                                    window.loadProjectsFromServer();
+                                }, 1000);
+                            }
+                        } else {
+                            throw new Error(result.error || 'Unknown error');
+                        }
+                    } catch (error) {
+                        console.error('Failed to rebuild locations:', error);
+                        if (rebuildStatus) {
+                            rebuildStatus.style.background = '#fee2e2';
+                            rebuildStatus.style.color = '#991b1b';
+                            rebuildStatus.textContent = `❌ Failed: ${error.message}`;
+                        }
+                    } finally {
+                        rebuildLocationsBtn.disabled = false;
+                        rebuildLocationsBtn.textContent = '🔄 Rebuild All Location Projects';
+                    }
+                });
+                rebuildLocationsBtn.dataset.rebuildClickAttached = 'true';
+            }
+
             adminPageInitialized = true;
         };
 
