@@ -79,9 +79,9 @@ get_header();
 <script>
 // Configure the JSON data source
 window.facilitiesConfig = {
-    jsonDataUrl: '<?php echo get_stylesheet_directory_uri(); ?>/js/data/facilities_master.json',
+    jsonDataUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
     jsonFileUrls: [
-        '<?php echo get_stylesheet_directory_uri(); ?>/js/data/facilities_master.json'
+        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
     ]
 };
 </script>
