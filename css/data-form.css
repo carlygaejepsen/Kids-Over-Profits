@@ -844,6 +844,14 @@ body:not(.admin-bar) .fixed-toolbar {
     margin-bottom: 20px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: max-width 0.3s ease, margin 0.3s ease;
+}
+
+.section.expanded {
+    max-width: 100%;
 }
 
 .section-header {
@@ -886,6 +894,7 @@ body:not(.admin-bar) .fixed-toolbar {
     border: 2px solid #B2E102; /* Chartreuse */
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
+    display: none;
 }
 
 .section.expanded .section-content {
@@ -2554,6 +2563,7 @@ textarea {
     /* Sections */
     .section {
         margin-bottom: 15px;
+        max-width: 100%; /* On mobile, sections are always full width */
     }
 
     .section-header {
