@@ -325,7 +325,7 @@ function extractFacilityState($facility) {
     // Check if facility is marked as international
     $isInternational = !empty($facility['isInternational']);
     
-    // First check the new locationDetails structure (preferred)
+    // 1. Check the nested locationDetails structure (new form format)
     if (!empty($facility['locationDetails']) && is_array($facility['locationDetails'])) {
         $details = $facility['locationDetails'];
         
@@ -346,7 +346,7 @@ function extractFacilityState($facility) {
         }
     }
     
-    // Fallback: check explicit locationState field (legacy)
+    // 2. Check flat locationState field (legacy/alternative format)
     if (!empty($facility['locationState'])) {
         $state = normalizeStateName($facility['locationState']);
         if ($state) {
@@ -354,7 +354,15 @@ function extractFacilityState($facility) {
         }
     }
     
-    // Fallback: check explicit locationCountry field (legacy)
+    // 3. Check flat state field (simple format)
+    if (!empty($facility['state'])) {
+        $state = normalizeStateName($facility['state']);
+        if ($state) {
+            return $state;
+        }
+    }
+    
+    // 4. Check flat locationCountry field (legacy international)
     if ($isInternational && !empty($facility['locationCountry'])) {
         $country = normalizeCountryName($facility['locationCountry']);
         if ($country) {
@@ -362,7 +370,15 @@ function extractFacilityState($facility) {
         }
     }
     
-    // Final fallback: try parsing from location string
+    // 5. Check flat country field (simple international)
+    if ($isInternational && !empty($facility['country'])) {
+        $country = normalizeCountryName($facility['country']);
+        if ($country) {
+            return $country;
+        }
+    }
+    
+    // 6. Try parsing from "location" string field (e.g., "Salt Lake City, UT")
     if (!empty($facility['location'])) {
         $parsed = parseCityState($facility['location']);
         if (!empty($parsed['state'])) {
@@ -371,9 +387,21 @@ function extractFacilityState($facility) {
                 return $state;
             }
             // If not a US state, might be a country
-            $country = normalizeCountryName($parsed['state']);
-            if ($country) {
-                return $country;
+            if ($isInternational) {
+                $country = normalizeCountryName($parsed['state']);
+                if ($country) {
+                    return $country;
+                }
+            }
+        }
+    }
+    
+    // 7. Check identification section for location hints
+    if (!empty($facility['identification']) && is_array($facility['identification'])) {
+        if (!empty($facility['identification']['state'])) {
+            $state = normalizeStateName($facility['identification']['state']);
+            if ($state) {
+                return $state;
             }
         }
     }
@@ -752,7 +780,8 @@ if ($action === 'rebuild-locations') {
         echo json_encode([
             'success' => true,
             'message' => "Rebuilt {$result['projectsProcessed']} projects into {$result['statesUpdated']} location projects",
-            'details' => $result
+            'details' => $result,
+            'debug' => $result['debug'] ?? []
         ]);
     } catch (Exception $e) {
         echo json_encode([
@@ -771,6 +800,12 @@ function rebuildAllLocationProjects($pdo) {
     
     $locationBuckets = [];
     $projectsProcessed = 0;
+    $debugInfo = [
+        'facilitiesScanned' => 0,
+        'facilitiesWithLocation' => 0,
+        'facilitiesWithoutLocation' => [],
+        'sampleFacility' => null
+    ];
     
     // Helper to initialize a bucket for a location (state or country)
     $initBucket = function($locationName) use (&$locationBuckets) {
@@ -825,13 +860,40 @@ function rebuildAllLocationProjects($pdo) {
         // Process facilities
         if (!empty($data['facilities']) && is_array($data['facilities'])) {
             foreach ($data['facilities'] as $facility) {
+                $debugInfo['facilitiesScanned']++;
+                
+                // Capture first facility for debugging
+                if ($debugInfo['sampleFacility'] === null) {
+                    $debugInfo['sampleFacility'] = [
+                        'projectName' => $projectName,
+                        'hasLocation' => !empty($facility['location']),
+                        'location' => $facility['location'] ?? null,
+                        'hasLocationDetails' => !empty($facility['locationDetails']),
+                        'locationDetails' => $facility['locationDetails'] ?? null,
+                        'hasState' => !empty($facility['state']),
+                        'state' => $facility['state'] ?? null,
+                        'keys' => array_keys($facility)
+                    ];
+                }
+                
                 $location = extractFacilityState($facility);
                 if ($location) {
+                    $debugInfo['facilitiesWithLocation']++;
                     $initBucket($location);
                     $clone = $facility;
                     $clone['sourceProject'] = $projectName;
                     $clone['sourceCategory'] = $sourceCategory;
                     $locationBuckets[$location]['facilities'][] = $clone;
+                } else {
+                    // Track facilities without location for debugging
+                    if (count($debugInfo['facilitiesWithoutLocation']) < 5) {
+                        $debugInfo['facilitiesWithoutLocation'][] = [
+                            'project' => $projectName,
+                            'facilityName' => $facility['identification']['name'] ?? $facility['name'] ?? 'Unknown',
+                            'location' => $facility['location'] ?? null,
+                            'locationDetails' => $facility['locationDetails'] ?? null
+                        ];
+                    }
                 }
             }
         }
@@ -912,7 +974,8 @@ function rebuildAllLocationProjects($pdo) {
     return [
         'projectsProcessed' => $projectsProcessed,
         'statesUpdated' => $locationsUpdated,
-        'stateDetails' => $locationDetails
+        'stateDetails' => $locationDetails,
+        'debug' => $debugInfo
     ];
 }
 

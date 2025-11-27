@@ -1822,11 +1822,40 @@
                             if (rebuildStatus) {
                                 rebuildStatus.style.background = '#dcfce7';
                                 rebuildStatus.style.color = '#166534';
-                                rebuildStatus.innerHTML = `✅ ${result.message}<br><small>Refresh to see updated location projects.</small>`;
+                                
+                                // Build detailed status message
+                                let statusHtml = `✅ ${result.message}`;
+                                
+                                // Show debug info if available
+                                if (result.debug) {
+                                    statusHtml += `<br><small>📊 Scanned ${result.debug.facilitiesScanned || 0} facilities, ${result.debug.facilitiesWithLocation || 0} had valid locations</small>`;
+                                    
+                                    if (result.debug.sampleFacility) {
+                                        console.log('🔍 Sample facility structure:', result.debug.sampleFacility);
+                                    }
+                                    
+                                    if (result.debug.facilitiesWithoutLocation && result.debug.facilitiesWithoutLocation.length > 0) {
+                                        console.log('⚠️ Facilities without location:', result.debug.facilitiesWithoutLocation);
+                                    }
+                                }
+                                
+                                // Show location details
+                                if (result.details && result.details.stateDetails) {
+                                    const locations = Object.keys(result.details.stateDetails);
+                                    if (locations.length > 0) {
+                                        statusHtml += `<br><small>📍 Locations: ${locations.join(', ')}</small>`;
+                                    }
+                                }
+                                
+                                statusHtml += `<br><small>Refresh to see updated location projects.</small>`;
+                                rebuildStatus.innerHTML = statusHtml;
                             }
                             
-                            // Log details
+                            // Log details and debug info
                             console.log('Location rebuild details:', result.details);
+                            if (result.debug) {
+                                console.log('Location rebuild debug:', result.debug);
+                            }
                             
                             // Reload projects to show updates
                             if (typeof window.loadProjectsFromServer === 'function') {
