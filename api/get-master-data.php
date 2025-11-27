@@ -14,9 +14,15 @@ try {
     $stmt2->execute();
     $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
-    $stmt3->execute();
-    $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+    // locations_master is optional - may not exist yet
+    $locationsResults = [];
+    try {
+        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+        $stmt3->execute();
+        $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Table doesn't exist yet, that's fine - continue without it
+    }
 
     // Merge all result sets
     $results = array_merge($facilitiesResults, $referrersResults, $locationsResults);
