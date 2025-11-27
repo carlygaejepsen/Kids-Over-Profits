@@ -970,23 +970,33 @@ if ($action === 'cleanup-locations') {
         $deleted = [];
         $skipped = [];
         $errors = [];
+        $found = [];
         
-        // Find all projects that match location names (case-insensitive)
-        $placeholders = implode(',', array_fill(0, count($allLocationNames), '?'));
-        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master WHERE UPPER(unique_name) IN ($placeholders)");
-        $stmt->execute($allLocationNames);
-        $locationProjects = $stmt->fetchAll();
+        // First, get ALL projects from the database to check
+        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+        $stmt->execute();
+        $allProjects = $stmt->fetchAll();
         
-        foreach ($locationProjects as $row) {
+        foreach ($allProjects as $row) {
             $projectName = $row['unique_name'];
-            $isLowercase = $projectName !== strtoupper($projectName);
+            $upperName = strtoupper($projectName);
+            
+            // Check if this project name matches a location name (case-insensitive)
+            if (!in_array($upperName, $allLocationNames)) {
+                continue; // Not a location project, skip
+            }
+            
+            $found[] = $projectName;
+            
+            $isLowercase = $projectName !== $upperName; // Has any lowercase letters
+            $isAllLowercase = $projectName === strtolower($projectName); // Is entirely lowercase
             
             $projectData = json_decode($row['json_data'], true);
             $data = $projectData['data'] ?? $projectData;
             $facilityCount = count($data['facilities'] ?? []);
             $referrerCount = count($data['referrerConsultants'] ?? []);
             
-            // Delete if: empty OR (force mode AND lowercase)
+            // Delete if: empty OR (force mode AND not all uppercase)
             $shouldDelete = ($facilityCount === 0 && $referrerCount === 0) || ($forceMode && $isLowercase);
             
             if ($shouldDelete) {
@@ -994,7 +1004,7 @@ if ($action === 'cleanup-locations') {
                     $deleteStmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
                     $deleteStmt->execute([':projectName' => $projectName]);
                     if ($deleteStmt->rowCount() > 0) {
-                        $deleted[] = $projectName . ($isLowercase ? ' (lowercase)' : '');
+                        $deleted[] = $projectName;
                     }
                 } catch (PDOException $e) {
                     $errors[] = "Failed to delete '$projectName': " . $e->getMessage();
@@ -1011,7 +1021,9 @@ if ($action === 'cleanup-locations') {
         
         echo json_encode([
             'success' => true,
-            'message' => "Deleted " . count($deleted) . " empty location projects, skipped " . count($skipped) . " with data",
+            'message' => "Deleted " . count($deleted) . " location projects, skipped " . count($skipped) . " with data",
+            'forceMode' => $forceMode,
+            'found' => $found,
             'deleted' => $deleted,
             'skipped' => $skipped,
             'errors' => $errors
