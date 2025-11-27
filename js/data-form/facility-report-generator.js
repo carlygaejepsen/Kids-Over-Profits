@@ -330,8 +330,8 @@ function generateOperatorSection() {
             ${renderList('Other Names', op.otherNames)}
             ${renderList('Parent Companies', op.parentCompanies)}
             ${renderList('Websites', op.websites)}
-            ${renderList('Founders', op.keyStaff?.founders)}
-            ${renderList('Key Executives', op.keyStaff?.keyExecutives)}
+            ${renderStaffList('Founders', op.keyStaff?.founders)}
+            ${renderStaffList('Key Executives', op.keyStaff?.keyExecutives)}
             ${renderList('Investors', op.investors)}
             ${renderList('Notes', op.notes)}
             ${renderFieldNotes(op.fieldNotes, 'Operator')}
@@ -398,7 +398,7 @@ function generateReferrerSection() {
                 ${agency.name ? `<div class="info-item"><span class="info-label">Name:</span><span class="info-value">${escapeHtml(agency.name)}</span></div>` : ''}
                 ${agency.city || agency.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([agency.city, agency.state].filter(Boolean).join(', '))}</span></div>` : ''}
                 ${agency.address ? `<div class="info-item"><span class="info-label">Address:</span><span class="info-value">${escapeHtml(agency.address)}</span></div>` : ''}
-                ${agency.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${escapeHtml(agency.website)}</span></div>` : ''}
+                ${agency.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${formatWebsiteLink(agency.website)}</span></div>` : ''}
                 ${agency.founded ? `<div class="info-item"><span class="info-label">Founded:</span><span class="info-value">${escapeHtml(agency.founded)}</span></div>` : ''}
             </div>
             ${renderList('Affiliations', agency.affiliations)}
@@ -433,7 +433,7 @@ function generateReferrerSection() {
                         ${consultant.city || consultant.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([consultant.city, consultant.state].filter(Boolean).join(', '))}</span></div>` : ''}
                         ${consultant.email ? `<div class="info-item"><span class="info-label">Email:</span><span class="info-value">${escapeHtml(consultant.email)}</span></div>` : ''}
                         ${consultant.phone ? `<div class="info-item"><span class="info-label">Phone:</span><span class="info-value">${escapeHtml(consultant.phone)}</span></div>` : ''}
-                        ${consultant.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${escapeHtml(consultant.website)}</span></div>` : ''}
+                        ${consultant.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${formatWebsiteLink(consultant.website)}</span></div>` : ''}
                         ${consultant.education ? `<div class="info-item"><span class="info-label">Education:</span><span class="info-value">${escapeHtml(consultant.education)}</span></div>` : ''}
                         ${consultant.credentials ? `<div class="info-item"><span class="info-label">Credentials:</span><span class="info-value">${escapeHtml(consultant.credentials)}</span></div>` : ''}
                     </div>
@@ -860,29 +860,54 @@ function renderFieldNotes(fieldNotes, sectionLabel = 'Field') {
 function renderList(title, items) {
     if (!items || items.length === 0) return '';
 
+    // Helper function to check if a string is a URL
+    const isUrl = (str) => {
+        if (typeof str !== 'string') return false;
+        return /^(https?:\/\/|www\.)/i.test(str.trim());
+    };
+
+    // Helper function to format URL as a link
+    const formatAsLink = (url) => {
+        const cleanUrl = url.trim();
+        // Ensure URL has protocol
+        const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+        return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(cleanUrl)}</a>`;
+    };
+
+    const isWebsiteList = title.toLowerCase().includes('website');
+
     const listItems = items.map(item => {
         // Handle different item types
         if (item === null || item === undefined) return '';
-        
+
         if (typeof item === 'string') {
-            return item.trim() ? `<li>${escapeHtml(item)}</li>` : '';
+            if (!item.trim()) return '';
+            // Check if it's a URL or if this is a website list
+            if (isWebsiteList || isUrl(item)) {
+                return `<li>${formatAsLink(item)}</li>`;
+            }
+            return `<li>${escapeHtml(item)}</li>`;
         }
-        
+
         if (typeof item === 'object') {
             // Try to extract a meaningful display value from common field names
-            const displayValue = item.name || item.value || item.text || item.title || 
+            const displayValue = item.name || item.value || item.text || item.title ||
                                  item.url || item.link || item.label ||
                                  (item.firstName && item.lastName ? `${item.firstName} ${item.lastName}` : null) ||
                                  item.firstName || item.lastName;
-            
+
             if (displayValue && typeof displayValue === 'string' && displayValue.trim()) {
+                // Check if it's a URL
+                if (isWebsiteList || isUrl(displayValue)) {
+                    return `<li>${formatAsLink(displayValue)}</li>`;
+                }
                 return `<li>${escapeHtml(displayValue)}</li>`;
             }
-            
+
             // For objects without recognized fields, skip them to avoid [object Object]
             return '';
         }
-        
+
         // For numbers or other primitives, convert to string
         const strVal = String(item);
         return strVal && strVal !== '[object Object]' ? `<li>${escapeHtml(strVal)}</li>` : '';
@@ -941,10 +966,10 @@ function renderStaffList(title, staffArray) {
 
 function escapeHtml(text) {
     if (text === null || text === undefined) return '';
-    
+
     // Handle objects - try to extract a string value
     if (typeof text === 'object') {
-        const displayValue = text.name || text.value || text.text || text.title || 
+        const displayValue = text.name || text.value || text.text || text.title ||
                              text.url || text.link || text.label ||
                              (text.firstName && text.lastName ? `${text.firstName} ${text.lastName}` : null) ||
                              text.firstName || text.lastName;
@@ -954,15 +979,24 @@ function escapeHtml(text) {
             return ''; // Don't output [object Object]
         }
     }
-    
+
     // Convert to string if not already
     if (typeof text !== 'string') {
         text = String(text);
     }
-    
+
     if (!text || text === '[object Object]') return '';
-    
+
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Helper function to format a URL as a clickable link
+function formatWebsiteLink(url) {
+    if (!url || typeof url !== 'string') return '';
+    const cleanUrl = url.trim();
+    // Ensure URL has protocol
+    const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(cleanUrl)}</a>`;
 }
