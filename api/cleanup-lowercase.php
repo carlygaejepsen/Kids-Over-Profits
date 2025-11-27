@@ -7,9 +7,36 @@
  * Run without parameters to see what would be deleted (dry run)
  */
 
-require_once __DIR__ . '/config.php';
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 header('Content-Type: text/html; charset=utf-8');
+
+echo "<!DOCTYPE html><html><head><title>Cleanup Lowercase Location Projects</title>";
+echo "<style>body{font-family:monospace;padding:20px;background:#1a1a2e;color:#eee;} ";
+echo ".delete{color:#ff6b6b;} .keep{color:#51cf66;} .info{color:#74c0fc;} ";
+echo "h1{color:#ffd43b;} pre{background:#2d2d44;padding:10px;border-radius:5px;overflow-x:auto;}</style></head><body>";
+
+echo "<h1>🧹 Cleanup Lowercase Location Projects</h1>";
+
+// Try to load config
+try {
+    require_once __DIR__ . '/config.php';
+    echo "<p class='keep'>✓ Config loaded successfully</p>";
+} catch (Exception $e) {
+    echo "<p class='delete'>Config error: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "</body></html>";
+    exit;
+}
+
+if (!isset($pdo)) {
+    echo "<p class='delete'>Error: \$pdo not defined after loading config</p>";
+    echo "</body></html>";
+    exit;
+}
+
+echo "<p class='keep'>✓ Database connection established</p>";
 
 // US States (all uppercase for matching)
 $US_STATE_NAMES = [
@@ -49,13 +76,6 @@ function isLowercase($name) {
 }
 
 $dryRun = !isset($_GET['run']) || $_GET['run'] !== '1';
-
-echo "<!DOCTYPE html><html><head><title>Cleanup Lowercase Location Projects</title>";
-echo "<style>body{font-family:monospace;padding:20px;background:#1a1a2e;color:#eee;} ";
-echo ".delete{color:#ff6b6b;} .keep{color:#51cf66;} .info{color:#74c0fc;} ";
-echo "h1{color:#ffd43b;} pre{background:#2d2d44;padding:10px;border-radius:5px;overflow-x:auto;}</style></head><body>";
-
-echo "<h1>🧹 Cleanup Lowercase Location Projects</h1>";
 
 if ($dryRun) {
     echo "<p class='info'><strong>DRY RUN MODE</strong> - No changes will be made. Add <code>?run=1</code> to URL to execute.</p>";
