@@ -1,3 +1,10 @@
+<?php
+/**
+ * Template Name: Public Data Form
+ * Template Post Type: page
+ */
+?>
+
     <div class="container">
         <div class="admin-header">
             <h1>📮 Submit Facility Data Suggestions</h1>
@@ -891,7 +898,7 @@
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasConversionTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasConversionTherapy" id="has-conversion">
-                    <label for="has-conversion">Sexual Orientation  Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE</label>
+                    <label for="has-conversion">Sexual Orientation Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE)</label>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasAttachmentTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasAttachmentTherapy" id="has-attachment">

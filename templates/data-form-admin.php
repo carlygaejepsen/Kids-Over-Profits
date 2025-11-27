@@ -1,4 +1,8 @@
 <?php
+/**
+ * Template Name: Admin Data Form
+ * Template Post Type: page
+ */
     // Ensure required assets are present when this template renders.
     $kop_theme_dir = get_stylesheet_directory();
     $kop_theme_uri = get_stylesheet_directory_uri();
@@ -918,7 +922,7 @@
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasConversionTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasConversionTherapy" id="has-conversion">
-                    <label for="has-conversion">Sexual Orientation  Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE</label>
+                    <label for="has-conversion">Sexual Orientation Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE)</label>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasAttachmentTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasAttachmentTherapy" id="has-attachment">
