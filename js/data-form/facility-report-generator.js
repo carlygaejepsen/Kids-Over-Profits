@@ -1,82 +1,5 @@
 // Add this to your facility-form.js or include it separately
 
-/**
- * Determines the project category for the current project
- * Returns 'companies', 'locations', or 'referrers'
- */
-function getReportProjectCategory() {
-    // First check if there's a stored category on the current project
-    if (typeof currentProjectName !== 'undefined' && currentProjectName && typeof window.projects !== 'undefined') {
-        const project = window.projects[currentProjectName];
-        if (project && project.category) {
-            return project.category;
-        }
-    }
-
-    // Fallback: check formData for clues
-    // If referrer data is present and substantial, it's likely a referrer project
-    if (formData) {
-        const agency = formData.referrerAgency || formData.referrerGroup;
-        const consultants = formData.referrerConsultants || [];
-        const hasAgencyData = agency && (agency.name || agency.city);
-        const hasConsultantData = consultants.some(c => c && (c.firstName || c.lastName || c.fullName));
-
-        if ((hasAgencyData || hasConsultantData) && 
-            (!formData.operator || !formData.operator.name) && 
-            (!formData.facilities || formData.facilities.length === 0)) {
-            return 'referrers';
-        }
-    }
-
-    // Try to infer from project name using heuristics
-    if (typeof currentProjectName === 'string') {
-        const normalized = currentProjectName.toLowerCase().trim();
-        
-        // Referrer keywords
-        if (normalized.includes('consultant') ||
-            normalized.includes('district') ||
-            normalized.includes('agency') ||
-            normalized.includes('referrer') ||
-            normalized.includes('education') ||
-            normalized.includes('school')) {
-            return 'referrers';
-        }
-
-        // Location/State detection - US states and countries
-        const US_STATES = ['alabama','alaska','arizona','arkansas','california','colorado','connecticut',
-            'delaware','florida','georgia','hawaii','idaho','illinois','indiana','iowa','kansas',
-            'kentucky','louisiana','maine','maryland','massachusetts','michigan','minnesota',
-            'mississippi','missouri','montana','nebraska','nevada','new hampshire','new jersey',
-            'new mexico','new york','north carolina','north dakota','ohio','oklahoma','oregon',
-            'pennsylvania','rhode island','south carolina','south dakota','tennessee','texas',
-            'utah','vermont','virginia','washington','west virginia','wisconsin','wyoming'];
-        
-        const COUNTRIES = ['united states','usa','canada','mexico','jamaica','costa rica','samoa',
-            'australia','united kingdom','uk','ireland'];
-
-        if (US_STATES.includes(normalized) || COUNTRIES.includes(normalized)) {
-            return 'locations';
-        }
-    }
-
-    return 'companies';
-}
-
-/**
- * Gets the appropriate section title based on project category
- */
-function getCategorySectionTitle(category) {
-    switch (category) {
-        case 'locations':
-            return 'State/Location Information';
-        case 'referrers':
-            return 'Referrer Organization';
-        case 'companies':
-        default:
-            return 'Operator Information';
-    }
-}
-
 function generateHTMLReport() {
     const reportWindow = window.open('', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
 
@@ -84,9 +7,6 @@ function generateHTMLReport() {
         alert('Popup blocked! Please allow popups for this site and try again.');
         return;
     }
-
-    // Determine project category for category-aware rendering
-    const projectCategory = getReportProjectCategory();
 
     const html = `
 <!DOCTYPE html>
@@ -356,13 +276,12 @@ function generateHTMLReport() {
                     hour: '2-digit',
                     minute: '2-digit'
                 })}
-                ${projectCategory !== 'companies' ? `<br><span style="color: #6b7280;">Category: ${projectCategory === 'locations' ? 'Location/State' : 'Referrer'}</span>` : ''}
             </div>
         </div>
 
-        ${generateOperatorSection(projectCategory)}
-        ${generateFacilitiesSection(projectCategory)}
-        ${generateReferrerSection(projectCategory)}
+        ${generateOperatorSection()}
+        ${generateFacilitiesSection()}
+        ${generateReferrerSection()}
     </div>
 </body>
 </html>
