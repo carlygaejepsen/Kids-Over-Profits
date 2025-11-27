@@ -318,91 +318,112 @@ function normalizeCountryName($country) {
 /**
  * Extract state or country from a facility record for location project grouping
  * Returns the state/country name that will be used as the location project name
+ * This function checks ALL possible field locations where state/country might be stored
  */
 function extractFacilityState($facility) {
-    global $US_STATE_NAMES, $COUNTRY_NAMES;
+    global $US_STATE_NAMES, $COUNTRY_NAMES, $STATE_ABBREVIATIONS;
+    
+    if (!is_array($facility)) {
+        return null;
+    }
     
     // Check if facility is marked as international
     $isInternational = !empty($facility['isInternational']);
+    
+    // Helper to try normalizing a value as state first, then country
+    $tryNormalize = function($value) use ($isInternational) {
+        if (empty($value) || !is_string($value)) {
+            return null;
+        }
+        
+        // Try as US state first
+        $state = normalizeStateName($value);
+        if ($state) {
+            return $state;
+        }
+        
+        // If international or state not found, try as country
+        $country = normalizeCountryName($value);
+        if ($country) {
+            return $country;
+        }
+        
+        return null;
+    };
     
     // 1. Check the nested locationDetails structure (new form format)
     if (!empty($facility['locationDetails']) && is_array($facility['locationDetails'])) {
         $details = $facility['locationDetails'];
         
-        // For international facilities, check country first
-        if ($isInternational && !empty($details['country'])) {
-            $country = normalizeCountryName($details['country']);
-            if ($country) {
-                return $country;
-            }
-        }
-        
         // Check state in locationDetails
         if (!empty($details['state'])) {
-            $state = normalizeStateName($details['state']);
-            if ($state) {
-                return $state;
-            }
+            $result = $tryNormalize($details['state']);
+            if ($result) return $result;
+        }
+        
+        // Check country in locationDetails (for international)
+        if (!empty($details['country'])) {
+            $result = $tryNormalize($details['country']);
+            if ($result) return $result;
         }
     }
     
-    // 2. Check flat locationState field (legacy/alternative format)
+    // 2. Check flat locationState field
     if (!empty($facility['locationState'])) {
-        $state = normalizeStateName($facility['locationState']);
-        if ($state) {
-            return $state;
-        }
+        $result = $tryNormalize($facility['locationState']);
+        if ($result) return $result;
     }
     
-    // 3. Check flat state field (simple format)
+    // 3. Check flat state field
     if (!empty($facility['state'])) {
-        $state = normalizeStateName($facility['state']);
-        if ($state) {
-            return $state;
-        }
+        $result = $tryNormalize($facility['state']);
+        if ($result) return $result;
     }
     
-    // 4. Check flat locationCountry field (legacy international)
-    if ($isInternational && !empty($facility['locationCountry'])) {
-        $country = normalizeCountryName($facility['locationCountry']);
-        if ($country) {
-            return $country;
-        }
+    // 4. Check flat locationCountry field
+    if (!empty($facility['locationCountry'])) {
+        $result = $tryNormalize($facility['locationCountry']);
+        if ($result) return $result;
     }
     
-    // 5. Check flat country field (simple international)
-    if ($isInternational && !empty($facility['country'])) {
-        $country = normalizeCountryName($facility['country']);
-        if ($country) {
-            return $country;
-        }
+    // 5. Check flat country field
+    if (!empty($facility['country'])) {
+        $result = $tryNormalize($facility['country']);
+        if ($result) return $result;
     }
     
     // 6. Try parsing from "location" string field (e.g., "Salt Lake City, UT")
-    if (!empty($facility['location'])) {
+    if (!empty($facility['location']) && is_string($facility['location'])) {
         $parsed = parseCityState($facility['location']);
         if (!empty($parsed['state'])) {
-            $state = normalizeStateName($parsed['state']);
-            if ($state) {
-                return $state;
-            }
-            // If not a US state, might be a country
-            if ($isInternational) {
-                $country = normalizeCountryName($parsed['state']);
-                if ($country) {
-                    return $country;
-                }
-            }
+            $result = $tryNormalize($parsed['state']);
+            if ($result) return $result;
         }
     }
     
     // 7. Check identification section for location hints
     if (!empty($facility['identification']) && is_array($facility['identification'])) {
         if (!empty($facility['identification']['state'])) {
-            $state = normalizeStateName($facility['identification']['state']);
-            if ($state) {
-                return $state;
-            }
+            $result = $tryNormalize($facility['identification']['state']);
+            if ($result) return $result;
+        }
+        if (!empty($facility['identification']['locationState'])) {
+            $result = $tryNormalize($facility['identification']['locationState']);
+            if ($result) return $result;
+        }
+        if (!empty($facility['identification']['country'])) {
+            $result = $tryNormalize($facility['identification']['country']);
+            if ($result) return $result;
+        }
+    }
+    
+    // 8. Check address field if it contains state info
+    if (!empty($facility['address']) && is_string($facility['address'])) {
+        // Try to extract state from end of address
+        $parsed = parseCityState($facility['address']);
+        if (!empty($parsed['state'])) {
+            $result = $tryNormalize($parsed['state']);
+            if ($result) return $result;
         }
     }
     
@@ -413,10 +434,87 @@ function extractFacilityState($facility) {
  * Extract state from a referrer/consultant record
  */
 function extractReferrerState($referrer) {
-    global $US_STATE_NAMES, $STATE_ABBREVIATIONS;
+    if (!is_array($referrer)) {
+        return null;
+    }
     
+    // Check state field
     if (!empty($referrer['state'])) {
         $state = normalizeStateName($referrer['state']);
+        if ($state) {
+            return $state;
+        }
+        // Try as country
+        $country = normalizeCountryName($referrer['state']);
+        if ($country) {
+            return $country;
+        }
+    }
+    
+    // Check location field (City, State format)
+    if (!empty($referrer['location']) && is_string($referrer['location'])) {
+        $parsed = parseCityState($referrer['location']);
+        if (!empty($parsed['state'])) {
+            $state = normalizeStateName($parsed['state']);
+            if ($state) {
+                return $state;
+            }
+        }
+    }
+    
+    // Check city field - sometimes state is stored incorrectly
+    if (!empty($referrer['city']) && is_string($referrer['city'])) {
+        // Some records have "City, State" in city field
+        $parsed = parseCityState($referrer['city']);
+        if (!empty($parsed['state'])) {
+            $state = normalizeStateName($parsed['state']);
+            if ($state) {
+                return $state;
+            }
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Extract state from operator record  
+ */
+function extractOperatorState($operator) {
+    if (!is_array($operator)) {
+        return null;
+    }
+    
+    // Check state field
+    if (!empty($operator['state'])) {
+        $state = normalizeStateName($operator['state']);
+        if ($state) {
+            return $state;
+        }
+    }
+    
+    // Check locationState field
+    if (!empty($operator['locationState'])) {
+        $state = normalizeStateName($operator['locationState']);
+        if ($state) {
+            return $state;
+        }
+    }
+    
+    // Check headquarters location
+    if (!empty($operator['location']) && is_string($operator['location'])) {
+        $parsed = parseCityState($operator['location']);
+        if (!empty($parsed['state'])) {
+            $state = normalizeStateName($parsed['state']);
+            if ($state) {
+                return $state;
+            }
+        }
+    }
+    
+    // Check hqState
+    if (!empty($operator['hqState'])) {
+        $state = normalizeStateName($operator['hqState']);
         if ($state) {
             return $state;
         }
@@ -560,14 +658,15 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
             
             $jsonData = json_encode($locationProject);
             
-            // Upsert the location project
+            // Upsert the location project (use separate placeholders for INSERT and UPDATE)
             $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at)
-                    VALUES (:unique_name, :json_data, NOW())
-                    ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
+                    VALUES (:unique_name, :json_data_insert, NOW())
+                    ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
             
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':unique_name', $locationName);
-            $stmt->bindValue(':json_data', $jsonData);
+            $stmt->bindValue(':json_data_insert', $jsonData);
+            $stmt->bindValue(':json_data_update', $jsonData);
             $stmt->execute();
             
             $updatedLocations[] = $locationName;
@@ -736,15 +835,16 @@ if ($action === 'save') {
     $tableName = ($category === 'referrers') ? 'referrers_master' : 'facilities_master';
 
     // SQL to insert or update the project data based on projectName
-    // The identifier column is `unique_name` and the data column is `json_data`.
+    // Use separate placeholders for INSERT and UPDATE values
     $sql = "INSERT INTO {$tableName} (unique_name, json_data, updated_at)
-            VALUES (:unique_name, :json_data, NOW())
-            ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
+            VALUES (:unique_name, :json_data_insert, NOW())
+            ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
 
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':unique_name', $projectName);
-        $stmt->bindValue(':json_data', $jsonData);
+        $stmt->bindValue(':json_data_insert', $jsonData);
+        $stmt->bindValue(':json_data_update', $jsonData);
 
         $stmt->execute();
         
@@ -928,6 +1028,17 @@ function rebuildAllLocationProjects($pdo) {
     // Now save all location projects
     $locationsUpdated = 0;
     $locationDetails = [];
+    $saveErrors = [];
+    
+    // Debug: track bucket details
+    $debugInfo['bucketNames'] = array_keys($locationBuckets);
+    $debugInfo['bucketSummary'] = [];
+    foreach ($locationBuckets as $name => $b) {
+        $debugInfo['bucketSummary'][$name] = [
+            'facilities' => count($b['facilities']),
+            'referrers' => count($b['referrers'])
+        ];
+    }
     
     foreach ($locationBuckets as $locationName => $bucket) {
         $facilityCount = count($bucket['facilities']);
@@ -954,20 +1065,62 @@ function rebuildAllLocationProjects($pdo) {
             
             $jsonData = json_encode($locationProject);
             
-            $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at)
-                    VALUES (:unique_name, :json_data, NOW())
-                    ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
+            // Debug: log first location project being created
+            if (!isset($debugInfo['sampleLocationProject'])) {
+                $debugInfo['sampleLocationProject'] = [
+                    'locationName' => $locationName,
+                    'facilities' => $facilityCount,
+                    'referrers' => $referrerCount,
+                    'jsonLength' => strlen($jsonData),
+                    'jsonSample' => substr($jsonData, 0, 500)
+                ];
+            }
             
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':unique_name', $locationName);
-            $stmt->bindValue(':json_data', $jsonData);
-            $stmt->execute();
-            
-            $locationsUpdated++;
-            $locationDetails[$locationName] = [
-                'facilities' => $facilityCount,
-                'referrers' => $referrerCount
-            ];
+            try {
+                // Use separate placeholders for INSERT and UPDATE to avoid PDO binding issues
+                $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at)
+                        VALUES (:unique_name, :json_data_insert, NOW())
+                        ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
+                
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindValue(':unique_name', $locationName);
+                $stmt->bindValue(':json_data_insert', $jsonData);
+                $stmt->bindValue(':json_data_update', $jsonData);
+                
+                // Debug: track execution attempt
+                $debugInfo['lastAttemptedLocation'] = $locationName;
+                
+                $result = $stmt->execute();
+                $rowCount = $stmt->rowCount();
+                
+                // Debug: record result
+                if (!isset($debugInfo['saveAttempts'])) {
+                    $debugInfo['saveAttempts'] = [];
+                }
+                $debugInfo['saveAttempts'][] = [
+                    'location' => $locationName,
+                    'result' => $result,
+                    'rowCount' => $rowCount
+                ];
+                
+                if ($result) {
+                    $locationsUpdated++;
+                    $locationDetails[$locationName] = [
+                        'facilities' => $facilityCount,
+                        'referrers' => $referrerCount,
+                        'rowCount' => $rowCount
+                    ];
+                } else {
+                    $saveErrors[] = "Failed to save $locationName: execute returned false";
+                }
+            } catch (PDOException $e) {
+                $saveErrors[] = "Error saving $locationName: " . $e->getMessage();
+                $debugInfo['lastPDOError'] = [
+                    'location' => $locationName,
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode()
+                ];
+            }
         }
     }
     
@@ -975,7 +1128,9 @@ function rebuildAllLocationProjects($pdo) {
         'projectsProcessed' => $projectsProcessed,
         'statesUpdated' => $locationsUpdated,
         'stateDetails' => $locationDetails,
-        'debug' => $debugInfo
+        'debug' => $debugInfo,
+        'bucketCount' => count($locationBuckets),
+        'saveErrors' => $saveErrors
     ];
 }
 

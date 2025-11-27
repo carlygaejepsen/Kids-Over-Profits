@@ -1847,6 +1847,16 @@
                                     }
                                 }
                                 
+                                // Show bucket count from debug
+                                if (result.debug && result.debug.bucketNames && result.debug.bucketNames.length > 0) {
+                                    statusHtml += `<br><small>🪣 Buckets created: ${result.debug.bucketNames.length} (${result.debug.bucketNames.slice(0, 5).join(', ')}${result.debug.bucketNames.length > 5 ? '...' : ''})</small>`;
+                                }
+                                
+                                // Show any save errors
+                                if (result.details && result.details.saveErrors && result.details.saveErrors.length > 0) {
+                                    statusHtml += `<br><small style="color: #dc2626;">⚠️ Errors: ${result.details.saveErrors.length}</small>`;
+                                }
+                                
                                 statusHtml += `<br><small>Refresh to see updated location projects.</small>`;
                                 rebuildStatus.innerHTML = statusHtml;
                             }
@@ -1855,6 +1865,28 @@
                             console.log('Location rebuild details:', result.details);
                             if (result.debug) {
                                 console.log('Location rebuild debug:', result.debug);
+                                
+                                // Log bucket info
+                                if (result.debug.bucketNames) {
+                                    console.log('📦 Location buckets created:', result.debug.bucketNames);
+                                }
+                                if (result.debug.bucketSummary) {
+                                    console.log('📊 Bucket summary:', result.debug.bucketSummary);
+                                }
+                                if (result.debug.sampleLocationProject) {
+                                    console.log('🏗️ Sample location project:', result.debug.sampleLocationProject);
+                                }
+                                if (result.debug.saveAttempts) {
+                                    console.log('💾 Save attempts:', result.debug.saveAttempts);
+                                }
+                                if (result.debug.lastPDOError) {
+                                    console.error('❌ PDO Error:', result.debug.lastPDOError);
+                                }
+                            }
+                            
+                            // Log save errors
+                            if (result.details && result.details.saveErrors && result.details.saveErrors.length > 0) {
+                                console.error('❌ Save errors:', result.details.saveErrors);
                             }
                             
                             // Reload projects to show updates
