@@ -533,6 +533,9 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
     $updatedLocations = [];
     $locationBuckets = [];
     
+    // Get the source project's operator info to attach to cloned facilities
+    $sourceOperator = isset($data['operator']) ? $data['operator'] : null;
+    
     // Initialize buckets for facilities and referrers by location (state or country)
     $initBucket = function($location) use (&$locationBuckets) {
         if (!isset($locationBuckets[$location])) {
@@ -553,6 +556,17 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
                 $clone = $facility;
                 $clone['sourceProject'] = $sourceProjectName;
                 $clone['sourceCategory'] = $sourceCategory;
+                // Include source operator info so facility knows its parent company
+                if ($sourceOperator) {
+                    $clone['sourceOperator'] = $sourceOperator;
+                    // Also set identification.currentOperator if not already set
+                    if (!isset($clone['identification'])) {
+                        $clone['identification'] = [];
+                    }
+                    if (empty($clone['identification']['currentOperator']) && !empty($sourceOperator['name'])) {
+                        $clone['identification']['currentOperator'] = $sourceOperator['name'];
+                    }
+                }
                 $locationBuckets[$location]['facilities'][] = $clone;
             }
         }
@@ -1037,6 +1051,9 @@ function rebuildAllLocationProjects($pdo) {
         $data = isset($projectJson['data']) ? $projectJson['data'] : $projectJson;
         $sourceCategory = isset($projectJson['category']) ? $projectJson['category'] : 'companies';
         
+        // Get the source project's operator info to attach to cloned facilities
+        $sourceOperator = isset($data['operator']) ? $data['operator'] : null;
+        
         // Skip if this is marked as a locations project
         if ($sourceCategory === 'locations') {
             continue;
@@ -1070,6 +1087,17 @@ function rebuildAllLocationProjects($pdo) {
                     $clone = $facility;
                     $clone['sourceProject'] = $projectName;
                     $clone['sourceCategory'] = $sourceCategory;
+                    // Include source operator info so facility knows its parent company
+                    if ($sourceOperator) {
+                        $clone['sourceOperator'] = $sourceOperator;
+                        // Also set identification.currentOperator if not already set
+                        if (!isset($clone['identification'])) {
+                            $clone['identification'] = [];
+                        }
+                        if (empty($clone['identification']['currentOperator']) && !empty($sourceOperator['name'])) {
+                            $clone['identification']['currentOperator'] = $sourceOperator['name'];
+                        }
+                    }
                     $locationBuckets[$location]['facilities'][] = $clone;
                 } else {
                     // Track facilities without location for debugging
