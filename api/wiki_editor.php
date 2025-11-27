@@ -409,8 +409,27 @@ get_header();
                     </select>
                     <label for="testimonyQuote">Quote or Description:</label>
                     <textarea id="testimonyQuote" rows="3" placeholder="e.g., 'This place thrives...' or 'Reddit Post by u/...'"></textarea>
-                    <label for="testimonySource">Source Name:</label>
-                    <input type="text" id="testimonySource" placeholder="e.g., Brooke (Google Reviews) or Reddit">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="testimonySourceName">Source Name:</label>
+                            <input type="text" id="testimonySourceName" placeholder="e.g., Brooke, u/username, Anonymous">
+                        </div>
+                        <div class="field-group">
+                            <label for="testimonyPlatform">Platform:</label>
+                            <select id="testimonyPlatform">
+                                <option value="">Select...</option>
+                                <option value="Reddit">Reddit</option>
+                                <option value="Google Reviews">Google Reviews</option>
+                                <option value="YouTube">YouTube</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Yelp">Yelp</option>
+                                <option value="News Article">News Article</option>
+                                <option value="Documentary">Documentary</option>
+                                <option value="Podcast">Podcast</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
                     <label for="testimonyUrl">Source URL:</label>
                     <input type="text" id="testimonyUrl">
                     <button type="button" class="add-btn" id="addTestimonyBtn">Add Testimony</button>

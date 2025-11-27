@@ -442,14 +442,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = document.getElementById('testimonyDate').value.trim();
             const type = document.getElementById('testimonyType').value;
             const quote = document.getElementById('testimonyQuote').value.trim();
-            const source = document.getElementById('testimonySource').value.trim();
+            const sourceName = document.getElementById('testimonySourceName').value.trim();
+            const platform = document.getElementById('testimonyPlatform').value;
             const url = sanitizeUrl(document.getElementById('testimonyUrl').value);
-            if (quote && source && url) {
-                testimonies.push({ date, type, quote, source, url });
+            if (quote && (sourceName || platform) && url) {
+                // Build combined source string for display/output
+                let source = sourceName;
+                if (platform && sourceName) {
+                    source = `${sourceName} (${platform})`;
+                } else if (platform && !sourceName) {
+                    source = platform;
+                }
+                testimonies.push({ date, type, quote, sourceName, platform, source, url });
                 renderList(testimonies, 'testimonyListOutput', item => `<strong>(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`);
-                clearInputs(['testimonyDate', 'testimonyQuote', 'testimonySource', 'testimonyUrl']);
+                clearInputs(['testimonyDate', 'testimonyQuote', 'testimonySourceName', 'testimonyUrl']);
+                // Reset platform dropdown
+                const platformSelect = document.getElementById('testimonyPlatform');
+                if (platformSelect) platformSelect.selectedIndex = 0;
             } else {
-                alert('Please enter at least a quote, source name, and source URL.');
+                alert('Please enter at least a quote, source name or platform, and source URL.');
             }
         });
     }
@@ -1700,7 +1711,39 @@ ${relatedMediaSection}
         ]);
         console.log('Testimonies section:', testimoniesSection ? `Found (${testimoniesSection.length} chars)` : 'Not found');
         if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-            // Split by double newlines or single newlines with bold markers
+            // Helper to parse source string into sourceName and platform
+            // Examples: "Brooke (Google Reviews)" -> { sourceName: "Brooke", platform: "Google Reviews" }
+            //           "Reddit" -> { sourceName: "", platform: "Reddit" }
+            //           "u/username" -> { sourceName: "u/username", platform: "Reddit" }
+            const parseSourceIntoParts = (sourceStr) => {
+                const knownPlatforms = ['Reddit', 'Google Reviews', 'YouTube', 'Facebook', 'Yelp', 'News Article', 'Documentary', 'Podcast'];
+                let sourceName = sourceStr;
+                let platform = '';
+
+                // Check for "Name (Platform)" format
+                const parenMatch = sourceStr.match(/^(.+?)\s*\(([^)]+)\)$/);
+                if (parenMatch) {
+                    sourceName = parenMatch[1].trim();
+                    platform = parenMatch[2].trim();
+                } else {
+                    // Check if the source itself is a known platform
+                    const lowerSource = sourceStr.toLowerCase();
+                    for (const p of knownPlatforms) {
+                        if (lowerSource === p.toLowerCase()) {
+                            sourceName = '';
+                            platform = p;
+                            break;
+                        }
+                    }
+                    // Check for Reddit username patterns
+                    if (sourceStr.match(/^u\/|^\/u\//i)) {
+                        platform = 'Reddit';
+                    }
+                }
+
+                return { sourceName, platform, source: sourceStr };
+            };
+
             // Split by double newlines. This is more robust for varying formats.
             const blocks = testimoniesSection.split(/\n\n+/);
             console.log(`Testimonies split into ${blocks.length} blocks`);
@@ -1724,11 +1767,14 @@ ${relatedMediaSection}
                 let match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 1 (Date+Type)`);
+                    const parsed = parseSourceIntoParts(match[4].trim());
                     testimonies.push({
                         date: match[1].trim(),
                         type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
-                        source: match[4].trim(),
+                        sourceName: parsed.sourceName,
+                        platform: parsed.platform,
+                        source: parsed.source,
                         url: sanitizeUrl(match[5].trim())
                     });
                     return;
@@ -1738,11 +1784,14 @@ ${relatedMediaSection}
                 match = cleaned.match(/^\*\*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 2 (Type only)`);
+                    const parsed = parseSourceIntoParts(match[3].trim());
                     testimonies.push({
                         date: '',
                         type: match[1].trim().toUpperCase(),
                         quote: match[2].trim(),
-                        source: match[3].trim(),
+                        sourceName: parsed.sourceName,
+                        platform: parsed.platform,
+                        source: parsed.source,
                         url: sanitizeUrl(match[4].trim())
                     });
                     return;
@@ -1752,11 +1801,14 @@ ${relatedMediaSection}
                 match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*([^\(\[]+)$/i);
                 if (match) {
                     console.log('  ✓ Matched pattern 1b (Date+Type, no link)');
+                    const parsed = parseSourceIntoParts(match[4].trim());
                     testimonies.push({
                         date: match[1].trim(),
                         type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
-                        source: match[4].trim(),
+                        sourceName: parsed.sourceName,
+                        platform: parsed.platform,
+                        source: parsed.source,
                         url: ''
                     });
                     return;
@@ -1766,11 +1818,14 @@ ${relatedMediaSection}
                 match = cleaned.match(/^(.*?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 3 (Date+Type, no bold)`);
+                    const parsed = parseSourceIntoParts(match[4].trim());
                     testimonies.push({
                         date: match[1].trim(),
                         type: match[2].trim().toUpperCase(),
                         quote: match[3].trim(),
-                        source: match[4].trim(),
+                        sourceName: parsed.sourceName,
+                        platform: parsed.platform,
+                        source: parsed.source,
                         url: sanitizeUrl(match[5].trim())
                     });
                     return;
@@ -1780,11 +1835,14 @@ ${relatedMediaSection}
                 match = cleaned.match(/^\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 4 (Type only, no bold)`);
+                    const parsed = parseSourceIntoParts(match[3].trim());
                     testimonies.push({
                         date: '',
                         type: match[1].trim().toUpperCase(),
                         quote: match[2].trim(),
-                        source: match[3].trim(),
+                        sourceName: parsed.sourceName,
+                        platform: parsed.platform,
+                        source: parsed.source,
                         url: sanitizeUrl(match[4].trim())
                     });
                     return;

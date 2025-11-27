@@ -4994,6 +4994,9 @@ window.initializeOverviewTabSwitching = initializeOverviewTabSwitching;
 window.initializeConsultantsTocToggle = initializeConsultantsTocToggle;
 window.initializeLocationFacilitiesToc = initializeLocationFacilitiesToc;
 
+// Expose project loading function for rebuild operations
+window.loadProjectsFromServer = loadAllProjectsFromCloud;
+
 // Create projectManager object for backwards compatibility
 window.projectManager = {
     loadProject: loadProject,
