@@ -1111,6 +1111,65 @@ async function loadProjectsFromFallbackDatasets() {
     return null;
 }
 
+/**
+ * Deduplicate location projects: when both lowercase and uppercase versions exist,
+ * keep only the uppercase version (which has the actual data from rebuild).
+ * For non-location projects, keep as-is.
+ */
+function deduplicateLocationProjects(projectsObj) {
+    const result = {};
+    const locationNames = new Set([...US_STATE_NAMES, ...COUNTRY_NAMES].map(n => n.toUpperCase()));
+    
+    // First pass: identify all location project keys
+    const locationKeys = {};  // Maps uppercase name -> array of actual keys
+    
+    Object.keys(projectsObj).forEach(key => {
+        const upperKey = key.toUpperCase();
+        if (locationNames.has(upperKey)) {
+            if (!locationKeys[upperKey]) {
+                locationKeys[upperKey] = [];
+            }
+            locationKeys[upperKey].push(key);
+        } else {
+            // Non-location project, keep as-is
+            result[key] = projectsObj[key];
+        }
+    });
+    
+    // Second pass: for each location, pick the best version
+    Object.keys(locationKeys).forEach(upperName => {
+        const keys = locationKeys[upperName];
+        
+        if (keys.length === 1) {
+            // Only one version exists, use it but normalize to uppercase
+            const originalKey = keys[0];
+            result[upperName] = projectsObj[originalKey];
+            result[upperName].name = upperName;  // Normalize the name
+            debugLog(`📍 Location project "${originalKey}" normalized to "${upperName}"`);
+        } else {
+            // Multiple versions exist (e.g., 'alabama' and 'ALABAMA')
+            // Pick the one with more facilities, or prefer uppercase if tied
+            let bestKey = keys[0];
+            let bestCount = projectsObj[keys[0]]?.data?.facilities?.length || 0;
+            
+            keys.forEach(key => {
+                const count = projectsObj[key]?.data?.facilities?.length || 0;
+                if (count > bestCount || (count === bestCount && key === upperName)) {
+                    bestKey = key;
+                    bestCount = count;
+                }
+            });
+            
+            result[upperName] = projectsObj[bestKey];
+            result[upperName].name = upperName;  // Normalize the name
+            console.log(`🔀 Deduplicated location "${upperName}": kept "${bestKey}" (${bestCount} facilities), discarded: ${keys.filter(k => k !== bestKey).join(', ')}`);
+        }
+    });
+    
+    debugLog(`📦 Deduplication complete: ${Object.keys(projectsObj).length} → ${Object.keys(result).length} projects`);
+    return result;
+}
+
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
@@ -1123,7 +1182,9 @@ async function loadAllProjectsFromCloud() {
         const result = await response.json();
 
         if (result.success && result.projects) {
-            window.projects = result.projects;
+            // Deduplicate location projects: prefer uppercase versions with data
+            const deduplicatedProjects = deduplicateLocationProjects(result.projects);
+            window.projects = deduplicatedProjects;
             projects = window.projects;
 
             invalidateAggregatedData();
