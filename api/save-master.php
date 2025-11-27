@@ -74,6 +74,31 @@ $US_STATE_NAMES = [
     'WISCONSIN', 'WYOMING'
 ];
 
+// Common countries for international facilities
+$COUNTRY_NAMES = [
+    'CANADA', 'MEXICO', 'UNITED KINGDOM', 'AUSTRALIA', 'JAMAICA', 'SAMOA', 'COSTA RICA',
+    'BELIZE', 'BAHAMAS', 'DOMINICAN REPUBLIC', 'PUERTO RICO', 'FRANCE', 'GERMANY', 'ITALY',
+    'SPAIN', 'NETHERLANDS', 'SWITZERLAND', 'SWEDEN', 'NORWAY', 'DENMARK', 'IRELAND',
+    'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN', 'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
+];
+
+// State abbreviation to full name mapping
+$STATE_ABBREVIATIONS = [
+    'AL' => 'ALABAMA', 'AK' => 'ALASKA', 'AZ' => 'ARIZONA', 'AR' => 'ARKANSAS',
+    'CA' => 'CALIFORNIA', 'CO' => 'COLORADO', 'CT' => 'CONNECTICUT', 'DE' => 'DELAWARE',
+    'FL' => 'FLORIDA', 'GA' => 'GEORGIA', 'HI' => 'HAWAII', 'ID' => 'IDAHO',
+    'IL' => 'ILLINOIS', 'IN' => 'INDIANA', 'IA' => 'IOWA', 'KS' => 'KANSAS',
+    'KY' => 'KENTUCKY', 'LA' => 'LOUISIANA', 'ME' => 'MAINE', 'MD' => 'MARYLAND',
+    'MA' => 'MASSACHUSETTS', 'MI' => 'MICHIGAN', 'MN' => 'MINNESOTA', 'MS' => 'MISSISSIPPI',
+    'MO' => 'MISSOURI', 'MT' => 'MONTANA', 'NE' => 'NEBRASKA', 'NV' => 'NEVADA',
+    'NH' => 'NEW HAMPSHIRE', 'NJ' => 'NEW JERSEY', 'NM' => 'NEW MEXICO', 'NY' => 'NEW YORK',
+    'NC' => 'NORTH CAROLINA', 'ND' => 'NORTH DAKOTA', 'OH' => 'OHIO', 'OK' => 'OKLAHOMA',
+    'OR' => 'OREGON', 'PA' => 'PENNSYLVANIA', 'RI' => 'RHODE ISLAND', 'SC' => 'SOUTH CAROLINA',
+    'SD' => 'SOUTH DAKOTA', 'TN' => 'TENNESSEE', 'TX' => 'TEXAS', 'UT' => 'UTAH',
+    'VT' => 'VERMONT', 'VA' => 'VIRGINIA', 'WA' => 'WASHINGTON', 'WV' => 'WEST VIRGINIA',
+    'WI' => 'WISCONSIN', 'WY' => 'WYOMING'
+];
+
 // Validate project name
 if (!$projectName) {
     echo json_encode([
@@ -240,24 +265,116 @@ function parseCityState($location) {
 }
 
 /**
- * Extract state from a facility record
+ * Normalize a state value - convert abbreviation to full name if needed
+ */
+function normalizeStateName($state) {
+    global $US_STATE_NAMES, $STATE_ABBREVIATIONS;
+    
+    if (!$state || !is_string($state)) {
+        return null;
+    }
+    
+    $state = strtoupper(trim($state));
+    
+    // Check if it's already a full state name
+    if (in_array($state, $US_STATE_NAMES)) {
+        return $state;
+    }
+    
+    // Check if it's an abbreviation
+    if (isset($STATE_ABBREVIATIONS[$state])) {
+        return $STATE_ABBREVIATIONS[$state];
+    }
+    
+    return null;
+}
+
+/**
+ * Normalize a country value
+ */
+function normalizeCountryName($country) {
+    global $COUNTRY_NAMES;
+    
+    if (!$country || !is_string($country)) {
+        return null;
+    }
+    
+    $country = strtoupper(trim($country));
+    
+    // Check if it's a known country
+    if (in_array($country, $COUNTRY_NAMES)) {
+        return $country;
+    }
+    
+    // For unknown countries, still return the uppercased value
+    // This allows new countries to be added dynamically
+    if (strlen($country) > 1) {
+        return $country;
+    }
+    
+    return null;
+}
+
+/**
+ * Extract state or country from a facility record for location project grouping
+ * Returns the state/country name that will be used as the location project name
  */
 function extractFacilityState($facility) {
-    global $US_STATE_NAMES;
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
     
-    // First check explicit locationState field
+    // Check if facility is marked as international
+    $isInternational = !empty($facility['isInternational']);
+    
+    // First check the new locationDetails structure (preferred)
+    if (!empty($facility['locationDetails']) && is_array($facility['locationDetails'])) {
+        $details = $facility['locationDetails'];
+        
+        // For international facilities, check country first
+        if ($isInternational && !empty($details['country'])) {
+            $country = normalizeCountryName($details['country']);
+            if ($country) {
+                return $country;
+            }
+        }
+        
+        // Check state in locationDetails
+        if (!empty($details['state'])) {
+            $state = normalizeStateName($details['state']);
+            if ($state) {
+                return $state;
+            }
+        }
+    }
+    
+    // Fallback: check explicit locationState field (legacy)
     if (!empty($facility['locationState'])) {
-        $state = strtoupper(trim($facility['locationState']));
-        if (in_array($state, $US_STATE_NAMES)) {
+        $state = normalizeStateName($facility['locationState']);
+        if ($state) {
             return $state;
         }
     }
     
-    // Then try parsing from location string
+    // Fallback: check explicit locationCountry field (legacy)
+    if ($isInternational && !empty($facility['locationCountry'])) {
+        $country = normalizeCountryName($facility['locationCountry']);
+        if ($country) {
+            return $country;
+        }
+    }
+    
+    // Final fallback: try parsing from location string
     if (!empty($facility['location'])) {
         $parsed = parseCityState($facility['location']);
-        if (!empty($parsed['state']) && in_array($parsed['state'], $US_STATE_NAMES)) {
-            return $parsed['state'];
+        if (!empty($parsed['state'])) {
+            $state = normalizeStateName($parsed['state']);
+            if ($state) {
+                return $state;
+            }
+            // If not a US state, might be a country
+            $country = normalizeCountryName($parsed['state']);
+            if ($country) {
+                return $country;
+            }
         }
     }
     
@@ -268,11 +385,11 @@ function extractFacilityState($facility) {
  * Extract state from a referrer/consultant record
  */
 function extractReferrerState($referrer) {
-    global $US_STATE_NAMES;
+    global $US_STATE_NAMES, $STATE_ABBREVIATIONS;
     
     if (!empty($referrer['state'])) {
-        $state = strtoupper(trim($referrer['state']));
-        if (in_array($state, $US_STATE_NAMES)) {
+        $state = normalizeStateName($referrer['state']);
+        if ($state) {
             return $state;
         }
     }
@@ -282,18 +399,18 @@ function extractReferrerState($referrer) {
 
 /**
  * Update location projects based on saved company/referrer data
- * This duplicates facilities and referrers to their respective state location projects
+ * This duplicates facilities and referrers to their respective state/country location projects
  */
 function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $sourceCategory) {
-    global $US_STATE_NAMES;
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
     
-    $updatedStates = [];
-    $stateBuckets = [];
+    $updatedLocations = [];
+    $locationBuckets = [];
     
-    // Initialize buckets for facilities and referrers by state
-    $initBucket = function($state) use (&$stateBuckets) {
-        if (!isset($stateBuckets[$state])) {
-            $stateBuckets[$state] = [
+    // Initialize buckets for facilities and referrers by location (state or country)
+    $initBucket = function($location) use (&$locationBuckets) {
+        if (!isset($locationBuckets[$location])) {
+            $locationBuckets[$location] = [
                 'facilities' => [],
                 'referrers' => []
             ];
@@ -303,14 +420,14 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
     // Process facilities
     if (!empty($data['facilities']) && is_array($data['facilities'])) {
         foreach ($data['facilities'] as $facility) {
-            $state = extractFacilityState($facility);
-            if ($state) {
-                $initBucket($state);
+            $location = extractFacilityState($facility);
+            if ($location) {
+                $initBucket($location);
                 // Clone the facility and add source project info
                 $clone = $facility;
                 $clone['sourceProject'] = $sourceProjectName;
                 $clone['sourceCategory'] = $sourceCategory;
-                $stateBuckets[$state]['facilities'][] = $clone;
+                $locationBuckets[$location]['facilities'][] = $clone;
             }
         }
     }
@@ -318,52 +435,52 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
     // Process referrer consultants
     if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
         foreach ($data['referrerConsultants'] as $consultant) {
-            $state = extractReferrerState($consultant);
-            if ($state) {
-                $initBucket($state);
+            $location = extractReferrerState($consultant);
+            if ($location) {
+                $initBucket($location);
                 $clone = $consultant;
                 $clone['sourceProject'] = $sourceProjectName;
                 $clone['sourceCategory'] = $sourceCategory;
-                $stateBuckets[$state]['referrers'][] = $clone;
+                $locationBuckets[$location]['referrers'][] = $clone;
             }
         }
     }
     
     // Process individual referrer
     if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
-        $state = extractReferrerState($data['referrerIndividual']);
-        if ($state) {
-            $initBucket($state);
+        $location = extractReferrerState($data['referrerIndividual']);
+        if ($location) {
+            $initBucket($location);
             $clone = $data['referrerIndividual'];
             $clone['sourceProject'] = $sourceProjectName;
             $clone['sourceCategory'] = $sourceCategory;
-            $stateBuckets[$state]['referrers'][] = $clone;
+            $locationBuckets[$location]['referrers'][] = $clone;
         }
     }
     
     // Process referrer agency
     if (!empty($data['referrerAgency']) && !empty($data['referrerAgency']['state'])) {
-        $state = strtoupper(trim($data['referrerAgency']['state']));
-        if (in_array($state, $US_STATE_NAMES)) {
-            $initBucket($state);
+        $location = normalizeStateName($data['referrerAgency']['state']);
+        if ($location) {
+            $initBucket($location);
             $clone = $data['referrerAgency'];
             $clone['sourceProject'] = $sourceProjectName;
             $clone['sourceCategory'] = $sourceCategory;
             // Store agency separately if needed
-            if (!isset($stateBuckets[$state]['agencies'])) {
-                $stateBuckets[$state]['agencies'] = [];
+            if (!isset($locationBuckets[$location]['agencies'])) {
+                $locationBuckets[$location]['agencies'] = [];
             }
-            $stateBuckets[$state]['agencies'][] = $clone;
+            $locationBuckets[$location]['agencies'][] = $clone;
         }
     }
     
-    // Now update each affected state's location project
-    foreach ($stateBuckets as $stateName => $bucket) {
+    // Now update each affected location's project
+    foreach ($locationBuckets as $locationName => $bucket) {
         try {
             // First, load existing location project (if any)
             $existingProject = null;
-            $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = :stateName");
-            $stmt->execute([':stateName' => $stateName]);
+            $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = :locationName");
+            $stmt->execute([':locationName' => $locationName]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($row && !empty($row['json_data'])) {
@@ -406,7 +523,7 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
             
             // Create the project structure
             $locationProject = [
-                'name' => $stateName,
+                'name' => $locationName,
                 'data' => $locationData,
                 'category' => 'locations',
                 'currentFacilityIndex' => 0,
@@ -421,19 +538,19 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
                     ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
             
             $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':unique_name', $stateName);
+            $stmt->bindValue(':unique_name', $locationName);
             $stmt->bindValue(':json_data', $jsonData);
             $stmt->execute();
             
-            $updatedStates[] = $stateName;
+            $updatedLocations[] = $locationName;
             
         } catch (PDOException $e) {
-            // Log the error but continue with other states
-            error_log("Failed to update location project '$stateName': " . $e->getMessage());
+            // Log the error but continue with other locations
+            error_log("Failed to update location project '$locationName': " . $e->getMessage());
         }
     }
     
-    return $updatedStates;
+    return $updatedLocations;
 }
 
 /**
@@ -441,19 +558,19 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
  * Called when a company/referrer project is deleted
  */
 function removeFromLocationProjects($pdo, $sourceProjectName) {
-    global $US_STATE_NAMES;
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
     
-    $cleanedStates = [];
+    $cleanedLocations = [];
     
     try {
-        // Find all location projects (projects whose names match US states)
-        $placeholders = implode(',', array_fill(0, count($US_STATE_NAMES), '?'));
-        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master WHERE unique_name IN ($placeholders)");
-        $stmt->execute($US_STATE_NAMES);
+        // Get all location projects (category = 'locations')
+        // This will find both state and country location projects
+        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master WHERE json_data LIKE '%\"category\":\"locations\"%'");
+        $stmt->execute();
         $locationProjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($locationProjects as $row) {
-            $stateName = $row['unique_name'];
+            $locationName = $row['unique_name'];
             $projectJson = json_decode($row['json_data'], true);
             
             if (!$projectJson || !isset($projectJson['data'])) {
@@ -490,29 +607,30 @@ function removeFromLocationProjects($pdo, $sourceProjectName) {
                 $projectJson['data'] = $locationData;
                 $projectJson['timestamp'] = date('c');
                 
-                $updateStmt = $pdo->prepare("UPDATE facilities_master SET json_data = :json_data, updated_at = NOW() WHERE unique_name = :stateName");
+                $updateStmt = $pdo->prepare("UPDATE facilities_master SET json_data = :json_data, updated_at = NOW() WHERE unique_name = :locationName");
                 $updateStmt->execute([
                     ':json_data' => json_encode($projectJson),
-                    ':stateName' => $stateName
+                    ':locationName' => $locationName
                 ]);
                 
-                $cleanedStates[] = $stateName;
+                $cleanedLocations[] = $locationName;
             }
         }
     } catch (PDOException $e) {
         error_log("Failed to clean location projects after deleting '$sourceProjectName': " . $e->getMessage());
     }
     
-    return $cleanedStates;
+    return $cleanedLocations;
 }
 
 
 // Handle action
 if ($action === 'delete') {
     try {
-        // First, check if this is a location project (state name) - don't allow deleting those
-        global $US_STATE_NAMES;
-        if (in_array(strtoupper($projectName), $US_STATE_NAMES)) {
+        // First, check if this is a location project (state or country name) - don't allow deleting those
+        global $US_STATE_NAMES, $COUNTRY_NAMES;
+        $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
+        if (in_array(strtoupper($projectName), $allLocationNames)) {
             echo json_encode([
                 'success' => false,
                 'error' => "Cannot delete location project '$projectName'. Location projects are auto-managed."
@@ -649,18 +767,20 @@ if ($action === 'rebuild-locations') {
  * Rebuild ALL location projects from scratch by processing all existing company/referrer projects
  */
 function rebuildAllLocationProjects($pdo) {
-    global $US_STATE_NAMES;
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
     
-    $stateBuckets = [];
+    $locationBuckets = [];
     $projectsProcessed = 0;
     
-    // Initialize buckets for all states
-    foreach ($US_STATE_NAMES as $state) {
-        $stateBuckets[$state] = [
-            'facilities' => [],
-            'referrers' => []
-        ];
-    }
+    // Helper to initialize a bucket for a location (state or country)
+    $initBucket = function($locationName) use (&$locationBuckets) {
+        if (!isset($locationBuckets[$locationName])) {
+            $locationBuckets[$locationName] = [
+                'facilities' => [],
+                'referrers' => []
+            ];
+        }
+    };
     
     // Fetch all projects from facilities_master
     $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
@@ -672,14 +792,17 @@ function rebuildAllLocationProjects($pdo) {
     $stmt->execute();
     $referrersResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Combine all known location names for skip detection
+    $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
+    
     // Merge and process all projects
     $allProjects = array_merge($facilitiesResults, $referrersResults);
     
     foreach ($allProjects as $row) {
         $projectName = $row['unique_name'];
         
-        // Skip location projects (state names) - we're rebuilding those
-        if (in_array(strtoupper($projectName), $US_STATE_NAMES)) {
+        // Skip location projects (state/country names) - we're rebuilding those
+        if (in_array(strtoupper($projectName), $allLocationNames)) {
             continue;
         }
         
@@ -702,12 +825,13 @@ function rebuildAllLocationProjects($pdo) {
         // Process facilities
         if (!empty($data['facilities']) && is_array($data['facilities'])) {
             foreach ($data['facilities'] as $facility) {
-                $state = extractFacilityState($facility);
-                if ($state && isset($stateBuckets[$state])) {
+                $location = extractFacilityState($facility);
+                if ($location) {
+                    $initBucket($location);
                     $clone = $facility;
                     $clone['sourceProject'] = $projectName;
                     $clone['sourceCategory'] = $sourceCategory;
-                    $stateBuckets[$state]['facilities'][] = $clone;
+                    $locationBuckets[$location]['facilities'][] = $clone;
                 }
             }
         }
@@ -715,33 +839,35 @@ function rebuildAllLocationProjects($pdo) {
         // Process referrer consultants
         if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
             foreach ($data['referrerConsultants'] as $consultant) {
-                $state = extractReferrerState($consultant);
-                if ($state && isset($stateBuckets[$state])) {
+                $location = extractReferrerState($consultant);
+                if ($location) {
+                    $initBucket($location);
                     $clone = $consultant;
                     $clone['sourceProject'] = $projectName;
                     $clone['sourceCategory'] = $sourceCategory;
-                    $stateBuckets[$state]['referrers'][] = $clone;
+                    $locationBuckets[$location]['referrers'][] = $clone;
                 }
             }
         }
         
         // Process individual referrer
         if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
-            $state = extractReferrerState($data['referrerIndividual']);
-            if ($state && isset($stateBuckets[$state])) {
+            $location = extractReferrerState($data['referrerIndividual']);
+            if ($location) {
+                $initBucket($location);
                 $clone = $data['referrerIndividual'];
                 $clone['sourceProject'] = $projectName;
                 $clone['sourceCategory'] = $sourceCategory;
-                $stateBuckets[$state]['referrers'][] = $clone;
+                $locationBuckets[$location]['referrers'][] = $clone;
             }
         }
     }
     
     // Now save all location projects
-    $statesUpdated = 0;
-    $stateDetails = [];
+    $locationsUpdated = 0;
+    $locationDetails = [];
     
-    foreach ($stateBuckets as $stateName => $bucket) {
+    foreach ($locationBuckets as $locationName => $bucket) {
         $facilityCount = count($bucket['facilities']);
         $referrerCount = count($bucket['referrers']);
         
@@ -751,13 +877,13 @@ function rebuildAllLocationProjects($pdo) {
                 'facilities' => $bucket['facilities'],
                 'referrerConsultants' => $bucket['referrers'],
                 'operator' => [
-                    'name' => $stateName,
+                    'name' => $locationName,
                     'type' => 'Location Aggregate'
                 ]
             ];
             
             $locationProject = [
-                'name' => $stateName,
+                'name' => $locationName,
                 'data' => $locationData,
                 'category' => 'locations',
                 'currentFacilityIndex' => 0,
@@ -771,12 +897,12 @@ function rebuildAllLocationProjects($pdo) {
                     ON DUPLICATE KEY UPDATE json_data = :json_data, updated_at = NOW()";
             
             $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':unique_name', $stateName);
+            $stmt->bindValue(':unique_name', $locationName);
             $stmt->bindValue(':json_data', $jsonData);
             $stmt->execute();
             
-            $statesUpdated++;
-            $stateDetails[$stateName] = [
+            $locationsUpdated++;
+            $locationDetails[$locationName] = [
                 'facilities' => $facilityCount,
                 'referrers' => $referrerCount
             ];
@@ -785,8 +911,8 @@ function rebuildAllLocationProjects($pdo) {
     
     return [
         'projectsProcessed' => $projectsProcessed,
-        'statesUpdated' => $statesUpdated,
-        'stateDetails' => $stateDetails
+        'statesUpdated' => $locationsUpdated,
+        'stateDetails' => $locationDetails
     ];
 }
 
