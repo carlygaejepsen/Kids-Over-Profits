@@ -754,21 +754,43 @@ function removeFromLocationProjects($pdo, $sourceProjectName) {
 // Handle action
 if ($action === 'delete') {
     try {
-        // First, check if this is a location project (state or country name) - don't allow deleting those
+        // Check if this is a location project (state or country name)
         global $US_STATE_NAMES, $COUNTRY_NAMES;
         $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
-        if (in_array(strtoupper($projectName), $allLocationNames)) {
-            echo json_encode([
-                'success' => false,
-                'error' => "Cannot delete location project '$projectName'. Location projects are auto-managed."
-            ]);
-            exit;
+        $isLocationProject = in_array(strtoupper($projectName), $allLocationNames);
+        
+        if ($isLocationProject) {
+            // For location projects, check if it has any data before blocking deletion
+            // Try both the original case and uppercase (old projects may be lowercase)
+            $stmt = $pdo->prepare("SELECT json_data, unique_name FROM facilities_master WHERE UPPER(unique_name) = :projectName");
+            $stmt->execute([':projectName' => strtoupper($projectName)]);
+            $row = $stmt->fetch();
+            
+            if ($row) {
+                $projectData = json_decode($row['json_data'], true);
+                $data = $projectData['data'] ?? $projectData;
+                $facilityCount = count($data['facilities'] ?? []);
+                $referrerCount = count($data['referrerConsultants'] ?? []);
+                
+                // If the location project has data, don't allow deletion
+                if ($facilityCount > 0 || $referrerCount > 0) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => "Cannot delete location project '$projectName'. It contains $facilityCount facilities and $referrerCount referrers. Location projects are auto-managed - data will be removed when source projects are deleted."
+                    ]);
+                    exit;
+                }
+                // If empty, allow deletion to proceed - use the actual stored name
+                $projectName = $row['unique_name'];
+            }
+            // If not found, allow deletion attempt (will report not found below)
         }
         
         // Try deleting from both tables (referrers and facilities)
         $deletedFromFacilities = false;
         $deletedFromReferrers = false;
 
+        // Use the project name (may have been updated to actual stored name for location projects)
         $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromFacilities = $stmt->rowCount() > 0;
@@ -780,10 +802,15 @@ if ($action === 'delete') {
         if ($deletedFromFacilities || $deletedFromReferrers) {
             $fromTable = $deletedFromReferrers ? 'referrers_master' : 'facilities_master';
             
-            // Also remove this project's entries from all location projects
-            $cleanedLocations = removeFromLocationProjects($pdo, $projectName);
+            // For non-location projects, also remove this project's entries from all location projects
+            $cleanedLocations = [];
+            if (!$isLocationProject) {
+                $cleanedLocations = removeFromLocationProjects($pdo, $projectName);
+            }
             
-            $message = "Project '$projectName' deleted from {$fromTable}";
+            $message = $isLocationProject 
+                ? "Empty location project '$projectName' deleted"
+                : "Project '$projectName' deleted from {$fromTable}";
             if (!empty($cleanedLocations)) {
                 $message .= ". Removed from location projects: " . implode(', ', $cleanedLocations);
             }
@@ -791,7 +818,8 @@ if ($action === 'delete') {
             echo json_encode([
                 'success' => true,
                 'message' => $message,
-                'locationProjectsCleaned' => $cleanedLocations
+                'locationProjectsCleaned' => $cleanedLocations,
+                'wasLocationProject' => $isLocationProject
             ]);
         } else {
             echo json_encode([
@@ -868,6 +896,65 @@ if ($action === 'save') {
         echo json_encode([
             'success' => false,
             'error' => 'Failed to save to database: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
+// Handle cleanup-locations action - deletes all empty location projects
+if ($action === 'cleanup-locations') {
+    try {
+        global $US_STATE_NAMES, $COUNTRY_NAMES;
+        $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
+        
+        $deleted = [];
+        $skipped = [];
+        $errors = [];
+        
+        // Find all projects that match location names (case-insensitive)
+        $placeholders = implode(',', array_fill(0, count($allLocationNames), '?'));
+        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master WHERE UPPER(unique_name) IN ($placeholders)");
+        $stmt->execute($allLocationNames);
+        $locationProjects = $stmt->fetchAll();
+        
+        foreach ($locationProjects as $row) {
+            $projectName = $row['unique_name'];
+            $projectData = json_decode($row['json_data'], true);
+            $data = $projectData['data'] ?? $projectData;
+            $facilityCount = count($data['facilities'] ?? []);
+            $referrerCount = count($data['referrerConsultants'] ?? []);
+            
+            // Only delete if empty
+            if ($facilityCount === 0 && $referrerCount === 0) {
+                try {
+                    $deleteStmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
+                    $deleteStmt->execute([':projectName' => $projectName]);
+                    if ($deleteStmt->rowCount() > 0) {
+                        $deleted[] = $projectName;
+                    }
+                } catch (PDOException $e) {
+                    $errors[] = "Failed to delete '$projectName': " . $e->getMessage();
+                }
+            } else {
+                $skipped[] = [
+                    'name' => $projectName,
+                    'facilities' => $facilityCount,
+                    'referrers' => $referrerCount
+                ];
+            }
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'message' => "Deleted " . count($deleted) . " empty location projects, skipped " . count($skipped) . " with data",
+            'deleted' => $deleted,
+            'skipped' => $skipped,
+            'errors' => $errors
+        ]);
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Failed to cleanup location projects: ' . $e->getMessage()
         ]);
     }
     exit;
