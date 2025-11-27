@@ -46,11 +46,16 @@
         activeViewLayout = normalizedView;
 
         viewManagedElements.forEach(item => {
+            // Guard against elements that may have been removed from the DOM
+            if (!item.element || !item.element.isConnected) {
+                return;
+            }
+
             const shouldShow = !item.views.length || item.views.includes(normalizedView);
 
             if (shouldShow) {
                 if (item.toggleDisplay) {
-                    item.element.style.display = item.dataset.originalDisplay || '';
+                    item.element.style.display = item.element.dataset.originalDisplay || '';
                 }
                 item.hiddenClasses.forEach(cls => cls && item.element.classList.remove(cls));
             } else {
