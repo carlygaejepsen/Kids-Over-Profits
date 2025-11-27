@@ -20,14 +20,26 @@ function kadence_child_enqueue_styles() {
         wp_get_theme()->get('Version')
     );
 
+    // Enqueue shared color variables for all pages
+    $colors_path = get_stylesheet_directory() . '/css/colors.css';
+
+    if (file_exists($colors_path)) {
+        wp_enqueue_style(
+            'kop-colors',
+            get_stylesheet_directory_uri() . '/css/colors.css',
+            array('kadence-parent-style'),
+            filemtime($colors_path)
+        );
+    }
+
     // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
-    if (is_page_template('page-data.php') || is_page_template('page-admin-data.php')) {
+    if (is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php')) {
         $style_path = get_stylesheet_directory() . '/css/data-form.css';
         if (file_exists($style_path)) {
             wp_enqueue_style(
                 'kop-data-form-style',
                 get_stylesheet_directory_uri() . '/css/data-form.css',
-                array('kadence-parent-style'),
+                array('kadence-parent-style', 'kop-colors'),
                 filemtime($style_path)
             );
         }
@@ -43,7 +55,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * @return bool
  */
 function kop_is_headerless_layout() {
-    return is_page_template('page-data.php') || is_page_template('page-admin-data.php');
+    return is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php');
 }
 
 /**
@@ -182,43 +194,12 @@ function kop_get_facilities_database_connection() {
         return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
     }
 
-    // Connect to the facilities database
-    $use_separate_db = false;
-    $facilities_db = null;
-
-    // Try to load credentials from constants first
-    $db_user = defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '';
-    $db_pass = defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '';
-    $db_name = defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '';
-    $db_host = defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost';
-
-    // If constants aren't defined, try to load from api/config.local.php (not config.php which is for API endpoints)
-    if (empty($db_user) || empty($db_name)) {
-        $config_local_path = get_stylesheet_directory() . '/api/config.local.php';
-        if (file_exists($config_local_path)) {
-            $localConfig = include $config_local_path;
-            if (is_array($localConfig)) {
-                $db_host = $localConfig['host'] ?? $localConfig['db_host'] ?? $db_host;
-                $db_name = $localConfig['name'] ?? $localConfig['db_name'] ?? $db_name;
-                $db_user = $localConfig['user'] ?? $localConfig['username'] ?? $localConfig['db_user'] ?? $db_user;
-                $db_pass = $localConfig['pass'] ?? $localConfig['password'] ?? $localConfig['db_pass'] ?? $db_pass;
-            }
-        }
-    }
-
-    // Only try to connect if we have credentials
-    if (!empty($db_user) && !empty($db_name)) {
-        try {
-            $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
-            $use_separate_db = true;
-        } catch (Exception $e) {
-            error_log('Failed to connect to facilities database: ' . $e->getMessage());
-        }
-    }
-
+    // Flywheel Local: Simplified to always use the default WordPress database.
+    // The original code attempted to connect to a separate database, which is complex to manage
+    // across different environments. Using the main WP database is more portable.
     $connection = array(
-        'db'     => $use_separate_db && $facilities_db ? $facilities_db : $wpdb,
-        'prefix' => '', // No prefix for the standalone facilities database
+        'db'     => $wpdb,
+        'prefix' => $wpdb->prefix,
     );
 
     /**
@@ -536,7 +517,7 @@ function load_facilities_data() {
         wp_enqueue_style(
             'kop-facility-reports-style',
             get_stylesheet_directory_uri() . '/css/facility-reports.css',
-            array(),
+            array('kop-colors'),
             filemtime($reports_style_path)
         );
     }
@@ -669,7 +650,7 @@ function kop_enqueue_report_scripts() {
                 wp_enqueue_style(
                     'kop-facility-reports-style',
                     get_stylesheet_directory_uri() . '/css/facility-reports.css',
-                    array(),
+                    array('kop-colors'),
                     filemtime($reports_style_path)
                 );
             }
@@ -715,7 +696,7 @@ function enqueue_facility_form_script() {
     }
 
     // Use the robust template check instead of a shortcode or slug check.
-    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php') || is_page_template('page-tti-program-index.php');
+    $is_data_form_page = is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
     if (!$is_data_form_page) {
         return;
     }
@@ -727,7 +708,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_style(
         'kop-data-form-style',
         get_stylesheet_directory_uri() . '/css/data-form.css',
-        array(),
+        array('kop-colors'),
         $style_version
     );
 
@@ -835,7 +816,7 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
+    } elseif (is_page_template('templates/data-form-admin.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
         // Admin page and TTI Program Index - loads admin-data-page.js
         $admin_page_relative_path = '/js/data-form/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
@@ -865,7 +846,7 @@ function enqueue_news_processor_scripts() {
     wp_enqueue_style(
         'news-processor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
     
@@ -885,7 +866,7 @@ add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
  * Enqueue TTI Processor (React article processor) scripts and styles
  */
 function enqueue_tti_processor_scripts() {
-    if (!is_page_template('page-tti-processor.php')) {
+    if (!is_page_template('page-tti-program-index.php')) {
         return;
     }
     
@@ -933,13 +914,13 @@ function enqueue_tti_processor_scripts() {
     );
     
     // Enqueue page-specific styles if they exist
-    $style_relative = '/css/tti-processor.css';
+    $style_relative = '/css/tti-program-index.css';
     $style_path = get_stylesheet_directory() . $style_relative;
     if (file_exists($style_path)) {
         wp_enqueue_style(
             'tti-processor-style',
             get_stylesheet_directory_uri() . $style_relative,
-            array('tailwind-css'),
+            array('tailwind-css', 'kop-colors'),
             filemtime($style_path)
         );
     }
@@ -959,7 +940,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_style(
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
 
@@ -1137,7 +1118,7 @@ class AnonymousDocPortal {
             wp_enqueue_style(
                 'anonymous-portal-css', 
                 get_stylesheet_directory_uri() . '/css/anonymous-portal.css', 
-                array(), 
+                array('kop-colors'), 
                 file_exists($css_path) ? filemtime($css_path) : '1.0'
             );
             
