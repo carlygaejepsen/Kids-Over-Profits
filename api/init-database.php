@@ -94,12 +94,31 @@ SQL;
 
     $pdo->exec($createReferrersTableSQL);
 
+    // ============================================
+    // Create locations_master table (location aggregates)
+    // ============================================
+    $createLocationsTableSQL = <<<SQL
+CREATE TABLE IF NOT EXISTS `locations_master` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unique_name` varchar(255) NOT NULL COMMENT 'Location identifier (state/country name in UPPERCASE)',
+  `json_data` longtext NOT NULL COMMENT 'JSON-encoded location aggregate data with facilities from multiple operators',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_name` (`unique_name`),
+  KEY `updated_at` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Location aggregate database - stores state/country facility collections'
+SQL;
+
+    $pdo->exec($createLocationsTableSQL);
+
     $result = [
         'success' => true,
         'message' => 'Database initialization complete',
         'tables_created' => [
-            'facilities_master' => 'Master facility data storage',
+            'facilities_master' => 'Master facility data storage (companies/operators)',
             'referrers_master' => 'Referrer/consultant data storage',
+            'locations_master' => 'Location aggregate data storage (states/countries)',
             'suggested_edits' => 'Public suggestion queue'
         ],
         'next_steps' => [

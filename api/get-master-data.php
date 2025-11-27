@@ -5,7 +5,7 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
-    // Query both facilities_master and referrers_master tables
+    // Query all three master tables: facilities, referrers, and locations
     $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
     $stmt1->execute();
     $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
@@ -14,8 +14,12 @@ try {
     $stmt2->execute();
     $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    // Merge both result sets
-    $results = array_merge($facilitiesResults, $referrersResults);
+    $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+    $stmt3->execute();
+    $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
+    // Merge all result sets
+    $results = array_merge($facilitiesResults, $referrersResults, $locationsResults);
 
     $projects = [];
     foreach ($results as $row) {

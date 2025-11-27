@@ -617,9 +617,9 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
     // Now update each affected location's project
     foreach ($locationBuckets as $locationName => $bucket) {
         try {
-            // First, load existing location project (if any)
+            // First, load existing location project from locations_master (if any)
             $existingProject = null;
-            $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = :locationName");
+            $stmt = $pdo->prepare("SELECT json_data FROM locations_master WHERE unique_name = :locationName");
             $stmt->execute([':locationName' => $locationName]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -672,8 +672,8 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
             
             $jsonData = json_encode($locationProject);
             
-            // Upsert the location project (use separate placeholders for INSERT and UPDATE)
-            $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at)
+            // Upsert the location project to locations_master table
+            $sql = "INSERT INTO locations_master (unique_name, json_data, updated_at)
                     VALUES (:unique_name, :json_data_insert, NOW())
                     ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
             
@@ -704,9 +704,8 @@ function removeFromLocationProjects($pdo, $sourceProjectName) {
     $cleanedLocations = [];
     
     try {
-        // Get all location projects (category = 'locations')
-        // This will find both state and country location projects
-        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master WHERE json_data LIKE '%\"category\":\"locations\"%'");
+        // Get all location projects from the locations_master table
+        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
         $stmt->execute();
         $locationProjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
@@ -748,7 +747,7 @@ function removeFromLocationProjects($pdo, $sourceProjectName) {
                 $projectJson['data'] = $locationData;
                 $projectJson['timestamp'] = date('c');
                 
-                $updateStmt = $pdo->prepare("UPDATE facilities_master SET json_data = :json_data, updated_at = NOW() WHERE unique_name = :locationName");
+                $updateStmt = $pdo->prepare("UPDATE locations_master SET json_data = :json_data, updated_at = NOW() WHERE unique_name = :locationName");
                 $updateStmt->execute([
                     ':json_data' => json_encode($projectJson),
                     ':locationName' => $locationName
@@ -774,9 +773,8 @@ if ($action === 'delete') {
         $isLocationProject = in_array(strtoupper($projectName), $allLocationNames);
         
         if ($isLocationProject) {
-            // For location projects, check if it has any data before blocking deletion
-            // Try both the original case and uppercase (old projects may be lowercase)
-            $stmt = $pdo->prepare("SELECT json_data, unique_name FROM facilities_master WHERE UPPER(unique_name) = :projectName");
+            // For location projects, check the locations_master table
+            $stmt = $pdo->prepare("SELECT json_data, unique_name FROM locations_master WHERE UPPER(unique_name) = :projectName");
             $stmt->execute([':projectName' => strtoupper($projectName)]);
             $row = $stmt->fetch();
             
@@ -794,17 +792,25 @@ if ($action === 'delete') {
                     ]);
                     exit;
                 }
-                // If empty, allow deletion to proceed - use the actual stored name
-                $projectName = $row['unique_name'];
+                // If empty, allow deletion from locations_master
+                $deleteStmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
+                $deleteStmt->execute([':projectName' => $row['unique_name']]);
+                
+                echo json_encode([
+                    'success' => true,
+                    'message' => "Empty location project '{$row['unique_name']}' deleted from locations_master",
+                    'wasLocationProject' => true
+                ]);
+                exit;
             }
-            // If not found, allow deletion attempt (will report not found below)
+            // If not found in locations_master, check facilities_master for legacy entries
         }
         
-        // Try deleting from both tables (referrers and facilities)
+        // Try deleting from all three tables (facilities, referrers, and locations)
         $deletedFromFacilities = false;
         $deletedFromReferrers = false;
+        $deletedFromLocations = false;
 
-        // Use the project name (may have been updated to actual stored name for location projects)
         $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromFacilities = $stmt->rowCount() > 0;
@@ -813,8 +819,12 @@ if ($action === 'delete') {
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromReferrers = $stmt->rowCount() > 0;
 
-        if ($deletedFromFacilities || $deletedFromReferrers) {
-            $fromTable = $deletedFromReferrers ? 'referrers_master' : 'facilities_master';
+        $stmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
+        $stmt->execute([':projectName' => $projectName]);
+        $deletedFromLocations = $stmt->rowCount() > 0;
+
+        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromLocations) {
+            $fromTable = $deletedFromReferrers ? 'referrers_master' : ($deletedFromLocations ? 'locations_master' : 'facilities_master');
             
             // For non-location projects, also remove this project's entries from all location projects
             $cleanedLocations = [];
@@ -969,31 +979,26 @@ if ($action === 'cleanup-locations') {
         $forceMode = isset($request['force']) && ($request['force'] === true || $request['force'] === 'true' || $request['force'] == 1);
         
         // Code version for deployment verification
-        $codeVersion = '2025-11-26-v2';
+        $codeVersion = '2025-11-26-v3-locations-table';
         
         $deleted = [];
+        $deletedFromFacilities = [];
         $skipped = [];
         $errors = [];
         $found = [];
         
-        // First, get ALL projects from the database to check
-        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+        // Query the locations_master table (the proper place for location projects)
+        $stmt = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
         $stmt->execute();
-        $allProjects = $stmt->fetchAll();
+        $locationProjects = $stmt->fetchAll();
         
-        foreach ($allProjects as $row) {
+        foreach ($locationProjects as $row) {
             $projectName = $row['unique_name'];
             $upperName = strtoupper($projectName);
-            
-            // Check if this project name matches a location name (case-insensitive)
-            if (!in_array($upperName, $allLocationNames)) {
-                continue; // Not a location project, skip
-            }
             
             $found[] = $projectName;
             
             $isLowercase = $projectName !== $upperName; // Has any lowercase letters
-            $isAllLowercase = $projectName === strtolower($projectName); // Is entirely lowercase
             
             $projectData = json_decode($row['json_data'], true);
             $data = $projectData['data'] ?? $projectData;
@@ -1005,13 +1010,13 @@ if ($action === 'cleanup-locations') {
             
             if ($shouldDelete) {
                 try {
-                    $deleteStmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
+                    $deleteStmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
                     $deleteStmt->execute([':projectName' => $projectName]);
                     if ($deleteStmt->rowCount() > 0) {
                         $deleted[] = $projectName;
                     }
                 } catch (PDOException $e) {
-                    $errors[] = "Failed to delete '$projectName': " . $e->getMessage();
+                    $errors[] = "Failed to delete '$projectName' from locations_master: " . $e->getMessage();
                 }
             } else {
                 $skipped[] = [
@@ -1023,13 +1028,32 @@ if ($action === 'cleanup-locations') {
             }
         }
         
+        // Also clean up any stale location projects that were incorrectly stored in facilities_master
+        $staleFromFacilities = [];
+        $stmtFac = $pdo->prepare("SELECT unique_name FROM facilities_master WHERE UPPER(unique_name) IN (" . implode(',', array_fill(0, count($allLocationNames), '?')) . ")");
+        $stmtFac->execute($allLocationNames);
+        $staleLocations = $stmtFac->fetchAll(PDO::FETCH_COLUMN);
+        
+        foreach ($staleLocations as $staleName) {
+            try {
+                $deleteStale = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :name");
+                $deleteStale->execute([':name' => $staleName]);
+                if ($deleteStale->rowCount() > 0) {
+                    $staleFromFacilities[] = $staleName;
+                }
+            } catch (PDOException $e) {
+                $errors[] = "Failed to clean stale '$staleName' from facilities_master: " . $e->getMessage();
+            }
+        }
+        
         echo json_encode([
             'success' => true,
-            'message' => "Deleted " . count($deleted) . " location projects, skipped " . count($skipped) . " with data",
+            'message' => "Deleted " . count($deleted) . " from locations_master, cleaned " . count($staleFromFacilities) . " stale from facilities_master",
             'codeVersion' => $codeVersion,
             'forceMode' => $forceMode,
             'found' => $found,
             'deleted' => $deleted,
+            'deletedFromFacilitiesMaster' => $staleFromFacilities,
             'skipped' => $skipped,
             'errors' => $errors
         ]);
@@ -1260,8 +1284,8 @@ function rebuildAllLocationProjects($pdo) {
             }
             
             try {
-                // Use separate placeholders for INSERT and UPDATE to avoid PDO binding issues
-                $sql = "INSERT INTO facilities_master (unique_name, json_data, updated_at)
+                // Save to locations_master table (separate from facilities_master)
+                $sql = "INSERT INTO locations_master (unique_name, json_data, updated_at)
                         VALUES (:unique_name, :json_data_insert, NOW())
                         ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
                 
