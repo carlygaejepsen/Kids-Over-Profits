@@ -915,11 +915,57 @@ if ($action === 'save') {
     exit;
 }
 
-// Handle cleanup-locations action - deletes all empty location projects
+// Handle inspect-project action - returns raw database contents for debugging
+if ($action === 'inspect-project') {
+    try {
+        if (!$projectName) {
+            echo json_encode(['success' => false, 'error' => 'Project name required']);
+            exit;
+        }
+        
+        // Try case-insensitive match
+        $stmt = $pdo->prepare("SELECT unique_name, json_data, updated_at FROM facilities_master WHERE UPPER(unique_name) = UPPER(:projectName)");
+        $stmt->execute([':projectName' => $projectName]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$row) {
+            // Try referrers table
+            $stmt = $pdo->prepare("SELECT unique_name, json_data, updated_at FROM referrers_master WHERE UPPER(unique_name) = UPPER(:projectName)");
+            $stmt->execute([':projectName' => $projectName]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        
+        if ($row) {
+            $jsonData = json_decode($row['json_data'], true);
+            echo json_encode([
+                'success' => true,
+                'storedName' => $row['unique_name'],
+                'updatedAt' => $row['updated_at'],
+                'jsonDataKeys' => $jsonData ? array_keys($jsonData) : null,
+                'hasDataKey' => isset($jsonData['data']),
+                'dataKeys' => isset($jsonData['data']) ? array_keys($jsonData['data']) : null,
+                'facilitiesCount' => isset($jsonData['data']['facilities']) ? count($jsonData['data']['facilities']) : (isset($jsonData['facilities']) ? count($jsonData['facilities']) : 0),
+                'referrersCount' => isset($jsonData['data']['referrerConsultants']) ? count($jsonData['data']['referrerConsultants']) : 0,
+                'category' => $jsonData['category'] ?? 'unknown',
+                'rawJson' => $jsonData
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Project not found']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// Handle cleanup-locations action - deletes all empty location projects (or all lowercase ones with force=true)
 if ($action === 'cleanup-locations') {
     try {
         global $US_STATE_NAMES, $COUNTRY_NAMES;
         $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
+        
+        // Check if force mode is requested (delete ALL lowercase location projects)
+        $forceMode = isset($request['force']) && $request['force'] === true;
         
         $deleted = [];
         $skipped = [];
@@ -933,18 +979,22 @@ if ($action === 'cleanup-locations') {
         
         foreach ($locationProjects as $row) {
             $projectName = $row['unique_name'];
+            $isLowercase = $projectName !== strtoupper($projectName);
+            
             $projectData = json_decode($row['json_data'], true);
             $data = $projectData['data'] ?? $projectData;
             $facilityCount = count($data['facilities'] ?? []);
             $referrerCount = count($data['referrerConsultants'] ?? []);
             
-            // Only delete if empty
-            if ($facilityCount === 0 && $referrerCount === 0) {
+            // Delete if: empty OR (force mode AND lowercase)
+            $shouldDelete = ($facilityCount === 0 && $referrerCount === 0) || ($forceMode && $isLowercase);
+            
+            if ($shouldDelete) {
                 try {
                     $deleteStmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
                     $deleteStmt->execute([':projectName' => $projectName]);
                     if ($deleteStmt->rowCount() > 0) {
-                        $deleted[] = $projectName;
+                        $deleted[] = $projectName . ($isLowercase ? ' (lowercase)' : '');
                     }
                 } catch (PDOException $e) {
                     $errors[] = "Failed to delete '$projectName': " . $e->getMessage();
@@ -953,7 +1003,8 @@ if ($action === 'cleanup-locations') {
                 $skipped[] = [
                     'name' => $projectName,
                     'facilities' => $facilityCount,
-                    'referrers' => $referrerCount
+                    'referrers' => $referrerCount,
+                    'isLowercase' => $isLowercase
                 ];
             }
         }
