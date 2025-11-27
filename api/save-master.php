@@ -965,7 +965,11 @@ if ($action === 'cleanup-locations') {
         $allLocationNames = array_merge($US_STATE_NAMES, $COUNTRY_NAMES);
         
         // Check if force mode is requested (delete ALL lowercase location projects)
-        $forceMode = isset($request['force']) && $request['force'] === true;
+        // Handle boolean true, string 'true', and integer 1 from AJAX
+        $forceMode = isset($request['force']) && ($request['force'] === true || $request['force'] === 'true' || $request['force'] == 1);
+        
+        // Code version for deployment verification
+        $codeVersion = '2025-11-26-v2';
         
         $deleted = [];
         $skipped = [];
@@ -1022,6 +1026,7 @@ if ($action === 'cleanup-locations') {
         echo json_encode([
             'success' => true,
             'message' => "Deleted " . count($deleted) . " location projects, skipped " . count($skipped) . " with data",
+            'codeVersion' => $codeVersion,
             'forceMode' => $forceMode,
             'found' => $found,
             'deleted' => $deleted,

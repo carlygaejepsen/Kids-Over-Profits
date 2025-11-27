@@ -1644,11 +1644,24 @@ function loadProject(projectName) { // Note: This function is now asynchronous
     debugLog('🔄 loadProject called with:', projectName);
     debugLog('📦 Available projects:', Object.keys(window.projects || {}));
 
+    // Try exact match first, then uppercase (for location projects stored as uppercase)
+    let resolvedName = projectName;
     if (!window.projects[projectName]) {
-        console.error('❌ Project not found:', projectName);
+        const upperName = projectName.toUpperCase();
+        if (window.projects[upperName]) {
+            resolvedName = upperName;
+            debugLog('📍 Resolved project name to uppercase:', resolvedName);
+        }
+    }
+    
+    if (!window.projects[resolvedName]) {
+        console.error('❌ Project not found:', projectName, '(also tried:', projectName.toUpperCase(), ')');
         showUploadStatus(`Project "${projectName}" not found.`, 'error');
         return Promise.reject(new Error(`Project not found: ${projectName}`));
     }
+    
+    // Use resolved name for the rest of the function
+    projectName = resolvedName;
 
     // Determine the project category and switch to the correct tab
     const projectCategory = determineProjectCategory(projectName);
