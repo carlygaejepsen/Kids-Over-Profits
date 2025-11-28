@@ -60,19 +60,14 @@ get_header();
                         <h3>🌍 Locations / States</h3>
                     </div>
                     <div class="project-management location-project-management">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects</h2>
                         <div class="form-group">
                             <label>Saved Location Projects</label>
                             <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <div class="form-group" style="text-align: center; margin-top: 15px;">
-                            <button class="btn" id="rebuild-locations-btn" style="background: #059669; color: white;">🔄 Rebuild All Location Projects</button>
-                            <p style="margin-top: 8px; color: #6b7280; font-size: 12px;">Scans all company/referrer projects and rebuilds location aggregates</p>
-                        </div>
-                        <div id="rebuild-status" style="display: none; margin-top: 10px; padding: 10px; border-radius: 6px;"></div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects are automatically updated when you save company or referrer projects. </p>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">Location projects aggregate facilities by state/country from company and referrer projects.</p>
                     </div>
 
                     <!-- Facilities Overview for Locations -->
