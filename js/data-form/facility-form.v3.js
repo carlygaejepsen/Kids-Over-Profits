@@ -28,7 +28,10 @@ const getAPIEndpoints = () => {
         SAVE_SUGGESTION: saveSuggestion,
         SAVE_PROJECT: (typeof window !== 'undefined' && window.FORM_MODE === 'suggestions') ? saveSuggestion : saveMaster,
         LOAD_PROJECTS: loadProjects,
-        AUTOCOMPLETE: autocomplete
+        AUTOCOMPLETE: autocomplete,
+        REST_SAVE_PROJECT: FACILITY_FORM_CONFIG.restSaveUrl || API_ENDPOINT_FALLBACKS.REST_SAVE_PROJECT || '/wp-json/kop/v1/projects/save',
+        REST_DELETE_PROJECT: FACILITY_FORM_CONFIG.restDeleteUrl || API_ENDPOINT_FALLBACKS.REST_DELETE_PROJECT || '/wp-json/kop/v1/projects/delete',
+        REST_NONCE: FACILITY_FORM_CONFIG.restNonce || ''
     };
 };
 
@@ -106,6 +109,12 @@ const DEFAULT_SAVE_SUGGESTION = FACILITY_FORM_CONFIG.endpoints?.SAVE_SUGGESTION 
     FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT_SUGGESTION ||
     getResolverEndpoint('save-suggestion.php', '/wp-content/themes/child/api/save-suggestion.php');
 
+// WordPress REST API endpoints as reliable fallbacks
+const REST_API_BASE = '/wp-json/kop/v1';
+const REST_SAVE_PROJECT = REST_API_BASE + '/projects/save';
+const REST_DELETE_PROJECT = REST_API_BASE + '/projects/delete';
+const REST_LOAD_PROJECTS = REST_API_BASE + '/projects';
+
 const defaultApiPaths = {
     SAVE_MASTER: DEFAULT_SAVE_MASTER,
     SAVE_SUGGESTION: DEFAULT_SAVE_SUGGESTION,
@@ -115,7 +124,11 @@ const defaultApiPaths = {
     AUTOCOMPLETE:
         FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
         FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php')
+        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php'),
+    // REST API fallbacks
+    REST_SAVE_PROJECT: REST_SAVE_PROJECT,
+    REST_DELETE_PROJECT: REST_DELETE_PROJECT,
+    REST_LOAD_PROJECTS: REST_LOAD_PROJECTS
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
@@ -127,7 +140,9 @@ API_ENDPOINT_FALLBACKS = {
     SAVE_MASTER: API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
     SAVE_SUGGESTION: API_ENDPOINTS.SAVE_SUGGESTION || API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
     LOAD_PROJECTS: API_ENDPOINTS.LOAD_PROJECTS,
-    AUTOCOMPLETE: API_ENDPOINTS.AUTOCOMPLETE
+    AUTOCOMPLETE: API_ENDPOINTS.AUTOCOMPLETE,
+    REST_SAVE_PROJECT: API_ENDPOINTS.REST_SAVE_PROJECT,
+    REST_DELETE_PROJECT: API_ENDPOINTS.REST_DELETE_PROJECT
 };
 
 const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
@@ -1556,27 +1571,57 @@ async function saveProjectToCloud(projectName, action = 'save') {
         debugLog('Payload size:', payloadSize, 'characters');
         debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
 
-        const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        let response;
+        let usedRestApi = false;
 
-        debugLog('Response status:', response.status, response.statusText);
-        debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
+        try {
+            response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
+            debugLog('Response status:', response.status, response.statusText);
+            debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
+
+            // Check if we got PHP source code instead of JSON (server misconfiguration)
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const responseText = await response.text();
+                if (responseText.includes('<?php')) {
+                    console.warn('⚠️ Direct PHP endpoint not working, trying REST API fallback...');
+                    throw new Error('PHP_NOT_EXECUTING');
+                }
+                console.error('❌ Expected JSON but got:', contentType);
+                console.error('Response preview:', responseText.substring(0, 500));
+                throw new Error(`Expected JSON response, got ${contentType}`);
+            }
+        } catch (directError) {
+            // If direct PHP failed, try REST API fallback
+            if (directError.message === 'PHP_NOT_EXECUTING' || directError.message.includes('Failed to fetch')) {
+                debugLog('🔄 Trying WordPress REST API fallback...');
+                const restEndpoint = API_ENDPOINTS.REST_SAVE_PROJECT || '/wp-json/kop/v1/projects/save';
+                const restNonce = API_ENDPOINTS.REST_NONCE || window.wpApiSettings?.nonce || '';
+                
+                response = await fetch(restEndpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': restNonce
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload)
+                });
+                usedRestApi = true;
+                debugLog('REST API response status:', response.status);
+            } else {
+                throw directError;
+            }
+        }
         if (!response.ok) {
             const errorText = await response.text();
             console.error('❌ Save failed response body:', errorText.substring(0, 500));
             throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
-        }
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const responseText = await response.text();
-            console.error('❌ Expected JSON but got:', contentType);
-            console.error('Response preview:', responseText.substring(0, 500));
-            throw new Error(`Expected JSON response, got ${contentType}`);
         }
 
         const result = await response.json();
@@ -1595,7 +1640,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
         // Backup to localStorage
         persistProjectLocally(projectName);
 
-        debugLog('✅ Save successful!');
+        debugLog('✅ Save successful!' + (usedRestApi ? ' (via REST API)' : ''));
         debugLog('=== SAVE PROJECT END ===');
         showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
 

@@ -451,8 +451,169 @@ function kop_register_facilities_rest_routes() {
             'permission_callback' => '__return_true', // Publicly accessible
         )
     );
+
+    // Register save endpoint for admin users
+    register_rest_route(
+        'kop/v1',
+        '/projects/save',
+        array(
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => 'kop_save_project_rest_callback',
+            'permission_callback' => function () {
+                return current_user_can('administrator');
+            },
+        )
+    );
+
+    // Register delete endpoint for admin users
+    register_rest_route(
+        'kop/v1',
+        '/projects/delete',
+        array(
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => 'kop_delete_project_rest_callback',
+            'permission_callback' => function () {
+                return current_user_can('administrator');
+            },
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
+
+/**
+ * REST API callback for saving projects.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_save_project_rest_callback($request) {
+    global $wpdb;
+
+    $params = $request->get_json_params();
+
+    $project_name = isset($params['projectName']) ? sanitize_text_field($params['projectName']) : '';
+    $data = isset($params['data']) ? $params['data'] : null;
+    $category = isset($params['category']) ? sanitize_text_field($params['category']) : 'company';
+
+    if (empty($project_name)) {
+        return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
+    }
+
+    if (!$data) {
+        return new WP_Error('missing_data', 'Project data is required', array('status' => 400));
+    }
+
+    // Determine which table to use based on category
+    $table_map = array(
+        'company' => 'facilities_master',
+        'companies' => 'facilities_master',
+        'referrers' => 'referrers_master',
+        'referrer' => 'referrers_master',
+        'locations' => 'locations_master',
+        'location' => 'locations_master',
+    );
+
+    $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
+
+    // Encode data as JSON
+    $json_data = wp_json_encode($data);
+
+    // Check if project exists
+    $existing = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id FROM {$table_name} WHERE project_name = %s",
+            $project_name
+        )
+    );
+
+    if ($existing) {
+        // Update existing project
+        $result = $wpdb->update(
+            $table_name,
+            array(
+                'project_data' => $json_data,
+                'updated_at' => current_time('mysql'),
+            ),
+            array('project_name' => $project_name),
+            array('%s', '%s'),
+            array('%s')
+        );
+    } else {
+        // Insert new project
+        $result = $wpdb->insert(
+            $table_name,
+            array(
+                'project_name' => $project_name,
+                'project_data' => $json_data,
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql'),
+            ),
+            array('%s', '%s', '%s', '%s')
+        );
+    }
+
+    if ($result === false) {
+        return new WP_Error('db_error', 'Database error: ' . $wpdb->last_error, array('status' => 500));
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => $existing ? 'Project updated successfully' : 'Project created successfully',
+        'projectName' => $project_name,
+        'table' => $table_name,
+    ));
+}
+
+/**
+ * REST API callback for deleting projects.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_delete_project_rest_callback($request) {
+    global $wpdb;
+
+    $params = $request->get_json_params();
+
+    $project_name = isset($params['projectName']) ? sanitize_text_field($params['projectName']) : '';
+    $category = isset($params['category']) ? sanitize_text_field($params['category']) : 'company';
+
+    if (empty($project_name)) {
+        return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
+    }
+
+    // Determine which table to use based on category
+    $table_map = array(
+        'company' => 'facilities_master',
+        'companies' => 'facilities_master',
+        'referrers' => 'referrers_master',
+        'referrer' => 'referrers_master',
+        'locations' => 'locations_master',
+        'location' => 'locations_master',
+    );
+
+    $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
+
+    $result = $wpdb->delete(
+        $table_name,
+        array('project_name' => $project_name),
+        array('%s')
+    );
+
+    if ($result === false) {
+        return new WP_Error('db_error', 'Database error: ' . $wpdb->last_error, array('status' => 500));
+    }
+
+    if ($result === 0) {
+        return new WP_Error('not_found', 'Project not found', array('status' => 404));
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => 'Project deleted successfully',
+        'projectName' => $project_name,
+    ));
+}
 
 /**
  * Get the REST API endpoint URL that provides facilities data.
@@ -819,7 +980,10 @@ function enqueue_facility_form_script() {
         'fallbackProjectsUrl' => $fallback_url,
         'fallbackProjectsUrls' => $dataset_urls,
         'projectsApiUrl' => esc_url_raw(rest_url('kop/v1/projects')),
-        'apiBase' => home_url()
+        'apiBase' => home_url(),
+        'restNonce' => wp_create_nonce('wp_rest'),
+        'restSaveUrl' => esc_url_raw(rest_url('kop/v1/projects/save')),
+        'restDeleteUrl' => esc_url_raw(rest_url('kop/v1/projects/delete')),
     );
     error_log('KOP Config being localized: ' . json_encode($config));
 
