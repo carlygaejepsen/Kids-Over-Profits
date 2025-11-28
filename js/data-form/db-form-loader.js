@@ -396,19 +396,12 @@
             const isSuccess = result.success || result.source || hasProjects;
 
             if (isSuccess && hasProjects) {
-                // DEBUG: Log sample project structures to understand data format
-                const sampleProjects = Object.entries(result.projects).slice(0, 5);
-                console.log('🔬 SAMPLE RAW PROJECT STRUCTURES FROM API:');
-                sampleProjects.forEach(([name, proj]) => {
-                    console.log(`  "${name}":`, {
-                        hasData: !!proj.data,
-                        dataKeys: proj.data ? Object.keys(proj.data) : 'NO DATA PROPERTY',
-                        hasFacilitiesInData: !!proj.data?.facilities,
-                        facilitiesInDataCount: proj.data?.facilities?.length,
-                        hasFacilitiesAtRoot: !!proj.facilities,
-                        facilitiesAtRootCount: proj.facilities?.length,
-                        category: proj.category
-                    });
+                // DEBUG: Log sample project structures
+                console.log('🔬 LOADED PROJECTS - Sample data structure:');
+                const firstFive = Object.keys(result.projects).slice(0, 5);
+                firstFive.forEach(name => {
+                    const p = result.projects[name];
+                    console.log(`  ${name}: data=${!!p.data}, data.facilities=${p.data?.facilities?.length || 0}, root.facilities=${p.facilities?.length || 0}`);
                 });
                 
                 window.projects = result.projects;
