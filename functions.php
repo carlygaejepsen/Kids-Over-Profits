@@ -31,19 +31,6 @@ function kadence_child_enqueue_styles() {
             filemtime($colors_path)
         );
     }
-
-    // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
-    if (is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php')) {
-        $style_path = get_stylesheet_directory() . '/css/data-form.css';
-        if (file_exists($style_path)) {
-            wp_enqueue_style(
-                'kop-data-form-style',
-                get_stylesheet_directory_uri() . '/css/data-form.css',
-                array('kadence-parent-style', 'kop-colors'),
-                filemtime($style_path)
-            );
-        }
-    }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
@@ -702,15 +689,17 @@ function enqueue_facility_form_script() {
     }
 
     // Enqueue the shared data form stylesheet
-    $style_path = get_stylesheet_directory() . '/css/data-form.css';
-    $style_version = file_exists($style_path) ? filemtime($style_path) : time();
-
-    wp_enqueue_style(
-        'kop-data-form-style',
-        get_stylesheet_directory_uri() . '/css/data-form.css',
-        array('kop-colors'),
-        $style_version
-    );
+    $data_form_css_path = get_stylesheet_directory() . '/css/data-form.css';
+    if (file_exists($data_form_css_path)) {
+        wp_enqueue_style(
+            'kop-data-form-style',
+            get_stylesheet_directory_uri() . '/css/data-form.css',
+            array('kadence-parent-style', 'kop-colors'),
+            filemtime($data_form_css_path)
+        );
+    } else {
+        error_log('ERROR: data-form.css not found at: ' . $data_form_css_path);
+    }
 
     // Enqueue the DB form loader first (handles data loading)
     $loader_relative_path = '/js/data-form/db-form-loader.js';
