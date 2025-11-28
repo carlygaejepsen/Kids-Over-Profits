@@ -682,8 +682,11 @@ function enqueue_facility_form_script() {
         return;
     }
 
-    // Use the robust template check instead of a shortcode or slug check.
-    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php') || is_page_template('page-tti-program-index.php');
+    // Support both the page-level templates and the templates/ directory versions.
+    $is_data_template  = is_page_template('page-data.php') || is_page_template('templates/data-form-public.php');
+    $is_admin_template = is_page_template('page-admin-data.php') || is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
+    $is_data_form_page = $is_data_template || $is_admin_template;
+
     if (!$is_data_form_page) {
         return;
     }
@@ -779,7 +782,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue page-specific scripts based on template (slug fallback for legacy pages)
-    if (is_page_template('page-data.php') || is_page('data')) {
+    if ($is_data_template || is_page('data')) {
         // Suggestions page - loads data-page.js
         $data_page_relative_path = '/js/data-form/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -792,7 +795,7 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
+    } elseif ($is_admin_template || is_page('admin-data')) {
         // Admin page and TTI Program Index - loads admin-data-page.js
         $admin_page_relative_path = '/js/data-form/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
