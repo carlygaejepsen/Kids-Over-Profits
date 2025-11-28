@@ -691,6 +691,17 @@ function enqueue_facility_form_script() {
         return;
     }
 
+    // Ensure the data-form stylesheet is queued before header output.
+    $data_form_css = get_stylesheet_directory() . '/css/data-form.css';
+    if (file_exists($data_form_css)) {
+        wp_enqueue_style(
+            'kop-data-form-style',
+            get_stylesheet_directory_uri() . '/css/data-form.css',
+            array('kadence-parent-style', 'kop-colors'),
+            filemtime($data_form_css)
+        );
+    }
+
     // Enqueue the DB form loader first (handles data loading)
     $loader_relative_path = '/js/data-form/db-form-loader.js';
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
