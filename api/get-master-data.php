@@ -35,6 +35,17 @@ try {
         // Decode the stored JSON
         $stored = json_decode($row['json_data'], true);
 
+        // DEBUG: Log Acadia structure
+        if ($row['unique_name'] === 'Acadia') {
+            error_log('ACADIA DEBUG - stored keys: ' . json_encode(array_keys($stored)));
+            error_log('ACADIA DEBUG - has data: ' . (isset($stored['data']) ? 'yes' : 'no'));
+            error_log('ACADIA DEBUG - has timestamp: ' . (isset($stored['timestamp']) ? 'yes' : 'no'));
+            if (isset($stored['data'])) {
+                error_log('ACADIA DEBUG - data keys: ' . json_encode(array_keys($stored['data'])));
+                error_log('ACADIA DEBUG - data.facilities exists: ' . (isset($stored['data']['facilities']) ? 'yes' : 'no'));
+            }
+        }
+
         // Check if this is the new format (with metadata) or old format (just data)
         if (isset($stored['data']) && isset($stored['timestamp'])) {
             // New format: already has the complete project structure
