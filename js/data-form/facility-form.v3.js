@@ -1201,10 +1201,10 @@ function syncLocationProjectsFromSources(projectsObj) {
         if (project.category === 'locations') return;
         
         // Only process company and referrer projects
-        if (project.category !== 'company' && project.category !== 'referrers') return;
+        if (project.category !== 'company' && project.category !== 'referrers' && project.category !== 'companies') return;
         
-        // Process each facility in the project
-        const facilities = project.facilities || [];
+        // Process each facility in the project - note: data is nested in project.data
+        const facilities = project.data?.facilities || [];
         facilities.forEach(facility => {
             // Try to determine the state from the facility
             let state = facility.locationState || '';
@@ -1274,8 +1274,13 @@ function syncLocationProjectsFromSources(projectsObj) {
         const existingProject = projectsObj[state];
         
         if (existingProject) {
+            // Ensure data structure exists
+            if (!existingProject.data) {
+                existingProject.data = { facilities: [] };
+            }
+            
             // Merge facilities: keep existing + add new unique ones
-            const existingFacilities = existingProject.facilities || [];
+            const existingFacilities = existingProject.data.facilities || [];
             const existingIds = new Set(existingFacilities.map(f => f.id || `${f.name}-${f.location}`));
             
             // Add new facilities that don't already exist
@@ -1289,18 +1294,20 @@ function syncLocationProjectsFromSources(projectsObj) {
                 }
             });
             
-            existingProject.facilities = existingFacilities;
+            existingProject.data.facilities = existingFacilities;
             existingProject.currentFacilityIndex = existingProject.currentFacilityIndex || 0;
             
             if (addedCount > 0) {
                 debugLog(`📍 Updated location "${state}": added ${addedCount} new facilities (total: ${existingFacilities.length})`);
             }
         } else {
-            // Create new location project
+            // Create new location project with proper nested structure
             projectsObj[state] = {
                 name: state,
                 category: 'locations',
-                facilities: facilities,
+                data: {
+                    facilities: facilities
+                },
                 currentFacilityIndex: 0,
                 timestamp: new Date().toISOString()
             };
