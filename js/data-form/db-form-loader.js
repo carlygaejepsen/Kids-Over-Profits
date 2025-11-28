@@ -396,6 +396,21 @@
             const isSuccess = result.success || result.source || hasProjects;
 
             if (isSuccess && hasProjects) {
+                // DEBUG: Log sample project structures to understand data format
+                const sampleProjects = Object.entries(result.projects).slice(0, 5);
+                console.log('🔬 SAMPLE RAW PROJECT STRUCTURES FROM API:');
+                sampleProjects.forEach(([name, proj]) => {
+                    console.log(`  "${name}":`, {
+                        hasData: !!proj.data,
+                        dataKeys: proj.data ? Object.keys(proj.data) : 'NO DATA PROPERTY',
+                        hasFacilitiesInData: !!proj.data?.facilities,
+                        facilitiesInDataCount: proj.data?.facilities?.length,
+                        hasFacilitiesAtRoot: !!proj.facilities,
+                        facilitiesAtRootCount: proj.facilities?.length,
+                        category: proj.category
+                    });
+                });
+                
                 window.projects = result.projects;
 
                 invalidateAggregatedData();
