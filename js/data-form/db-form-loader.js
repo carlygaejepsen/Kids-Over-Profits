@@ -405,6 +405,18 @@
                 });
                 
                 window.projects = result.projects;
+                
+                // DEBUG: Verify structure immediately after assignment
+                const acadia = window.projects['Acadia'];
+                if (acadia) {
+                    console.log('🔬 ACADIA RIGHT AFTER LOAD:', {
+                        'acadia.data exists': !!acadia.data,
+                        'acadia.data.facilities exists': !!acadia.data?.facilities,
+                        'acadia.data.facilities.length': acadia.data?.facilities?.length,
+                        'acadia.data.data exists': !!acadia.data?.data,
+                        'acadia.data keys': acadia.data ? Object.keys(acadia.data) : 'no data'
+                    });
+                }
 
                 invalidateAggregatedData();
 
