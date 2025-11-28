@@ -1182,6 +1182,17 @@ async function loadAllProjectsFromCloud() {
         const result = await response.json();
 
         if (result.success && result.projects) {
+            // Debug: Log raw location projects from server
+            const rawLocationProjects = Object.entries(result.projects).filter(([name, proj]) => {
+                const normalized = name.toLowerCase();
+                return US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized) || proj.category === 'locations';
+            });
+            console.log('🗺️ Raw location projects from server:', rawLocationProjects.length, rawLocationProjects.map(([name, proj]) => ({
+                name,
+                category: proj.category,
+                facilitiesCount: proj.data?.facilities?.length || 0
+            })));
+
             // Deduplicate location projects: prefer uppercase versions with data
             const deduplicatedProjects = deduplicateLocationProjects(result.projects);
             window.projects = deduplicatedProjects;
