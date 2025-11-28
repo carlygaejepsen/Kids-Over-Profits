@@ -415,6 +415,24 @@ function kop_register_facilities_rest_routes() {
             'permission_callback' => '__return_true',
         )
     );
+
+    register_rest_route(
+        'kop/v1',
+        '/projects',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $projects = kop_get_facilities_projects_from_database();
+
+                if (is_wp_error($projects)) {
+                    return $projects;
+                }
+
+                return rest_ensure_response($projects);
+            },
+            'permission_callback' => '__return_true', // Publicly accessible
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 
@@ -782,6 +800,7 @@ function enqueue_facility_form_script() {
     $config = array(
         'fallbackProjectsUrl' => $fallback_url,
         'fallbackProjectsUrls' => $dataset_urls,
+        'projectsApiUrl' => esc_url_raw(rest_url('kop/v1/projects')),
         'apiBase' => home_url()
     );
     error_log('KOP Config being localized: ' . json_encode($config));
