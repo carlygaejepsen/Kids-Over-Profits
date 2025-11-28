@@ -4525,6 +4525,38 @@ async function initializeForm() {
     debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
+    // Wait for referrer module to be ready
+    if (typeof window.ensureReferrerDataStructures !== 'function') {
+        console.warn('⚠️ Referrer module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.ensureReferrerDataStructures === 'function') {
+                debugLog('✅ Referrer module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.ensureReferrerDataStructures !== 'function') {
+            console.error('❌ Referrer module failed to load after 5 seconds. Referrer form may not work.');
+            showUploadStatus('Error: Referrer module failed to load.', 'error');
+        }
+    }
+
+    // Wait for autocomplete module to be ready
+    if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+        console.warn('⚠️ Autocomplete module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.initializeAutocompleteFields === 'function' && !window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+                debugLog('✅ Autocomplete module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+            console.error('❌ Autocomplete module failed to load after 5 seconds. Autocomplete will not work.');
+            showUploadStatus('Error: Autocomplete module failed to load.', 'error');
+        }
+    }
+
     // Wait for loader to be available (with better diagnostics)
     if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
         console.warn('⚠️ KOP_FormLoader not ready, waiting...', {
