@@ -120,10 +120,21 @@ function getFieldNotes(scope, key, createIfMissing = false) {
     const notes = store[key];
 
     // CRITICAL BUG FIX: Always ensure we return an array
+    // Handle case where notes is an object {} instead of an array []
     if (!Array.isArray(notes)) {
         const normalized = [];
-        if (notes !== null && notes !== undefined && `${notes}`.trim() !== '') {
-            normalized.push(`${notes}`);
+        if (notes !== null && notes !== undefined) {
+            // If it's an object with values, try to extract them
+            if (typeof notes === 'object') {
+                const values = Object.values(notes);
+                values.forEach(v => {
+                    if (v !== null && v !== undefined && `${v}`.trim() !== '') {
+                        normalized.push(`${v}`);
+                    }
+                });
+            } else if (`${notes}`.trim() !== '') {
+                normalized.push(`${notes}`);
+            }
         }
         store[key] = normalized;
         return normalized;
@@ -138,12 +149,20 @@ function getFieldNotes(scope, key, createIfMissing = false) {
  * @param {string} key - The field key
  */
 function addFieldNote(scope, key) {
-    const notes = getFieldNotes(scope, key, true);
+    let notes = getFieldNotes(scope, key, true);
 
     // Additional safety check - ensure notes is definitely an array
     if (!Array.isArray(notes)) {
-        console.error('[Notes] getFieldNotes did not return an array:', notes);
-        return;
+        console.warn('[Notes] getFieldNotes returned non-array, normalizing:', notes);
+        // Force it to be an array
+        const store = ensureFieldNotesStore(scope, true);
+        if (store) {
+            store[key] = [];
+            notes = store[key];
+        } else {
+            console.error('[Notes] Could not get field notes store');
+            return;
+        }
     }
 
     notes.push('');
