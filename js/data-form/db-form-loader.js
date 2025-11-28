@@ -87,6 +87,7 @@
             getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
         LOAD_PROJECTS:
             FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
+            FACILITY_FORM_CONFIG.projectsApiUrl ||
             getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
         AUTOCOMPLETE:
             FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
@@ -388,7 +389,13 @@
             const result = await response.json();
             debugLog('Received result:', result);
 
-            if (result.success && result.projects) {
+            // Support both formats:
+            // 1. Direct PHP API: { success: true, projects: {...} }
+            // 2. WordPress REST API: { source: 'database', projects: {...} }
+            const hasProjects = result.projects && typeof result.projects === 'object';
+            const isSuccess = result.success || result.source || hasProjects;
+
+            if (isSuccess && hasProjects) {
                 window.projects = result.projects;
 
                 invalidateAggregatedData();
