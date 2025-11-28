@@ -1737,6 +1737,16 @@ function loadProject(projectName) { // Note: This function is now asynchronous
         targetTab.classList.add('active');
         debugLog('✅ Switched to', projectCategory, 'tab');
     }
+
+    // Also switch category content panels (this was missing before)
+    document.querySelectorAll('.category-content').forEach(content => {
+        content.classList.add('view-hidden', 'd-none');
+    });
+    const contentId = projectCategory === 'locations' ? 'states-content' : `${projectCategory}-content`;
+    const activeContent = document.getElementById(contentId);
+    if (activeContent) {
+        activeContent.classList.remove('view-hidden', 'd-none');
+    }
     
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -1786,6 +1796,12 @@ function loadProject(projectName) { // Note: This function is now asynchronous
                 updateLabelsForProjectType(projectName);
             } else {
                 console.error('❌ updateAllUI not available!');
+            }
+
+            // Explicitly update consultant UI for referrer projects
+            if (projectCategory === 'referrers' && typeof window.updateConsultantsUI === 'function') {
+                debugLog('🔄 Updating consultants UI for referrer project...');
+                window.updateConsultantsUI();
             }
 
             // Dispatch custom event for project loaded
