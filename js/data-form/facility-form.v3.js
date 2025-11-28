@@ -1330,6 +1330,22 @@ async function loadAllProjectsFromCloud() {
         const result = await response.json();
 
         if (result.success && result.projects) {
+            // Debug: Log raw data structure from a few sample projects
+            const sampleProjects = Object.entries(result.projects).slice(0, 3);
+            console.log('🔬 SAMPLE RAW PROJECT STRUCTURES:');
+            sampleProjects.forEach(([name, proj]) => {
+                console.log(`  "${name}":`, {
+                    hasData: !!proj.data,
+                    dataKeys: proj.data ? Object.keys(proj.data) : 'NO DATA',
+                    hasFacilitiesInData: !!proj.data?.facilities,
+                    facilitiesInDataCount: proj.data?.facilities?.length,
+                    hasFacilitiesAtRoot: !!proj.facilities,
+                    facilitiesAtRootCount: proj.facilities?.length,
+                    category: proj.category,
+                    fullStructure: JSON.stringify(proj).substring(0, 500)
+                });
+            });
+            
             // Debug: Log raw location projects from server
             const rawLocationProjects = Object.entries(result.projects).filter(([name, proj]) => {
                 const normalized = name.toLowerCase();
@@ -1338,7 +1354,8 @@ async function loadAllProjectsFromCloud() {
             console.log('🗺️ Raw location projects from server:', rawLocationProjects.length, rawLocationProjects.map(([name, proj]) => ({
                 name,
                 category: proj.category,
-                facilitiesCount: proj.data?.facilities?.length || 0
+                facilitiesInData: proj.data?.facilities?.length || 0,
+                facilitiesAtRoot: proj.facilities?.length || 0
             })));
 
             // Deduplicate location projects: prefer uppercase versions with data
