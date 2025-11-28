@@ -388,18 +388,9 @@
 
             const result = await response.json();
             
-            // DEBUG: Log RAW Acadia from API response BEFORE any processing
-            if (result.projects && result.projects['Acadia']) {
-                const rawAcadia = result.projects['Acadia'];
-                console.log('🔬🔬 RAW ACADIA FROM API (before any JS processing):', {
-                    'keys': Object.keys(rawAcadia),
-                    'rawAcadia.data type': typeof rawAcadia.data,
-                    'rawAcadia.data keys': rawAcadia.data ? Object.keys(rawAcadia.data) : 'N/A',
-                    'rawAcadia.data.facilities exists': !!rawAcadia.data?.facilities,
-                    'rawAcadia.data.facilities length': rawAcadia.data?.facilities?.length,
-                    'rawAcadia.data.data exists': !!rawAcadia.data?.data,
-                    'JSON preview': JSON.stringify(rawAcadia).substring(0, 500)
-                });
+            // DEBUG: Log RAW Acadia from API
+            if (result.projects?.Acadia) {
+                console.log('🔬🔬 RAW ACADIA:', JSON.stringify(result.projects.Acadia).substring(0, 800));
             }
             
             debugLog('Received result:', result);
