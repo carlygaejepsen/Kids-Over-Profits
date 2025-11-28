@@ -3,26 +3,8 @@
  * Template Name: Admin Data Form
  * Template Post Type: page
  */
-    // Ensure required assets are present when this template renders.
-    $kop_theme_dir = get_stylesheet_directory();
-    $kop_theme_uri = get_stylesheet_directory_uri();
 
-    if (function_exists('wp_enqueue_style')) {
-        $data_form_css = $kop_theme_dir . '/css/data-form.css';
-        if (!wp_style_is('kop-data-form-style', 'enqueued')) {
-            wp_enqueue_style(
-                'kop-data-form-style',
-                $kop_theme_uri . '/css/data-form.css',
-                array('kadence-parent-style', 'kop-colors'),
-                file_exists($data_form_css) ? filemtime($data_form_css) : null
-            );
-        }
-    }
-
-    if (function_exists('wp_enqueue_script')) {
-        wp_enqueue_script('facility-form-script');
-        wp_enqueue_script('admin-data-page-script');
-    }
+get_header();
 ?>
 
     <div class="container">
@@ -1295,3 +1277,5 @@
     </div>
 
         </div>
+
+<?php get_footer(); ?>
