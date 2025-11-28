@@ -1170,6 +1170,132 @@ function deduplicateLocationProjects(projectsObj) {
     return result;
 }
 
+/**
+ * Syncs location projects with facilities from company and referrer projects.
+ * This automatically aggregates all facilities by state from other project types.
+ * @param {Object} projectsObj - The projects object to sync (modified in place)
+ */
+function syncLocationProjectsFromSources(projectsObj) {
+    debugLog('🔄 Syncing location projects from company and referrer sources...');
+    
+    // Collect facilities by state from company and referrer projects
+    const facilitiesByState = {};
+    
+    Object.entries(projectsObj).forEach(([projectName, project]) => {
+        // Skip location projects themselves
+        if (project.category === 'locations') return;
+        
+        // Only process company and referrer projects
+        if (project.category !== 'company' && project.category !== 'referrers') return;
+        
+        // Process each facility in the project
+        const facilities = project.facilities || [];
+        facilities.forEach(facility => {
+            // Try to determine the state from the facility
+            let state = facility.locationState || '';
+            
+            // If no explicit state, try to parse from location field
+            if (!state && facility.location) {
+                // Parse "City, STATE" or "City, ST" format
+                const locationParts = facility.location.split(',').map(p => p.trim());
+                if (locationParts.length >= 2) {
+                    state = locationParts[locationParts.length - 1];
+                }
+            }
+            
+            // Normalize state to uppercase
+            state = state.toUpperCase().trim();
+            
+            // Skip if no valid state
+            if (!state) return;
+            
+            // Check if it's a valid US state
+            const stateLower = state.toLowerCase();
+            if (!US_STATE_SET.has(stateLower)) {
+                // Maybe it's a state abbreviation - try to expand it
+                const stateAbbrevs = {
+                    'AL': 'ALABAMA', 'AK': 'ALASKA', 'AZ': 'ARIZONA', 'AR': 'ARKANSAS',
+                    'CA': 'CALIFORNIA', 'CO': 'COLORADO', 'CT': 'CONNECTICUT', 'DE': 'DELAWARE',
+                    'FL': 'FLORIDA', 'GA': 'GEORGIA', 'HI': 'HAWAII', 'ID': 'IDAHO',
+                    'IL': 'ILLINOIS', 'IN': 'INDIANA', 'IA': 'IOWA', 'KS': 'KANSAS',
+                    'KY': 'KENTUCKY', 'LA': 'LOUISIANA', 'ME': 'MAINE', 'MD': 'MARYLAND',
+                    'MA': 'MASSACHUSETTS', 'MI': 'MICHIGAN', 'MN': 'MINNESOTA', 'MS': 'MISSISSIPPI',
+                    'MO': 'MISSOURI', 'MT': 'MONTANA', 'NE': 'NEBRASKA', 'NV': 'NEVADA',
+                    'NH': 'NEW HAMPSHIRE', 'NJ': 'NEW JERSEY', 'NM': 'NEW MEXICO', 'NY': 'NEW YORK',
+                    'NC': 'NORTH CAROLINA', 'ND': 'NORTH DAKOTA', 'OH': 'OHIO', 'OK': 'OKLAHOMA',
+                    'OR': 'OREGON', 'PA': 'PENNSYLVANIA', 'RI': 'RHODE ISLAND', 'SC': 'SOUTH CAROLINA',
+                    'SD': 'SOUTH DAKOTA', 'TN': 'TENNESSEE', 'TX': 'TEXAS', 'UT': 'UTAH',
+                    'VT': 'VERMONT', 'VA': 'VIRGINIA', 'WA': 'WASHINGTON', 'WV': 'WEST VIRGINIA',
+                    'WI': 'WISCONSIN', 'WY': 'WYOMING', 'DC': 'WASHINGTON DC'
+                };
+                if (stateAbbrevs[state]) {
+                    state = stateAbbrevs[state];
+                } else {
+                    return; // Skip invalid states
+                }
+            } else {
+                // Convert to uppercase full name
+                state = state.toUpperCase();
+            }
+            
+            // Initialize state array if needed
+            if (!facilitiesByState[state]) {
+                facilitiesByState[state] = [];
+            }
+            
+            // Add facility to state (with source project info)
+            facilitiesByState[state].push({
+                ...facility,
+                _sourceProject: projectName,
+                _sourceCategory: project.category
+            });
+        });
+    });
+    
+    debugLog(`📍 Found facilities in ${Object.keys(facilitiesByState).length} states`);
+    
+    // Now update or create location projects for each state with facilities
+    Object.entries(facilitiesByState).forEach(([state, facilities]) => {
+        const existingProject = projectsObj[state];
+        
+        if (existingProject) {
+            // Merge facilities: keep existing + add new unique ones
+            const existingFacilities = existingProject.facilities || [];
+            const existingIds = new Set(existingFacilities.map(f => f.id || `${f.name}-${f.location}`));
+            
+            // Add new facilities that don't already exist
+            let addedCount = 0;
+            facilities.forEach(facility => {
+                const facilityId = facility.id || `${facility.name}-${facility.location}`;
+                if (!existingIds.has(facilityId)) {
+                    existingFacilities.push(facility);
+                    existingIds.add(facilityId);
+                    addedCount++;
+                }
+            });
+            
+            existingProject.facilities = existingFacilities;
+            existingProject.currentFacilityIndex = existingProject.currentFacilityIndex || 0;
+            
+            if (addedCount > 0) {
+                debugLog(`📍 Updated location "${state}": added ${addedCount} new facilities (total: ${existingFacilities.length})`);
+            }
+        } else {
+            // Create new location project
+            projectsObj[state] = {
+                name: state,
+                category: 'locations',
+                facilities: facilities,
+                currentFacilityIndex: 0,
+                timestamp: new Date().toISOString()
+            };
+            debugLog(`📍 Created location project "${state}" with ${facilities.length} facilities`);
+        }
+    });
+    
+    debugLog('✅ Location sync complete');
+}
+
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
@@ -1195,6 +1321,10 @@ async function loadAllProjectsFromCloud() {
 
             // Deduplicate location projects: prefer uppercase versions with data
             const deduplicatedProjects = deduplicateLocationProjects(result.projects);
+            
+            // Sync location projects with facilities from company/referrer projects
+            syncLocationProjectsFromSources(deduplicatedProjects);
+            
             window.projects = deduplicatedProjects;
             projects = window.projects;
 
@@ -1205,12 +1335,6 @@ async function loadAllProjectsFromCloud() {
 
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
             debugLog('Loaded projects from cloud:', Object.keys(projects));
-
-            // Debug: Check if category metadata is present
-            Object.keys(projects).forEach(name => {
-                const project = projects[name];
-                console.log(`📊 Project "${name}" - Category: ${project.category || 'MISSING'}, Has timestamp: ${!!project.timestamp}, Has currentFacilityIndex: ${!!project.currentFacilityIndex}`);
-            });
 
             // Force re-initialize autocomplete after cloud data loads
             setTimeout(() => {
