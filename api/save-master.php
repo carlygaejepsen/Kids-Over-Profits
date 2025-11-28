@@ -52,8 +52,8 @@ if (!$request) {
 // Load this BEFORE extracting variables to avoid WordPress variable conflicts
 require_once __DIR__ . '/config.php';
 
-// Get WordPress table prefix
-$prefix = defined('DB_TABLE_PREFIX') ? DB_TABLE_PREFIX : 'wpdl_';
+// Tables are stored without WordPress prefix in this database
+$prefix = '';
 $facilities_table = $prefix . 'facilities_master';
 $referrers_table = $prefix . 'referrers_master';
 $locations_table = $prefix . 'locations_master';

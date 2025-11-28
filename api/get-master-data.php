@@ -5,8 +5,8 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
-    // Get WordPress table prefix
-    $prefix = defined('DB_TABLE_PREFIX') ? DB_TABLE_PREFIX : 'wpdl_';
+    // Tables are stored without WordPress prefix in this database
+    $prefix = '';
 
     // Query all three master tables: facilities, referrers, and locations
     $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
