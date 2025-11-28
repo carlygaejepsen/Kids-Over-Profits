@@ -5,19 +5,22 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
+    // Get WordPress table prefix
+    $prefix = defined('DB_TABLE_PREFIX') ? DB_TABLE_PREFIX : 'wpdl_';
+
     // Query all three master tables: facilities, referrers, and locations
-    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
     $stmt1->execute();
     $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
+    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}referrers_master");
     $stmt2->execute();
     $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
     // locations_master is optional - may not exist yet
     $locationsResults = [];
     try {
-        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
