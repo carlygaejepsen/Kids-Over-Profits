@@ -229,18 +229,8 @@ const DEBUG_LOGGING_ENABLED = (() => {
     return false;
 })();
 
-function debugLog(...args) {
-    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
-        return;
-    }
-
-    const logFn = typeof console.debug === 'function' ? console.debug.bind(console) : console.log.bind(console);
-    try {
-        logFn(...args);
-    } catch (debugLogError) {
-        // Never let debug logging break runtime execution
-    }
-}
+// debugLog function now defined in utilities.js module
+// Access via window.debugLog
 
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
@@ -319,97 +309,17 @@ window.currentFacilityIndex = currentFacilityIndex;
 window.formData = formData;
 
 // ============================================
-// UTILITY FUNCTIONS
+// UTILITY FUNCTIONS - Delegated to utilities.js module
 // ============================================
-function escapeHtmlForAttr(s) {
-    return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function deepClone(obj) {
-    if (obj === null || typeof obj !== 'object') return obj;
-    if (obj instanceof Date) return new Date(obj.getTime());
-    if (obj instanceof Array) return obj.map(item => deepClone(item));
-    if (obj instanceof Object) {
-        const clonedObj = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                clonedObj[key] = deepClone(obj[key]);
-            }
-        }
-        return clonedObj;
-    }
-}
-
-function getNestedValue(obj, path) {
-    return path.split('.').reduce((current, key) => {
-        if (!current) return undefined;
-
-        // Try exact match first
-        if (current[key] !== undefined) {
-            return current[key];
-        }
-
-        // Try common variations
-        const variations = [
-            key,                                    // original key
-            key.toLowerCase(),                      // lowercase
-            key.toUpperCase(),                      // uppercase
-            key.charAt(0).toUpperCase() + key.slice(1), // capitalize first letter
-            key.charAt(0).toLowerCase() + key.slice(1), // lowercase first letter
-            key.replace(/_/g, ''),                  // remove underscores
-            key.replace(/-/g, ''),                  // remove hyphens
-            toCamelCase(key),                       // camelCase version
-            toSnakeCase(key),                       // snake_case version
-        ];
-
-        // Try each variation
-        for (const variant of variations) {
-            if (current[variant] !== undefined) {
-                return current[variant];
-            }
-        }
-
-        return undefined;
-    }, obj);
-}
-
-// Helper function to convert to camelCase
-function toCamelCase(str) {
-    return str.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
-}
-
-// Helper function to convert to snake_case
-function toSnakeCase(str) {
-    return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
-}
-
-// Helper function to parse "City, State" strings into separate components
-function parseCityState(str) {
-    if (!str || typeof str !== 'string') {
-        return { city: '', state: '' };
-    }
-    const trimmed = str.trim();
-    if (!trimmed) {
-        return { city: '', state: '' };
-    }
-    // Split on comma and extract city/state
-    const parts = trimmed.split(',').map(p => p.trim());
-    if (parts.length >= 2) {
-        return { city: parts[0], state: parts.slice(1).join(', ').trim() };
-    }
-    // No comma - could be just a city or state, return as city
-    return { city: trimmed, state: '' };
-}
-
-// Helper function to combine city and state into "City, State" format
-function combineCityState(city, state) {
-    const c = (city || '').trim();
-    const s = (state || '').trim();
-    if (c && s) {
-        return `${c}, ${s}`;
-    }
-    return c || s || '';
-}
+// The following utility functions are now defined in utilities.js and exported globally:
+// - escapeHtmlForAttr(s)
+// - deepClone(obj)
+// - getNestedValue(obj, path)
+// - toCamelCase(str)
+// - toSnakeCase(str)
+// - parseCityState(str)
+// - combineCityState(city, state)
+// Access via window.escapeHtmlForAttr, window.deepClone, etc.
 
 // Normalize project data to handle different field name variations
 // Also ensures default structures exist for all required fields
@@ -782,29 +692,8 @@ function normalizeProjectData(data) {
     return data;
 }
 
-function setNestedValue(obj, path, value) {
-    const keys = path.split('.');
-    const lastKey = keys.pop();
-    const target = keys.reduce((current, key) => {
-        if (!current[key] || typeof current[key] !== 'object') {
-            current[key] = {};
-        }
-        return current[key];
-    }, obj);
-    target[lastKey] = value;
-}
-
-function showUploadStatus(message, type) {
-    const statusDiv = document.getElementById('upload-status') || document.getElementById('project-status');
-    if (statusDiv) {
-        statusDiv.style.display = 'block';
-        statusDiv.textContent = message;
-        statusDiv.className = `upload-status ${type}`;
-        setTimeout(() => {
-            statusDiv.style.display = 'none';
-        }, 5000);
-    }
-}
+// setNestedValue and showUploadStatus functions now defined in utilities.js module
+// Access via window.setNestedValue and window.showUploadStatus
 
 // NOTE: normalizeProjectData function is defined earlier in this file (around line 372)
 // It handles both field name normalization AND default structure initialization
@@ -3564,34 +3453,8 @@ function handleFileUpload(event) {
     reader.readAsText(file);
 }
 
-function copyToClipboard() {
-    navigator.clipboard.writeText(JSON.stringify(window.formData, null, 2)).then(() => {
-        showUploadStatus('JSON copied to clipboard!', 'success');
-    });
-}
-
-function downloadJSON() {
-    const jsonString = JSON.stringify(window.formData, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${window.currentProjectName || 'facility_data'}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function buildProjectExport(categories) {
-    const projects = window.projects || {};
-    const allowed = Array.isArray(categories) && categories.length ? new Set(categories) : null;
-
-    return Object.fromEntries(
-        Object.entries(projects).filter(([_, project]) => {
-            const category = project?.category || 'companies';
-            return !allowed || allowed.has(category);
-        })
-    );
-}
+// copyToClipboard, downloadJSON, and buildProjectExport functions now defined in utilities.js module
+// Access via window.copyToClipboard, window.downloadJSON, and window.buildProjectExport
 
 function exportProjectsToFile({ categories = null, filename } = {}) {
     const filtered = buildProjectExport(categories);
@@ -4503,8 +4366,7 @@ window.previousFacility = previousFacility;
 window.nextFacility = nextFacility;
 window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
-window.copyToClipboard = copyToClipboard;
-window.downloadJSON = downloadJSON;
+// copyToClipboard and downloadJSON now exported from utilities.js module
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 window.initializeAutocompleteFields = initializeAutocompleteFields;
 window.invalidateAggregatedData = invalidateAggregatedData;

@@ -899,7 +899,20 @@ function enqueue_facility_form_script() {
         );
     }
 
-    // Enqueue the DB form loader first (handles data loading)
+    // Enqueue utilities module first (provides basic helper functions)
+    $utilities_relative_path = '/js/data-form/utilities.js';
+    $utilities_file_path = get_stylesheet_directory() . $utilities_relative_path;
+    $utilities_uri = get_stylesheet_directory_uri() . $utilities_relative_path;
+
+    wp_enqueue_script(
+        'utilities-module-script',
+        $utilities_uri,
+        array('jquery'),
+        file_exists($utilities_file_path) ? filemtime($utilities_file_path) : time(),
+        true
+    );
+
+    // Enqueue the DB form loader (handles data loading, depends on utilities)
     $loader_relative_path = '/js/data-form/db-form-loader.js';
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
     $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
@@ -915,12 +928,25 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'db-form-loader',
         $loader_uri,
-        array('jquery'),
+        array('jquery', 'utilities-module-script'),
         file_exists($loader_file_path) ? filemtime($loader_file_path) : time(),
         true
     );
 
-    // Enqueue the referrer form module (depends on loader)
+    // Enqueue the location form module (depends on utilities and loader)
+    $location_script_relative_path = '/js/data-form/location-form.js';
+    $location_script_file_path = get_stylesheet_directory() . $location_script_relative_path;
+    $location_script_uri = get_stylesheet_directory_uri() . $location_script_relative_path;
+
+    wp_enqueue_script(
+        'location-form-script',
+        $location_script_uri,
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
+        file_exists($location_script_file_path) ? filemtime($location_script_file_path) : time(),
+        true
+    );
+
+    // Enqueue the referrer form module (depends on utilities and loader)
     $referrer_script_relative_path = '/js/data-form/referrer-form.js';
     $referrer_script_file_path = get_stylesheet_directory() . $referrer_script_relative_path;
     $referrer_script_uri = get_stylesheet_directory_uri() . $referrer_script_relative_path;
@@ -928,7 +954,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'referrer-form-script',
         $referrer_script_uri,
-        array('jquery', 'db-form-loader'),
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
         file_exists($referrer_script_file_path) ? filemtime($referrer_script_file_path) : time(),
         true
     );
@@ -967,7 +993,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
+        array('jquery', 'utilities-module-script', 'db-form-loader', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
