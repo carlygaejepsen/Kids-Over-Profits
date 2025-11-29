@@ -324,6 +324,16 @@ window.formData = formData;
 // Normalize project data to handle different field name variations
 // Also ensures default structures exist for all required fields
 function normalizeProjectData(data) {
+    // If the payload is stringified JSON, parse it first
+    if (typeof data === 'string') {
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            console.warn('normalizeProjectData: failed to parse string data', err);
+            data = {};
+        }
+    }
+
     // Handle null/undefined data - create default structure
     if (!data) {
         return typeof createNewProjectData === 'function' ? createNewProjectData() : {
@@ -968,13 +978,25 @@ function normalizeProjectsPayload(payload) {
     const assignProject = (projectName, projectPayload) => {
         if (!projectName) return;
         const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
-        const rawData = source.data ? source.data : source;
+
+        // Handle cases where data is stringified JSON
+        let rawData = source.data ? source.data : source;
+        if (typeof rawData === 'string') {
+            try {
+                rawData = JSON.parse(rawData);
+            } catch (parseErr) {
+                console.warn('Failed to parse project data string for', projectName, parseErr);
+                rawData = {};
+            }
+        }
+
         const name = source.name || projectName;
         normalized[projectName] = {
             name,
             data: normalizeProjectData(rawData),
             timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
-            currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0
+            currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0,
+            category: source.category || rawData?.category || 'companies'
         };
     };
 

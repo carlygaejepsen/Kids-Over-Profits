@@ -6,15 +6,19 @@ Welcome! This repository powers the **Kids Over Profits** WordPress child theme.
 
 ### Production Environment
 - **Hosting provider & control panel:** NixiHost shared hosting managed through cPanel (Softaculous WordPress Manager for application administration).
-- **Web server & PHP:** LiteSpeed with PHP 8.2 (`ea-php82___lsphp`).
+- **Web server:** Apache with LiteSpeed
+- **PHP version:** 8.2 (`ea-php82___lsphp`)
 - **Database:** MySQL provisioned through the hosting environment.
 - **CMS stack:** WordPress with the Kadence parent theme and this custom child theme.
+- **Active plugins & services:**
+  - Security: Wordfence Web Application Firewall (WAF)
+  - Caching: LiteSpeed Cache (LSCache) configured via `.htaccess`
 - **Access constraints:** No production credentials live in the repo; automation must work only with the checked-in files.
 
 ### Local Development Environment
 - **Platform:** Flywheel Local (WordPress local development environment)
 - **Project root:** `c:\Users\daniu\Local Sites\kids-over-profits\`
-- **Web server:** Nginx 1.26.1 (configurable to Apache in Flywheel)
+- **Web server:** Apache
 - **PHP version:** 8.2.29
 - **Database:** MySQL (accessible via Flywheel Local's Adminer or command line)
 - **WordPress root:** `app/public/` (relative to project root)
@@ -43,10 +47,9 @@ c:\Users\daniu\Local Sites\kids-over-profits\
 │   │   └── [WordPress core files]
 │   └── sql\                       # Database backups
 ├── conf\                          # Server configuration
-│   ├── nginx-1.26.1\              # Nginx config
+│   ├── apache\                    # Apache config
 │   ├── php-8.2.29\                # PHP config
-│   ├── mysql\                     # MySQL config
-│   └── apache\                    # Apache config (if using Apache mode)
+│   └── mysql\                     # MySQL config
 └── logs\                          # Server logs
 ```
 
