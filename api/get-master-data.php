@@ -35,39 +35,33 @@ try {
         // Decode the stored JSON
         $stored = json_decode($row['json_data'], true);
 
-        // Detect format: 
-        // NEW format has: { name, data: { operator, facilities }, category, timestamp }
-        // OLD format has: { operator/name, facilities, ... } (facilities at root)
+        // Detect format by checking where facilities/operator live:
+        // NEW format: { name, data: { operator, facilities }, category?, timestamp? }
+        // OLD format: { operator, facilities, ... } (at root level)
         
-        // Check if facilities are at root level (old format) or nested in data (new format)
-        $hasRootFacilities = isset($stored['facilities']) && is_array($stored['facilities']);
         $hasNestedFacilities = isset($stored['data']['facilities']) && is_array($stored['data']['facilities']);
+        $hasNestedOperator = isset($stored['data']['operator']) && is_array($stored['data']['operator']);
+        $hasRootFacilities = isset($stored['facilities']) && is_array($stored['facilities']);
         $hasRootOperator = isset($stored['operator']) && is_array($stored['operator']);
         
-        // If facilities or operator are at root level, it's old format
-        $isOldFormat = $hasRootFacilities || $hasRootOperator;
+        // It's NEW format if data contains facilities OR operator
+        $isNewFormat = $hasNestedFacilities || $hasNestedOperator;
         
-        if (!$isOldFormat && isset($stored['data']) && isset($stored['timestamp'])) {
-            // New format: already has the complete project structure
-            // Ensure name field is set correctly
+        if ($isNewFormat) {
+            // New format: data is already nested correctly, just pass through
             $stored['name'] = $stored['name'] ?? $row['unique_name'];
-            // Ensure category is set
-            if (!isset($stored['category'])) {
-                $stored['category'] = 'companies'; // Default category
-            }
-            // Ensure currentFacilityIndex is set
-            if (!isset($stored['currentFacilityIndex'])) {
-                $stored['currentFacilityIndex'] = 0;
-            }
+            $stored['category'] = $stored['category'] ?? 'companies';
+            $stored['currentFacilityIndex'] = $stored['currentFacilityIndex'] ?? 0;
+            $stored['timestamp'] = $stored['timestamp'] ?? date('c');
             $projects[$row['unique_name']] = $stored;
         } else {
-            // Old format: only has data, need to reconstruct by wrapping in 'data'
+            // Old format: facilities/operator at root, need to wrap in 'data'
             $projects[$row['unique_name']] = [
                 'name' => $row['unique_name'],
                 'data' => $stored,
                 'timestamp' => $stored['timestamp'] ?? date('c'),
                 'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => $stored['category'] ?? 'companies'  // Default for legacy projects
+                'category' => $stored['category'] ?? 'companies'
             ];
         }
     }
