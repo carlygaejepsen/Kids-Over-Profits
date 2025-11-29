@@ -804,17 +804,25 @@ function getAllOperatingPeriods() {
 // These wrapper functions delegate to the module for backward compatibility.
 // ============================================
 
+// Capture the real module implementations before defining our delegates so we don't overwrite them.
+const moduleCreateAutocomplete = (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
+    ? window.createAutocomplete
+    : null;
+const moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
+    ? window.initializeAutocompleteFields
+    : null;
+
 function createAutocomplete(input, getDataFunction, category) {
-    if (window.createAutocomplete && window.createAutocomplete !== createAutocomplete) {
-        return window.createAutocomplete(input, getDataFunction, category);
+    if (moduleCreateAutocomplete && moduleCreateAutocomplete !== createAutocomplete) {
+        return moduleCreateAutocomplete(input, getDataFunction, category);
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
 }
 
 function initializeAutocompleteFields() {
-    if (window.initializeAutocompleteFields && window.initializeAutocompleteFields !== initializeAutocompleteFields) {
-        return window.initializeAutocompleteFields();
+    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== initializeAutocompleteFields) {
+        return moduleInitializeAutocompleteFields();
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping initializeAutocompleteFields');
@@ -4368,7 +4376,13 @@ window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 // copyToClipboard and downloadJSON now exported from utilities.js module
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
-window.initializeAutocompleteFields = initializeAutocompleteFields;
+// Only expose autocomplete helpers if the module did not already register them
+if (typeof window.createAutocomplete !== 'function') {
+    window.createAutocomplete = createAutocomplete;
+}
+if (typeof window.initializeAutocompleteFields !== 'function') {
+    window.initializeAutocompleteFields = initializeAutocompleteFields;
+}
 window.invalidateAggregatedData = invalidateAggregatedData;
 window.normalizeProjectData = normalizeProjectData;
 window.initializeSectionToggles = initializeSectionToggles;
