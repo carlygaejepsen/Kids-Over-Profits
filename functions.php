@@ -535,33 +535,33 @@ function kop_save_project_rest_callback($request) {
     // Encode data as JSON
     $json_data = wp_json_encode($data);
 
-    // Check if project exists
+    // Check if project exists (use unique_name column which matches actual DB schema)
     $existing = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT id FROM {$table_name} WHERE project_name = %s",
+            "SELECT id FROM {$table_name} WHERE unique_name = %s",
             $project_name
         )
     );
 
     if ($existing) {
-        // Update existing project
+        // Update existing project (use json_data column which matches actual DB schema)
         $result = $wpdb->update(
             $table_name,
             array(
-                'project_data' => $json_data,
+                'json_data' => $json_data,
                 'updated_at' => current_time('mysql'),
             ),
-            array('project_name' => $project_name),
+            array('unique_name' => $project_name),
             array('%s', '%s'),
             array('%s')
         );
     } else {
-        // Insert new project
+        // Insert new project (use unique_name and json_data columns which match actual DB schema)
         $result = $wpdb->insert(
             $table_name,
             array(
-                'project_name' => $project_name,
-                'project_data' => $json_data,
+                'unique_name' => $project_name,
+                'json_data' => $json_data,
                 'created_at' => current_time('mysql'),
                 'updated_at' => current_time('mysql'),
             ),
@@ -611,9 +611,10 @@ function kop_delete_project_rest_callback($request) {
 
     $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
 
+    // Use unique_name column which matches actual DB schema
     $result = $wpdb->delete(
         $table_name,
-        array('project_name' => $project_name),
+        array('unique_name' => $project_name),
         array('%s')
     );
 
