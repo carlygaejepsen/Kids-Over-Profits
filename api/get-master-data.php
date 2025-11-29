@@ -35,8 +35,19 @@ try {
         // Decode the stored JSON
         $stored = json_decode($row['json_data'], true);
 
-        // Check if this is the new format (with metadata) or old format (just data)
-        if (isset($stored['data']) && isset($stored['timestamp'])) {
+        // Detect format: 
+        // NEW format has: { name, data: { operator, facilities }, category, timestamp }
+        // OLD format has: { operator/name, facilities, ... } (facilities at root)
+        
+        // Check if facilities are at root level (old format) or nested in data (new format)
+        $hasRootFacilities = isset($stored['facilities']) && is_array($stored['facilities']);
+        $hasNestedFacilities = isset($stored['data']['facilities']) && is_array($stored['data']['facilities']);
+        $hasRootOperator = isset($stored['operator']) && is_array($stored['operator']);
+        
+        // If facilities or operator are at root level, it's old format
+        $isOldFormat = $hasRootFacilities || $hasRootOperator;
+        
+        if (!$isOldFormat && isset($stored['data']) && isset($stored['timestamp'])) {
             // New format: already has the complete project structure
             // Ensure name field is set correctly
             $stored['name'] = $stored['name'] ?? $row['unique_name'];
@@ -50,7 +61,7 @@ try {
             }
             $projects[$row['unique_name']] = $stored;
         } else {
-            // Old format: only has data, need to reconstruct
+            // Old format: only has data, need to reconstruct by wrapping in 'data'
             $projects[$row['unique_name']] = [
                 'name' => $row['unique_name'],
                 'data' => $stored,

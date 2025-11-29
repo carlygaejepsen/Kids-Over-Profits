@@ -3349,20 +3349,6 @@ function refreshSavedProjectPanels() {
             const date = new Date(project.timestamp || 0);
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
-            // DEBUG: Log facility count calculation
-            const hasData = !!project.data;
-            const hasFacilities = !!project.data?.facilities;
-            const facilitiesLength = project.data?.facilities?.length;
-            if (name === 'Acadia' || name === 'ALABAMA' || name === 'Alabama') {
-                console.log(`🔍 DEBUG ${name}:`, {
-                    hasData,
-                    hasFacilities, 
-                    facilitiesLength,
-                    dataKeys: project.data ? Object.keys(project.data) : 'no data',
-                    projectKeys: Object.keys(project)
-                });
-            }
-            
             const facilityCount = project.data?.facilities?.length || 0;
             const facilityLabel = determineProjectCategory(name) === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
             
