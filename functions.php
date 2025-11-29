@@ -977,10 +977,17 @@ function enqueue_facility_form_script() {
     $autocomplete_script_file_path = get_stylesheet_directory() . $autocomplete_script_relative_path;
     $autocomplete_script_uri = get_stylesheet_directory_uri() . $autocomplete_script_relative_path;
 
+    error_log('KOP Autocomplete path check: ' . $autocomplete_script_file_path);
+    error_log('KOP Autocomplete exists: ' . (file_exists($autocomplete_script_file_path) ? 'YES' : 'NO'));
+
+    if (!file_exists($autocomplete_script_file_path)) {
+        error_log('ERROR: autocomplete.js not found at: ' . $autocomplete_script_file_path);
+    }
+
     wp_enqueue_script(
         'autocomplete-module-script',
         $autocomplete_script_uri,
-        array('jquery', 'db-form-loader'),
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
         file_exists($autocomplete_script_file_path) ? filemtime($autocomplete_script_file_path) : time(),
         true
     );
