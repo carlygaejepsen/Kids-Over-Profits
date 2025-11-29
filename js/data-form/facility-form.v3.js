@@ -805,24 +805,49 @@ function getAllOperatingPeriods() {
 // ============================================
 
 // Capture the real module implementations before defining our delegates so we don't overwrite them.
-const moduleCreateAutocomplete = (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
+// Use lets so we can pick up late-loaded modules if dependency order is altered by plugins/caching.
+let moduleCreateAutocomplete = (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
     ? window.createAutocomplete
     : null;
-const moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
+let moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
     ? window.initializeAutocompleteFields
     : null;
 
-function createAutocomplete(input, getDataFunction, category) {
+function resolveCreateAutocomplete() {
     if (moduleCreateAutocomplete && moduleCreateAutocomplete !== createAutocomplete) {
-        return moduleCreateAutocomplete(input, getDataFunction, category);
+        return moduleCreateAutocomplete;
+    }
+    if (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function' && window.createAutocomplete !== createAutocomplete) {
+        moduleCreateAutocomplete = window.createAutocomplete;
+        return moduleCreateAutocomplete;
+    }
+    return null;
+}
+
+function resolveInitializeAutocompleteFields() {
+    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== initializeAutocompleteFields) {
+        return moduleInitializeAutocompleteFields;
+    }
+    if (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function' && window.initializeAutocompleteFields !== initializeAutocompleteFields) {
+        moduleInitializeAutocompleteFields = window.initializeAutocompleteFields;
+        return moduleInitializeAutocompleteFields;
+    }
+    return null;
+}
+
+function createAutocomplete(input, getDataFunction, category) {
+    const delegate = resolveCreateAutocomplete();
+    if (delegate) {
+        return delegate(input, getDataFunction, category);
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
 }
 
 function initializeAutocompleteFields() {
-    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== initializeAutocompleteFields) {
-        return moduleInitializeAutocompleteFields();
+    const delegate = resolveInitializeAutocompleteFields();
+    if (delegate) {
+        return delegate();
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping initializeAutocompleteFields');
