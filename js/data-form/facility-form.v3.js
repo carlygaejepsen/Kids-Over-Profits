@@ -835,23 +835,23 @@ function resolveInitializeAutocompleteFields() {
     return null;
 }
 
-function createAutocomplete(input, getDataFunction, category) {
+const createAutocomplete = (input, getDataFunction, category) => {
     const delegate = resolveCreateAutocomplete();
     if (delegate) {
         return delegate(input, getDataFunction, category);
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
-}
+};
 
-function initializeAutocompleteFields() {
+const initializeAutocompleteFields = () => {
     const delegate = resolveInitializeAutocompleteFields();
     if (delegate) {
         return delegate();
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping initializeAutocompleteFields');
-}
+};
 
 function initializeSectionToggles() {
     const sections = document.querySelectorAll('.section');
