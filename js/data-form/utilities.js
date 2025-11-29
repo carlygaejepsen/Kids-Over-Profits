@@ -18,7 +18,11 @@
  * @param {...*} args - Arguments to log
  */
 function debugLog(...args) {
-    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
+    // Prefer a shared global flag if present, otherwise stay silent by default
+    const enabled = (typeof DEBUG_LOGGING_ENABLED !== 'undefined' && DEBUG_LOGGING_ENABLED === true) ||
+        (typeof window !== 'undefined' && window.DEBUG_LOGGING_ENABLED === true);
+
+    if (!enabled || typeof console === 'undefined') {
         return;
     }
 

@@ -136,13 +136,6 @@ This repository (the child theme) contains a full-stack data management applicat
     -   `data-form-admin.php` - Administrator data entry interface (direct master database access)
     -   `data-form-public.php` - Public suggestion interface (submissions for review)
 
--   **`docs/`**: Project documentation
-    -   **`docs/phase-0/`**: Initial project phase documentation
-        -   `phase-0-1-requirements.md` - Project requirements
-        -   `phase-0-2-technical-decisions.md` - Technical architecture decisions
-        -   `phase-0-3-environment-transition.md` - Environment migration notes
-    -   `security-hardening.md` - Security implementation guidelines
-
 -   **`tests/`**: Test files and scripts
     -   **`tests/db-form/`**: Database form test suite
 
