@@ -814,10 +814,10 @@ let moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && typeo
     : null;
 
 function resolveCreateAutocomplete() {
-    if (moduleCreateAutocomplete && moduleCreateAutocomplete !== createAutocomplete) {
+    if (moduleCreateAutocomplete && moduleCreateAutocomplete !== delegateCreateAutocomplete) {
         return moduleCreateAutocomplete;
     }
-    if (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function' && window.createAutocomplete !== createAutocomplete) {
+    if (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function' && window.createAutocomplete !== delegateCreateAutocomplete) {
         moduleCreateAutocomplete = window.createAutocomplete;
         return moduleCreateAutocomplete;
     }
@@ -825,17 +825,17 @@ function resolveCreateAutocomplete() {
 }
 
 function resolveInitializeAutocompleteFields() {
-    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== initializeAutocompleteFields) {
+    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== delegateInitializeAutocompleteFields) {
         return moduleInitializeAutocompleteFields;
     }
-    if (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function' && window.initializeAutocompleteFields !== initializeAutocompleteFields) {
+    if (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function' && window.initializeAutocompleteFields !== delegateInitializeAutocompleteFields) {
         moduleInitializeAutocompleteFields = window.initializeAutocompleteFields;
         return moduleInitializeAutocompleteFields;
     }
     return null;
 }
 
-const createAutocomplete = (input, getDataFunction, category) => {
+const delegateCreateAutocomplete = (input, getDataFunction, category) => {
     const delegate = resolveCreateAutocomplete();
     if (delegate) {
         return delegate(input, getDataFunction, category);
@@ -844,7 +844,7 @@ const createAutocomplete = (input, getDataFunction, category) => {
     console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
 };
 
-const initializeAutocompleteFields = () => {
+const delegateInitializeAutocompleteFields = () => {
     const delegate = resolveInitializeAutocompleteFields();
     if (delegate) {
         return delegate();
