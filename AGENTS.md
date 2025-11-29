@@ -74,16 +74,83 @@ c:\Users\daniu\Local Sites\kids-over-profits\
 
 ## Repository Layout
 
-This repository (the child theme) contains a full-stack data management application built within a WordPress environment. Here's a breakdown of the key components:
+This repository (the child theme) contains a full-stack data management application built within a WordPress environment. The application manages facility data through a dual-workflow system: administrative direct access and public suggestion submission.
+
+### Architecture Overview
+
+The application follows a traditional WordPress child theme structure with custom API endpoints, template files, and page-specific JavaScript modules. Key architectural patterns:
+
+1. **Backend API Layer** (`api/`): PHP scripts handle database operations independent of WordPress REST API
+2. **Template System** (`templates/`): Custom page templates loaded via WordPress page assignments
+3. **Frontend Modules** (`js/`): Modular JavaScript files loaded conditionally based on page context
+4. **Page Templates** (`page-*.php`): WordPress page template files that determine which assets load
+5. **Conditional Loading** (`functions.php`): Smart script enqueuing based on page templates and slugs
+
+### Database Schema
+
+The application uses four main database tables:
+- **`facilities_master`**: Official facility records (admin-managed)
+- **`suggested_edits`**: Public-submitted changes pending approval
+- **`locations_master`**: Location/address data for facilities
+- **`referrers_master`**: Referrer information for facilities
+
+### Dependency Chain
+
+```
+functions.php (orchestrator)
+    ↓
+Page Templates (page-*.php) detect current page
+    ↓
+Conditional script loading based on template/slug
+    ↓
+Template Files (templates/*.php) OR page content
+    ↓
+JavaScript Modules load (js/*) with localized config
+    ↓
+API Endpoints called (api/*.php)
+    ↓
+Database operations (MySQL tables)
+```
+
+Here's a breakdown of the key components:
 
 ### Child Theme Root Files
--   **`functions.php`**: The core of the child theme. It acts as the backend orchestrator, loading all necessary scripts and styles, defining API endpoints, and adding custom features to the WordPress admin area. It contains the main PHP logic for data handling and page-specific script loading.
--   **`style.css`**: The main stylesheet for the child theme, which primarily contains theme header information and can be used for global style overrides.
--   **`page-*.php`**: Custom page templates for WordPress pages (e.g., `page-admin-data.php`, `page-data.php`, `page-tti-program-index.php`, `page-wiki-editor.php`)
--   **`.env`**: Environment-specific configuration (gitignored, see `.env.example` for template)
--   **`.cpanel.yml`**: cPanel deployment configuration
--   **`.htaccess`**: Apache/LiteSpeed server directives
--   **`tailwind.config.js`**: Tailwind CSS configuration (if using Tailwind)
+
+-   **`functions.php`** (~1,850 lines) - **Core orchestrator**
+    - Enqueues parent theme styles and color variables globally
+    - Implements conditional script loading based on page template/slug
+    - Registers REST API routes for facilities data export (`/wp-json/kop/v1/facilities`)
+    - Implements `AnonymousDocPortal` class for document submissions
+    - Handles Kadence theme navigation conflicts on headerless pages
+    - Key hooks: `wp_enqueue_scripts`, `rest_api_init`, `admin_menu`
+    - Major functions:
+      - `kadence_child_enqueue_styles()` - Base CSS loading
+      - `kop_enqueue_kadence_nav_guard()` - Navigation guard (loads first)
+      - `load_facilities_data()` - TTI Program Index data
+      - `enqueue_facility_form_script()` - Form assets (admin/public)
+      - `kop_enqueue_report_scripts()` - State report scripts
+      - `kop_register_facilities_rest_routes()` - REST API setup
+
+-   **`style.css`** - WordPress theme header
+    - Theme metadata (Theme Name, Version, Template, etc.)
+    - Required by WordPress to identify child theme
+    - Minimal global CSS overrides
+
+-   **Page Templates** - WordPress custom page templates:
+    - `page-admin-data.php` - Includes `templates/data-form-admin.php`
+    - `page-data.php` - Includes `templates/data-form-public.php`
+    - `page-data-test.php` - Development/testing template
+    - `page-tti-program-index.php` - Facility directory page
+    - `page-wiki-editor.php` - Wiki content editor
+    - `page-news-processor.php` - News processing interface
+
+-   **Configuration Files**:
+    - `.env` - Environment variables (gitignored, database credentials, API keys)
+    - `.env.example` - Template for `.env` file
+    - `.cpanel.yml` - cPanel Git deployment automation config
+    - `.htaccess` - Apache directives (Wordfence WAF, LiteSpeed Cache)
+    - `tailwind.config.js` - Tailwind configuration (minimal usage)
+    - `.gitignore` - Excludes `.env`, `config.local.php`, etc.
 
 ### Core Directories
 
@@ -103,25 +170,98 @@ This repository (the child theme) contains a full-stack data management applicat
         -   **`get-autocomplete.php`**: Provides autocomplete suggestions for form fields by querying both master and suggested data, ensuring consistency.
         -   **`approve-edits.php`**: Provides the frontend UI for the admin approval page, which uses `process-edit.php` to perform its actions.
 
--   **`js/`**: Client-side JavaScript files powering interactive features
-    -   **`js/data-form/`**: Facility data entry form scripts
-        -   `facility-form.v3.js` - Core admin data entry form (dynamic fields, validation, API communication)
-        -   `db-form-loader.js` - Data loading and project management
-        -   `facility-report-generator.js` - Generate printable HTML reports from form data
-        -   `notes.js` - Facility notes functionality
-        -   `referrer-form.js` - Referrer data entry and management
-        -   `kadence-nav-guard.js` - Prevent Kadence theme navigation conflicts
-        -   `admin-data-page.js` - Admin-specific page functionality
-        -   `data-page.js` - Public suggestion page functionality
-    -   **`js/inspections/`**: State inspection report scripts
-        -   `facilities-display.js` - Public searchable facility directory (TTI Program Index page)
-        -   `ca-reports.js`, `tx_reports.js`, `az_reports.js`, etc. - State-specific report pages
-    -   **`js/data/`**: JSON data files for reports (fallback datasets)
-    -   `anonymous-portal.js` - Anonymous document submission interface
-    -   `autocomplete.js` - Form field autocomplete functionality
-    -   `news-processor.js` - News content processing
-    -   `tti-program-index.js` - TTI program index page logic
-    -   `wiki-editor.js` - Wiki editor functionality
+-   **`js/`**: Client-side JavaScript files (modular architecture)
+
+    -   **`js/data-form/`**: Facility data entry form system
+
+        -   `utilities.js` (~330 lines) - **Shared utility library (no dependencies)**
+            - Debug logging with conditional output
+            - Data manipulation (deepClone, nested getters/setters)
+            - String utilities (escapeHtmlForAttr, case conversion, city/state parsing)
+            - Export utilities (copyToClipboard, downloadJSON, buildProjectExport)
+            - UI helpers (showUploadStatus)
+            - **This file provides global functions used by all other form modules**
+
+        -   `facility-form.v3.js` (~5,800 lines) - **Main form controller**
+            - Complete facility data entry form lifecycle
+            - Dynamic field generation, validation, conditional display
+            - API communication (save, load, delete, clone operations)
+            - Project management and data export
+            - Reads `KOP_FACILITY_FORM_CONFIG` localized by `functions.php`
+            - Dependencies: `utilities.js` (via global functions)
+            - Modes: `master` (admin) or `suggestion` (public)
+
+        -   `location-form.js` (~550 lines) - **Location data entry**
+            - Location/address field management
+            - City, state, postal code handling
+            - Dependencies: `facility-form.v3.js`, `utilities.js`
+
+        -   `referrer-form.js` (~1,200 lines) - **Referrer data entry**
+            - Referrer information management
+            - Auto-population from referrers_master table
+            - Dependencies: `facility-form.v3.js`, `utilities.js`
+
+        -   `notes.js` (~1,200 lines) - **Facility notes system**
+            - CRUD operations for facility notes
+            - Note threading and reply functionality
+            - Dependencies: `facility-form.v3.js`, `utilities.js`
+
+        -   `db-form-loader.js` (~630 lines) - **Project loading**
+            - Fetches project lists from `api/get-master-data.php`
+            - Project selection UI and management
+            - Coordinates with `facility-form.v3.js` for data loading
+            - Dependencies: `facility-form.v3.js`, `utilities.js`
+
+        -   `facility-report-generator.js` (~1,300 lines) - **Report generation**
+            - Generates printable HTML reports from form data
+            - Export and download functionality
+            - Dependencies: `facility-form.v3.js`
+
+        -   `kadence-nav-guard.js` (~330 lines) - **Navigation conflict prevention**
+            - Prevents Kadence theme errors on headerless pages
+            - Intercepts DOM queries for missing navigation elements
+            - **Loaded globally with highest priority (no dependencies)**
+            - Smart detection: strict blocking on headerless pages, graceful fallbacks elsewhere
+
+        -   `admin-data-page.js` (~2,800 lines) - **Admin page orchestrator**
+            - Coordinates all admin form modules
+            - Admin-specific UI and features
+            - Loaded only when `page-admin-data.php` template is active
+            - Dependencies: ALL form modules above
+
+        -   `data-page.js` (~2,900 lines) - **Public page orchestrator**
+            - Coordinates public suggestion form
+            - Restricted features for public users
+            - Loaded only when `page-data.php` template is active
+            - Dependencies: Core form modules (subset of admin)
+
+    -   **`js/inspections/`**: State inspection report display
+        -   `facilities-display.js` (~800 lines) - **Facility directory**
+            - Searchable, sortable facility table
+            - Fetches from REST API or fallback JSON
+            - Loaded on TTI Program Index page
+            - Dependencies: Localized data from `functions.php::load_facilities_data()`
+
+        -   State-specific report pages (~600-800 lines each):
+            - `az_reports.js` - Arizona inspection reports
+            - `ca-reports.js` - California inspection reports
+            - `ct_reports.js` - Connecticut inspection reports
+            - `mt_reports.js` - Montana inspection reports
+            - `tx_reports.js` - Texas inspection reports
+            - `ut_reports.js` - Utah inspection reports
+            - `wa_reports.js` - Washington inspection reports
+
+    -   **`js/data/`**: Static JSON fallback datasets
+        - Facility data exports (organized by date)
+        - Used when REST API unavailable
+        - Auto-discovered by `functions.php::kop_get_facility_projects_dataset_urls()`
+
+    -   **Root-level modules**:
+        -   `anonymous-portal.js` - Anonymous document submission (AJAX file uploads)
+        -   `autocomplete.js` (~1,200 lines) - Form field autocomplete (queries `api/get-autocomplete.php`)
+        -   `news-processor.js` - News content processing
+        -   `tti-program-index.js` - TTI index page coordination
+        -   `wiki-editor.js` (~2,500 lines) - Wiki content management with rich text editing
 
 -   **`css/`**: Stylesheets for the project
     -   `data-form.css` - Facility data entry form styling (layout, typography, buttons, responsive design)
@@ -132,21 +272,101 @@ This repository (the child theme) contains a full-stack data management applicat
     -   `tti-program-index.css` - TTI index page styling
     -   `wiki-editor.css` - Wiki editor styling
 
--   **`templates/`**: PHP template files loaded via shortcodes or page templates
-    -   `data-form-admin.php` - Administrator data entry interface (direct master database access)
-    -   `data-form-public.php` - Public suggestion interface (submissions for review)
+-   **`templates/`**: PHP template files included by page templates
+
+    -   `data-form-admin.php` (~2,300 lines) - **Administrator data entry interface**
+        - Complete facility form HTML structure
+        - Field groups: Facility Info, Contact, Programs, Incidents, Inspections, etc.
+        - Included by `page-admin-data.php`
+        - Triggers conditional loading of admin form scripts
+        - Database mode: Direct writes to `facilities_master` table
+
+    -   `data-form-public.php` (~2,300 lines) - **Public suggestion interface**
+        - Nearly identical structure to admin template
+        - Included by `page-data.php`
+        - Triggers loading of public suggestion scripts
+        - Database mode: Writes to `suggested_edits` table for approval
+        - Feature restrictions: No direct delete, requires approval workflow
 
 -   **`tests/`**: Test files and scripts
     -   **`tests/db-form/`**: Database form test suite
 
 -   **`Wiki Editor Template/`**: Template files for wiki editor functionality
 
-### WordPress Integration
-All active pages are PHP-based WordPress pages that load templates or shortcodes:
--   Admin data form uses the `data-form-admin.php` template
--   Public suggestion form uses the `data-form-public.php` template
--   TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `js/inspections/facilities-display.js` renders the database
--   Other pages are created as standard WordPress pages with embedded shortcodes or custom page templates
+### WordPress Integration & Page Loading System
+
+The application uses conditional script loading based on page templates and slugs. Here's how each page works:
+
+**1. Admin Data Entry Page**
+```
+WordPress Page (template: page-admin-data.php)
+    ↓
+Template includes templates/data-form-admin.php
+    ↓
+functions.php::enqueue_facility_form_script() detects template
+    ↓
+Loads: css/data-form.css, js/data-form/utilities.js,
+       js/data-form/facility-form.v3.js, js/data-form/admin-data-page.js
+    ↓
+Localizes KOP_FACILITY_FORM_CONFIG with: mode='master', apiBase, endpoints
+    ↓
+User interacts → API calls → Saves to facilities_master table
+```
+
+**2. Public Suggestion Page**
+```
+WordPress Page (template: page-data.php)
+    ↓
+Template includes templates/data-form-public.php
+    ↓
+functions.php::enqueue_facility_form_script() detects template
+    ↓
+Loads same assets but: js/data-form/data-page.js instead of admin
+    ↓
+Localizes KOP_FACILITY_FORM_CONFIG with: mode='suggestion'
+    ↓
+User submits → API calls → Saves to suggested_edits table (requires approval)
+```
+
+**3. TTI Program Index Page**
+```
+WordPress Page (slug: tti-program-index, template: page-tti-program-index.php)
+    ↓
+functions.php::load_facilities_data() detects page slug
+    ↓
+Loads: js/inspections/facilities-display.js, css/tti-program-index.css
+    ↓
+Localizes facility data from REST API (/wp-json/kop/v1/facilities) or JSON fallback
+    ↓
+JavaScript renders searchable facility directory in #facilities-container
+```
+
+**4. Wiki Editor Page**
+- Template: `page-wiki-editor.php`
+- Loads: `js/wiki-editor.js`, `css/wiki-editor.css`
+- Provides rich text editing interface
+
+**5. State Report Pages**
+- Detected by slug pattern: `{state}-reports` (e.g., 'ca-reports', 'tx-reports')
+- `functions.php::kop_enqueue_report_scripts()` loads state-specific JS
+- Each loads corresponding inspection report data
+
+**6. Anonymous Document Portal**
+- Shortcode: `[anonymous_doc_portal]`
+- Can be embedded in any WordPress page
+- `AnonymousDocPortal` class handles rendering and AJAX
+- Loads: `js/anonymous-portal.js`, `css/anonymous-portal.css`
+- Uploads stored in `/wp-content/uploads/anonymous-submissions/`
+
+**Script Loading Detection Pattern**:
+```php
+// functions.php uses WordPress conditional tags:
+is_page_template('page-admin-data.php')  → Admin form assets
+is_page_template('page-data.php')        → Public form assets
+is_page('tti-program-index')             → Facility display
+is_page('wiki-editor')                    → Wiki editor
+preg_match('/-reports$/', $slug)         → State reports
+```
 
 ### Documentation Files
 -   `AGENTS.md` - This file! Central developer guide (architecture, conventions, design principles)

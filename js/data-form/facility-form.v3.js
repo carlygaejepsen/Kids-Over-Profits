@@ -425,14 +425,41 @@ function normalizeProjectData(data) {
                     data.operator.keyStaff[field] = [];
                 }
             });
-        } else {
-            // Create keyStaff if it doesn't exist
-            data.operator.keyStaff = {
-                ceo: '',
-                founders: [],
-                keyExecutives: []
-            };
+    } else {
+        // Create keyStaff if it doesn't exist
+        data.operator.keyStaff = {
+            ceo: '',
+            founders: [],
+            keyExecutives: []
+        };
+    }
+}
+
+    // Accept legacy facilities shapes (stringified, nested, or alternate keys)
+    if (!Array.isArray(data.facilities)) {
+        let facilitiesCandidate = [];
+
+        if (typeof data.facilities === 'string') {
+            try {
+                const parsed = JSON.parse(data.facilities);
+                if (Array.isArray(parsed)) facilitiesCandidate = parsed;
+            } catch (err) {
+                console.warn('normalizeProjectData: failed to parse string facilities', err);
+            }
+        } else if (data.facilities && typeof data.facilities === 'object' && Array.isArray(data.facilities.facilities)) {
+            facilitiesCandidate = data.facilities.facilities;
+        } else if (Array.isArray(data.facility)) {
+            facilitiesCandidate = data.facility;
+        } else if (typeof data.facility === 'string') {
+            try {
+                const parsed = JSON.parse(data.facility);
+                if (Array.isArray(parsed)) facilitiesCandidate = parsed;
+            } catch (err) {
+                console.warn('normalizeProjectData: failed to parse string facility', err);
+            }
         }
+
+        data.facilities = Array.isArray(data.facilities) ? data.facilities : facilitiesCandidate;
     }
 
     // Normalize facilities array
@@ -975,6 +1002,17 @@ function normalizeProjectsPayload(payload) {
 
     const normalized = {};
 
+    const inferCategory = (projectName, explicitCategory) => {
+        if (explicitCategory) return explicitCategory;
+        const upper = (projectName || '').toUpperCase().trim();
+        const isLocation = (
+            (typeof window !== 'undefined' && window.US_STATE_SET && window.US_STATE_SET.has(upper.toLowerCase())) ||
+            (typeof window !== 'undefined' && window.COUNTRY_SET && window.COUNTRY_SET.has(upper.toLowerCase()))
+        );
+        if (isLocation) return 'locations';
+        return 'companies';
+    };
+
     const assignProject = (projectName, projectPayload) => {
         if (!projectName) return;
         const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
@@ -996,7 +1034,7 @@ function normalizeProjectsPayload(payload) {
             data: normalizeProjectData(rawData),
             timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
             currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0,
-            category: source.category || rawData?.category || 'companies'
+            category: inferCategory(name, source.category || rawData?.category)
         };
     };
 

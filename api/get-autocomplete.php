@@ -103,8 +103,33 @@ function normalize_project_payload($json)
         return null;
     }
 
+    $maybeData = $decoded['data'] ?? null;
+    if (is_string($maybeData)) {
+        $parsed = json_decode($maybeData, true);
+        if (is_array($parsed)) {
+            $decoded['data'] = $parsed;
+        }
+    }
+
     if (isset($decoded['data']) && is_array($decoded['data'])) {
-        return $decoded['data'];
+        $data = $decoded['data'];
+        // Legacy: facilities might be stringified or nested
+        if (isset($data['facilities']) && is_string($data['facilities'])) {
+            $parsedFacilities = json_decode($data['facilities'], true);
+            if (is_array($parsedFacilities)) {
+                $data['facilities'] = $parsedFacilities;
+            }
+        } elseif (isset($data['facilities']['facilities']) && is_array($data['facilities']['facilities'])) {
+            $data['facilities'] = $data['facilities']['facilities'];
+        } elseif (isset($data['facility']) && is_array($data['facility'])) {
+            $data['facilities'] = $data['facility'];
+        } elseif (isset($data['facility']) && is_string($data['facility'])) {
+            $parsedFacilities = json_decode($data['facility'], true);
+            if (is_array($parsedFacilities)) {
+                $data['facilities'] = $parsedFacilities;
+            }
+        }
+        return $data;
     }
 
     if (isset($decoded['project']) && is_array($decoded['project'])) {
