@@ -2168,7 +2168,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(roleInput, 'role');
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
-                    createAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
                     roleInput.dataset.autocompleteInit = 'true';
                 }
             }, 100);
@@ -2183,7 +2183,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(nameInput, 'human');
             itemDiv.appendChild(nameInput);
             setTimeout(() => {
-                createAutocomplete(nameInput, getAllHumanNames, 'human');
+                delegateCreateAutocomplete(nameInput, getAllHumanNames, 'human');
                 nameInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else if (isPastTTIJobs) {
@@ -2196,7 +2196,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(roleInput, 'role');
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
-                    createAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
                     roleInput.dataset.autocompleteInit = 'true';
                 }
             }, 100);
@@ -2211,7 +2211,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(orgInput, 'operator');
             itemDiv.appendChild(orgInput);
             setTimeout(() => {
-                createAutocomplete(orgInput, getAllOperators, 'operator');
+                delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
                 orgInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else {
@@ -2271,7 +2271,7 @@ function renderArray(container, path, items) {
                 itemDiv.appendChild(input); // Must be in DOM for createAutocomplete to find parent
                 setTimeout(() => {
                     if (!input.dataset.autocompleteInit) {
-                        createAutocomplete(input, dataFunc, category);
+                        delegateCreateAutocomplete(input, dataFunc, category);
                         input.dataset.autocompleteInit = 'true';
                     }
                 }, 100);
@@ -2658,7 +2658,7 @@ window.updateAllUI = function() {
         // Reinitialize autocomplete for facility status field
         const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
         if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
-            createAutocomplete(facilityStatusField, getAllStatuses, 'status');
+            delegateCreateAutocomplete(facilityStatusField, getAllStatuses, 'status');
         }
     } finally {
         // Clear flag after a short delay to allow any triggered events to complete
@@ -4403,10 +4403,10 @@ window.navigateToFacility = navigateToFacility;
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 // Only expose autocomplete helpers if the module did not already register them
 if (typeof window.createAutocomplete !== 'function') {
-    window.createAutocomplete = createAutocomplete;
+    window.createAutocomplete = delegateCreateAutocomplete;
 }
 if (typeof window.initializeAutocompleteFields !== 'function') {
-    window.initializeAutocompleteFields = initializeAutocompleteFields;
+    window.initializeAutocompleteFields = delegateInitializeAutocompleteFields;
 }
 window.invalidateAggregatedData = invalidateAggregatedData;
 window.normalizeProjectData = normalizeProjectData;
