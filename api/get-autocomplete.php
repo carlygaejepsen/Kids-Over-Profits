@@ -470,9 +470,15 @@ function collect_gender_values(array $data, array &$set)
 
 function collect_location_values(array $data, array &$set)
 {
+    // Location project name (for location aggregates)
+    if (!empty($data['name'])) {
+        add_value($set, $data['name']);
+    }
+
     if (!empty($data['operator']) && is_array($data['operator'])) {
         add_value($set, $data['operator']['location'] ?? null);
         add_value($set, $data['operator']['headquarters'] ?? null);
+        add_value($set, $data['operator']['name'] ?? null);
     }
 
     if (empty($data['facilities']) || !is_array($data['facilities'])) {
@@ -672,6 +678,7 @@ try {
     $sources = [
         "SELECT json_data AS payload FROM facilities_master",
         "SELECT json_data AS payload FROM referrers_master",
+        "SELECT json_data AS payload FROM locations_master",
         "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
     ];
 
