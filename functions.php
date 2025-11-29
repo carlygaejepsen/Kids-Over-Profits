@@ -379,13 +379,30 @@ function kop_get_facilities_projects_from_database() {
             continue;
         }
 
-        $projects[$unique_name] = array(
-            'name' => $unique_name,
-            'label' => sanitize_text_field($unique_name_raw),
-            'data' => $decoded,
-            'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
-            'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
-        );
+        // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
+        $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||
+                         (isset($decoded['data']['operator']) && is_array($decoded['data']['operator']));
+        
+        if ($is_new_format) {
+            // NEW format: data is already nested correctly, pass through as-is
+            $projects[$unique_name] = array(
+                'name' => isset($decoded['name']) ? sanitize_text_field($decoded['name']) : $unique_name,
+                'label' => sanitize_text_field($unique_name_raw),
+                'data' => $decoded['data'],  // Use the nested data directly
+                'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : 'companies',
+                'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+            );
+        } else {
+            // OLD format: facilities/operator at root, wrap in 'data'
+            $projects[$unique_name] = array(
+                'name' => $unique_name,
+                'label' => sanitize_text_field($unique_name_raw),
+                'data' => $decoded,
+                'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+            );
+        }
     }
 
     return array(
