@@ -3,23 +3,90 @@
 Welcome! This repository powers the **Kids Over Profits** WordPress child theme. Before making changes, read through this guide to understand the environment, collaboration preferences, and visual direction.
 
 ## Environment Snapshot
+
+### Production Environment
 - **Hosting provider & control panel:** NixiHost shared hosting managed through cPanel (Softaculous WordPress Manager for application administration).
 - **Web server & PHP:** LiteSpeed with PHP 8.2 (`ea-php82___lsphp`).
 - **Database:** MySQL provisioned through the hosting environment.
 - **CMS stack:** WordPress with the Kadence parent theme and this custom child theme.
-- **Local development context:** Historically maintained from Windows at `c:\\Users\\daniu\\OneDrive\\Documents\\GitHub\\Kids-Over-Profits`.
 - **Access constraints:** No production credentials live in the repo; automation must work only with the checked-in files.
+
+### Local Development Environment
+- **Platform:** Flywheel Local (WordPress local development environment)
+- **Project root:** `c:\Users\daniu\Local Sites\kids-over-profits\`
+- **Web server:** Nginx 1.26.1 (configurable to Apache in Flywheel)
+- **PHP version:** 8.2.29
+- **Database:** MySQL (accessible via Flywheel Local's Adminer or command line)
+- **WordPress root:** `app/public/` (relative to project root)
+- **Child theme directory:** `app/public/wp-content/themes/child/`
+- **Version control:** Git repository maintained within the child theme directory
 
 For more operational background, consult `environment-summary.md` and other documentation files in the repository.
 
+## Flywheel Local Development Setup
+
+### Directory Structure
+The Flywheel Local environment organizes the project as follows:
+
+```
+c:\Users\daniu\Local Sites\kids-over-profits\
+├── app\
+│   ├── public\                    # WordPress root directory
+│   │   ├── wp-admin\              # WordPress admin
+│   │   ├── wp-content\
+│   │   │   ├── themes\
+│   │   │   │   └── child\         # This repository (Git-tracked)
+│   │   │   ├── plugins\           # WordPress plugins
+│   │   │   └── uploads\           # Media uploads
+│   │   ├── wp-config.php          # WordPress configuration
+│   │   ├── *.sql                  # Database export files
+│   │   └── [WordPress core files]
+│   └── sql\                       # Database backups
+├── conf\                          # Server configuration
+│   ├── nginx-1.26.1\              # Nginx config
+│   ├── php-8.2.29\                # PHP config
+│   ├── mysql\                     # MySQL config
+│   └── apache\                    # Apache config (if using Apache mode)
+└── logs\                          # Server logs
+```
+
+### Working with Flywheel Local
+- **Starting the site:** Open Flywheel Local and start the "kids-over-profits" site
+- **Accessing the site:** https://kids-over-profits.local (or the domain configured in Flywheel)
+- **Database access:**
+  - Use Flywheel Local's built-in Adminer (Database tab → Open Adminer)
+  - Or connect via command line tools to localhost
+- **File synchronization:** The `app/public/wp-content/themes/child/` directory is the Git repository
+- **Database exports:** Export `.sql` files to `app/sql/` or `app/public/` for versioning
+- **Configuration files:** Server configs are in `conf/` - modify only if necessary
+- **Logs:** Check `logs/` for debugging web server and PHP errors
+
+### Development Workflow
+1. Start the site in Flywheel Local
+2. Make changes in `app/public/wp-content/themes/child/`
+3. Test changes at the local URL
+4. Commit changes from within the child theme directory
+5. Export database if schema changes were made
+6. Deploy to production via Git deployment or manual file transfer
+
 ## Repository Layout
 
-This repository contains a full-stack data management application built within a WordPress environment. Here’s a breakdown of the key components:
+This repository (the child theme) contains a full-stack data management application built within a WordPress environment. Here's a breakdown of the key components:
 
+### Child Theme Root Files
 -   **`functions.php`**: The core of the child theme. It acts as the backend orchestrator, loading all necessary scripts and styles, defining API endpoints, and adding custom features to the WordPress admin area. It contains the main PHP logic for data handling and page-specific script loading.
+-   **`style.css`**: The main stylesheet for the child theme, which primarily contains theme header information and can be used for global style overrides.
+-   **`page-*.php`**: Custom page templates for WordPress pages (e.g., `page-admin-data.php`, `page-data.php`, `page-tti-program-index.php`, `page-wiki-editor.php`)
+-   **`.env`**: Environment-specific configuration (gitignored, see `.env.example` for template)
+-   **`.cpanel.yml`**: cPanel deployment configuration
+-   **`.htaccess`**: Apache/LiteSpeed server directives
+-   **`tailwind.config.js`**: Tailwind CSS configuration (if using Tailwind)
 
--   **`api/`**: This directory contains PHP scripts that serve as the backend API for the data form. It supports two distinct workflows for data management: one for administrators and one for public suggestions.
-    -   **`api/config.php`**: A critical configuration file holding the database credentials. It establishes the database connection used by all other API scripts.
+### Core Directories
+
+-   **`api/`**: Backend API scripts for the data management system. Supports two distinct workflows: administrator and public suggestions.
+    -   **`api/config.php`**: Database configuration loader that reads credentials from WordPress constants, environment variables, or `config.local.php`
+    -   **`api/config.local.php`**: Local database credentials (gitignored, use `config.php.example` as template)
 
     -   **Administrator Workflow:**
         -   **`get-master-data.php`**: Fetches all official records from the `facilities_master` table to populate the form for admins.
@@ -33,40 +100,68 @@ This repository contains a full-stack data management application built within a
         -   **`get-autocomplete.php`**: Provides autocomplete suggestions for form fields by querying both master and suggested data, ensuring consistency.
         -   **`approve-edits.php`**: Provides the frontend UI for the admin approval page, which uses `process-edit.php` to perform its actions.
 
--   **`js/`**: Contains the client-side JavaScript files that power the site's interactive features.
-    -   **`js/data-form/`**: Scripts related to the facility data entry form.
-        -   **`js/data-form/facility-form.v3.js`**: The core script for the admin data entry form. It manages dynamic fields, validation, and communication with the backend API.
-        -   **`js/data-form/db-form-loader.js`**: Handles data loading and project management for the form.
-        -   **`js/data-form/facility-report-generator.js`**: A utility for admins to generate a clean, printable HTML report from the data currently loaded in the facility form.
-        -   **`js/data-form/notes.js`**: Manages facility notes functionality.
-        -   **`js/data-form/referrer-form.js`**: Handles referrer data entry and management.
-        -   **`js/data-form/kadence-nav-guard.js`**: Prevents Kadence theme navigation conflicts on data form pages.
-        -   **`js/data-form/admin-data-page.js`**: Admin-specific page functionality.
-        -   **`js/data-form/data-page.js`**: Public suggestion page functionality.
-    -   **`js/inspections/`**: State inspection report scripts.
-        -   **`js/inspections/facilities-display.js`**: Renders the public-facing, searchable directory of all facilities. It fetches data from the API and injects it into the `tti-program-index` page.
-        -   **`js/inspections/ca-reports.js`**, **`js/inspections/tx_reports.js`**, **`js/inspections/az_reports.js`**, etc.: State-specific report pages.
-    -   **`js/anonymous-portal.js`**: Powers the frontend of the secure, anonymous document submission page, handling file uploads and user interaction.
-    -   **`js/autocomplete.js`**: Provides autocomplete functionality for form fields.
+-   **`js/`**: Client-side JavaScript files powering interactive features
+    -   **`js/data-form/`**: Facility data entry form scripts
+        -   `facility-form.v3.js` - Core admin data entry form (dynamic fields, validation, API communication)
+        -   `db-form-loader.js` - Data loading and project management
+        -   `facility-report-generator.js` - Generate printable HTML reports from form data
+        -   `notes.js` - Facility notes functionality
+        -   `referrer-form.js` - Referrer data entry and management
+        -   `kadence-nav-guard.js` - Prevent Kadence theme navigation conflicts
+        -   `admin-data-page.js` - Admin-specific page functionality
+        -   `data-page.js` - Public suggestion page functionality
+    -   **`js/inspections/`**: State inspection report scripts
+        -   `facilities-display.js` - Public searchable facility directory (TTI Program Index page)
+        -   `ca-reports.js`, `tx_reports.js`, `az_reports.js`, etc. - State-specific report pages
+    -   **`js/data/`**: JSON data files for reports (fallback datasets)
+    -   `anonymous-portal.js` - Anonymous document submission interface
+    -   `autocomplete.js` - Form field autocomplete functionality
+    -   `news-processor.js` - News content processing
+    -   `tti-program-index.js` - TTI program index page logic
+    -   `wiki-editor.js` - Wiki editor functionality
 
--   **`css/`**: Contains the stylesheets for the project.
-    -   **`css/data-form.css`**: This file provides all the styling for the facility data entry form, ensuring a consistent and user-friendly interface. It covers everything from layout and typography to button styles and responsive design.
+-   **`css/`**: Stylesheets for the project
+    -   `data-form.css` - Facility data entry form styling (layout, typography, buttons, responsive design)
+    -   `anonymous-portal.css` - Anonymous portal styling
+    -   `colors.css` - Campaign color palette definitions
+    -   `facility-reports.css` - Report generation styling
+    -   `news-processor.css` - News processor styling
+    -   `tti-program-index.css` - TTI index page styling
+    -   `wiki-editor.css` - Wiki editor styling
 
--   **`templates/`**: Contains PHP template files that are loaded into WordPress pages via shortcodes or page templates.
-    -   **`templates/data-form-admin.php`**: The administrator data entry interface template, loaded into WordPress pages for privileged users who can directly modify the master database.
-    -   **`templates/data-form-public.php`**: The public suggestion interface template, loaded into WordPress pages for contributors who submit data for review before it's added to the master database.
+-   **`templates/`**: PHP template files loaded via shortcodes or page templates
+    -   `data-form-admin.php` - Administrator data entry interface (direct master database access)
+    -   `data-form-public.php` - Public suggestion interface (submissions for review)
 
--   **`data/`**: This directory contains various JSON data files used by the reporting pages and can serve as fallback datasets when the API is unavailable.
+-   **`docs/`**: Project documentation
+    -   **`docs/phase-0/`**: Initial project phase documentation
+        -   `phase-0-1-requirements.md` - Project requirements
+        -   `phase-0-2-technical-decisions.md` - Technical architecture decisions
+        -   `phase-0-3-environment-transition.md` - Environment migration notes
+    -   `security-hardening.md` - Security implementation guidelines
 
--   **WordPress Pages**: All active pages are now PHP-based WordPress pages that load templates or shortcodes:
-    -   The admin data form uses the `data-form-admin.php` template
-    -   The public suggestion form uses the `data-form-public.php` template
-    -   The TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `js/inspections/facilities-display.js` renders the database
-    -   Other pages are created as standard WordPress pages with embedded shortcodes or custom page templates
+-   **`tests/`**: Test files and scripts
+    -   **`tests/db-form/`**: Database form test suite
 
--   **`style.css`**: The main stylesheet for the child theme, which primarily contains theme header information and can be used for global style overrides.
+-   **`Wiki Editor Template/`**: Template files for wiki editor functionality
 
--   **`AGENTS.md`**: This file! The central guide for developers, outlining the project's architecture, conventions, and design principles.
+### WordPress Integration
+All active pages are PHP-based WordPress pages that load templates or shortcodes:
+-   Admin data form uses the `data-form-admin.php` template
+-   Public suggestion form uses the `data-form-public.php` template
+-   TTI Program Index page uses the `[facilities_display]` shortcode which injects `<div id="facilities-container"></div>` where `js/inspections/facilities-display.js` renders the database
+-   Other pages are created as standard WordPress pages with embedded shortcodes or custom page templates
+
+### Documentation Files
+-   `AGENTS.md` - This file! Central developer guide (architecture, conventions, design principles)
+-   `environment-summary.md` - Environment and access details
+-   `DATABASE_SETUP_GUIDE.md` - Database configuration and setup
+-   `DATA_FORM_TEMPLATE_SETUP.md` - Data form template configuration
+-   `COLOR_SYSTEM_SUMMARY.md` - Color palette and design system
+-   `KADENCE_NAV_FIX_SUMMARY.md` - Kadence theme navigation fixes
+-   `ISSUE_FIX_SUMMARY.md` - Issue tracking and resolution
+-   `NOTES_MIGRATION_GUIDE.md` - Notes system migration guide
+-   `DIAGNOSTIC_TESTS.md` - System diagnostic procedures
 
 ## Collaboration Preferences
 - **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `facility-form.v4.js`). Preserve prior versions unless instructed otherwise.
