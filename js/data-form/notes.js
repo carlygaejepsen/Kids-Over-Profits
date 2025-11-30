@@ -600,7 +600,11 @@ function addNoteButtons() {
             'facility-counter',
             'project-name',
             'organize-by',
-            'organize-value'
+            'organize-value',
+            'organize-value-modal',
+            'organize-by-modal',
+            'searchInput',
+            'clearSearch'
         ];
 
         if (skipFieldIds.includes(fieldId)) {
@@ -614,6 +618,11 @@ function addNoteButtons() {
 
         // Skip fields within data organizer section
         if (field.closest('#data-organizer-section')) {
+            return;
+        }
+
+        // Skip fields within organizer modal
+        if (field.closest('#organizer-modal') || field.closest('.organizer-modal')) {
             return;
         }
 
@@ -633,6 +642,12 @@ function addNoteButtons() {
             if (skipLabels.some(skipLabel => labelText.includes(skipLabel))) {
                 return;
             }
+        }
+
+        // Skip search/filter fields based on placeholder text
+        const placeholder = (field.placeholder || '').toLowerCase();
+        if (placeholder.includes('search') || placeholder.includes('filter')) {
+            return;
         }
 
         // Create note button
