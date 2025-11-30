@@ -717,6 +717,23 @@ function normalizeProjectData(data) {
         data.isIndependentConsultant = false;
     }
 
+    // Preserve or set referrerType based on existing data
+    if (!data.referrerType) {
+        data.referrerType = data.isIndependentConsultant ? 'individual' : 'group';
+    }
+
+    // Keep referrerGroup in sync with referrerAgency
+    if (data.referrerAgency && !data.referrerGroup) {
+        data.referrerGroup = data.referrerAgency;
+    } else if (data.referrerGroup && !data.referrerAgency) {
+        data.referrerAgency = data.referrerGroup;
+    }
+
+    // Keep referrerIndividual in sync with current consultant
+    if (Array.isArray(data.referrerConsultants) && data.referrerConsultants.length > 0) {
+        data.referrerIndividual = data.referrerConsultants[0];
+    }
+
     if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
         data.fieldNotes = {};
     }
@@ -1798,6 +1815,11 @@ function loadProject(projectName) { // Note: This function is now asynchronous
                 window.currentFacilityIndex = 0;
             }
 
+            // Reset consultant index for referrer projects to avoid stale state
+            if (projectCategory === 'referrers') {
+                window.currentConsultantIndex = 0;
+            }
+
             const projectNameInput = document.getElementById('project-name');
             if (projectNameInput) {
                 projectNameInput.value = projectName;
@@ -2663,7 +2685,13 @@ function loadReferrerData() {
         window.applyReferrerToggleState(referrerType === 'individual');
     }
 
-    const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    // Ensure currentConsultantIndex is valid
+    const consultants = window.formData.referrerConsultants || [];
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0 || window.currentConsultantIndex >= consultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
         debugLog('📋 Consultant data:', consultant);
@@ -2714,7 +2742,7 @@ function loadReferrerData() {
     const individualArrays = [
         { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
         { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
-        { path: 'referrerIndividual.affiliations', data: consultant.affiliations },
+        { path: 'consultant.affiliations', data: consultant.affiliations },
         { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
         { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
     ];
@@ -4074,6 +4102,16 @@ function attachFieldListeners() {
     // Referrer field event listeners - handled by referrer-form.js module
     if (typeof window.attachReferrerFieldListeners === 'function') {
         window.attachReferrerFieldListeners();
+    }
+
+    // Consultant navigation buttons - handled by referrer-form.js module
+    if (typeof window.initializeConsultantNavigation === 'function') {
+        window.initializeConsultantNavigation();
+    }
+
+    // Consultants TOC toggle - handled by referrer-form.js module
+    if (typeof window.initializeConsultantsTocToggle === 'function') {
+        window.initializeConsultantsTocToggle();
     }
 
     // Facility fields

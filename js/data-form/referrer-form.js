@@ -323,7 +323,13 @@ function loadReferrerData() {
         window.applyReferrerToggleState(referrerType === 'individual');
     }
 
-    const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    // Ensure currentConsultantIndex is valid
+    const consultants = window.formData.referrerConsultants || [];
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0 || window.currentConsultantIndex >= consultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
         debugLog('📋 Consultant data:', consultant);
