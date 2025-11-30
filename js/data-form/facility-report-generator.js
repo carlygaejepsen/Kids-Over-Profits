@@ -431,8 +431,8 @@ function generateReferrerSection() {
                         ${consultant.role ? `<div class="info-item"><span class="info-label">Role:</span><span class="info-value">${escapeHtml(consultant.role)}</span></div>` : ''}
                         ${consultant.status ? `<div class="info-item"><span class="info-label">Status:</span><span class="info-value">${escapeHtml(consultant.status)}</span></div>` : ''}
                         ${consultant.city || consultant.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([consultant.city, consultant.state].filter(Boolean).join(', '))}</span></div>` : ''}
-                        ${consultant.email ? `<div class="info-item"><span class="info-label">Email:</span><span class="info-value">${escapeHtml(consultant.email)}</span></div>` : ''}
-                        ${consultant.phone ? `<div class="info-item"><span class="info-label">Phone:</span><span class="info-value">${escapeHtml(consultant.phone)}</span></div>` : ''}
+                        ${consultant.email ? `<div class="info-item"><span class="info-label">Email:</span><span class="info-value">${formatEmailLink(consultant.email)}</span></div>` : ''}
+                        ${consultant.phone ? `<div class="info-item"><span class="info-label">Phone:</span><span class="info-value">${formatPhoneLink(consultant.phone)}</span></div>` : ''}
                         ${consultant.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${formatWebsiteLink(consultant.website)}</span></div>` : ''}
                         ${consultant.education ? `<div class="info-item"><span class="info-label">Education:</span><span class="info-value">${escapeHtml(consultant.education)}</span></div>` : ''}
                         ${consultant.credentials ? `<div class="info-item"><span class="info-label">Credentials:</span><span class="info-value">${escapeHtml(consultant.credentials)}</span></div>` : ''}
@@ -858,66 +858,36 @@ function renderFieldNotes(fieldNotes, sectionLabel = 'Field') {
 }
 
 function renderList(title, items) {
-    if (!items || items.length === 0) return '';
+    if (!items || !Array.isArray(items) || items.length === 0) return '';
 
-    // Helper function to check if a string is a URL
-    const isUrl = (str) => {
-        if (typeof str !== 'string') return false;
-        return /^(https?:\/\/|www\.)/i.test(str.trim());
-    };
-
-    // Helper function to format URL as a link
-    const formatAsLink = (url) => {
-        const cleanUrl = url.trim();
-        // Ensure URL has protocol
-        const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
-        return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(cleanUrl)}</a>`;
-    };
-
-    const isWebsiteList = title.toLowerCase().includes('website');
+    const isWebsiteList = title.toLowerCase().includes('website') || 
+                          title.toLowerCase().includes('link') ||
+                          title.toLowerCase().includes('url');
 
     const listItems = items.map(item => {
-        // Handle different item types
-        if (item === null || item === undefined) return '';
+        // Get a clean string value using safeString
+        const displayValue = safeString(item);
+        
+        if (!displayValue) return '';
 
-        if (typeof item === 'string') {
-            if (!item.trim()) return '';
-            // Check if it's a URL or if this is a website list
-            if (isWebsiteList || isUrl(item)) {
-                return `<li>${formatAsLink(item)}</li>`;
-            }
-            return `<li>${escapeHtml(item)}</li>`;
+        // Check if it should be rendered as a link
+        if (isWebsiteList || looksLikeUrl(displayValue)) {
+            return `<li>${formatWebsiteLink(displayValue)}</li>`;
         }
-
-        if (typeof item === 'object') {
-            // Try to extract a meaningful display value from common field names
-            const displayValue = item.name || item.value || item.text || item.title ||
-                                 item.url || item.link || item.label ||
-                                 (item.firstName && item.lastName ? `${item.firstName} ${item.lastName}` : null) ||
-                                 item.firstName || item.lastName;
-
-            if (displayValue && typeof displayValue === 'string' && displayValue.trim()) {
-                // Check if it's a URL
-                if (isWebsiteList || isUrl(displayValue)) {
-                    return `<li>${formatAsLink(displayValue)}</li>`;
-                }
-                return `<li>${escapeHtml(displayValue)}</li>`;
-            }
-
-            // For objects without recognized fields, skip them to avoid [object Object]
-            return '';
+        
+        // Check if it's an email
+        if (looksLikeEmail(displayValue)) {
+            return `<li>${formatEmailLink(displayValue)}</li>`;
         }
-
-        // For numbers or other primitives, convert to string
-        const strVal = String(item);
-        return strVal && strVal !== '[object Object]' ? `<li>${escapeHtml(strVal)}</li>` : '';
+        
+        return `<li>${escapeHtml(displayValue)}</li>`;
     }).filter(item => item).join('');
 
     if (!listItems) return '';
 
     return `
         <div class="list-section">
-            <div class="list-title">${title}</div>
+            <div class="list-title">${escapeHtml(title)}</div>
             <ul class="list-items">${listItems}</ul>
         </div>
     `;
@@ -927,24 +897,33 @@ function renderStaffList(title, staffArray) {
     if (!staffArray || staffArray.length === 0) return '';
 
     const staffItems = staffArray.map(staff => {
-        let name, role;
+        let name = '';
+        let role = '';
 
         if (typeof staff === 'string') {
-            name = staff;
+            name = staff.trim();
             role = '';
         } else if (staff && typeof staff === 'object') {
-            // Try multiple possible field names for the name
-            name = staff.name || staff.Name || staff.fullName || staff.firstName ||
-                   (staff.firstName && staff.lastName ? `${staff.firstName} ${staff.lastName}` : '') ||
-                   JSON.stringify(staff); // Fallback to show the object data
-            role = staff.role || staff.Role || staff.title || staff.Title || staff.position || staff.Position || '';
-        } else {
-            // Fallback for unexpected types
-            name = String(staff);
+            // Try to get the name - use safeString for nested values
+            if (staff.firstName && staff.lastName) {
+                name = `${safeString(staff.firstName)} ${safeString(staff.lastName)}`.trim();
+            } else {
+                name = safeString(staff.name) || safeString(staff.Name) || 
+                       safeString(staff.fullName) || safeString(staff.firstName) || 
+                       safeString(staff.lastName) || '';
+            }
+            
+            // Get role
+            role = safeString(staff.role) || safeString(staff.Role) || 
+                   safeString(staff.title) || safeString(staff.Title) || 
+                   safeString(staff.position) || safeString(staff.Position) || '';
+        } else if (staff !== null && staff !== undefined) {
+            name = safeString(staff);
             role = '';
         }
 
-        if (!name || name === '{}' || name === '[object Object]') return '';
+        // Skip if no valid name
+        if (!name) return '';
 
         return `
             <div class="staff-item">
@@ -958,45 +937,135 @@ function renderStaffList(title, staffArray) {
 
     return `
         <div class="list-section">
-            <div class="list-title">${title}</div>
+            <div class="list-title">${escapeHtml(title)}</div>
             ${staffItems}
         </div>
     `;
 }
 
-function escapeHtml(text) {
-    if (text === null || text === undefined) return '';
-
-    // Handle objects - try to extract a string value
-    if (typeof text === 'object') {
-        const displayValue = text.name || text.value || text.text || text.title ||
-                             text.url || text.link || text.label ||
-                             (text.firstName && text.lastName ? `${text.firstName} ${text.lastName}` : null) ||
-                             text.firstName || text.lastName;
-        if (displayValue && typeof displayValue === 'string') {
-            text = displayValue;
-        } else {
-            return ''; // Don't output [object Object]
+/**
+ * Safely extracts a displayable string from any value
+ * @param {*} value - The value to convert to a safe string
+ * @returns {string} - A clean string or empty string
+ */
+function safeString(value) {
+    if (value === null || value === undefined) return '';
+    
+    // Already a string
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
+    }
+    
+    // Numbers and booleans - convert directly
+    if (typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+    
+    // Arrays - try to join string values
+    if (Array.isArray(value)) {
+        const stringValues = value.map(v => safeString(v)).filter(Boolean);
+        return stringValues.join(', ');
+    }
+    
+    // Objects - try to extract a meaningful value
+    if (typeof value === 'object') {
+        // Try common field names in order of preference
+        const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title', 
+                                'url', 'link', 'label', 'display', 'content'];
+        
+        for (const field of possibleFields) {
+            if (value[field] && typeof value[field] === 'string' && value[field].trim()) {
+                return value[field].trim();
+            }
         }
+        
+        // Try firstName + lastName combo
+        if (value.firstName || value.lastName) {
+            const name = [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+            if (name) return name;
+        }
+        
+        // Don't output objects as strings
+        return '';
     }
+    
+    // Fallback - try String() but check result
+    const str = String(value);
+    return (str && str !== '[object Object]') ? str : '';
+}
 
-    // Convert to string if not already
-    if (typeof text !== 'string') {
-        text = String(text);
-    }
-
-    if (!text || text === '[object Object]') return '';
+function escapeHtml(text) {
+    // Use safeString to get a clean string value first
+    const cleanText = safeString(text);
+    if (!cleanText) return '';
 
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = cleanText;
     return div.innerHTML;
 }
 
-// Helper function to format a URL as a clickable link
+/**
+ * Checks if a string looks like a URL
+ * @param {string} str - The string to check
+ * @returns {boolean} - True if it looks like a URL
+ */
+function looksLikeUrl(str) {
+    if (typeof str !== 'string') return false;
+    const trimmed = str.trim().toLowerCase();
+    return trimmed.startsWith('http://') || 
+           trimmed.startsWith('https://') || 
+           trimmed.startsWith('www.') ||
+           /^[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i.test(trimmed);
+}
+
+/**
+ * Checks if a string looks like an email address
+ * @param {string} str - The string to check
+ * @returns {boolean} - True if it looks like an email
+ */
+function looksLikeEmail(str) {
+    if (typeof str !== 'string') return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str.trim());
+}
+
+/**
+ * Format a URL as a clickable link
+ * @param {*} url - The URL value (can be string or object with url property)
+ * @returns {string} - HTML link or empty string
+ */
 function formatWebsiteLink(url) {
-    if (!url || typeof url !== 'string') return '';
-    const cleanUrl = url.trim();
+    // Extract string from object if needed
+    let urlStr = safeString(url);
+    if (!urlStr) return '';
+    
     // Ensure URL has protocol
-    const href = cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`;
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(cleanUrl)}</a>`;
+    const href = urlStr.startsWith('http') ? urlStr : `https://${urlStr}`;
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(urlStr)}</a>`;
+}
+
+/**
+ * Format an email as a clickable mailto link
+ * @param {*} email - The email value (can be string or object)
+ * @returns {string} - HTML mailto link or empty string
+ */
+function formatEmailLink(email) {
+    let emailStr = safeString(email);
+    if (!emailStr) return '';
+    
+    return `<a href="mailto:${escapeHtml(emailStr)}" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(emailStr)}</a>`;
+}
+
+/**
+ * Format a phone number as a clickable tel link
+ * @param {*} phone - The phone value (can be string or object)
+ * @returns {string} - HTML tel link or escaped string
+ */
+function formatPhoneLink(phone) {
+    let phoneStr = safeString(phone);
+    if (!phoneStr) return '';
+    
+    // Clean the phone number for the tel: href (remove spaces, parens, dashes for some formats)
+    const cleanPhone = phoneStr.replace(/[\s\(\)\-\.]/g, '');
+    return `<a href="tel:${escapeHtml(cleanPhone)}" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(phoneStr)}</a>`;
 }
