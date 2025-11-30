@@ -92,7 +92,7 @@
         AUTOCOMPLETE:
             FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
             FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-            getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php')
+            '/wp-json/kop/v1/autocomplete'  // Use WordPress REST API (more reliable)
     };
 
     const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
