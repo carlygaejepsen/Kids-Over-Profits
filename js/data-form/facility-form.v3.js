@@ -1593,6 +1593,22 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('operator.')) {
+        // Check if we're in a location project - if so, use facility's sourceOperator
+        const activeTab = document.querySelector('.category-tab.active');
+        const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+        
+        if (isLocationProject && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+            const currentFacility = window.formData.facilities[window.currentFacilityIndex];
+            if (!currentFacility.sourceOperator) {
+                currentFacility.sourceOperator = {};
+            }
+            scope = 'operator';
+            normalizedPath = path.replace('operator.', '');
+            target = currentFacility.sourceOperator;
+            return { scope, normalizedPath, target };
+        }
+        
+        // For non-location projects, use project-level operator
         if (!window.formData.operator) {
             window.formData.operator = createNewProjectData().operator;
         }
