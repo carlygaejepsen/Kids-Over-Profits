@@ -1394,18 +1394,37 @@
             
             // Modal search function
             function performOrganizedSearchModal() {
-                if (!organizeBySelectModal || !organizeValueInputModal) return;
+                // Get modal elements dynamically in case they weren't available at init time
+                const modalBySelect = document.getElementById('organize-by-modal');
+                const modalValueInput = document.getElementById('organize-value-modal');
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalResultsTitle = document.getElementById('organize-results-title-modal');
+                const modalResultsCount = document.getElementById('organize-results-count-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
                 
-                const searchType = organizeBySelectModal.value;
-                const searchValue = organizeValueInputModal.value.trim();
+                console.log('🔍 Modal search triggered', {
+                    modalBySelect: !!modalBySelect,
+                    modalValueInput: !!modalValueInput,
+                    modalResults: !!modalResults
+                });
+                
+                if (!modalBySelect || !modalValueInput) {
+                    console.error('Modal elements not found!');
+                    announceOrganizerStatus('Search modal elements not found. Please try again.', 'error');
+                    return;
+                }
+                
+                const searchType = modalBySelect.value;
+                const searchValue = modalValueInput.value.trim();
                 const activeFormData = typeof formData !== 'undefined' ? formData : window.formData;
                 const projectStore = (typeof projects !== 'undefined' && projects) ? projects : (window.projects || {});
                 
+                console.log('🔍 Search params:', { searchType, searchValue, hasFormData: !!activeFormData, projectCount: Object.keys(projectStore || {}).length });
+                
                 if (!searchType || !searchValue) {
                     announceOrganizerStatus('Select a data point and enter a search value, then click Search.', 'error');
-                    if (organizeValueInputModal) {
-                        organizeValueInputModal.focus();
-                    }
+                    modalValueInput.focus();
                     return;
                 }
                 
@@ -1464,7 +1483,19 @@
             }
             
             function displayOrganizerResultsModal(results, searchType, searchValue) {
-                if (!organizeResultsModal) return;
+                // Get modal elements dynamically
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalResultsTitle = document.getElementById('organize-results-title-modal');
+                const modalResultsCount = document.getElementById('organize-results-count-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+                
+                console.log('📊 Displaying results:', { count: results.length, modalResults: !!modalResults, modalMatches: !!modalMatches });
+                
+                if (!modalResults) {
+                    console.error('organize-results-modal not found!');
+                    return;
+                }
                 
                 const searchTypeLabels = {
                     'staff': 'Staff Member',
@@ -1478,24 +1509,24 @@
                 };
                 const searchTypeLabel = searchTypeLabels[searchType] || searchType;
                 
-                organizeResultsModal.classList.remove('d-none');
+                modalResults.classList.remove('d-none');
                 
-                if (organizeResultsTitleModal) {
-                    organizeResultsTitleModal.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+                if (modalResultsTitle) {
+                    modalResultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
                 }
-                if (organizeResultsCountModal) {
-                    organizeResultsCountModal.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'}`;
-                }
-                
-                if (organizeClearBtnModal) {
-                    organizeClearBtnModal.classList.remove('d-none');
+                if (modalResultsCount) {
+                    modalResultsCount.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'}`;
                 }
                 
-                if (organizeMatchesModal) {
+                if (modalClearBtn) {
+                    modalClearBtn.classList.remove('d-none');
+                }
+                
+                if (modalMatches) {
                     if (results.length === 0) {
-                        organizeMatchesModal.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
+                        modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
                     } else {
-                        organizeMatchesModal.innerHTML = results.map(result => {
+                        modalMatches.innerHTML = results.map(result => {
                             const facilityName = result.facility.identification?.name || result.facility.identification?.currentName || 'Unnamed Facility';
                             const location = result.facility.location || '';
                             return `
@@ -1519,17 +1550,23 @@
             }
             
             function clearOrganizerResultsModal() {
-                if (organizeResultsModal) {
-                    organizeResultsModal.classList.add('d-none');
+                // Get modal elements dynamically
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+                const modalValueInput = document.getElementById('organize-value-modal');
+                
+                if (modalResults) {
+                    modalResults.classList.add('d-none');
                 }
-                if (organizeClearBtnModal) {
-                    organizeClearBtnModal.classList.add('d-none');
+                if (modalClearBtn) {
+                    modalClearBtn.classList.add('d-none');
                 }
-                if (organizeValueInputModal) {
-                    organizeValueInputModal.value = '';
+                if (modalValueInput) {
+                    modalValueInput.value = '';
                 }
-                if (organizeMatchesModal) {
-                    organizeMatchesModal.innerHTML = '';
+                if (modalMatches) {
+                    modalMatches.innerHTML = '';
                 }
             }
             
