@@ -300,8 +300,8 @@ get_header();
         </div>
 
         <div id="facility-main-wrapper" data-section-views="companies,locations">
-        <!-- Facility Table of Contents -->
-        <div class="facility-toc" id="facility-toc">
+        <!-- Facility Table of Contents (Companies only - Locations has its own in #states-content) -->
+        <div class="facility-toc" id="facility-toc" data-section-views="companies">
             <div class="toc-header">
                 <h2 class="toc-title">Facilities Overview</h2>
                 <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
