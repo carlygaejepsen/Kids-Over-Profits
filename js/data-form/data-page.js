@@ -1447,7 +1447,7 @@
             }
             
             // Modal search function - exposed globally for event handlers
-            window.performOrganizedSearchModal = function() {
+            window.performOrganizedSearchModal = async function() {
                 // Get modal elements dynamically in case they weren't available at init time
                 const modalBySelect = document.getElementById('organize-by-modal');
                 const modalValueInput = document.getElementById('organize-value-modal');
@@ -1471,10 +1471,8 @@
                 
                 const searchType = modalBySelect.value;
                 const searchValue = modalValueInput.value.trim();
-                const activeFormData = typeof formData !== 'undefined' ? formData : window.formData;
-                const projectStore = (typeof projects !== 'undefined' && projects) ? projects : (window.projects || {});
                 
-                console.log('🔍 Search params:', { searchType, searchValue, hasFormData: !!activeFormData, projectCount: Object.keys(projectStore || {}).length });
+                console.log('🔍 Search params:', { searchType, searchValue });
                 
                 if (!searchType || !searchValue) {
                     announceOrganizerStatus('Select a data point and enter a search value, then click Search.', 'error');
@@ -1482,58 +1480,68 @@
                     return;
                 }
                 
-                // Get all facilities from all projects
-                const hasFormData = Boolean(activeFormData && Array.isArray(activeFormData.facilities) && activeFormData.facilities.length);
-                const hasProjects = Boolean(projectStore && Object.keys(projectStore).length);
-                if (!hasFormData && !hasProjects) {
-                    announceOrganizerStatus('No facility data is loaded yet. Load a project or add facilities before searching.', 'error');
-                    return;
+                // Show loading state
+                announceOrganizerStatus(`Searching all facilities for "${searchValue}"...`, 'info');
+                if (modalResults) {
+                    modalResults.classList.remove('d-none');
+                    if (modalMatches) {
+                        modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">🔍</span><br>Searching database...</p>';
+                    }
                 }
                 
-                announceOrganizerStatus(`Searching for "${searchValue}"...`, 'info');
-                const results = [];
-                
-                // Search through current formData facilities
-                if (activeFormData && activeFormData.facilities) {
-                    activeFormData.facilities.forEach((facility, facilityIndex) => {
-                        const matches = extractDataPointsForSearch(facility, searchType, searchValue);
-                        if (matches.length > 0) {
-                            results.push({
-                                projectName: window.currentProjectName || 'Current Project',
-                                facility: facility,
-                                facilityIndex: facilityIndex,
-                                matches: matches,
-                                operator: activeFormData.operator?.name
-                            });
-                        }
-                    });
-                }
-                
-                // Search through all saved projects
-                Object.keys(projectStore || {}).forEach(projectName => {
-                    const project = projectStore[projectName];
-                    if (project && project.data && project.data.facilities) {
-                        project.data.facilities.forEach((facility, facilityIndex) => {
-                            const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                try {
+                    // Fetch all projects from the API
+                    const apiUrl = (window.KOP_FACILITY_FORM_CONFIG?.restUrl || '/wp-json/kop/v1/') + 'facilities';
+                    console.log('🔍 Fetching from API:', apiUrl);
+                    
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+                    
+                    const allProjects = await response.json();
+                    console.log('🔍 API returned projects:', Object.keys(allProjects || {}).length);
+                    
+                    const results = [];
+                    
+                    // Search through all projects from database
+                    Object.keys(allProjects || {}).forEach(projectName => {
+                        const project = allProjects[projectName];
+                        const facilities = project?.facilities || project?.data?.facilities || [];
+                        
+                        facilities.forEach((facility, facilityIndex) => {
+                            const matches = window.extractDataPointsForSearch ? 
+                                window.extractDataPointsForSearch(facility, searchType, searchValue) :
+                                extractDataPointsForSearch(facility, searchType, searchValue);
                             if (matches.length > 0) {
                                 results.push({
                                     projectName: projectName,
                                     facility: facility,
                                     facilityIndex: facilityIndex,
                                     matches: matches,
-                                    operator: project.data.operator?.name
+                                    operator: project?.operator?.name || facility?.identification?.operator
                                 });
                             }
                         });
+                    });
+                    
+                    console.log('🔍 Search results:', results.length);
+                    
+                    if (results.length === 0) {
+                        announceOrganizerStatus(`No matches found for "${searchValue}" in the database.`, 'warning');
+                    } else {
+                        announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
                     }
-                });
-                
-                if (results.length === 0) {
-                    announceOrganizerStatus(`No matches found for "${searchValue}".`, 'warning');
-                } else {
-                    announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
+                    
+                    window.displayOrganizerResultsModal(results, searchType, searchValue);
+                    
+                } catch (error) {
+                    console.error('Search API error:', error);
+                    announceOrganizerStatus(`Search failed: ${error.message}. Please try again.`, 'error');
+                    if (modalMatches) {
+                        modalMatches.innerHTML = `<p style="padding: 20px; text-align: center; color: #dc2626;">❌ Search failed: ${error.message}</p>`;
+                    }
                 }
-                displayOrganizerResultsModal(results, searchType, searchValue);
             }
             
             // Expose as global for event handlers
