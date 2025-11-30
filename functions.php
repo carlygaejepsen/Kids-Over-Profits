@@ -274,7 +274,7 @@ function kop_discover_facilities_master_table($connection, $prefix = '') {
 }
 
 /**
- * Fetch facilities projects from the database.
+ * Fetch all projects from the database (facilities, referrers, and locations).
  *
  * @return array|WP_Error Array of projects on success, WP_Error on failure.
  */
@@ -292,117 +292,158 @@ function kop_get_facilities_projects_from_database() {
         return new WP_Error('kop_facilities_invalid_connection', __('Facilities database connection is invalid.', 'kadence-child'));
     }
 
-    $table_name = kop_discover_facilities_master_table($db_connection, $prefix);
-
-    if ($table_name === null) {
-        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found.', 'kadence-child'));
-    }
-
-    $available_columns = $db_connection->get_col(sprintf('SHOW COLUMNS FROM %s', $table_name));
-
-    if (!is_array($available_columns)) {
-        return new WP_Error('kop_facilities_columns_unavailable', __('Unable to read facilities master columns.', 'kadence-child'));
-    }
-
-    $select_column = function ($candidates) use ($available_columns) {
-        foreach ($candidates as $candidate) {
-            if (in_array($candidate, $available_columns, true)) {
-                return $candidate;
-            }
-        }
-
-        return null;
-    };
-
-    $sanitize_identifier = function ($identifier) {
-        if (!is_string($identifier)) {
-            return '';
-        }
-
-        return preg_match('/^[A-Za-z0-9_]+$/', $identifier) === 1 ? $identifier : '';
-    };
-
-    $identifier_column = $select_column(array('unique_name', 'project_unique_name', 'slug', 'project_slug', 'project_name', 'name', 'id'));
-    $json_column = $select_column(array('json_data', 'project_json', 'json', 'project_data', 'data'));
-    $updated_column = $select_column(array('updated_at', 'modified_at', 'last_updated', 'timestamp', 'created_at'));
-
-    if ($identifier_column === null || $json_column === null) {
-        return new WP_Error('kop_facilities_required_columns_missing', __('Required facilities master columns are missing. Expected an identifier and JSON payload column.', 'kadence-child'));
-    }
-
-    $identifier_column = $sanitize_identifier($identifier_column);
-    $json_column = $sanitize_identifier($json_column);
-    $updated_column = $updated_column !== null ? $sanitize_identifier($updated_column) : null;
-
-    if ($identifier_column === '' || $json_column === '') {
-        return new WP_Error('kop_facilities_required_columns_invalid', __('Facilities master table columns contained invalid characters.', 'kadence-child'));
-    }
-
-    $select_parts = array();
-    $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
-    $select_parts[] = '`' . $json_column . '` AS project_payload';
-
-    if ($updated_column !== null && $updated_column !== '') {
-        $select_parts[] = '`' . $updated_column . '` AS project_updated';
-    }
-
-    $select_sql = implode(', ', $select_parts);
-
-    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery helper.
-    $rows = $db_connection->get_results("SELECT {$select_sql} FROM {$table_name}", ARRAY_A);
-
-    if (!is_array($rows)) {
-        return new WP_Error('kop_facilities_query_failed', __('Unable to fetch facilities data from the database.', 'kadence-child'));
-    }
+    // All three master tables to query
+    $master_tables = array(
+        'facilities_master',
+        'referrers_master',
+        'locations_master',
+    );
 
     $projects = array();
 
-    foreach ($rows as $row) {
-        $unique_name_raw = isset($row['project_identifier']) ? $row['project_identifier'] : '';
-        $unique_name = sanitize_text_field($unique_name_raw);
+    foreach ($master_tables as $table_base) {
+        // Try table with and without prefix
+        $table_name = null;
+        $prefixes_to_try = array('');
+        if (is_string($prefix) && $prefix !== '') {
+            $prefixes_to_try[] = $prefix;
+        }
+        if ($db_connection->prefix !== null && $db_connection->prefix !== '') {
+            $prefixes_to_try[] = $db_connection->prefix;
+        }
 
-        if ($unique_name === '') {
+        foreach ($prefixes_to_try as $prefix_candidate) {
+            $candidate_table = $prefix_candidate . $table_base;
+            $table_exists = $db_connection->get_var($db_connection->prepare(
+                'SHOW TABLES LIKE %s',
+                $candidate_table
+            ));
+            if ($table_exists === $candidate_table) {
+                $table_name = $candidate_table;
+                break;
+            }
+        }
+
+        // Skip if table doesn't exist
+        if ($table_name === null) {
             continue;
         }
 
-        $payload_raw = isset($row['project_payload']) ? $row['project_payload'] : '';
+        $available_columns = $db_connection->get_col(sprintf('SHOW COLUMNS FROM %s', $table_name));
 
-        if (!is_string($payload_raw) || $payload_raw === '') {
-            error_log(sprintf('KOP facilities: empty JSON payload for project "%s"', $unique_name));
+        if (!is_array($available_columns)) {
             continue;
         }
 
-        $decoded = json_decode($payload_raw, true);
+        $select_column = function ($candidates) use ($available_columns) {
+            foreach ($candidates as $candidate) {
+                if (in_array($candidate, $available_columns, true)) {
+                    return $candidate;
+                }
+            }
+            return null;
+        };
 
-        if (!is_array($decoded)) {
-            error_log(sprintf('KOP facilities: invalid JSON for project "%s"', $unique_name));
+        $sanitize_identifier = function ($identifier) {
+            if (!is_string($identifier)) {
+                return '';
+            }
+            return preg_match('/^[A-Za-z0-9_]+$/', $identifier) === 1 ? $identifier : '';
+        };
+
+        $identifier_column = $select_column(array('unique_name', 'project_unique_name', 'slug', 'project_slug', 'project_name', 'name', 'id'));
+        $json_column = $select_column(array('json_data', 'project_json', 'json', 'project_data', 'data'));
+        $updated_column = $select_column(array('updated_at', 'modified_at', 'last_updated', 'timestamp', 'created_at'));
+
+        if ($identifier_column === null || $json_column === null) {
             continue;
         }
 
-        // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
-        $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||
-                         (isset($decoded['data']['operator']) && is_array($decoded['data']['operator']));
-        
-        if ($is_new_format) {
-            // NEW format: data is already nested correctly, pass through as-is
-            $projects[$unique_name] = array(
-                'name' => isset($decoded['name']) ? sanitize_text_field($decoded['name']) : $unique_name,
-                'label' => sanitize_text_field($unique_name_raw),
-                'data' => $decoded['data'],  // Use the nested data directly
-                'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : 'companies',
-                'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
-                'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
-            );
-        } else {
-            // OLD format: facilities/operator at root, wrap in 'data'
-            $projects[$unique_name] = array(
-                'name' => $unique_name,
-                'label' => sanitize_text_field($unique_name_raw),
-                'data' => $decoded,
-                'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
-                'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
-            );
+        $identifier_column = $sanitize_identifier($identifier_column);
+        $json_column = $sanitize_identifier($json_column);
+        $updated_column = $updated_column !== null ? $sanitize_identifier($updated_column) : null;
+
+        if ($identifier_column === '' || $json_column === '') {
+            continue;
         }
+
+        $select_parts = array();
+        $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
+        $select_parts[] = '`' . $json_column . '` AS project_payload';
+
+        if ($updated_column !== null && $updated_column !== '') {
+            $select_parts[] = '`' . $updated_column . '` AS project_updated';
+        }
+
+        $select_sql = implode(', ', $select_parts);
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery loop.
+        $rows = $db_connection->get_results("SELECT {$select_sql} FROM {$table_name}", ARRAY_A);
+
+        if (!is_array($rows)) {
+            continue;
+        }
+
+        foreach ($rows as $row) {
+            $unique_name_raw = isset($row['project_identifier']) ? $row['project_identifier'] : '';
+            $unique_name = sanitize_text_field($unique_name_raw);
+
+            if ($unique_name === '') {
+                continue;
+            }
+
+            $payload_raw = isset($row['project_payload']) ? $row['project_payload'] : '';
+
+            if (!is_string($payload_raw) || $payload_raw === '') {
+                error_log(sprintf('KOP: empty JSON payload for project "%s" in %s', $unique_name, $table_name));
+                continue;
+            }
+
+            $decoded = json_decode($payload_raw, true);
+
+            if (!is_array($decoded)) {
+                error_log(sprintf('KOP: invalid JSON for project "%s" in %s', $unique_name, $table_name));
+                continue;
+            }
+
+            // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
+            $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||
+                             (isset($decoded['data']['operator']) && is_array($decoded['data']['operator']));
+
+            // Determine default category based on table
+            $default_category = 'companies';
+            if (strpos($table_base, 'referrers') !== false) {
+                $default_category = 'referrers';
+            } elseif (strpos($table_base, 'locations') !== false) {
+                $default_category = 'locations';
+            }
+
+            if ($is_new_format) {
+                // NEW format: data is already nested correctly, pass through as-is
+                $projects[$unique_name] = array(
+                    'name' => isset($decoded['name']) ? sanitize_text_field($decoded['name']) : $unique_name,
+                    'label' => sanitize_text_field($unique_name_raw),
+                    'data' => $decoded['data'],
+                    'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : $default_category,
+                    'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                    'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+                );
+            } else {
+                // OLD format: facilities/operator at root, wrap in 'data'
+                $projects[$unique_name] = array(
+                    'name' => $unique_name,
+                    'label' => sanitize_text_field($unique_name_raw),
+                    'data' => $decoded,
+                    'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : $default_category,
+                    'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                    'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+                );
+            }
+        }
+    }
+
+    if (empty($projects)) {
+        return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));
     }
 
     return array(
