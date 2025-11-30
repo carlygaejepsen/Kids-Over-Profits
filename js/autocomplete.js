@@ -565,7 +565,7 @@ function getAutocompleteEndpoint() {
 
     // Check global API helper
     if (window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
-        return window.KOP_API.getEndpoint('get-autocomplete.php');
+        return window.KOP_API.getEndpoint('autocomplete');
     }
 
     // Check config endpoints
@@ -574,9 +574,9 @@ function getAutocompleteEndpoint() {
         return config.endpoints.AUTOCOMPLETE;
     }
 
-    // Fallback to default path
+    // Use WordPress REST API endpoint (preferred - always works)
     const baseUrl = config.apiBase || window.location.origin;
-    return `${baseUrl.replace(/\/$/, '')}/wp-content/themes/child/api/get-autocomplete.php`;
+    return `${baseUrl.replace(/\/$/, '')}/wp-json/kop/v1/autocomplete`;
 }
 
 // ============================================
