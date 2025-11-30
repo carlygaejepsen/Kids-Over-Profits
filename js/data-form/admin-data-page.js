@@ -697,16 +697,42 @@
                 organizeBySelect.addEventListener('change', () => {
                     const value = organizeBySelect.value;
                     if (value) {
-                        organizeValueGroup.style.display = 'block';
-                        organizeSearchBtn.style.display = 'inline-block';
+                        organizeValueGroup.classList.remove('d-none');
+                        organizeSearchBtn.classList.remove('d-none');
                         organizeValueInput.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInput.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInput.removeAttribute('data-autocomplete-category');
+                        }
                     } else {
-                        organizeValueGroup.style.display = 'none';
-                        organizeSearchBtn.style.display = 'none';
+                        organizeValueGroup.classList.add('d-none');
+                        organizeSearchBtn.classList.add('d-none');
                         clearOrganizerResults();
                     }
                 }, { passive: true });
                 organizeBySelect.dataset.organizerChangeAttached = 'true';
+            }
+            
+            // Map search types to autocomplete categories
+            function getAutocompleteCategory(searchType) {
+                const categoryMap = {
+                    'staff': 'human',
+                    'operator': 'operator',
+                    'location': 'location',
+                    'programType': 'type',
+                    'status': 'status',
+                    'accreditation': 'accreditation',
+                    'certification': 'certification'
+                };
+                return categoryMap[searchType] || null;
             }
 
             // Handle search
@@ -754,6 +780,18 @@
                     const value = organizeBySelectModal.value;
                     if (value && organizeValueInputModal) {
                         organizeValueInputModal.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInputModal.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInputModal.removeAttribute('data-autocomplete-category');
+                        }
                     }
                 }, { passive: true });
                 organizeBySelectModal.dataset.organizerChangeAttached = 'true';
