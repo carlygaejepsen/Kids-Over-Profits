@@ -968,7 +968,8 @@ function createAutocomplete(input, getDataFunction, category) {
 
     input.addEventListener('focus', () => {
         // Only trigger autocomplete dropdown if not during a programmatic UI update
-        if (input.value.trim() && !window.isUpdatingUI) {
+        // and not immediately after committing a selection
+        if (input.value.trim() && !window.isUpdatingUI && !isCommittingSelection) {
             input.dispatchEvent(new Event('input'));
         }
     }, { passive: true });
@@ -996,7 +997,8 @@ function createAutocomplete(input, getDataFunction, category) {
             setActive(items);
         } else if (e.key === 'Enter' || e.key === 'Tab') {
             const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
-            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
+            const isDropdownVisible = dropdown.classList.contains('active');
+            const hasVisibleOptions = isDropdownVisible && actionableItems.length > 0;
             const isTab = e.key === 'Tab';
 
             const maybePreventDefault = () => {
@@ -1020,7 +1022,8 @@ function createAutocomplete(input, getDataFunction, category) {
                 e.preventDefault();
             }
 
-            if (isTab && dropdown.style.display !== 'none') {
+            // Always hide dropdown on Tab, regardless of selection
+            if (isTab) {
                 hideDropdown();
             }
         } else if (e.key === 'Escape') {
