@@ -1196,8 +1196,8 @@
                 </div>
 
                 <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
-                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
+                    <button class="btn" id="organize-search-btn-modal" onclick="if(window.performOrganizedSearchModal) { window.performOrganizedSearchModal(); } else { console.error('performOrganizedSearchModal not found'); alert('Search function not loaded. Please refresh the page.'); }" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" onclick="if(window.clearOrganizerResultsModal) { window.clearOrganizerResultsModal(); }" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
                 </div>
 
                 <div id="organize-results-modal" class="d-none">

@@ -1034,6 +1034,42 @@
                 if (showOrganizerBtn) {
                     showOrganizerBtn.textContent = '📊 Hide Organizer';
                 }
+                // Attach modal handlers when modal opens
+                setTimeout(() => {
+                    // Modal search button
+                    const searchBtn = document.getElementById('organize-search-btn-modal');
+                    if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
+                        console.log('✅ Attaching modal search button handler on modal open');
+                        searchBtn.addEventListener('click', () => {
+                            if (typeof window.performOrganizedSearchModal === 'function') {
+                                window.performOrganizedSearchModal();
+                            }
+                        }, { passive: true });
+                        searchBtn.dataset.organizerSearchAttached = 'true';
+                    }
+                    
+                    // Modal enter key
+                    const valueInput = document.getElementById('organize-value-modal');
+                    if (valueInput && !valueInput.dataset.organizerKeypressAttached) {
+                        valueInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter' && typeof window.performOrganizedSearchModal === 'function') {
+                                window.performOrganizedSearchModal();
+                            }
+                        }, { passive: true });
+                        valueInput.dataset.organizerKeypressAttached = 'true';
+                    }
+                    
+                    // Modal clear button  
+                    const clearBtn = document.getElementById('organize-clear-btn-modal');
+                    if (clearBtn && !clearBtn.dataset.organizerClearAttached) {
+                        clearBtn.addEventListener('click', () => {
+                            if (typeof window.clearOrganizerResultsModal === 'function') {
+                                window.clearOrganizerResultsModal();
+                            }
+                        }, { passive: true });
+                        clearBtn.dataset.organizerClearAttached = 'true';
+                    }
+                }, 100);
             }, { passive: false });
             showOrganizerModalBtn.dataset.organizerToggleAttached = 'true';
         }
@@ -1114,48 +1150,66 @@
                 organizeClearBtn.dataset.organizerClearAttached = 'true';
             }
             
-            // Modal search button
-            if (organizeSearchBtnModal && !organizeSearchBtnModal.dataset.organizerSearchAttached) {
-                organizeSearchBtnModal.addEventListener('click', performOrganizedSearchModal, { passive: true });
-                organizeSearchBtnModal.dataset.organizerSearchAttached = 'true';
-            }
+            // Modal search button - get element dynamically and attach handler
+            const attachModalSearchHandler = () => {
+                const searchBtn = document.getElementById('organize-search-btn-modal');
+                if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
+                    console.log('✅ Attaching modal search button handler');
+                    searchBtn.addEventListener('click', window.performOrganizedSearchModal, { passive: true });
+                    searchBtn.dataset.organizerSearchAttached = 'true';
+                }
+            };
+            attachModalSearchHandler();
             
             // Modal value input enter key
-            if (organizeValueInputModal && !organizeValueInputModal.dataset.organizerKeypressAttached) {
-                organizeValueInputModal.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') performOrganizedSearchModal();
-                }, { passive: true });
-                organizeValueInputModal.dataset.organizerKeypressAttached = 'true';
-            }
+            const attachModalEnterHandler = () => {
+                const valueInput = document.getElementById('organize-value-modal');
+                if (valueInput && !valueInput.dataset.organizerKeypressAttached) {
+                    valueInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') window.performOrganizedSearchModal();
+                    }, { passive: true });
+                    valueInput.dataset.organizerKeypressAttached = 'true';
+                }
+            };
+            attachModalEnterHandler();
             
             // Modal clear button
-            if (organizeClearBtnModal && !organizeClearBtnModal.dataset.organizerClearAttached) {
-                organizeClearBtnModal.addEventListener('click', clearOrganizerResultsModal, { passive: true });
-                organizeClearBtnModal.dataset.organizerClearAttached = 'true';
-            }
+            const attachModalClearHandler = () => {
+                const clearBtn = document.getElementById('organize-clear-btn-modal');
+                if (clearBtn && !clearBtn.dataset.organizerClearAttached) {
+                    clearBtn.addEventListener('click', window.clearOrganizerResultsModal, { passive: true });
+                    clearBtn.dataset.organizerClearAttached = 'true';
+                }
+            };
+            attachModalClearHandler();
             
             // Modal organize-by select - set up autocomplete
-            if (organizeBySelectModal && !organizeBySelectModal.dataset.organizerChangeAttached) {
-                organizeBySelectModal.addEventListener('change', () => {
-                    const value = organizeBySelectModal.value;
-                    if (value && organizeValueInputModal) {
-                        organizeValueInputModal.focus();
-                        
-                        // Set up autocomplete based on selected search type
-                        const autocompleteCategory = getAutocompleteCategory(value);
-                        if (autocompleteCategory) {
-                            organizeValueInputModal.setAttribute('data-autocomplete-category', autocompleteCategory);
-                            // Reinitialize autocomplete for this field
-                            if (typeof window.initializeAutocompleteFields === 'function') {
-                                window.initializeAutocompleteFields();
+            const attachModalSelectHandler = () => {
+                const selectEl = document.getElementById('organize-by-modal');
+                const valueInput = document.getElementById('organize-value-modal');
+                if (selectEl && !selectEl.dataset.organizerChangeAttached) {
+                    selectEl.addEventListener('change', () => {
+                        const value = selectEl.value;
+                        if (value && valueInput) {
+                            valueInput.focus();
+                            
+                            // Set up autocomplete based on selected search type
+                            const autocompleteCategory = getAutocompleteCategory(value);
+                            if (autocompleteCategory) {
+                                valueInput.setAttribute('data-autocomplete-category', autocompleteCategory);
+                                // Reinitialize autocomplete for this field
+                                if (typeof window.initializeAutocompleteFields === 'function') {
+                                    window.initializeAutocompleteFields();
+                                }
+                            } else {
+                                valueInput.removeAttribute('data-autocomplete-category');
                             }
-                        } else {
-                            organizeValueInputModal.removeAttribute('data-autocomplete-category');
                         }
-                    }
-                }, { passive: true });
-                organizeBySelectModal.dataset.organizerChangeAttached = 'true';
-            }
+                    }, { passive: true });
+                    selectEl.dataset.organizerChangeAttached = 'true';
+                }
+            };
+            attachModalSelectHandler();
 
             function performOrganizedSearch() {
                 const searchType = organizeBySelect.value;
@@ -1392,8 +1446,8 @@
                 organizeValueInput.value = '';
             }
             
-            // Modal search function
-            function performOrganizedSearchModal() {
+            // Modal search function - exposed globally for event handlers
+            window.performOrganizedSearchModal = function() {
                 // Get modal elements dynamically in case they weren't available at init time
                 const modalBySelect = document.getElementById('organize-by-modal');
                 const modalValueInput = document.getElementById('organize-value-modal');
@@ -1482,7 +1536,8 @@
                 displayOrganizerResultsModal(results, searchType, searchValue);
             }
             
-            function displayOrganizerResultsModal(results, searchType, searchValue) {
+            // Expose as global for event handlers
+            window.displayOrganizerResultsModal = function(results, searchType, searchValue) {
                 // Get modal elements dynamically
                 const modalResults = document.getElementById('organize-results-modal');
                 const modalResultsTitle = document.getElementById('organize-results-title-modal');
@@ -1549,7 +1604,8 @@
                 }
             }
             
-            function clearOrganizerResultsModal() {
+            // Expose as global for event handlers
+            window.clearOrganizerResultsModal = function() {
                 // Get modal elements dynamically
                 const modalResults = document.getElementById('organize-results-modal');
                 const modalMatches = document.getElementById('organize-matches-modal');
