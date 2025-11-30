@@ -4375,6 +4375,22 @@ async function initializeForm() {
         }
     }
 
+    // Wait for notes module to be ready
+    if (typeof window.NotesModule === 'undefined') {
+        console.warn('⚠️ Notes module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.NotesModule !== 'undefined') {
+                debugLog('✅ Notes module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.NotesModule === 'undefined') {
+            console.error('❌ Notes module failed to load after 5 seconds. Field notes may not work.');
+            showUploadStatus('Warning: Notes module failed to load.', 'error');
+        }
+    }
+
     // Wait for loader to be available (with better diagnostics)
     if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
         console.warn('⚠️ KOP_FormLoader not ready, waiting...', {
@@ -4511,6 +4527,12 @@ function syncFieldNotes(facilityData) {
 
 function getCurrentFieldNotesSnapshot() {
     return getCurrentFacilityNotes();
+}
+
+function addNoteButtons() {
+    if (window.NotesModule && typeof window.NotesModule.addNoteButtons === 'function') {
+        window.NotesModule.addNoteButtons();
+    }
 }
 
 // Make key functions globally available

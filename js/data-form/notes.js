@@ -1147,3 +1147,6 @@ window.NotesModule = {
     getAllFacilityNotes: () => allFacilityNotes,
     setAllFacilityNotes: (value) => { allFacilityNotes = value; }
 };
+
+// Log that the module has loaded
+console.log('📝 Notes module loaded and window.NotesModule is available');
