@@ -791,7 +791,7 @@ function kop_autocomplete_rest_callback($request) {
 
     $master_tables = isset($category_tables[$category]) ? $category_tables[$category] : array('facilities_master');
     $value_set = array();
-
+    
     foreach ($master_tables as $table_name) {
         // Check if table exists
         $table_exists = $wpdb->get_var($wpdb->prepare(
@@ -1086,11 +1086,18 @@ function kop_collect_values_for_category($category, $data, &$set) {
 function kop_collect_operator_values($data, &$set) {
     if (!empty($data['operator']) && is_array($data['operator'])) {
         $operator = $data['operator'];
-        kop_add_autocomplete_value($set, isset($operator['name']) ? $operator['name'] : null);
-        kop_add_autocomplete_value($set, isset($operator['currentName']) ? $operator['currentName'] : null);
-        kop_add_autocomplete_values($set, isset($operator['otherNames']) ? $operator['otherNames'] : array());
-        kop_add_autocomplete_values($set, isset($operator['parentCompanies']) ? $operator['parentCompanies'] : array());
-        kop_add_autocomplete_values($set, isset($operator['previousNames']) ? $operator['previousNames'] : array());
+        
+        // Skip "Location Aggregate" type operators - these are state/region summaries, not real operators
+        $operator_type = isset($operator['type']) ? $operator['type'] : '';
+        if (strcasecmp($operator_type, 'Location Aggregate') === 0) {
+            // Still collect facility-level operator info, but skip the aggregate operator name
+        } else {
+            kop_add_autocomplete_value($set, isset($operator['name']) ? $operator['name'] : null);
+            kop_add_autocomplete_value($set, isset($operator['currentName']) ? $operator['currentName'] : null);
+            kop_add_autocomplete_values($set, isset($operator['otherNames']) ? $operator['otherNames'] : array());
+            kop_add_autocomplete_values($set, isset($operator['parentCompanies']) ? $operator['parentCompanies'] : array());
+            kop_add_autocomplete_values($set, isset($operator['previousNames']) ? $operator['previousNames'] : array());
+        }
     }
 
     if (!empty($data['facilities']) && is_array($data['facilities'])) {
