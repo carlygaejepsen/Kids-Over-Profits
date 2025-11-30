@@ -1520,6 +1520,21 @@
                     
                     console.log('🔍 Projects found:', Object.keys(allProjects));
                     
+                    // Debug: log first project structure
+                    const firstProjectKey = Object.keys(allProjects)[0];
+                    if (firstProjectKey) {
+                        const firstProject = allProjects[firstProjectKey];
+                        console.log(`🔍 First project "${firstProjectKey}" structure:`, {
+                            hasData: !!firstProject?.data,
+                            dataKeys: firstProject?.data ? Object.keys(firstProject.data) : [],
+                            hasFacilitiesInData: !!firstProject?.data?.facilities,
+                            facilitiesCount: firstProject?.data?.facilities?.length || 0,
+                            hasFacilitiesAtRoot: !!firstProject?.facilities,
+                            rootFacilitiesCount: firstProject?.facilities?.length || 0,
+                            fullProject: firstProject
+                        });
+                    }
+                    
                     const results = [];
                     
                     // Search through all projects from database
