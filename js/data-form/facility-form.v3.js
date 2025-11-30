@@ -2484,8 +2484,22 @@ function loadOperatorData() {
         debugLog('⚠️ loadOperatorData: formData not ready yet');
         return;
     }
-    if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
-    const operator = window.formData.operator;
+    
+    // Determine if we're in a location project - if so, use the facility's sourceOperator
+    const activeTab = document.querySelector('.category-tab.active');
+    const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+    
+    let operator;
+    if (isLocationProject && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+        // For location projects, use the current facility's sourceOperator
+        const currentFacility = window.formData.facilities[window.currentFacilityIndex];
+        operator = currentFacility.sourceOperator || {};
+        debugLog('📍 Location project: loading operator from facility.sourceOperator:', operator.name);
+    } else {
+        // For company/referrer projects, use the project-level operator
+        if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
+        operator = window.formData.operator;
+    }
 
     const operatorName = document.getElementById('operator-name');
     if (operatorName) operatorName.value = operator.name || '';
