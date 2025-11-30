@@ -1502,14 +1502,21 @@
                     const apiResponse = await response.json();
                     console.log('🔍 API response structure:', apiResponse);
                     
-                    // The API returns { source: 'database', projectName1: {...}, projectName2: {...} }
-                    // Filter out the 'source' key to get just projects
-                    const allProjects = {};
-                    Object.keys(apiResponse || {}).forEach(key => {
-                        if (key !== 'source' && typeof apiResponse[key] === 'object') {
-                            allProjects[key] = apiResponse[key];
-                        }
-                    });
+                    // The API returns { source: 'database', projects: { projectName1: {...}, projectName2: {...} } }
+                    // Or it might return projects at root level (older format)
+                    let allProjects = {};
+                    
+                    if (apiResponse.projects && typeof apiResponse.projects === 'object') {
+                        // New format: projects nested under 'projects' key
+                        allProjects = apiResponse.projects;
+                    } else {
+                        // Old format: projects at root level, filter out metadata keys
+                        Object.keys(apiResponse || {}).forEach(key => {
+                            if (key !== 'source' && typeof apiResponse[key] === 'object') {
+                                allProjects[key] = apiResponse[key];
+                            }
+                        });
+                    }
                     
                     console.log('🔍 Projects found:', Object.keys(allProjects));
                     
@@ -1521,7 +1528,7 @@
                         // Try different data structures
                         const facilities = project?.data?.facilities || project?.facilities || [];
                         
-                        console.log(`🔍 Project "${projectName}": ${facilities.length} facilities`, project);
+                        console.log(`🔍 Project "${projectName}": ${facilities.length} facilities`);
                         
                         facilities.forEach((facility, facilityIndex) => {
                             const matches = window.extractDataPointsForSearch ? 
