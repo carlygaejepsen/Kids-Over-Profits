@@ -300,8 +300,8 @@ get_header();
         </div>
 
         <div id="facility-main-wrapper" data-section-views="companies,locations">
-        <!-- Facility Table of Contents -->
-        <div class="facility-toc" id="facility-toc">
+        <!-- Facility Table of Contents (Companies only) -->
+        <div class="facility-toc" id="facility-toc" data-section-views="companies">
             <div class="toc-header">
                 <h2 class="toc-title">Facilities Overview</h2>
                 <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
@@ -319,8 +319,8 @@ get_header();
             </div>
         </div>
         
-        <!-- Facility Navigation -->
-        <div class="facility-controls">
+        <!-- Facility Navigation (Companies only) -->
+        <div class="facility-controls" data-section-views="companies">
             <div class="facility-header">
                 <div class="d-flex align-items-center gap-15">
                     <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
