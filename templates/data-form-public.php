@@ -89,7 +89,8 @@
                         </div>
                     </div>
 
-                    <div id="private-ownership-toggle-section" class="view-hidden" data-section-views="locations">
+                    <!-- Private Ownership Toggle for Locations -->
+                    <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
                             <span>Privately Owned Facility (not part of a chain):</span>
                             <div style="display: flex; align-items: center; gap: 10px;">

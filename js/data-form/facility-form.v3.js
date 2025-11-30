@@ -1906,6 +1906,11 @@ function initializeCategoryTabs() {
             handleReferrerToggle();
         }
 
+        // Apply view layout to show/hide elements based on data-section-views
+        if (typeof window.applyViewLayout === 'function') {
+            window.applyViewLayout(category === 'locations' ? 'locations' : category);
+        }
+
         // Refresh the list of saved projects for the new tab
         if (typeof refreshSavedProjectPanels === 'function') {
             refreshSavedProjectPanels();

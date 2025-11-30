@@ -83,6 +83,26 @@ get_header();
                             </div>
                         </div>
                     </div>
+
+                    <!-- Private Ownership Toggle for Locations -->
+                    <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Privately Owned Facility (not part of a chain):</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>No</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                                    <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Yes</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Referrers Content -->
@@ -115,7 +135,7 @@ get_header();
         </div>
 
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
-        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers" style="display: none;">
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
             <!-- Agency Toggle -->
             <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
