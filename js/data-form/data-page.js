@@ -1499,15 +1499,29 @@
                         throw new Error(`API error: ${response.status}`);
                     }
                     
-                    const allProjects = await response.json();
-                    console.log('🔍 API returned projects:', Object.keys(allProjects || {}).length);
+                    const apiResponse = await response.json();
+                    console.log('🔍 API response structure:', apiResponse);
+                    
+                    // The API returns { source: 'database', projectName1: {...}, projectName2: {...} }
+                    // Filter out the 'source' key to get just projects
+                    const allProjects = {};
+                    Object.keys(apiResponse || {}).forEach(key => {
+                        if (key !== 'source' && typeof apiResponse[key] === 'object') {
+                            allProjects[key] = apiResponse[key];
+                        }
+                    });
+                    
+                    console.log('🔍 Projects found:', Object.keys(allProjects));
                     
                     const results = [];
                     
                     // Search through all projects from database
-                    Object.keys(allProjects || {}).forEach(projectName => {
+                    Object.keys(allProjects).forEach(projectName => {
                         const project = allProjects[projectName];
-                        const facilities = project?.facilities || project?.data?.facilities || [];
+                        // Try different data structures
+                        const facilities = project?.data?.facilities || project?.facilities || [];
+                        
+                        console.log(`🔍 Project "${projectName}": ${facilities.length} facilities`, project);
                         
                         facilities.forEach((facility, facilityIndex) => {
                             const matches = window.extractDataPointsForSearch ? 
@@ -1519,7 +1533,7 @@
                                     facility: facility,
                                     facilityIndex: facilityIndex,
                                     matches: matches,
-                                    operator: project?.operator?.name || facility?.identification?.operator
+                                    operator: project?.data?.operator?.name || project?.operator?.name || facility?.identification?.operator
                                 });
                             }
                         });
