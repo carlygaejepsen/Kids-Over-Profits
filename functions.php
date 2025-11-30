@@ -768,8 +768,28 @@ function kop_autocomplete_rest_callback($request) {
         return new WP_Error('invalid_category', 'Unsupported category parameter', array('status' => 400));
     }
 
-    // Master tables to query
-    $master_tables = array('facilities_master', 'referrers_master', 'locations_master');
+    // Determine which tables to query based on category
+    // locations_master contains state/region aggregates - should NOT be used for operator/facility/human names
+    // referrers_master contains referrer data - should primarily be used for referrer-related categories
+    $category_tables = array(
+        'operator' => array('facilities_master'),
+        'facility' => array('facilities_master', 'referrers_master'),  // referrers may have facilitiesReferred
+        'human' => array('facilities_master'),
+        'referrer' => array('facilities_master', 'referrers_master'),
+        'type' => array('facilities_master'),
+        'status' => array('facilities_master'),
+        'gender' => array('facilities_master'),
+        'location' => array('facilities_master', 'locations_master'),  // locations_master is appropriate here
+        'licensing' => array('facilities_master'),
+        'membership' => array('facilities_master'),
+        'accreditation' => array('facilities_master'),
+        'certification' => array('facilities_master'),
+        'investor' => array('facilities_master'),
+        'role' => array('facilities_master'),
+        'operatingperiod' => array('facilities_master'),
+    );
+
+    $master_tables = isset($category_tables[$category]) ? $category_tables[$category] : array('facilities_master');
     $value_set = array();
 
     foreach ($master_tables as $table_name) {
