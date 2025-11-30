@@ -828,10 +828,21 @@ function createAutocomplete(input, getDataFunction, category) {
         }
     }
 
-    function showDropdown(items) {
+    function showDropdown(items, isLoading = false) {
         dropdown.innerHTML = '';
         dropdown.classList.add('active');
         dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
+
+        if (isLoading) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'autocomplete-item';
+            loadingDiv.textContent = 'Loading...';
+            loadingDiv.style.color = '#9ca3af';
+            loadingDiv.style.fontStyle = 'italic';
+            loadingDiv.dataset.placeholder = 'true';
+            dropdown.appendChild(loadingDiv);
+            return;
+        }
 
         if (items.length === 0) {
             const emptyDiv = document.createElement('div');
