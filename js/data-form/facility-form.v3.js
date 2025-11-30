@@ -1798,6 +1798,12 @@ function loadProject(projectName) { // Note: This function is now asynchronous
                 window.updateConsultantsUI();
             }
 
+            // Explicitly update location facilities overview for location projects
+            if (projectCategory === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
+                debugLog('🔄 Updating location facilities overview for location project...');
+                window.updateLocationFacilitiesOverview();
+            }
+
             // Dispatch custom event for project loaded
             document.dispatchEvent(new CustomEvent('projectLoaded', {
                 detail: { projectName: projectName }
@@ -2714,8 +2720,13 @@ window.updateAllUI = function() {
         initializeNoteControls();
         updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
-        // Ensure referrer consultant UI stays in sync when loading referrer projects
+        // Update location facilities overview for location projects
         const activeTab = document.querySelector('.category-tab.active');
+        if (activeTab && activeTab.dataset.category === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
+            window.updateLocationFacilitiesOverview();
+        }
+
+        // Ensure referrer consultant UI stays in sync when loading referrer projects
         if (activeTab && activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
             window.updateConsultantsUI();
         }
