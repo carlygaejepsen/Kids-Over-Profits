@@ -955,6 +955,17 @@
             const organizeResultsTitle = document.getElementById('organize-results-title');
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
+            
+            // Modal elements
+            const organizeBySelectModal = document.getElementById('organize-by-modal');
+            const organizeValueInputModal = document.getElementById('organize-value-modal');
+            const organizeSearchBtnModal = document.getElementById('organize-search-btn-modal');
+            const organizeClearBtnModal = document.getElementById('organize-clear-btn-modal');
+            const organizeResultsModal = document.getElementById('organize-results-modal');
+            const organizeResultsTitleModal = document.getElementById('organize-results-title-modal');
+            const organizeResultsCountModal = document.getElementById('organize-results-count-modal');
+            const organizeMatchesModal = document.getElementById('organize-matches-modal');
+            
             const announceOrganizerStatus = (message, type = 'info') => {
                 if (typeof showSuggestionStatus === 'function') {
                     showSuggestionStatus(message, type);
@@ -1101,6 +1112,49 @@
             if (!organizeClearBtn.dataset.organizerClearAttached) {
                 organizeClearBtn.addEventListener('click', clearOrganizerResults, { passive: true });
                 organizeClearBtn.dataset.organizerClearAttached = 'true';
+            }
+            
+            // Modal search button
+            if (organizeSearchBtnModal && !organizeSearchBtnModal.dataset.organizerSearchAttached) {
+                organizeSearchBtnModal.addEventListener('click', performOrganizedSearchModal, { passive: true });
+                organizeSearchBtnModal.dataset.organizerSearchAttached = 'true';
+            }
+            
+            // Modal value input enter key
+            if (organizeValueInputModal && !organizeValueInputModal.dataset.organizerKeypressAttached) {
+                organizeValueInputModal.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performOrganizedSearchModal();
+                }, { passive: true });
+                organizeValueInputModal.dataset.organizerKeypressAttached = 'true';
+            }
+            
+            // Modal clear button
+            if (organizeClearBtnModal && !organizeClearBtnModal.dataset.organizerClearAttached) {
+                organizeClearBtnModal.addEventListener('click', clearOrganizerResultsModal, { passive: true });
+                organizeClearBtnModal.dataset.organizerClearAttached = 'true';
+            }
+            
+            // Modal organize-by select - set up autocomplete
+            if (organizeBySelectModal && !organizeBySelectModal.dataset.organizerChangeAttached) {
+                organizeBySelectModal.addEventListener('change', () => {
+                    const value = organizeBySelectModal.value;
+                    if (value && organizeValueInputModal) {
+                        organizeValueInputModal.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInputModal.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInputModal.removeAttribute('data-autocomplete-category');
+                        }
+                    }
+                }, { passive: true });
+                organizeBySelectModal.dataset.organizerChangeAttached = 'true';
             }
 
             function performOrganizedSearch() {
@@ -1338,6 +1392,147 @@
                 organizeValueInput.value = '';
             }
             
+            // Modal search function
+            function performOrganizedSearchModal() {
+                if (!organizeBySelectModal || !organizeValueInputModal) return;
+                
+                const searchType = organizeBySelectModal.value;
+                const searchValue = organizeValueInputModal.value.trim();
+                const activeFormData = typeof formData !== 'undefined' ? formData : window.formData;
+                const projectStore = (typeof projects !== 'undefined' && projects) ? projects : (window.projects || {});
+                
+                if (!searchType || !searchValue) {
+                    announceOrganizerStatus('Select a data point and enter a search value, then click Search.', 'error');
+                    if (organizeValueInputModal) {
+                        organizeValueInputModal.focus();
+                    }
+                    return;
+                }
+                
+                // Get all facilities from all projects
+                const hasFormData = Boolean(activeFormData && Array.isArray(activeFormData.facilities) && activeFormData.facilities.length);
+                const hasProjects = Boolean(projectStore && Object.keys(projectStore).length);
+                if (!hasFormData && !hasProjects) {
+                    announceOrganizerStatus('No facility data is loaded yet. Load a project or add facilities before searching.', 'error');
+                    return;
+                }
+                
+                announceOrganizerStatus(`Searching for "${searchValue}"...`, 'info');
+                const results = [];
+                
+                // Search through current formData facilities
+                if (activeFormData && activeFormData.facilities) {
+                    activeFormData.facilities.forEach((facility, facilityIndex) => {
+                        const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                        if (matches.length > 0) {
+                            results.push({
+                                projectName: window.currentProjectName || 'Current Project',
+                                facility: facility,
+                                facilityIndex: facilityIndex,
+                                matches: matches,
+                                operator: activeFormData.operator?.name
+                            });
+                        }
+                    });
+                }
+                
+                // Search through all saved projects
+                Object.keys(projectStore || {}).forEach(projectName => {
+                    const project = projectStore[projectName];
+                    if (project && project.data && project.data.facilities) {
+                        project.data.facilities.forEach((facility, facilityIndex) => {
+                            const matches = extractDataPointsForSearch(facility, searchType, searchValue);
+                            if (matches.length > 0) {
+                                results.push({
+                                    projectName: projectName,
+                                    facility: facility,
+                                    facilityIndex: facilityIndex,
+                                    matches: matches,
+                                    operator: project.data.operator?.name
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                if (results.length === 0) {
+                    announceOrganizerStatus(`No matches found for "${searchValue}".`, 'warning');
+                } else {
+                    announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
+                }
+                displayOrganizerResultsModal(results, searchType, searchValue);
+            }
+            
+            function displayOrganizerResultsModal(results, searchType, searchValue) {
+                if (!organizeResultsModal) return;
+                
+                const searchTypeLabels = {
+                    'staff': 'Staff Member',
+                    'operator': 'Operator',
+                    'location': 'Location',
+                    'programType': 'Program Type',
+                    'status': 'Operating Status',
+                    'year': 'Opening Year',
+                    'accreditation': 'Accreditation',
+                    'certification': 'Certification'
+                };
+                const searchTypeLabel = searchTypeLabels[searchType] || searchType;
+                
+                organizeResultsModal.classList.remove('d-none');
+                
+                if (organizeResultsTitleModal) {
+                    organizeResultsTitleModal.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+                }
+                if (organizeResultsCountModal) {
+                    organizeResultsCountModal.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'}`;
+                }
+                
+                if (organizeClearBtnModal) {
+                    organizeClearBtnModal.classList.remove('d-none');
+                }
+                
+                if (organizeMatchesModal) {
+                    if (results.length === 0) {
+                        organizeMatchesModal.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
+                    } else {
+                        organizeMatchesModal.innerHTML = results.map(result => {
+                            const facilityName = result.facility.identification?.name || result.facility.identification?.currentName || 'Unnamed Facility';
+                            const location = result.facility.location || '';
+                            return `
+                                <div style="padding: 15px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" 
+                                     onclick="goToFacility('${result.projectName.replace(/'/g, "\\'")}', ${result.facilityIndex})"
+                                     onmouseover="this.style.background='#f3f4f6'" 
+                                     onmouseout="this.style.background='transparent'">
+                                    <div style="font-weight: 600; color: #1f2937;">${facilityName}</div>
+                                    <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                                        <span style="color: #33A7B5;">${result.projectName}</span>
+                                        ${location ? ` • ${location}` : ''}
+                                    </div>
+                                    <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">
+                                        Matches: ${result.matches.join(', ')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            }
+            
+            function clearOrganizerResultsModal() {
+                if (organizeResultsModal) {
+                    organizeResultsModal.classList.add('d-none');
+                }
+                if (organizeClearBtnModal) {
+                    organizeClearBtnModal.classList.add('d-none');
+                }
+                if (organizeValueInputModal) {
+                    organizeValueInputModal.value = '';
+                }
+                if (organizeMatchesModal) {
+                    organizeMatchesModal.innerHTML = '';
+                }
+            }
+            
             // Function to navigate to a specific facility
             window.goToFacility = function(projectName, facilityIndex) {
                 // Switch to the project if it's different
@@ -1360,6 +1555,11 @@
                 }
                 if (showOrganizerBtn) {
                     showOrganizerBtn.textContent = '📊 Data Organizer';
+                }
+                
+                // Also hide the modal if it's open
+                if (organizerModal) {
+                    organizerModal.classList.remove('active');
                 }
                 
                 // Scroll to top of page
