@@ -2235,12 +2235,31 @@ function renderArray(container, path, items) {
         }
     }
 
-    const itemsToShow = itemsArray;
+    // Normalize items: convert strings to {role, name} for staff arrays
+    const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+    const itemsToShow = itemsArray.map((item, idx) => {
+        if (isStaff && typeof item === 'string') {
+            // Parse legacy string format - check for "Role: Name" pattern
+            const colonMatch = item.match(/^([^:]+):\s*(.+)$/);
+            let role = '';
+            let name = item;
+            if (colonMatch) {
+                role = colonMatch[1].trim();
+                name = colonMatch[2].trim();
+            }
+            // Update the actual data array to the new format
+            const array = getNestedValue(target, normalizedPath);
+            if (Array.isArray(array)) {
+                array[idx] = { role, name };
+            }
+            return { role, name };
+        }
+        return item;
+    });
 
     itemsToShow.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'array-item';
-        const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const scopeForNotes = scope;
         const noteKey = `${path}.${index}`;
