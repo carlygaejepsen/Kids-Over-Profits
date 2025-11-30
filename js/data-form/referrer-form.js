@@ -579,6 +579,14 @@ function loadConsultantData() {
         window.currentConsultantIndex = 0;
     }
 
+    // Ensure currentConsultantIndex is valid
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0) {
+        window.currentConsultantIndex = 0;
+    }
+    if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
     const consultant = window.formData.referrerConsultants[window.currentConsultantIndex];
 
     if (!consultant) {
@@ -686,6 +694,8 @@ function updateConsultantsUI() {
     if (typeof debugLog === 'function') {
         debugLog('🔄 updateConsultantsUI called');
     }
+    // Ensure data structures exist before loading
+    ensureReferrerDataStructures();
     loadConsultantData();
     updateConsultantsOverview();
     updateConsultantDropdown();

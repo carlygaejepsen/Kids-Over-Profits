@@ -779,59 +779,61 @@ function attachCustomValueRecorder(input, category) {
 // DATA AGGREGATION - Delegated to autocomplete.js module
 // All data aggregation functions (getAllOperators, getAllFacilityNames, etc.)
 // are now defined in autocomplete.js and exported globally.
-// These wrapper functions delegate to the module for backward compatibility.
+// These wrapper functions delegate to the KOP_Autocomplete namespace for backward compatibility.
+// NOTE: We use window.KOP_Autocomplete.* instead of window.* to avoid circular reference
+// since this file's local functions would shadow the window.* exports.
 // ============================================
 
 function getAllOperators() {
-    return window.getAllOperators ? window.getAllOperators() : [];
+    return window.KOP_Autocomplete?.getAllOperators ? window.KOP_Autocomplete.getAllOperators() : [];
 }
 
 function getAllFacilityNames() {
-    return window.getAllFacilityNames ? window.getAllFacilityNames() : [];
+    return window.KOP_Autocomplete?.getAllFacilityNames ? window.KOP_Autocomplete.getAllFacilityNames() : [];
 }
 
 function getAllHumanNames() {
-    return window.getAllHumanNames ? window.getAllHumanNames() : [];
+    return window.KOP_Autocomplete?.getAllHumanNames ? window.KOP_Autocomplete.getAllHumanNames() : [];
 }
 
 function getAllReferrers() {
-    return window.getAllReferrers ? window.getAllReferrers() : [];
+    return window.KOP_Autocomplete?.getAllReferrers ? window.KOP_Autocomplete.getAllReferrers() : [];
 }
 
 function getAllFacilityTypes() {
-    return window.getAllFacilityTypes ? window.getAllFacilityTypes() : [];
+    return window.KOP_Autocomplete?.getAllFacilityTypes ? window.KOP_Autocomplete.getAllFacilityTypes() : [];
 }
 
 function getAllStaffRoles() {
-    return window.getAllStaffRoles ? window.getAllStaffRoles() : [];
+    return window.KOP_Autocomplete?.getAllStaffRoles ? window.KOP_Autocomplete.getAllStaffRoles() : [];
 }
 
 function getAllCertifications() {
-    return window.getAllCertifications ? window.getAllCertifications() : [];
+    return window.KOP_Autocomplete?.getAllCertifications ? window.KOP_Autocomplete.getAllCertifications() : [];
 }
 
 function getAllAccreditations() {
-    return window.getAllAccreditations ? window.getAllAccreditations() : [];
+    return window.KOP_Autocomplete?.getAllAccreditations ? window.KOP_Autocomplete.getAllAccreditations() : [];
 }
 
 function getAllMemberships() {
-    return window.getAllMemberships ? window.getAllMemberships() : [];
+    return window.KOP_Autocomplete?.getAllMemberships ? window.KOP_Autocomplete.getAllMemberships() : [];
 }
 
 function getAllLocations() {
-    return window.getAllLocations ? window.getAllLocations() : [];
+    return window.KOP_Autocomplete?.getAllLocations ? window.KOP_Autocomplete.getAllLocations() : [];
 }
 
 function getAllStatuses() {
-    return window.getAllStatuses ? window.getAllStatuses() : [];
+    return window.KOP_Autocomplete?.getAllStatuses ? window.KOP_Autocomplete.getAllStatuses() : [];
 }
 
 function getAllGenders() {
-    return window.getAllGenders ? window.getAllGenders() : [];
+    return window.KOP_Autocomplete?.getAllGenders ? window.KOP_Autocomplete.getAllGenders() : [];
 }
 
 function getAllOperatingPeriods() {
-    return window.getAllOperatingPeriods ? window.getAllOperatingPeriods() : [];
+    return window.KOP_Autocomplete?.getAllOperatingPeriods ? window.KOP_Autocomplete.getAllOperatingPeriods() : [];
 }
 
 // ============================================
@@ -843,15 +845,25 @@ function getAllOperatingPeriods() {
 
 // Capture the real module implementations before defining our delegates so we don't overwrite them.
 // Use lets so we can pick up late-loaded modules if dependency order is altered by plugins/caching.
-let moduleCreateAutocomplete = (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
-    ? window.createAutocomplete
-    : null;
-let moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
-    ? window.initializeAutocompleteFields
-    : null;
+// Priority: window.KOP_Autocomplete.* (namespaced) > window.* (legacy exports)
+let moduleCreateAutocomplete = (typeof window !== 'undefined' && window.KOP_Autocomplete?.createAutocomplete)
+    ? window.KOP_Autocomplete.createAutocomplete
+    : (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
+        ? window.createAutocomplete
+        : null;
+let moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && window.KOP_Autocomplete?.initializeAutocompleteFields)
+    ? window.KOP_Autocomplete.initializeAutocompleteFields
+    : (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
+        ? window.initializeAutocompleteFields
+        : null;
 
 function resolveCreateAutocomplete() {
     if (moduleCreateAutocomplete && moduleCreateAutocomplete !== delegateCreateAutocomplete) {
+        return moduleCreateAutocomplete;
+    }
+    // Try KOP_Autocomplete namespace first (avoids circular reference issues)
+    if (typeof window !== 'undefined' && window.KOP_Autocomplete?.createAutocomplete) {
+        moduleCreateAutocomplete = window.KOP_Autocomplete.createAutocomplete;
         return moduleCreateAutocomplete;
     }
     if (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function' && window.createAutocomplete !== delegateCreateAutocomplete) {
@@ -863,6 +875,11 @@ function resolveCreateAutocomplete() {
 
 function resolveInitializeAutocompleteFields() {
     if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== delegateInitializeAutocompleteFields) {
+        return moduleInitializeAutocompleteFields;
+    }
+    // Try KOP_Autocomplete namespace first (avoids circular reference issues)
+    if (typeof window !== 'undefined' && window.KOP_Autocomplete?.initializeAutocompleteFields) {
+        moduleInitializeAutocompleteFields = window.KOP_Autocomplete.initializeAutocompleteFields;
         return moduleInitializeAutocompleteFields;
     }
     if (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function' && window.initializeAutocompleteFields !== delegateInitializeAutocompleteFields) {

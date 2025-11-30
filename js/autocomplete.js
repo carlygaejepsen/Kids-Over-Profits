@@ -12,7 +12,7 @@
 // MODULE STATE & CONFIGURATION
 // ============================================
 
-const AUTOCOMPLETE_MODULE_VERSION = 'autocomplete.v1.2025-11-26';
+const AUTOCOMPLETE_MODULE_VERSION = 'autocomplete.v1.3.2025-11-30';
 
 // Debug logging flag - can be enabled via window.KOP_AUTOCOMPLETE_DEBUG or localStorage
 const DEBUG_AUTOCOMPLETE = (() => {
@@ -830,7 +830,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
     function showDropdown(items) {
         dropdown.innerHTML = '';
-        dropdown.style.display = 'block';
+        dropdown.classList.add('active');
         dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
 
         if (items.length === 0) {
@@ -865,7 +865,7 @@ function createAutocomplete(input, getDataFunction, category) {
     }
 
     function hideDropdown() {
-        dropdown.style.display = 'none';
+        dropdown.classList.remove('active');
         currentFocus = -1;
     }
     
@@ -1044,7 +1044,12 @@ function getCategoryFunctions() {
         licensing: () => Array.from(window.customLicensing || []),
         investor: () => Array.from(window.customInvestors || []),
         role: getAllStaffRoles,
-        operatingperiod: getAllOperatingPeriods
+        operatingperiod: getAllOperatingPeriods,
+        country: () => [
+            'United States', 'Mexico', 'Canada', 'Jamaica', 'Costa Rica',
+            'Samoa', 'Czech Republic', 'Dominican Republic', 'Honduras',
+            'United Kingdom', 'Australia', 'New Zealand'
+        ]
     };
 }
 
@@ -1085,6 +1090,7 @@ window.KOP_Autocomplete = {
     addCustomValue,
     attachCustomValueRecorder,
     getCategoryFunctions,
+    autoInitialize,
     // Data aggregation functions
     getAllOperators,
     getAllFacilityNames,
@@ -1131,5 +1137,76 @@ window.getAllOperatingPeriods = getAllOperatingPeriods;
 window.DEFAULT_FACILITY_TYPES = DEFAULT_FACILITY_TYPES;
 window.DEFAULT_OPERATORS = DEFAULT_OPERATORS;
 window.DEFAULT_STAFF_ROLES = DEFAULT_STAFF_ROLES;
+
+// ============================================
+// AUTO-INITIALIZATION ON DOMCONTENTLOADED
+// ============================================
+
+/**
+ * Initialize autocomplete fields when DOM is ready
+ * Also set up a MutationObserver to handle dynamically added fields
+ */
+function autoInitialize() {
+    debugLog('🚀 Auto-initializing autocomplete fields...');
+    
+    // Initialize all existing fields with data-autocomplete-category
+    initializeAutocompleteFields();
+    
+    // Set up MutationObserver to handle dynamically added fields
+    const observer = new MutationObserver((mutations) => {
+        let shouldReinit = false;
+        
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Check if the added node or its descendants have autocomplete fields
+                    if (node.matches && node.matches('input[data-autocomplete-category]:not([data-autocomplete-init="true"])')) {
+                        shouldReinit = true;
+                    } else if (node.querySelectorAll) {
+                        const newFields = node.querySelectorAll('input[data-autocomplete-category]:not([data-autocomplete-init="true"])');
+                        if (newFields.length > 0) {
+                            shouldReinit = true;
+                        }
+                    }
+                }
+            });
+        });
+        
+        if (shouldReinit) {
+            // Debounce re-initialization
+            clearTimeout(autoInitialize._debounceTimer);
+            autoInitialize._debounceTimer = setTimeout(() => {
+                debugLog('🔄 Re-initializing autocomplete for dynamically added fields...');
+                initializeAutocompleteFields();
+            }, 100);
+        }
+    });
+    
+    // Start observing the document body for changes
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    debugLog('✅ Autocomplete auto-initialization complete. MutationObserver active.');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoInitialize);
+} else {
+    // DOM is already ready
+    autoInitialize();
+}
+
+// Also re-initialize when formReady event fires (after all data is loaded)
+document.addEventListener('formReady', () => {
+    debugLog('📢 formReady event received, re-initializing autocomplete...');
+    // Clear init flags to allow re-initialization with fresh data
+    document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
+        delete field.dataset.autocompleteInit;
+    });
+    initializeAutocompleteFields();
+});
 
 console.log(`[Autocomplete Module] v${AUTOCOMPLETE_MODULE_VERSION} loaded`);
