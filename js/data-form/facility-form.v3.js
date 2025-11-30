@@ -1748,6 +1748,9 @@ function createNewProjectData() {
 function loadProject(projectName) { // Note: This function is now asynchronous
     debugLog('🔄 loadProject called with:', projectName);
     debugLog('📦 Available projects:', Object.keys(window.projects || {}));
+    
+    // Show immediate loading feedback
+    showUploadStatus(`Loading project "${projectName}"...`, 'info');
 
     // Try exact match first, then uppercase (for location projects stored as uppercase)
     let resolvedName = projectName;

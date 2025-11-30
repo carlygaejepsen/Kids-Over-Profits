@@ -591,16 +591,26 @@
         }, { once: true });
 
         function showSuggestionStatus(message, type) {
+            // Show in the inline status div (backward compatibility)
             const statusDiv = document.getElementById('suggestion-status');
-            statusDiv.className = `upload-status ${type}`;
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
+            if (statusDiv) {
+                statusDiv.className = `upload-status ${type}`;
+                statusDiv.textContent = message;
+                statusDiv.style.display = 'block';
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
             
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
+            // Also show as a toast for better visibility
+            if (typeof window.showToast === 'function') {
+                // Map 'info' to appropriate duration - keep info/error visible longer
+                const duration = type === 'info' ? 3000 : (type === 'error' ? 8000 : 5000);
+                window.showToast(message, type, duration);
             }
         }
         

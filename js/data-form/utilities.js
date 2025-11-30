@@ -190,11 +190,185 @@ function setNestedValue(obj, path, value) {
 // ============================================
 
 /**
- * Show status message in upload status div
+ * Create the toast container if it doesn't exist
+ * @returns {HTMLElement} The toast container element
+ */
+function getOrCreateToastContainer() {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+            pointer-events: none;
+        `;
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
+/**
+ * Show a prominent toast notification
+ * @param {string} message - Message to display
+ * @param {string} type - Message type (success, error, info, warning)
+ * @param {number} duration - Duration in ms (0 = no auto-hide)
+ */
+function showToast(message, type = 'info', duration = 5000) {
+    const container = getOrCreateToastContainer();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    
+    // Icon based on type
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    // Color schemes
+    const colors = {
+        success: {
+            bg: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            border: '#047857',
+            text: '#ffffff'
+        },
+        error: {
+            bg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+            border: '#b91c1c',
+            text: '#ffffff'
+        },
+        warning: {
+            bg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            border: '#b45309',
+            text: '#ffffff'
+        },
+        info: {
+            bg: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+            border: '#1d4ed8',
+            text: '#ffffff'
+        }
+    };
+    
+    const colorScheme = colors[type] || colors.info;
+    
+    toast.style.cssText = `
+        background: ${colorScheme.bg};
+        border: 2px solid ${colorScheme.border};
+        color: ${colorScheme.text};
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 4px 8px rgba(0, 0, 0, 0.15);
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.4;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        animation: toastSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        pointer-events: auto;
+        cursor: pointer;
+        max-width: 100%;
+        word-wrap: break-word;
+    `;
+    
+    // Add keyframes if not already present
+    if (!document.getElementById('toast-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'toast-keyframes';
+        style.textContent = `
+            @keyframes toastSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%) scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+            }
+            @keyframes toastSlideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%) scale(0.8);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    const icon = document.createElement('span');
+    icon.style.cssText = 'font-size: 20px; flex-shrink: 0;';
+    icon.textContent = icons[type] || icons.info;
+    
+    const text = document.createElement('span');
+    text.style.cssText = 'flex: 1;';
+    text.textContent = message;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '×';
+    closeBtn.style.cssText = `
+        background: none;
+        border: none;
+        color: ${colorScheme.text};
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+        margin: -4px -4px -4px 8px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        line-height: 1;
+    `;
+    closeBtn.onmouseenter = () => closeBtn.style.opacity = '1';
+    closeBtn.onmouseleave = () => closeBtn.style.opacity = '0.7';
+    
+    toast.appendChild(icon);
+    toast.appendChild(text);
+    toast.appendChild(closeBtn);
+    
+    // Remove function
+    const removeToast = () => {
+        toast.style.animation = 'toastSlideOut 0.3s ease-in forwards';
+        setTimeout(() => toast.remove(), 300);
+    };
+    
+    // Click to dismiss
+    toast.onclick = removeToast;
+    closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        removeToast();
+    };
+    
+    container.appendChild(toast);
+    
+    // Auto-hide
+    if (duration > 0) {
+        setTimeout(removeToast, duration);
+    }
+    
+    return toast;
+}
+
+/**
+ * Show status message in upload status div AND as a toast
  * @param {string} message - Message to display
  * @param {string} type - Message type (success, error, info, etc.)
  */
 function showUploadStatus(message, type) {
+    // Show in the inline status div (for backward compatibility)
     const statusDiv = document.getElementById('upload-status') || document.getElementById('project-status');
     if (statusDiv) {
         statusDiv.style.display = 'block';
@@ -204,6 +378,9 @@ function showUploadStatus(message, type) {
             statusDiv.style.display = 'none';
         }, 5000);
     }
+    
+    // Also show as a toast for better visibility
+    showToast(message, type);
 }
 
 // ============================================
@@ -264,6 +441,7 @@ window.combineCityState = combineCityState;
 window.deepClone = deepClone;
 window.getNestedValue = getNestedValue;
 window.setNestedValue = setNestedValue;
+window.showToast = showToast;
 window.showUploadStatus = showUploadStatus;
 window.copyToClipboard = copyToClipboard;
 window.downloadJSON = downloadJSON;
