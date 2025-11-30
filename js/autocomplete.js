@@ -895,7 +895,12 @@ function createAutocomplete(input, getDataFunction, category) {
         const localItems = (typeof getDataFunction === 'function') ? getDataFunction() : [];
         const localFiltered = localItems.filter(item => item.toLowerCase().includes(value.toLowerCase()));
 
-        showDropdown(localFiltered);
+        // Show local results immediately, or "Loading..." if none
+        if (localFiltered.length > 0) {
+            showDropdown(localFiltered);
+        } else {
+            showDropdown([], true); // Show loading state
+        }
 
         // Cancel any pending remote fetch
         if (abortController) {
@@ -920,13 +925,20 @@ function createAutocomplete(input, getDataFunction, category) {
 
                 if (!resp.ok) {
                     console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
-                    return; // Keep showing local items
+                    // Show "No matches" only after fetch fails and local is empty
+                    if (localFiltered.length === 0) {
+                        showDropdown([]);
+                    }
+                    return;
                 }
 
                 const contentType = resp.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
-                    return; // Keep showing local items
+                    if (localFiltered.length === 0) {
+                        showDropdown([]);
+                    }
+                    return;
                 }
 
                 const json = await resp.json();
@@ -936,6 +948,9 @@ function createAutocomplete(input, getDataFunction, category) {
                     debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
                     console.warn('⚠️ Autocomplete API returned unexpected format:', json);
+                    if (localFiltered.length === 0) {
+                        showDropdown([]);
+                    }
                 }
             } catch (e) {
                 if (e.name === 'AbortError') {
@@ -943,9 +958,12 @@ function createAutocomplete(input, getDataFunction, category) {
                     return;
                 }
                 console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
-                // Keep showing local items on error
+                // Show "No matches" only if local was also empty
+                if (localFiltered.length === 0) {
+                    showDropdown([]);
+                }
             }
-        }, 300); // Debounce delay
+        }, 150); // Reduced debounce for faster response
     }, { passive: true });
 
     input.addEventListener('focus', () => {
