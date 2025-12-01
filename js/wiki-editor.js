@@ -736,13 +736,41 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Build Staff Section ---
             let staffSection;
             if (staffMembers.length > 0) {
-                staffSection = staffMembers.map(s => {
+                // Sort staff: current staff first, then former staff
+                const sortedStaff = [...staffMembers].sort((a, b) => {
+                    const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
+                    const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
+                    if (aIsFormer && !bIsFormer) return 1;  // a is former, b is current -> b first
+                    if (!aIsFormer && bIsFormer) return -1; // a is current, b is former -> a first
+                    return 0; // preserve original order within group
+                });
+                
+                staffSection = sortedStaff.map(s => {
                     const roleText = escapeMarkdown(s.role);
                     const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
-                    const descriptor = s.isFormer
-                        ? articleRole.replace(/^the\s+/i, 'the former ')
-                        : articleRole;
-                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(s)} ${descriptor}`);
+                    
+                    // Determine if this is a former staff member
+                    const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
+                    
+                    let verb, descriptor;
+                    if (s.isFormer && !roleHasFormer) {
+                        // Checkbox marked as former, but role doesn't say "former"
+                        // Use: "is the former [Role]"
+                        verb = 'is';
+                        descriptor = articleRole.replace(/^the\s+/i, 'the former ');
+                    } else if (roleHasFormer) {
+                        // Role already contains "former/previous/ex-"
+                        // Use: "was the [Role]" (role already has former in it)
+                        verb = 'was';
+                        descriptor = articleRole;
+                    } else {
+                        // Current staff member
+                        // Use: "is the [Role]"
+                        verb = 'is';
+                        descriptor = articleRole;
+                    }
+                    
+                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${verb} ${descriptor}`);
                     
                     // Format previous roles - handle both old string format and new {role, employer} format
                     let previousSentence = '';
