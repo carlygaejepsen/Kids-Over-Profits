@@ -1403,9 +1403,52 @@ ${relatedMediaSection}
                 }
 
                 // Extract bio - everything after first sentence, excluding work history sentences
-                const firstSentenceEnd = normalized.indexOf('.') + 1;
+                // First, find the end of the first sentence (but not inside a markdown link)
+                let firstSentenceEnd = -1;
+                let inLink = 0;
+                for (let i = 0; i < normalized.length; i++) {
+                    if (normalized[i] === '[') inLink++;
+                    else if (normalized[i] === ')' && inLink > 0) inLink--;
+                    else if (normalized[i] === '.' && inLink === 0 && i > 0) {
+                        // Check if this is end of sentence (followed by space and capital, or end)
+                        const nextChar = normalized[i + 1];
+                        if (!nextChar || nextChar === ' ' || nextChar === '\n') {
+                            firstSentenceEnd = i + 1;
+                            break;
+                        }
+                    }
+                }
+                if (firstSentenceEnd === -1) firstSentenceEnd = normalized.length;
+                
                 const remainingText = normalized.substring(firstSentenceEnd).trim();
-                const sentences = remainingText.split(/\.\s+/);
+                
+                // Smart sentence split that preserves markdown links
+                const splitIntoSentences = (text) => {
+                    const sentences = [];
+                    let current = '';
+                    let inLinkBracket = 0;
+                    
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        current += char;
+                        
+                        if (char === '[') inLinkBracket++;
+                        else if (char === ')' && inLinkBracket > 0) inLinkBracket--;
+                        else if (char === '.' && inLinkBracket === 0) {
+                            // Check if followed by space (sentence end) or end of string
+                            const next = text[i + 1];
+                            if (!next || next === ' ' || next === '\n') {
+                                sentences.push(current.trim());
+                                current = '';
+                                if (next === ' ') i++; // skip the space
+                            }
+                        }
+                    }
+                    if (current.trim()) sentences.push(current.trim());
+                    return sentences;
+                };
+                
+                const sentences = splitIntoSentences(remainingText);
                 const bioSentences = sentences.filter(s => {
                     const trimmed = s.trim();
                     if (trimmed.length === 0) return false;
