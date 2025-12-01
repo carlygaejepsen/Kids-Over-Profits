@@ -265,7 +265,8 @@ body:not(.admin-bar) .fixed-toolbar {
     gap: 10px;
     align-items: center;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: space-between;
+    position: relative;
 }
 
 .fixed-toolbar .toolbar-group {
@@ -282,6 +283,9 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .fixed-toolbar .toolbar-group.facility-nav-group {
     flex-grow: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .fixed-toolbar .toolbar-label {
@@ -1023,6 +1027,7 @@ body:not(.admin-bar) .fixed-toolbar {
         font-size: 11px;
         min-height: 32px;
     }
+}
 
 /* Short labels on mobile (640px and below) - saves horizontal space */
 @media (max-width: 640px) {
