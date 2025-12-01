@@ -1404,77 +1404,9 @@ ${relatedMediaSection}
                 }
 
                 // Extract bio - everything after first sentence, excluding work history sentences
-                // Find end of first sentence, being careful not to split inside markdown links [text](url)
-                const findSentenceEnd = (text, startPos = 0) => {
-                    let i = startPos;
-                    while (i < text.length) {
-                        // Skip over markdown links entirely
-                        if (text[i] === '[') {
-                            // Find the closing ] and then (...)
-                            let j = i + 1;
-                            let depth = 1;
-                            while (j < text.length && depth > 0) {
-                                if (text[j] === '[') depth++;
-                                else if (text[j] === ']') depth--;
-                                j++;
-                            }
-                            // Now look for (url)
-                            if (j < text.length && text[j] === '(') {
-                                let parenDepth = 1;
-                                j++;
-                                while (j < text.length && parenDepth > 0) {
-                                    if (text[j] === '(') parenDepth++;
-                                    else if (text[j] === ')') parenDepth--;
-                                    j++;
-                                }
-                            }
-                            i = j;
-                            continue;
-                        }
-                        // Check for sentence end: period followed by space or end
-                        if (text[i] === '.') {
-                            const next = text[i + 1];
-                            if (!next || next === ' ' || next === '\n') {
-                                return i;
-                            }
-                        }
-                        i++;
-                    }
-                    return -1;
-                };
-                
-                const firstSentenceEnd = findSentenceEnd(normalized);
-                const remainingText = firstSentenceEnd >= 0 
-                    ? normalized.substring(firstSentenceEnd + 1).trim()
-                    : '';
-                
-                // Split remaining text into sentences, preserving markdown links
-                const splitIntoSentences = (text) => {
-                    const sentences = [];
-                    let start = 0;
-                    let pos = 0;
-                    
-                    while (pos < text.length) {
-                        const sentEnd = findSentenceEnd(text, pos);
-                        if (sentEnd === -1) {
-                            // No more sentence ends, take the rest
-                            if (start < text.length) {
-                                sentences.push(text.substring(start).trim());
-                            }
-                            break;
-                        }
-                        sentences.push(text.substring(start, sentEnd + 1).trim());
-                        start = sentEnd + 1;
-                        // Skip whitespace
-                        while (start < text.length && (text[start] === ' ' || text[start] === '\n')) {
-                            start++;
-                        }
-                        pos = start;
-                    }
-                    return sentences.filter(s => s.length > 0);
-                };
-                
-                const sentences = splitIntoSentences(remainingText);
+                const firstSentenceEnd = normalized.indexOf('.') + 1;
+                const remainingText = normalized.substring(firstSentenceEnd).trim();
+                const sentences = remainingText.split(/(?<!\w\.\w)(?<![A-Z][a-z]\.)(?<=\.)\s+/);
                 const bioSentences = sentences.filter(s => {
                     const trimmed = s.trim();
                     if (trimmed.length === 0) return false;
@@ -2004,36 +1936,9 @@ ${relatedMediaSection}
     }
 
     function escapeMarkdown(text) {
-        // Check if the text contains intentional markdown links [text](url)
-        // If so, preserve them and only escape other special characters
-        const str = String(text);
-        
-        // If there are markdown links, preserve them
-        if (/\[[^\]]+\]\([^)]+\)/.test(str)) {
-            // Split by markdown links, escape non-link parts, then rejoin
-            const parts = [];
-            let lastIndex = 0;
-            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-            let match;
-            
-            while ((match = linkRegex.exec(str)) !== null) {
-                // Escape the part before this link
-                if (match.index > lastIndex) {
-                    parts.push(escapeMarkdownBasic(str.substring(lastIndex, match.index)));
-                }
-                // Keep the link intact
-                parts.push(match[0]);
-                lastIndex = linkRegex.lastIndex;
-            }
-            // Escape any remaining text after the last link
-            if (lastIndex < str.length) {
-                parts.push(escapeMarkdownBasic(str.substring(lastIndex)));
-            }
-            return parts.join('');
-        }
-        
-        // No markdown links, escape everything
-        return escapeMarkdownBasic(str);
+        // Don't escape - preserve markdown formatting including links
+        // The bio and other fields may contain intentional markdown
+        return String(text);
     }
     
     function escapeMarkdownBasic(text) {
@@ -2042,7 +1947,6 @@ ${relatedMediaSection}
             .replace(/\*/g, '\\*')
             .replace(/_/g, '\\_')
             .replace(/`/g, '\\`');
-        // Note: NOT escaping [ and ] anymore since we handle links separately
     }
 
     // --- DATABASE SUBMISSION ---
