@@ -1722,9 +1722,10 @@
             window.goToFacility = async function(projectName, facilityIndex) {
                 console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
                 
-                // Hide the modal first for better UX
-                if (organizerModal) {
-                    organizerModal.classList.remove('active');
+                // Hide the modal first for better UX - get it by ID to ensure we have access
+                const modal = document.getElementById('data-organizer-modal');
+                if (modal) {
+                    modal.classList.remove('active');
                 }
                 
                 // Check if project exists in window.projects
