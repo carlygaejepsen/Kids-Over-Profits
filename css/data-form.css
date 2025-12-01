@@ -289,11 +289,7 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .toolbar-label {
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 12px;
-    margin-right: 4px;
-    white-space: nowrap;
+    display: none;
 }
 
 .fixed-toolbar .btn-toolbar {
