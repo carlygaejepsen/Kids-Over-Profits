@@ -3715,7 +3715,7 @@ function updateLabelsForProjectType() {
 
     // Define default and referrer-specific labels
     const labels = {
-        toolbarTitle: { default: '📋 Facility Editor', referrer: '📋 Referrer Editor' },
+        toolbarTitle: { default: '📋 Project Editor', referrer: '📋 Referrer Editor' },
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
         facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },

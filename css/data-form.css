@@ -2486,7 +2486,7 @@ textarea {
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 10000; /* Above toolbar (9999) but below WP admin bar (99999) */
 }
 
 .modal.active {
