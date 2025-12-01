@@ -37,6 +37,9 @@ RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase /
 
+# Allow direct access to PHP files in the theme's API folder
+RewriteRule ^wp-content/themes/child/api/.+\.php$ - [L]
+
 # Allow direct access to JS, CSS, and image files
 RewriteRule ^wp-content/themes/.+\.(js|json|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$ - [L]
 
