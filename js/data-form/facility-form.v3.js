@@ -1583,7 +1583,7 @@ function autoSave() {
             if (saved) {
                 debugLog('Suggestion draft saved locally for', window.currentProjectName);
             }
-        }, 2000);
+        }, 150000); // 2.5 minutes
         return;
     }
 
@@ -1602,7 +1602,7 @@ function autoSave() {
             } finally {
                 isSaveInProgress = false;
             }
-        }, 2000);
+        }, 150000); // 2.5 minutes
     }
 }
 
