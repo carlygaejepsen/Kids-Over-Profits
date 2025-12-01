@@ -137,6 +137,52 @@ function kop_add_early_navigation_blocker() {
 }
 add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
 
+/**
+ * Add global error suppressor for Kadence navigation.min.js errors.
+ * This runs on ALL pages to catch getAttribute errors from missing nav elements.
+ * Does NOT hide the header - just suppresses console errors.
+ */
+function kop_add_navigation_error_suppressor() {
+    ?>
+    <script>
+    (function(){
+        // Suppress navigation.min.js getAttribute errors globally
+        window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('navigation') && 
+                e.message && e.message.includes('getAttribute')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return true;
+            }
+        }, true);
+        
+        // Patch querySelector to return safe objects for nav elements
+        var origQuerySelector = Document.prototype.querySelector;
+        Document.prototype.querySelector = function(selector) {
+            var result = origQuerySelector.call(this, selector);
+            // If looking for nav-related elements and nothing found, return a safe stub
+            if (!result && typeof selector === 'string' && 
+                (selector.includes('navigation') || selector.includes('nav-toggle') || 
+                 selector.includes('mobile-toggle') || selector.includes('drawer'))) {
+                return {
+                    getAttribute: function() { return null; },
+                    setAttribute: function() {},
+                    addEventListener: function() {},
+                    removeEventListener: function() {},
+                    classList: { add: function(){}, remove: function(){}, toggle: function(){}, contains: function(){ return false; } },
+                    style: {},
+                    querySelectorAll: function() { return []; },
+                    querySelector: function() { return null; }
+                };
+            }
+            return result;
+        };
+    })();
+    </script>
+    <?php
+}
+add_action('wp_head', 'kop_add_navigation_error_suppressor', 0); // Priority 0 - very first thing
+
 // =================================================================
 // CUSTOM FUNCTIONS
 // =================================================================
