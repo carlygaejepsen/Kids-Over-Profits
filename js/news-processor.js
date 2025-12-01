@@ -617,7 +617,127 @@
         URL.revokeObjectURL(url);
     }
 
+    // --- DATABASE SUBMISSION ---
+    function setupDatabaseSubmission() {
+        const submitBtn = document.getElementById('submit-to-db');
+        const modal = document.getElementById('newsSubmitModal');
+        const cancelBtn = document.getElementById('newsCancelSubmitBtn');
+        const confirmBtn = document.getElementById('newsConfirmSubmitBtn');
+        const statusEl = document.getElementById('newsSubmitStatus');
+
+        if (!submitBtn || !modal) return;
+
+        submitBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            if (statusEl) statusEl.innerHTML = '';
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        confirmBtn.addEventListener('click', async () => {
+            const title = formData.title || '';
+            
+            if (!title.trim()) {
+                statusEl.innerHTML = '<span class="error">❌ Article title is required</span>';
+                return;
+            }
+
+            statusEl.innerHTML = '<span class="loading">⏳ Submitting...</span>';
+            confirmBtn.disabled = true;
+
+            // Build submission data
+            const submissionData = {
+                title: formData.title,
+                alternateTitle: formData.alternateTitle,
+                author: formData.author,
+                publicationName: formData.publicationName,
+                publicationDate: formData.publicationDate,
+                url: formData.url,
+                articleType: formData.articleType,
+                facilities: formData.facilities,
+                staff: formData.staff,
+                survivors: formData.survivors,
+                contentWarnings: formData.contentWarnings,
+                summary: formData.summary,
+                needsAlternateTitle: formData.needsAlternateTitle,
+                // Type-specific fields
+                plaintiffs: formData.plaintiffs,
+                defendants: formData.defendants,
+                legalRep: formData.legalRep,
+                dateFiled: formData.dateFiled,
+                jurisdiction: formData.jurisdiction,
+                pressReleases: formData.pressReleases,
+                relatedCoverage: formData.relatedCoverage,
+                staffMemberName: formData.staffMemberName,
+                arrestFacilityName: formData.arrestFacilityName,
+                misconductDates: formData.misconductDates,
+                charges: formData.charges,
+                caseStatus: formData.caseStatus,
+                closureFacilityName: formData.closureFacilityName,
+                closureLocation: formData.closureLocation,
+                closureDate: formData.closureDate,
+                closureContext: formData.closureContext,
+                corporateFacilityNames: formData.corporateFacilityNames,
+                corporateLocation: formData.corporateLocation,
+                keyPersonnel: formData.keyPersonnel,
+                ownership: formData.ownership,
+                // Submission metadata
+                submittedBy: document.getElementById('newsSubmitterEmail')?.value || '',
+                submissionNotes: document.getElementById('newsSubmissionNotes')?.value || ''
+            };
+
+            try {
+                const response = await fetch('/wp-content/themes/child/api/save-news-submission.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusEl.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${result.id})</span>`;
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 2000);
+                } else {
+                    statusEl.innerHTML = `<span class="error">❌ ${result.error || 'Submission failed'}</span>`;
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                statusEl.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            } finally {
+                confirmBtn.disabled = false;
+            }
+        });
+    }
+
     // Initialize on load
+    function init() {
+        loadFromLocalStorage();
+        setupSectionToggles();
+        setupFormInputs();
+        setupContentWarnings();
+        setupArticleTypes();
+        setupSaveButtons();
+        setupExportButtons();
+        setupAlnewstle();
+        setupClearButton();
+        setupDatabaseSubmission();
+        restoreFormState();
+        restoreSavedValues();
+    }
+
     document.addEventListener('DOMContentLoaded', init);
 })();
 

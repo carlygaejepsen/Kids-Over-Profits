@@ -164,9 +164,30 @@ get_header();
             <div class="news-footer">
                 <button id="export-json" class="news-btn news-btn-primary">Export as JSON</button>
                 <button id="export-text" class="news-btn news-btn-secondary">Export as Text</button>
+                <button id="submit-to-db" class="news-btn news-btn-submit">💾 Submit to Database</button>
                 <button id="clear-form" class="news-btn news-btn-clear">Clear Form</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Submission Modal -->
+<div id="newsSubmitModal" class="news-submit-modal" style="display: none;">
+    <div class="news-submit-modal-content">
+        <h3>Submit Article to Database</h3>
+        <div class="news-submit-form-group">
+            <label for="newsSubmitterEmail">Your Email (optional):</label>
+            <input type="email" id="newsSubmitterEmail" placeholder="your@email.com">
+        </div>
+        <div class="news-submit-form-group">
+            <label for="newsSubmissionNotes">Notes (optional):</label>
+            <textarea id="newsSubmissionNotes" rows="3" placeholder="Any additional context or notes..."></textarea>
+        </div>
+        <div class="news-submit-modal-actions">
+            <button type="button" id="newsCancelSubmitBtn" class="news-btn news-btn-clear">Cancel</button>
+            <button type="button" id="newsConfirmSubmitBtn" class="news-btn news-btn-primary">Submit</button>
+        </div>
+        <div id="newsSubmitStatus" class="news-submit-status"></div>
     </div>
 </div>
 

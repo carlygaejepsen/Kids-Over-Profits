@@ -439,6 +439,27 @@ get_header();
         <div class="output-actions">
             <button type="button" id="convertPastBtn">Convert to Past Tense</button>
             <button type="button" id="copyBtn">Copy to Clipboard</button>
+            <button type="button" id="submitToDbBtn" class="submit-db-btn">💾 Submit to Database</button>
+        </div>
+        
+        <!-- Submission Modal -->
+        <div id="submitModal" class="submit-modal" style="display: none;">
+            <div class="submit-modal-content">
+                <h3>Submit Wiki Entry to Database</h3>
+                <div class="submit-form-group">
+                    <label for="submitterEmail">Your Email (optional):</label>
+                    <input type="email" id="submitterEmail" placeholder="your@email.com">
+                </div>
+                <div class="submit-form-group">
+                    <label for="submissionNotes">Notes (optional):</label>
+                    <textarea id="submissionNotes" rows="3" placeholder="Any additional context or notes..."></textarea>
+                </div>
+                <div class="submit-modal-actions">
+                    <button type="button" id="cancelSubmitBtn" class="cancel-btn">Cancel</button>
+                    <button type="button" id="confirmSubmitBtn" class="submit-btn">Submit</button>
+                </div>
+                <div id="submitStatus" class="submit-status"></div>
+            </div>
         </div>
     </div>
 </div>

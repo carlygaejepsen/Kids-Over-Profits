@@ -1914,4 +1914,113 @@ ${relatedMediaSection}
             .replace(/\]/g, '\\]')
             .replace(/`/g, '\\`');
     }
+
+    // --- DATABASE SUBMISSION ---
+    const submitToDbBtn = document.getElementById('submitToDbBtn');
+    const submitModal = document.getElementById('submitModal');
+    const cancelSubmitBtn = document.getElementById('cancelSubmitBtn');
+    const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+    const submitStatus = document.getElementById('submitStatus');
+
+    if (submitToDbBtn && submitModal) {
+        submitToDbBtn.addEventListener('click', () => {
+            submitModal.style.display = 'flex';
+            submitStatus.innerHTML = '';
+        });
+
+        cancelSubmitBtn.addEventListener('click', () => {
+            submitModal.style.display = 'none';
+        });
+
+        submitModal.addEventListener('click', (e) => {
+            if (e.target === submitModal) {
+                submitModal.style.display = 'none';
+            }
+        });
+
+        confirmSubmitBtn.addEventListener('click', async () => {
+            const programName = document.getElementById('programName')?.value || '';
+            const outputCode = document.getElementById('outputCode')?.value || '';
+            
+            if (!programName.trim()) {
+                submitStatus.innerHTML = '<span class="error">❌ Program name is required</span>';
+                return;
+            }
+
+            if (!outputCode.trim()) {
+                submitStatus.innerHTML = '<span class="error">❌ Please generate wiki code first</span>';
+                return;
+            }
+
+            submitStatus.innerHTML = '<span class="loading">⏳ Submitting...</span>';
+            confirmSubmitBtn.disabled = true;
+
+            // Collect all form data
+            const formData = {
+                programName: programName,
+                yearsActive: document.getElementById('yearsActive')?.value || '',
+                cityState: document.getElementById('cityState')?.value || '',
+                programType: document.getElementById('programType')?.value || '',
+                yearFounded: document.getElementById('yearFounded')?.value || '',
+                ageRange: document.getElementById('ageRange')?.value || '',
+                ownerName: document.getElementById('ownerName')?.value || '',
+                ownerLink: document.getElementById('ownerLink')?.value || '',
+                avgStay: document.getElementById('avgStay')?.value || '',
+                tuition: document.getElementById('tuition')?.value || '',
+                natsapMember: document.getElementById('natsapMember')?.value || '',
+                natsapYear: document.getElementById('natsapYear')?.value || '',
+                diagnosesList: document.getElementById('diagnosesList')?.value || '',
+                mainAddress: document.getElementById('mainAddress')?.value || '',
+                addressLink: document.getElementById('addressLink')?.value || '',
+                accreditingBody: document.getElementById('accreditingBody')?.value || '',
+                accreditingBodyLink: document.getElementById('accreditingBodyLink')?.value || '',
+                mainComplaints: document.getElementById('mainComplaints')?.value || '',
+                mediaInfo: document.getElementById('mediaInfo')?.value || '',
+                // Arrays
+                staffMembers: staffMembers,
+                programLevels: programLevels,
+                punishments: punishments,
+                lawsuits: lawsuits,
+                newsArticles: newsArticles,
+                testimonies: testimonies,
+                relatedMedia: relatedMedia,
+                campuses: campuses,
+                ownershipChanges: ownershipChanges,
+                rules: rules,
+                allegations: allegations,
+                therapies: therapies,
+                // Generated output
+                generatedMarkdown: outputCode,
+                // Submission metadata
+                submittedBy: document.getElementById('submitterEmail')?.value || '',
+                submissionNotes: document.getElementById('submissionNotes')?.value || ''
+            };
+
+            try {
+                const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    submitStatus.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${result.id})</span>`;
+                    setTimeout(() => {
+                        submitModal.style.display = 'none';
+                    }, 2000);
+                } else {
+                    submitStatus.innerHTML = `<span class="error">❌ ${result.error || 'Submission failed'}</span>`;
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                submitStatus.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            } finally {
+                confirmSubmitBtn.disabled = false;
+            }
+        });
+    }
 });
