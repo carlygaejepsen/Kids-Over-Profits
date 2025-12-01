@@ -1194,8 +1194,15 @@ ${relatedMediaSection}
         newsArticles = [];
         testimonies = [];
         relatedMedia = [];
+        campuses = [];
+        ownershipChanges = [];
         resetStaffForm();
         renderStaffList();
+        // Clear the ownership changes display
+        const ownerChangeListEl = document.getElementById('ownerChangeListOutput');
+        if (ownerChangeListEl) ownerChangeListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
+        const campusListEl = document.getElementById('campusListOutput');
+        if (campusListEl) campusListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
 
         // Normalize newlines so regex parsing works with Windows CRLF input
         const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
