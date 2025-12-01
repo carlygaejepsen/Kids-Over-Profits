@@ -1359,17 +1359,22 @@ ${relatedMediaSection}
 
             // Parse ownership changes from history
             // Pattern: "Prior to being purchased/acquired by NewOwner in YEAR, Alabama Clinical Schools was owned by [PreviousOwner](link)"
+            console.log('=== OWNERSHIP CHANGE PARSING ===');
+            console.log('Looking for pattern in:', normalizedHistory.substring(0, 500));
+            
             const priorOwnerLinkMatch = normalizedHistory.match(
                 /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?owned by \[([^\]]+)\]\(([^)]+)\)/i
             );
-            console.log('Prior owner link match:', priorOwnerLinkMatch);
+            console.log('Prior owner link match result:', priorOwnerLinkMatch);
+            
             if (priorOwnerLinkMatch) {
                 const newOwner = expandAcronym(priorOwnerLinkMatch[1]);
                 const year = priorOwnerLinkMatch[2].trim();
                 const previousOwner = priorOwnerLinkMatch[3].trim();
                 const previousLink = priorOwnerLinkMatch[4].trim();
-                console.log('Parsed ownership change:', { year, previous: previousOwner, previousLink, newOwner });
+                console.log('SUCCESS! Parsed ownership change:', { year, previous: previousOwner, previousLink, newOwner });
                 ownershipChanges.push({ year, previous: previousOwner, previousLink, newOwner, newOwnerLink: '' });
+                console.log('ownershipChanges array now:', ownershipChanges);
                 renderList(ownershipChanges, 'ownerChangeListOutput', item => {
                     const prevDisplay = item.previousLink 
                         ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
@@ -1379,6 +1384,7 @@ ${relatedMediaSection}
                         : escapeHtml(item.newOwner || '?');
                     return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
                 });
+                console.log('renderList called for ownership changes');
             } else {
                 // Try without markdown link: "Prior to being purchased by NewOwner in YEAR, was owned by PreviousOwner"
                 const priorOwnerTextMatch = normalizedHistory.match(
