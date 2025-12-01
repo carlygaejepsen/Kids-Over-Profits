@@ -1299,8 +1299,10 @@ ${relatedMediaSection}
 
         // Parse History section
         const historySection = getSection(normalizedMarkdown, 'History and Background Information');
+        console.log('History section content:', historySection);
         if (historySection && !historySection.includes('No information is known')) {
             const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
+            console.log('Normalized history:', normalizedHistory);
 
             const yearFoundedMatch = normalizedHistory.match(/(?:founded|opened|started|established|began)\s+(?:in\s+)?(\d{4})/i);
             if (yearFoundedMatch) {
