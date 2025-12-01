@@ -10,6 +10,19 @@
     box-sizing: border-box;
 }
 
+/* Ensure all buttons contain their text without overflow */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.button,
+[role="button"] {
+    white-space: nowrap;
+    overflow: visible;
+    width: auto;
+    min-width: fit-content;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
@@ -304,6 +317,10 @@ body:not(.admin-bar) .fixed-toolbar {
     color: #000435;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: visible; /* Ensure text is not clipped */
+    width: auto; /* Let button size to fit content */
+    max-width: none; /* Remove any max-width constraints */
 }
 
 .fixed-toolbar .btn-toolbar:hover {
@@ -1476,6 +1493,10 @@ textarea {
     gap: 6px;
     white-space: nowrap; /* Prevent text from wrapping */
     min-width: fit-content; /* Ensure button is wide enough for content */
+    overflow: visible; /* Ensure text is not clipped */
+    text-overflow: clip; /* Don't use ellipsis */
+    width: auto; /* Let button size to fit content */
+    max-width: none; /* Remove any max-width constraints */
 }
 
 .btn:hover {
