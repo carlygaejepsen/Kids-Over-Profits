@@ -153,7 +153,7 @@ function addFieldNote(scope, key) {
 
     // Additional safety check - ensure notes is definitely an array
     if (!Array.isArray(notes)) {
-        console.warn('[Notes] getFieldNotes returned non-array, normalizing:', notes);
+        debugLog('getFieldNotes returned non-array, normalizing:', notes);
         // Force it to be an array
         const store = ensureFieldNotesStore(scope, true);
         if (store) {

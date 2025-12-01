@@ -347,6 +347,29 @@ function normalizeProjectData(data) {
     
     if (typeof data !== 'object') return data;
 
+    // Helper to normalize fieldNotes entries - ensures all values are arrays, not objects
+    // This fixes a bug where database can store empty notes as {} instead of []
+    const normalizeFieldNotesEntries = (fieldNotesObj) => {
+        if (!fieldNotesObj || typeof fieldNotesObj !== 'object') return;
+        Object.keys(fieldNotesObj).forEach(key => {
+            const value = fieldNotesObj[key];
+            if (!Array.isArray(value)) {
+                // Convert non-array to array
+                if (value === null || value === undefined) {
+                    fieldNotesObj[key] = [];
+                } else if (typeof value === 'object') {
+                    // Extract values from object (handles {} case)
+                    const values = Object.values(value);
+                    fieldNotesObj[key] = values.filter(v => v !== null && v !== undefined && `${v}`.trim() !== '');
+                } else if (`${value}`.trim() !== '') {
+                    fieldNotesObj[key] = [`${value}`];
+                } else {
+                    fieldNotesObj[key] = [];
+                }
+            }
+        });
+    };
+
     // Helper to get value trying different key variations
     const getValue = (obj, ...keys) => {
         for (const key of keys) {
@@ -433,6 +456,11 @@ function normalizeProjectData(data) {
             keyExecutives: []
         };
     }
+
+        // Normalize operator fieldNotes entries
+        if (data.operator.fieldNotes && typeof data.operator.fieldNotes === 'object') {
+            normalizeFieldNotesEntries(data.operator.fieldNotes);
+        }
 }
 
     // Accept legacy facilities shapes (stringified, nested, or alternate keys)
@@ -601,6 +629,11 @@ function normalizeProjectData(data) {
                 normalized.resources.notes = [];
             }
 
+            // Normalize fieldNotes entries for each facility
+            if (normalized.fieldNotes && typeof normalized.fieldNotes === 'object') {
+                normalizeFieldNotesEntries(normalized.fieldNotes);
+            }
+
             return normalized;
         });
     }
@@ -696,6 +729,7 @@ function normalizeProjectData(data) {
         if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
             data.referrerAgency.fieldNotes = {};
         }
+        normalizeFieldNotesEntries(data.referrerAgency.fieldNotes);
     }
 
     if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
@@ -709,6 +743,7 @@ function normalizeProjectData(data) {
             if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
             if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
             if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
+            normalizeFieldNotesEntries(merged.fieldNotes);
             return merged;
         });
     }
@@ -737,6 +772,7 @@ function normalizeProjectData(data) {
     if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
         data.fieldNotes = {};
     }
+    normalizeFieldNotesEntries(data.fieldNotes);
 
     // Build referrer entries from the data
     if (typeof buildReferrerEntries === 'function') {
