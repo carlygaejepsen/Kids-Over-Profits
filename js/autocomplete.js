@@ -925,13 +925,33 @@ function createAutocomplete(input, getDataFunction, category) {
             hideDropdown();
             return;
         }
+        
+        // Sort function: prioritize items starting with search term, then alphabetical
+        const sortByRelevance = (items, searchTerm) => {
+            const lower = searchTerm.toLowerCase();
+            return items.sort((a, b) => {
+                const aLower = a.toLowerCase();
+                const bLower = b.toLowerCase();
+                const aStarts = aLower.startsWith(lower);
+                const bStarts = bLower.startsWith(lower);
+                
+                // Items starting with search term come first
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                
+                // Within same group, sort alphabetically
+                return aLower.localeCompare(bLower);
+            });
+        };
+        
         // Merge local items with remote suggestions (debounced)
         const localItems = (typeof getDataFunction === 'function') ? getDataFunction() : [];
         const localFiltered = localItems.filter(item => item.toLowerCase().includes(value.toLowerCase()));
+        const localSorted = sortByRelevance(localFiltered, value);
 
         // Show local results immediately, or "Loading..." if none
-        if (localFiltered.length > 0) {
-            showDropdown(localFiltered);
+        if (localSorted.length > 0) {
+            showDropdown(localSorted);
         } else {
             showDropdown([], true); // Show loading state
         }
@@ -960,7 +980,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 if (!resp.ok) {
                     console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
                     // Show "No matches" only after fetch fails and local is empty
-                    if (localFiltered.length === 0) {
+                    if (localSorted.length === 0) {
                         showDropdown([]);
                     }
                     return;
@@ -969,7 +989,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 const contentType = resp.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
-                    if (localFiltered.length === 0) {
+                    if (localSorted.length === 0) {
                         showDropdown([]);
                     }
                     return;
@@ -977,12 +997,13 @@ function createAutocomplete(input, getDataFunction, category) {
 
                 const json = await resp.json();
                 if (json && json.success && Array.isArray(json.values)) {
-                    const merged = Array.from(new Set([...localFiltered, ...json.values]));
-                    showDropdown(merged);
+                    const merged = Array.from(new Set([...localSorted, ...json.values]));
+                    const mergedSorted = sortByRelevance(merged, value);
+                    showDropdown(mergedSorted);
                     debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
                     console.warn('⚠️ Autocomplete API returned unexpected format:', json);
-                    if (localFiltered.length === 0) {
+                    if (localSorted.length === 0) {
                         showDropdown([]);
                     }
                 }
@@ -993,7 +1014,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 }
                 console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
                 // Show "No matches" only if local was also empty
-                if (localFiltered.length === 0) {
+                if (localSorted.length === 0) {
                     showDropdown([]);
                 }
             }

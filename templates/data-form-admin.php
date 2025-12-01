@@ -1193,19 +1193,13 @@ get_header();
     <!-- Data Organizer Modal -->
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content">
-            <div class="organizer-modal-header">
-                <h2>🔍 Search Facility Data</h2>
+            <div class="organizer-modal-header" style="padding: 12px 20px;">
+                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
             </div>
-            <div class="organizer-modal-body">
-                <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <p class="info-text" style="margin: 0; color: #4b5563;">
-                        <strong>🔍 Find all facilities by a specific data point:</strong>
-                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
-                    </p>
-                </div>
+            <div class="organizer-modal-body" style="padding: 15px 20px;">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div class="form-group">
                         <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">

@@ -3132,8 +3132,19 @@ nav.main-navigation,
 }
 
 .organizer-modal-body {
-    padding: 30px;
+    padding: 20px;
     color: #1f2937;
+}
+
+/* Ensure autocomplete dropdowns appear properly in modals */
+.organizer-modal-body .autocomplete-dropdown {
+    max-height: 180px;
+    z-index: 100001;
+}
+
+/* Ensure the form groups in modal have relative positioning for dropdowns */
+.organizer-modal-body .form-group {
+    position: relative;
 }
 
 /* Clone Modal Styles */
