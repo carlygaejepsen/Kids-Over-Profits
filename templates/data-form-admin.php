@@ -1,7 +1,7 @@
 <?php
 /**
- * Template Name: Admin Data Form
- * Template Post Type: page
+ * Admin Data Form - Template partial
+ * Included by page-admin-data.php
  */
 
 get_header();
