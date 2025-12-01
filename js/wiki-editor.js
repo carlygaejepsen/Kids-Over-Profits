@@ -1234,7 +1234,8 @@ ${relatedMediaSection}
                 setValue('diagnosesList', uniqueDiagnoses.join('; '));
             }
 
-            const stayMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+[^,\.\n]+)/i);
+            // Average stay - must have time unit words like days, weeks, months
+            const stayMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
             if (stayMatch) {
                 setValue('avgStay', stayMatch[1].trim());
             }
@@ -1244,9 +1245,26 @@ ${relatedMediaSection}
                 setValue('tuition', tuitionMatch[1].trim());
             }
 
-            const natsapMatch = normalizedHistory.match(/(NATSAP[^\.\n]+)/i);
-            if (natsapMatch) {
-                setValue('natsapStatus', natsapMatch[1].trim());
+            // NATSAP membership - check for various patterns and set the dropdown
+            const natsapPatterns = [
+                { pattern: /is\s+(?:a\s+)?(?:current\s+)?NATSAP\s+member/i, value: 'yes' },
+                { pattern: /has\s+been\s+(?:a\s+)?NATSAP\s+member\s+since\s+(\d{4})/i, value: 'yes', yearGroup: 1 },
+                { pattern: /NATSAP\s+member\s+since\s+(\d{4})/i, value: 'yes', yearGroup: 1 },
+                { pattern: /is\s+(?:a\s+)?former\s+NATSAP\s+member/i, value: 'former' },
+                { pattern: /was\s+(?:a\s+)?NATSAP\s+member/i, value: 'former' },
+                { pattern: /is\s+not\s+(?:a\s+)?NATSAP\s+member/i, value: 'no' },
+                { pattern: /not\s+(?:a\s+)?NATSAP\s+member/i, value: 'no' }
+            ];
+            
+            for (const { pattern, value, yearGroup } of natsapPatterns) {
+                const natsapMatch = normalizedHistory.match(pattern);
+                if (natsapMatch) {
+                    setValue('natsapMember', value);
+                    if (yearGroup && natsapMatch[yearGroup]) {
+                        setValue('natsapYear', natsapMatch[yearGroup]);
+                    }
+                    break;
+                }
             }
 
             // Extract address (allow variations like "located at/as/in")
