@@ -1114,15 +1114,18 @@ ${relatedMediaSection}
             return '';
         };
 
-        // Parse header
-        const headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\**(.+?)\**\s*\(([^)]+)\)\s+([^\r\n]+)/m);
+        // Parse header - handles multiple formats:
+        // Format 1: #**Name** (Years) City, ST
+        // Format 2: ## Name (Years) City, ST  
+        // Format 3: ##**Name** (Years) City, ST
+        let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}([^*\n(]+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
         console.log('Header match:', headerMatch);
         if (headerMatch) {
             setValue('programName', headerMatch[1].trim());
             setValue('yearsActive', headerMatch[2].trim());
             setValue('cityState', headerMatch[3].trim());
         } else {
-            console.warn('No header match found. Looking for pattern: ## ProgramName (Years) City, ST');
+            console.warn('No header match found. Looking for pattern: #**ProgramName** (Years) City, ST');
         }
 
         // Parse program type
@@ -1136,7 +1139,7 @@ ${relatedMediaSection}
         if (historySection && !historySection.includes('No information is known')) {
             const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
 
-            const yearFoundedMatch = normalizedHistory.match(/founded in (\d{4})/i);
+            const yearFoundedMatch = normalizedHistory.match(/(?:founded|opened|started|established|began)\s+(?:in\s+)?(\d{4})/i);
             if (yearFoundedMatch) {
                 setValue('yearFounded', yearFoundedMatch[1].trim());
             }
@@ -1152,6 +1155,7 @@ ${relatedMediaSection}
 
             let ownerCaptured = false;
             const ownerPatternsWithLinks = [
+                /is\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center|behavior))/i,
                 /owned by \[([^\]]+)\]\(([^)]+)\)/i,
                 /operated by \[([^\]]+)\]\(([^)]+)\)/i,
                 /run by \[([^\]]+)\]\(([^)]+)\)/i,
@@ -1182,6 +1186,7 @@ ${relatedMediaSection}
             }
 
             const agePatterns = [
+                /\((\d{1,2})\s*-\s*(\d{1,2})\)/i,  // Match (9-18) format in parentheses
                 /aged?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
                 /ages?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
                 /age range\s+(?:of\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
@@ -1214,7 +1219,9 @@ ${relatedMediaSection}
                 /any of the following:\s*([^\.]+)\./i,
                 /specializes? in treating\s+([^\.]+?)(?:\.|, but)/i,
                 /specialized in treating\s+([^\.]+?)(?:\.|, but)/i,
-                /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i
+                /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i,
+                /struggling with\s+([^\.]+?)(?:\.|, and more)/i,  // Match "struggling with X, Y, Z"
+                /who are\s+(?:struggling|dealing)\s+with\s+([^\.]+?)(?:\.|, and)/i
             ];
             diagnosisPatterns.forEach(pattern => {
                 const match = normalizedHistory.match(pattern);
@@ -1751,6 +1758,9 @@ ${relatedMediaSection}
             blocks.forEach((block, idx) => {
                 const trimmed = block.trim();
                 if (!trimmed || trimmed.length === 0) return;
+                
+                // Skip non-testimony lines (like "No other survivor testimonies...")
+                if (trimmed.startsWith('*No ') || trimmed.startsWith('_No ')) return;
 
                 const cleaned = trimmed
                     // Drop bullet markers only if followed by whitespace
@@ -1764,7 +1774,8 @@ ${relatedMediaSection}
                 console.log(`Testimony block ${idx + 1}:`, cleaned.substring(0, 80));
 
                 // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
-                let match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
+                // More flexible quote matching - allows any text between quotes
+                let match = cleaned.match(/^\*\*([^:]+):\s*\(([^)]+)\)\*\*\s+"(.+?)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
                 if (match) {
                     console.log(`  → Matched pattern 1 (Date+Type)`);
                     const parsed = parseSourceIntoParts(match[4].trim());
@@ -1906,13 +1917,45 @@ ${relatedMediaSection}
     }
 
     function escapeMarkdown(text) {
+        // Check if the text contains intentional markdown links [text](url)
+        // If so, preserve them and only escape other special characters
+        const str = String(text);
+        
+        // If there are markdown links, preserve them
+        if (/\[[^\]]+\]\([^)]+\)/.test(str)) {
+            // Split by markdown links, escape non-link parts, then rejoin
+            const parts = [];
+            let lastIndex = 0;
+            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            let match;
+            
+            while ((match = linkRegex.exec(str)) !== null) {
+                // Escape the part before this link
+                if (match.index > lastIndex) {
+                    parts.push(escapeMarkdownBasic(str.substring(lastIndex, match.index)));
+                }
+                // Keep the link intact
+                parts.push(match[0]);
+                lastIndex = linkRegex.lastIndex;
+            }
+            // Escape any remaining text after the last link
+            if (lastIndex < str.length) {
+                parts.push(escapeMarkdownBasic(str.substring(lastIndex)));
+            }
+            return parts.join('');
+        }
+        
+        // No markdown links, escape everything
+        return escapeMarkdownBasic(str);
+    }
+    
+    function escapeMarkdownBasic(text) {
         return String(text)
             .replace(/\\/g, '\\\\')
             .replace(/\*/g, '\\*')
             .replace(/_/g, '\\_')
-            .replace(/\[/g, '\\[')
-            .replace(/\]/g, '\\]')
             .replace(/`/g, '\\`');
+        // Note: NOT escaping [ and ] anymore since we handle links separately
     }
 
     // --- DATABASE SUBMISSION ---
