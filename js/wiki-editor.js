@@ -627,7 +627,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const previousSentence = (s.previousRoles && s.previousRoles.length)
                         ? ensureSentence(`Previously worked at ${joinWithAnd(s.previousRoles.map(pr => escapeMarkdown(pr)))}`)
                         : '';
-                    const bioSentence = ensureSentence(escapeMarkdown(s.bio || ''));
+                    // Bio can contain markdown links - don't escape it, just ensure sentence ending
+                    const bioSentence = ensureSentence(s.bio || '');
                     return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
                 }).join('\n\n');
             } else {
@@ -1403,49 +1404,74 @@ ${relatedMediaSection}
                 }
 
                 // Extract bio - everything after first sentence, excluding work history sentences
-                // First, find the end of the first sentence (but not inside a markdown link)
-                let firstSentenceEnd = -1;
-                let inLink = 0;
-                for (let i = 0; i < normalized.length; i++) {
-                    if (normalized[i] === '[') inLink++;
-                    else if (normalized[i] === ')' && inLink > 0) inLink--;
-                    else if (normalized[i] === '.' && inLink === 0 && i > 0) {
-                        // Check if this is end of sentence (followed by space and capital, or end)
-                        const nextChar = normalized[i + 1];
-                        if (!nextChar || nextChar === ' ' || nextChar === '\n') {
-                            firstSentenceEnd = i + 1;
-                            break;
+                // Find end of first sentence, being careful not to split inside markdown links [text](url)
+                const findSentenceEnd = (text, startPos = 0) => {
+                    let i = startPos;
+                    while (i < text.length) {
+                        // Skip over markdown links entirely
+                        if (text[i] === '[') {
+                            // Find the closing ] and then (...)
+                            let j = i + 1;
+                            let depth = 1;
+                            while (j < text.length && depth > 0) {
+                                if (text[j] === '[') depth++;
+                                else if (text[j] === ']') depth--;
+                                j++;
+                            }
+                            // Now look for (url)
+                            if (j < text.length && text[j] === '(') {
+                                let parenDepth = 1;
+                                j++;
+                                while (j < text.length && parenDepth > 0) {
+                                    if (text[j] === '(') parenDepth++;
+                                    else if (text[j] === ')') parenDepth--;
+                                    j++;
+                                }
+                            }
+                            i = j;
+                            continue;
                         }
-                    }
-                }
-                if (firstSentenceEnd === -1) firstSentenceEnd = normalized.length;
-                
-                const remainingText = normalized.substring(firstSentenceEnd).trim();
-                
-                // Smart sentence split that preserves markdown links
-                const splitIntoSentences = (text) => {
-                    const sentences = [];
-                    let current = '';
-                    let inLinkBracket = 0;
-                    
-                    for (let i = 0; i < text.length; i++) {
-                        const char = text[i];
-                        current += char;
-                        
-                        if (char === '[') inLinkBracket++;
-                        else if (char === ')' && inLinkBracket > 0) inLinkBracket--;
-                        else if (char === '.' && inLinkBracket === 0) {
-                            // Check if followed by space (sentence end) or end of string
+                        // Check for sentence end: period followed by space or end
+                        if (text[i] === '.') {
                             const next = text[i + 1];
                             if (!next || next === ' ' || next === '\n') {
-                                sentences.push(current.trim());
-                                current = '';
-                                if (next === ' ') i++; // skip the space
+                                return i;
                             }
                         }
+                        i++;
                     }
-                    if (current.trim()) sentences.push(current.trim());
-                    return sentences;
+                    return -1;
+                };
+                
+                const firstSentenceEnd = findSentenceEnd(normalized);
+                const remainingText = firstSentenceEnd >= 0 
+                    ? normalized.substring(firstSentenceEnd + 1).trim()
+                    : '';
+                
+                // Split remaining text into sentences, preserving markdown links
+                const splitIntoSentences = (text) => {
+                    const sentences = [];
+                    let start = 0;
+                    let pos = 0;
+                    
+                    while (pos < text.length) {
+                        const sentEnd = findSentenceEnd(text, pos);
+                        if (sentEnd === -1) {
+                            // No more sentence ends, take the rest
+                            if (start < text.length) {
+                                sentences.push(text.substring(start).trim());
+                            }
+                            break;
+                        }
+                        sentences.push(text.substring(start, sentEnd + 1).trim());
+                        start = sentEnd + 1;
+                        // Skip whitespace
+                        while (start < text.length && (text[start] === ' ' || text[start] === '\n')) {
+                            start++;
+                        }
+                        pos = start;
+                    }
+                    return sentences.filter(s => s.length > 0);
                 };
                 
                 const sentences = splitIntoSentences(remainingText);
