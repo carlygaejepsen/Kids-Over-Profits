@@ -1119,7 +1119,7 @@ ${relatedMediaSection}
         // Format 1: #**Name** (Years) City, ST
         // Format 2: ## Name (Years) City, ST  
         // Format 3: ##**Name** (Years) City, ST
-        let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}([^*\n(]+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
+        let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
         console.log('Header match:', headerMatch);
         if (headerMatch) {
             setValue('programName', headerMatch[1].trim());
