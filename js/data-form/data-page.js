@@ -1344,17 +1344,39 @@
                         break;
                         
                     case 'location':
-                        if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                        // Check facility location fields
+                        if (facility.location && typeof facility.location === 'string' && facility.location.toLowerCase().includes(searchLower)) {
                             matches.push(facility.location);
                         }
-                        if (facility.address && facility.address.toLowerCase().includes(searchLower)) {
+                        if (facility.address && typeof facility.address === 'string' && facility.address.toLowerCase().includes(searchLower)) {
                             matches.push(`Address: ${facility.address}`);
                         }
-                        if (facility.locationCity && facility.locationCity.toLowerCase().includes(searchLower)) {
+                        if (facility.locationCity && typeof facility.locationCity === 'string' && facility.locationCity.toLowerCase().includes(searchLower)) {
                             matches.push(`City: ${facility.locationCity}`);
                         }
-                        if (facility.locationState && facility.locationState.toLowerCase().includes(searchLower)) {
+                        if (facility.locationState && typeof facility.locationState === 'string' && facility.locationState.toLowerCase().includes(searchLower)) {
                             matches.push(`State: ${facility.locationState}`);
+                        }
+                        // Check project-level operator location/headquarters
+                        if (projectOperator) {
+                            if (projectOperator.location && typeof projectOperator.location === 'string' && projectOperator.location.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator Location: ${projectOperator.location}`);
+                            }
+                            if (projectOperator.headquarters && typeof projectOperator.headquarters === 'string' && projectOperator.headquarters.toLowerCase().includes(searchLower)) {
+                                matches.push(`Headquarters: ${projectOperator.headquarters}`);
+                            }
+                            if (projectOperator.headquartersCity && typeof projectOperator.headquartersCity === 'string' && projectOperator.headquartersCity.toLowerCase().includes(searchLower)) {
+                                matches.push(`HQ City: ${projectOperator.headquartersCity}`);
+                            }
+                            if (projectOperator.headquartersState && typeof projectOperator.headquartersState === 'string' && projectOperator.headquartersState.toLowerCase().includes(searchLower)) {
+                                matches.push(`HQ State: ${projectOperator.headquartersState}`);
+                            }
+                            if (projectOperator.locationCity && typeof projectOperator.locationCity === 'string' && projectOperator.locationCity.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator City: ${projectOperator.locationCity}`);
+                            }
+                            if (projectOperator.locationState && typeof projectOperator.locationState === 'string' && projectOperator.locationState.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator State: ${projectOperator.locationState}`);
+                            }
                         }
                         break;
                         
@@ -1621,9 +1643,46 @@
                     
                 } catch (error) {
                     console.error('Search API error:', error);
-                    announceOrganizerStatus(`Search failed: ${error.message}. Please try again.`, 'error');
-                    if (modalMatches) {
-                        modalMatches.innerHTML = `<p style="padding: 20px; text-align: center; color: #dc2626;">❌ Search failed: ${error.message}</p>`;
+                    console.log('🔄 Falling back to local projects cache...');
+                    
+                    // Fallback: search through window.projects if API fails
+                    if (window.projects && Object.keys(window.projects).length > 0) {
+                        announceOrganizerStatus(`API unavailable, searching local cache...`, 'info');
+                        
+                        const results = [];
+                        Object.keys(window.projects).forEach(projectName => {
+                            const project = window.projects[projectName];
+                            const facilities = project?.data?.facilities || project?.facilities || [];
+                            const projectOperator = project?.data?.operator || project?.operator || null;
+                            
+                            facilities.forEach((facility, facilityIndex) => {
+                                const matches = window.extractDataPointsForSearch ? 
+                                    window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
+                                    extractDataPointsForSearch(facility, searchType, searchValue, projectOperator);
+                                if (matches.length > 0) {
+                                    results.push({
+                                        projectName: projectName,
+                                        facility: facility,
+                                        facilityIndex: facilityIndex,
+                                        matches: matches,
+                                        operator: project?.data?.operator?.name || project?.operator?.name || facility?.identification?.currentOperator
+                                    });
+                                }
+                            });
+                        });
+                        
+                        if (results.length === 0) {
+                            announceOrganizerStatus(`No matches found for "${searchValue}" in local cache.`, 'warning');
+                        } else {
+                            announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}" (local).`, 'success');
+                        }
+                        
+                        window.displayOrganizerResultsModal(results, searchType, searchValue);
+                    } else {
+                        announceOrganizerStatus(`Search failed: ${error.message}. No local data available.`, 'error');
+                        if (modalMatches) {
+                            modalMatches.innerHTML = `<p style="padding: 20px; text-align: center; color: #dc2626;">❌ Search failed: ${error.message}<br><br>No local project data available to search.</p>`;
+                        }
                     }
                 }
             }
