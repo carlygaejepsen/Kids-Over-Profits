@@ -1280,7 +1280,7 @@
                 displayOrganizerResults(results, searchType, searchValue);
             }
             
-            function extractDataPointsForSearch(facility, type, searchValue) {
+            function extractDataPointsForSearch(facility, type, searchValue, projectOperator = null) {
                 const matches = [];
                 const searchLower = searchValue.toLowerCase();
                 
@@ -1288,17 +1288,19 @@
                     case 'staff':
                         if (facility.staff) {
                             if (facility.staff.administrator) {
-                                facility.staff.administrator.forEach(admin => {
-                                    const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
-                                    if (adminStr.toLowerCase().includes(searchLower)) {
+                                const admins = Array.isArray(facility.staff.administrator) ? facility.staff.administrator : [facility.staff.administrator];
+                                admins.forEach(admin => {
+                                    const adminStr = typeof admin === 'string' ? admin : (admin?.name || '');
+                                    if (adminStr && adminStr.toLowerCase().includes(searchLower)) {
                                         matches.push(`Administrator: ${adminStr}`);
                                     }
                                 });
                             }
                             if (facility.staff.notableStaff) {
-                                facility.staff.notableStaff.forEach(staff => {
-                                    const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
-                                    if (staffStr.toLowerCase().includes(searchLower)) {
+                                const staffList = Array.isArray(facility.staff.notableStaff) ? facility.staff.notableStaff : [facility.staff.notableStaff];
+                                staffList.forEach(staff => {
+                                    const staffStr = typeof staff === 'string' ? staff : (staff?.name || '');
+                                    if (staffStr && staffStr.toLowerCase().includes(searchLower)) {
                                         matches.push(`Notable Staff: ${staffStr}`);
                                     }
                                 });
@@ -1307,22 +1309,52 @@
                         break;
                         
                     case 'operator':
+                        // Check facility's current operator
+                        if (facility.identification?.currentOperator && 
+                            facility.identification.currentOperator.toLowerCase().includes(searchLower)) {
+                            matches.push(`Current Operator: ${facility.identification.currentOperator}`);
+                        }
+                        // Check facility's other/past operators
+                        if (facility.otherOperators && Array.isArray(facility.otherOperators)) {
+                            facility.otherOperators.forEach(op => {
+                                const opStr = typeof op === 'string' ? op : (op?.name || '');
+                                if (opStr && opStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Other Operator: ${opStr}`);
+                                }
+                            });
+                        }
+                        // Check project-level operator (parent company)
+                        if (projectOperator) {
+                            if (projectOperator.name && projectOperator.name.toLowerCase().includes(searchLower)) {
+                                matches.push(`Parent Company: ${projectOperator.name}`);
+                            }
+                            if (projectOperator.otherNames && Array.isArray(projectOperator.otherNames)) {
+                                projectOperator.otherNames.forEach(name => {
+                                    if (name && name.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Parent Company (alias): ${name}`);
+                                    }
+                                });
+                            }
+                        }
+                        // Legacy: check old operator field path
                         if (facility.identification?.operator && 
                             facility.identification.operator.toLowerCase().includes(searchLower)) {
                             matches.push(facility.identification.operator);
-                        }
-                        if (facility.otherOperators) {
-                            facility.otherOperators.forEach(op => {
-                                if (op.toLowerCase().includes(searchLower)) {
-                                    matches.push(op);
-                                }
-                            });
                         }
                         break;
                         
                     case 'location':
                         if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
                             matches.push(facility.location);
+                        }
+                        if (facility.address && facility.address.toLowerCase().includes(searchLower)) {
+                            matches.push(`Address: ${facility.address}`);
+                        }
+                        if (facility.locationCity && facility.locationCity.toLowerCase().includes(searchLower)) {
+                            matches.push(`City: ${facility.locationCity}`);
+                        }
+                        if (facility.locationState && facility.locationState.toLowerCase().includes(searchLower)) {
+                            matches.push(`State: ${facility.locationState}`);
                         }
                         break;
                         
@@ -1543,12 +1575,28 @@
                         // Try different data structures
                         const facilities = project?.data?.facilities || project?.facilities || [];
                         
+                        // Debug: log first facility structure for first project
+                        if (facilities.length > 0 && Object.keys(allProjects).indexOf(projectName) === 0) {
+                            const firstFacility = facilities[0];
+                            console.log(`🔍 First facility in "${projectName}" structure:`, {
+                                keys: Object.keys(firstFacility || {}),
+                                identification: firstFacility?.identification,
+                                operator: firstFacility?.operator,
+                                otherOperators: firstFacility?.otherOperators,
+                                staff: firstFacility?.staff,
+                                projectOperator: project?.data?.operator || project?.operator
+                            });
+                        }
+                        
                         console.log(`🔍 Project "${projectName}": ${facilities.length} facilities`);
+                        
+                        // Get project-level operator for searching
+                        const projectOperator = project?.data?.operator || project?.operator || null;
                         
                         facilities.forEach((facility, facilityIndex) => {
                             const matches = window.extractDataPointsForSearch ? 
-                                window.extractDataPointsForSearch(facility, searchType, searchValue) :
-                                extractDataPointsForSearch(facility, searchType, searchValue);
+                                window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
+                                extractDataPointsForSearch(facility, searchType, searchValue, projectOperator);
                             if (matches.length > 0) {
                                 results.push({
                                     projectName: projectName,
