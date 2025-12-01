@@ -2881,9 +2881,19 @@ textarea {
         max-width: 100%;
     }
 
-    /* Buttons on Mobile - Full Width and Stacked */
+    /* Buttons on Mobile - Keep plus/note buttons small */
     .array-item .field-note-btn,
-    .array-item .add-plus-btn,
+    .array-item .add-plus-btn {
+        width: 28px !important;
+        max-width: 28px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        max-height: 28px !important;
+        min-height: 28px !important;
+        flex: 0 0 28px !important;
+        align-self: center;
+    }
+
     .array-item .remove-btn {
         align-self: stretch;
         width: 100% !important;
@@ -3405,3 +3415,106 @@ nav.main-navigation,
 .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
     background: #a1a1a1;
 }
+
+/* ============================================
+   MOBILE SECTION CONTROLS
+   ============================================ */
+
+/* Mobile section controls bar - hidden on desktop */
+.mobile-section-controls {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Mobile Section Controls Bar */
+    .mobile-section-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+        border: 1px solid #33A7B5;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        gap: 10px;
+    }
+
+    .mobile-section-controls .section-control-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #000435;
+    }
+
+    .mobile-section-controls .section-control-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .mobile-section-controls .btn-section-control {
+        padding: 6px 12px;
+        font-size: 12px;
+        background: #33A7B5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .mobile-section-controls .btn-section-control:hover,
+    .mobile-section-controls .btn-section-control:active {
+        background: #000435;
+    }
+
+    /* Make sections collapsible by default on mobile */
+    .section:not(.expanded) .section-content {
+        display: none !important;
+    }
+
+    /* Section header visual indicator for collapsed state */
+    .section:not(.expanded) .section-header {
+        border-radius: 8px;
+    }
+
+    .section:not(.expanded) .section-toggle::after {
+        content: ' ▼';
+        font-size: 10px;
+    }
+
+    .section.expanded .section-toggle::after {
+        content: ' ▲';
+        font-size: 10px;
+    }
+
+    /* Compact section headers on mobile */
+    .section-header {
+        padding: 10px 15px;
+        min-height: 44px; /* Touch-friendly target */
+    }
+
+    /* Visual feedback when tapping section header */
+    .section-header:active {
+        background: linear-gradient(135deg, #000435 0%, #33A7B5 100%);
+    }
+}
+
+/* Even smaller screens - stack controls vertically */
+@media (max-width: 480px) {
+    .mobile-section-controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .mobile-section-controls .section-control-btns {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .mobile-section-controls .btn-section-control {
+        flex: 1;
+    }
+}
+

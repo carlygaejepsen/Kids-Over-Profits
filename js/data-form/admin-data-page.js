@@ -558,8 +558,10 @@
                     toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
                 };
 
-                // Initialize with existing expanded state
-                setState(section.classList.contains('expanded'));
+                // Initialize with existing expanded state, but collapse on mobile
+                const isMobile = window.innerWidth <= 768;
+                const shouldExpand = isMobile ? false : section.classList.contains('expanded');
+                setState(shouldExpand);
 
                 const handleToggle = (event) => {
                     event.preventDefault();
@@ -580,6 +582,93 @@
                     }
                     handleToggle(event);
                 }, { passive: false });
+            });
+
+            // Initialize mobile section controls
+            initializeMobileSectionControls();
+        }
+
+        /**
+         * Initialize mobile section controls for expand/collapse all
+         */
+        function initializeMobileSectionControls() {
+            // Only add controls if on mobile and not already added
+            if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) {
+                return;
+            }
+
+            // Create the mobile controls bar
+            const controlsBar = document.createElement('div');
+            controlsBar.className = 'mobile-section-controls';
+            controlsBar.innerHTML = `
+                <span class="section-control-label">📋 Sections</span>
+                <div class="section-control-btns">
+                    <button class="btn-section-control" id="expand-all-sections">Expand All</button>
+                    <button class="btn-section-control" id="collapse-all-sections">Collapse All</button>
+                </div>
+            `;
+
+            // Insert at the beginning of the form wrapper or container
+            const facilityWrapper = document.getElementById('facility-main-wrapper');
+            const referrerWrapper = document.getElementById('referrer-main-wrapper');
+
+            if (facilityWrapper && facilityWrapper.offsetParent !== null) {
+                facilityWrapper.insertBefore(controlsBar.cloneNode(true), facilityWrapper.firstChild);
+            }
+            if (referrerWrapper) {
+                referrerWrapper.insertBefore(controlsBar.cloneNode(true), referrerWrapper.firstChild);
+            }
+
+            // Attach event listeners using event delegation
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'expand-all-sections' || e.target.closest('#expand-all-sections')) {
+                    e.preventDefault();
+                    expandAllSections();
+                }
+                if (e.target.id === 'collapse-all-sections' || e.target.closest('#collapse-all-sections')) {
+                    e.preventDefault();
+                    collapseAllSections();
+                }
+            });
+
+            console.log('[Mobile] Section controls initialized');
+        }
+
+        /**
+         * Expand all collapsible sections
+         */
+        function expandAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.add('expanded');
+                    content.style.display = 'block';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'true');
+                        toggle.setAttribute('title', 'Collapse section');
+                    }
+                }
+            });
+        }
+
+        /**
+         * Collapse all collapsible sections
+         */
+        function collapseAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.remove('expanded');
+                    content.style.display = 'none';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                        toggle.setAttribute('title', 'Expand section');
+                    }
+                }
             });
         }
 
