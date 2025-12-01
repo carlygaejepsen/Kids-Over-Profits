@@ -482,11 +482,21 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const year = document.getElementById('ownerChangeYear')?.value.trim() || '';
             const previous = document.getElementById('ownerChangePrevious')?.value.trim() || '';
+            const previousLink = document.getElementById('ownerChangePreviousLink')?.value.trim() || '';
             const newOwner = document.getElementById('ownerChangeNew')?.value.trim() || '';
+            const newOwnerLink = document.getElementById('ownerChangeNewLink')?.value.trim() || '';
             if (year && (previous || newOwner)) {
-                ownershipChanges.push({ year, previous, newOwner });
-                renderList(ownershipChanges, 'ownerChangeListOutput', item => `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`);
-                clearInputs(['ownerChangeYear', 'ownerChangePrevious', 'ownerChangeNew']);
+                ownershipChanges.push({ year, previous, previousLink, newOwner, newOwnerLink });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+                    const prevDisplay = item.previousLink 
+                        ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                        : escapeHtml(item.previous || '?');
+                    const newDisplay = item.newOwnerLink
+                        ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                        : escapeHtml(item.newOwner || '?');
+                    return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
+                });
+                clearInputs(['ownerChangeYear', 'ownerChangePrevious', 'ownerChangePreviousLink', 'ownerChangeNew', 'ownerChangeNewLink']);
             } else {
                 alert('Please enter a year and at least one owner name.');
             }
@@ -698,12 +708,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generate sentences for ownership changes
             if (ownershipChanges.length > 0) {
                 ownershipChanges.forEach(change => {
+                    // Create markdown links if URLs are available
+                    const prevText = change.previousLink 
+                        ? `[${escapeMarkdown(change.previous)}](${change.previousLink})`
+                        : escapeMarkdown(change.previous);
+                    const newText = change.newOwnerLink
+                        ? `[${escapeMarkdown(change.newOwner)}](${change.newOwnerLink})`
+                        : escapeMarkdown(change.newOwner);
+                    
                     if (change.previous && change.newOwner) {
-                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program changed ownership from ${escapeMarkdown(change.previous)} to ${escapeMarkdown(change.newOwner)}.`);
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program changed ownership from ${prevText} to ${newText}.`);
                     } else if (change.newOwner) {
-                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program was acquired by ${escapeMarkdown(change.newOwner)}.`);
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, the program was acquired by ${newText}.`);
                     } else if (change.previous) {
-                        historySentences.push(`In ${escapeMarkdown(change.year)}, ${escapeMarkdown(change.previous)} divested from the program.`);
+                        historySentences.push(`In ${escapeMarkdown(change.year)}, ${prevText} divested from the program.`);
                     }
                 });
             }
@@ -1339,11 +1357,17 @@ ${relatedMediaSection}
                 const newOwner = expandAcronym(priorOwnerLinkMatch[1]);
                 const year = priorOwnerLinkMatch[2].trim();
                 const previousOwner = priorOwnerLinkMatch[3].trim();
-                // const previousOwnerLink = priorOwnerLinkMatch[4]; // Could store link if needed
-                ownershipChanges.push({ year, previous: previousOwner, newOwner });
-                renderList(ownershipChanges, 'ownerChangeListOutput', item => 
-                    `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
-                );
+                const previousLink = priorOwnerLinkMatch[4].trim();
+                ownershipChanges.push({ year, previous: previousOwner, previousLink, newOwner, newOwnerLink: '' });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+                    const prevDisplay = item.previousLink 
+                        ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                        : escapeHtml(item.previous || '?');
+                    const newDisplay = item.newOwnerLink
+                        ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                        : escapeHtml(item.newOwner || '?');
+                    return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
+                });
             } else {
                 // Try without markdown link: "Prior to being purchased by NewOwner in YEAR, was owned by PreviousOwner"
                 const priorOwnerTextMatch = normalizedHistory.match(
@@ -1353,10 +1377,16 @@ ${relatedMediaSection}
                     const newOwner = expandAcronym(priorOwnerTextMatch[1]);
                     const year = priorOwnerTextMatch[2].trim();
                     const previousOwner = expandAcronym(priorOwnerTextMatch[3]);
-                    ownershipChanges.push({ year, previous: previousOwner, newOwner });
-                    renderList(ownershipChanges, 'ownerChangeListOutput', item => 
-                        `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
-                    );
+                    ownershipChanges.push({ year, previous: previousOwner, previousLink: '', newOwner, newOwnerLink: '' });
+                    renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+                        const prevDisplay = item.previousLink 
+                            ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                            : escapeHtml(item.previous || '?');
+                        const newDisplay = item.newOwnerLink
+                            ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                            : escapeHtml(item.newOwner || '?');
+                        return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
+                    });
                 }
             }
 
@@ -1367,10 +1397,17 @@ ${relatedMediaSection}
             if (purchasedInYearMatch && ownershipChanges.length === 0) {
                 const year = purchasedInYearMatch[1].trim();
                 const newOwner = expandAcronym(purchasedInYearMatch[2]);
-                ownershipChanges.push({ year, previous: '', newOwner });
-                renderList(ownershipChanges, 'ownerChangeListOutput', item => 
-                    `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
-                );
+                const newOwnerLink = purchasedInYearMatch[3].trim();
+                ownershipChanges.push({ year, previous: '', previousLink: '', newOwner, newOwnerLink });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+                    const prevDisplay = item.previousLink 
+                        ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                        : escapeHtml(item.previous || '?');
+                    const newDisplay = item.newOwnerLink
+                        ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                        : escapeHtml(item.newOwner || '?');
+                    return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
+                });
             }
 
             const agePatterns = [

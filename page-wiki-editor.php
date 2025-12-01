@@ -143,8 +143,18 @@ get_header();
                             <input type="text" id="ownerChangePrevious" placeholder="e.g., Aspen Education">
                         </div>
                         <div class="field-group">
+                            <label for="ownerChangePreviousLink">Previous Owner Link (optional):</label>
+                            <input type="text" id="ownerChangePreviousLink" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
                             <label for="ownerChangeNew">New Owner:</label>
                             <input type="text" id="ownerChangeNew" placeholder="e.g., Sequel Youth">
+                        </div>
+                        <div class="field-group">
+                            <label for="ownerChangeNewLink">New Owner Link (optional):</label>
+                            <input type="text" id="ownerChangeNewLink" placeholder="https://...">
                         </div>
                     </div>
                     <button type="button" class="add-btn" id="addOwnerChangeBtn">Add Ownership Change</button>
