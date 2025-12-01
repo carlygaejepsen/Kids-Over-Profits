@@ -1232,28 +1232,4 @@ get_header();
         </div>
     </div>
 
-<script>
-// Debug: Check if modal search function exists when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== DEBUG: Public Form Page Loaded ===');
-    console.log('performOrganizedSearchModal exists:', typeof window.performOrganizedSearchModal);
-    console.log('Modal element exists:', !!document.getElementById('data-organizer-modal'));
-    console.log('Search button exists:', !!document.getElementById('organize-search-btn-modal'));
-    
-    // Add a direct click handler as backup
-    var searchBtn = document.getElementById('organize-search-btn-modal');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            console.log('Search button clicked!');
-            console.log('performOrganizedSearchModal at click time:', typeof window.performOrganizedSearchModal);
-            if (typeof window.performOrganizedSearchModal === 'function') {
-                window.performOrganizedSearchModal();
-            } else {
-                alert('Search function not loaded yet. Check console for errors.');
-            }
-        });
-    }
-});
-</script>
-
 <?php get_footer(); ?>

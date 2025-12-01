@@ -1841,14 +1841,6 @@ function enqueue_facility_form_script() {
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
     $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
 
-    // Debug: Log the file path
-    error_log('KOP Loader path check: ' . $loader_file_path);
-    error_log('KOP Loader exists: ' . (file_exists($loader_file_path) ? 'YES' : 'NO'));
-
-    if (!file_exists($loader_file_path)) {
-        error_log('ERROR: db-form-loader.js not found at: ' . $loader_file_path);
-    }
-
     wp_enqueue_script(
         'db-form-loader',
         $loader_uri,
@@ -1901,13 +1893,6 @@ function enqueue_facility_form_script() {
     $autocomplete_script_file_path = get_stylesheet_directory() . $autocomplete_script_relative_path;
     $autocomplete_script_uri = get_stylesheet_directory_uri() . $autocomplete_script_relative_path;
 
-    error_log('KOP Autocomplete path check: ' . $autocomplete_script_file_path);
-    error_log('KOP Autocomplete exists: ' . (file_exists($autocomplete_script_file_path) ? 'YES' : 'NO'));
-
-    if (!file_exists($autocomplete_script_file_path)) {
-        error_log('ERROR: autocomplete.js not found at: ' . $autocomplete_script_file_path);
-    }
-
     wp_enqueue_script(
         'autocomplete-module-script',
         $autocomplete_script_uri,
@@ -1942,7 +1927,6 @@ function enqueue_facility_form_script() {
         'restSaveUrl' => esc_url_raw(rest_url('kop/v1/projects/save')),
         'restDeleteUrl' => esc_url_raw(rest_url('kop/v1/projects/delete')),
     );
-    error_log('KOP Config being localized: ' . json_encode($config));
 
     wp_localize_script(
         'db-form-loader',

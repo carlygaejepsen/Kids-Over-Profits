@@ -1,8 +1,8 @@
 ---
 deployment:
   tasks:
-    # Deploy all files to the WordPress staging child theme directory
-    - export DEPLOYPATH=/home/kidsover/public_html/staging/wp-content/themes/child/
+    # Deploy all files to the WordPress child theme directory
+    - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
 
     # Remove WordPress content snippet files that shouldn't be deployed
     - /bin/rm -f $DEPLOYPATH/tti-program-index 2>/dev/null || true
@@ -15,7 +15,6 @@ deployment:
     - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp -R templates $DEPLOYPATH 2>/dev/null || true
     - /bin/cp *.php $DEPLOYPATH 2>/dev/null || true
     - /bin/cp *.html $DEPLOYPATH 2>/dev/null || true
 
@@ -29,8 +28,7 @@ deployment:
 
     # Set proper permissions
     - /bin/chmod 644 $DEPLOYPATH/*.php 2>/dev/null || true
-    - /bin/chmod 600 $DEPLOYPATH/.env 2>/dev/null || true
-    - /bin/chmod 600 $DEPLOYPATH/api/config.local.php 2>/dev/null || true
+    - /bin/chmod 644 $DEPLOYPATH/.env 2>/dev/null || true
 
     # Ensure .env exists on server (create from example if missing)
     - test -f $DEPLOYPATH/.env || /bin/cp $DEPLOYPATH/.env.example $DEPLOYPATH/.env
