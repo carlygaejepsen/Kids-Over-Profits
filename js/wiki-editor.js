@@ -1292,9 +1292,36 @@ ${relatedMediaSection}
                 setValue('accreditingBodyLink', sanitizeUrl(accreditMatch[2]));
             }
 
-            // Capture remaining history text that wasn't parsed into specific fields
-            // This preserves any extra paragraphs, program descriptions, etc.
-            setValue('historyNotes', historySection);
+            // Capture sentences that weren't matched by any specific pattern
+            // Split into sentences and filter out ones we already captured
+            const knownPatterns = [
+                /(?:founded|opened|started|established|began)\s+(?:in\s+)?\d{4}/i,
+                /is\s+(?:an?|the)?\s*\[.+?\]\(.+?\)\s+(?:behavior|program|school|facility)/i,
+                /owned by|operated by|run by|part of/i,
+                /\(\d{1,2}\s*-\s*\d{1,2}\)/i,
+                /aged?\s+(?:between\s+)?\d{1,2}/i,
+                /ages?\s+(?:between\s+)?\d{1,2}/i,
+                /struggling with/i,
+                /average length of stay/i,
+                /tuition/i,
+                /NATSAP/i,
+                /located\s+(?:at|as|in)/i,
+                /accredited/i,
+                /serves\s+.*?(?:children|boys|girls|teens|youth|young people)/i,
+                /specializes?\s+in\s+treating/i
+            ];
+            
+            const sentences = historySection.split(/(?<=[.!?])\s+/);
+            const extraSentences = sentences.filter(sentence => {
+                const trimmed = sentence.trim();
+                if (!trimmed) return false;
+                // Keep if it doesn't match any known patterns
+                return !knownPatterns.some(pattern => pattern.test(trimmed));
+            });
+            
+            if (extraSentences.length > 0) {
+                setValue('historyNotes', extraSentences.join(' '));
+            }
         }
 
         // Parse Staff section
