@@ -205,15 +205,24 @@ function getAllOperators() {
         const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
 
         Object.values(projects).forEach(project => {
-            if (project.data?.operator?.name) operators.add(project.data.operator.name);
-            if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
-            if (project.data?.operator?.otherNames) {
-                project.data.operator.otherNames.forEach(name => operators.add(name));
+            // Skip project-level operator data for location projects
+            // (location project names are places, not companies)
+            if (project.category !== 'locations') {
+                if (project.data?.operator?.name) operators.add(project.data.operator.name);
+                if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
+                if (project.data?.operator?.otherNames) {
+                    project.data.operator.otherNames.forEach(name => operators.add(name));
+                }
             }
 
+            // Always collect facility-level operator data (these are valid company names)
             project.data?.facilities?.forEach(facility => {
                 if (facility.identification?.currentOperator) {
                     operators.add(facility.identification.currentOperator);
+                }
+                // Also collect sourceOperator from location project facilities
+                if (facility.sourceOperator?.name) {
+                    operators.add(facility.sourceOperator.name);
                 }
                 facility.otherOperators?.forEach(op => operators.add(op));
             });
