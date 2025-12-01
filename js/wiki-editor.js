@@ -746,11 +746,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 staffSection = sortedStaff.map(s => {
-                    const roleText = escapeMarkdown(s.role);
-                    const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
+                    let roleText = escapeMarkdown(s.role);
                     
                     // Determine if this is a former staff member
                     const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
+                    const isFormerStaff = s.isFormer || roleHasFormer;
+                    
+                    // If marked as former, remove "current" from role
+                    if (isFormerStaff) {
+                        roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
+                    }
+                    
+                    const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
                     
                     let verb, descriptor;
                     if (s.isFormer && !roleHasFormer) {
