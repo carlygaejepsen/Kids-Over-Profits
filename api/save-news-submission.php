@@ -167,8 +167,10 @@ try {
         $articleType = 'general';
     }
     
-    // Format date
-    if ($publicationDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $publicationDate)) {
+    // Format date - handle empty strings
+    if (empty($publicationDate)) {
+        $publicationDate = null;
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $publicationDate)) {
         $timestamp = strtotime($publicationDate);
         $publicationDate = $timestamp ? date('Y-m-d', $timestamp) : null;
     }
