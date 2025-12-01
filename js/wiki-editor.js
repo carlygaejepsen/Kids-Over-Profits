@@ -1345,137 +1345,54 @@ ${relatedMediaSection}
                 const name = nameMatch[1].trim();
                 console.log(`  → Found name: "${name}"`);
 
-                // Extract role from first sentence - be flexible with verb phrases
-                // Patterns: "is the X", "was the X", "currently works as", "works as", "served as"
-                let roleMatch = normalized.match(/^\*\*[^*]+\*\*\s+(?:was|is)\s+(?:the|a|an)?\s+([^\.]+)\./i);
-
+                // Extract role from first sentence - find the first real sentence end
+                // The first sentence pattern: **Name** is/was the Role at Place.
+                const afterName = normalized.substring(normalized.indexOf('**', 2) + 2).trim();
+                
+                // Find first real sentence end (period followed by space+capital or end)
+                let roleEndIdx = -1;
+                for (let i = 0; i < afterName.length; i++) {
+                    if (afterName[i] === '.') {
+                        const next = afterName[i + 1];
+                        const nextNext = afterName[i + 2];
+                        // Skip if followed by lowercase (URL like .com)
+                        if (next && /[a-z]/.test(next)) continue;
+                        // Skip if inside parentheses (likely a URL)
+                        const before = afterName.substring(Math.max(0, i - 5), i);
+                        if (/https?:|www\./i.test(before)) continue;
+                        // Real sentence end
+                        if (!next || next === ' ') {
+                            roleEndIdx = i;
+                            break;
+                        }
+                    }
+                }
+                
                 let role = '';
-                if (roleMatch) {
-                    role = roleMatch[1].trim();
-                    console.log(`  → Role (pattern match): "${role}"`);
+                if (roleEndIdx > 0) {
+                    const firstSentence = afterName.substring(0, roleEndIdx);
+                    // Extract role: "is/was (the) ROLE"
+                    const roleMatch = firstSentence.match(/^(?:was|is)\s+(?:the|a|an)?\s*(.+)/i);
+                    if (roleMatch) {
+                        role = roleMatch[1].trim();
+                    } else {
+                        role = firstSentence.trim();
+                    }
+                    console.log(`  → Role: "${role}"`);
                 } else {
-                    // Fallback: try to extract anything after the name until first period
-                    const fallbackMatch = normalized.match(/^\*\*[^*]+\*\*\s+([^\.]+)\./);
-                    if (fallbackMatch) {
-                        role = fallbackMatch[1].trim();
-                        console.log(`  → Role (fallback): "${role}"`);
-                    } else {
-                        // If still no match, use a default role but still add the person
-                        console.warn(`  → Could not extract role for: ${name}, using default "Staff Member"`);
-                        role = 'Staff Member';
-                    }
+                    console.warn(`  → Could not extract role for: ${name}, using default`);
+                    role = 'Staff Member';
                 }
 
-                // Extract previous roles - look for work history patterns
-                const previousRoles = [];
-
-                // Pattern: "Previously, X worked as Y at Z"
-                const prevMatches = normalized.matchAll(/(?:Previously|She previously|He previously),?\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?(?:\s+in\s+\d{4})?[\.]/gi);
-                for (const match of prevMatches) {
-                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
-                }
-
-                // Pattern: "She/He then worked as Y at Z"
-                const thenMatches = normalized.matchAll(/(?:She|He)\s+then\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
-                for (const match of thenMatches) {
-                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
-                }
-
-                // Pattern: "After this, X worked as Y at Z"
-                const afterMatches = normalized.matchAll(/After\s+this,\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
-                for (const match of afterMatches) {
-                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
-                }
-
-                // Pattern: "began her/his career...as Y at Z"
-                const beganMatches = normalized.matchAll(/(?:began|started)\s+(?:her|his)\s+career[^\.]*?\s+as\s+(?:a|an|the)?\s*([^\.]+?)\s+at\s+([^\.]+?)(?:\s+from\s+[^\.]+)?[\.]/gi);
-                for (const match of beganMatches) {
-                    previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
-                }
-
-                // Pattern: "Before founding X, Y worked as Z"
-                const beforeMatches = normalized.matchAll(/Before\s+(?:founding|starting)\s+[^,]+,\s+\w+\s+worked\s+as\s+(?:a|an|the)?\s*([^\.]+?)(?:\s+at\s+([^\.]+?))?[\.]/gi);
-                for (const match of beforeMatches) {
-                    if (match[2]) {
-                        previousRoles.push(`${match[1].trim()} at ${match[2].trim()}`);
-                    } else {
-                        previousRoles.push(match[1].trim());
-                    }
-                }
-
-                // Extract bio - everything after first sentence, excluding work history sentences
-                // Find end of first sentence - skip periods inside URLs/links
-                const findFirstSentenceEnd = (text) => {
-                    let i = 0;
-                    while (i < text.length) {
-                        if (text[i] === '.') {
-                            // Check if this looks like end of sentence (followed by space + capital or end)
-                            const next = text[i + 1];
-                            const nextNext = text[i + 2];
-                            // Not end of sentence if followed by lowercase (like .com, .org)
-                            if (next && /[a-z]/.test(next)) {
-                                i++;
-                                continue;
-                            }
-                            // Not end of sentence if inside a URL pattern
-                            const before = text.substring(Math.max(0, i - 10), i);
-                            if (/https?:|www\.|\.com|\.org|\.net|\.edu|\.gov/i.test(before)) {
-                                i++;
-                                continue;
-                            }
-                            // Looks like a real sentence end
-                            if (!next || next === ' ' || next === '\n') {
-                                return i + 1;
-                            }
-                        }
-                        i++;
-                    }
-                    return text.length;
-                };
+                // For bio, get everything after the first sentence
+                // Don't try to parse work history - just keep the whole bio with links intact
+                const bioStart = roleEndIdx > 0 ? roleEndIdx + 1 : 0;
+                const bioText = afterName.substring(bioStart).trim();
                 
-                const firstSentenceEnd = findFirstSentenceEnd(normalized);
-                const remainingText = normalized.substring(firstSentenceEnd).trim();
-                
-                // Split into sentences, but don't split on periods in URLs
-                const splitSentences = (text) => {
-                    const results = [];
-                    let current = '';
-                    let i = 0;
-                    while (i < text.length) {
-                        current += text[i];
-                        if (text[i] === '.') {
-                            const next = text[i + 1];
-                            // Check if this is a real sentence boundary
-                            if (!next || next === ' ' || next === '\n') {
-                                // Check it's not part of a URL
-                                const lookback = current.substring(Math.max(0, current.length - 15));
-                                if (!/https?:|www\.|\.com|\.org|\.net|\.edu|\.gov/i.test(lookback) || !next) {
-                                    results.push(current.trim());
-                                    current = '';
-                                    if (next === ' ') i++; // skip the space
-                                }
-                            }
-                        }
-                        i++;
-                    }
-                    if (current.trim()) results.push(current.trim());
-                    return results;
-                };
-                
-                const sentences = splitSentences(remainingText);
-                const bioSentences = sentences.filter(s => {
-                    const trimmed = s.trim();
-                    if (trimmed.length === 0) return false;
-                    // Exclude sentences that are about work history
-                    if (/(?:worked|began|started|served)\s+(?:as|at|her|his)/i.test(trimmed)) return false;
-                    if (/(?:Previously|She|He)\s+(?:then|previously)/i.test(trimmed)) return false;
-                    if (/After\s+this/i.test(trimmed)) return false;
-                    if (/Before\s+(?:founding|starting)/i.test(trimmed)) return false;
-                    return true;
-                });
-                const bio = bioSentences.join('. ').trim();
+                // Keep the full bio text - it contains markdown links we want to preserve
+                const bio = bioText;
 
-                addStaff(name, role, bio, previousRoles);
+                addStaff(name, role, bio, []);
             });
 
             renderStaffList();
