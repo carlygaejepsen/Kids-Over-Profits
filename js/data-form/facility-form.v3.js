@@ -2003,6 +2003,10 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             }));
 
             showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
+            
+            // Scroll to form input area after loading project
+            scrollToFormInput();
+            
             resolve();
         }, 100); // A small delay to ensure DOM updates can happen
     });
@@ -3064,7 +3068,39 @@ function navigateToFacility(index) {
         updateFacilityControls();
         updateTableOfContents();
         updateToolbarFacilityInfo();
+        scrollToFormInput();
     }
+}
+
+/**
+ * Scroll the view to the form input section after loading a facility
+ * Targets the facility controls or first form section for best UX
+ */
+function scrollToFormInput() {
+    // Small delay to ensure DOM is updated
+    setTimeout(() => {
+        // Try to scroll to the facility controls (where input starts)
+        const facilityControls = document.querySelector('.facility-controls');
+        const operatorSection = document.getElementById('operator-section');
+        const identificationSection = document.getElementById('identification-section');
+        const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+        
+        // Find the best target to scroll to
+        const scrollTarget = facilityControls || operatorSection || identificationSection || facilityMainWrapper;
+        
+        if (scrollTarget) {
+            // Account for fixed toolbar height
+            const toolbarHeight = document.querySelector('.fixed-toolbar')?.offsetHeight || 0;
+            const offset = toolbarHeight + 20; // Extra padding
+            
+            const targetPosition = scrollTarget.getBoundingClientRect().top + window.pageYOffset - offset;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }, 50);
 }
 
 // ============================================
@@ -3483,6 +3519,7 @@ function previousFacility() {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        scrollToFormInput();
         setTimeout(() => { isNavigating = false; }, 100);
     }
 }
@@ -3495,6 +3532,7 @@ function nextFacility() {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        scrollToFormInput();
         setTimeout(() => { isNavigating = false; }, 100);
     }
 }
@@ -4725,6 +4763,7 @@ window.previousFacility = previousFacility;
 window.nextFacility = nextFacility;
 window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
+window.scrollToFormInput = scrollToFormInput;
 // copyToClipboard and downloadJSON now exported from utilities.js module
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 // Only expose autocomplete helpers if the module did not already register them
