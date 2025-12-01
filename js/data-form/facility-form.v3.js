@@ -507,16 +507,24 @@ function normalizeProjectData(data) {
                 });
             }
 
-            // Normalize facilityDetails
-            if (normalized.facilityDetails) {
-                normalized.facilityDetails = normalizeObject(normalized.facilityDetails, {
-                    type: ['type', 'Type', 'facilityType', 'facility_type'],
-                    capacity: ['capacity', 'Capacity'],
-                    currentCensus: ['currentCensus', 'current_census', 'census'],
-                    gender: ['gender', 'Gender'],
-                    ageRange: ['ageRange', 'age_range', 'AgeRange']
-                });
+            // Normalize facilityDetails - ensure it exists and check for root-level type fields
+            if (!normalized.facilityDetails) {
+                normalized.facilityDetails = {};
             }
+            // Check for type at root level and move to facilityDetails
+            if (!normalized.facilityDetails.type) {
+                const rootType = getValue(normalized, 'type', 'Type', 'facilityType', 'facility_type', 'programType', 'program_type');
+                if (rootType) {
+                    normalized.facilityDetails.type = rootType;
+                }
+            }
+            normalized.facilityDetails = normalizeObject(normalized.facilityDetails, {
+                type: ['type', 'Type', 'facilityType', 'facility_type', 'programType', 'program_type'],
+                capacity: ['capacity', 'Capacity'],
+                currentCensus: ['currentCensus', 'current_census', 'census'],
+                gender: ['gender', 'Gender'],
+                ageRange: ['ageRange', 'age_range', 'AgeRange']
+            });
 
             // Normalize operatingPeriod
             if (normalized.operatingPeriod) {

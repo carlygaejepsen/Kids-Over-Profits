@@ -1375,6 +1375,7 @@
                         break;
                         
                     case 'programType':
+                        // Check facilityDetails.type (primary and normalized location)
                         if (facility.facilityDetails?.type && 
                             facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
                             matches.push(facility.facilityDetails.type);
@@ -1597,6 +1598,7 @@
                             console.log(`🔍 First facility in "${projectName}" structure:`, {
                                 keys: Object.keys(firstFacility || {}),
                                 identification: firstFacility?.identification,
+                                facilityDetails: firstFacility?.facilityDetails,
                                 operator: firstFacility?.operator,
                                 otherOperators: firstFacility?.otherOperators,
                                 staff: firstFacility?.staff,
