@@ -103,8 +103,33 @@ function normalize_project_payload($json)
         return null;
     }
 
+    $maybeData = $decoded['data'] ?? null;
+    if (is_string($maybeData)) {
+        $parsed = json_decode($maybeData, true);
+        if (is_array($parsed)) {
+            $decoded['data'] = $parsed;
+        }
+    }
+
     if (isset($decoded['data']) && is_array($decoded['data'])) {
-        return $decoded['data'];
+        $data = $decoded['data'];
+        // Legacy: facilities might be stringified or nested
+        if (isset($data['facilities']) && is_string($data['facilities'])) {
+            $parsedFacilities = json_decode($data['facilities'], true);
+            if (is_array($parsedFacilities)) {
+                $data['facilities'] = $parsedFacilities;
+            }
+        } elseif (isset($data['facilities']['facilities']) && is_array($data['facilities']['facilities'])) {
+            $data['facilities'] = $data['facilities']['facilities'];
+        } elseif (isset($data['facility']) && is_array($data['facility'])) {
+            $data['facilities'] = $data['facility'];
+        } elseif (isset($data['facility']) && is_string($data['facility'])) {
+            $parsedFacilities = json_decode($data['facility'], true);
+            if (is_array($parsedFacilities)) {
+                $data['facilities'] = $parsedFacilities;
+            }
+        }
+        return $data;
     }
 
     if (isset($decoded['project']) && is_array($decoded['project'])) {
@@ -445,9 +470,15 @@ function collect_gender_values(array $data, array &$set)
 
 function collect_location_values(array $data, array &$set)
 {
+    // Location project name (for location aggregates)
+    if (!empty($data['name'])) {
+        add_value($set, $data['name']);
+    }
+
     if (!empty($data['operator']) && is_array($data['operator'])) {
         add_value($set, $data['operator']['location'] ?? null);
         add_value($set, $data['operator']['headquarters'] ?? null);
+        add_value($set, $data['operator']['name'] ?? null);
     }
 
     if (empty($data['facilities']) || !is_array($data['facilities'])) {
@@ -647,6 +678,7 @@ try {
     $sources = [
         "SELECT json_data AS payload FROM facilities_master",
         "SELECT json_data AS payload FROM referrers_master",
+        "SELECT json_data AS payload FROM locations_master",
         "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
     ];
 

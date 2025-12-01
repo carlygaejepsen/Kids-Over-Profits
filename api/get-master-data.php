@@ -5,19 +5,22 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
+    // Tables are stored without WordPress prefix in this database
+    $prefix = '';
+
     // Query all three master tables: facilities, referrers, and locations
-    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
     $stmt1->execute();
     $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
+    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}referrers_master");
     $stmt2->execute();
     $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
     // locations_master is optional - may not exist yet
     $locationsResults = [];
     try {
-        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -32,28 +35,33 @@ try {
         // Decode the stored JSON
         $stored = json_decode($row['json_data'], true);
 
-        // Check if this is the new format (with metadata) or old format (just data)
-        if (isset($stored['data']) && isset($stored['timestamp'])) {
-            // New format: already has the complete project structure
-            // Ensure name field is set correctly
+        // Detect format by checking where facilities/operator live:
+        // NEW format: { name, data: { operator, facilities }, category?, timestamp? }
+        // OLD format: { operator, facilities, ... } (at root level)
+        
+        $hasNestedFacilities = isset($stored['data']['facilities']) && is_array($stored['data']['facilities']);
+        $hasNestedOperator = isset($stored['data']['operator']) && is_array($stored['data']['operator']);
+        $hasRootFacilities = isset($stored['facilities']) && is_array($stored['facilities']);
+        $hasRootOperator = isset($stored['operator']) && is_array($stored['operator']);
+        
+        // It's NEW format if data contains facilities OR operator
+        $isNewFormat = $hasNestedFacilities || $hasNestedOperator;
+        
+        if ($isNewFormat) {
+            // New format: data is already nested correctly, just pass through
             $stored['name'] = $stored['name'] ?? $row['unique_name'];
-            // Ensure category is set
-            if (!isset($stored['category'])) {
-                $stored['category'] = 'companies'; // Default category
-            }
-            // Ensure currentFacilityIndex is set
-            if (!isset($stored['currentFacilityIndex'])) {
-                $stored['currentFacilityIndex'] = 0;
-            }
+            $stored['category'] = $stored['category'] ?? 'companies';
+            $stored['currentFacilityIndex'] = $stored['currentFacilityIndex'] ?? 0;
+            $stored['timestamp'] = $stored['timestamp'] ?? date('c');
             $projects[$row['unique_name']] = $stored;
         } else {
-            // Old format: only has data, need to reconstruct
+            // Old format: facilities/operator at root, need to wrap in 'data'
             $projects[$row['unique_name']] = [
                 'name' => $row['unique_name'],
                 'data' => $stored,
                 'timestamp' => $stored['timestamp'] ?? date('c'),
                 'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => $stored['category'] ?? 'companies'  // Default for legacy projects
+                'category' => $stored['category'] ?? 'companies'
             ];
         }
     }

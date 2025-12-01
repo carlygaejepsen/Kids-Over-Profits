@@ -87,11 +87,12 @@
             getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
         LOAD_PROJECTS:
             FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
+            FACILITY_FORM_CONFIG.projectsApiUrl ||
             getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
         AUTOCOMPLETE:
             FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
             FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-            getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php')
+            '/wp-json/kop/v1/autocomplete'  // Use WordPress REST API (more reliable)
     };
 
     const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
@@ -233,7 +234,13 @@
         const assignProject = (projectName, projectPayload) => {
             if (!projectName) return;
             const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
-            const rawData = source.data ? source.data : source;
+            
+            // Handle cases where data is double-nested (e.g., { data: { data: {...} } })
+            let rawData = source.data || source;
+            if (rawData.data && Object.keys(rawData).length <= 3) { // Heuristic: if outer 'data' has few keys besides 'data' itself
+                rawData = rawData.data;
+            }
+
             const name = source.name || projectName;
             normalized[projectName] = {
                 name,
@@ -273,48 +280,24 @@
      * Load custom autocomplete data from localStorage
      */
     function loadCustomDataFromLocalStorage() {
-        // Helper to deduplicate and clean arrays
         const dedupe = (arr) => [...new Set(arr.filter(v => v && v.trim()).map(v => v.trim()))];
-
+    
+        const customDataKeys = [
+            'customOperators', 'customFacilityNames', 'customHumanNames', 'customReferrers',
+            'customFacilityTypes', 'customCertifications', 'customAccreditations', 'customMemberships',
+            'customLicensing', 'customInvestors', 'customStaffRoles', 'customStatuses',
+            'customGenders', 'customLocations', 'customOperatingPeriods'
+        ];
+    
         try {
-            window.customOperators = dedupe(JSON.parse(localStorage.getItem('customOperators') || '[]'));
-            window.customFacilityNames = dedupe(JSON.parse(localStorage.getItem('customFacilityNames') || '[]'));
-            window.customHumanNames = dedupe(JSON.parse(localStorage.getItem('customHumanNames') || '[]'));
-            window.customReferrers = dedupe(JSON.parse(localStorage.getItem('customReferrers') || '[]'));
-            window.customFacilityTypes = dedupe(JSON.parse(localStorage.getItem('customFacilityTypes') || '[]'));
-            window.customCertifications = dedupe(JSON.parse(localStorage.getItem('customCertifications') || '[]'));
-            window.customAccreditations = dedupe(JSON.parse(localStorage.getItem('customAccreditations') || '[]'));
-            window.customMemberships = dedupe(JSON.parse(localStorage.getItem('customMemberships') || '[]'));
-            window.customLicensing = dedupe(JSON.parse(localStorage.getItem('customLicensing') || '[]'));
-            window.customInvestors = dedupe(JSON.parse(localStorage.getItem('customInvestors') || '[]'));
-            window.customStaffRoles = dedupe(JSON.parse(localStorage.getItem('customStaffRoles') || '[]'));
-            window.customStatuses = dedupe(JSON.parse(localStorage.getItem('customStatuses') || '[]'));
-            window.customGenders = dedupe(JSON.parse(localStorage.getItem('customGenders') || '[]'));
-            window.customLocations = dedupe(JSON.parse(localStorage.getItem('customLocations') || '[]'));
-            window.customOperatingPeriods = dedupe(JSON.parse(localStorage.getItem('customOperatingPeriods') || '[]'));
+            customDataKeys.forEach(key => {
+                const storedValue = localStorage.getItem(key) || '[]';
+                const cleanedValue = dedupe(JSON.parse(storedValue));
+                window[key] = cleanedValue;
+                localStorage.setItem(key, JSON.stringify(cleanedValue));
+            });
         } catch (e) {
-            console.warn('Failed to load custom data from localStorage:', e);
-        }
-
-        // Save the cleaned, deduplicated values back to localStorage
-        try {
-            localStorage.setItem('customOperators', JSON.stringify(window.customOperators || []));
-            localStorage.setItem('customFacilityNames', JSON.stringify(window.customFacilityNames || []));
-            localStorage.setItem('customHumanNames', JSON.stringify(window.customHumanNames || []));
-            localStorage.setItem('customReferrers', JSON.stringify(window.customReferrers || []));
-            localStorage.setItem('customFacilityTypes', JSON.stringify(window.customFacilityTypes || []));
-            localStorage.setItem('customCertifications', JSON.stringify(window.customCertifications || []));
-            localStorage.setItem('customAccreditations', JSON.stringify(window.customAccreditations || []));
-            localStorage.setItem('customMemberships', JSON.stringify(window.customMemberships || []));
-            localStorage.setItem('customLicensing', JSON.stringify(window.customLicensing || []));
-            localStorage.setItem('customInvestors', JSON.stringify(window.customInvestors || []));
-            localStorage.setItem('customStaffRoles', JSON.stringify(window.customStaffRoles || []));
-            localStorage.setItem('customStatuses', JSON.stringify(window.customStatuses || []));
-            localStorage.setItem('customGenders', JSON.stringify(window.customGenders || []));
-            localStorage.setItem('customLocations', JSON.stringify(window.customLocations || []));
-            localStorage.setItem('customOperatingPeriods', JSON.stringify(window.customOperatingPeriods || []));
-        } catch (e) {
-            console.warn('Failed to save cleaned custom data:', e);
+            console.warn('Failed to load or save custom data from/to localStorage:', e);
         }
     }
 
@@ -386,10 +369,42 @@
             }
 
             const result = await response.json();
+            
+            // DEBUG: Log RAW Acadia from API
+            debugLog('🔬🔬 RAW ACADIA from API:', result.projects?.Acadia 
+                ? JSON.stringify(result.projects.Acadia).substring(0, 800) 
+                : 'Not found');
+            
             debugLog('Received result:', result);
 
-            if (result.success && result.projects) {
+            // Support both formats:
+            // 1. Direct PHP API: { success: true, projects: {...} }
+            // 2. WordPress REST API: { source: 'database', projects: {...} }
+            const hasProjects = result.projects && typeof result.projects === 'object';
+            const isSuccess = result.success || result.source || hasProjects;
+
+            if (isSuccess && hasProjects) {
+                // DEBUG: Log sample project structures
+                debugLog('🔬 LOADED PROJECTS - Sample data structure:');
+                const firstFive = Object.keys(result.projects).slice(0, 5);
+                firstFive.forEach(name => {
+                    const p = result.projects[name];
+                    debugLog(`  ${name}: data=${!!p.data}, data.facilities=${p.data?.facilities?.length || 0}, root.facilities=${p.facilities?.length || 0}`);
+                });
+                
                 window.projects = result.projects;
+                
+                // DEBUG: Verify structure immediately after assignment
+                const acadia = window.projects['Acadia'];
+                if (acadia && DEBUG_LOGGING_ENABLED) {
+                    debugLog('🔬 ACADIA RIGHT AFTER LOAD:', {
+                        'acadia.data exists': !!acadia.data,
+                        'acadia.data.facilities exists': !!acadia.data?.facilities,
+                        'acadia.data.facilities.length': acadia.data?.facilities?.length ?? 'N/A',
+                        'acadia.data.data exists': !!acadia.data?.data,
+                        'acadia.data keys': acadia.data ? Object.keys(acadia.data) : 'no data'
+                    });
+                }
 
                 invalidateAggregatedData();
 

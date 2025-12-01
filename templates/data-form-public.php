@@ -89,7 +89,8 @@
                         </div>
                     </div>
 
-                    <div id="private-ownership-toggle-section" class="view-hidden" data-section-views="locations">
+                    <!-- Private Ownership Toggle for Locations -->
+                    <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
                             <span>Privately Owned Facility (not part of a chain):</span>
                             <div style="display: flex; align-items: center; gap: 10px;">
@@ -292,7 +293,7 @@
             <!-- Referrer Submission Section -->
             <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
                 <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                    <h2 class="section-title" style="color: white; pointer-events: none;">📮 Save Referrer Project</h2>
+                    <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Referrer for Review</h2>
                 </div>
                 <div class="section-content" style="display: block;">
                     <div class="form-group">
@@ -301,7 +302,7 @@
                     </div>
                     <div class="form-group">
                         <button type="button" class="save-master-btn" id="save-referrer-project-btn">
-                            📮 Save Referrer Project
+                            📮 Submit for Review
                         </button>
                     </div>
                 </div>
@@ -1161,19 +1162,13 @@
     <!-- Data Organizer Modal -->
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content">
-            <div class="organizer-modal-header">
-                <h2>🔍 Search Facility Data</h2>
+            <div class="organizer-modal-header" style="padding: 12px 20px;">
+                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
             </div>
-            <div class="organizer-modal-body">
-                <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <p class="info-text" style="margin: 0; color: #4b5563;">
-                        <strong>🔍 Find all facilities by a specific data point:</strong>
-                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
-                    </p>
-                </div>
+            <div class="organizer-modal-body" style="padding: 15px 20px;">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div class="form-group">
                         <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
@@ -1195,8 +1190,8 @@
                 </div>
 
                 <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
-                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
+                    <button class="btn" id="organize-search-btn-modal" onclick="if(window.performOrganizedSearchModal) { window.performOrganizedSearchModal(); } else { console.error('performOrganizedSearchModal not found'); alert('Search function not loaded. Please refresh the page.'); }" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" onclick="if(window.clearOrganizerResultsModal) { window.clearOrganizerResultsModal(); }" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
                 </div>
 
                 <div id="organize-results-modal" class="d-none">
@@ -1234,3 +1229,27 @@
             </div>
         </div>
     </div>
+
+<script>
+// Debug: Check if modal search function exists when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== DEBUG: Public Form Page Loaded ===');
+    console.log('performOrganizedSearchModal exists:', typeof window.performOrganizedSearchModal);
+    console.log('Modal element exists:', !!document.getElementById('data-organizer-modal'));
+    console.log('Search button exists:', !!document.getElementById('organize-search-btn-modal'));
+    
+    // Add a direct click handler as backup
+    var searchBtn = document.getElementById('organize-search-btn-modal');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            console.log('Search button clicked!');
+            console.log('performOrganizedSearchModal at click time:', typeof window.performOrganizedSearchModal);
+            if (typeof window.performOrganizedSearchModal === 'function') {
+                window.performOrganizedSearchModal();
+            } else {
+                alert('Search function not loaded yet. Check console for errors.');
+            }
+        });
+    }
+});
+</script>

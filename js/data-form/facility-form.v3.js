@@ -28,7 +28,10 @@ const getAPIEndpoints = () => {
         SAVE_SUGGESTION: saveSuggestion,
         SAVE_PROJECT: (typeof window !== 'undefined' && window.FORM_MODE === 'suggestions') ? saveSuggestion : saveMaster,
         LOAD_PROJECTS: loadProjects,
-        AUTOCOMPLETE: autocomplete
+        AUTOCOMPLETE: autocomplete,
+        REST_SAVE_PROJECT: FACILITY_FORM_CONFIG.restSaveUrl || API_ENDPOINT_FALLBACKS.REST_SAVE_PROJECT || '/wp-json/kop/v1/projects/save',
+        REST_DELETE_PROJECT: FACILITY_FORM_CONFIG.restDeleteUrl || API_ENDPOINT_FALLBACKS.REST_DELETE_PROJECT || '/wp-json/kop/v1/projects/delete',
+        REST_NONCE: FACILITY_FORM_CONFIG.restNonce || ''
     };
 };
 
@@ -106,6 +109,12 @@ const DEFAULT_SAVE_SUGGESTION = FACILITY_FORM_CONFIG.endpoints?.SAVE_SUGGESTION 
     FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT_SUGGESTION ||
     getResolverEndpoint('save-suggestion.php', '/wp-content/themes/child/api/save-suggestion.php');
 
+// WordPress REST API endpoints as reliable fallbacks
+const REST_API_BASE = '/wp-json/kop/v1';
+const REST_SAVE_PROJECT = REST_API_BASE + '/projects/save';
+const REST_DELETE_PROJECT = REST_API_BASE + '/projects/delete';
+const REST_LOAD_PROJECTS = REST_API_BASE + '/projects';
+
 const defaultApiPaths = {
     SAVE_MASTER: DEFAULT_SAVE_MASTER,
     SAVE_SUGGESTION: DEFAULT_SAVE_SUGGESTION,
@@ -115,7 +124,11 @@ const defaultApiPaths = {
     AUTOCOMPLETE:
         FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
         FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php')
+        getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php'),
+    // REST API fallbacks
+    REST_SAVE_PROJECT: REST_SAVE_PROJECT,
+    REST_DELETE_PROJECT: REST_DELETE_PROJECT,
+    REST_LOAD_PROJECTS: REST_LOAD_PROJECTS
 };
 
 const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
@@ -127,7 +140,9 @@ API_ENDPOINT_FALLBACKS = {
     SAVE_MASTER: API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
     SAVE_SUGGESTION: API_ENDPOINTS.SAVE_SUGGESTION || API_ENDPOINTS.SAVE_MASTER || API_ENDPOINTS.SAVE_PROJECT,
     LOAD_PROJECTS: API_ENDPOINTS.LOAD_PROJECTS,
-    AUTOCOMPLETE: API_ENDPOINTS.AUTOCOMPLETE
+    AUTOCOMPLETE: API_ENDPOINTS.AUTOCOMPLETE,
+    REST_SAVE_PROJECT: API_ENDPOINTS.REST_SAVE_PROJECT,
+    REST_DELETE_PROJECT: API_ENDPOINTS.REST_DELETE_PROJECT
 };
 
 const resolvedFormMode = typeof FACILITY_FORM_CONFIG.mode === 'string'
@@ -214,18 +229,8 @@ const DEBUG_LOGGING_ENABLED = (() => {
     return false;
 })();
 
-function debugLog(...args) {
-    if (!DEBUG_LOGGING_ENABLED || typeof console === 'undefined') {
-        return;
-    }
-
-    const logFn = typeof console.debug === 'function' ? console.debug.bind(console) : console.log.bind(console);
-    try {
-        logFn(...args);
-    } catch (debugLogError) {
-        // Never let debug logging break runtime execution
-    }
-}
+// debugLog function now defined in utilities.js module
+// Access via window.debugLog
 
 function logActiveFacilityFormConfigOnce() {
     if (typeof window === 'undefined') {
@@ -304,101 +309,31 @@ window.currentFacilityIndex = currentFacilityIndex;
 window.formData = formData;
 
 // ============================================
-// UTILITY FUNCTIONS
+// UTILITY FUNCTIONS - Delegated to utilities.js module
 // ============================================
-function escapeHtmlForAttr(s) {
-    return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function deepClone(obj) {
-    if (obj === null || typeof obj !== 'object') return obj;
-    if (obj instanceof Date) return new Date(obj.getTime());
-    if (obj instanceof Array) return obj.map(item => deepClone(item));
-    if (obj instanceof Object) {
-        const clonedObj = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                clonedObj[key] = deepClone(obj[key]);
-            }
-        }
-        return clonedObj;
-    }
-}
-
-function getNestedValue(obj, path) {
-    return path.split('.').reduce((current, key) => {
-        if (!current) return undefined;
-
-        // Try exact match first
-        if (current[key] !== undefined) {
-            return current[key];
-        }
-
-        // Try common variations
-        const variations = [
-            key,                                    // original key
-            key.toLowerCase(),                      // lowercase
-            key.toUpperCase(),                      // uppercase
-            key.charAt(0).toUpperCase() + key.slice(1), // capitalize first letter
-            key.charAt(0).toLowerCase() + key.slice(1), // lowercase first letter
-            key.replace(/_/g, ''),                  // remove underscores
-            key.replace(/-/g, ''),                  // remove hyphens
-            toCamelCase(key),                       // camelCase version
-            toSnakeCase(key),                       // snake_case version
-        ];
-
-        // Try each variation
-        for (const variant of variations) {
-            if (current[variant] !== undefined) {
-                return current[variant];
-            }
-        }
-
-        return undefined;
-    }, obj);
-}
-
-// Helper function to convert to camelCase
-function toCamelCase(str) {
-    return str.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
-}
-
-// Helper function to convert to snake_case
-function toSnakeCase(str) {
-    return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
-}
-
-// Helper function to parse "City, State" strings into separate components
-function parseCityState(str) {
-    if (!str || typeof str !== 'string') {
-        return { city: '', state: '' };
-    }
-    const trimmed = str.trim();
-    if (!trimmed) {
-        return { city: '', state: '' };
-    }
-    // Split on comma and extract city/state
-    const parts = trimmed.split(',').map(p => p.trim());
-    if (parts.length >= 2) {
-        return { city: parts[0], state: parts.slice(1).join(', ').trim() };
-    }
-    // No comma - could be just a city or state, return as city
-    return { city: trimmed, state: '' };
-}
-
-// Helper function to combine city and state into "City, State" format
-function combineCityState(city, state) {
-    const c = (city || '').trim();
-    const s = (state || '').trim();
-    if (c && s) {
-        return `${c}, ${s}`;
-    }
-    return c || s || '';
-}
+// The following utility functions are now defined in utilities.js and exported globally:
+// - escapeHtmlForAttr(s)
+// - deepClone(obj)
+// - getNestedValue(obj, path)
+// - toCamelCase(str)
+// - toSnakeCase(str)
+// - parseCityState(str)
+// - combineCityState(city, state)
+// Access via window.escapeHtmlForAttr, window.deepClone, etc.
 
 // Normalize project data to handle different field name variations
 // Also ensures default structures exist for all required fields
 function normalizeProjectData(data) {
+    // If the payload is stringified JSON, parse it first
+    if (typeof data === 'string') {
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            console.warn('normalizeProjectData: failed to parse string data', err);
+            data = {};
+        }
+    }
+
     // Handle null/undefined data - create default structure
     if (!data) {
         return typeof createNewProjectData === 'function' ? createNewProjectData() : {
@@ -411,6 +346,29 @@ function normalizeProjectData(data) {
     }
     
     if (typeof data !== 'object') return data;
+
+    // Helper to normalize fieldNotes entries - ensures all values are arrays, not objects
+    // This fixes a bug where database can store empty notes as {} instead of []
+    const normalizeFieldNotesEntries = (fieldNotesObj) => {
+        if (!fieldNotesObj || typeof fieldNotesObj !== 'object') return;
+        Object.keys(fieldNotesObj).forEach(key => {
+            const value = fieldNotesObj[key];
+            if (!Array.isArray(value)) {
+                // Convert non-array to array
+                if (value === null || value === undefined) {
+                    fieldNotesObj[key] = [];
+                } else if (typeof value === 'object') {
+                    // Extract values from object (handles {} case)
+                    const values = Object.values(value);
+                    fieldNotesObj[key] = values.filter(v => v !== null && v !== undefined && `${v}`.trim() !== '');
+                } else if (`${value}`.trim() !== '') {
+                    fieldNotesObj[key] = [`${value}`];
+                } else {
+                    fieldNotesObj[key] = [];
+                }
+            }
+        });
+    };
 
     // Helper to get value trying different key variations
     const getValue = (obj, ...keys) => {
@@ -490,14 +448,46 @@ function normalizeProjectData(data) {
                     data.operator.keyStaff[field] = [];
                 }
             });
-        } else {
-            // Create keyStaff if it doesn't exist
-            data.operator.keyStaff = {
-                ceo: '',
-                founders: [],
-                keyExecutives: []
-            };
+    } else {
+        // Create keyStaff if it doesn't exist
+        data.operator.keyStaff = {
+            ceo: '',
+            founders: [],
+            keyExecutives: []
+        };
+    }
+
+        // Normalize operator fieldNotes entries
+        if (data.operator.fieldNotes && typeof data.operator.fieldNotes === 'object') {
+            normalizeFieldNotesEntries(data.operator.fieldNotes);
         }
+}
+
+    // Accept legacy facilities shapes (stringified, nested, or alternate keys)
+    if (!Array.isArray(data.facilities)) {
+        let facilitiesCandidate = [];
+
+        if (typeof data.facilities === 'string') {
+            try {
+                const parsed = JSON.parse(data.facilities);
+                if (Array.isArray(parsed)) facilitiesCandidate = parsed;
+            } catch (err) {
+                console.warn('normalizeProjectData: failed to parse string facilities', err);
+            }
+        } else if (data.facilities && typeof data.facilities === 'object' && Array.isArray(data.facilities.facilities)) {
+            facilitiesCandidate = data.facilities.facilities;
+        } else if (Array.isArray(data.facility)) {
+            facilitiesCandidate = data.facility;
+        } else if (typeof data.facility === 'string') {
+            try {
+                const parsed = JSON.parse(data.facility);
+                if (Array.isArray(parsed)) facilitiesCandidate = parsed;
+            } catch (err) {
+                console.warn('normalizeProjectData: failed to parse string facility', err);
+            }
+        }
+
+        data.facilities = Array.isArray(data.facilities) ? data.facilities : facilitiesCandidate;
     }
 
     // Normalize facilities array
@@ -517,16 +507,24 @@ function normalizeProjectData(data) {
                 });
             }
 
-            // Normalize facilityDetails
-            if (normalized.facilityDetails) {
-                normalized.facilityDetails = normalizeObject(normalized.facilityDetails, {
-                    type: ['type', 'Type', 'facilityType', 'facility_type'],
-                    capacity: ['capacity', 'Capacity'],
-                    currentCensus: ['currentCensus', 'current_census', 'census'],
-                    gender: ['gender', 'Gender'],
-                    ageRange: ['ageRange', 'age_range', 'AgeRange']
-                });
+            // Normalize facilityDetails - ensure it exists and check for root-level type fields
+            if (!normalized.facilityDetails) {
+                normalized.facilityDetails = {};
             }
+            // Check for type at root level and move to facilityDetails
+            if (!normalized.facilityDetails.type) {
+                const rootType = getValue(normalized, 'type', 'Type', 'facilityType', 'facility_type', 'programType', 'program_type');
+                if (rootType) {
+                    normalized.facilityDetails.type = rootType;
+                }
+            }
+            normalized.facilityDetails = normalizeObject(normalized.facilityDetails, {
+                type: ['type', 'Type', 'facilityType', 'facility_type', 'programType', 'program_type'],
+                capacity: ['capacity', 'Capacity'],
+                currentCensus: ['currentCensus', 'current_census', 'census'],
+                gender: ['gender', 'Gender'],
+                ageRange: ['ageRange', 'age_range', 'AgeRange']
+            });
 
             // Normalize operatingPeriod
             if (normalized.operatingPeriod) {
@@ -639,6 +637,11 @@ function normalizeProjectData(data) {
                 normalized.resources.notes = [];
             }
 
+            // Normalize fieldNotes entries for each facility
+            if (normalized.fieldNotes && typeof normalized.fieldNotes === 'object') {
+                normalizeFieldNotesEntries(normalized.fieldNotes);
+            }
+
             return normalized;
         });
     }
@@ -734,6 +737,7 @@ function normalizeProjectData(data) {
         if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
             data.referrerAgency.fieldNotes = {};
         }
+        normalizeFieldNotesEntries(data.referrerAgency.fieldNotes);
     }
 
     if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
@@ -747,6 +751,7 @@ function normalizeProjectData(data) {
             if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
             if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
             if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
+            normalizeFieldNotesEntries(merged.fieldNotes);
             return merged;
         });
     }
@@ -755,9 +760,27 @@ function normalizeProjectData(data) {
         data.isIndependentConsultant = false;
     }
 
+    // Preserve or set referrerType based on existing data
+    if (!data.referrerType) {
+        data.referrerType = data.isIndependentConsultant ? 'individual' : 'group';
+    }
+
+    // Keep referrerGroup in sync with referrerAgency
+    if (data.referrerAgency && !data.referrerGroup) {
+        data.referrerGroup = data.referrerAgency;
+    } else if (data.referrerGroup && !data.referrerAgency) {
+        data.referrerAgency = data.referrerGroup;
+    }
+
+    // Keep referrerIndividual in sync with current consultant
+    if (Array.isArray(data.referrerConsultants) && data.referrerConsultants.length > 0) {
+        data.referrerIndividual = data.referrerConsultants[0];
+    }
+
     if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
         data.fieldNotes = {};
     }
+    normalizeFieldNotesEntries(data.fieldNotes);
 
     // Build referrer entries from the data
     if (typeof buildReferrerEntries === 'function') {
@@ -767,29 +790,8 @@ function normalizeProjectData(data) {
     return data;
 }
 
-function setNestedValue(obj, path, value) {
-    const keys = path.split('.');
-    const lastKey = keys.pop();
-    const target = keys.reduce((current, key) => {
-        if (!current[key] || typeof current[key] !== 'object') {
-            current[key] = {};
-        }
-        return current[key];
-    }, obj);
-    target[lastKey] = value;
-}
-
-function showUploadStatus(message, type) {
-    const statusDiv = document.getElementById('upload-status') || document.getElementById('project-status');
-    if (statusDiv) {
-        statusDiv.style.display = 'block';
-        statusDiv.textContent = message;
-        statusDiv.className = `upload-status ${type}`;
-        setTimeout(() => {
-            statusDiv.style.display = 'none';
-        }, 5000);
-    }
-}
+// setNestedValue and showUploadStatus functions now defined in utilities.js module
+// Access via window.setNestedValue and window.showUploadStatus
 
 // NOTE: normalizeProjectData function is defined earlier in this file (around line 372)
 // It handles both field name normalization AND default structure initialization
@@ -838,59 +840,61 @@ function attachCustomValueRecorder(input, category) {
 // DATA AGGREGATION - Delegated to autocomplete.js module
 // All data aggregation functions (getAllOperators, getAllFacilityNames, etc.)
 // are now defined in autocomplete.js and exported globally.
-// These wrapper functions delegate to the module for backward compatibility.
+// These wrapper functions delegate to the KOP_Autocomplete namespace for backward compatibility.
+// NOTE: We use window.KOP_Autocomplete.* instead of window.* to avoid circular reference
+// since this file's local functions would shadow the window.* exports.
 // ============================================
 
 function getAllOperators() {
-    return window.getAllOperators ? window.getAllOperators() : [];
+    return window.KOP_Autocomplete?.getAllOperators ? window.KOP_Autocomplete.getAllOperators() : [];
 }
 
 function getAllFacilityNames() {
-    return window.getAllFacilityNames ? window.getAllFacilityNames() : [];
+    return window.KOP_Autocomplete?.getAllFacilityNames ? window.KOP_Autocomplete.getAllFacilityNames() : [];
 }
 
 function getAllHumanNames() {
-    return window.getAllHumanNames ? window.getAllHumanNames() : [];
+    return window.KOP_Autocomplete?.getAllHumanNames ? window.KOP_Autocomplete.getAllHumanNames() : [];
 }
 
 function getAllReferrers() {
-    return window.getAllReferrers ? window.getAllReferrers() : [];
+    return window.KOP_Autocomplete?.getAllReferrers ? window.KOP_Autocomplete.getAllReferrers() : [];
 }
 
 function getAllFacilityTypes() {
-    return window.getAllFacilityTypes ? window.getAllFacilityTypes() : [];
+    return window.KOP_Autocomplete?.getAllFacilityTypes ? window.KOP_Autocomplete.getAllFacilityTypes() : [];
 }
 
 function getAllStaffRoles() {
-    return window.getAllStaffRoles ? window.getAllStaffRoles() : [];
+    return window.KOP_Autocomplete?.getAllStaffRoles ? window.KOP_Autocomplete.getAllStaffRoles() : [];
 }
 
 function getAllCertifications() {
-    return window.getAllCertifications ? window.getAllCertifications() : [];
+    return window.KOP_Autocomplete?.getAllCertifications ? window.KOP_Autocomplete.getAllCertifications() : [];
 }
 
 function getAllAccreditations() {
-    return window.getAllAccreditations ? window.getAllAccreditations() : [];
+    return window.KOP_Autocomplete?.getAllAccreditations ? window.KOP_Autocomplete.getAllAccreditations() : [];
 }
 
 function getAllMemberships() {
-    return window.getAllMemberships ? window.getAllMemberships() : [];
+    return window.KOP_Autocomplete?.getAllMemberships ? window.KOP_Autocomplete.getAllMemberships() : [];
 }
 
 function getAllLocations() {
-    return window.getAllLocations ? window.getAllLocations() : [];
+    return window.KOP_Autocomplete?.getAllLocations ? window.KOP_Autocomplete.getAllLocations() : [];
 }
 
 function getAllStatuses() {
-    return window.getAllStatuses ? window.getAllStatuses() : [];
+    return window.KOP_Autocomplete?.getAllStatuses ? window.KOP_Autocomplete.getAllStatuses() : [];
 }
 
 function getAllGenders() {
-    return window.getAllGenders ? window.getAllGenders() : [];
+    return window.KOP_Autocomplete?.getAllGenders ? window.KOP_Autocomplete.getAllGenders() : [];
 }
 
 function getAllOperatingPeriods() {
-    return window.getAllOperatingPeriods ? window.getAllOperatingPeriods() : [];
+    return window.KOP_Autocomplete?.getAllOperatingPeriods ? window.KOP_Autocomplete.getAllOperatingPeriods() : [];
 }
 
 // ============================================
@@ -900,21 +904,69 @@ function getAllOperatingPeriods() {
 // These wrapper functions delegate to the module for backward compatibility.
 // ============================================
 
-function createAutocomplete(input, getDataFunction, category) {
-    if (window.createAutocomplete && window.createAutocomplete !== createAutocomplete) {
-        return window.createAutocomplete(input, getDataFunction, category);
+// Capture the real module implementations before defining our delegates so we don't overwrite them.
+// Use lets so we can pick up late-loaded modules if dependency order is altered by plugins/caching.
+// Priority: window.KOP_Autocomplete.* (namespaced) > window.* (legacy exports)
+let moduleCreateAutocomplete = (typeof window !== 'undefined' && window.KOP_Autocomplete?.createAutocomplete)
+    ? window.KOP_Autocomplete.createAutocomplete
+    : (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function')
+        ? window.createAutocomplete
+        : null;
+let moduleInitializeAutocompleteFields = (typeof window !== 'undefined' && window.KOP_Autocomplete?.initializeAutocompleteFields)
+    ? window.KOP_Autocomplete.initializeAutocompleteFields
+    : (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function')
+        ? window.initializeAutocompleteFields
+        : null;
+
+function resolveCreateAutocomplete() {
+    if (moduleCreateAutocomplete && moduleCreateAutocomplete !== delegateCreateAutocomplete) {
+        return moduleCreateAutocomplete;
+    }
+    // Try KOP_Autocomplete namespace first (avoids circular reference issues)
+    if (typeof window !== 'undefined' && window.KOP_Autocomplete?.createAutocomplete) {
+        moduleCreateAutocomplete = window.KOP_Autocomplete.createAutocomplete;
+        return moduleCreateAutocomplete;
+    }
+    if (typeof window !== 'undefined' && typeof window.createAutocomplete === 'function' && window.createAutocomplete !== delegateCreateAutocomplete) {
+        moduleCreateAutocomplete = window.createAutocomplete;
+        return moduleCreateAutocomplete;
+    }
+    return null;
+}
+
+function resolveInitializeAutocompleteFields() {
+    if (moduleInitializeAutocompleteFields && moduleInitializeAutocompleteFields !== delegateInitializeAutocompleteFields) {
+        return moduleInitializeAutocompleteFields;
+    }
+    // Try KOP_Autocomplete namespace first (avoids circular reference issues)
+    if (typeof window !== 'undefined' && window.KOP_Autocomplete?.initializeAutocompleteFields) {
+        moduleInitializeAutocompleteFields = window.KOP_Autocomplete.initializeAutocompleteFields;
+        return moduleInitializeAutocompleteFields;
+    }
+    if (typeof window !== 'undefined' && typeof window.initializeAutocompleteFields === 'function' && window.initializeAutocompleteFields !== delegateInitializeAutocompleteFields) {
+        moduleInitializeAutocompleteFields = window.initializeAutocompleteFields;
+        return moduleInitializeAutocompleteFields;
+    }
+    return null;
+}
+
+const delegateCreateAutocomplete = (input, getDataFunction, category) => {
+    const delegate = resolveCreateAutocomplete();
+    if (delegate) {
+        return delegate(input, getDataFunction, category);
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping createAutocomplete');
-}
+};
 
-function initializeAutocompleteFields() {
-    if (window.initializeAutocompleteFields && window.initializeAutocompleteFields !== initializeAutocompleteFields) {
-        return window.initializeAutocompleteFields();
+const delegateInitializeAutocompleteFields = () => {
+    const delegate = resolveInitializeAutocompleteFields();
+    if (delegate) {
+        return delegate();
     }
     // Autocomplete module not loaded - skip initialization
     console.warn('[Facility Form] Autocomplete module not loaded, skipping initializeAutocompleteFields');
-}
+};
 
 function initializeSectionToggles() {
     const sections = document.querySelectorAll('.section');
@@ -942,8 +994,10 @@ function initializeSectionToggles() {
             toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
         };
 
-        // Initialize with existing expanded state
-        setState(section.classList.contains('expanded'));
+        // Initialize with existing expanded state, but collapse on mobile
+        const isMobile = window.innerWidth <= 768;
+        const shouldExpand = isMobile ? false : section.classList.contains('expanded');
+        setState(shouldExpand);
 
         const handleToggle = (event) => {
             event.preventDefault();
@@ -960,7 +1014,96 @@ function initializeSectionToggles() {
             handleToggle(event);
         });
     });
+
+    // Initialize mobile section controls
+    initializeMobileSectionControls();
 }
+
+/**
+ * Initialize mobile section controls for expand/collapse all
+ */
+function initializeMobileSectionControls() {
+    // Only add controls if on mobile and not already added
+    if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) {
+        return;
+    }
+
+    // Create the mobile controls bar
+    const controlsBar = document.createElement('div');
+    controlsBar.className = 'mobile-section-controls';
+    controlsBar.innerHTML = `
+        <span class="section-control-label">📋 Sections</span>
+        <div class="section-control-btns">
+            <button class="btn-section-control" id="expand-all-sections">Expand All</button>
+            <button class="btn-section-control" id="collapse-all-sections">Collapse All</button>
+        </div>
+    `;
+
+    // Insert at the beginning of the form wrapper or container
+    const facilityWrapper = document.getElementById('facility-main-wrapper');
+    const referrerWrapper = document.getElementById('referrer-main-wrapper');
+    const categoryNav = document.getElementById('category-navigation');
+
+    if (facilityWrapper && facilityWrapper.offsetParent !== null) {
+        facilityWrapper.insertBefore(controlsBar.cloneNode(true), facilityWrapper.firstChild);
+    }
+    if (referrerWrapper) {
+        referrerWrapper.insertBefore(controlsBar.cloneNode(true), referrerWrapper.firstChild);
+    }
+
+    // Attach event listeners using event delegation
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'expand-all-sections' || e.target.closest('#expand-all-sections')) {
+            e.preventDefault();
+            expandAllSections();
+        }
+        if (e.target.id === 'collapse-all-sections' || e.target.closest('#collapse-all-sections')) {
+            e.preventDefault();
+            collapseAllSections();
+        }
+    });
+
+    console.log('[Mobile] Section controls initialized');
+}
+
+/**
+ * Expand all collapsible sections
+ */
+function expandAllSections() {
+    const sections = document.querySelectorAll('.section:not(.view-hidden)');
+    sections.forEach(section => {
+        const content = section.querySelector('.section-content');
+        const toggle = section.querySelector('.section-toggle');
+        if (content) {
+            section.classList.add('expanded');
+            content.style.display = 'block';
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', 'true');
+                toggle.setAttribute('title', 'Collapse section');
+            }
+        }
+    });
+}
+
+/**
+ * Collapse all collapsible sections
+ */
+function collapseAllSections() {
+    const sections = document.querySelectorAll('.section:not(.view-hidden)');
+    sections.forEach(section => {
+        const content = section.querySelector('.section-content');
+        const toggle = section.querySelector('.section-toggle');
+        if (content) {
+            section.classList.remove('expanded');
+            content.style.display = 'none';
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.setAttribute('title', 'Expand section');
+            }
+        }
+    });
+}
+
 
 // ============================================
 // FIELD NOTE CONTROLS - Delegated to notes.js module
@@ -1028,16 +1171,39 @@ function normalizeProjectsPayload(payload) {
 
     const normalized = {};
 
+    const inferCategory = (projectName, explicitCategory) => {
+        if (explicitCategory) return explicitCategory;
+        const upper = (projectName || '').toUpperCase().trim();
+        const isLocation = (
+            (typeof window !== 'undefined' && window.US_STATE_SET && window.US_STATE_SET.has(upper.toLowerCase())) ||
+            (typeof window !== 'undefined' && window.COUNTRY_SET && window.COUNTRY_SET.has(upper.toLowerCase()))
+        );
+        if (isLocation) return 'locations';
+        return 'companies';
+    };
+
     const assignProject = (projectName, projectPayload) => {
         if (!projectName) return;
         const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
-        const rawData = source.data ? source.data : source;
+
+        // Handle cases where data is stringified JSON
+        let rawData = source.data ? source.data : source;
+        if (typeof rawData === 'string') {
+            try {
+                rawData = JSON.parse(rawData);
+            } catch (parseErr) {
+                console.warn('Failed to parse project data string for', projectName, parseErr);
+                rawData = {};
+            }
+        }
+
         const name = source.name || projectName;
         normalized[projectName] = {
             name,
             data: normalizeProjectData(rawData),
             timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
-            currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0
+            currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0,
+            category: inferCategory(name, source.category || rawData?.category)
         };
     };
 
@@ -1111,65 +1277,6 @@ async function loadProjectsFromFallbackDatasets() {
     return null;
 }
 
-/**
- * Deduplicate location projects: when both lowercase and uppercase versions exist,
- * keep only the uppercase version (which has the actual data from rebuild).
- * For non-location projects, keep as-is.
- */
-function deduplicateLocationProjects(projectsObj) {
-    const result = {};
-    const locationNames = new Set([...US_STATE_NAMES, ...COUNTRY_NAMES].map(n => n.toUpperCase()));
-    
-    // First pass: identify all location project keys
-    const locationKeys = {};  // Maps uppercase name -> array of actual keys
-    
-    Object.keys(projectsObj).forEach(key => {
-        const upperKey = key.toUpperCase();
-        if (locationNames.has(upperKey)) {
-            if (!locationKeys[upperKey]) {
-                locationKeys[upperKey] = [];
-            }
-            locationKeys[upperKey].push(key);
-        } else {
-            // Non-location project, keep as-is
-            result[key] = projectsObj[key];
-        }
-    });
-    
-    // Second pass: for each location, pick the best version
-    Object.keys(locationKeys).forEach(upperName => {
-        const keys = locationKeys[upperName];
-        
-        if (keys.length === 1) {
-            // Only one version exists, use it but normalize to uppercase
-            const originalKey = keys[0];
-            result[upperName] = projectsObj[originalKey];
-            result[upperName].name = upperName;  // Normalize the name
-            debugLog(`📍 Location project "${originalKey}" normalized to "${upperName}"`);
-        } else {
-            // Multiple versions exist (e.g., 'alabama' and 'ALABAMA')
-            // Pick the one with more facilities, or prefer uppercase if tied
-            let bestKey = keys[0];
-            let bestCount = projectsObj[keys[0]]?.data?.facilities?.length || 0;
-            
-            keys.forEach(key => {
-                const count = projectsObj[key]?.data?.facilities?.length || 0;
-                if (count > bestCount || (count === bestCount && key === upperName)) {
-                    bestKey = key;
-                    bestCount = count;
-                }
-            });
-            
-            result[upperName] = projectsObj[bestKey];
-            result[upperName].name = upperName;  // Normalize the name
-            console.log(`🔀 Deduplicated location "${upperName}": kept "${bestKey}" (${bestCount} facilities), discarded: ${keys.filter(k => k !== bestKey).join(', ')}`);
-        }
-    });
-    
-    debugLog(`📦 Deduplication complete: ${Object.keys(projectsObj).length} → ${Object.keys(result).length} projects`);
-    return result;
-}
-
 async function loadAllProjectsFromCloud() {
     try {
         showUploadStatus('Loading projects from cloud...', 'info');
@@ -1182,8 +1289,40 @@ async function loadAllProjectsFromCloud() {
         const result = await response.json();
 
         if (result.success && result.projects) {
+            // Debug: Log raw data structure from a few sample projects
+            const sampleProjects = Object.entries(result.projects).slice(0, 3);
+            console.log('🔬 SAMPLE RAW PROJECT STRUCTURES:');
+            sampleProjects.forEach(([name, proj]) => {
+                console.log(`  "${name}":`, {
+                    hasData: !!proj.data,
+                    dataKeys: proj.data ? Object.keys(proj.data) : 'NO DATA',
+                    hasFacilitiesInData: !!proj.data?.facilities,
+                    facilitiesInDataCount: proj.data?.facilities?.length,
+                    hasFacilitiesAtRoot: !!proj.facilities,
+                    facilitiesAtRootCount: proj.facilities?.length,
+                    category: proj.category,
+                    fullStructure: JSON.stringify(proj).substring(0, 500)
+                });
+            });
+            
+            // Debug: Log raw location projects from server
+            const rawLocationProjects = Object.entries(result.projects).filter(([name, proj]) => {
+                const normalized = name.toLowerCase();
+                return window.US_STATE_SET.has(normalized) || window.COUNTRY_SET.has(normalized) || proj.category === 'locations';
+            });
+            console.log('🗺️ Raw location projects from server:', rawLocationProjects.length, rawLocationProjects.map(([name, proj]) => ({
+                name,
+                category: proj.category,
+                facilitiesInData: proj.data?.facilities?.length || 0,
+                facilitiesAtRoot: proj.facilities?.length || 0
+            })));
+
             // Deduplicate location projects: prefer uppercase versions with data
             const deduplicatedProjects = deduplicateLocationProjects(result.projects);
+            
+            // Sync location projects with facilities from company/referrer projects
+            syncLocationProjectsFromSources(deduplicatedProjects);
+            
             window.projects = deduplicatedProjects;
             projects = window.projects;
 
@@ -1194,12 +1333,6 @@ async function loadAllProjectsFromCloud() {
 
             showUploadStatus(`Loaded ${Object.keys(projects).length} projects from cloud`, 'success');
             debugLog('Loaded projects from cloud:', Object.keys(projects));
-
-            // Debug: Check if category metadata is present
-            Object.keys(projects).forEach(name => {
-                const project = projects[name];
-                console.log(`📊 Project "${name}" - Category: ${project.category || 'MISSING'}, Has timestamp: ${!!project.timestamp}, Has currentFacilityIndex: ${!!project.currentFacilityIndex}`);
-            });
 
             // Force re-initialize autocomplete after cloud data loads
             setTimeout(() => {
@@ -1421,27 +1554,57 @@ async function saveProjectToCloud(projectName, action = 'save') {
         debugLog('Payload size:', payloadSize, 'characters');
         debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
 
-        const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        let response;
+        let usedRestApi = false;
 
-        debugLog('Response status:', response.status, response.statusText);
-        debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
+        try {
+            response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
+            debugLog('Response status:', response.status, response.statusText);
+            debugLog('Response headers:', Object.fromEntries(response.headers.entries()));
+
+            // Check if we got PHP source code instead of JSON (server misconfiguration)
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const responseText = await response.text();
+                if (responseText.includes('<?php')) {
+                    console.warn('⚠️ Direct PHP endpoint not working, trying REST API fallback...');
+                    throw new Error('PHP_NOT_EXECUTING');
+                }
+                console.error('❌ Expected JSON but got:', contentType);
+                console.error('Response preview:', responseText.substring(0, 500));
+                throw new Error(`Expected JSON response, got ${contentType}`);
+            }
+        } catch (directError) {
+            // If direct PHP failed, try REST API fallback
+            if (directError.message === 'PHP_NOT_EXECUTING' || directError.message.includes('Failed to fetch')) {
+                debugLog('🔄 Trying WordPress REST API fallback...');
+                const restEndpoint = API_ENDPOINTS.REST_SAVE_PROJECT || '/wp-json/kop/v1/projects/save';
+                const restNonce = API_ENDPOINTS.REST_NONCE || window.wpApiSettings?.nonce || '';
+                
+                response = await fetch(restEndpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': restNonce
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload)
+                });
+                usedRestApi = true;
+                debugLog('REST API response status:', response.status);
+            } else {
+                throw directError;
+            }
+        }
         if (!response.ok) {
             const errorText = await response.text();
             console.error('❌ Save failed response body:', errorText.substring(0, 500));
             throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
-        }
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const responseText = await response.text();
-            console.error('❌ Expected JSON but got:', contentType);
-            console.error('Response preview:', responseText.substring(0, 500));
-            throw new Error(`Expected JSON response, got ${contentType}`);
         }
 
         const result = await response.json();
@@ -1460,7 +1623,7 @@ async function saveProjectToCloud(projectName, action = 'save') {
         // Backup to localStorage
         persistProjectLocally(projectName);
 
-        debugLog('✅ Save successful!');
+        debugLog('✅ Save successful!' + (usedRestApi ? ' (via REST API)' : ''));
         debugLog('=== SAVE PROJECT END ===');
         showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
 
@@ -1511,7 +1674,7 @@ function autoSave() {
             if (saved) {
                 debugLog('Suggestion draft saved locally for', window.currentProjectName);
             }
-        }, 2000);
+        }, 150000); // 2.5 minutes
         return;
     }
 
@@ -1530,7 +1693,7 @@ function autoSave() {
             } finally {
                 isSaveInProgress = false;
             }
-        }, 2000);
+        }, 150000); // 2.5 minutes
     }
 }
 
@@ -1599,6 +1762,22 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('operator.')) {
+        // Check if we're in a location project - if so, use facility's sourceOperator
+        const activeTab = document.querySelector('.category-tab.active');
+        const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+        
+        if (isLocationProject && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+            const currentFacility = window.formData.facilities[window.currentFacilityIndex];
+            if (!currentFacility.sourceOperator) {
+                currentFacility.sourceOperator = {};
+            }
+            scope = 'operator';
+            normalizedPath = path.replace('operator.', '');
+            target = currentFacility.sourceOperator;
+            return { scope, normalizedPath, target };
+        }
+        
+        // For non-location projects, use project-level operator
         if (!window.formData.operator) {
             window.formData.operator = createNewProjectData().operator;
         }
@@ -1704,6 +1883,9 @@ function createNewProjectData() {
 function loadProject(projectName) { // Note: This function is now asynchronous
     debugLog('🔄 loadProject called with:', projectName);
     debugLog('📦 Available projects:', Object.keys(window.projects || {}));
+    
+    // Show immediate loading feedback
+    showUploadStatus(`Loading project "${projectName}"...`, 'info');
 
     // Try exact match first, then uppercase (for location projects stored as uppercase)
     let resolvedName = projectName;
@@ -1737,6 +1919,16 @@ function loadProject(projectName) { // Note: This function is now asynchronous
         targetTab.classList.add('active');
         debugLog('✅ Switched to', projectCategory, 'tab');
     }
+
+    // Also switch category content panels (this was missing before)
+    document.querySelectorAll('.category-content').forEach(content => {
+        content.classList.add('view-hidden', 'd-none');
+    });
+    const contentId = projectCategory === 'locations' ? 'states-content' : `${projectCategory}-content`;
+    const activeContent = document.getElementById(contentId);
+    if (activeContent) {
+        activeContent.classList.remove('view-hidden', 'd-none');
+    }
     
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -1759,6 +1951,11 @@ function loadProject(projectName) { // Note: This function is now asynchronous
 
             if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                 window.currentFacilityIndex = 0;
+            }
+
+            // Reset consultant index for referrer projects to avoid stale state
+            if (projectCategory === 'referrers') {
+                window.currentConsultantIndex = 0;
             }
 
             const projectNameInput = document.getElementById('project-name');
@@ -1788,12 +1985,28 @@ function loadProject(projectName) { // Note: This function is now asynchronous
                 console.error('❌ updateAllUI not available!');
             }
 
+            // Explicitly update consultant UI for referrer projects
+            if (projectCategory === 'referrers' && typeof window.updateConsultantsUI === 'function') {
+                debugLog('🔄 Updating consultants UI for referrer project...');
+                window.updateConsultantsUI();
+            }
+
+            // Explicitly update location facilities overview for location projects
+            if (projectCategory === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
+                debugLog('🔄 Updating location facilities overview for location project...');
+                window.updateLocationFacilitiesOverview();
+            }
+
             // Dispatch custom event for project loaded
             document.dispatchEvent(new CustomEvent('projectLoaded', {
                 detail: { projectName: projectName }
             }));
 
             showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
+            
+            // Scroll to form input area after loading project
+            scrollToFormInput();
+            
             resolve();
         }, 100); // A small delay to ensure DOM updates can happen
     });
@@ -1894,6 +2107,11 @@ function initializeCategoryTabs() {
         // Handle main form visibility (facility vs. referrer form)
         if (typeof handleReferrerToggle === 'function') {
             handleReferrerToggle();
+        }
+
+        // Apply view layout to show/hide elements based on data-section-views
+        if (typeof window.applyViewLayout === 'function') {
+            window.applyViewLayout(category === 'locations' ? 'locations' : category);
         }
 
         // Refresh the list of saved projects for the new tab
@@ -2198,12 +2416,31 @@ function renderArray(container, path, items) {
         }
     }
 
-    const itemsToShow = itemsArray;
+    // Normalize items: convert strings to {role, name} for staff arrays
+    const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+    const itemsToShow = itemsArray.map((item, idx) => {
+        if (isStaff && typeof item === 'string') {
+            // Parse legacy string format - check for "Role: Name" pattern
+            const colonMatch = item.match(/^([^:]+):\s*(.+)$/);
+            let role = '';
+            let name = item;
+            if (colonMatch) {
+                role = colonMatch[1].trim();
+                name = colonMatch[2].trim();
+            }
+            // Update the actual data array to the new format
+            const array = getNestedValue(target, normalizedPath);
+            if (Array.isArray(array)) {
+                array[idx] = { role, name };
+            }
+            return { role, name };
+        }
+        return item;
+    });
 
     itemsToShow.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'array-item';
-        const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const scopeForNotes = scope;
         const noteKey = `${path}.${index}`;
@@ -2218,7 +2455,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(roleInput, 'role');
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
-                    createAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
                     roleInput.dataset.autocompleteInit = 'true';
                 }
             }, 100);
@@ -2233,7 +2470,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(nameInput, 'human');
             itemDiv.appendChild(nameInput);
             setTimeout(() => {
-                createAutocomplete(nameInput, getAllHumanNames, 'human');
+                delegateCreateAutocomplete(nameInput, getAllHumanNames, 'human');
                 nameInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else if (isPastTTIJobs) {
@@ -2246,7 +2483,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(roleInput, 'role');
             setTimeout(() => {
                 if (!roleInput.dataset.autocompleteInit) {
-                    createAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
                     roleInput.dataset.autocompleteInit = 'true';
                 }
             }, 100);
@@ -2261,7 +2498,7 @@ function renderArray(container, path, items) {
             attachCustomValueRecorder(orgInput, 'operator');
             itemDiv.appendChild(orgInput);
             setTimeout(() => {
-                createAutocomplete(orgInput, getAllOperators, 'operator');
+                delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
                 orgInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else {
@@ -2311,7 +2548,7 @@ function renderArray(container, path, items) {
                 dataFunc = getAllFacilityNames;
             } else if (/consultant\.schoolDistricts$/.test(path)) {
                 category = 'location';
-                dataFunc = () => Array.from(US_STATE_SET);
+                dataFunc = () => Array.from(window.US_STATE_SET);
             } else if (/referrerAgency\.keyPersonnel$/.test(path)) {
                 category = 'human';
                 dataFunc = getAllHumanNames;
@@ -2321,7 +2558,7 @@ function renderArray(container, path, items) {
                 itemDiv.appendChild(input); // Must be in DOM for createAutocomplete to find parent
                 setTimeout(() => {
                     if (!input.dataset.autocompleteInit) {
-                        createAutocomplete(input, dataFunc, category);
+                        delegateCreateAutocomplete(input, dataFunc, category);
                         input.dataset.autocompleteInit = 'true';
                     }
                 }, 100);
@@ -2463,8 +2700,22 @@ function loadOperatorData() {
         debugLog('⚠️ loadOperatorData: formData not ready yet');
         return;
     }
-    if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
-    const operator = window.formData.operator;
+    
+    // Determine if we're in a location project - if so, use the facility's sourceOperator
+    const activeTab = document.querySelector('.category-tab.active');
+    const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+    
+    let operator;
+    if (isLocationProject && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+        // For location projects, use the current facility's sourceOperator
+        const currentFacility = window.formData.facilities[window.currentFacilityIndex];
+        operator = currentFacility.sourceOperator || {};
+        debugLog('📍 Location project: loading operator from facility.sourceOperator:', operator.name);
+    } else {
+        // For company/referrer projects, use the project-level operator
+        if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
+        operator = window.formData.operator;
+    }
 
     const operatorName = document.getElementById('operator-name');
     if (operatorName) operatorName.value = operator.name || '';
@@ -2576,7 +2827,13 @@ function loadReferrerData() {
         window.applyReferrerToggleState(referrerType === 'individual');
     }
 
-    const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    // Ensure currentConsultantIndex is valid
+    const consultants = window.formData.referrerConsultants || [];
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0 || window.currentConsultantIndex >= consultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
         debugLog('📋 Consultant data:', consultant);
@@ -2627,7 +2884,7 @@ function loadReferrerData() {
     const individualArrays = [
         { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
         { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
-        { path: 'referrerIndividual.affiliations', data: consultant.affiliations },
+        { path: 'consultant.affiliations', data: consultant.affiliations },
         { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
         { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
     ];
@@ -2688,7 +2945,6 @@ window.updateAllUI = function() {
         loadOperatorData();
         loadReferrerData();
         loadFacilityData();
-        rebuildLocationAggregates();
         updateFacilityControls();
         updateTableOfContents();
         updateJSON();
@@ -2700,8 +2956,13 @@ window.updateAllUI = function() {
         initializeNoteControls();
         updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
-        // Ensure referrer consultant UI stays in sync when loading referrer projects
+        // Update location facilities overview for location projects
         const activeTab = document.querySelector('.category-tab.active');
+        if (activeTab && activeTab.dataset.category === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
+            window.updateLocationFacilitiesOverview();
+        }
+
+        // Ensure referrer consultant UI stays in sync when loading referrer projects
         if (activeTab && activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
             window.updateConsultantsUI();
         }
@@ -2709,7 +2970,7 @@ window.updateAllUI = function() {
         // Reinitialize autocomplete for facility status field
         const facilityStatusField = document.querySelector('.facility-field[data-field="operatingPeriod.status"]');
         if (facilityStatusField && facilityStatusField.dataset.autocompleteInit !== 'true') {
-            createAutocomplete(facilityStatusField, getAllStatuses, 'status');
+            delegateCreateAutocomplete(facilityStatusField, getAllStatuses, 'status');
         }
     } finally {
         // Clear flag after a short delay to allow any triggered events to complete
@@ -2807,7 +3068,39 @@ function navigateToFacility(index) {
         updateFacilityControls();
         updateTableOfContents();
         updateToolbarFacilityInfo();
+        scrollToFormInput();
     }
+}
+
+/**
+ * Scroll the view to the form input section after loading a facility
+ * Targets the facility controls or first form section for best UX
+ */
+function scrollToFormInput() {
+    // Small delay to ensure DOM is updated
+    setTimeout(() => {
+        // Try to scroll to the facility controls (where input starts)
+        const facilityControls = document.querySelector('.facility-controls');
+        const operatorSection = document.getElementById('operator-section');
+        const identificationSection = document.getElementById('identification-section');
+        const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+        
+        // Find the best target to scroll to
+        const scrollTarget = facilityControls || operatorSection || identificationSection || facilityMainWrapper;
+        
+        if (scrollTarget) {
+            // Account for fixed toolbar height
+            const toolbarHeight = document.querySelector('.fixed-toolbar')?.offsetHeight || 0;
+            const offset = toolbarHeight + 20; // Extra padding
+            
+            const targetPosition = scrollTarget.getBoundingClientRect().top + window.pageYOffset - offset;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }, 50);
 }
 
 // ============================================
@@ -3226,6 +3519,7 @@ function previousFacility() {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        scrollToFormInput();
         setTimeout(() => { isNavigating = false; }, 100);
     }
 }
@@ -3238,77 +3532,13 @@ function nextFacility() {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
+        scrollToFormInput();
         setTimeout(() => { isNavigating = false; }, 100);
     }
 }
 
-const US_STATE_NAMES = [
-    'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
-    'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
-    'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey',
-    'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina',
-    'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'
-];
-
-const COUNTRY_NAMES = [
-    'canada', 'mexico', 'united kingdom', 'france', 'germany', 'italy', 'spain', 'russia', 'china', 'japan',
-    'australia', 'brazil', 'argentina', 'india', 'south africa', 'nigeria', 'egypt', 'saudi arabia', 'iran', 'iraq',
-    'norway', 'sweden', 'denmark', 'netherlands', 'belgium', 'switzerland', 'austria', 'poland', 'ukraine', 'turkey'
-];
-
-const US_STATE_SET = new Set(US_STATE_NAMES);
-const COUNTRY_SET = new Set(COUNTRY_NAMES);
-
-function ensureLocationProjectsFromFacilities() {
-    if (!window.formData || !Array.isArray(window.formData.facilities)) return;
-    if (!window.projects) window.projects = {};
-
-    const states = new Set();
-    window.formData.facilities.forEach((facility = {}) => {
-        const rawLocation = facility.location || '';
-        const parsed = parseCityState(rawLocation);
-        const state = (facility.locationState || parsed.state || '').trim();
-        if (state) {
-            states.add(state.toUpperCase());
-        }
-    });
-
-    states.forEach((stateName) => {
-        if (!window.projects[stateName]) {
-            const locationProject = createNewProjectData();
-            locationProject.facilities = [];
-            window.projects[stateName] = {
-                name: stateName,
-                data: locationProject,
-                timestamp: new Date().toISOString(),
-                category: 'locations'
-            };
-        } else if (!window.projects[stateName].category) {
-            window.projects[stateName].category = 'locations';
-        }
-    });
-}
-
-function ensureAllStateLocationProjects() {
-    if (!window.projects) {
-        window.projects = {};
-    }
-
-    US_STATE_NAMES.forEach((stateName) => {
-        if (!window.projects[stateName]) {
-            const emptyLocation = createNewProjectData();
-            emptyLocation.facilities = [];
-            window.projects[stateName] = {
-                name: stateName,
-                data: emptyLocation,
-                timestamp: new Date().toISOString(),
-                category: 'locations'
-            };
-        } else if (!window.projects[stateName].category) {
-            window.projects[stateName].category = 'locations';
-        }
-    });
-}
+// Location constants now defined in location-form.js module
+// Access via window.US_STATE_NAMES, window.COUNTRY_NAMES, window.US_STATE_SET, window.COUNTRY_SET
 
 function getProjectStates(projectData = {}) {
     const states = new Set();
@@ -3347,78 +3577,6 @@ function getProjectStates(projectData = {}) {
     return Array.from(states).filter(Boolean);
 }
 
-function rebuildLocationAggregates() {
-    if (!window.projects || typeof deepClone !== 'function') {
-        return;
-    }
-
-    const stateBuckets = {};
-    const registerState = (state) => {
-        if (!state) return;
-        const normalized = state.trim().toUpperCase();
-        if (!normalized) return;
-        if (!stateBuckets[normalized]) {
-            stateBuckets[normalized] = { facilities: [], referrers: [] };
-        }
-    };
-
-    // Collect facilities and referrers from every non-location project
-    Object.entries(window.projects).forEach(([projectName, project]) => {
-        if (!project || project.category === 'locations') return;
-        const data = project.data || {};
-
-        // Facilities
-        (data.facilities || []).forEach((facility = {}) => {
-            const parsed = parseCityState(facility.location || '');
-            const state = (facility.locationState || parsed.state || '').trim();
-            if (!state) return;
-            registerState(state);
-            const clone = deepClone(facility);
-            clone.sourceProject = projectName;
-            stateBuckets[state.toUpperCase()].facilities.push(clone);
-        });
-
-        // Referrer consultants/individuals
-        const refConsultants = Array.isArray(data.referrerConsultants) ? data.referrerConsultants : [];
-        refConsultants.forEach((consultant = {}) => {
-            const state = (consultant.state || '').trim();
-            if (!state) return;
-            registerState(state);
-            const clone = deepClone(consultant);
-            clone.sourceProject = projectName;
-            stateBuckets[state.toUpperCase()].referrers.push(clone);
-        });
-
-        const refInd = data.referrerIndividual || null;
-        if (refInd && refInd.state) {
-            registerState(refInd.state);
-            const clone = deepClone(refInd);
-            clone.sourceProject = projectName;
-            stateBuckets[refInd.state.trim().toUpperCase()].referrers.push(clone);
-        }
-    });
-
-    // Ensure every US state project exists, then overwrite with the aggregated data
-    ensureAllStateLocationProjects();
-
-    Object.keys(window.projects).forEach((projectName) => {
-        const isStateProject = US_STATE_SET.has(projectName.toUpperCase());
-        if (!isStateProject) return;
-
-        const bucket = stateBuckets[projectName.toUpperCase()] || { facilities: [], referrers: [] };
-        const aggregated = createNewProjectData();
-        aggregated.facilities = bucket.facilities;
-        aggregated.referrerConsultants = bucket.referrers;
-
-        window.projects[projectName] = {
-            name: projectName,
-            data: aggregated,
-            timestamp: new Date().toISOString(),
-            category: 'locations'
-        };
-    });
-}
-
 function determineProjectCategory(name = '') {
     // First, check if the project has stored category metadata
     const project = window.projects?.[name];
@@ -3437,7 +3595,7 @@ function determineProjectCategory(name = '') {
         normalized.includes('school')) {
         return 'referrers';
     }
-    if (US_STATE_SET.has(normalized) || COUNTRY_SET.has(normalized)) {
+    if (window.US_STATE_SET.has(normalized) || window.COUNTRY_SET.has(normalized)) {
         return 'locations';
     }
     return 'companies';
@@ -3476,6 +3634,7 @@ function refreshSavedProjectPanels() {
             const project = window.projects[name];
             const date = new Date(project.timestamp || 0);
             const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
             const facilityCount = project.data?.facilities?.length || 0;
             const facilityLabel = determineProjectCategory(name) === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
             
@@ -3556,7 +3715,7 @@ function updateLabelsForProjectType() {
 
     // Define default and referrer-specific labels
     const labels = {
-        toolbarTitle: { default: '📋 Facility Editor', referrer: '📋 Referrer Editor' },
+        toolbarTitle: { default: '📋 Project Editor', referrer: '📋 Referrer Editor' },
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
         facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
@@ -3659,34 +3818,8 @@ function handleFileUpload(event) {
     reader.readAsText(file);
 }
 
-function copyToClipboard() {
-    navigator.clipboard.writeText(JSON.stringify(window.formData, null, 2)).then(() => {
-        showUploadStatus('JSON copied to clipboard!', 'success');
-    });
-}
-
-function downloadJSON() {
-    const jsonString = JSON.stringify(window.formData, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${window.currentProjectName || 'facility_data'}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-function buildProjectExport(categories) {
-    const projects = window.projects || {};
-    const allowed = Array.isArray(categories) && categories.length ? new Set(categories) : null;
-
-    return Object.fromEntries(
-        Object.entries(projects).filter(([_, project]) => {
-            const category = project?.category || 'companies';
-            return !allowed || allowed.has(category);
-        })
-    );
-}
+// copyToClipboard, downloadJSON, and buildProjectExport functions now defined in utilities.js module
+// Access via window.copyToClipboard, window.downloadJSON, and window.buildProjectExport
 
 function exportProjectsToFile({ categories = null, filename } = {}) {
     const filtered = buildProjectExport(categories);
@@ -4147,6 +4280,16 @@ function attachFieldListeners() {
         window.attachReferrerFieldListeners();
     }
 
+    // Consultant navigation buttons - handled by referrer-form.js module
+    if (typeof window.initializeConsultantNavigation === 'function') {
+        window.initializeConsultantNavigation();
+    }
+
+    // Consultants TOC toggle - handled by referrer-form.js module
+    if (typeof window.initializeConsultantsTocToggle === 'function') {
+        window.initializeConsultantsTocToggle();
+    }
+
     // Facility fields
     document.querySelectorAll('.facility-field').forEach(field => {
         if (!field.dataset.listenerAttached) {
@@ -4414,6 +4557,54 @@ async function initializeForm() {
     debugLog('Initializing consolidated form with cloud-first storage...');
     logActiveFacilityFormConfigOnce();
 
+    // Wait for referrer module to be ready
+    if (typeof window.ensureReferrerDataStructures !== 'function') {
+        console.warn('⚠️ Referrer module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.ensureReferrerDataStructures === 'function') {
+                debugLog('✅ Referrer module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.ensureReferrerDataStructures !== 'function') {
+            console.error('❌ Referrer module failed to load after 5 seconds. Referrer form may not work.');
+            showUploadStatus('Error: Referrer module failed to load.', 'error');
+        }
+    }
+
+    // Wait for autocomplete module to be ready
+    if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+        console.warn('⚠️ Autocomplete module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.initializeAutocompleteFields === 'function' && !window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+                debugLog('✅ Autocomplete module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
+            console.error('❌ Autocomplete module failed to load after 5 seconds. Autocomplete will not work.');
+            showUploadStatus('Error: Autocomplete module failed to load.', 'error');
+        }
+    }
+
+    // Wait for notes module to be ready
+    if (typeof window.NotesModule === 'undefined') {
+        console.warn('⚠️ Notes module not ready, waiting...');
+        for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (typeof window.NotesModule !== 'undefined') {
+                debugLog('✅ Notes module loaded successfully after', i * 100, 'ms');
+                break;
+            }
+        }
+        if (typeof window.NotesModule === 'undefined') {
+            console.error('❌ Notes module failed to load after 5 seconds. Field notes may not work.');
+            showUploadStatus('Warning: Notes module failed to load.', 'error');
+        }
+    }
+
     // Wait for loader to be available (with better diagnostics)
     if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
         console.warn('⚠️ KOP_FormLoader not ready, waiting...', {
@@ -4552,6 +4743,12 @@ function getCurrentFieldNotesSnapshot() {
     return getCurrentFacilityNotes();
 }
 
+function addNoteButtons() {
+    if (window.NotesModule && typeof window.NotesModule.addNoteButtons === 'function') {
+        window.NotesModule.addNoteButtons();
+    }
+}
+
 // Make key functions globally available
 window.loadProject = loadProject;
 window.newProject = newProject;
@@ -4566,412 +4763,22 @@ window.previousFacility = previousFacility;
 window.nextFacility = nextFacility;
 window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
-window.copyToClipboard = copyToClipboard;
-window.downloadJSON = downloadJSON;
+window.scrollToFormInput = scrollToFormInput;
+// copyToClipboard and downloadJSON now exported from utilities.js module
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
-window.initializeAutocompleteFields = initializeAutocompleteFields;
+// Only expose autocomplete helpers if the module did not already register them
+if (typeof window.createAutocomplete !== 'function') {
+    window.createAutocomplete = delegateCreateAutocomplete;
+}
+if (typeof window.initializeAutocompleteFields !== 'function') {
+    window.initializeAutocompleteFields = delegateInitializeAutocompleteFields;
+}
 window.invalidateAggregatedData = invalidateAggregatedData;
 window.normalizeProjectData = normalizeProjectData;
 window.initializeSectionToggles = initializeSectionToggles;
-
-// ============================================
-// CONSULTANTS OVERVIEW (for Referrers view)
-// ============================================
-
-function getConsultantDisplayName(consultant, index) {
-    if (!consultant) {
-        return `Consultant ${index + 1}`;
-    }
-
-    const fullName = (consultant.fullName || '').trim();
-    const nameField = (consultant.name || '').trim();
-    const firstLast = [consultant.firstName, consultant.lastName].map(part => (part || '').trim()).filter(Boolean).join(' ').trim();
-
-    // Prefer the longest available string so a 1-letter fullName doesn't win
-    const candidates = [fullName, nameField, firstLast].filter(Boolean);
-    const best = candidates.reduce((winner, candidate) => {
-        if (!winner) return candidate;
-        return candidate.length > winner.length ? candidate : winner;
-    }, '');
-
-    const displayName = best || `Consultant ${index + 1}`;
-
-    // Backfill missing name parts to keep downstream code consistent
-    if (!consultant.fullName && best) {
-        consultant.fullName = best;
-    }
-    if (!consultant.firstName && !consultant.lastName && best) {
-        const parts = best.split(/\s+/);
-        if (parts.length > 1) {
-            consultant.firstName = parts.shift();
-            consultant.lastName = parts.join(' ');
-        } else {
-            consultant.firstName = best;
-        }
-    }
-
-    return displayName;
-}
-
-function updateConsultantsOverview() {
-    const consultantsList = document.getElementById('consultants-list');
-    const consultantsStats = document.getElementById('consultants-toc-stats');
-
-    if (!consultantsList || !consultantsStats) return;
-
-    const consultants = window.formData?.referrerConsultants || [];
-    const currentIndex = window.currentConsultantIndex || 0;
-
-    debugLog('updateConsultantsOverview: consultants count =', consultants.length, 'currentIndex =', currentIndex);
-
-    // Update stats
-    consultantsStats.textContent = `Total: ${consultants.length} consultant${consultants.length !== 1 ? 's' : ''}`;
-
-    // Clear list
-    consultantsList.innerHTML = '';
-
-    // Populate consultant items
-    consultants.forEach((consultant, index) => {
-        debugLog(`Processing consultant ${index}:`, {
-            firstName: consultant.firstName,
-            lastName: consultant.lastName,
-            fullName: consultant.fullName,
-            city: consultant.city,
-            state: consultant.state,
-            allKeys: Object.keys(consultant)
-        });
-
-        // Build full name - try multiple possible keys
-        const fullName = getConsultantDisplayName(consultant, index);
-
-        // Build location
-        const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || 'Location not specified';
-
-        debugLog(`Consultant ${index} display: name="${fullName}", location="${location}"`);
-
-        const item = document.createElement('div');
-        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
-        item.tabIndex = 0;
-        item.setAttribute('role', 'button');
-        item.setAttribute('aria-label', `View ${fullName}`);
-
-        // Properly escape HTML
-        const nameDiv = document.createElement('div');
-        nameDiv.textContent = fullName;
-        const nameEscaped = nameDiv.innerHTML;
-
-        const locationDiv = document.createElement('div');
-        locationDiv.textContent = location;
-        const locationEscaped = locationDiv.innerHTML;
-
-        item.innerHTML = `
-            <div class="facility-item-number">${index + 1}</div>
-            <div class="facility-item-info">
-                <div class="facility-item-name">${nameEscaped}</div>
-                <div class="facility-item-details">${locationEscaped}</div>
-            </div>
-        `;
-
-        const selectConsultant = () => {
-            debugLog('Selected consultant index:', index);
-            window.currentConsultantIndex = index;
-            loadConsultantData();
-            updateConsultantsOverview();
-        };
-
-        item.addEventListener('click', selectConsultant, { passive: true });
-        item.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                selectConsultant();
-            }
-        });
-
-        consultantsList.appendChild(item);
-    });
-}
-
-function loadConsultantData() {
-    if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length === 0) {
-        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
-        window.currentConsultantIndex = 0;
-    }
-
-    const consultant = window.formData.referrerConsultants[window.currentConsultantIndex];
-    
-    if (!consultant) {
-        console.warn('⚠️ Consultant not found at index', window.currentConsultantIndex);
-        return;
-    }
-
-    // Ensure fullName is built if not already set (prefer longest available name)
-    getConsultantDisplayName(consultant, window.currentConsultantIndex);
-
-    // Load basic fields - map from input IDs to consultant data keys
-    const fields = {
-        'consultant-firstname': 'firstName',
-        'consultant-lastname': 'lastName',
-        'consultant-credentials': 'credentials',
-        'consultant-education': 'education',
-        'consultant-city': 'city',
-        'consultant-state': 'state',
-        'consultant-email': 'email',
-        'consultant-phone': 'phone',
-        'consultant-website': 'website',
-        'consultant-role': 'role',
-        'consultant-status': 'status',
-        'consultant-notes': 'notes',
-        'consultant-lawsuits': 'lawsuits'
-    };
-
-    Object.keys(fields).forEach(fieldId => {
-        const element = document.getElementById(fieldId);
-        if (element) {
-            element.value = consultant[fields[fieldId]] || '';
-        }
-    });
-
-    // Update dropdown
-    updateConsultantDropdown();
-
-    // Update remove button visibility
-    const removeBtn = document.getElementById('remove-consultant-btn');
-    if (removeBtn) {
-        if (window.formData.referrerConsultants.length > 1) {
-            removeBtn.classList.remove('d-none');
-        } else {
-            removeBtn.classList.add('d-none');
-        }
-    }
-
-    // Initialize array fields
-    if (!Array.isArray(consultant.affiliations)) {
-        consultant.affiliations = [];
-    }
-    if (!Array.isArray(consultant.facilitiesReferred)) {
-        consultant.facilitiesReferred = [];
-    }
-    if (!Array.isArray(consultant.schoolDistricts)) {
-        consultant.schoolDistricts = [];
-    }
-
-    // Render array fields
-    const consultantArrays = [
-        { path: 'consultant.affiliations', data: consultant.affiliations },
-        { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
-        { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
-    ];
-
-    if (typeof renderArray === 'function') {
-        consultantArrays.forEach(({ path, data }) => {
-            const container = document.querySelector(`[data-path="${path}"]`);
-            if (container) {
-                renderArray(container, path, data);
-            }
-        });
-    }
-}
-
-function updateConsultantDropdown() {
-    const dropdown = document.getElementById('consultant-dropdown');
-    if (!dropdown) return;
-
-    const consultants = window.formData?.referrerConsultants || [];
-    dropdown.innerHTML = '';
-
-    consultants.forEach((consultant, index) => {
-        const fullName = getConsultantDisplayName(consultant, index);
-
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${index + 1}. ${fullName}`;
-        dropdown.appendChild(option);
-    });
-
-    dropdown.value = window.currentConsultantIndex || 0;
-    debugLog('✅ Consultant dropdown updated with', consultants.length, 'consultants');
-}
-
-function updateConsultantsUI() {
-    debugLog('🔄 updateConsultantsUI called');
-    loadConsultantData();
-    updateConsultantsOverview();
-    updateConsultantDropdown();
-    if (typeof updateJSON === 'function') updateJSON();
-    if (typeof autoSave === 'function') autoSave();
-    debugLog('✅ updateConsultantsUI complete');
-}
-
-// ============================================
-// LOCATION FACILITIES OVERVIEW
-// ============================================
-
-function updateLocationFacilitiesOverview() {
-    const facilitiesList = document.getElementById('location-facilities-list');
-    const facilitiesStats = document.getElementById('location-facilities-toc-stats');
-
-    if (!facilitiesList || !facilitiesStats) return;
-
-    const facilities = window.formData?.facilities || [];
-    const currentIndex = window.currentFacilityIndex || 0;
-
-    // Update stats
-    facilitiesStats.textContent = `Total: ${facilities.length} facilit${facilities.length !== 1 ? 'ies' : 'y'}`;
-
-    // Clear list
-    facilitiesList.innerHTML = '';
-
-    if (facilities.length === 0) {
-        facilitiesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No facilities in this location yet</div>';
-        return;
-    }
-
-    // Populate facility items
-    facilities.forEach((facility, index) => {
-        const facilityName = facility.identification?.name || 'Unnamed Facility';
-        const operator = facility.identification?.currentOperator || 'Unknown Operator';
-        const programType = facility.facilityDetails?.type || '';
-        const status = facility.operatingPeriod?.status || '';
-
-        const item = document.createElement('div');
-        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
-        item.tabIndex = 0;
-        const accessibleFacilityName = facilityName !== 'Unnamed Facility' ? facilityName : `Facility ${index + 1}`;
-        item.setAttribute('role', 'button');
-        item.setAttribute('aria-label', `View ${accessibleFacilityName}`);
-
-        // Escape HTML
-        const div1 = document.createElement('div');
-        div1.textContent = facilityName;
-        const nameEscaped = div1.innerHTML;
-
-        const div2 = document.createElement('div');
-        div2.textContent = operator;
-        const operatorEscaped = div2.innerHTML;
-
-        const div3 = document.createElement('div');
-        div3.textContent = programType;
-        const typeEscaped = div3.innerHTML;
-
-        const div4 = document.createElement('div');
-        div4.textContent = status;
-        const statusEscaped = div4.innerHTML;
-
-        item.innerHTML = `
-            <div class="facility-item-number">${index + 1}</div>
-            <div class="facility-item-info">
-                <div class="facility-item-name">${nameEscaped}</div>
-                <div class="facility-item-details">
-                    ${operatorEscaped}${programType ? ' • ' + typeEscaped : ''}${status ? ' • ' + statusEscaped : ''}
-                </div>
-            </div>
-        `;
-
-        const selectFacility = () => {
-            window.currentFacilityIndex = index;
-            if (typeof window.updateAllUI === 'function') {
-                window.updateAllUI();
-            }
-            updateLocationFacilitiesOverview();
-        };
-
-        item.addEventListener('click', selectFacility);
-        item.addEventListener('keydown', function(event) { // Note: cannot be passive
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                selectFacility();
-            }
-        });
-
-        facilitiesList.appendChild(item);
-    });
-}
-
-// ============================================
-// CONSULTANT NAVIGATION INITIALIZATION
-// ============================================
-
-function initializeConsultantNavigation() {
-    // Initialize consultant navigation buttons
-    const addConsultantBtn = document.getElementById('add-consultant-btn');
-    const removeConsultantBtn = document.getElementById('remove-consultant-btn');
-    const prevConsultantBtn = document.getElementById('prev-consultant-btn');
-    const nextConsultantBtn = document.getElementById('next-consultant-btn');
-    const consultantDropdown = document.getElementById('consultant-dropdown');
-
-    if (addConsultantBtn && !addConsultantBtn.dataset.listenerAttached) {
-        addConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
-            if (!window.formData.referrerConsultants) {
-                window.formData.referrerConsultants = [];
-            }
-            window.formData.referrerConsultants.push({
-                firstName: '',
-                lastName: '',
-                credentials: '',
-                city: '',
-                state: '',
-                email: '',
-                phone: '',
-                website: '',
-                affiliations: [],
-                facilitiesReferred: [],
-                schoolDistricts: [],
-                notes: ''
-            });
-            window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
-            updateConsultantsUI();
-        });
-        addConsultantBtn.dataset.listenerAttached = 'true';
-    }
-
-    if (removeConsultantBtn && !removeConsultantBtn.dataset.listenerAttached) {
-        removeConsultantBtn.addEventListener('click', function() {
-            if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length <= 1) {
-                return;
-            }
-            if (confirm('Are you sure you want to remove this consultant?')) {
-                window.formData.referrerConsultants.splice(window.currentConsultantIndex, 1);
-                if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
-                    window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
-                }
-                updateConsultantsUI();
-            }
-        });
-        removeConsultantBtn.dataset.listenerAttached = 'true';
-    }
-
-    if (prevConsultantBtn && !prevConsultantBtn.dataset.listenerAttached) {
-        prevConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
-            if (window.currentConsultantIndex > 0) {
-                window.currentConsultantIndex--;
-                loadConsultantData();
-                updateConsultantsOverview();
-            }
-        });
-        prevConsultantBtn.dataset.listenerAttached = 'true';
-    }
-
-    if (nextConsultantBtn && !nextConsultantBtn.dataset.listenerAttached) {
-        nextConsultantBtn.addEventListener('click', function() {
-            const maxIndex = (window.formData.referrerConsultants?.length || 1) - 1;
-            if (window.currentConsultantIndex < maxIndex) {
-                window.currentConsultantIndex++;
-                loadConsultantData();
-                updateConsultantsOverview();
-            }
-        });
-        nextConsultantBtn.dataset.listenerAttached = 'true';
-    }
-
-    if (consultantDropdown && !consultantDropdown.dataset.listenerAttached) {
-        consultantDropdown.addEventListener('change', function(e) {
-            window.currentConsultantIndex = parseInt(e.target.value);
-            loadConsultantData();
-            updateConsultantsOverview();
-        }, { passive: true });
-        consultantDropdown.dataset.listenerAttached = 'true';
-    }
-}
+window.initializeMobileSectionControls = initializeMobileSectionControls;
+window.expandAllSections = expandAllSections;
+window.collapseAllSections = collapseAllSections;
 
 // ============================================
 // TAB-SWITCHING INITIALIZATION FOR OVERVIEWS
@@ -5014,59 +4821,8 @@ function initializeOverviewTabSwitching() {
     });
 }
 
-// ============================================
-// TOC TOGGLE INITIALIZATION
-// ============================================
-
-function initializeConsultantsTocToggle() {
-    const consultantsTocToggle = document.getElementById('consultants-toc-toggle-btn');
-    if (consultantsTocToggle && !consultantsTocToggle.dataset.listenerAttached) {
-        consultantsTocToggle.addEventListener('click', function() { // UI-only, can be passive
-            const toc = document.getElementById('consultants-toc');
-            const content = toc.querySelector('.toc-content');
-            const isCollapsed = content.style.display === 'none';
-
-            if (isCollapsed) {
-                content.style.display = 'block';
-                consultantsTocToggle.textContent = '🔎';
-            } else {
-                content.style.display = 'none';
-                consultantsTocToggle.textContent = '👁️';
-            }
-        }, { passive: true });
-        consultantsTocToggle.dataset.listenerAttached = 'true';
-    }
-}
-
-function initializeLocationFacilitiesToc() {
-    const locationFacilitiesTocToggle = document.getElementById('location-facilities-toc-toggle-btn');
-    if (locationFacilitiesTocToggle && !locationFacilitiesTocToggle.dataset.listenerAttached) {
-        locationFacilitiesTocToggle.addEventListener('click', function() { // UI-only, can be passive
-            const toc = document.getElementById('location-facilities-toc');
-            const content = toc.querySelector('.toc-content');
-            const isCollapsed = content.style.display === 'none';
-
-            if (isCollapsed) {
-                content.style.display = 'block';
-                locationFacilitiesTocToggle.textContent = '🔎';
-            } else {
-                content.style.display = 'none';
-                locationFacilitiesTocToggle.textContent = '👁️';
-            }
-        }, { passive: true });
-        locationFacilitiesTocToggle.dataset.listenerAttached = 'true';
-    }
-}
-
 // Expose to global scope
-window.updateConsultantsOverview = updateConsultantsOverview;
-window.updateConsultantsUI = updateConsultantsUI;
-window.loadConsultantData = loadConsultantData;
-window.updateLocationFacilitiesOverview = updateLocationFacilitiesOverview;
-window.initializeConsultantNavigation = initializeConsultantNavigation;
 window.initializeOverviewTabSwitching = initializeOverviewTabSwitching;
-window.initializeConsultantsTocToggle = initializeConsultantsTocToggle;
-window.initializeLocationFacilitiesToc = initializeLocationFacilitiesToc;
 
 // Expose project loading function for rebuild operations
 window.loadProjectsFromServer = loadAllProjectsFromCloud;

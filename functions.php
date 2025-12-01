@@ -20,17 +20,16 @@ function kadence_child_enqueue_styles() {
         wp_get_theme()->get('Version')
     );
 
-    // Enqueue data form stylesheet on the 'data' and 'admin-data' pages.
-    if (is_page_template('page-data.php') || is_page_template('page-admin-data.php')) {
-        $style_path = get_stylesheet_directory() . '/css/data-form.css';
-        if (file_exists($style_path)) {
-            wp_enqueue_style(
-                'kop-data-form-style',
-                get_stylesheet_directory_uri() . '/css/data-form.css',
-                array('kadence-parent-style'),
-                filemtime($style_path)
-            );
-        }
+    // Enqueue shared color variables for all pages
+    $colors_path = get_stylesheet_directory() . '/css/colors.css';
+
+    if (file_exists($colors_path)) {
+        wp_enqueue_style(
+            'kop-colors',
+            get_stylesheet_directory_uri() . '/css/colors.css',
+            array('kadence-parent-style'),
+            filemtime($colors_path)
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
@@ -43,7 +42,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * @return bool
  */
 function kop_is_headerless_layout() {
-    return is_page_template('page-data.php') || is_page_template('page-admin-data.php');
+    return is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php');
 }
 
 /**
@@ -182,43 +181,12 @@ function kop_get_facilities_database_connection() {
         return new WP_Error('kop_facilities_wpdb_missing', __('Database connection is not available.', 'kadence-child'));
     }
 
-    // Connect to the facilities database
-    $use_separate_db = false;
-    $facilities_db = null;
-
-    // Try to load credentials from constants first
-    $db_user = defined('KOP_FACILITIES_DB_USER') ? KOP_FACILITIES_DB_USER : '';
-    $db_pass = defined('KOP_FACILITIES_DB_PASSWORD') ? KOP_FACILITIES_DB_PASSWORD : '';
-    $db_name = defined('KOP_FACILITIES_DB_NAME') ? KOP_FACILITIES_DB_NAME : '';
-    $db_host = defined('KOP_FACILITIES_DB_HOST') ? KOP_FACILITIES_DB_HOST : 'localhost';
-
-    // If constants aren't defined, try to load from api/config.local.php (not config.php which is for API endpoints)
-    if (empty($db_user) || empty($db_name)) {
-        $config_local_path = get_stylesheet_directory() . '/api/config.local.php';
-        if (file_exists($config_local_path)) {
-            $localConfig = include $config_local_path;
-            if (is_array($localConfig)) {
-                $db_host = $localConfig['host'] ?? $localConfig['db_host'] ?? $db_host;
-                $db_name = $localConfig['name'] ?? $localConfig['db_name'] ?? $db_name;
-                $db_user = $localConfig['user'] ?? $localConfig['username'] ?? $localConfig['db_user'] ?? $db_user;
-                $db_pass = $localConfig['pass'] ?? $localConfig['password'] ?? $localConfig['db_pass'] ?? $db_pass;
-            }
-        }
-    }
-
-    // Only try to connect if we have credentials
-    if (!empty($db_user) && !empty($db_name)) {
-        try {
-            $facilities_db = new wpdb($db_user, $db_pass, $db_name, $db_host);
-            $use_separate_db = true;
-        } catch (Exception $e) {
-            error_log('Failed to connect to facilities database: ' . $e->getMessage());
-        }
-    }
-
+    // Flywheel Local: Simplified to always use the default WordPress database.
+    // The original code attempted to connect to a separate database, which is complex to manage
+    // across different environments. Using the main WP database is more portable.
     $connection = array(
-        'db'     => $use_separate_db && $facilities_db ? $facilities_db : $wpdb,
-        'prefix' => '', // No prefix for the standalone facilities database
+        'db'     => $wpdb,
+        'prefix' => $wpdb->prefix,
     );
 
     /**
@@ -306,7 +274,7 @@ function kop_discover_facilities_master_table($connection, $prefix = '') {
 }
 
 /**
- * Fetch facilities projects from the database.
+ * Fetch all projects from the database (facilities, referrers, and locations).
  *
  * @return array|WP_Error Array of projects on success, WP_Error on failure.
  */
@@ -324,100 +292,158 @@ function kop_get_facilities_projects_from_database() {
         return new WP_Error('kop_facilities_invalid_connection', __('Facilities database connection is invalid.', 'kadence-child'));
     }
 
-    $table_name = kop_discover_facilities_master_table($db_connection, $prefix);
-
-    if ($table_name === null) {
-        return new WP_Error('kop_facilities_table_missing', __('Facilities master table was not found.', 'kadence-child'));
-    }
-
-    $available_columns = $db_connection->get_col(sprintf('SHOW COLUMNS FROM %s', $table_name));
-
-    if (!is_array($available_columns)) {
-        return new WP_Error('kop_facilities_columns_unavailable', __('Unable to read facilities master columns.', 'kadence-child'));
-    }
-
-    $select_column = function ($candidates) use ($available_columns) {
-        foreach ($candidates as $candidate) {
-            if (in_array($candidate, $available_columns, true)) {
-                return $candidate;
-            }
-        }
-
-        return null;
-    };
-
-    $sanitize_identifier = function ($identifier) {
-        if (!is_string($identifier)) {
-            return '';
-        }
-
-        return preg_match('/^[A-Za-z0-9_]+$/', $identifier) === 1 ? $identifier : '';
-    };
-
-    $identifier_column = $select_column(array('unique_name', 'project_unique_name', 'slug', 'project_slug', 'project_name', 'name', 'id'));
-    $json_column = $select_column(array('json_data', 'project_json', 'json', 'project_data', 'data'));
-    $updated_column = $select_column(array('updated_at', 'modified_at', 'last_updated', 'timestamp', 'created_at'));
-
-    if ($identifier_column === null || $json_column === null) {
-        return new WP_Error('kop_facilities_required_columns_missing', __('Required facilities master columns are missing. Expected an identifier and JSON payload column.', 'kadence-child'));
-    }
-
-    $identifier_column = $sanitize_identifier($identifier_column);
-    $json_column = $sanitize_identifier($json_column);
-    $updated_column = $updated_column !== null ? $sanitize_identifier($updated_column) : null;
-
-    if ($identifier_column === '' || $json_column === '') {
-        return new WP_Error('kop_facilities_required_columns_invalid', __('Facilities master table columns contained invalid characters.', 'kadence-child'));
-    }
-
-    $select_parts = array();
-    $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
-    $select_parts[] = '`' . $json_column . '` AS project_payload';
-
-    if ($updated_column !== null && $updated_column !== '') {
-        $select_parts[] = '`' . $updated_column . '` AS project_updated';
-    }
-
-    $select_sql = implode(', ', $select_parts);
-
-    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery helper.
-    $rows = $db_connection->get_results("SELECT {$select_sql} FROM {$table_name}", ARRAY_A);
-
-    if (!is_array($rows)) {
-        return new WP_Error('kop_facilities_query_failed', __('Unable to fetch facilities data from the database.', 'kadence-child'));
-    }
+    // All three master tables to query
+    $master_tables = array(
+        'facilities_master',
+        'referrers_master',
+        'locations_master',
+    );
 
     $projects = array();
 
-    foreach ($rows as $row) {
-        $unique_name_raw = isset($row['project_identifier']) ? $row['project_identifier'] : '';
-        $unique_name = sanitize_text_field($unique_name_raw);
+    foreach ($master_tables as $table_base) {
+        // Try table with and without prefix
+        $table_name = null;
+        $prefixes_to_try = array('');
+        if (is_string($prefix) && $prefix !== '') {
+            $prefixes_to_try[] = $prefix;
+        }
+        if ($db_connection->prefix !== null && $db_connection->prefix !== '') {
+            $prefixes_to_try[] = $db_connection->prefix;
+        }
 
-        if ($unique_name === '') {
+        foreach ($prefixes_to_try as $prefix_candidate) {
+            $candidate_table = $prefix_candidate . $table_base;
+            $table_exists = $db_connection->get_var($db_connection->prepare(
+                'SHOW TABLES LIKE %s',
+                $candidate_table
+            ));
+            if ($table_exists === $candidate_table) {
+                $table_name = $candidate_table;
+                break;
+            }
+        }
+
+        // Skip if table doesn't exist
+        if ($table_name === null) {
             continue;
         }
 
-        $payload_raw = isset($row['project_payload']) ? $row['project_payload'] : '';
+        $available_columns = $db_connection->get_col(sprintf('SHOW COLUMNS FROM %s', $table_name));
 
-        if (!is_string($payload_raw) || $payload_raw === '') {
-            error_log(sprintf('KOP facilities: empty JSON payload for project "%s"', $unique_name));
+        if (!is_array($available_columns)) {
             continue;
         }
 
-        $decoded = json_decode($payload_raw, true);
+        $select_column = function ($candidates) use ($available_columns) {
+            foreach ($candidates as $candidate) {
+                if (in_array($candidate, $available_columns, true)) {
+                    return $candidate;
+                }
+            }
+            return null;
+        };
 
-        if (!is_array($decoded)) {
-            error_log(sprintf('KOP facilities: invalid JSON for project "%s"', $unique_name));
+        $sanitize_identifier = function ($identifier) {
+            if (!is_string($identifier)) {
+                return '';
+            }
+            return preg_match('/^[A-Za-z0-9_]+$/', $identifier) === 1 ? $identifier : '';
+        };
+
+        $identifier_column = $select_column(array('unique_name', 'project_unique_name', 'slug', 'project_slug', 'project_name', 'name', 'id'));
+        $json_column = $select_column(array('json_data', 'project_json', 'json', 'project_data', 'data'));
+        $updated_column = $select_column(array('updated_at', 'modified_at', 'last_updated', 'timestamp', 'created_at'));
+
+        if ($identifier_column === null || $json_column === null) {
             continue;
         }
 
-        $projects[$unique_name] = array(
-            'name' => $unique_name,
-            'label' => sanitize_text_field($unique_name_raw),
-            'data' => $decoded,
-            'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
-            'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
-        );
+        $identifier_column = $sanitize_identifier($identifier_column);
+        $json_column = $sanitize_identifier($json_column);
+        $updated_column = $updated_column !== null ? $sanitize_identifier($updated_column) : null;
+
+        if ($identifier_column === '' || $json_column === '') {
+            continue;
+        }
+
+        $select_parts = array();
+        $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
+        $select_parts[] = '`' . $json_column . '` AS project_payload';
+
+        if ($updated_column !== null && $updated_column !== '') {
+            $select_parts[] = '`' . $updated_column . '` AS project_updated';
+        }
+
+        $select_sql = implode(', ', $select_parts);
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Trusted table name from discovery loop.
+        $rows = $db_connection->get_results("SELECT {$select_sql} FROM {$table_name}", ARRAY_A);
+
+        if (!is_array($rows)) {
+            continue;
+        }
+
+        foreach ($rows as $row) {
+            $unique_name_raw = isset($row['project_identifier']) ? $row['project_identifier'] : '';
+            $unique_name = sanitize_text_field($unique_name_raw);
+
+            if ($unique_name === '') {
+                continue;
+            }
+
+            $payload_raw = isset($row['project_payload']) ? $row['project_payload'] : '';
+
+            if (!is_string($payload_raw) || $payload_raw === '') {
+                error_log(sprintf('KOP: empty JSON payload for project "%s" in %s', $unique_name, $table_name));
+                continue;
+            }
+
+            $decoded = json_decode($payload_raw, true);
+
+            if (!is_array($decoded)) {
+                error_log(sprintf('KOP: invalid JSON for project "%s" in %s', $unique_name, $table_name));
+                continue;
+            }
+
+            // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
+            $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||
+                             (isset($decoded['data']['operator']) && is_array($decoded['data']['operator']));
+
+            // Determine default category based on table
+            $default_category = 'companies';
+            if (strpos($table_base, 'referrers') !== false) {
+                $default_category = 'referrers';
+            } elseif (strpos($table_base, 'locations') !== false) {
+                $default_category = 'locations';
+            }
+
+            if ($is_new_format) {
+                // NEW format: data is already nested correctly, pass through as-is
+                $projects[$unique_name] = array(
+                    'name' => isset($decoded['name']) ? sanitize_text_field($decoded['name']) : $unique_name,
+                    'label' => sanitize_text_field($unique_name_raw),
+                    'data' => $decoded['data'],
+                    'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : $default_category,
+                    'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                    'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+                );
+            } else {
+                // OLD format: facilities/operator at root, wrap in 'data'
+                $projects[$unique_name] = array(
+                    'name' => $unique_name,
+                    'label' => sanitize_text_field($unique_name_raw),
+                    'data' => $decoded,
+                    'category' => isset($decoded['category']) ? sanitize_text_field($decoded['category']) : $default_category,
+                    'timestamp' => isset($decoded['timestamp']) ? sanitize_text_field($decoded['timestamp']) : ($updated_column !== null && isset($row['project_updated']) ? sanitize_text_field($row['project_updated']) : current_time('mysql')),
+                    'currentFacilityIndex' => isset($decoded['currentFacilityIndex']) ? intval($decoded['currentFacilityIndex']) : 0,
+                );
+            }
+        }
+    }
+
+    if (empty($projects)) {
+        return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));
     }
 
     return array(
@@ -447,8 +473,1021 @@ function kop_register_facilities_rest_routes() {
             'permission_callback' => '__return_true',
         )
     );
+
+    register_rest_route(
+        'kop/v1',
+        '/projects',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $projects = kop_get_facilities_projects_from_database();
+
+                if (is_wp_error($projects)) {
+                    return $projects;
+                }
+
+                return rest_ensure_response($projects);
+            },
+            'permission_callback' => '__return_true', // Publicly accessible
+        )
+    );
+
+    register_rest_route(
+        'kop/v1',
+        '/projects',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $projects = kop_get_facilities_projects_from_database();
+
+                if (is_wp_error($projects)) {
+                    return $projects;
+                }
+
+                return rest_ensure_response($projects);
+            },
+            'permission_callback' => '__return_true', // Publicly accessible
+        )
+    );
+
+    // Register save endpoint for admin users
+    register_rest_route(
+        'kop/v1',
+        '/projects/save',
+        array(
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => 'kop_save_project_rest_callback',
+            'permission_callback' => function () {
+                return current_user_can('administrator');
+            },
+        )
+    );
+
+    // Register delete endpoint for admin users
+    register_rest_route(
+        'kop/v1',
+        '/projects/delete',
+        array(
+            'methods'  => WP_REST_Server::CREATABLE,
+            'callback' => 'kop_delete_project_rest_callback',
+            'permission_callback' => function () {
+                return current_user_can('administrator');
+            },
+        )
+    );
+
+    // Register autocomplete endpoint (public)
+    register_rest_route(
+        'kop/v1',
+        '/autocomplete',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => 'kop_autocomplete_rest_callback',
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'category' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'q' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'limit' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'default' => 50,
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
+
+/**
+ * REST API callback for saving projects.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_save_project_rest_callback($request) {
+    global $wpdb;
+
+    $params = $request->get_json_params();
+
+    $project_name = isset($params['projectName']) ? sanitize_text_field($params['projectName']) : '';
+    $data = isset($params['data']) ? $params['data'] : null;
+    $category = isset($params['category']) ? sanitize_text_field($params['category']) : 'company';
+
+    if (empty($project_name)) {
+        return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
+    }
+
+    if (!$data) {
+        return new WP_Error('missing_data', 'Project data is required', array('status' => 400));
+    }
+
+    // Determine which table to use based on category
+    $table_map = array(
+        'company' => 'facilities_master',
+        'companies' => 'facilities_master',
+        'referrers' => 'referrers_master',
+        'referrer' => 'referrers_master',
+        'locations' => 'locations_master',
+        'location' => 'locations_master',
+    );
+
+    $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
+
+    // Encode data as JSON
+    $json_data = wp_json_encode($data);
+
+    // Check if project exists (use unique_name column which matches actual DB schema)
+    $existing = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id FROM {$table_name} WHERE unique_name = %s",
+            $project_name
+        )
+    );
+
+    if ($existing) {
+        // Update existing project (use json_data column which matches actual DB schema)
+        $result = $wpdb->update(
+            $table_name,
+            array(
+                'json_data' => $json_data,
+                'updated_at' => current_time('mysql'),
+            ),
+            array('unique_name' => $project_name),
+            array('%s', '%s'),
+            array('%s')
+        );
+    } else {
+        // Insert new project (use unique_name and json_data columns which match actual DB schema)
+        $result = $wpdb->insert(
+            $table_name,
+            array(
+                'unique_name' => $project_name,
+                'json_data' => $json_data,
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql'),
+            ),
+            array('%s', '%s', '%s', '%s')
+        );
+    }
+
+    if ($result === false) {
+        return new WP_Error('db_error', 'Database error: ' . $wpdb->last_error, array('status' => 500));
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => $existing ? 'Project updated successfully' : 'Project created successfully',
+        'projectName' => $project_name,
+        'table' => $table_name,
+    ));
+}
+
+/**
+ * REST API callback for deleting projects.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_delete_project_rest_callback($request) {
+    global $wpdb;
+
+    $params = $request->get_json_params();
+
+    $project_name = isset($params['projectName']) ? sanitize_text_field($params['projectName']) : '';
+    $category = isset($params['category']) ? sanitize_text_field($params['category']) : 'company';
+
+    if (empty($project_name)) {
+        return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
+    }
+
+    // Determine which table to use based on category
+    $table_map = array(
+        'company' => 'facilities_master',
+        'companies' => 'facilities_master',
+        'referrers' => 'referrers_master',
+        'referrer' => 'referrers_master',
+        'locations' => 'locations_master',
+        'location' => 'locations_master',
+    );
+
+    $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
+
+    // Use unique_name column which matches actual DB schema
+    $result = $wpdb->delete(
+        $table_name,
+        array('unique_name' => $project_name),
+        array('%s')
+    );
+
+    if ($result === false) {
+        return new WP_Error('db_error', 'Database error: ' . $wpdb->last_error, array('status' => 500));
+    }
+
+    if ($result === 0) {
+        return new WP_Error('not_found', 'Project not found', array('status' => 404));
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'message' => 'Project deleted successfully',
+        'projectName' => $project_name,
+    ));
+}
+
+/**
+ * REST API callback for autocomplete suggestions.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_autocomplete_rest_callback($request) {
+    global $wpdb;
+
+    $raw_category = $request->get_param('category');
+    $query = $request->get_param('q');
+    $limit = $request->get_param('limit');
+    $max_results = $limit > 0 ? max(1, min(200, $limit)) : 50;
+
+    // Category aliases
+    $category_aliases = array(
+        'operators' => 'operator',
+        'facilities' => 'facility',
+        'facilityname' => 'facility',
+        'facilitynames' => 'facility',
+        'humans' => 'human',
+        'people' => 'human',
+        'staff' => 'human',
+        'referrers' => 'referrer',
+        'facilitytype' => 'type',
+        'facilitytypes' => 'type',
+        'types' => 'type',
+        'statuses' => 'status',
+        'genders' => 'gender',
+        'locations' => 'location',
+        'licences' => 'licensing',
+        'licenses' => 'licensing',
+        'licensing' => 'licensing',
+        'accreditations' => 'accreditation',
+        'memberships' => 'membership',
+        'certifications' => 'certification',
+        'investors' => 'investor',
+        'roles' => 'role',
+        'staffroles' => 'role',
+        'operatingperiods' => 'operatingperiod',
+        'operatingperiod' => 'operatingperiod',
+        'operating_period' => 'operatingperiod',
+        'operationyears' => 'operatingperiod',
+        'operatingyears' => 'operatingperiod',
+        'operation_years' => 'operatingperiod',
+        'yearsofoperation' => 'operatingperiod',
+        'years_of_operation' => 'operatingperiod',
+    );
+
+    $category = strtolower($raw_category);
+    if (isset($category_aliases[$category])) {
+        $category = $category_aliases[$category];
+    }
+
+    $allowed_categories = array(
+        'operator', 'facility', 'human', 'referrer', 'type', 'status',
+        'gender', 'location', 'licensing', 'membership', 'accreditation',
+        'certification', 'investor', 'role', 'operatingperiod'
+    );
+
+    if (!in_array($category, $allowed_categories, true)) {
+        return new WP_Error('invalid_category', 'Unsupported category parameter', array('status' => 400));
+    }
+
+    // Determine which tables to query based on category
+    // locations_master contains state/region aggregates - should NOT be used for operator/facility/human names
+    // referrers_master contains referrer data - should primarily be used for referrer-related categories
+    $category_tables = array(
+        'operator' => array('facilities_master'),
+        'facility' => array('facilities_master', 'referrers_master'),  // referrers may have facilitiesReferred
+        'human' => array('facilities_master'),
+        'referrer' => array('facilities_master', 'referrers_master'),
+        'type' => array('facilities_master'),
+        'status' => array('facilities_master'),
+        'gender' => array('facilities_master'),
+        'location' => array('facilities_master', 'locations_master'),  // locations_master is appropriate here
+        'licensing' => array('facilities_master'),
+        'membership' => array('facilities_master'),
+        'accreditation' => array('facilities_master'),
+        'certification' => array('facilities_master'),
+        'investor' => array('facilities_master'),
+        'role' => array('facilities_master'),
+        'operatingperiod' => array('facilities_master'),
+    );
+
+    $master_tables = isset($category_tables[$category]) ? $category_tables[$category] : array('facilities_master');
+    $value_set = array();
+    
+    foreach ($master_tables as $table_name) {
+        // Check if table exists
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $table_name
+        ));
+
+        if (!$table_exists) {
+            continue;
+        }
+
+        // Get JSON data from the table
+        $rows = $wpdb->get_results("SELECT json_data AS payload FROM {$table_name}", ARRAY_A);
+
+        if (!is_array($rows)) {
+            continue;
+        }
+
+        foreach ($rows as $row) {
+            if (empty($row['payload'])) {
+                continue;
+            }
+
+            $data = kop_normalize_project_payload($row['payload']);
+            if (!$data) {
+                continue;
+            }
+
+            kop_collect_values_for_category($category, $data, $value_set);
+        }
+    }
+
+    // Also check suggested_edits table
+    $suggested_exists = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+        DB_NAME,
+        'suggested_edits'
+    ));
+
+    if ($suggested_exists) {
+        $suggested_rows = $wpdb->get_results(
+            "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''",
+            ARRAY_A
+        );
+
+        if (is_array($suggested_rows)) {
+            foreach ($suggested_rows as $row) {
+                if (empty($row['payload'])) {
+                    continue;
+                }
+
+                $data = kop_normalize_project_payload($row['payload']);
+                if (!$data) {
+                    continue;
+                }
+
+                kop_collect_values_for_category($category, $data, $value_set);
+            }
+        }
+    }
+
+    $values = array_values($value_set);
+
+    // Filter by query if provided
+    if ($query !== '') {
+        $values = array_values(array_filter($values, function ($value) use ($query) {
+            return stripos($value, $query) !== false;
+        }));
+    }
+
+    // Sort naturally
+    usort($values, function ($a, $b) {
+        return strnatcasecmp($a, $b);
+    });
+
+    // Limit results
+    if (count($values) > $max_results) {
+        $values = array_slice($values, 0, $max_results);
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'values' => $values,
+        'count' => count($values),
+    ));
+}
+
+/**
+ * Normalize project payload for autocomplete processing.
+ *
+ * @param string $json The JSON string to normalize.
+ * @return array|null Normalized data array or null on failure.
+ */
+function kop_normalize_project_payload($json) {
+    if (!$json) {
+        return null;
+    }
+
+    $decoded = json_decode($json, true);
+    if (!is_array($decoded)) {
+        return null;
+    }
+
+    // Handle nested data structures
+    $maybe_data = isset($decoded['data']) ? $decoded['data'] : null;
+    if (is_string($maybe_data)) {
+        $parsed = json_decode($maybe_data, true);
+        if (is_array($parsed)) {
+            $decoded['data'] = $parsed;
+        }
+    }
+
+    if (isset($decoded['data']) && is_array($decoded['data'])) {
+        $data = $decoded['data'];
+
+        // Handle legacy facilities structures
+        if (isset($data['facilities']) && is_string($data['facilities'])) {
+            $parsed_facilities = json_decode($data['facilities'], true);
+            if (is_array($parsed_facilities)) {
+                $data['facilities'] = $parsed_facilities;
+            }
+        } elseif (isset($data['facilities']['facilities']) && is_array($data['facilities']['facilities'])) {
+            $data['facilities'] = $data['facilities']['facilities'];
+        } elseif (isset($data['facility']) && is_array($data['facility'])) {
+            $data['facilities'] = $data['facility'];
+        } elseif (isset($data['facility']) && is_string($data['facility'])) {
+            $parsed_facilities = json_decode($data['facility'], true);
+            if (is_array($parsed_facilities)) {
+                $data['facilities'] = $parsed_facilities;
+            }
+        }
+        return $data;
+    }
+
+    if (isset($decoded['project']) && is_array($decoded['project'])) {
+        $project = $decoded['project'];
+        if (isset($project['data']) && is_array($project['data'])) {
+            return $project['data'];
+        }
+        if (isset($project['operator']) || isset($project['facilities'])) {
+            return $project;
+        }
+    }
+
+    if (isset($decoded['operator']) || isset($decoded['facilities'])) {
+        return $decoded;
+    }
+
+    return null;
+}
+
+/**
+ * Add a value to the autocomplete value set.
+ *
+ * @param array &$set The value set to add to.
+ * @param mixed $value The value to add.
+ */
+function kop_add_autocomplete_value(&$set, $value) {
+    if ($value === null) {
+        return;
+    }
+
+    if (is_object($value)) {
+        $value = (array) $value;
+    }
+
+    if (is_array($value)) {
+        $handled = false;
+        foreach (array('name', 'value', 'label', 'title', 'text') as $key) {
+            if (!empty($value[$key])) {
+                kop_add_autocomplete_value($set, $value[$key]);
+                $handled = true;
+            }
+        }
+
+        if ($handled) {
+            return;
+        }
+
+        foreach ($value as $nested) {
+            if (is_scalar($nested) || (is_object($nested) && method_exists($nested, '__toString'))) {
+                kop_add_autocomplete_value($set, $nested);
+            }
+        }
+
+        return;
+    }
+
+    $string_value = trim((string) $value);
+    if ($string_value === '') {
+        return;
+    }
+
+    $normalized = function_exists('mb_strtolower') ? mb_strtolower($string_value, 'UTF-8') : strtolower($string_value);
+    if (!isset($set[$normalized])) {
+        $set[$normalized] = $string_value;
+    }
+}
+
+/**
+ * Add multiple values to the autocomplete value set.
+ *
+ * @param array &$set The value set to add to.
+ * @param array $values The values to add.
+ */
+function kop_add_autocomplete_values(&$set, $values) {
+    if (!is_array($values)) {
+        return;
+    }
+
+    foreach ($values as $value) {
+        if (is_array($value)) {
+            if (isset($value['name'])) {
+                kop_add_autocomplete_value($set, $value['name']);
+                continue;
+            }
+            if (isset($value['value'])) {
+                kop_add_autocomplete_value($set, $value['value']);
+                continue;
+            }
+            if (isset($value['label'])) {
+                kop_add_autocomplete_value($set, $value['label']);
+                continue;
+            }
+        }
+
+        kop_add_autocomplete_value($set, $value);
+    }
+}
+
+/**
+ * Collect values for a specific category from project data.
+ *
+ * @param string $category The category to collect values for.
+ * @param array $data The project data to extract values from.
+ * @param array &$set The value set to populate.
+ */
+function kop_collect_values_for_category($category, $data, &$set) {
+    switch ($category) {
+        case 'operator':
+            kop_collect_operator_values($data, $set);
+            break;
+        case 'facility':
+            kop_collect_facility_values($data, $set);
+            break;
+        case 'human':
+            kop_collect_human_values($data, $set);
+            break;
+        case 'referrer':
+            kop_collect_referrer_values($data, $set);
+            break;
+        case 'type':
+            kop_collect_type_values($data, $set);
+            break;
+        case 'status':
+            kop_collect_status_values($data, $set);
+            break;
+        case 'gender':
+            kop_collect_gender_values($data, $set);
+            break;
+        case 'location':
+            kop_collect_location_values($data, $set);
+            break;
+        case 'licensing':
+            kop_collect_licensing_values($data, $set);
+            break;
+        case 'membership':
+            kop_collect_membership_values($data, $set);
+            break;
+        case 'accreditation':
+            kop_collect_accreditation_values($data, $set);
+            break;
+        case 'certification':
+            kop_collect_certification_values($data, $set);
+            break;
+        case 'investor':
+            kop_collect_investor_values($data, $set);
+            break;
+        case 'role':
+            kop_collect_role_values($data, $set);
+            break;
+        case 'operatingperiod':
+            kop_collect_operatingperiod_values($data, $set);
+            break;
+    }
+}
+
+/**
+ * Collect operator values from project data.
+ */
+function kop_collect_operator_values($data, &$set) {
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        $operator = $data['operator'];
+        
+        // Skip "Location Aggregate" type operators - these are state/region summaries, not real operators
+        $operator_type = isset($operator['type']) ? $operator['type'] : '';
+        if (strcasecmp($operator_type, 'Location Aggregate') === 0) {
+            // Still collect facility-level operator info, but skip the aggregate operator name
+        } else {
+            kop_add_autocomplete_value($set, isset($operator['name']) ? $operator['name'] : null);
+            kop_add_autocomplete_value($set, isset($operator['currentName']) ? $operator['currentName'] : null);
+            kop_add_autocomplete_values($set, isset($operator['otherNames']) ? $operator['otherNames'] : array());
+            kop_add_autocomplete_values($set, isset($operator['parentCompanies']) ? $operator['parentCompanies'] : array());
+            kop_add_autocomplete_values($set, isset($operator['previousNames']) ? $operator['previousNames'] : array());
+        }
+    }
+
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = isset($facility['identification']) ? $facility['identification'] : array();
+            if (is_array($identification)) {
+                kop_add_autocomplete_value($set, isset($identification['currentOperator']) ? $identification['currentOperator'] : null);
+            }
+            kop_add_autocomplete_values($set, isset($facility['otherOperators']) ? $facility['otherOperators'] : array());
+        }
+    }
+}
+
+/**
+ * Collect facility name values from project data.
+ */
+function kop_collect_facility_values($data, &$set) {
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = isset($facility['identification']) ? $facility['identification'] : array();
+            if (is_array($identification)) {
+                kop_add_autocomplete_value($set, isset($identification['name']) ? $identification['name'] : null);
+                kop_add_autocomplete_value($set, isset($identification['currentName']) ? $identification['currentName'] : null);
+                kop_add_autocomplete_values($set, isset($identification['otherNames']) ? $identification['otherNames'] : array());
+            }
+        }
+    }
+
+    // Collect from referrer consultants' facilitiesReferred
+    if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $consultant) {
+            if (!is_array($consultant)) {
+                continue;
+            }
+            kop_add_autocomplete_values($set, isset($consultant['facilitiesReferred']) ? $consultant['facilitiesReferred'] : array());
+        }
+    }
+
+    if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
+        kop_add_autocomplete_values($set, isset($data['referrerIndividual']['facilitiesReferred']) ? $data['referrerIndividual']['facilitiesReferred'] : array());
+    }
+}
+
+/**
+ * Collect human name values from project data.
+ */
+function kop_collect_human_values($data, &$set) {
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        $operator = $data['operator'];
+        kop_add_autocomplete_value($set, isset($operator['ceo']) ? $operator['ceo'] : null);
+        if (!empty($operator['keyStaff']) && is_array($operator['keyStaff'])) {
+            $key_staff = $operator['keyStaff'];
+            kop_add_autocomplete_value($set, isset($key_staff['ceo']) ? $key_staff['ceo'] : null);
+            kop_add_autocomplete_values($set, isset($key_staff['founders']) ? $key_staff['founders'] : array());
+            kop_add_autocomplete_values($set, isset($key_staff['keyExecutives']) ? $key_staff['keyExecutives'] : array());
+            kop_add_autocomplete_values($set, isset($key_staff['boardMembers']) ? $key_staff['boardMembers'] : array());
+        }
+    }
+
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+
+        $staff = isset($facility['staff']) ? $facility['staff'] : array();
+        if (!empty($staff['administrator']) && is_array($staff['administrator'])) {
+            foreach ($staff['administrator'] as $admin) {
+                if (is_array($admin)) {
+                    if (isset($admin['name'])) {
+                        kop_add_autocomplete_value($set, $admin['name']);
+                    }
+                    if (isset($admin['person'])) {
+                        kop_add_autocomplete_value($set, $admin['person']);
+                    }
+                } else {
+                    kop_add_autocomplete_value($set, $admin);
+                }
+            }
+        }
+
+        if (!empty($staff['notableStaff']) && is_array($staff['notableStaff'])) {
+            foreach ($staff['notableStaff'] as $staff_member) {
+                if (is_array($staff_member)) {
+                    if (isset($staff_member['name'])) {
+                        kop_add_autocomplete_value($set, $staff_member['name']);
+                    }
+                    if (isset($staff_member['person'])) {
+                        kop_add_autocomplete_value($set, $staff_member['person']);
+                    }
+                } else {
+                    kop_add_autocomplete_value($set, $staff_member);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Collect referrer values from project data.
+ */
+function kop_collect_referrer_values($data, &$set) {
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = isset($facility['identification']) ? $facility['identification'] : array();
+            if (is_array($identification)) {
+                kop_add_autocomplete_values($set, isset($identification['knownReferrers']) ? $identification['knownReferrers'] : array());
+            }
+        }
+    }
+
+    if (!empty($data['referrerAgency']) && is_array($data['referrerAgency'])) {
+        kop_add_autocomplete_value($set, isset($data['referrerAgency']['name']) ? $data['referrerAgency']['name'] : null);
+    }
+
+    if (!empty($data['referrerGroup']) && is_array($data['referrerGroup'])) {
+        kop_add_autocomplete_value($set, isset($data['referrerGroup']['name']) ? $data['referrerGroup']['name'] : null);
+    }
+
+    if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $consultant) {
+            if (!is_array($consultant)) {
+                continue;
+            }
+            $full_name = isset($consultant['fullName']) ? $consultant['fullName'] : null;
+            if (!$full_name) {
+                $first_name = trim(isset($consultant['firstName']) ? $consultant['firstName'] : '');
+                $last_name = trim(isset($consultant['lastName']) ? $consultant['lastName'] : '');
+                if ($first_name || $last_name) {
+                    $full_name = trim("$first_name $last_name");
+                }
+            }
+            kop_add_autocomplete_value($set, $full_name);
+        }
+    }
+
+    if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
+        $individual = $data['referrerIndividual'];
+        $full_name = isset($individual['fullName']) ? $individual['fullName'] : null;
+        if (!$full_name) {
+            $first_name = trim(isset($individual['firstName']) ? $individual['firstName'] : '');
+            $last_name = trim(isset($individual['lastName']) ? $individual['lastName'] : '');
+            if ($first_name || $last_name) {
+                $full_name = trim("$first_name $last_name");
+            }
+        }
+        kop_add_autocomplete_value($set, $full_name);
+    }
+}
+
+/**
+ * Collect facility type values from project data.
+ */
+function kop_collect_type_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $details = isset($facility['facilityDetails']) ? $facility['facilityDetails'] : array();
+        if (is_array($details)) {
+            kop_add_autocomplete_value($set, isset($details['type']) ? $details['type'] : null);
+        }
+    }
+}
+
+/**
+ * Collect status values from project data.
+ */
+function kop_collect_status_values($data, &$set) {
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        kop_add_autocomplete_value($set, isset($data['operator']['status']) ? $data['operator']['status'] : null);
+    }
+
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $period = isset($facility['operatingPeriod']) ? $facility['operatingPeriod'] : array();
+        if (is_array($period)) {
+            kop_add_autocomplete_value($set, isset($period['status']) ? $period['status'] : null);
+        }
+    }
+}
+
+/**
+ * Collect gender values from project data.
+ */
+function kop_collect_gender_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $details = isset($facility['facilityDetails']) ? $facility['facilityDetails'] : array();
+        if (is_array($details)) {
+            kop_add_autocomplete_value($set, isset($details['gender']) ? $details['gender'] : null);
+        }
+    }
+}
+
+/**
+ * Collect location values from project data.
+ */
+function kop_collect_location_values($data, &$set) {
+    if (!empty($data['name'])) {
+        kop_add_autocomplete_value($set, $data['name']);
+    }
+
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        kop_add_autocomplete_value($set, isset($data['operator']['location']) ? $data['operator']['location'] : null);
+        kop_add_autocomplete_value($set, isset($data['operator']['headquarters']) ? $data['operator']['headquarters'] : null);
+        kop_add_autocomplete_value($set, isset($data['operator']['name']) ? $data['operator']['name'] : null);
+    }
+
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        kop_add_autocomplete_value($set, isset($facility['location']) ? $facility['location'] : null);
+        if (!empty($facility['address']) && is_array($facility['address'])) {
+            $address = $facility['address'];
+            $parts = array();
+            foreach (array('street', 'city', 'state', 'zip') as $segment) {
+                if (!empty($address[$segment])) {
+                    $parts[] = trim((string) $address[$segment]);
+                }
+            }
+            if (!empty($parts)) {
+                kop_add_autocomplete_value($set, implode(', ', $parts));
+            }
+        }
+    }
+}
+
+/**
+ * Collect licensing values from project data.
+ */
+function kop_collect_licensing_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        kop_add_autocomplete_values($set, isset($facility['licensing']) ? $facility['licensing'] : array());
+    }
+}
+
+/**
+ * Collect membership values from project data.
+ */
+function kop_collect_membership_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        kop_add_autocomplete_values($set, isset($facility['memberships']) ? $facility['memberships'] : array());
+    }
+}
+
+/**
+ * Collect accreditation values from project data.
+ */
+function kop_collect_accreditation_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $accreditations = isset($facility['accreditations']) ? $facility['accreditations'] : array();
+        if (is_array($accreditations)) {
+            kop_add_autocomplete_values($set, isset($accreditations['current']) ? $accreditations['current'] : array());
+            kop_add_autocomplete_values($set, isset($accreditations['past']) ? $accreditations['past'] : array());
+        }
+    }
+}
+
+/**
+ * Collect certification values from project data.
+ */
+function kop_collect_certification_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        kop_add_autocomplete_values($set, isset($facility['certifications']) ? $facility['certifications'] : array());
+    }
+}
+
+/**
+ * Collect investor values from project data.
+ */
+function kop_collect_investor_values($data, &$set) {
+    if (empty($data['operator']) || !is_array($data['operator'])) {
+        return;
+    }
+
+    kop_add_autocomplete_values($set, isset($data['operator']['investors']) ? $data['operator']['investors'] : array());
+}
+
+/**
+ * Collect role values from project data.
+ */
+function kop_collect_role_values($data, &$set) {
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $staff = isset($facility['staff']) ? $facility['staff'] : array();
+        $groups = array('administrator', 'notableStaff');
+        foreach ($groups as $group) {
+            if (empty($staff[$group]) || !is_array($staff[$group])) {
+                continue;
+            }
+            foreach ($staff[$group] as $member) {
+                if (is_array($member) && isset($member['role'])) {
+                    kop_add_autocomplete_value($set, $member['role']);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Collect operating period values from project data.
+ */
+function kop_collect_operatingperiod_values($data, &$set) {
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        kop_add_autocomplete_value($set, isset($data['operator']['operatingPeriod']) ? $data['operator']['operatingPeriod'] : null);
+    }
+
+    if (empty($data['facilities']) || !is_array($data['facilities'])) {
+        return;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+
+        $period = isset($facility['operatingPeriod']) ? $facility['operatingPeriod'] : array();
+        if (is_array($period)) {
+            kop_add_autocomplete_value($set, isset($period['yearsOfOperation']) ? $period['yearsOfOperation'] : null);
+        }
+    }
+}
 
 /**
  * Get the REST API endpoint URL that provides facilities data.
@@ -536,7 +1575,7 @@ function load_facilities_data() {
         wp_enqueue_style(
             'kop-facility-reports-style',
             get_stylesheet_directory_uri() . '/css/facility-reports.css',
-            array(),
+            array('kop-colors'),
             filemtime($reports_style_path)
         );
     }
@@ -669,7 +1708,7 @@ function kop_enqueue_report_scripts() {
                 wp_enqueue_style(
                     'kop-facility-reports-style',
                     get_stylesheet_directory_uri() . '/css/facility-reports.css',
-                    array(),
+                    array('kop-colors'),
                     filemtime($reports_style_path)
                 );
             }
@@ -714,24 +1753,40 @@ function enqueue_facility_form_script() {
         return;
     }
 
-    // Use the robust template check instead of a shortcode or slug check.
-    $is_data_form_page = is_page_template('page-data.php') || is_page_template('page-admin-data.php') || is_page_template('page-tti-program-index.php');
+    // Support both the page-level templates and the templates/ directory versions.
+    $is_data_template  = is_page_template('page-data.php') || is_page_template('templates/data-form-public.php');
+    $is_admin_template = is_page_template('page-admin-data.php') || is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
+    $is_data_form_page = $is_data_template || $is_admin_template;
+
     if (!$is_data_form_page) {
         return;
     }
 
-    // Enqueue the shared data form stylesheet
-    $style_path = get_stylesheet_directory() . '/css/data-form.css';
-    $style_version = file_exists($style_path) ? filemtime($style_path) : time();
+    // Ensure the data-form stylesheet is queued before header output.
+    $data_form_css = get_stylesheet_directory() . '/css/data-form.css';
+    if (file_exists($data_form_css)) {
+        wp_enqueue_style(
+            'kop-data-form-style',
+            get_stylesheet_directory_uri() . '/css/data-form.css',
+            array('kadence-parent-style', 'kop-colors'),
+            filemtime($data_form_css)
+        );
+    }
 
-    wp_enqueue_style(
-        'kop-data-form-style',
-        get_stylesheet_directory_uri() . '/css/data-form.css',
-        array(),
-        $style_version
+    // Enqueue utilities module first (provides basic helper functions)
+    $utilities_relative_path = '/js/data-form/utilities.js';
+    $utilities_file_path = get_stylesheet_directory() . $utilities_relative_path;
+    $utilities_uri = get_stylesheet_directory_uri() . $utilities_relative_path;
+
+    wp_enqueue_script(
+        'utilities-module-script',
+        $utilities_uri,
+        array('jquery'),
+        file_exists($utilities_file_path) ? filemtime($utilities_file_path) : time(),
+        true
     );
 
-    // Enqueue the DB form loader first (handles data loading)
+    // Enqueue the DB form loader (handles data loading, depends on utilities)
     $loader_relative_path = '/js/data-form/db-form-loader.js';
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
     $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
@@ -747,12 +1802,25 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'db-form-loader',
         $loader_uri,
-        array('jquery'),
+        array('jquery', 'utilities-module-script'),
         file_exists($loader_file_path) ? filemtime($loader_file_path) : time(),
         true
     );
 
-    // Enqueue the referrer form module (depends on loader)
+    // Enqueue the location form module (depends on utilities and loader)
+    $location_script_relative_path = '/js/data-form/location-form.js';
+    $location_script_file_path = get_stylesheet_directory() . $location_script_relative_path;
+    $location_script_uri = get_stylesheet_directory_uri() . $location_script_relative_path;
+
+    wp_enqueue_script(
+        'location-form-script',
+        $location_script_uri,
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
+        file_exists($location_script_file_path) ? filemtime($location_script_file_path) : time(),
+        true
+    );
+
+    // Enqueue the referrer form module (depends on utilities and loader)
     $referrer_script_relative_path = '/js/data-form/referrer-form.js';
     $referrer_script_file_path = get_stylesheet_directory() . $referrer_script_relative_path;
     $referrer_script_uri = get_stylesheet_directory_uri() . $referrer_script_relative_path;
@@ -760,7 +1828,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'referrer-form-script',
         $referrer_script_uri,
-        array('jquery', 'db-form-loader'),
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
         file_exists($referrer_script_file_path) ? filemtime($referrer_script_file_path) : time(),
         true
     );
@@ -783,10 +1851,17 @@ function enqueue_facility_form_script() {
     $autocomplete_script_file_path = get_stylesheet_directory() . $autocomplete_script_relative_path;
     $autocomplete_script_uri = get_stylesheet_directory_uri() . $autocomplete_script_relative_path;
 
+    error_log('KOP Autocomplete path check: ' . $autocomplete_script_file_path);
+    error_log('KOP Autocomplete exists: ' . (file_exists($autocomplete_script_file_path) ? 'YES' : 'NO'));
+
+    if (!file_exists($autocomplete_script_file_path)) {
+        error_log('ERROR: autocomplete.js not found at: ' . $autocomplete_script_file_path);
+    }
+
     wp_enqueue_script(
         'autocomplete-module-script',
         $autocomplete_script_uri,
-        array('jquery', 'db-form-loader'),
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
         file_exists($autocomplete_script_file_path) ? filemtime($autocomplete_script_file_path) : time(),
         true
     );
@@ -799,7 +1874,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
+        array('jquery', 'utilities-module-script', 'db-form-loader', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
@@ -811,7 +1886,11 @@ function enqueue_facility_form_script() {
     $config = array(
         'fallbackProjectsUrl' => $fallback_url,
         'fallbackProjectsUrls' => $dataset_urls,
-        'apiBase' => home_url()
+        'projectsApiUrl' => esc_url_raw(rest_url('kop/v1/projects')),
+        'apiBase' => home_url(),
+        'restNonce' => wp_create_nonce('wp_rest'),
+        'restSaveUrl' => esc_url_raw(rest_url('kop/v1/projects/save')),
+        'restDeleteUrl' => esc_url_raw(rest_url('kop/v1/projects/delete')),
     );
     error_log('KOP Config being localized: ' . json_encode($config));
 
@@ -822,7 +1901,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue page-specific scripts based on template (slug fallback for legacy pages)
-    if (is_page_template('page-data.php') || is_page('data')) {
+    if ($is_data_template || is_page('data')) {
         // Suggestions page - loads data-page.js
         $data_page_relative_path = '/js/data-form/data-page.js';
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -835,7 +1914,7 @@ function enqueue_facility_form_script() {
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
             true
         );
-    } elseif (is_page_template('page-admin-data.php') || is_page('admin-data') || is_page_template('page-tti-program-index.php')) {
+    } elseif ($is_admin_template || is_page('admin-data')) {
         // Admin page and TTI Program Index - loads admin-data-page.js
         $admin_page_relative_path = '/js/data-form/admin-data-page.js';
         $admin_page_file_path = get_stylesheet_directory() . $admin_page_relative_path;
@@ -865,7 +1944,7 @@ function enqueue_news_processor_scripts() {
     wp_enqueue_style(
         'news-processor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
     
@@ -885,7 +1964,7 @@ add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
  * Enqueue TTI Processor (React article processor) scripts and styles
  */
 function enqueue_tti_processor_scripts() {
-    if (!is_page_template('page-tti-processor.php')) {
+    if (!is_page_template('page-tti-program-index.php')) {
         return;
     }
     
@@ -933,13 +2012,13 @@ function enqueue_tti_processor_scripts() {
     );
     
     // Enqueue page-specific styles if they exist
-    $style_relative = '/css/tti-processor.css';
+    $style_relative = '/css/tti-program-index.css';
     $style_path = get_stylesheet_directory() . $style_relative;
     if (file_exists($style_path)) {
         wp_enqueue_style(
             'tti-processor-style',
             get_stylesheet_directory_uri() . $style_relative,
-            array('tailwind-css'),
+            array('tailwind-css', 'kop-colors'),
             filemtime($style_path)
         );
     }
@@ -959,7 +2038,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_style(
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
-        array(),
+        array('kop-colors'),
         file_exists($style_path) ? filemtime($style_path) : time()
     );
 
@@ -1137,7 +2216,7 @@ class AnonymousDocPortal {
             wp_enqueue_style(
                 'anonymous-portal-css', 
                 get_stylesheet_directory_uri() . '/css/anonymous-portal.css', 
-                array(), 
+                array('kop-colors'), 
                 file_exists($css_path) ? filemtime($css_path) : '1.0'
             );
             

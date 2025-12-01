@@ -3,24 +3,8 @@
  * Template Name: Admin Data Form
  * Template Post Type: page
  */
-    // Ensure required assets are present when this template renders.
-    $kop_theme_dir = get_stylesheet_directory();
-    $kop_theme_uri = get_stylesheet_directory_uri();
 
-    if (function_exists('wp_enqueue_style')) {
-        $data_form_css = $kop_theme_dir . '/css/data-form.css';
-        wp_enqueue_style(
-            'kop-data-form',
-            $kop_theme_uri . '/css/data-form.css',
-            array(),
-            file_exists($data_form_css) ? filemtime($data_form_css) : null
-        );
-    }
-
-    if (function_exists('wp_enqueue_script')) {
-        wp_enqueue_script('facility-form-script');
-        wp_enqueue_script('admin-data-page-script');
-    }
+get_header();
 ?>
 
     <div class="container">
@@ -76,19 +60,14 @@
                         <h3>🌍 Locations / States</h3>
                     </div>
                     <div class="project-management location-project-management">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
+                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects</h2>
                         <div class="form-group">
                             <label>Saved Location Projects</label>
                             <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <div class="form-group" style="text-align: center; margin-top: 15px;">
-                            <button class="btn" id="rebuild-locations-btn" style="background: #059669; color: white;">🔄 Rebuild All Location Projects</button>
-                            <p style="margin-top: 8px; color: #6b7280; font-size: 12px;">Scans all company/referrer projects and rebuilds location aggregates</p>
-                        </div>
-                        <div id="rebuild-status" style="display: none; margin-top: 10px; padding: 10px; border-radius: 6px;"></div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects are automatically updated when you save company or referrer projects. </p>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">Location projects aggregate facilities by state/country from company and referrer projects.</p>
                     </div>
 
                     <!-- Facilities Overview for Locations -->
@@ -103,6 +82,26 @@
                                 <!-- Facility items will be populated here -->
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Private Ownership Toggle for Locations -->
+                    <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                            <span>Privately Owned Facility (not part of a chain):</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>No</span>
+                                <div style="position: relative; display: inline-block;">
+                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                                    <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                        <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                    </span>
+                                </div>
+                                <span>Yes</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                        </p>
                     </div>
                 </div>
 
@@ -136,7 +135,7 @@
         </div>
 
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
-        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers" style="display: none;">
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
             <!-- Agency Toggle -->
             <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -321,8 +320,8 @@
         </div>
 
         <div id="facility-main-wrapper" data-section-views="companies,locations">
-        <!-- Facility Table of Contents -->
-        <div class="facility-toc" id="facility-toc">
+        <!-- Facility Table of Contents (Companies only - Locations has its own in #states-content) -->
+        <div class="facility-toc" id="facility-toc" data-section-views="companies">
             <div class="toc-header">
                 <h2 class="toc-title">Facilities Overview</h2>
                 <button class="toc-toggle" id="toc-toggle-btn">🔎</button>
@@ -1194,19 +1193,13 @@
     <!-- Data Organizer Modal -->
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content">
-            <div class="organizer-modal-header">
-                <h2>🔍 Search Facility Data</h2>
+            <div class="organizer-modal-header" style="padding: 12px 20px;">
+                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
             </div>
-            <div class="organizer-modal-body">
-                <div class="bg-light content-box" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <p class="info-text" style="margin: 0; color: #4b5563;">
-                        <strong>🔍 Find all facilities by a specific data point:</strong>
-                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
-                    </p>
-                </div>
+            <div class="organizer-modal-body" style="padding: 15px 20px;">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div class="form-group">
                         <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
@@ -1293,3 +1286,5 @@
     </div>
 
         </div>
+
+<?php get_footer(); ?>

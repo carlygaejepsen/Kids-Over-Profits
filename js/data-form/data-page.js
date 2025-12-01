@@ -137,79 +137,73 @@
                 showUploadStatus(`🔄 Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
             }
             
-            // Force clear current project first to ensure a clean switch
-            if (window.projectManager && window.projectManager.newProject) {
-                console.log('🧹 Clearing current project first...');
-                window.projectManager.newProject(false); // false = don't show status
-            }
+            // Don't call newProject() - it shows a confirmation dialog
+            // loadProject handles clearing and loading in one step
             
-            // Small delay to ensure clearing is complete, then load the new project
-            setTimeout(() => {
-                // Use the existing project manager to load the project
-                if (window.projectManager && window.projectManager.loadProject) {
-                    console.log('📥 Loading project:', projectName);
-                    window.projectManager.loadProject(projectName);
-                    
-                    // Wait a moment for the load to complete, then sync our formData
-                    setTimeout(() => {
-                        // Make sure we have access to the global formData
-                        if (typeof formData !== 'undefined') {
-                            window.globalFormData = formData;
-                            
-                            // Extensive debugging
-                            console.log('Project loaded and synced:', projectName);
-                            console.log('📊 Current project data:', formData);
-                            console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
-                            console.log('📝 Current project name from variables:', {
-                                'window.currentProjectName': window.currentProjectName,
-                                'formData.projectName': formData?.projectName,
-                                'requested': projectName
-                            });
+            // Use the existing project manager to load the project
+            if (window.projectManager && window.projectManager.loadProject) {
+                console.log('📥 Loading project:', projectName);
+                window.projectManager.loadProject(projectName);
+                
+                // Wait a moment for the load to complete, then sync our formData
+                setTimeout(() => {
+                    // Make sure we have access to the global formData
+                    if (typeof formData !== 'undefined') {
+                        window.globalFormData = formData;
+                        
+                        // Extensive debugging
+                        console.log('Project loaded and synced:', projectName);
+                        console.log('📊 Current project data:', formData);
+                        console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
+                        console.log('📝 Current project name from variables:', {
+                            'window.currentProjectName': window.currentProjectName,
+                            'formData.projectName': formData?.projectName,
+                            'requested': projectName
+                        });
 
-                            // Verify we loaded the right project
-                            const actualCurrentProject = window.currentProjectName;
-                            if (actualCurrentProject !== projectName) {
-                                console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
-                                if (typeof showUploadStatus === 'function') {
-                                    showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
-                                }
-                            } else {
-                                // Show additional success status
-                                if (typeof showUploadStatus === 'function') {
-                                    const facilityCount = formData?.facilities?.length || 0;
-                                    showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
-                                }
-                            }
-                            
-                            // Also update the page title or some indicator
-                            const pageTitle = document.querySelector('h1');
-                            if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName;
-                                pageTitle.innerHTML = `Admin - ${actualProject}`;
-                            }
-
-                            if (typeof window.updateToolbarFacilityInfo === 'function') {
-                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
-                                window.updateToolbarFacilityInfo();
-                                setTimeout(window.updateToolbarFacilityInfo, 100);
-                                setTimeout(window.updateToolbarFacilityInfo, 300);
-                                setTimeout(window.updateToolbarFacilityInfo, 500);
-                                setTimeout(window.updateToolbarFacilityInfo, 1000);
+                        // Verify we loaded the right project
+                        const actualCurrentProject = window.currentProjectName;
+                        if (actualCurrentProject !== projectName) {
+                            console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
+                            if (typeof showUploadStatus === 'function') {
+                                showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
                             }
                         } else {
-                            console.warn('formData not found after project load');
+                            // Show additional success status
                             if (typeof showUploadStatus === 'function') {
-                                showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                                const facilityCount = formData?.facilities?.length || 0;
+                                showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
                             }
                         }
-                    }, 300);
-                } else {
-                    console.error('Project manager not available');
-                    if (typeof showUploadStatus === 'function') {
-                        showUploadStatus('❌ Project manager not available', 'error');
+                        
+                        // Also update the page title or some indicator
+                        const pageTitle = document.querySelector('h1');
+                        if (pageTitle && projectName !== 'New Project') {
+                            const actualProject = window.currentProjectName || projectName;
+                            pageTitle.innerHTML = `Admin - ${actualProject}`;
+                        }
+
+                        if (typeof window.updateToolbarFacilityInfo === 'function') {
+                            console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                            window.updateToolbarFacilityInfo();
+                            setTimeout(window.updateToolbarFacilityInfo, 100);
+                            setTimeout(window.updateToolbarFacilityInfo, 300);
+                            setTimeout(window.updateToolbarFacilityInfo, 500);
+                            setTimeout(window.updateToolbarFacilityInfo, 1000);
+                        }
+                    } else {
+                        console.warn('formData not found after project load');
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                        }
                     }
+                }, 300);
+            } else {
+                console.error('Project manager not available');
+                if (typeof showUploadStatus === 'function') {
+                    showUploadStatus('❌ Project manager not available', 'error');
                 }
-            }, 100);
+            }
         }
 
         // Independent consultant toggle functionality
@@ -591,16 +585,26 @@
         }, { once: true });
 
         function showSuggestionStatus(message, type) {
+            // Show in the inline status div (backward compatibility)
             const statusDiv = document.getElementById('suggestion-status');
-            statusDiv.className = `upload-status ${type}`;
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
+            if (statusDiv) {
+                statusDiv.className = `upload-status ${type}`;
+                statusDiv.textContent = message;
+                statusDiv.style.display = 'block';
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
             
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
+            // Also show as a toast for better visibility
+            if (typeof window.showToast === 'function') {
+                // Map 'info' to appropriate duration - keep info/error visible longer
+                const duration = type === 'info' ? 3000 : (type === 'error' ? 8000 : 5000);
+                window.showToast(message, type, duration);
             }
         }
         
@@ -892,8 +896,10 @@
                     toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
                 };
 
-                // Initialize with existing expanded state
-                setState(section.classList.contains('expanded'));
+                // Initialize with existing expanded state, but collapse on mobile
+                const isMobile = window.innerWidth <= 768;
+                const shouldExpand = isMobile ? false : section.classList.contains('expanded');
+                setState(shouldExpand);
 
                 const handleToggle = (event) => {
                     event.preventDefault();
@@ -914,6 +920,93 @@
                     }
                     handleToggle(event);
                 }, { passive: false });
+            });
+
+            // Initialize mobile section controls
+            initializeMobileSectionControls();
+        }
+
+        /**
+         * Initialize mobile section controls for expand/collapse all
+         */
+        function initializeMobileSectionControls() {
+            // Only add controls if on mobile and not already added
+            if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) {
+                return;
+            }
+
+            // Create the mobile controls bar
+            const controlsBar = document.createElement('div');
+            controlsBar.className = 'mobile-section-controls';
+            controlsBar.innerHTML = `
+                <span class="section-control-label">📋 Sections</span>
+                <div class="section-control-btns">
+                    <button class="btn-section-control" id="expand-all-sections">Expand All</button>
+                    <button class="btn-section-control" id="collapse-all-sections">Collapse All</button>
+                </div>
+            `;
+
+            // Insert at the beginning of the form wrapper or container
+            const facilityWrapper = document.getElementById('facility-main-wrapper');
+            const referrerWrapper = document.getElementById('referrer-main-wrapper');
+
+            if (facilityWrapper && facilityWrapper.offsetParent !== null) {
+                facilityWrapper.insertBefore(controlsBar.cloneNode(true), facilityWrapper.firstChild);
+            }
+            if (referrerWrapper) {
+                referrerWrapper.insertBefore(controlsBar.cloneNode(true), referrerWrapper.firstChild);
+            }
+
+            // Attach event listeners using event delegation
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'expand-all-sections' || e.target.closest('#expand-all-sections')) {
+                    e.preventDefault();
+                    expandAllSections();
+                }
+                if (e.target.id === 'collapse-all-sections' || e.target.closest('#collapse-all-sections')) {
+                    e.preventDefault();
+                    collapseAllSections();
+                }
+            });
+
+            console.log('[Mobile] Section controls initialized');
+        }
+
+        /**
+         * Expand all collapsible sections
+         */
+        function expandAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.add('expanded');
+                    content.style.display = 'block';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'true');
+                        toggle.setAttribute('title', 'Collapse section');
+                    }
+                }
+            });
+        }
+
+        /**
+         * Collapse all collapsible sections
+         */
+        function collapseAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.remove('expanded');
+                    content.style.display = 'none';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                        toggle.setAttribute('title', 'Expand section');
+                    }
+                }
             });
         }
 
@@ -945,6 +1038,17 @@
             const organizeResultsTitle = document.getElementById('organize-results-title');
             const organizeResultsCount = document.getElementById('organize-results-count');
             const organizeMatches = document.getElementById('organize-matches');
+            
+            // Modal elements
+            const organizeBySelectModal = document.getElementById('organize-by-modal');
+            const organizeValueInputModal = document.getElementById('organize-value-modal');
+            const organizeSearchBtnModal = document.getElementById('organize-search-btn-modal');
+            const organizeClearBtnModal = document.getElementById('organize-clear-btn-modal');
+            const organizeResultsModal = document.getElementById('organize-results-modal');
+            const organizeResultsTitleModal = document.getElementById('organize-results-title-modal');
+            const organizeResultsCountModal = document.getElementById('organize-results-count-modal');
+            const organizeMatchesModal = document.getElementById('organize-matches-modal');
+            
             const announceOrganizerStatus = (message, type = 'info') => {
                 if (typeof showSuggestionStatus === 'function') {
                     showSuggestionStatus(message, type);
@@ -1013,6 +1117,42 @@
                 if (showOrganizerBtn) {
                     showOrganizerBtn.textContent = '📊 Hide Organizer';
                 }
+                // Attach modal handlers when modal opens
+                setTimeout(() => {
+                    // Modal search button
+                    const searchBtn = document.getElementById('organize-search-btn-modal');
+                    if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
+                        console.log('✅ Attaching modal search button handler on modal open');
+                        searchBtn.addEventListener('click', () => {
+                            if (typeof window.performOrganizedSearchModal === 'function') {
+                                window.performOrganizedSearchModal();
+                            }
+                        }, { passive: true });
+                        searchBtn.dataset.organizerSearchAttached = 'true';
+                    }
+                    
+                    // Modal enter key
+                    const valueInput = document.getElementById('organize-value-modal');
+                    if (valueInput && !valueInput.dataset.organizerKeypressAttached) {
+                        valueInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter' && typeof window.performOrganizedSearchModal === 'function') {
+                                window.performOrganizedSearchModal();
+                            }
+                        }, { passive: true });
+                        valueInput.dataset.organizerKeypressAttached = 'true';
+                    }
+                    
+                    // Modal clear button  
+                    const clearBtn = document.getElementById('organize-clear-btn-modal');
+                    if (clearBtn && !clearBtn.dataset.organizerClearAttached) {
+                        clearBtn.addEventListener('click', () => {
+                            if (typeof window.clearOrganizerResultsModal === 'function') {
+                                window.clearOrganizerResultsModal();
+                            }
+                        }, { passive: true });
+                        clearBtn.dataset.organizerClearAttached = 'true';
+                    }
+                }, 100);
             }, { passive: false });
             showOrganizerModalBtn.dataset.organizerToggleAttached = 'true';
         }
@@ -1036,16 +1176,42 @@
                 organizeBySelect.addEventListener('change', () => {
                     const value = organizeBySelect.value;
                     if (value) {
-                        organizeValueGroup.style.display = 'block';
-                        organizeSearchBtn.style.display = 'inline-block';
+                        organizeValueGroup.classList.remove('d-none');
+                        organizeSearchBtn.classList.remove('d-none');
                         organizeValueInput.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInput.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInput.removeAttribute('data-autocomplete-category');
+                        }
                     } else {
-                        organizeValueGroup.style.display = 'none';
-                        organizeSearchBtn.style.display = 'none';
+                        organizeValueGroup.classList.add('d-none');
+                        organizeSearchBtn.classList.add('d-none');
                         clearOrganizerResults();
                     }
                 }, { passive: true });
                 organizeBySelect.dataset.organizerChangeAttached = 'true';
+            }
+            
+            // Map search types to autocomplete categories
+            function getAutocompleteCategory(searchType) {
+                const categoryMap = {
+                    'staff': 'human',
+                    'operator': 'operator',
+                    'location': 'location',
+                    'programType': 'type',
+                    'status': 'status',
+                    'accreditation': 'accreditation',
+                    'certification': 'certification'
+                };
+                return categoryMap[searchType] || null;
             }
 
             // Handle search
@@ -1066,6 +1232,67 @@
                 organizeClearBtn.addEventListener('click', clearOrganizerResults, { passive: true });
                 organizeClearBtn.dataset.organizerClearAttached = 'true';
             }
+            
+            // Modal search button - get element dynamically and attach handler
+            const attachModalSearchHandler = () => {
+                const searchBtn = document.getElementById('organize-search-btn-modal');
+                if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
+                    console.log('✅ Attaching modal search button handler');
+                    searchBtn.addEventListener('click', window.performOrganizedSearchModal, { passive: true });
+                    searchBtn.dataset.organizerSearchAttached = 'true';
+                }
+            };
+            attachModalSearchHandler();
+            
+            // Modal value input enter key
+            const attachModalEnterHandler = () => {
+                const valueInput = document.getElementById('organize-value-modal');
+                if (valueInput && !valueInput.dataset.organizerKeypressAttached) {
+                    valueInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') window.performOrganizedSearchModal();
+                    }, { passive: true });
+                    valueInput.dataset.organizerKeypressAttached = 'true';
+                }
+            };
+            attachModalEnterHandler();
+            
+            // Modal clear button
+            const attachModalClearHandler = () => {
+                const clearBtn = document.getElementById('organize-clear-btn-modal');
+                if (clearBtn && !clearBtn.dataset.organizerClearAttached) {
+                    clearBtn.addEventListener('click', window.clearOrganizerResultsModal, { passive: true });
+                    clearBtn.dataset.organizerClearAttached = 'true';
+                }
+            };
+            attachModalClearHandler();
+            
+            // Modal organize-by select - set up autocomplete
+            const attachModalSelectHandler = () => {
+                const selectEl = document.getElementById('organize-by-modal');
+                const valueInput = document.getElementById('organize-value-modal');
+                if (selectEl && !selectEl.dataset.organizerChangeAttached) {
+                    selectEl.addEventListener('change', () => {
+                        const value = selectEl.value;
+                        if (value && valueInput) {
+                            valueInput.focus();
+                            
+                            // Set up autocomplete based on selected search type
+                            const autocompleteCategory = getAutocompleteCategory(value);
+                            if (autocompleteCategory) {
+                                valueInput.setAttribute('data-autocomplete-category', autocompleteCategory);
+                                // Reinitialize autocomplete for this field
+                                if (typeof window.initializeAutocompleteFields === 'function') {
+                                    window.initializeAutocompleteFields();
+                                }
+                            } else {
+                                valueInput.removeAttribute('data-autocomplete-category');
+                            }
+                        }
+                    }, { passive: true });
+                    selectEl.dataset.organizerChangeAttached = 'true';
+                }
+            };
+            attachModalSelectHandler();
 
             function performOrganizedSearch() {
                 const searchType = organizeBySelect.value;
@@ -1136,7 +1363,7 @@
                 displayOrganizerResults(results, searchType, searchValue);
             }
             
-            function extractDataPointsForSearch(facility, type, searchValue) {
+            function extractDataPointsForSearch(facility, type, searchValue, projectOperator = null) {
                 const matches = [];
                 const searchLower = searchValue.toLowerCase();
                 
@@ -1144,17 +1371,19 @@
                     case 'staff':
                         if (facility.staff) {
                             if (facility.staff.administrator) {
-                                facility.staff.administrator.forEach(admin => {
-                                    const adminStr = typeof admin === 'string' ? admin : (admin.name || '');
-                                    if (adminStr.toLowerCase().includes(searchLower)) {
+                                const admins = Array.isArray(facility.staff.administrator) ? facility.staff.administrator : [facility.staff.administrator];
+                                admins.forEach(admin => {
+                                    const adminStr = typeof admin === 'string' ? admin : (admin?.name || '');
+                                    if (adminStr && adminStr.toLowerCase().includes(searchLower)) {
                                         matches.push(`Administrator: ${adminStr}`);
                                     }
                                 });
                             }
                             if (facility.staff.notableStaff) {
-                                facility.staff.notableStaff.forEach(staff => {
-                                    const staffStr = typeof staff === 'string' ? staff : (staff.name || '');
-                                    if (staffStr.toLowerCase().includes(searchLower)) {
+                                const staffList = Array.isArray(facility.staff.notableStaff) ? facility.staff.notableStaff : [facility.staff.notableStaff];
+                                staffList.forEach(staff => {
+                                    const staffStr = typeof staff === 'string' ? staff : (staff?.name || '');
+                                    if (staffStr && staffStr.toLowerCase().includes(searchLower)) {
                                         matches.push(`Notable Staff: ${staffStr}`);
                                     }
                                 });
@@ -1163,26 +1392,79 @@
                         break;
                         
                     case 'operator':
+                        // Check facility's current operator
+                        if (facility.identification?.currentOperator && 
+                            facility.identification.currentOperator.toLowerCase().includes(searchLower)) {
+                            matches.push(`Current Operator: ${facility.identification.currentOperator}`);
+                        }
+                        // Check facility's other/past operators
+                        if (facility.otherOperators && Array.isArray(facility.otherOperators)) {
+                            facility.otherOperators.forEach(op => {
+                                const opStr = typeof op === 'string' ? op : (op?.name || '');
+                                if (opStr && opStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Other Operator: ${opStr}`);
+                                }
+                            });
+                        }
+                        // Check project-level operator (parent company)
+                        if (projectOperator) {
+                            if (projectOperator.name && projectOperator.name.toLowerCase().includes(searchLower)) {
+                                matches.push(`Parent Company: ${projectOperator.name}`);
+                            }
+                            if (projectOperator.otherNames && Array.isArray(projectOperator.otherNames)) {
+                                projectOperator.otherNames.forEach(name => {
+                                    if (name && name.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Parent Company (alias): ${name}`);
+                                    }
+                                });
+                            }
+                        }
+                        // Legacy: check old operator field path
                         if (facility.identification?.operator && 
                             facility.identification.operator.toLowerCase().includes(searchLower)) {
                             matches.push(facility.identification.operator);
                         }
-                        if (facility.otherOperators) {
-                            facility.otherOperators.forEach(op => {
-                                if (op.toLowerCase().includes(searchLower)) {
-                                    matches.push(op);
-                                }
-                            });
-                        }
                         break;
                         
                     case 'location':
-                        if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                        // Check facility location fields
+                        if (facility.location && typeof facility.location === 'string' && facility.location.toLowerCase().includes(searchLower)) {
                             matches.push(facility.location);
+                        }
+                        if (facility.address && typeof facility.address === 'string' && facility.address.toLowerCase().includes(searchLower)) {
+                            matches.push(`Address: ${facility.address}`);
+                        }
+                        if (facility.locationCity && typeof facility.locationCity === 'string' && facility.locationCity.toLowerCase().includes(searchLower)) {
+                            matches.push(`City: ${facility.locationCity}`);
+                        }
+                        if (facility.locationState && typeof facility.locationState === 'string' && facility.locationState.toLowerCase().includes(searchLower)) {
+                            matches.push(`State: ${facility.locationState}`);
+                        }
+                        // Check project-level operator location/headquarters
+                        if (projectOperator) {
+                            if (projectOperator.location && typeof projectOperator.location === 'string' && projectOperator.location.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator Location: ${projectOperator.location}`);
+                            }
+                            if (projectOperator.headquarters && typeof projectOperator.headquarters === 'string' && projectOperator.headquarters.toLowerCase().includes(searchLower)) {
+                                matches.push(`Headquarters: ${projectOperator.headquarters}`);
+                            }
+                            if (projectOperator.headquartersCity && typeof projectOperator.headquartersCity === 'string' && projectOperator.headquartersCity.toLowerCase().includes(searchLower)) {
+                                matches.push(`HQ City: ${projectOperator.headquartersCity}`);
+                            }
+                            if (projectOperator.headquartersState && typeof projectOperator.headquartersState === 'string' && projectOperator.headquartersState.toLowerCase().includes(searchLower)) {
+                                matches.push(`HQ State: ${projectOperator.headquartersState}`);
+                            }
+                            if (projectOperator.locationCity && typeof projectOperator.locationCity === 'string' && projectOperator.locationCity.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator City: ${projectOperator.locationCity}`);
+                            }
+                            if (projectOperator.locationState && typeof projectOperator.locationState === 'string' && projectOperator.locationState.toLowerCase().includes(searchLower)) {
+                                matches.push(`Operator State: ${projectOperator.locationState}`);
+                            }
                         }
                         break;
                         
                     case 'programType':
+                        // Check facilityDetails.type (primary and normalized location)
                         if (facility.facilityDetails?.type && 
                             facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
                             matches.push(facility.facilityDetails.type);
@@ -1302,37 +1584,365 @@
                 organizeValueInput.value = '';
             }
             
-            // Function to navigate to a specific facility
-            window.goToFacility = function(projectName, facilityIndex) {
-                // Switch to the project if it's different
-                if (window.currentProjectName !== projectName) {
-                    if (typeof loadProjectAndSync === 'function') {
-                        loadProjectAndSync(projectName);
-                    } else if (typeof loadProject === 'function') {
-                        loadProject(projectName);
+            // Modal search function - exposed globally for event handlers
+            window.performOrganizedSearchModal = async function() {
+                // Get modal elements dynamically in case they weren't available at init time
+                const modalBySelect = document.getElementById('organize-by-modal');
+                const modalValueInput = document.getElementById('organize-value-modal');
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalResultsTitle = document.getElementById('organize-results-title-modal');
+                const modalResultsCount = document.getElementById('organize-results-count-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+                
+                console.log('🔍 Modal search triggered', {
+                    modalBySelect: !!modalBySelect,
+                    modalValueInput: !!modalValueInput,
+                    modalResults: !!modalResults
+                });
+                
+                if (!modalBySelect || !modalValueInput) {
+                    console.error('Modal elements not found!');
+                    announceOrganizerStatus('Search modal elements not found. Please try again.', 'error');
+                    return;
+                }
+                
+                const searchType = modalBySelect.value;
+                const searchValue = modalValueInput.value.trim();
+                
+                console.log('🔍 Search params:', { searchType, searchValue });
+                
+                if (!searchType || !searchValue) {
+                    announceOrganizerStatus('Select a data point and enter a search value, then click Search.', 'error');
+                    modalValueInput.focus();
+                    return;
+                }
+                
+                // Show loading state
+                announceOrganizerStatus(`Searching all facilities for "${searchValue}"...`, 'info');
+                if (modalResults) {
+                    modalResults.classList.remove('d-none');
+                    if (modalMatches) {
+                        modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">🔍</span><br>Searching database...</p>';
                     }
                 }
                 
-                // Switch to the facility
-                currentFacilityIndex = facilityIndex;
-                updateUI();
-                
-                // Hide organizer and scroll to top
-                organizerVisible = false;
-                if (organizerSection) {
-                    organizerSection.style.display = 'none';
+                try {
+                    // Fetch all projects from the API
+                    const apiUrl = (window.KOP_FACILITY_FORM_CONFIG?.restUrl || '/wp-json/kop/v1/') + 'facilities';
+                    console.log('🔍 Fetching from API:', apiUrl);
+                    
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status}`);
+                    }
+                    
+                    const apiResponse = await response.json();
+                    console.log('🔍 API response structure:', apiResponse);
+                    
+                    // The API returns { source: 'database', projects: { projectName1: {...}, projectName2: {...} } }
+                    // Or it might return projects at root level (older format)
+                    let allProjects = {};
+                    
+                    if (apiResponse.projects && typeof apiResponse.projects === 'object') {
+                        // New format: projects nested under 'projects' key
+                        allProjects = apiResponse.projects;
+                    } else {
+                        // Old format: projects at root level, filter out metadata keys
+                        Object.keys(apiResponse || {}).forEach(key => {
+                            if (key !== 'source' && typeof apiResponse[key] === 'object') {
+                                allProjects[key] = apiResponse[key];
+                            }
+                        });
+                    }
+                    
+                    console.log('🔍 Projects found:', Object.keys(allProjects));
+                    
+                    // Debug: log first project structure
+                    const firstProjectKey = Object.keys(allProjects)[0];
+                    if (firstProjectKey) {
+                        const firstProject = allProjects[firstProjectKey];
+                        console.log(`🔍 First project "${firstProjectKey}" structure:`, {
+                            hasData: !!firstProject?.data,
+                            dataKeys: firstProject?.data ? Object.keys(firstProject.data) : [],
+                            hasFacilitiesInData: !!firstProject?.data?.facilities,
+                            facilitiesCount: firstProject?.data?.facilities?.length || 0,
+                            hasFacilitiesAtRoot: !!firstProject?.facilities,
+                            rootFacilitiesCount: firstProject?.facilities?.length || 0,
+                            fullProject: firstProject
+                        });
+                    }
+                    
+                    const results = [];
+                    
+                    // Search through all projects from database
+                    Object.keys(allProjects).forEach(projectName => {
+                        const project = allProjects[projectName];
+                        // Try different data structures
+                        const facilities = project?.data?.facilities || project?.facilities || [];
+                        
+                        // Debug: log first facility structure for first project
+                        if (facilities.length > 0 && Object.keys(allProjects).indexOf(projectName) === 0) {
+                            const firstFacility = facilities[0];
+                            console.log(`🔍 First facility in "${projectName}" structure:`, {
+                                keys: Object.keys(firstFacility || {}),
+                                identification: firstFacility?.identification,
+                                facilityDetails: firstFacility?.facilityDetails,
+                                operator: firstFacility?.operator,
+                                otherOperators: firstFacility?.otherOperators,
+                                staff: firstFacility?.staff,
+                                projectOperator: project?.data?.operator || project?.operator
+                            });
+                        }
+                        
+                        console.log(`🔍 Project "${projectName}": ${facilities.length} facilities`);
+                        
+                        // Get project-level operator for searching
+                        const projectOperator = project?.data?.operator || project?.operator || null;
+                        
+                        facilities.forEach((facility, facilityIndex) => {
+                            const matches = window.extractDataPointsForSearch ? 
+                                window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
+                                extractDataPointsForSearch(facility, searchType, searchValue, projectOperator);
+                            if (matches.length > 0) {
+                                results.push({
+                                    projectName: projectName,
+                                    facility: facility,
+                                    facilityIndex: facilityIndex,
+                                    matches: matches,
+                                    operator: project?.data?.operator?.name || project?.operator?.name || facility?.identification?.operator
+                                });
+                            }
+                        });
+                    });
+                    
+                    console.log('🔍 Search results:', results.length);
+                    
+                    if (results.length === 0) {
+                        announceOrganizerStatus(`No matches found for "${searchValue}" in the database.`, 'warning');
+                    } else {
+                        announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
+                    }
+                    
+                    window.displayOrganizerResultsModal(results, searchType, searchValue);
+                    
+                } catch (error) {
+                    console.error('Search API error:', error);
+                    console.log('🔄 Falling back to local projects cache...');
+                    
+                    // Fallback: search through window.projects if API fails
+                    if (window.projects && Object.keys(window.projects).length > 0) {
+                        announceOrganizerStatus(`API unavailable, searching local cache...`, 'info');
+                        
+                        const results = [];
+                        Object.keys(window.projects).forEach(projectName => {
+                            const project = window.projects[projectName];
+                            const facilities = project?.data?.facilities || project?.facilities || [];
+                            const projectOperator = project?.data?.operator || project?.operator || null;
+                            
+                            facilities.forEach((facility, facilityIndex) => {
+                                const matches = window.extractDataPointsForSearch ? 
+                                    window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
+                                    extractDataPointsForSearch(facility, searchType, searchValue, projectOperator);
+                                if (matches.length > 0) {
+                                    results.push({
+                                        projectName: projectName,
+                                        facility: facility,
+                                        facilityIndex: facilityIndex,
+                                        matches: matches,
+                                        operator: project?.data?.operator?.name || project?.operator?.name || facility?.identification?.currentOperator
+                                    });
+                                }
+                            });
+                        });
+                        
+                        if (results.length === 0) {
+                            announceOrganizerStatus(`No matches found for "${searchValue}" in local cache.`, 'warning');
+                        } else {
+                            announceOrganizerStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}" (local).`, 'success');
+                        }
+                        
+                        window.displayOrganizerResultsModal(results, searchType, searchValue);
+                    } else {
+                        announceOrganizerStatus(`Search failed: ${error.message}. No local data available.`, 'error');
+                        if (modalMatches) {
+                            modalMatches.innerHTML = `<p style="padding: 20px; text-align: center; color: #dc2626;">❌ Search failed: ${error.message}<br><br>No local project data available to search.</p>`;
+                        }
+                    }
                 }
-                if (showOrganizerBtn) {
-                    showOrganizerBtn.textContent = '📊 Data Organizer';
+            }
+            
+            // Expose as global for event handlers
+            window.displayOrganizerResultsModal = function(results, searchType, searchValue) {
+                // Get modal elements dynamically
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalResultsTitle = document.getElementById('organize-results-title-modal');
+                const modalResultsCount = document.getElementById('organize-results-count-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+                
+                console.log('📊 Displaying results:', { count: results.length, modalResults: !!modalResults, modalMatches: !!modalMatches });
+                
+                if (!modalResults) {
+                    console.error('organize-results-modal not found!');
+                    return;
                 }
                 
-                // Scroll to top of page
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const searchTypeLabels = {
+                    'staff': 'Staff Member',
+                    'operator': 'Operator',
+                    'location': 'Location',
+                    'programType': 'Program Type',
+                    'status': 'Operating Status',
+                    'year': 'Opening Year',
+                    'accreditation': 'Accreditation',
+                    'certification': 'Certification'
+                };
+                const searchTypeLabel = searchTypeLabels[searchType] || searchType;
                 
-                // Log the navigation
+                modalResults.classList.remove('d-none');
+                
+                if (modalResultsTitle) {
+                    modalResultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+                }
+                if (modalResultsCount) {
+                    modalResultsCount.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'}`;
+                }
+                
+                if (modalClearBtn) {
+                    modalClearBtn.classList.remove('d-none');
+                }
+                
+                if (modalMatches) {
+                    if (results.length === 0) {
+                        modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
+                    } else {
+                        modalMatches.innerHTML = results.map(result => {
+                            const facilityName = result.facility.identification?.name || result.facility.identification?.currentName || 'Unnamed Facility';
+                            const location = result.facility.location || '';
+                            return `
+                                <div style="padding: 15px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" 
+                                     onclick="goToFacility('${result.projectName.replace(/'/g, "\\'")}', ${result.facilityIndex})"
+                                     onmouseover="this.style.background='#f3f4f6'" 
+                                     onmouseout="this.style.background='transparent'">
+                                    <div style="font-weight: 600; color: #1f2937;">${facilityName}</div>
+                                    <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                                        <span style="color: #33A7B5;">${result.projectName}</span>
+                                        ${location ? ` • ${location}` : ''}
+                                    </div>
+                                    <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">
+                                        Matches: ${result.matches.join(', ')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            }
+            
+            // Expose as global for event handlers
+            window.clearOrganizerResultsModal = function() {
+                // Get modal elements dynamically
+                const modalResults = document.getElementById('organize-results-modal');
+                const modalMatches = document.getElementById('organize-matches-modal');
+                const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+                const modalValueInput = document.getElementById('organize-value-modal');
+                
+                if (modalResults) {
+                    modalResults.classList.add('d-none');
+                }
+                if (modalClearBtn) {
+                    modalClearBtn.classList.add('d-none');
+                }
+                if (modalValueInput) {
+                    modalValueInput.value = '';
+                }
+                if (modalMatches) {
+                    modalMatches.innerHTML = '';
+                }
+            }
+            
+            // Function to navigate to a specific facility
+            window.goToFacility = async function(projectName, facilityIndex) {
+                console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
+                
+                // Hide the modal first for better UX - get it by ID to ensure we have access
+                const modal = document.getElementById('data-organizer-modal');
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+                
+                // Check if project exists in window.projects
+                if (!window.projects || !window.projects[projectName]) {
+                    console.log(`📥 Project "${projectName}" not in local cache, fetching from API...`);
+                    
+                    // Show loading status
+                    if (typeof showUploadStatus === 'function') {
+                        showUploadStatus(`Loading project "${projectName}"...`, 'info');
+                    }
+                    
+                    try {
+                        // Fetch project from API
+                        const apiUrl = (window.KOP_FACILITY_FORM_CONFIG?.restUrl || '/wp-json/kop/v1/') + 'facilities';
+                        const response = await fetch(apiUrl);
+                        if (response.ok) {
+                            const apiResponse = await response.json();
+                            const allProjects = apiResponse.projects || apiResponse;
+                            
+                            if (allProjects[projectName]) {
+                                // Add to window.projects
+                                if (!window.projects) window.projects = {};
+                                window.projects[projectName] = allProjects[projectName];
+                                console.log(`✅ Added "${projectName}" to local project cache`);
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Failed to fetch project from API:', err);
+                    }
+                }
+                
+                // Now try to load the project
+                if (window.currentProjectName !== projectName) {
+                    if (window.projects && window.projects[projectName]) {
+                        if (typeof loadProjectAndSync === 'function') {
+                            loadProjectAndSync(projectName);
+                        } else if (window.projectManager && window.projectManager.loadProject) {
+                            window.projectManager.loadProject(projectName);
+                        } else if (typeof loadProject === 'function') {
+                            loadProject(projectName);
+                        }
+                    } else {
+                        console.error(`❌ Project "${projectName}" not found`);
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus(`Project "${projectName}" not found.`, 'error');
+                        }
+                        return;
+                    }
+                }
+                
+                // Wait a moment for project to load, then switch to the facility
                 setTimeout(() => {
-                    console.log(`Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
-                }, 500);
+                    window.currentFacilityIndex = facilityIndex;
+                    if (typeof updateUI === 'function') {
+                        updateUI();
+                    } else if (typeof window.updateAllUI === 'function') {
+                        window.updateAllUI();
+                    }
+                    
+                    // Hide organizer and scroll to top
+                    organizerVisible = false;
+                    if (organizerSection) {
+                        organizerSection.style.display = 'none';
+                    }
+                    if (showOrganizerBtn) {
+                        showOrganizerBtn.textContent = '📊 Data Organizer';
+                    }
+                    
+                    // Scroll to top of page
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    console.log(`✅ Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
+                }, 300);
             };
         }
         let organizerInitialized = false;

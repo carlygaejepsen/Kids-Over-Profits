@@ -323,7 +323,13 @@ function loadReferrerData() {
         window.applyReferrerToggleState(referrerType === 'individual');
     }
 
-    const consultant = window.formData.referrerIndividual || window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
+    // Ensure currentConsultantIndex is valid
+    const consultants = window.formData.referrerConsultants || [];
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0 || window.currentConsultantIndex >= consultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
         debugLog('📋 Consultant data:', consultant);
@@ -436,6 +442,381 @@ function handleReferrerToggle() {
     } else {
         hideElement(referrerMainWrapper);
         showElement(facilityMainWrapper);
+    }
+}
+
+// ============================================
+// CONSULTANT NAVIGATION & UI FUNCTIONS
+// ============================================
+
+/**
+ * Get consultant display name with fallbacks
+ */
+function getConsultantDisplayName(consultant, index) {
+    if (!consultant) {
+        return `Consultant ${index + 1}`;
+    }
+
+    const fullName = (consultant.fullName || '').trim();
+    const nameField = (consultant.name || '').trim();
+    const firstLast = [consultant.firstName, consultant.lastName].map(part => (part || '').trim()).filter(Boolean).join(' ').trim();
+
+    // Prefer the longest available string so a 1-letter fullName doesn't win
+    const candidates = [fullName, nameField, firstLast].filter(Boolean);
+    const best = candidates.reduce((winner, candidate) => {
+        if (!winner) return candidate;
+        return candidate.length > winner.length ? candidate : winner;
+    }, '');
+
+    const displayName = best || `Consultant ${index + 1}`;
+
+    // Backfill missing name parts to keep downstream code consistent
+    if (!consultant.fullName && best) {
+        consultant.fullName = best;
+    }
+    if (!consultant.firstName && !consultant.lastName && best) {
+        const parts = best.split(/\s+/);
+        if (parts.length > 1) {
+            consultant.firstName = parts.shift();
+            consultant.lastName = parts.join(' ');
+        } else {
+            consultant.firstName = best;
+        }
+    }
+
+    return displayName;
+}
+
+/**
+ * Update consultants overview/TOC list
+ */
+function updateConsultantsOverview() {
+    const consultantsList = document.getElementById('consultants-list');
+    const consultantsStats = document.getElementById('consultants-toc-stats');
+
+    if (!consultantsList || !consultantsStats) return;
+
+    const consultants = window.formData?.referrerConsultants || [];
+    const currentIndex = window.currentConsultantIndex || 0;
+
+    if (typeof debugLog === 'function') {
+        debugLog('updateConsultantsOverview: consultants count =', consultants.length, 'currentIndex =', currentIndex);
+    }
+
+    // Update stats
+    consultantsStats.textContent = `Total: ${consultants.length} consultant${consultants.length !== 1 ? 's' : ''}`;
+
+    // Clear list
+    consultantsList.innerHTML = '';
+
+    // Populate consultant items
+    consultants.forEach((consultant, index) => {
+        if (typeof debugLog === 'function') {
+            debugLog(`Processing consultant ${index}:`, {
+                firstName: consultant.firstName,
+                lastName: consultant.lastName,
+                fullName: consultant.fullName,
+                city: consultant.city,
+                state: consultant.state,
+                allKeys: Object.keys(consultant)
+            });
+        }
+
+        // Build full name - try multiple possible keys
+        const fullName = getConsultantDisplayName(consultant, index);
+
+        // Build location
+        const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || 'Location not specified';
+
+        if (typeof debugLog === 'function') {
+            debugLog(`Consultant ${index} display: name="${fullName}", location="${location}"`);
+        }
+
+        const item = document.createElement('div');
+        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+        item.tabIndex = 0;
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-label', `View ${fullName}`);
+
+        // Properly escape HTML
+        const nameDiv = document.createElement('div');
+        nameDiv.textContent = fullName;
+        const nameEscaped = nameDiv.innerHTML;
+
+        const locationDiv = document.createElement('div');
+        locationDiv.textContent = location;
+        const locationEscaped = locationDiv.innerHTML;
+
+        item.innerHTML = `
+            <div class="facility-item-number">${index + 1}</div>
+            <div class="facility-item-info">
+                <div class="facility-item-name">${nameEscaped}</div>
+                <div class="facility-item-details">${locationEscaped}</div>
+            </div>
+        `;
+
+        const selectConsultant = () => {
+            if (typeof debugLog === 'function') {
+                debugLog('Selected consultant index:', index);
+            }
+            window.currentConsultantIndex = index;
+            loadConsultantData();
+            updateConsultantsOverview();
+        };
+
+        item.addEventListener('click', selectConsultant, { passive: true });
+        item.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectConsultant();
+            }
+        });
+
+        consultantsList.appendChild(item);
+    });
+}
+
+/**
+ * Load consultant data into form fields
+ */
+function loadConsultantData() {
+    if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length === 0) {
+        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
+        window.currentConsultantIndex = 0;
+    }
+
+    // Ensure currentConsultantIndex is valid
+    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0) {
+        window.currentConsultantIndex = 0;
+    }
+    if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
+        window.currentConsultantIndex = 0;
+    }
+
+    const consultant = window.formData.referrerConsultants[window.currentConsultantIndex];
+
+    if (!consultant) {
+        console.warn('⚠️ Consultant not found at index', window.currentConsultantIndex);
+        return;
+    }
+
+    // Ensure fullName is built if not already set (prefer longest available name)
+    getConsultantDisplayName(consultant, window.currentConsultantIndex);
+
+    // Load basic fields - map from input IDs to consultant data keys
+    const fields = {
+        'consultant-firstname': 'firstName',
+        'consultant-lastname': 'lastName',
+        'consultant-credentials': 'credentials',
+        'consultant-education': 'education',
+        'consultant-city': 'city',
+        'consultant-state': 'state',
+        'consultant-email': 'email',
+        'consultant-phone': 'phone',
+        'consultant-website': 'website',
+        'consultant-role': 'role',
+        'consultant-status': 'status',
+        'consultant-notes': 'notes',
+        'consultant-lawsuits': 'lawsuits'
+    };
+
+    Object.keys(fields).forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.value = consultant[fields[fieldId]] || '';
+        }
+    });
+
+    // Update dropdown
+    updateConsultantDropdown();
+
+    // Update remove button visibility
+    const removeBtn = document.getElementById('remove-consultant-btn');
+    if (removeBtn) {
+        if (window.formData.referrerConsultants.length > 1) {
+            removeBtn.classList.remove('d-none');
+        } else {
+            removeBtn.classList.add('d-none');
+        }
+    }
+
+    // Initialize array fields
+    if (!Array.isArray(consultant.affiliations)) {
+        consultant.affiliations = [];
+    }
+    if (!Array.isArray(consultant.facilitiesReferred)) {
+        consultant.facilitiesReferred = [];
+    }
+    if (!Array.isArray(consultant.schoolDistricts)) {
+        consultant.schoolDistricts = [];
+    }
+
+    // Render array fields
+    const consultantArrays = [
+        { path: 'consultant.affiliations', data: consultant.affiliations },
+        { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
+        { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
+    ];
+
+    if (typeof renderArray === 'function') {
+        consultantArrays.forEach(({ path, data }) => {
+            const container = document.querySelector(`[data-path="${path}"]`);
+            if (container) {
+                renderArray(container, path, data);
+            }
+        });
+    }
+}
+
+/**
+ * Update consultant dropdown
+ */
+function updateConsultantDropdown() {
+    const dropdown = document.getElementById('consultant-dropdown');
+    if (!dropdown) return;
+
+    const consultants = window.formData?.referrerConsultants || [];
+    dropdown.innerHTML = '';
+
+    consultants.forEach((consultant, index) => {
+        const fullName = getConsultantDisplayName(consultant, index);
+
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${index + 1}. ${fullName}`;
+        dropdown.appendChild(option);
+    });
+
+    dropdown.value = window.currentConsultantIndex || 0;
+    if (typeof debugLog === 'function') {
+        debugLog('✅ Consultant dropdown updated with', consultants.length, 'consultants');
+    }
+}
+
+/**
+ * Update all consultant UI components
+ */
+function updateConsultantsUI() {
+    if (typeof debugLog === 'function') {
+        debugLog('🔄 updateConsultantsUI called');
+    }
+    // Ensure data structures exist before loading
+    ensureReferrerDataStructures();
+    loadConsultantData();
+    updateConsultantsOverview();
+    updateConsultantDropdown();
+    if (typeof updateJSON === 'function') updateJSON();
+    if (typeof autoSave === 'function') autoSave();
+    if (typeof debugLog === 'function') {
+        debugLog('✅ updateConsultantsUI complete');
+    }
+}
+
+/**
+ * Initialize consultant navigation buttons (prev/next/add/remove/dropdown)
+ */
+function initializeConsultantNavigation() {
+    // Initialize consultant navigation buttons
+    const addConsultantBtn = document.getElementById('add-consultant-btn');
+    const removeConsultantBtn = document.getElementById('remove-consultant-btn');
+    const prevConsultantBtn = document.getElementById('prev-consultant-btn');
+    const nextConsultantBtn = document.getElementById('next-consultant-btn');
+    const consultantDropdown = document.getElementById('consultant-dropdown');
+
+    if (addConsultantBtn && !addConsultantBtn.dataset.listenerAttached) {
+        addConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
+            if (!window.formData.referrerConsultants) {
+                window.formData.referrerConsultants = [];
+            }
+            window.formData.referrerConsultants.push({
+                firstName: '',
+                lastName: '',
+                credentials: '',
+                city: '',
+                state: '',
+                email: '',
+                phone: '',
+                website: '',
+                affiliations: [],
+                facilitiesReferred: [],
+                schoolDistricts: [],
+                notes: ''
+            });
+            window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
+            updateConsultantsUI();
+        });
+        addConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (removeConsultantBtn && !removeConsultantBtn.dataset.listenerAttached) {
+        removeConsultantBtn.addEventListener('click', function() {
+            if (!window.formData.referrerConsultants || window.formData.referrerConsultants.length <= 1) {
+                return;
+            }
+            if (confirm('Are you sure you want to remove this consultant?')) {
+                window.formData.referrerConsultants.splice(window.currentConsultantIndex, 1);
+                if (window.currentConsultantIndex >= window.formData.referrerConsultants.length) {
+                    window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
+                }
+                updateConsultantsUI();
+            }
+        });
+        removeConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (prevConsultantBtn && !prevConsultantBtn.dataset.listenerAttached) {
+        prevConsultantBtn.addEventListener('click', function() { // Note: cannot be passive
+            if (window.currentConsultantIndex > 0) {
+                window.currentConsultantIndex--;
+                loadConsultantData();
+                updateConsultantsOverview();
+            }
+        });
+        prevConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (nextConsultantBtn && !nextConsultantBtn.dataset.listenerAttached) {
+        nextConsultantBtn.addEventListener('click', function() {
+            const maxIndex = (window.formData.referrerConsultants?.length || 1) - 1;
+            if (window.currentConsultantIndex < maxIndex) {
+                window.currentConsultantIndex++;
+                loadConsultantData();
+                updateConsultantsOverview();
+            }
+        });
+        nextConsultantBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (consultantDropdown && !consultantDropdown.dataset.listenerAttached) {
+        consultantDropdown.addEventListener('change', function(e) {
+            window.currentConsultantIndex = parseInt(e.target.value);
+            loadConsultantData();
+            updateConsultantsOverview();
+        }, { passive: true });
+        consultantDropdown.dataset.listenerAttached = 'true';
+    }
+}
+
+/**
+ * Initialize consultants TOC toggle button
+ */
+function initializeConsultantsTocToggle() {
+    const consultantsTocToggle = document.getElementById('consultants-toc-toggle-btn');
+    if (consultantsTocToggle && !consultantsTocToggle.dataset.listenerAttached) {
+        consultantsTocToggle.addEventListener('click', function() { // UI-only, can be passive
+            const toc = document.getElementById('consultants-toc');
+            const content = toc.querySelector('.toc-content');
+            const isCollapsed = content.style.display === 'none';
+
+            if (isCollapsed) {
+                content.style.display = 'block';
+                consultantsTocToggle.textContent = '🔎';
+            } else {
+                content.style.display = 'none';
+                consultantsTocToggle.textContent = '👁️';
+            }
+        }, { passive: true });
+        consultantsTocToggle.dataset.listenerAttached = 'true';
     }
 }
 
@@ -591,6 +972,15 @@ window.getAllReferrers = getAllReferrers;
 window.loadReferrerData = loadReferrerData;
 window.handleReferrerToggle = handleReferrerToggle;
 window.attachReferrerFieldListeners = attachReferrerFieldListeners;
+
+// Expose consultant navigation functions
+window.getConsultantDisplayName = getConsultantDisplayName;
+window.updateConsultantsOverview = updateConsultantsOverview;
+window.loadConsultantData = loadConsultantData;
+window.updateConsultantDropdown = updateConsultantDropdown;
+window.updateConsultantsUI = updateConsultantsUI;
+window.initializeConsultantNavigation = initializeConsultantNavigation;
+window.initializeConsultantsTocToggle = initializeConsultantsTocToggle;
 
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {

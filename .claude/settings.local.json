@@ -8,7 +8,8 @@
       "Bash(php -l:*)",
       "Bash(node -c:*)",
       "Bash(NUL)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []

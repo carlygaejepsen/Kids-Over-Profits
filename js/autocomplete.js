@@ -12,7 +12,7 @@
 // MODULE STATE & CONFIGURATION
 // ============================================
 
-const AUTOCOMPLETE_MODULE_VERSION = 'autocomplete.v1.2025-11-26';
+const AUTOCOMPLETE_MODULE_VERSION = 'autocomplete.v1.3.2025-11-30';
 
 // Debug logging flag - can be enabled via window.KOP_AUTOCOMPLETE_DEBUG or localStorage
 const DEBUG_AUTOCOMPLETE = (() => {
@@ -100,6 +100,40 @@ const DEFAULT_STAFF_ROLES = [
     'Other'
 ];
 
+const DEFAULT_ACCREDITATIONS = [
+    'Joint Commission (JCAHO)',
+    'CARF International',
+    'Council on Accreditation (COA)',
+    'National Association of Therapeutic Schools and Programs (NATSAP)',
+    'Association of Experiential Education (AEE)',
+    'Outdoor Behavioral Healthcare Council (OBH)',
+    'NATSAP',
+    'NIPDB',
+    'Middle States Association',
+    'AdvancED',
+    'Cognia',
+    'WASC',
+    'NAEYC',
+    'State Licensed',
+    'Medicare Certified',
+    'Medicaid Certified'
+];
+
+const DEFAULT_CERTIFICATIONS = [
+    'Licensed Clinical Social Worker (LCSW)',
+    'Licensed Professional Counselor (LPC)',
+    'Licensed Marriage and Family Therapist (LMFT)',
+    'Certified Addiction Counselor (CAC)',
+    'Board Certified Behavior Analyst (BCBA)',
+    'Registered Nurse (RN)',
+    'Licensed Practical Nurse (LPN)',
+    'Certified Nursing Assistant (CNA)',
+    'CPR Certified',
+    'First Aid Certified',
+    'Trauma-Informed Care Certified',
+    'Crisis Intervention Certified'
+];
+
 // ============================================
 // AGGREGATED DATA CACHE
 // ============================================
@@ -171,15 +205,24 @@ function getAllOperators() {
         const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
 
         Object.values(projects).forEach(project => {
-            if (project.data?.operator?.name) operators.add(project.data.operator.name);
-            if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
-            if (project.data?.operator?.otherNames) {
-                project.data.operator.otherNames.forEach(name => operators.add(name));
+            // Skip project-level operator data for location projects
+            // (location project names are places, not companies)
+            if (project.category !== 'locations') {
+                if (project.data?.operator?.name) operators.add(project.data.operator.name);
+                if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
+                if (project.data?.operator?.otherNames) {
+                    project.data.operator.otherNames.forEach(name => operators.add(name));
+                }
             }
 
+            // Always collect facility-level operator data (these are valid company names)
             project.data?.facilities?.forEach(facility => {
                 if (facility.identification?.currentOperator) {
                     operators.add(facility.identification.currentOperator);
+                }
+                // Also collect sourceOperator from location project facilities
+                if (facility.sourceOperator?.name) {
+                    operators.add(facility.sourceOperator.name);
                 }
                 facility.otherOperators?.forEach(op => operators.add(op));
             });
@@ -402,7 +445,7 @@ function getAllCertifications() {
     if (!aggregatedDataCache.certifications) {
         const projects = window.projects || {};
         const customCertifications = window.customCertifications || [];
-        const certs = new Set(customCertifications);
+        const certs = new Set([...DEFAULT_CERTIFICATIONS, ...customCertifications]);
 
         Object.values(projects).forEach(project => {
             project.data?.facilities?.forEach(facility => {
@@ -423,7 +466,7 @@ function getAllAccreditations() {
     if (!aggregatedDataCache.accreditations) {
         const projects = window.projects || {};
         const customAccreditations = window.customAccreditations || [];
-        const accreds = new Set(customAccreditations);
+        const accreds = new Set([...DEFAULT_ACCREDITATIONS, ...customAccreditations]);
 
         Object.values(projects).forEach(project => {
             project.data?.facilities?.forEach(facility => {
@@ -565,7 +608,7 @@ function getAutocompleteEndpoint() {
 
     // Check global API helper
     if (window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
-        return window.KOP_API.getEndpoint('get-autocomplete.php');
+        return window.KOP_API.getEndpoint('autocomplete');
     }
 
     // Check config endpoints
@@ -574,9 +617,9 @@ function getAutocompleteEndpoint() {
         return config.endpoints.AUTOCOMPLETE;
     }
 
-    // Fallback to default path
+    // Use WordPress REST API endpoint (preferred - always works)
     const baseUrl = config.apiBase || window.location.origin;
-    return `${baseUrl.replace(/\/$/, '')}/wp-content/themes/child/api/get-autocomplete.php`;
+    return `${baseUrl.replace(/\/$/, '')}/wp-json/kop/v1/autocomplete`;
 }
 
 // ============================================
@@ -773,23 +816,30 @@ function createAutocomplete(input, getDataFunction, category) {
             pendingFetch = null;
         }
 
-        // Hide dropdown immediately
+        // Cancel any pending remote fetch
+        if (abortController) {
+            abortController.abort();
+            abortController = null;
+        }
+
+        // Hide dropdown immediately and keep it hidden
         hideDropdown();
         currentFocus = -1;
 
         // Now set the value
         input.value = value;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // Dispatch events without triggering autocomplete
         input.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // Reset flag after a short delay
+        // Reset flag after a longer delay to ensure all async operations complete
         setTimeout(() => {
             isCommittingSelection = false;
-        }, 150);
+        }, 300);
 
         if (shouldRefocus) {
             // Use timeout to ensure dropdown has fully closed before refocusing
-            setTimeout(() => input.focus(), 0);
+            setTimeout(() => input.focus(), 50);
         }
     }
 
@@ -828,10 +878,21 @@ function createAutocomplete(input, getDataFunction, category) {
         }
     }
 
-    function showDropdown(items) {
+    function showDropdown(items, isLoading = false) {
         dropdown.innerHTML = '';
-        dropdown.style.display = 'block';
+        dropdown.classList.add('active');
         dropdown.dataset.empty = items.length === 0 ? 'true' : 'false';
+
+        if (isLoading) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'autocomplete-item';
+            loadingDiv.textContent = 'Loading...';
+            loadingDiv.style.color = '#9ca3af';
+            loadingDiv.style.fontStyle = 'italic';
+            loadingDiv.dataset.placeholder = 'true';
+            dropdown.appendChild(loadingDiv);
+            return;
+        }
 
         if (items.length === 0) {
             const emptyDiv = document.createElement('div');
@@ -865,7 +926,7 @@ function createAutocomplete(input, getDataFunction, category) {
     }
 
     function hideDropdown() {
-        dropdown.style.display = 'none';
+        dropdown.classList.remove('active');
         currentFocus = -1;
     }
     
@@ -880,11 +941,36 @@ function createAutocomplete(input, getDataFunction, category) {
             hideDropdown();
             return;
         }
+        
+        // Sort function: prioritize items starting with search term, then alphabetical
+        const sortByRelevance = (items, searchTerm) => {
+            const lower = searchTerm.toLowerCase();
+            return items.sort((a, b) => {
+                const aLower = a.toLowerCase();
+                const bLower = b.toLowerCase();
+                const aStarts = aLower.startsWith(lower);
+                const bStarts = bLower.startsWith(lower);
+                
+                // Items starting with search term come first
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                
+                // Within same group, sort alphabetically
+                return aLower.localeCompare(bLower);
+            });
+        };
+        
         // Merge local items with remote suggestions (debounced)
         const localItems = (typeof getDataFunction === 'function') ? getDataFunction() : [];
         const localFiltered = localItems.filter(item => item.toLowerCase().includes(value.toLowerCase()));
+        const localSorted = sortByRelevance(localFiltered, value);
 
-        showDropdown(localFiltered);
+        // Show local results immediately, or "Loading..." if none
+        if (localSorted.length > 0) {
+            showDropdown(localSorted);
+        } else {
+            showDropdown([], true); // Show loading state
+        }
 
         // Cancel any pending remote fetch
         if (abortController) {
@@ -909,22 +995,33 @@ function createAutocomplete(input, getDataFunction, category) {
 
                 if (!resp.ok) {
                     console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
-                    return; // Keep showing local items
+                    // Show "No matches" only after fetch fails and local is empty
+                    if (localSorted.length === 0) {
+                        showDropdown([]);
+                    }
+                    return;
                 }
 
                 const contentType = resp.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
-                    return; // Keep showing local items
+                    if (localSorted.length === 0) {
+                        showDropdown([]);
+                    }
+                    return;
                 }
 
                 const json = await resp.json();
                 if (json && json.success && Array.isArray(json.values)) {
-                    const merged = Array.from(new Set([...localFiltered, ...json.values]));
-                    showDropdown(merged);
+                    const merged = Array.from(new Set([...localSorted, ...json.values]));
+                    const mergedSorted = sortByRelevance(merged, value);
+                    showDropdown(mergedSorted);
                     debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
                     console.warn('⚠️ Autocomplete API returned unexpected format:', json);
+                    if (localSorted.length === 0) {
+                        showDropdown([]);
+                    }
                 }
             } catch (e) {
                 if (e.name === 'AbortError') {
@@ -932,14 +1029,18 @@ function createAutocomplete(input, getDataFunction, category) {
                     return;
                 }
                 console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
-                // Keep showing local items on error
+                // Show "No matches" only if local was also empty
+                if (localSorted.length === 0) {
+                    showDropdown([]);
+                }
             }
-        }, 300); // Debounce delay
+        }, 150); // Reduced debounce for faster response
     }, { passive: true });
 
     input.addEventListener('focus', () => {
         // Only trigger autocomplete dropdown if not during a programmatic UI update
-        if (input.value.trim() && !window.isUpdatingUI) {
+        // and not immediately after committing a selection
+        if (input.value.trim() && !window.isUpdatingUI && !isCommittingSelection) {
             input.dispatchEvent(new Event('input'));
         }
     }, { passive: true });
@@ -967,7 +1068,8 @@ function createAutocomplete(input, getDataFunction, category) {
             setActive(items);
         } else if (e.key === 'Enter' || e.key === 'Tab') {
             const actionableItems = Array.from(items).filter((item) => item.dataset && item.dataset.value);
-            const hasVisibleOptions = dropdown.style.display !== 'none' && actionableItems.length > 0;
+            const isDropdownVisible = dropdown.classList.contains('active');
+            const hasVisibleOptions = isDropdownVisible && actionableItems.length > 0;
             const isTab = e.key === 'Tab';
 
             const maybePreventDefault = () => {
@@ -991,7 +1093,8 @@ function createAutocomplete(input, getDataFunction, category) {
                 e.preventDefault();
             }
 
-            if (isTab && dropdown.style.display !== 'none') {
+            // Always hide dropdown on Tab, regardless of selection
+            if (isTab) {
                 hideDropdown();
             }
         } else if (e.key === 'Escape') {
@@ -1044,7 +1147,12 @@ function getCategoryFunctions() {
         licensing: () => Array.from(window.customLicensing || []),
         investor: () => Array.from(window.customInvestors || []),
         role: getAllStaffRoles,
-        operatingperiod: getAllOperatingPeriods
+        operatingperiod: getAllOperatingPeriods,
+        country: () => [
+            'United States', 'Mexico', 'Canada', 'Jamaica', 'Costa Rica',
+            'Samoa', 'Czech Republic', 'Dominican Republic', 'Honduras',
+            'United Kingdom', 'Australia', 'New Zealand'
+        ]
     };
 }
 
@@ -1085,6 +1193,7 @@ window.KOP_Autocomplete = {
     addCustomValue,
     attachCustomValueRecorder,
     getCategoryFunctions,
+    autoInitialize,
     // Data aggregation functions
     getAllOperators,
     getAllFacilityNames,
@@ -1131,5 +1240,76 @@ window.getAllOperatingPeriods = getAllOperatingPeriods;
 window.DEFAULT_FACILITY_TYPES = DEFAULT_FACILITY_TYPES;
 window.DEFAULT_OPERATORS = DEFAULT_OPERATORS;
 window.DEFAULT_STAFF_ROLES = DEFAULT_STAFF_ROLES;
+
+// ============================================
+// AUTO-INITIALIZATION ON DOMCONTENTLOADED
+// ============================================
+
+/**
+ * Initialize autocomplete fields when DOM is ready
+ * Also set up a MutationObserver to handle dynamically added fields
+ */
+function autoInitialize() {
+    debugLog('🚀 Auto-initializing autocomplete fields...');
+    
+    // Initialize all existing fields with data-autocomplete-category
+    initializeAutocompleteFields();
+    
+    // Set up MutationObserver to handle dynamically added fields
+    const observer = new MutationObserver((mutations) => {
+        let shouldReinit = false;
+        
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Check if the added node or its descendants have autocomplete fields
+                    if (node.matches && node.matches('input[data-autocomplete-category]:not([data-autocomplete-init="true"])')) {
+                        shouldReinit = true;
+                    } else if (node.querySelectorAll) {
+                        const newFields = node.querySelectorAll('input[data-autocomplete-category]:not([data-autocomplete-init="true"])');
+                        if (newFields.length > 0) {
+                            shouldReinit = true;
+                        }
+                    }
+                }
+            });
+        });
+        
+        if (shouldReinit) {
+            // Debounce re-initialization
+            clearTimeout(autoInitialize._debounceTimer);
+            autoInitialize._debounceTimer = setTimeout(() => {
+                debugLog('🔄 Re-initializing autocomplete for dynamically added fields...');
+                initializeAutocompleteFields();
+            }, 100);
+        }
+    });
+    
+    // Start observing the document body for changes
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    debugLog('✅ Autocomplete auto-initialization complete. MutationObserver active.');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoInitialize);
+} else {
+    // DOM is already ready
+    autoInitialize();
+}
+
+// Also re-initialize when formReady event fires (after all data is loaded)
+document.addEventListener('formReady', () => {
+    debugLog('📢 formReady event received, re-initializing autocomplete...');
+    // Clear init flags to allow re-initialization with fresh data
+    document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
+        delete field.dataset.autocompleteInit;
+    });
+    initializeAutocompleteFields();
+});
 
 console.log(`[Autocomplete Module] v${AUTOCOMPLETE_MODULE_VERSION} loaded`);

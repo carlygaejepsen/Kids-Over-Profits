@@ -52,6 +52,12 @@ if (!$request) {
 // Load this BEFORE extracting variables to avoid WordPress variable conflicts
 require_once __DIR__ . '/config.php';
 
+// Tables are stored without WordPress prefix in this database
+$prefix = '';
+$facilities_table = $prefix . 'facilities_master';
+$referrers_table = $prefix . 'referrers_master';
+$locations_table = $prefix . 'locations_master';
+
 // Set defaults for all expected variables to prevent undefined errors
 // These are defined AFTER config.php to prevent WordPress from overwriting them
 $action = isset($request['action']) ? $request['action'] : 'save';

@@ -248,16 +248,25 @@
         window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
         function showSuggestionStatus(message, type) {
+            // Show in the inline status div (backward compatibility)
             const statusDiv = document.getElementById('suggestion-status');
-            statusDiv.className = `upload-status ${type}`;
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
+            if (statusDiv) {
+                statusDiv.className = `upload-status ${type}`;
+                statusDiv.textContent = message;
+                statusDiv.style.display = 'block';
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
             
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 5000);
+            // Also show as a toast for better visibility
+            if (typeof window.showToast === 'function') {
+                const duration = type === 'info' ? 3000 : (type === 'error' ? 8000 : 5000);
+                window.showToast(message, type, duration);
             }
         }
         
@@ -549,8 +558,10 @@
                     toggle.setAttribute('title', expanded ? 'Collapse section' : 'Expand section');
                 };
 
-                // Initialize with existing expanded state
-                setState(section.classList.contains('expanded'));
+                // Initialize with existing expanded state, but collapse on mobile
+                const isMobile = window.innerWidth <= 768;
+                const shouldExpand = isMobile ? false : section.classList.contains('expanded');
+                setState(shouldExpand);
 
                 const handleToggle = (event) => {
                     event.preventDefault();
@@ -571,6 +582,93 @@
                     }
                     handleToggle(event);
                 }, { passive: false });
+            });
+
+            // Initialize mobile section controls
+            initializeMobileSectionControls();
+        }
+
+        /**
+         * Initialize mobile section controls for expand/collapse all
+         */
+        function initializeMobileSectionControls() {
+            // Only add controls if on mobile and not already added
+            if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) {
+                return;
+            }
+
+            // Create the mobile controls bar
+            const controlsBar = document.createElement('div');
+            controlsBar.className = 'mobile-section-controls';
+            controlsBar.innerHTML = `
+                <span class="section-control-label">📋 Sections</span>
+                <div class="section-control-btns">
+                    <button class="btn-section-control" id="expand-all-sections">Expand All</button>
+                    <button class="btn-section-control" id="collapse-all-sections">Collapse All</button>
+                </div>
+            `;
+
+            // Insert at the beginning of the form wrapper or container
+            const facilityWrapper = document.getElementById('facility-main-wrapper');
+            const referrerWrapper = document.getElementById('referrer-main-wrapper');
+
+            if (facilityWrapper && facilityWrapper.offsetParent !== null) {
+                facilityWrapper.insertBefore(controlsBar.cloneNode(true), facilityWrapper.firstChild);
+            }
+            if (referrerWrapper) {
+                referrerWrapper.insertBefore(controlsBar.cloneNode(true), referrerWrapper.firstChild);
+            }
+
+            // Attach event listeners using event delegation
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'expand-all-sections' || e.target.closest('#expand-all-sections')) {
+                    e.preventDefault();
+                    expandAllSections();
+                }
+                if (e.target.id === 'collapse-all-sections' || e.target.closest('#collapse-all-sections')) {
+                    e.preventDefault();
+                    collapseAllSections();
+                }
+            });
+
+            console.log('[Mobile] Section controls initialized');
+        }
+
+        /**
+         * Expand all collapsible sections
+         */
+        function expandAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.add('expanded');
+                    content.style.display = 'block';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'true');
+                        toggle.setAttribute('title', 'Collapse section');
+                    }
+                }
+            });
+        }
+
+        /**
+         * Collapse all collapsible sections
+         */
+        function collapseAllSections() {
+            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            sections.forEach(section => {
+                const content = section.querySelector('.section-content');
+                const toggle = section.querySelector('.section-toggle');
+                if (content) {
+                    section.classList.remove('expanded');
+                    content.style.display = 'none';
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                        toggle.setAttribute('title', 'Expand section');
+                    }
+                }
             });
         }
 
@@ -688,16 +786,42 @@
                 organizeBySelect.addEventListener('change', () => {
                     const value = organizeBySelect.value;
                     if (value) {
-                        organizeValueGroup.style.display = 'block';
-                        organizeSearchBtn.style.display = 'inline-block';
+                        organizeValueGroup.classList.remove('d-none');
+                        organizeSearchBtn.classList.remove('d-none');
                         organizeValueInput.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInput.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInput.removeAttribute('data-autocomplete-category');
+                        }
                     } else {
-                        organizeValueGroup.style.display = 'none';
-                        organizeSearchBtn.style.display = 'none';
+                        organizeValueGroup.classList.add('d-none');
+                        organizeSearchBtn.classList.add('d-none');
                         clearOrganizerResults();
                     }
                 }, { passive: true });
                 organizeBySelect.dataset.organizerChangeAttached = 'true';
+            }
+            
+            // Map search types to autocomplete categories
+            function getAutocompleteCategory(searchType) {
+                const categoryMap = {
+                    'staff': 'human',
+                    'operator': 'operator',
+                    'location': 'location',
+                    'programType': 'type',
+                    'status': 'status',
+                    'accreditation': 'accreditation',
+                    'certification': 'certification'
+                };
+                return categoryMap[searchType] || null;
             }
 
             // Handle search
@@ -745,6 +869,18 @@
                     const value = organizeBySelectModal.value;
                     if (value && organizeValueInputModal) {
                         organizeValueInputModal.focus();
+                        
+                        // Set up autocomplete based on selected search type
+                        const autocompleteCategory = getAutocompleteCategory(value);
+                        if (autocompleteCategory) {
+                            organizeValueInputModal.setAttribute('data-autocomplete-category', autocompleteCategory);
+                            // Reinitialize autocomplete for this field
+                            if (typeof window.initializeAutocompleteFields === 'function') {
+                                window.initializeAutocompleteFields();
+                            }
+                        } else {
+                            organizeValueInputModal.removeAttribute('data-autocomplete-category');
+                        }
                     }
                 }, { passive: true });
                 organizeBySelectModal.dataset.organizerChangeAttached = 'true';
@@ -1778,139 +1914,6 @@
             }
             if (typeof window.initializeLocationFacilitiesToc === 'function') {
                 initializeLocationFacilitiesToc();
-            }
-
-            // Add handler for Rebuild Location Projects button
-            const rebuildLocationsBtn = document.getElementById('rebuild-locations-btn');
-            if (rebuildLocationsBtn && !rebuildLocationsBtn.dataset.rebuildClickAttached) {
-                rebuildLocationsBtn.addEventListener('click', async function() {
-                    const rebuildStatus = document.getElementById('rebuild-status');
-                    
-                    // Confirm action
-                    if (!confirm('This will rebuild all location projects from existing company and referrer data. Continue?')) {
-                        return;
-                    }
-                    
-                    // Show loading status
-                    rebuildLocationsBtn.disabled = true;
-                    rebuildLocationsBtn.textContent = '⏳ Rebuilding...';
-                    if (rebuildStatus) {
-                        rebuildStatus.style.display = 'block';
-                        rebuildStatus.style.background = '#e0f2fe';
-                        rebuildStatus.style.color = '#0369a1';
-                        rebuildStatus.textContent = '🔄 Processing all projects...';
-                    }
-                    
-                    try {
-                        // Get API endpoint
-                        const API_ENDPOINTS = typeof getAPIEndpoints === 'function' ? getAPIEndpoints() : {};
-                        const saveEndpoint = API_ENDPOINTS.SAVE_PROJECT || 
-                            (window.KOP_FACILITY_FORM_CONFIG?.apiBase || '') + '/api/save-master.php';
-                        
-                        const response = await fetch(saveEndpoint, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                projectName: '__rebuild__',
-                                action: 'rebuild-locations'
-                            })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            if (rebuildStatus) {
-                                rebuildStatus.style.background = '#dcfce7';
-                                rebuildStatus.style.color = '#166534';
-                                
-                                // Build detailed status message
-                                let statusHtml = `✅ ${result.message}`;
-                                
-                                // Show debug info if available
-                                if (result.debug) {
-                                    statusHtml += `<br><small>📊 Scanned ${result.debug.facilitiesScanned || 0} facilities, ${result.debug.facilitiesWithLocation || 0} had valid locations</small>`;
-                                    
-                                    if (result.debug.sampleFacility) {
-                                        console.log('🔍 Sample facility structure:', result.debug.sampleFacility);
-                                    }
-                                    
-                                    if (result.debug.facilitiesWithoutLocation && result.debug.facilitiesWithoutLocation.length > 0) {
-                                        console.log('⚠️ Facilities without location:', result.debug.facilitiesWithoutLocation);
-                                    }
-                                }
-                                
-                                // Show location details
-                                if (result.details && result.details.stateDetails) {
-                                    const locations = Object.keys(result.details.stateDetails);
-                                    if (locations.length > 0) {
-                                        statusHtml += `<br><small>📍 Locations: ${locations.join(', ')}</small>`;
-                                    }
-                                }
-                                
-                                // Show bucket count from debug
-                                if (result.debug && result.debug.bucketNames && result.debug.bucketNames.length > 0) {
-                                    statusHtml += `<br><small>🪣 Buckets created: ${result.debug.bucketNames.length} (${result.debug.bucketNames.slice(0, 5).join(', ')}${result.debug.bucketNames.length > 5 ? '...' : ''})</small>`;
-                                }
-                                
-                                // Show any save errors
-                                if (result.details && result.details.saveErrors && result.details.saveErrors.length > 0) {
-                                    statusHtml += `<br><small style="color: #dc2626;">⚠️ Errors: ${result.details.saveErrors.length}</small>`;
-                                }
-                                
-                                statusHtml += `<br><small>Refresh to see updated location projects.</small>`;
-                                rebuildStatus.innerHTML = statusHtml;
-                            }
-                            
-                            // Log details and debug info
-                            console.log('Location rebuild details:', result.details);
-                            if (result.debug) {
-                                console.log('Location rebuild debug:', result.debug);
-                                
-                                // Log bucket info
-                                if (result.debug.bucketNames) {
-                                    console.log('📦 Location buckets created:', result.debug.bucketNames);
-                                }
-                                if (result.debug.bucketSummary) {
-                                    console.log('📊 Bucket summary:', result.debug.bucketSummary);
-                                }
-                                if (result.debug.sampleLocationProject) {
-                                    console.log('🏗️ Sample location project:', result.debug.sampleLocationProject);
-                                }
-                                if (result.debug.saveAttempts) {
-                                    console.log('💾 Save attempts:', result.debug.saveAttempts);
-                                }
-                                if (result.debug.lastPDOError) {
-                                    console.error('❌ PDO Error:', result.debug.lastPDOError);
-                                }
-                            }
-                            
-                            // Log save errors
-                            if (result.details && result.details.saveErrors && result.details.saveErrors.length > 0) {
-                                console.error('❌ Save errors:', result.details.saveErrors);
-                            }
-                            
-                            // Reload projects to show updates
-                            if (typeof window.loadProjectsFromServer === 'function') {
-                                setTimeout(() => {
-                                    window.loadProjectsFromServer();
-                                }, 1000);
-                            }
-                        } else {
-                            throw new Error(result.error || 'Unknown error');
-                        }
-                    } catch (error) {
-                        console.error('Failed to rebuild locations:', error);
-                        if (rebuildStatus) {
-                            rebuildStatus.style.background = '#fee2e2';
-                            rebuildStatus.style.color = '#991b1b';
-                            rebuildStatus.textContent = `❌ Failed: ${error.message}`;
-                        }
-                    } finally {
-                        rebuildLocationsBtn.disabled = false;
-                        rebuildLocationsBtn.textContent = '🔄 Rebuild All Location Projects';
-                    }
-                });
-                rebuildLocationsBtn.dataset.rebuildClickAttached = 'true';
             }
 
             adminPageInitialized = true;
