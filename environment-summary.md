@@ -52,6 +52,8 @@ The child theme contains a full-stack data management application:
 *   `suggested_edits` — Public-submitted changes pending approval
 *   `locations_master` — Location/address data for facilities
 *   `referrers_master` — Referrer information for facilities
+*   `wiki_submissions` — Wiki editor form submissions (TTI program wiki entries)
+*   `news_submissions` — News processor form submissions (processed articles)
 
 ### API Endpoints (`api/`)
 *   **Admin Workflow:**
@@ -60,6 +62,11 @@ The child theme contains a full-stack data management application:
 *   **Public Suggestion Workflow:**
     *   `save-suggestion.php` — Saves to suggested_edits for review
     *   `process-edit.php` — Admin approval/rejection handler
+*   **Content Submission Workflow:**
+    *   `save-wiki-submission.php` — Saves wiki editor submissions
+    *   `save-news-submission.php` — Saves news processor submissions
+    *   `manage-submissions.php` — Admin submission management
+    *   `init-submissions-db.php` — Creates submission tables (run with `?init=1`)
 *   **Shared:**
     *   `get-autocomplete.php` — Form field autocomplete
     *   `approve-edits.php` — Admin approval UI
@@ -88,6 +95,7 @@ The child theme contains a full-stack data management application:
 *   **`tailwind.config.js`** — Tailwind CSS configuration
 *   **`api/config.php`** — Database configuration loader
 *   **`api/config.local.php`** — Local database credentials (gitignored)
+*   **`submissions_database.sql`** — SQL schema for wiki/news submission tables
 
 ## 6. Database Credential Configuration
 

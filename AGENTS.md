@@ -88,11 +88,13 @@ The application follows a traditional WordPress child theme structure with custo
 
 ### Database Schema
 
-The application uses four main database tables:
+The application uses six main database tables:
 - **`facilities_master`**: Official facility records (admin-managed)
 - **`suggested_edits`**: Public-submitted changes pending approval
 - **`locations_master`**: Location/address data for facilities
 - **`referrers_master`**: Referrer information for facilities
+- **`wiki_submissions`**: Wiki editor form submissions (TTI program wiki entries)
+- **`news_submissions`**: News processor form submissions (processed news articles)
 
 ### Dependency Chain
 
@@ -151,11 +153,12 @@ Here's a breakdown of the key components:
     - `.htaccess` - Apache directives (Wordfence WAF, LiteSpeed Cache)
     - `tailwind.config.js` - Tailwind configuration (minimal usage)
     - `.gitignore` - Excludes `.env`, `config.local.php`, etc.
+    - `submissions_database.sql` - SQL schema for wiki/news submission tables
 
 ### Core Directories
 
--   **`api/`**: Backend API scripts for the data management system. Supports two distinct workflows: administrator and public suggestions.
-    -   **`api/config.php`**: Database configuration loader that reads credentials from WordPress constants, environment variables, or `config.local.php`
+-   **`api/`**: Backend API scripts for the data management system. Supports multiple workflows: administrator, public suggestions, and content submissions.
+    -   **`api/config.php`**: Database configuration loader that reads credentials from `.env`, WordPress constants, environment variables, or `config.local.php`
     -   **`api/config.local.php`**: Local database credentials (gitignored, use `config.php.example` as template)
 
     -   **Administrator Workflow:**
@@ -166,9 +169,23 @@ Here's a breakdown of the key components:
         -   **`save-suggestion.php`**: A public endpoint that saves proposed changes to a separate `suggested_edits` table for review. It does *not* touch the live data.
         -   **`process-edit.php`**: The backend for the admin approval page. It allows an admin to approve or reject a pending suggestion. If approved, the data is moved from `suggested_edits` to the `facilities_master` table.
 
+    -   **Content Submission Workflow:**
+        -   **`save-wiki-submission.php`**: Saves wiki editor form submissions (TTI program wiki entries) to `wiki_submissions` table.
+        -   **`save-news-submission.php`**: Saves news processor form submissions (processed news articles) to `news_submissions` table.
+        -   **`manage-submissions.php`**: Admin interface for reviewing and managing wiki/news submissions.
+        -   **`init-submissions-db.php`**: Database initialization script that creates `wiki_submissions` and `news_submissions` tables. Run with `?init=1` parameter or via CLI.
+
     -   **Shared Endpoints:**
         -   **`get-autocomplete.php`**: Provides autocomplete suggestions for form fields by querying both master and suggested data, ensuring consistency.
         -   **`approve-edits.php`**: Provides the frontend UI for the admin approval page, which uses `process-edit.php` to perform its actions.
+        -   **`news_processor.php`**: Backend for news article processing.
+        -   **`wiki_editor.php`**: Backend for wiki content editing.
+
+    -   **Utility/Debug Scripts:**
+        -   **`init-database.php`**: Creates/updates main database tables.
+        -   **`check-env.php`**, **`check-data.php`**, **`check-functions.php`**: Diagnostic utilities.
+        -   **`test-connection.php`**, **`test-php.php`**: Connection and PHP testing.
+        -   **`cleanup-lowercase.php`**: Data cleanup utilities.
 
 -   **`js/`**: Client-side JavaScript files (modular architecture)
 
@@ -259,9 +276,9 @@ Here's a breakdown of the key components:
     -   **Root-level modules**:
         -   `anonymous-portal.js` - Anonymous document submission (AJAX file uploads)
         -   `autocomplete.js` (~1,200 lines) - Form field autocomplete (queries `api/get-autocomplete.php`)
-        -   `news-processor.js` - News content processing
-        -   `tti-program-index.js` - TTI index page coordination
-        -   `wiki-editor.js` (~2,500 lines) - Wiki content management with rich text editing
+        -   `news-processor.js` - News content processing and article submission
+        -   `tti-program-index.js` - TTI index page coordination with facility filtering
+        -   `wiki-editor.js` (~2,500 lines) - Wiki content management with rich text editing, form submissions to `wiki_submissions` table
 
 -   **`css/`**: Stylesheets for the project
     -   `data-form.css` - Facility data entry form styling (layout, typography, buttons, responsive design)
@@ -371,13 +388,7 @@ preg_match('/-reports$/', $slug)         → State reports
 ### Documentation Files
 -   `AGENTS.md` - This file! Central developer guide (architecture, conventions, design principles)
 -   `environment-summary.md` - Environment and access details
--   `DATABASE_SETUP_GUIDE.md` - Database configuration and setup
--   `DATA_FORM_TEMPLATE_SETUP.md` - Data form template configuration
 -   `COLOR_SYSTEM_SUMMARY.md` - Color palette and design system
--   `KADENCE_NAV_FIX_SUMMARY.md` - Kadence theme navigation fixes
--   `ISSUE_FIX_SUMMARY.md` - Issue tracking and resolution
--   `NOTES_MIGRATION_GUIDE.md` - Notes system migration guide
--   `DIAGNOSTIC_TESTS.md` - System diagnostic procedures
 
 ## Collaboration Preferences
 - **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `facility-form.v4.js`). Preserve prior versions unless instructed otherwise.
