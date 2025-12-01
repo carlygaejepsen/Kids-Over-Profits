@@ -100,6 +100,40 @@ const DEFAULT_STAFF_ROLES = [
     'Other'
 ];
 
+const DEFAULT_ACCREDITATIONS = [
+    'Joint Commission (JCAHO)',
+    'CARF International',
+    'Council on Accreditation (COA)',
+    'National Association of Therapeutic Schools and Programs (NATSAP)',
+    'Association of Experiential Education (AEE)',
+    'Outdoor Behavioral Healthcare Council (OBH)',
+    'NATSAP',
+    'NIPDB',
+    'Middle States Association',
+    'AdvancED',
+    'Cognia',
+    'WASC',
+    'NAEYC',
+    'State Licensed',
+    'Medicare Certified',
+    'Medicaid Certified'
+];
+
+const DEFAULT_CERTIFICATIONS = [
+    'Licensed Clinical Social Worker (LCSW)',
+    'Licensed Professional Counselor (LPC)',
+    'Licensed Marriage and Family Therapist (LMFT)',
+    'Certified Addiction Counselor (CAC)',
+    'Board Certified Behavior Analyst (BCBA)',
+    'Registered Nurse (RN)',
+    'Licensed Practical Nurse (LPN)',
+    'Certified Nursing Assistant (CNA)',
+    'CPR Certified',
+    'First Aid Certified',
+    'Trauma-Informed Care Certified',
+    'Crisis Intervention Certified'
+];
+
 // ============================================
 // AGGREGATED DATA CACHE
 // ============================================
@@ -402,7 +436,7 @@ function getAllCertifications() {
     if (!aggregatedDataCache.certifications) {
         const projects = window.projects || {};
         const customCertifications = window.customCertifications || [];
-        const certs = new Set(customCertifications);
+        const certs = new Set([...DEFAULT_CERTIFICATIONS, ...customCertifications]);
 
         Object.values(projects).forEach(project => {
             project.data?.facilities?.forEach(facility => {
@@ -423,7 +457,7 @@ function getAllAccreditations() {
     if (!aggregatedDataCache.accreditations) {
         const projects = window.projects || {};
         const customAccreditations = window.customAccreditations || [];
-        const accreds = new Set(customAccreditations);
+        const accreds = new Set([...DEFAULT_ACCREDITATIONS, ...customAccreditations]);
 
         Object.values(projects).forEach(project => {
             project.data?.facilities?.forEach(facility => {
