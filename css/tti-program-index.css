@@ -3,34 +3,34 @@
    ================================================================= */
 
 /* =================================================================
-   GLOBAL & SHARED STYLES
+   GLOBAL & SHARED STYLES (scoped to TTI index)
    ================================================================= */
 
-/* Hides the default dropdown arrow across all custom components */
-summary::-webkit-details-marker,
-summary::marker {
+/* Hides the default dropdown arrow for operator sections only */
+.tti-program-index-wrapper summary::-webkit-details-marker,
+.tti-program-index-wrapper summary::marker {
     display: none;
 }
 
-/* Fallback to ensure no list-style icon appears */
-summary {
+/* Fallback to ensure no list-style icon appears in operator sections */
+.tti-program-index-wrapper summary {
     list-style: none;
 }
 
 /* Show/Hide text based on details open/closed state */
-.closed-text {
+.tti-program-index-wrapper .closed-text {
     display: inline;
 }
 
-.open-text {
+.tti-program-index-wrapper .open-text {
     display: none;
 }
 
-details[open] > summary .closed-text {
+.tti-program-index-wrapper details[open] > summary .closed-text {
     display: none;
 }
 
-details[open] > summary .open-text {
+.tti-program-index-wrapper details[open] > summary .open-text {
     display: inline;
 }
 
