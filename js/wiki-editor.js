@@ -1349,15 +1349,17 @@ ${relatedMediaSection}
             }
 
             // Parse ownership changes from history
-            // Pattern: "Prior to being purchased/acquired by NewOwner in YEAR, was owned by [PreviousOwner](link)"
+            // Pattern: "Prior to being purchased/acquired by NewOwner in YEAR, Alabama Clinical Schools was owned by [PreviousOwner](link)"
             const priorOwnerLinkMatch = normalizedHistory.match(
-                /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?(?:was )?owned by \[([^\]]+)\]\(([^)]+)\)/i
+                /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?owned by \[([^\]]+)\]\(([^)]+)\)/i
             );
+            console.log('Prior owner link match:', priorOwnerLinkMatch);
             if (priorOwnerLinkMatch) {
                 const newOwner = expandAcronym(priorOwnerLinkMatch[1]);
                 const year = priorOwnerLinkMatch[2].trim();
                 const previousOwner = priorOwnerLinkMatch[3].trim();
                 const previousLink = priorOwnerLinkMatch[4].trim();
+                console.log('Parsed ownership change:', { year, previous: previousOwner, previousLink, newOwner });
                 ownershipChanges.push({ year, previous: previousOwner, previousLink, newOwner, newOwnerLink: '' });
                 renderList(ownershipChanges, 'ownerChangeListOutput', item => {
                     const prevDisplay = item.previousLink 
@@ -1371,8 +1373,9 @@ ${relatedMediaSection}
             } else {
                 // Try without markdown link: "Prior to being purchased by NewOwner in YEAR, was owned by PreviousOwner"
                 const priorOwnerTextMatch = normalizedHistory.match(
-                    /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?(?:was )?owned by ([^.\n]+)/i
+                    /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?owned by ([^.\n\[]+)/i
                 );
+                console.log('Prior owner text match:', priorOwnerTextMatch);
                 if (priorOwnerTextMatch) {
                     const newOwner = expandAcronym(priorOwnerTextMatch[1]);
                     const year = priorOwnerTextMatch[2].trim();
