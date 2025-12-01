@@ -3,6 +3,8 @@
  * Template Name: Public Data Form
  * Template Post Type: page
  */
+
+get_header();
 ?>
 
     <div class="container">
@@ -1253,3 +1255,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<?php get_footer(); ?>
