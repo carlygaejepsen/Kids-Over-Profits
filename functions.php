@@ -42,8 +42,32 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * @return bool
  */
 function kop_is_headerless_layout() {
-    return is_page_template('templates/data-form-public.php') || is_page_template('templates/data-form-admin.php');
+    // Check for page templates (multiple possible paths/names)
+    return is_page_template('page-admin-data.php') 
+        || is_page_template('page-data.php')
+        || is_page_template('page-data-test.php')
+        || is_page_template('templates/data-form-public.php') 
+        || is_page_template('templates/data-form-admin.php');
 }
+
+/**
+ * Enqueue the Kadence navigation guard script on headerless pages.
+ * This intercepts DOM queries for navigation elements and suppresses errors.
+ */
+function kop_enqueue_kadence_nav_guard() {
+    if (!kop_is_headerless_layout()) {
+        return;
+    }
+    
+    wp_enqueue_script(
+        'kop-kadence-nav-guard',
+        get_stylesheet_directory_uri() . '/js/data-form/kadence-nav-guard.js',
+        array(), // No dependencies - load as early as possible
+        '1.0.0',
+        false // Load in header, not footer
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1); // Priority 1 - load very early
 
 /**
  * Remove Kadence navigation scripts when the page intentionally renders without a header.
@@ -54,12 +78,16 @@ function kop_maybe_disable_kadence_navigation() {
     }
 
     // List of Kadence navigation-related script handles to remove
+    // Includes various possible handle names used by Kadence theme
     $nav_scripts = array(
         'kadence-navigation',
         'kadence-navigation-init',
         'kadence-navigation-mobile',
         'kadence-header',
-        'kadence-sticky-header'
+        'kadence-sticky-header',
+        'kadence-nav',
+        'kadence-menu',
+        'navigation', // Generic handle that might be used
     );
 
     foreach ($nav_scripts as $script_handle) {
@@ -1961,12 +1989,12 @@ function enqueue_tti_processor_scripts() {
         true
     );
     
-    // Enqueue Lucide React icons
+    // Enqueue Lucide icons (using UMD build with specific version to avoid conflicts)
     wp_enqueue_script(
         'lucide-react',
-        'https://cdn.jsdelivr.net/npm/lucide@latest',
+        'https://cdn.jsdelivr.net/npm/lucide@0.294.0/dist/umd/lucide.min.js',
         array(),
-        'latest',
+        '0.294.0',
         true
     );
     
