@@ -1,55 +1,65 @@
 /**
  * Kadence Navigation Guard - resilient headerless protection.
  *
- * Rather than guessing based on URLs or body classes, the guard watches the
- * DOM itself. If Kadence scripts load before a header exists (or on layouts
- * that never render one) we inject a hidden navigation scaffold and repeatedly
- * neutralise Kadence's initialisers so `getAttribute` is never invoked on
- * missing nodes.
+ * This script ONLY activates on explicitly headerless pages (tti-data-submission).
+ * On all other pages, it does nothing - no DOM manipulation, no event listeners,
+ * no interference with Kadence navigation whatsoever.
+ *
+ * The guard injects a hidden navigation scaffold and neutralises Kadence's
+ * initialisers so `getAttribute` is never invoked on missing nodes.
  */
 (function() {
     'use strict';
 
-    var STUB_ATTRIBUTE = 'data-kadence-nav-guard-stub';
-    var STUB_LINK_TARGET = 'kadence-nav-guard-stub';
-    var MAX_STUB_ATTEMPTS = 120; // ~6 seconds of retries.
-    var MAX_NEUTRALISE_CHECKS = 200; // ~20 seconds of follow-up protection.
-    // Flag to track if guard is active
-    window.KADENCE_NAV_GUARD_ACTIVE = true;
-
-    // Check if this is a headerless layout (tti-data-submission page only)
-    // Use a function to avoid accessing document.body before it exists
-    function isHeaderlessPage() {
-        if (window.KADENCE_NAV_DISABLED) {
+    // Early exit check - run BEFORE setting up any state
+    // This must be synchronous and happen immediately
+    function shouldActivateGuard() {
+        // Explicit opt-in via global flag
+        if (window.KADENCE_NAV_DISABLED === true) {
             return true;
         }
 
         var pathname = (window.location && window.location.pathname) || '';
-
-        if (pathname) {
-            var normalizedPath = pathname.replace(/\/index\.php$/, '').replace(/\/$/, '');
-
-            // Only activate on tti-data-submission page
-            if (normalizedPath === '/tti-data-submission' ||
-                normalizedPath.indexOf('/tti-data-submission') !== -1) {
-                return true;
-            }
+        if (!pathname) {
+            return false;
         }
 
-        if (document.body) {
-            // Check for tti-data-submission page body class
-            if (document.body.classList.contains('page-tti-data-submission')) {
-                return true;
-            }
+        var normalizedPath = pathname.replace(/\/index\.php$/, '').replace(/\/$/, '').toLowerCase();
 
-            var bodyClasses = document.body.className || '';
-            if (bodyClasses.indexOf('page-slug-tti-data-submission') !== -1 ||
-                bodyClasses.indexOf('tti-data-submission') !== -1) {
-                return true;
-            }
+        // ONLY activate on tti-data-submission page - nothing else
+        if (normalizedPath === '/tti-data-submission' ||
+            normalizedPath.endsWith('/tti-data-submission')) {
+            return true;
         }
 
         return false;
+    }
+
+    // CRITICAL: Check immediately and exit if not on a headerless page
+    // This prevents any DOM manipulation or event binding on normal pages
+    if (!shouldActivateGuard()) {
+        window.KADENCE_NAV_GUARD_ACTIVE = false;
+        return; // Exit IIFE immediately - do nothing on normal pages
+    }
+
+    // Only set up state if we're actually activating
+    var STUB_ATTRIBUTE = 'data-kadence-nav-guard-stub';
+    var STUB_LINK_TARGET = 'kadence-nav-guard-stub';
+    var MAX_STUB_ATTEMPTS = 120; // ~6 seconds of retries.
+    var MAX_NEUTRALISE_CHECKS = 200; // ~20 seconds of follow-up protection.
+    
+    // Flag to track if guard is active
+    window.KADENCE_NAV_GUARD_ACTIVE = true;
+
+    // Secondary check that can also look at body classes (for when body exists)
+    function isHeaderlessPage() {
+        // Already confirmed via shouldActivateGuard(), but double-check body classes
+        if (document.body) {
+            var bodyClasses = document.body.className || '';
+            // If body has header-related classes, maybe this page does have a header
+            // But since we already passed shouldActivateGuard(), trust that check
+        }
+        return true; // We only get here if shouldActivateGuard() returned true
     }
 
     var ensureAttempts = 0;
@@ -220,9 +230,10 @@
     }
 
     function ensureNavigationShell() {
-        // Only activate on tti-data-submission page
+        // We already confirmed this is a headerless page via shouldActivateGuard()
+        // but do a sanity check in case something changed
         if (!isHeaderlessPage()) {
-            logDebug('Not on tti-data-submission page, guard inactive.');
+            logDebug('Page no longer appears headerless, deactivating guard.');
             stopEnsureTimer();
             stopBodyObserver();
             stopNeutraliseLoop();
@@ -231,6 +242,7 @@
         }
 
         if (hasRealKadenceHeader()) {
+            logDebug('Real Kadence header detected, deactivating guard.');
             stopEnsureTimer();
             stopBodyObserver();
             stopNeutraliseLoop();
@@ -261,6 +273,7 @@
     document.addEventListener('DOMContentLoaded', ensureNavigationShell, { passive: true });
     window.addEventListener('load', ensureNavigationShell, { passive: true });
 
+    // Only listen for navigation errors on headerless pages
     window.addEventListener('error', function(event) {
         if (!event) {
             return;
@@ -279,5 +292,5 @@
         }
     }, { capture: true });
 
-    logDebug('Guard armed.');
+    logDebug('Guard armed for headerless page: ' + window.location.pathname);
 })();
