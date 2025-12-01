@@ -42,7 +42,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * @return bool
  */
 function kop_is_headerless_layout() {
-    return is_page_template('page-data.php') || is_page_template('templates/data-form-admin.php');
+    return is_page_template('templates/data-form-public.php') || is_page_template('templates/data-form-admin.php');
 }
 
 /**
@@ -1753,9 +1753,9 @@ function enqueue_facility_form_script() {
         return;
     }
 
-    // Support both the page-level templates and the templates/ directory versions.
-    $is_data_template  = is_page_template('page-data.php') || is_page_template('templates/data-form-public.php');
-    $is_admin_template = is_page_template('page-admin-data.php') || is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
+    // Check for data form templates
+    $is_data_template  = is_page_template('templates/data-form-public.php');
+    $is_admin_template = is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
     $is_data_form_page = $is_data_template || $is_admin_template;
 
     if (!$is_data_form_page) {

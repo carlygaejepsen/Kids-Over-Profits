@@ -1,7 +1,7 @@
 <?php
 /**
- * Public Data Form - Template partial
- * Included by page-data.php
+ * Template Name: Public Data Form
+ * Template Post Type: page
  */
 ?>
 
