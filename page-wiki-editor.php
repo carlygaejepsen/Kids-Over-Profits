@@ -161,8 +161,25 @@ get_header();
                     <input type="text" id="staffRole">
                     <label for="staffBio">Bio/Details (can include Markdown links):</label>
                     <textarea id="staffBio" rows="3" placeholder="e.g., Previously worked at [Another Program](link)..."></textarea>
-                    <label for="staffPreviousRoles">Previous Roles (one per line):</label>
-                    <textarea id="staffPreviousRoles" rows="2" placeholder="e.g., Clinical Director at Another Campus"></textarea>
+                    
+                    <div class="previous-roles-section">
+                        <label>Previous Roles:</label>
+                        <div id="previousRolesContainer">
+                            <div class="previous-role-entry" data-index="0">
+                                <div class="field-row">
+                                    <div class="field-group">
+                                        <input type="text" class="prev-role-title" placeholder="Role/Title (e.g., Clinical Director)">
+                                    </div>
+                                    <div class="field-group">
+                                        <input type="text" class="prev-role-employer" placeholder="Employer (e.g., Another Campus)">
+                                    </div>
+                                    <button type="button" class="remove-prev-role-btn" title="Remove this role">×</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn add-prev-role-btn" id="addPreviousRoleBtn">+ Add Previous Role</button>
+                    </div>
+                    
                     <label class="checkbox-inline">
                         <input type="checkbox" id="staffIsFormer">
                         <span>Mark as former/previous staff member</span>

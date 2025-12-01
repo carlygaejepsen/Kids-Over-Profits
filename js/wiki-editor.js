@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const staffNameInput = document.getElementById('staffName');
     const staffRoleInput = document.getElementById('staffRole');
     const staffBioInput = document.getElementById('staffBio');
-    const staffPreviousRolesInput = document.getElementById('staffPreviousRoles');
+    const previousRolesContainer = document.getElementById('previousRolesContainer');
+    const addPreviousRoleBtn = document.getElementById('addPreviousRoleBtn');
     const staffIsFormerInput = document.getElementById('staffIsFormer');
     const addStaffBtn = document.getElementById('addStaffBtn');
     let editingStaffIndex = null;
@@ -42,20 +43,87 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeEmptyLists();
 
     function getStaffPreviousRolesFromInput() {
-        if (!staffPreviousRolesInput || !staffPreviousRolesInput.value) {
-            return [];
+        if (!previousRolesContainer) return [];
+        const entries = previousRolesContainer.querySelectorAll('.previous-role-entry');
+        const roles = [];
+        entries.forEach(entry => {
+            const roleInput = entry.querySelector('.prev-role-title');
+            const employerInput = entry.querySelector('.prev-role-employer');
+            const role = roleInput ? roleInput.value.trim() : '';
+            const employer = employerInput ? employerInput.value.trim() : '';
+            if (role || employer) {
+                roles.push({ role, employer });
+            }
+        });
+        return roles;
+    }
+
+    function addPreviousRoleEntry(role = '', employer = '') {
+        if (!previousRolesContainer) return;
+        const entries = previousRolesContainer.querySelectorAll('.previous-role-entry');
+        const newIndex = entries.length;
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'previous-role-entry';
+        entryDiv.dataset.index = newIndex;
+        entryDiv.innerHTML = `
+            <div class="field-row">
+                <div class="field-group">
+                    <input type="text" class="prev-role-title" placeholder="Role/Title (e.g., Clinical Director)" value="${escapeHtmlAttr(role)}">
+                </div>
+                <div class="field-group">
+                    <input type="text" class="prev-role-employer" placeholder="Employer (e.g., Another Campus)" value="${escapeHtmlAttr(employer)}">
+                </div>
+                <button type="button" class="remove-prev-role-btn" title="Remove this role">×</button>
+            </div>
+        `;
+        previousRolesContainer.appendChild(entryDiv);
+        // Attach remove handler
+        entryDiv.querySelector('.remove-prev-role-btn').addEventListener('click', () => {
+            entryDiv.remove();
+        });
+        return entryDiv;
+    }
+
+    function clearPreviousRolesEntries() {
+        if (!previousRolesContainer) return;
+        previousRolesContainer.innerHTML = '';
+        // Add one empty entry
+        addPreviousRoleEntry();
+    }
+
+    function populatePreviousRoles(previousRoles) {
+        if (!previousRolesContainer) return;
+        previousRolesContainer.innerHTML = '';
+        if (!previousRoles || previousRoles.length === 0) {
+            addPreviousRoleEntry();
+            return;
         }
-        return staffPreviousRolesInput.value
-            .split(/\r?\n|,/)
-            .map(role => role.trim())
-            .filter(Boolean);
+        previousRoles.forEach(pr => {
+            // Handle both old format (string) and new format ({role, employer})
+            if (typeof pr === 'string') {
+                // Try to parse "Role at Employer" format
+                const atMatch = pr.match(/^(.+?)\s+at\s+(.+)$/i);
+                if (atMatch) {
+                    addPreviousRoleEntry(atMatch[1].trim(), atMatch[2].trim());
+                } else {
+                    addPreviousRoleEntry(pr, '');
+                }
+            } else {
+                addPreviousRoleEntry(pr.role || '', pr.employer || '');
+            }
+        });
+    }
+
+    function escapeHtmlAttr(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function resetStaffForm() {
         if (staffNameInput) staffNameInput.value = '';
         if (staffRoleInput) staffRoleInput.value = '';
         if (staffBioInput) staffBioInput.value = '';
-        if (staffPreviousRolesInput) staffPreviousRolesInput.value = '';
+        clearPreviousRolesEntries();
         if (staffIsFormerInput) staffIsFormerInput.checked = false;
         editingStaffIndex = null;
         if (addStaffBtn) {
@@ -70,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (staffNameInput) staffNameInput.value = member.name || '';
         if (staffRoleInput) staffRoleInput.value = member.role || '';
         if (staffBioInput) staffBioInput.value = member.bio || '';
-        if (staffPreviousRolesInput) staffPreviousRolesInput.value = (member.previousRoles || []).join('\n');
+        populatePreviousRoles(member.previousRoles || []);
         if (staffIsFormerInput) staffIsFormerInput.checked = !!member.isFormer;
         if (addStaffBtn) addStaffBtn.textContent = 'Save Staff Member';
         if (staffNameInput) staffNameInput.focus();
@@ -125,7 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (member.previousRoles && member.previousRoles.length) {
                 const prev = document.createElement('div');
                 prev.className = 'staff-prev';
-                prev.textContent = `Prev: ${member.previousRoles.join('; ')}`;
+                const formatted = member.previousRoles.map(pr => {
+                    if (typeof pr === 'string') return pr;
+                    if (pr.role && pr.employer) return `${pr.role} at ${pr.employer}`;
+                    return pr.role || pr.employer || '';
+                }).filter(Boolean);
+                prev.textContent = `Prev: ${formatted.join('; ')}`;
                 item.appendChild(prev);
             }
 
@@ -257,6 +330,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderStaffList();
             resetStaffForm();
+        });
+    }
+
+    // --- Add Button: Previous Roles (within staff form) ---
+    if (addPreviousRoleBtn) {
+        addPreviousRoleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            addPreviousRoleEntry();
+        });
+    }
+
+    // --- Initialize remove handlers for existing previous role entries ---
+    if (previousRolesContainer) {
+        previousRolesContainer.querySelectorAll('.remove-prev-role-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const entry = btn.closest('.previous-role-entry');
+                if (entry && previousRolesContainer.querySelectorAll('.previous-role-entry').length > 1) {
+                    entry.remove();
+                } else if (entry) {
+                    // Clear inputs instead of removing if it's the only entry
+                    entry.querySelectorAll('input').forEach(input => input.value = '');
+                }
+            });
         });
     }
 
@@ -629,9 +725,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? articleRole.replace(/^the\s+/i, 'the former ')
                         : articleRole;
                     const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${roleVerb(s)} ${descriptor}`);
-                    const previousSentence = (s.previousRoles && s.previousRoles.length)
-                        ? ensureSentence(`Previously worked at ${joinWithAnd(s.previousRoles.map(pr => escapeMarkdown(pr)))}`)
-                        : '';
+                    
+                    // Format previous roles - handle both old string format and new {role, employer} format
+                    let previousSentence = '';
+                    if (s.previousRoles && s.previousRoles.length) {
+                        const formattedRoles = s.previousRoles.map(pr => {
+                            if (typeof pr === 'string') return escapeMarkdown(pr);
+                            if (pr.role && pr.employer) return `${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
+                            return escapeMarkdown(pr.role || pr.employer || '');
+                        }).filter(Boolean);
+                        if (formattedRoles.length > 0) {
+                            previousSentence = ensureSentence(`Previously worked as ${joinWithAnd(formattedRoles)}`);
+                        }
+                    }
+                    
                     // Bio can contain markdown links - don't escape it, just ensure sentence ending
                     const bioSentence = ensureSentence(s.bio || '');
                     return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
@@ -1414,14 +1521,37 @@ ${relatedMediaSection}
                 }
 
                 // For bio, get everything after the first sentence
-                // Don't try to parse work history - just keep the whole bio with links intact
                 const bioStart = roleEndIdx > 0 ? roleEndIdx + 1 : 0;
-                const bioText = afterName.substring(bioStart).trim();
+                let bioText = afterName.substring(bioStart).trim();
                 
-                // Keep the full bio text - it contains markdown links we want to preserve
+                // Extract previous roles from bio text
+                // Pattern: "Previously worked as X at Y" or "Previously worked at X"
+                const previousRoles = [];
+                const prevWorkedMatch = bioText.match(/Previously worked\s+(?:as\s+)?([^.]+)\./i);
+                if (prevWorkedMatch) {
+                    const prevWorkText = prevWorkedMatch[1].trim();
+                    // Split by "and" or commas to get individual roles
+                    const roleList = prevWorkText.split(/\s*(?:,|and)\s*/i);
+                    roleList.forEach(item => {
+                        const itemTrimmed = item.trim();
+                        if (!itemTrimmed) return;
+                        // Parse "Role at Employer" format
+                        const atMatch = itemTrimmed.match(/^(.+?)\s+at\s+(.+)$/i);
+                        if (atMatch) {
+                            previousRoles.push({ role: atMatch[1].trim(), employer: atMatch[2].trim() });
+                        } else {
+                            // Just employer or just role
+                            previousRoles.push({ role: '', employer: itemTrimmed });
+                        }
+                    });
+                    // Remove the "Previously worked..." sentence from bio
+                    bioText = bioText.replace(/Previously worked\s+(?:as\s+)?[^.]+\.\s*/i, '').trim();
+                }
+                
+                // Keep the remaining bio text - it contains markdown links we want to preserve
                 const bio = bioText;
 
-                addStaff(name, role, bio, []);
+                addStaff(name, role, bio, previousRoles);
             });
 
             renderStaffList();

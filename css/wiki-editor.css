@@ -281,6 +281,78 @@
       color: #FFFFFF;
   }
 
+/* Previous Roles Section within Staff Form */
+.wiki-editor-page .previous-roles-section {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #F2EEDF; /* Sand/Warm Ivory */
+    border: 1px dashed #B6E3D4; /* Mint Green */
+    border-radius: 5px;
+}
+
+.wiki-editor-page .previous-roles-section > label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #000435;
+}
+
+.wiki-editor-page #previousRolesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.wiki-editor-page .previous-role-entry {
+    background: #FFFFFF;
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+.wiki-editor-page .previous-role-entry .field-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.wiki-editor-page .previous-role-entry .field-group {
+    flex: 1;
+}
+
+.wiki-editor-page .previous-role-entry input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+}
+
+.wiki-editor-page .remove-prev-role-btn {
+    background: #FE8088;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.wiki-editor-page .remove-prev-role-btn:hover {
+    background: #FC8ED6;
+}
+
+.wiki-editor-page .add-prev-role-btn {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+}
+
 .wiki-editor-page #outputCode {
     width: 100%;
     height: 400px;
