@@ -1719,41 +1719,85 @@
             }
             
             // Function to navigate to a specific facility
-            window.goToFacility = function(projectName, facilityIndex) {
-                // Switch to the project if it's different
-                if (window.currentProjectName !== projectName) {
-                    if (typeof loadProjectAndSync === 'function') {
-                        loadProjectAndSync(projectName);
-                    } else if (typeof loadProject === 'function') {
-                        loadProject(projectName);
-                    }
-                }
+            window.goToFacility = async function(projectName, facilityIndex) {
+                console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
                 
-                // Switch to the facility
-                currentFacilityIndex = facilityIndex;
-                updateUI();
-                
-                // Hide organizer and scroll to top
-                organizerVisible = false;
-                if (organizerSection) {
-                    organizerSection.style.display = 'none';
-                }
-                if (showOrganizerBtn) {
-                    showOrganizerBtn.textContent = '📊 Data Organizer';
-                }
-                
-                // Also hide the modal if it's open
+                // Hide the modal first for better UX
                 if (organizerModal) {
                     organizerModal.classList.remove('active');
                 }
                 
-                // Scroll to top of page
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Check if project exists in window.projects
+                if (!window.projects || !window.projects[projectName]) {
+                    console.log(`📥 Project "${projectName}" not in local cache, fetching from API...`);
+                    
+                    // Show loading status
+                    if (typeof showUploadStatus === 'function') {
+                        showUploadStatus(`Loading project "${projectName}"...`, 'info');
+                    }
+                    
+                    try {
+                        // Fetch project from API
+                        const apiUrl = (window.KOP_FACILITY_FORM_CONFIG?.restUrl || '/wp-json/kop/v1/') + 'facilities';
+                        const response = await fetch(apiUrl);
+                        if (response.ok) {
+                            const apiResponse = await response.json();
+                            const allProjects = apiResponse.projects || apiResponse;
+                            
+                            if (allProjects[projectName]) {
+                                // Add to window.projects
+                                if (!window.projects) window.projects = {};
+                                window.projects[projectName] = allProjects[projectName];
+                                console.log(`✅ Added "${projectName}" to local project cache`);
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Failed to fetch project from API:', err);
+                    }
+                }
                 
-                // Log the navigation
+                // Now try to load the project
+                if (window.currentProjectName !== projectName) {
+                    if (window.projects && window.projects[projectName]) {
+                        if (typeof loadProjectAndSync === 'function') {
+                            loadProjectAndSync(projectName);
+                        } else if (window.projectManager && window.projectManager.loadProject) {
+                            window.projectManager.loadProject(projectName);
+                        } else if (typeof loadProject === 'function') {
+                            loadProject(projectName);
+                        }
+                    } else {
+                        console.error(`❌ Project "${projectName}" not found`);
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus(`Project "${projectName}" not found.`, 'error');
+                        }
+                        return;
+                    }
+                }
+                
+                // Wait a moment for project to load, then switch to the facility
                 setTimeout(() => {
-                    console.log(`Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
-                }, 500);
+                    window.currentFacilityIndex = facilityIndex;
+                    if (typeof updateUI === 'function') {
+                        updateUI();
+                    } else if (typeof window.updateAllUI === 'function') {
+                        window.updateAllUI();
+                    }
+                    
+                    // Hide organizer and scroll to top
+                    organizerVisible = false;
+                    if (organizerSection) {
+                        organizerSection.style.display = 'none';
+                    }
+                    if (showOrganizerBtn) {
+                        showOrganizerBtn.textContent = '📊 Data Organizer';
+                    }
+                    
+                    // Scroll to top of page
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    console.log(`✅ Navigated to ${projectName} - Facility #${facilityIndex + 1}`);
+                }, 300);
             };
         }
         let organizerInitialized = false;
