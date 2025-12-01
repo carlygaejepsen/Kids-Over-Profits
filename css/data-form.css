@@ -3130,13 +3130,19 @@ textarea {
    (Moved from data.html)
    ============================================ */
 
-/* Hide site header on this page - toolbar replaces it */
-header.site-header,
-.site-header,
-nav.main-navigation,
-.main-navigation,
-#masthead,
-.header-wrapper {
+/* Hide site header on data form pages only - toolbar replaces it */
+body.page-template-page-admin-data header.site-header,
+body.page-template-page-admin-data .site-header,
+body.page-template-page-admin-data nav.main-navigation,
+body.page-template-page-admin-data .main-navigation,
+body.page-template-page-admin-data #masthead,
+body.page-template-page-admin-data .header-wrapper,
+body.page-template-page-data header.site-header,
+body.page-template-page-data .site-header,
+body.page-template-page-data nav.main-navigation,
+body.page-template-page-data .main-navigation,
+body.page-template-page-data #masthead,
+body.page-template-page-data .header-wrapper {
     display: none !important;
 }
 
