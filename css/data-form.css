@@ -10,17 +10,18 @@
     box-sizing: border-box;
 }
 
-/* Ensure all buttons contain their text without overflow */
+/* Ensure all buttons contain their text - allow wrapping */
 button,
 input[type="button"],
 input[type="submit"],
 input[type="reset"],
 .button,
 [role="button"] {
-    white-space: nowrap;
-    overflow: visible;
-    width: auto;
-    min-width: fit-content;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    min-height: fit-content;
 }
 
 body {
@@ -306,7 +307,7 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    padding: 5px 8px;
+    padding: 5px 12px;
     font-size: 12px;
     font-weight: 600;
     border-radius: 4px;
@@ -317,10 +318,10 @@ body:not(.admin-bar) .fixed-toolbar {
     color: #000435;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
-    white-space: nowrap; /* Prevent text from wrapping */
-    overflow: visible; /* Ensure text is not clipped */
-    width: auto; /* Let button size to fit content */
-    max-width: none; /* Remove any max-width constraints */
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+    min-height: fit-content;
 }
 
 .fixed-toolbar .btn-toolbar:hover {
@@ -1478,7 +1479,7 @@ textarea {
 
 /* Base Button Style */
 .btn {
-    padding: 10px 16px;
+    padding: 10px 20px;
     font-size: 14px;
     font-weight: 600;
     border: 2px solid #FE8088; /* Coral Pink outline */
@@ -1491,12 +1492,10 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    white-space: nowrap; /* Prevent text from wrapping */
-    min-width: fit-content; /* Ensure button is wide enough for content */
-    overflow: visible; /* Ensure text is not clipped */
-    text-overflow: clip; /* Don't use ellipsis */
-    width: auto; /* Let button size to fit content */
-    max-width: none; /* Remove any max-width constraints */
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+    min-height: fit-content;
 }
 
 .btn:hover {
