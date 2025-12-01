@@ -137,79 +137,73 @@
                 showUploadStatus(`🔄 Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
             }
             
-            // Force clear current project first to ensure a clean switch
-            if (window.projectManager && window.projectManager.newProject) {
-                console.log('🧹 Clearing current project first...');
-                window.projectManager.newProject(false); // false = don't show status
-            }
+            // Don't call newProject() - it shows a confirmation dialog
+            // loadProject handles clearing and loading in one step
             
-            // Small delay to ensure clearing is complete, then load the new project
-            setTimeout(() => {
-                // Use the existing project manager to load the project
-                if (window.projectManager && window.projectManager.loadProject) {
-                    console.log('📥 Loading project:', projectName);
-                    window.projectManager.loadProject(projectName);
-                    
-                    // Wait a moment for the load to complete, then sync our formData
-                    setTimeout(() => {
-                        // Make sure we have access to the global formData
-                        if (typeof formData !== 'undefined') {
-                            window.globalFormData = formData;
-                            
-                            // Extensive debugging
-                            console.log('Project loaded and synced:', projectName);
-                            console.log('📊 Current project data:', formData);
-                            console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
-                            console.log('📝 Current project name from variables:', {
-                                'window.currentProjectName': window.currentProjectName,
-                                'formData.projectName': formData?.projectName,
-                                'requested': projectName
-                            });
+            // Use the existing project manager to load the project
+            if (window.projectManager && window.projectManager.loadProject) {
+                console.log('📥 Loading project:', projectName);
+                window.projectManager.loadProject(projectName);
+                
+                // Wait a moment for the load to complete, then sync our formData
+                setTimeout(() => {
+                    // Make sure we have access to the global formData
+                    if (typeof formData !== 'undefined') {
+                        window.globalFormData = formData;
+                        
+                        // Extensive debugging
+                        console.log('Project loaded and synced:', projectName);
+                        console.log('📊 Current project data:', formData);
+                        console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
+                        console.log('📝 Current project name from variables:', {
+                            'window.currentProjectName': window.currentProjectName,
+                            'formData.projectName': formData?.projectName,
+                            'requested': projectName
+                        });
 
-                            // Verify we loaded the right project
-                            const actualCurrentProject = window.currentProjectName;
-                            if (actualCurrentProject !== projectName) {
-                                console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
-                                if (typeof showUploadStatus === 'function') {
-                                    showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
-                                }
-                            } else {
-                                // Show additional success status
-                                if (typeof showUploadStatus === 'function') {
-                                    const facilityCount = formData?.facilities?.length || 0;
-                                    showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
-                                }
-                            }
-                            
-                            // Also update the page title or some indicator
-                            const pageTitle = document.querySelector('h1');
-                            if (pageTitle && projectName !== 'New Project') {
-                                const actualProject = window.currentProjectName || projectName;
-                                pageTitle.innerHTML = `Admin - ${actualProject}`;
-                            }
-
-                            if (typeof window.updateToolbarFacilityInfo === 'function') {
-                                console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
-                                window.updateToolbarFacilityInfo();
-                                setTimeout(window.updateToolbarFacilityInfo, 100);
-                                setTimeout(window.updateToolbarFacilityInfo, 300);
-                                setTimeout(window.updateToolbarFacilityInfo, 500);
-                                setTimeout(window.updateToolbarFacilityInfo, 1000);
+                        // Verify we loaded the right project
+                        const actualCurrentProject = window.currentProjectName;
+                        if (actualCurrentProject !== projectName) {
+                            console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
+                            if (typeof showUploadStatus === 'function') {
+                                showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
                             }
                         } else {
-                            console.warn('formData not found after project load');
+                            // Show additional success status
                             if (typeof showUploadStatus === 'function') {
-                                showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                                const facilityCount = formData?.facilities?.length || 0;
+                                showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
                             }
                         }
-                    }, 300);
-                } else {
-                    console.error('Project manager not available');
-                    if (typeof showUploadStatus === 'function') {
-                        showUploadStatus('❌ Project manager not available', 'error');
+                        
+                        // Also update the page title or some indicator
+                        const pageTitle = document.querySelector('h1');
+                        if (pageTitle && projectName !== 'New Project') {
+                            const actualProject = window.currentProjectName || projectName;
+                            pageTitle.innerHTML = `Admin - ${actualProject}`;
+                        }
+
+                        if (typeof window.updateToolbarFacilityInfo === 'function') {
+                            console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                            window.updateToolbarFacilityInfo();
+                            setTimeout(window.updateToolbarFacilityInfo, 100);
+                            setTimeout(window.updateToolbarFacilityInfo, 300);
+                            setTimeout(window.updateToolbarFacilityInfo, 500);
+                            setTimeout(window.updateToolbarFacilityInfo, 1000);
+                        }
+                    } else {
+                        console.warn('formData not found after project load');
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                        }
                     }
+                }, 300);
+            } else {
+                console.error('Project manager not available');
+                if (typeof showUploadStatus === 'function') {
+                    showUploadStatus('❌ Project manager not available', 'error');
                 }
-            }, 100);
+            }
         }
 
         // Independent consultant toggle functionality
