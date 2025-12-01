@@ -612,6 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
+            // Add any additional history notes (preserved as-is with markdown)
+            if (vals.historyNotes && vals.historyNotes.trim()) {
+                historySentences.push(vals.historyNotes.trim());
+            }
+
             historySection = historySentences.length > 0 ? historySentences.join('\n\n') : getPlaceholder('History and Background Information', programName);
 
             // --- Build Staff Section ---
@@ -1287,12 +1292,9 @@ ${relatedMediaSection}
                 setValue('accreditingBodyLink', sanitizeUrl(accreditMatch[2]));
             }
 
-            const historyParagraphs = historySection.split('\n\n')
-                .map(line => line.trim())
-                .filter(line => line && !line.includes('No information is known'));
-            if (historyParagraphs.length > 0) {
-                setValue('historyMisc', historyParagraphs.join('\n\n'));
-            }
+            // Capture remaining history text that wasn't parsed into specific fields
+            // This preserves any extra paragraphs, program descriptions, etc.
+            setValue('historyNotes', historySection);
         }
 
         // Parse Staff section

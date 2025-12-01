@@ -112,6 +112,8 @@ get_header();
                         <input type="text" id="accreditingBodyLink" name="accreditingBodyLink" placeholder="e.g., /r/troubledteens/wiki/...">
                     </div>
                 </div>
+                <label for="historyNotes">Additional History Notes (will be included as-is):</label>
+                <textarea id="historyNotes" name="historyNotes" rows="4" placeholder="Any additional background information that doesn't fit the fields above..."></textarea>
                 <hr>
                 <h4>Additional Locations / Campuses</h4>
                 <div class="form-adder">
