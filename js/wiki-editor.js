@@ -1193,6 +1193,38 @@ ${relatedMediaSection}
             }
         };
 
+        // Common acronym expansions for TTI industry companies
+        const companyAcronyms = {
+            'UHS': 'Universal Health Services',
+            'CRC': 'CRC Health Group',
+            'AAC': 'American Addiction Centers',
+            'BHC': 'Behavioral Healthcare Corporation',
+            'CEDU': 'CEDU Education',
+            'WWASP': 'World Wide Association of Specialty Programs',
+            'PCS': 'Provo Canyon School',
+            'NWA': 'Northwest Academy',
+            'SLS': 'Sequel Logan Services',
+            'YFA': 'Youth for America'
+        };
+
+        // Expand known acronyms to full company names
+        const expandAcronym = (name) => {
+            if (!name) return name;
+            const trimmed = name.trim();
+            // Check if it's a known acronym (case-insensitive)
+            const upperName = trimmed.toUpperCase();
+            if (companyAcronyms[upperName]) {
+                return companyAcronyms[upperName];
+            }
+            // Check if the name starts with a known acronym
+            for (const [acronym, fullName] of Object.entries(companyAcronyms)) {
+                if (trimmed.toUpperCase().startsWith(acronym + ' ') || trimmed.toUpperCase() === acronym) {
+                    return fullName;
+                }
+            }
+            return trimmed;
+        };
+
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         const getSection = (source, sectionTitle) => {
@@ -1296,6 +1328,49 @@ ${relatedMediaSection}
                         break;
                     }
                 }
+            }
+
+            // Parse ownership changes from history
+            // Pattern: "Prior to being purchased/acquired by NewOwner in YEAR, was owned by [PreviousOwner](link)"
+            const priorOwnerLinkMatch = normalizedHistory.match(
+                /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?(?:was )?owned by \[([^\]]+)\]\(([^)]+)\)/i
+            );
+            if (priorOwnerLinkMatch) {
+                const newOwner = expandAcronym(priorOwnerLinkMatch[1]);
+                const year = priorOwnerLinkMatch[2].trim();
+                const previousOwner = priorOwnerLinkMatch[3].trim();
+                // const previousOwnerLink = priorOwnerLinkMatch[4]; // Could store link if needed
+                ownershipChanges.push({ year, previous: previousOwner, newOwner });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => 
+                    `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
+                );
+            } else {
+                // Try without markdown link: "Prior to being purchased by NewOwner in YEAR, was owned by PreviousOwner"
+                const priorOwnerTextMatch = normalizedHistory.match(
+                    /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?(?:was )?owned by ([^.\n]+)/i
+                );
+                if (priorOwnerTextMatch) {
+                    const newOwner = expandAcronym(priorOwnerTextMatch[1]);
+                    const year = priorOwnerTextMatch[2].trim();
+                    const previousOwner = expandAcronym(priorOwnerTextMatch[3]);
+                    ownershipChanges.push({ year, previous: previousOwner, newOwner });
+                    renderList(ownershipChanges, 'ownerChangeListOutput', item => 
+                        `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
+                    );
+                }
+            }
+
+            // Also parse: "In YEAR, was purchased/acquired by NewOwner" or "NewOwner purchased/acquired in YEAR"
+            const purchasedInYearMatch = normalizedHistory.match(
+                /in\s+(\d{4})[^.]*?(?:was\s+)?(?:purchased|acquired|bought)\s+by\s+\[([^\]]+)\]\(([^)]+)\)/i
+            );
+            if (purchasedInYearMatch && ownershipChanges.length === 0) {
+                const year = purchasedInYearMatch[1].trim();
+                const newOwner = expandAcronym(purchasedInYearMatch[2]);
+                ownershipChanges.push({ year, previous: '', newOwner });
+                renderList(ownershipChanges, 'ownerChangeListOutput', item => 
+                    `<strong>${escapeHtml(item.year)}</strong>: ${escapeHtml(item.previous || '?')} → ${escapeHtml(item.newOwner || '?')}`
+                );
             }
 
             const agePatterns = [
@@ -1405,6 +1480,8 @@ ${relatedMediaSection}
                 /(?:founded|opened|started|established|began)\s+(?:in\s+)?\d{4}/i,
                 /is\s+(?:an?|the)?\s*\[.+?\]\(.+?\)\s+(?:behavior|program|school|facility)/i,
                 /owned by|operated by|run by|part of/i,
+                /prior to (?:being )?(?:purchased|acquired|bought)/i,
+                /(?:was\s+)?(?:purchased|acquired|bought)\s+by/i,
                 /\(\d{1,2}\s*-\s*\d{1,2}\)/i,
                 /aged?\s+(?:between\s+)?\d{1,2}/i,
                 /ages?\s+(?:between\s+)?\d{1,2}/i,
