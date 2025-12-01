@@ -1404,9 +1404,65 @@ ${relatedMediaSection}
                 }
 
                 // Extract bio - everything after first sentence, excluding work history sentences
-                const firstSentenceEnd = normalized.indexOf('.') + 1;
+                // Find end of first sentence - skip periods inside URLs/links
+                const findFirstSentenceEnd = (text) => {
+                    let i = 0;
+                    while (i < text.length) {
+                        if (text[i] === '.') {
+                            // Check if this looks like end of sentence (followed by space + capital or end)
+                            const next = text[i + 1];
+                            const nextNext = text[i + 2];
+                            // Not end of sentence if followed by lowercase (like .com, .org)
+                            if (next && /[a-z]/.test(next)) {
+                                i++;
+                                continue;
+                            }
+                            // Not end of sentence if inside a URL pattern
+                            const before = text.substring(Math.max(0, i - 10), i);
+                            if (/https?:|www\.|\.com|\.org|\.net|\.edu|\.gov/i.test(before)) {
+                                i++;
+                                continue;
+                            }
+                            // Looks like a real sentence end
+                            if (!next || next === ' ' || next === '\n') {
+                                return i + 1;
+                            }
+                        }
+                        i++;
+                    }
+                    return text.length;
+                };
+                
+                const firstSentenceEnd = findFirstSentenceEnd(normalized);
                 const remainingText = normalized.substring(firstSentenceEnd).trim();
-                const sentences = remainingText.split(/(?<!\w\.\w)(?<![A-Z][a-z]\.)(?<=\.)\s+/);
+                
+                // Split into sentences, but don't split on periods in URLs
+                const splitSentences = (text) => {
+                    const results = [];
+                    let current = '';
+                    let i = 0;
+                    while (i < text.length) {
+                        current += text[i];
+                        if (text[i] === '.') {
+                            const next = text[i + 1];
+                            // Check if this is a real sentence boundary
+                            if (!next || next === ' ' || next === '\n') {
+                                // Check it's not part of a URL
+                                const lookback = current.substring(Math.max(0, current.length - 15));
+                                if (!/https?:|www\.|\.com|\.org|\.net|\.edu|\.gov/i.test(lookback) || !next) {
+                                    results.push(current.trim());
+                                    current = '';
+                                    if (next === ' ') i++; // skip the space
+                                }
+                            }
+                        }
+                        i++;
+                    }
+                    if (current.trim()) results.push(current.trim());
+                    return results;
+                };
+                
+                const sentences = splitSentences(remainingText);
                 const bioSentences = sentences.filter(s => {
                     const trimmed = s.trim();
                     if (trimmed.length === 0) return false;
