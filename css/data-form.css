@@ -2003,7 +2003,8 @@ textarea {
     max-width: 500px;
     width: 90%;
     max-height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
@@ -2013,6 +2014,12 @@ textarea {
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    z-index: 10;
 }
 
 .modal-title {
@@ -2046,6 +2053,8 @@ textarea {
 .modal-body {
     padding: 20px;
     color: #1f2937;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .modal-footer {
@@ -2054,6 +2063,9 @@ textarea {
     gap: 10px;
     padding: 20px;
     border-top: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 0 0 12px 12px;
 }
 
 .modal-btn {
@@ -2473,7 +2485,8 @@ textarea {
     max-width: 500px;
     width: 90%;
     max-height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
@@ -2483,6 +2496,12 @@ textarea {
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    z-index: 10;
 }
 
 .modal-title {
@@ -2516,6 +2535,8 @@ textarea {
 .modal-body {
     padding: 20px;
     color: #1f2937;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .modal-footer {
@@ -2524,6 +2545,9 @@ textarea {
     gap: 10px;
     padding: 20px;
     border-top: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 0 0 12px 12px;
 }
 
 .modal-btn {
@@ -3106,7 +3130,8 @@ nav.main-navigation,
     width: 90%;
     max-width: 900px;
     max-height: 85vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
@@ -3118,6 +3143,10 @@ nav.main-navigation,
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .organizer-modal-header h2 {
@@ -3134,6 +3163,8 @@ nav.main-navigation,
 .organizer-modal-body {
     padding: 20px;
     color: #1f2937;
+    overflow-y: auto;
+    flex: 1;
 }
 
 /* Ensure autocomplete dropdowns appear properly in modals */
