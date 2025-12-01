@@ -816,23 +816,30 @@ function createAutocomplete(input, getDataFunction, category) {
             pendingFetch = null;
         }
 
-        // Hide dropdown immediately
+        // Cancel any pending remote fetch
+        if (abortController) {
+            abortController.abort();
+            abortController = null;
+        }
+
+        // Hide dropdown immediately and keep it hidden
         hideDropdown();
         currentFocus = -1;
 
         // Now set the value
         input.value = value;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // Dispatch events without triggering autocomplete
         input.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // Reset flag after a short delay
+        // Reset flag after a longer delay to ensure all async operations complete
         setTimeout(() => {
             isCommittingSelection = false;
-        }, 150);
+        }, 300);
 
         if (shouldRefocus) {
             // Use timeout to ensure dropdown has fully closed before refocusing
-            setTimeout(() => input.focus(), 0);
+            setTimeout(() => input.focus(), 50);
         }
     }
 
