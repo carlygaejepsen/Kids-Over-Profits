@@ -324,16 +324,16 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
+                        <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
+                        <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone this facility">📋 Clone</button>
+                    </div>
+                    <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
                             <button class="btn-toolbar" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
                             <button class="btn-toolbar" id="next-facility-btn-toolbar" title="Next facility">▶</button>
                         </div>
-                    </div>
-                    <div class="toolbar-group">
-                        <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone this facility">📋 Clone</button>
                     </div>
                     <div class="toolbar-group">
                         <button class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍 Search Data</button>

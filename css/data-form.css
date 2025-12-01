@@ -258,15 +258,14 @@ body:not(.admin-bar) .fixed-toolbar {
     padding: 8px 12px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
-    overflow-x: auto;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .fixed-toolbar .toolbar-group {
@@ -279,6 +278,10 @@ body:not(.admin-bar) .fixed-toolbar {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
+}
+
+.fixed-toolbar .toolbar-group.facility-nav-group {
+    flex-grow: 0;
 }
 
 .fixed-toolbar .toolbar-label {
@@ -974,18 +977,23 @@ body:not(.admin-bar) .fixed-toolbar {
 
     /* Minimal toolbar content padding - saves vertical space */
     .fixed-toolbar .toolbar-content {
-        padding: 3px 6px;
+        padding: 6px 8px;
+        overflow-x: auto;
     }
 
-    /* Tight spacing between groups */
+    /* Keep horizontal layout on tablet */
     .fixed-toolbar .toolbar-section {
-        gap: 3px;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        justify-content: center;
     }
 
-    /* Ultra-compact toolbar groups */
+    /* Compact toolbar groups - keep inline */
     .fixed-toolbar .toolbar-group {
-        gap: 2px;
-        padding: 2px 3px;
+        display: inline-flex;
+        gap: 3px;
+        padding: 3px 5px;
     }
 
     /* Hide "Current Facility:" label */
@@ -997,91 +1005,92 @@ body:not(.admin-bar) .fixed-toolbar {
     .fixed-toolbar .facility-dropdown {
         min-width: 90px;
         max-width: 130px;
-        font-size: 10px;
-        padding: 3px 4px;
+        font-size: 11px;
+        padding: 4px 6px;
     }
 
     /* Tiny navigation buttons */
     .fixed-toolbar .facility-selector .btn-toolbar {
-        width: 22px;
-        padding: 2px;
-        font-size: 10px;
+        width: 28px;
+        height: 28px;
+        padding: 4px;
+        font-size: 11px;
     }
 
-    /* Compact all toolbar buttons */
+    /* Compact all toolbar buttons - keep auto width */
     .fixed-toolbar .btn-toolbar {
-        padding: 3px 4px;
+        padding: 6px 10px;
+        font-size: 11px;
+        min-height: 32px;
+    }
+
+/* Short labels on mobile (640px and below) - saves horizontal space */
+@media (max-width: 640px) {
+    /* Keep horizontal layout, allow scrolling */
+    .fixed-toolbar .toolbar-content {
+        overflow-x: auto;
+    }
+
+    .fixed-toolbar .toolbar-section {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+        justify-content: flex-start;
+    }
+
+    /* Compact toolbar groups */
+    .fixed-toolbar .toolbar-group {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px 4px;
+    }
+
+    /* More compact buttons with short labels */
+    .fixed-toolbar .btn-toolbar {
+        padding: 5px 8px;
+        font-size: 10px;
+        min-height: 28px;
+    }
+
+    /* Replace full text with short labels */
+    #add-facility-btn-toolbar {
+        font-size: 0;
+    }
+    #add-facility-btn-toolbar::after {
+        content: "➕ Add";
         font-size: 10px;
     }
 
-    /* Short labels on mobile (640px and below) - saves horizontal space */
-    @media (max-width: 640px) {
-        /* 2-column grid layout for button groups */
-        .fixed-toolbar .toolbar-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-        }
+    #clone-facility-btn-toolbar {
+        font-size: 0;
+    }
+    #clone-facility-btn-toolbar::after {
+        content: "📋 Copy";
+        font-size: 10px;
+    }
 
-        /* Facility selector spans both columns */
-        .fixed-toolbar .toolbar-group:first-child {
-            grid-column: 1 / -1;
-        }
+    #remove-facility-btn-toolbar {
+        font-size: 0;
+    }
+    #remove-facility-btn-toolbar::after {
+        content: "🗑️ Del";
+        font-size: 10px;
+    }
 
-        /* Button groups each take one column */
-        .fixed-toolbar .toolbar-group:nth-child(2),
-        .fixed-toolbar .toolbar-group:nth-child(3) {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+    #show-organizer-modal-btn {
+        font-size: 0;
+    }
+    #show-organizer-modal-btn::after {
+        content: "🔍";
+        font-size: 10px;
+    }
 
-        /* Make all buttons full width within their column */
-        .fixed-toolbar .toolbar-group:not(:first-child) .btn-toolbar {
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* Replace full text with short labels */
-        #add-facility-btn-toolbar {
-            font-size: 0;
-        }
-        #add-facility-btn-toolbar::after {
-            content: "➕ Add";
-            font-size: 10px;
-        }
-
-        #clone-facility-btn-toolbar {
-            font-size: 0;
-        }
-        #clone-facility-btn-toolbar::after {
-            content: "📋 Copy";
-            font-size: 10px;
-        }
-
-        #remove-facility-btn-toolbar {
-            font-size: 0;
-        }
-        #remove-facility-btn-toolbar::after {
-            content: "🗑️ Delete";
-            font-size: 10px;
-        }
-
-        #show-organizer-modal-btn {
-            font-size: 0;
-        }
-        #show-organizer-modal-btn::after {
-            content: "🔍 Search";
-            font-size: 10px;
-        }
-
-        #submit-suggestion-btn-toolbar {
-            font-size: 0;
-        }
-        #submit-suggestion-btn-toolbar::after {
-            content: "📮 Submit";
-            font-size: 10px;
-        }
+    #submit-suggestion-btn-toolbar {
+        font-size: 0;
+    }
+    #submit-suggestion-btn-toolbar::after {
+        content: "📮";
+        font-size: 10px;
     }
 
     .form-row,
