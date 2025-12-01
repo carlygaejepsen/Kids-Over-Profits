@@ -46,30 +46,6 @@ function kop_is_headerless_layout() {
 }
 
 /**
- * Enqueue Kadence navigation guard script globally to prevent timing issues.
- * This script intercepts DOM queries and provides smart fallbacks for missing elements.
- *
- * The guard is "smart" - it detects headerless pages and applies strict blocking,
- * but on normal pages it only provides graceful fallbacks for missing elements.
- */
-function kop_enqueue_kadence_nav_guard() {
-    $guard_script_path = get_stylesheet_directory() . '/js/data-form/kadence-nav-guard.js';
-    $guard_script_url = get_stylesheet_directory_uri() . '/js/data-form/kadence-nav-guard.js';
-
-    if (file_exists($guard_script_path)) {
-        // Enqueue globally with highest priority (loaded first)
-        wp_enqueue_script(
-            'kadence-nav-guard',
-            $guard_script_url,
-            array(), // No dependencies
-            filemtime($guard_script_path),
-            false // Load in header, before other scripts
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1);
-
-/**
  * Remove Kadence navigation scripts when the page intentionally renders without a header.
  */
 function kop_maybe_disable_kadence_navigation() {
