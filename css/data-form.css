@@ -396,7 +396,7 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     background: #AEE0ED; /* Powder Blue */
     border: 2px solid #33A7B5; /* Teal */
