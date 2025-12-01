@@ -10,20 +10,6 @@
     box-sizing: border-box;
 }
 
-/* Ensure all buttons contain their text - allow wrapping */
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-.button,
-[role="button"] {
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    text-align: center;
-    min-height: fit-content;
-}
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
@@ -1535,19 +1521,23 @@ textarea {
 
 /* Plus Button for Adding Items Inline - matches admin header */
 .add-plus-btn {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    min-width: 28px;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    min-height: 28px !important;
+    max-height: 28px !important;
     background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     font-size: 16px;
     font-weight: 700;
-    flex: 0 0 28px; /* Prevent stretching */
+    flex: 0 0 28px !important; /* Prevent stretching */
     border-radius: 4px;
     border: 2px solid #FE8088; /* Coral Pink */
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
     transition: all 0.2s ease;
+    white-space: nowrap !important;
 }
 
 .add-plus-btn:hover {
@@ -2324,10 +2314,14 @@ textarea {
    ============================================ */
 .field-note-btn {
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
+    width: 28px !important;
+    height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
     aspect-ratio: 1 / 1;
-    padding: 0;
+    padding: 0 !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2340,6 +2334,7 @@ textarea {
     cursor: pointer;
     transition: all 0.2s ease;
     line-height: 1;
+    white-space: nowrap !important;
 }
 
 .field-note-btn:hover {
