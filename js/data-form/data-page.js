@@ -584,6 +584,130 @@
             }
         }, { once: true });
 
+        // ============================================
+        // PRIVATE OWNERSHIP TOGGLE
+        // ============================================
+        const privateOwnershipToggle = document.getElementById('private-ownership-toggle');
+        const privateOwnershipSliderTrack = document.getElementById('slider-track');
+        const privateOwnershipSliderKnob = document.getElementById('slider-knob');
+        const operatorSection = document.getElementById('operator-section');
+
+        function updatePrivateOwnershipSliderAppearance() {
+            if (!privateOwnershipSliderTrack || !privateOwnershipSliderKnob || !privateOwnershipToggle) return;
+
+            if (privateOwnershipToggle.checked) {
+                // Private ownership - toggle is ON
+                privateOwnershipSliderTrack.style.backgroundColor = '#10b981';
+                privateOwnershipSliderKnob.style.transform = 'translateX(24px)';
+                if (operatorSection) operatorSection.style.display = 'none';
+                // Modify Operations section for private ownership
+                modifyOperationsForPrivateOwnership(true);
+            } else {
+                // Corporate ownership - toggle is OFF
+                privateOwnershipSliderTrack.style.backgroundColor = '#e5e7eb';
+                privateOwnershipSliderKnob.style.transform = 'translateX(0px)';
+                if (operatorSection) operatorSection.style.display = 'block';
+                // Restore Operations section for corporate ownership
+                modifyOperationsForPrivateOwnership(false);
+            }
+        }
+
+        function clearOperatorFieldsForPrivate() {
+            console.log('🧹 Clearing operator fields for private facility mode');
+            
+            // Clear operator section fields
+            const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
+            operatorInputs.forEach(input => {
+                input.value = '';
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+            
+            // Also clear operator data from formData if available
+            if (window.formData && window.formData.operator) {
+                window.formData.operator = {
+                    name: '',
+                    currentName: '',
+                    pastNames: [],
+                    otherNames: [],
+                    foundingDate: '',
+                    keyPersonnel: [],
+                    headquarters: '',
+                    website: ''
+                };
+                console.log('Cleared operator data from formData');
+            }
+        }
+
+        function modifyOperationsForPrivateOwnership(isPrivate) {
+            const operationsSection = document.getElementById('operations-section');
+            if (!operationsSection) return;
+            
+            const otherOperatorsGroup = operationsSection.querySelector('.array-container[data-path="otherOperators"]');
+            const otherOperatorsLabel = otherOperatorsGroup ? otherOperatorsGroup.previousElementSibling : null;
+            
+            if (isPrivate) {
+                // Hide "Other Operators" and add "Owners" fields
+                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'none';
+                if (otherOperatorsLabel && otherOperatorsLabel.textContent === 'Other Operators') {
+                    otherOperatorsLabel.style.display = 'none';
+                }
+                
+                // Add owners fields if they don't exist
+                if (!document.getElementById('owners-group')) {
+                    const ownersHTML = `
+                        <div class="form-group" id="owners-group">
+                            <label>Current Owner</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="facility-field" data-field="owner" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="other-owners-group">
+                            <label>Previous/Other Owners</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="facility-field" data-field="otherOwners" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            </div>
+                        </div>
+                    `;
+                    
+                    const sectionContent = operationsSection.querySelector('.section-content');
+                    if (sectionContent) {
+                        sectionContent.insertAdjacentHTML('beforeend', ownersHTML);
+                    }
+                } else {
+                    // Show existing owners fields
+                    const ownersGroup = document.getElementById('owners-group');
+                    const otherOwnersGroup = document.getElementById('other-owners-group');
+                    if (ownersGroup) ownersGroup.style.display = 'block';
+                    if (otherOwnersGroup) otherOwnersGroup.style.display = 'block';
+                }
+            } else {
+                // Restore "Other Operators" and hide "Owners" fields
+                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'block';
+                if (otherOperatorsLabel) otherOperatorsLabel.style.display = 'block';
+                
+                const ownersGroup = document.getElementById('owners-group');
+                const otherOwnersGroup = document.getElementById('other-owners-group');
+                if (ownersGroup) ownersGroup.style.display = 'none';
+                if (otherOwnersGroup) otherOwnersGroup.style.display = 'none';
+            }
+        }
+
+        if (privateOwnershipSliderTrack && privateOwnershipToggle) {
+            privateOwnershipSliderTrack.addEventListener('click', function() {
+                privateOwnershipToggle.checked = !privateOwnershipToggle.checked;
+                updatePrivateOwnershipSliderAppearance();
+                
+                if (privateOwnershipToggle.checked) {
+                    clearOperatorFieldsForPrivate();
+                }
+                
+                // Trigger change event for form tracking
+                privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        }
+
+        window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppearance;
+
         function showSuggestionStatus(message, type) {
             // Show in the inline status div (backward compatibility)
             const statusDiv = document.getElementById('suggestion-status');
