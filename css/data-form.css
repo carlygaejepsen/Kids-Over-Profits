@@ -990,28 +990,32 @@ body:not(.admin-bar) .fixed-toolbar {
         align-items: center;
     }
 
-    /* Remove absolute positioning on mobile for facility nav group */
+    /* Compact toolbar groups - keep buttons HORIZONTAL within each group */
+    .fixed-toolbar .toolbar-group {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 3px;
+        padding: 3px 5px;
+        align-items: center;
+    }
+
+    /* First row: action buttons - keep them together */
+    .fixed-toolbar .toolbar-group:not(.facility-nav-group) {
+        order: 1;
+        flex-shrink: 1;
+        flex-grow: 0;
+    }
+
+    /* Second row: facility nav group - full width, centered */
     .fixed-toolbar .toolbar-group.facility-nav-group {
-        position: relative;
-        left: auto;
-        transform: none;
+        position: relative !important;
+        left: auto !important;
+        transform: none !important;
         flex-grow: 0;
         order: 2; /* Put in second row */
         width: 100%; /* Full width for second row */
         justify-content: center;
-    }
-
-    /* First row: action buttons */
-    .fixed-toolbar .toolbar-group:not(.facility-nav-group) {
-        order: 1;
-        flex-shrink: 1;
-    }
-
-    /* Compact toolbar groups - keep inline */
-    .fixed-toolbar .toolbar-group {
-        display: inline-flex;
-        gap: 3px;
-        padding: 3px 5px;
     }
 
     /* Hide "Current Facility:" label */
@@ -1058,26 +1062,31 @@ body:not(.admin-bar) .fixed-toolbar {
         justify-content: center;
     }
 
-    /* Facility nav group stays in second row, full width */
-    .fixed-toolbar .toolbar-group.facility-nav-group {
-        position: relative;
-        left: auto;
-        transform: none;
-        order: 2;
-        width: 100%;
-        justify-content: center;
+    /* Compact toolbar groups - HORIZONTAL layout within groups */
+    .fixed-toolbar .toolbar-group {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 2px;
+        padding: 2px 4px;
+        align-items: center;
     }
 
     /* Other groups in first row */
     .fixed-toolbar .toolbar-group:not(.facility-nav-group) {
         order: 1;
+        flex-shrink: 1;
+        flex-grow: 0;
     }
 
-    /* Compact toolbar groups */
-    .fixed-toolbar .toolbar-group {
-        display: inline-flex;
-        gap: 2px;
-        padding: 2px 4px;
+    /* Facility nav group stays in second row, full width */
+    .fixed-toolbar .toolbar-group.facility-nav-group {
+        position: relative !important;
+        left: auto !important;
+        transform: none !important;
+        order: 2;
+        width: 100%;
+        justify-content: center;
     }
 
     /* More compact buttons with short labels */
