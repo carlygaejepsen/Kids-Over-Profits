@@ -68,6 +68,18 @@ $category = isset($request['category']) ? $request['category'] : 'companies';
 $currentFacilityIndex = isset($request['currentFacilityIndex']) ? intval($request['currentFacilityIndex']) : 0;
 $timestamp = isset($request['timestamp']) ? $request['timestamp'] : date('c');
 
+// DEBUG: Echo what we're receiving for rebuild-locations
+if (isset($request['action']) && $request['action'] === 'rebuild-locations') {
+    echo json_encode([
+        'debug' => true,
+        'received_action' => $action,
+        'received_projectName' => $projectName,
+        'validation_will_run' => (!$projectName && $action !== 'rebuild-locations'),
+        'full_request' => $request
+    ]);
+    exit; // Temporary - remove after debugging
+}
+
 // US State names for location project matching (used by multiple functions)
 $US_STATE_NAMES = [
     'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',
