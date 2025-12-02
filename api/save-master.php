@@ -890,7 +890,13 @@ if ($action === 'save') {
     $jsonData = json_encode($projectStructure);
 
     // Determine which table to use based on category
-    $tableName = ($category === 'referrers') ? 'referrers_master' : 'facilities_master';
+    if ($category === 'locations') {
+        $tableName = 'locations_master';
+    } elseif ($category === 'referrers') {
+        $tableName = 'referrers_master';
+    } else {
+        $tableName = 'facilities_master';
+    }
 
     // SQL to insert or update the project data based on projectName
     // Use separate placeholders for INSERT and UPDATE values

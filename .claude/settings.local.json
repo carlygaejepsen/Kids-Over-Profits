@@ -9,7 +9,8 @@
       "Bash(node -c:*)",
       "Bash(NUL)",
       "Bash(git push:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
