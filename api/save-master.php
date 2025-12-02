@@ -14,6 +14,18 @@
 // Set JSON header
 header('Content-Type: application/json');
 
+// DEBUG v2 - Immediate output before anything else
+$raw_input = file_get_contents('php://input');
+if (strpos($raw_input, 'rebuild') !== false) {
+    echo json_encode([
+        'debug_v2' => true,
+        'timestamp' => time(),
+        'raw_input' => $raw_input,
+        'message' => 'Debug intercept BEFORE processing'
+    ]);
+    exit;
+}
+
 // Enable error reporting for debugging (remove in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display errors in JSON response
