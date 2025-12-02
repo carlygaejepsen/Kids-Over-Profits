@@ -105,8 +105,8 @@ $STATE_ABBREVIATIONS = [
     'WI' => 'WISCONSIN', 'WY' => 'WYOMING'
 ];
 
-// Validate project name
-if (!$projectName) {
+// Validate project name (skip for rebuild-locations which processes all projects)
+if (!$projectName && $action !== 'rebuild-locations') {
     echo json_encode([
         'success' => false,
         'error' => 'Project name is required'
