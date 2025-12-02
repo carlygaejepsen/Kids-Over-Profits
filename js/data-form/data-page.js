@@ -497,6 +497,28 @@
         window.submitSuggestion = submitSuggestion;
         window.performSuggestionSubmission = performSuggestionSubmission;
 
+        // Save Draft Locally button handler
+        const saveDraftBtn = document.getElementById('save-draft-locally-btn');
+        if (saveDraftBtn) {
+            saveDraftBtn.addEventListener('click', () => {
+                if (typeof window.persistProjectLocally === 'function') {
+                    const projectName = window.currentProjectName || 'Untitled Project';
+                    const result = window.persistProjectLocally(projectName, {
+                        showNotification: true,
+                        statusMessage: '💾 Draft saved locally! Your work is stored in this browser.'
+                    });
+                    if (result) {
+                        console.log('✅ Draft saved locally for:', projectName);
+                    }
+                } else {
+                    console.error('❌ persistProjectLocally function not available');
+                    if (typeof showUploadStatus === 'function') {
+                        showUploadStatus('❌ Unable to save draft - function not available', 'error');
+                    }
+                }
+            });
+        }
+
         const independentToggle = document.getElementById('referrer-independent-toggle');
         const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
         const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');

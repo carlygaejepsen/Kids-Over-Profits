@@ -2106,7 +2106,56 @@ function initializeCategoryTabs() {
         const tab = event.target.closest('.category-tab');
         if (!tab) return;
 
-        const category = tab.dataset.category;
+        const newCategory = tab.dataset.category;
+        const currentTab = document.querySelector('.category-tab.active');
+        const currentCategory = currentTab ? currentTab.dataset.category : null;
+        
+        // If clicking the same tab, do nothing
+        if (newCategory === currentCategory) return;
+        
+        // Check if there's a loaded project from a different category
+        const currentProjectCategory = window.currentProjectName ? 
+            (window.projects?.[window.currentProjectName]?.category || determineProjectCategory(window.currentProjectName)) : null;
+        
+        // If there's a project loaded AND it's from a different category than where we're going
+        if (window.currentProjectName && currentProjectCategory && currentProjectCategory !== newCategory) {
+            // Check if there are unsaved changes (formData exists and has meaningful content)
+            const hasUnsavedWork = window.formData && (
+                (window.formData.facilities && window.formData.facilities.length > 0 && 
+                 window.formData.facilities.some(f => f.identification?.name)) ||
+                (window.formData.operator && window.formData.operator.name) ||
+                (window.formData.referrerConsultants && window.formData.referrerConsultants.length > 0)
+            );
+            
+            if (hasUnsavedWork) {
+                const choice = confirm(
+                    `You have "${window.currentProjectName}" (${currentProjectCategory}) loaded.\n\n` +
+                    `Switching to ${newCategory} will clear this from the form.\n\n` +
+                    `Click OK to continue (your data is auto-saved locally).\n` +
+                    `Click Cancel to stay on the current tab.`
+                );
+                
+                if (!choice) {
+                    return; // User cancelled, don't switch tabs
+                }
+                
+                // Auto-save the current project locally before switching
+                if (typeof persistProjectLocally === 'function') {
+                    persistProjectLocally(window.currentProjectName);
+                    debugLog(`Auto-saved "${window.currentProjectName}" locally before tab switch`);
+                }
+            }
+            
+            // Clear the current project when switching categories
+            window.currentProjectName = null;
+            window.formData = createNewProjectData();
+            window.currentFacilityIndex = 0;
+            
+            const projectNameInput = document.getElementById('project-name');
+            if (projectNameInput) {
+                projectNameInput.value = '';
+            }
+        }
 
         // Update active tab
         categoryTabsContainer.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
@@ -2119,7 +2168,7 @@ function initializeCategoryTabs() {
 
         // Determine the ID of the content to show
         // Handles the special case where 'locations' category maps to 'states-content' ID
-        const contentId = category === 'locations' ? 'states-content' : `${category}-content`;
+        const contentId = newCategory === 'locations' ? 'states-content' : `${newCategory}-content`;
         const activeContent = document.getElementById(contentId);
 
         if (activeContent) {
@@ -2133,7 +2182,7 @@ function initializeCategoryTabs() {
 
         // Apply view layout to show/hide elements based on data-section-views
         if (typeof window.applyViewLayout === 'function') {
-            window.applyViewLayout(category === 'locations' ? 'locations' : category);
+            window.applyViewLayout(newCategory === 'locations' ? 'locations' : newCategory);
         }
 
         // Refresh the list of saved projects for the new tab
@@ -2144,6 +2193,11 @@ function initializeCategoryTabs() {
         // Update labels if the function exists
         if (typeof updateLabelsForProjectType === 'function') {
             updateLabelsForProjectType();
+        }
+        
+        // Update UI to reflect cleared form if we switched
+        if (typeof window.updateAllUI === 'function') {
+            window.updateAllUI();
         }
     };
 
@@ -4796,6 +4850,7 @@ function addNoteButtons() {
 window.loadProject = loadProject;
 window.newProject = newProject;
 window.saveProjectToCloud = saveProjectToCloud;
+window.persistProjectLocally = persistProjectLocally;
 window.addFacility = addFacility;
 window.removeFacility = removeFacility;
 window.renameProject = renameProject;

@@ -1376,6 +1376,69 @@
                 initializeLocationFacilitiesToc();
             }
 
+            // ============================================
+            // SAVE DRAFT LOCALLY BUTTON
+            // ============================================
+            const saveDraftBtn = document.getElementById('save-draft-locally-btn');
+            const draftStatus = document.getElementById('draft-status');
+            if (saveDraftBtn && !saveDraftBtn.dataset.draftHandlerAttached) {
+                saveDraftBtn.addEventListener('click', function() {
+                    const projectNameInput = document.getElementById('project-name');
+                    let projectName = projectNameInput ? projectNameInput.value.trim() : '';
+                    
+                    // If no project name entered, use current project name or prompt
+                    if (!projectName) {
+                        if (window.currentProjectName) {
+                            projectName = window.currentProjectName;
+                        } else {
+                            projectName = prompt('Enter a name for this draft:');
+                            if (!projectName || !projectName.trim()) {
+                                if (typeof showUploadStatus === 'function') {
+                                    showUploadStatus('❌ Draft name is required', 'error');
+                                }
+                                return;
+                            }
+                            projectName = projectName.trim();
+                            if (projectNameInput) {
+                                projectNameInput.value = projectName;
+                            }
+                        }
+                    }
+                    
+                    // Save using persistProjectLocally
+                    if (typeof window.persistProjectLocally === 'function') {
+                        const saved = window.persistProjectLocally(projectName, {
+                            showStatus: true,
+                            statusType: 'success',
+                            statusMessage: `📋 Draft "${projectName}" saved locally! You can resume work anytime.`
+                        });
+                        
+                        if (saved) {
+                            window.currentProjectName = projectName;
+                            
+                            // Update status display
+                            if (draftStatus) {
+                                const now = new Date();
+                                draftStatus.innerHTML = `✅ Draft saved: <strong>${projectName}</strong> at ${now.toLocaleTimeString()}`;
+                                draftStatus.style.display = 'block';
+                                draftStatus.style.color = '#059669';
+                            }
+                            
+                            // Refresh the project lists
+                            if (typeof window.refreshSavedProjectPanels === 'function') {
+                                window.refreshSavedProjectPanels();
+                            }
+                        }
+                    } else {
+                        console.error('persistProjectLocally not available');
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus('❌ Could not save draft - function not available', 'error');
+                        }
+                    }
+                });
+                saveDraftBtn.dataset.draftHandlerAttached = 'true';
+            }
+
             adminPageInitialized = true;
         };
 

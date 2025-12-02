@@ -64,7 +64,7 @@ $action = isset($request['action']) ? $request['action'] : 'save';
 $projectName = isset($request['projectName']) ? $request['projectName'] : null;
 $newProjectName = isset($request['newProjectName']) ? $request['newProjectName'] : null;
 $data = isset($request['data']) ? $request['data'] : null;
-$category = isset($request['category']) ? $request['category'] : 'companies';
+$requestedCategory = isset($request['category']) ? $request['category'] : 'companies';
 $currentFacilityIndex = isset($request['currentFacilityIndex']) ? intval($request['currentFacilityIndex']) : 0;
 $timestamp = isset($request['timestamp']) ? $request['timestamp'] : date('c');
 
@@ -104,6 +104,20 @@ $STATE_ABBREVIATIONS = [
     'VT' => 'VERMONT', 'VA' => 'VIRGINIA', 'WA' => 'WASHINGTON', 'WV' => 'WEST VIRGINIA',
     'WI' => 'WISCONSIN', 'WY' => 'WYOMING'
 ];
+
+// SERVER-SIDE CATEGORY VALIDATION: Override category for state/country names
+// This ensures location projects ALWAYS go to locations_master, regardless of what frontend sends
+$category = $requestedCategory; // Start with requested category
+if ($projectName) {
+    $projectNameUpper = strtoupper(trim($projectName));
+    if (in_array($projectNameUpper, $US_STATE_NAMES) || in_array($projectNameUpper, $COUNTRY_NAMES)) {
+        $category = 'locations';
+        // Log if frontend sent wrong category (helps debug issues)
+        if ($requestedCategory !== 'locations') {
+            error_log("Category override: '$projectName' is a state/country name - forcing category from '$requestedCategory' to 'locations'");
+        }
+    }
+}
 
 // Validate project name (skip for rebuild-locations which processes all projects)
 if (!$projectName && $action !== 'rebuild-locations') {

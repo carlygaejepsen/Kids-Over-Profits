@@ -1069,11 +1069,17 @@ get_header();
             <div class="section-content" style="display: block;">
                 <div id="suggestion-status" style="display: none;"></div>
 
-                <div class="form-group">
+                <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button type="button" class="save-master-btn" onclick="submitSuggestion()">
                         📮 Submit for Review
                     </button>
+                    <button type="button" id="save-draft-locally-btn" class="save-master-btn" style="background: #6b7280;" title="Save your work in progress to your browser's local storage so you can continue later">
+                        💾 Save Draft Locally
+                    </button>
                 </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 13px;">
+                    💡 <strong>Save Draft Locally</strong> saves your work to this browser so you can continue later. Your data stays on your device until you submit.
+                </p>
             </div>
         </div>
         

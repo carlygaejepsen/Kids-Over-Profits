@@ -1037,11 +1037,15 @@ get_header();
                     <label for="project-name">Project Name</label>
                     <input type="text" id="project-name" placeholder="Enter project name..." style="width: 100%;">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button type="button" class="save-master-btn" id="save-project-btn">
                         💾 Save to Master Database
                     </button>
+                    <button type="button" class="btn" id="save-draft-locally-btn" style="background: #6b7280; color: white;" title="Save your work locally to continue later">
+                        📋 Save Draft Locally
+                    </button>
                 </div>
+                <p id="draft-status" style="margin-top: 10px; font-size: 13px; color: #6b7280; display: none;"></p>
             </div>
         </div>
         
