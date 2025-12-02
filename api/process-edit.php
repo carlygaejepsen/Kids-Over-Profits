@@ -95,21 +95,114 @@ try {
             exit;
         }
 
-        // Determine which table to use based on data structure
+        // Determine which table to use based on data structure and project name
         $decoded_data = json_decode($json_data, true);
+        
+        // US State names for location project detection
+        $US_STATE_NAMES = [
+            'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',
+            'DELAWARE', 'FLORIDA', 'GEORGIA', 'HAWAII', 'IDAHO', 'ILLINOIS', 'INDIANA', 'IOWA',
+            'KANSAS', 'KENTUCKY', 'LOUISIANA', 'MAINE', 'MARYLAND', 'MASSACHUSETTS', 'MICHIGAN',
+            'MINNESOTA', 'MISSISSIPPI', 'MISSOURI', 'MONTANA', 'NEBRASKA', 'NEVADA', 'NEW HAMPSHIRE',
+            'NEW JERSEY', 'NEW MEXICO', 'NEW YORK', 'NORTH CAROLINA', 'NORTH DAKOTA', 'OHIO',
+            'OKLAHOMA', 'OREGON', 'PENNSYLVANIA', 'RHODE ISLAND', 'SOUTH CAROLINA', 'SOUTH DAKOTA',
+            'TENNESSEE', 'TEXAS', 'UTAH', 'VERMONT', 'VIRGINIA', 'WASHINGTON', 'WEST VIRGINIA',
+            'WISCONSIN', 'WYOMING'
+        ];
+        
+        // Common countries for international facilities
+        $COUNTRY_NAMES = [
+            'CANADA', 'MEXICO', 'UNITED KINGDOM', 'AUSTRALIA', 'JAMAICA', 'SAMOA', 'COSTA RICA',
+            'BELIZE', 'BAHAMAS', 'DOMINICAN REPUBLIC', 'PUERTO RICO', 'FRANCE', 'GERMANY', 'ITALY',
+            'SPAIN', 'NETHERLANDS', 'SWITZERLAND', 'SWEDEN', 'NORWAY', 'DENMARK', 'IRELAND',
+            'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN', 'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
+        ];
+        
+        // Check if master_id is a state or country name (location project)
+        $masterIdUpper = strtoupper(trim($master_id ?? ''));
+        $isLocation = in_array($masterIdUpper, $US_STATE_NAMES) || in_array($masterIdUpper, $COUNTRY_NAMES);
+        
+        // Check if it's a referrer project
         $isReferrer = !empty($decoded_data['referrerAgency']['name']) ||
                       !empty($decoded_data['referrerConsultants'][0]['firstName']) ||
                       !empty($decoded_data['referrerConsultants'][0]['lastName']);
-        $tableName = $isReferrer ? 'referrers_master' : 'facilities_master';
+        
+        // Determine table: locations first, then referrers, then facilities
+        if ($isLocation) {
+            $tableName = 'locations_master';
+            $category = 'locations';
+        } elseif ($isReferrer) {
+            $tableName = 'referrers_master';
+            $category = 'referrers';
+        } else {
+            $tableName = 'facilities_master';
+            $category = 'companies';
+        }
+
+        // Wrap the data in proper project structure if it's not already wrapped
+        // Expected format: { name, data: { operator, facilities }, category, timestamp }
+        $hasNestedData = isset($decoded_data['data']) && is_array($decoded_data['data']);
+        if (!$hasNestedData) {
+            // Data is at root level (old/raw format), wrap it
+            $wrappedData = [
+                'name' => $master_id ?: 'Unnamed Project',
+                'data' => $decoded_data,
+                'category' => $category,
+                'currentFacilityIndex' => 0,
+                'timestamp' => date('c')
+            ];
+            $json_data = json_encode($wrappedData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        } else {
+            // Already in new format, just ensure category is set
+            if (!isset($decoded_data['category'])) {
+                $decoded_data['category'] = $category;
+                $json_data = json_encode($decoded_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            }
+        }
 
         // If master_id is empty, insert a new row with NULL unique_name
         if ($master_id) {
             // Check if record exists by unique_name in the appropriate table
-            $checkStmt = $pdo->prepare("SELECT id FROM {$tableName} WHERE unique_name = ? LIMIT 1");
+            $checkStmt = $pdo->prepare("SELECT id, json_data FROM {$tableName} WHERE unique_name = ? LIMIT 1");
             $checkStmt->execute([$master_id]);
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
             if ($exists) {
+                // For location projects, merge new facilities into existing data
+                if ($isLocation && !empty($exists['json_data'])) {
+                    $existingData = json_decode($exists['json_data'], true);
+                    $newData = json_decode($json_data, true);
+                    
+                    // Get the actual data arrays
+                    $existingFacilities = $existingData['data']['facilities'] ?? [];
+                    $newFacilities = $newData['data']['facilities'] ?? [];
+                    
+                    // Merge facilities - add new ones, avoiding exact duplicates by name
+                    foreach ($newFacilities as $newFacility) {
+                        $newName = $newFacility['identification']['name'] ?? '';
+                        $isDuplicate = false;
+                        
+                        if ($newName) {
+                            foreach ($existingFacilities as $existingFacility) {
+                                $existingName = $existingFacility['identification']['name'] ?? '';
+                                if ($existingName === $newName) {
+                                    $isDuplicate = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!$isDuplicate) {
+                            $existingFacilities[] = $newFacility;
+                        }
+                    }
+                    
+                    // Update the merged data
+                    $existingData['data']['facilities'] = $existingFacilities;
+                    $existingData['timestamp'] = date('c');
+                    $json_data = json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                
                 // Update existing record
                 $updateStmt = $pdo->prepare("UPDATE {$tableName} SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
                 $updateStmt->execute([$json_data, $master_id]);
