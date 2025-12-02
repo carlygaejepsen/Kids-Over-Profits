@@ -68,13 +68,7 @@ get_header();
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <div class="form-group" style="text-align: center; margin-top: 15px; padding: 15px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
-                            <label style="color: #856404; font-weight: 600;">🔄 Rebuild Location Projects</label>
-                            <p style="margin: 10px 0; color: #856404; font-size: 13px;">This will regenerate all location projects by aggregating facilities from company projects by state/country.</p>
-                            <button class="btn" id="rebuild-locations-btn" style="background: #ffc107; color: #000; font-weight: 600;">🔄 Rebuild All Location Projects</button>
-                            <div id="rebuild-status" style="margin-top: 10px; font-size: 13px;"></div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">Location projects aggregate facilities by state/country from company and referrer projects.</p>
+
                     </div>
 
                     <!-- Facilities Overview for Locations -->
@@ -341,7 +335,7 @@ get_header();
                 <div class="mt-15 d-flex gap-10 flex-center">
                     <button class="btn" id="add-facility-main-btn">Add New Facility</button>
                     <button class="btn" id="sort-facilities-btn">Sort Alphabetically</button>
-                    <button class="btn" onclick="window.open('https://kidsoverprofits.org/data-organizer/', '_blank')" title="Open Data Organizer in new tab">📊 Data Organizer</button>
+
                 </div>
             </div>
         </div>
@@ -363,61 +357,7 @@ get_header();
                         <button class="btn" id="add-facility-btn">Add Facility</button>
                         <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
                         <button class="btn" id="clone-facility-btn">Clone Facility</button>
-                        <button class="btn btn-secondary" id="show-organizer-btn">📊 Data Organizer</button>
-                        <button class="btn btn-secondary" id="show-organizer-modal-btn">🔍 Search Data</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Data Organizer Section -->
-        <div class="section" id="data-organizer-section" data-section-views="companies,locations,referrers">
-            <div class="section-header">
-                <h2 class="section-title">📊 Data Organizer</h2>
-                <span class="section-toggle">🔎</span>
-            </div>
-            <div class="section-content">
-                <div class="bg-light content-box">
-                    <p class="info-text" style="margin: 0;">
-                        <strong>🔍 Find all facilities by a specific data point:</strong> 
-                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
-                    </p>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="organize-by">Organize by:</label>
-                        <select id="organize-by" class="input-secondary">
-                            <option value="">Select data point...</option>
-                            <option value="staff">Staff Member</option>
-                            <option value="operator">Operator/Company</option>
-                            <option value="location">Location</option>
-                            <option value="programType">Program Type</option>
-                            <option value="status">Operating Status</option>
-                            <option value="year">Opening Year</option>
-                            <option value="accreditation">Accreditation</option>
-                            <option value="certification">Certification</option>
-                        </select>
-                    </div>
-                    <div class="form-group d-none" id="organize-value-group">
-                        <label for="organize-value">Search for:</label>
-                        <input type="text" id="organize-value" class="input-secondary" placeholder="Type to search...">
-                    </div>
-                </div>
-                
-                <div class="mb-15">
-                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
-                    <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
-                </div>
-                
-                <div id="organize-results" class="d-none">
-                    <div class="info-box">
-                        <div id="organize-results-title" class="info-title"></div>
-                        <div id="organize-results-count" class="info-text"></div>
-                    </div>
-                    
-                    <div id="organize-matches" class="scroll-container">
-                        <!-- Results will appear here -->
                     </div>
                 </div>
             </div>
@@ -1193,55 +1133,6 @@ get_header();
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
                 <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Data Organizer Modal -->
-    <div id="data-organizer-modal" class="organizer-modal">
-        <div class="organizer-modal-content">
-            <div class="organizer-modal-header" style="padding: 12px 20px;">
-                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
-                <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
-            </div>
-            <div class="organizer-modal-body" style="padding: 15px 20px;">
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div class="form-group">
-                        <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
-                        <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
-                            <option value="">Select data point...</option>
-                            <option value="staff">Staff Member</option>
-                            <option value="operator">Operator/Company</option>
-                            <option value="location">Location</option>
-                            <option value="programType">Program Type</option>
-                            <option value="status">Operating Status</option>
-                            <option value="year">Opening Year</option>
-                            <option value="accreditation">Accreditation</option>
-                            <option value="certification">Certification</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="organize-value-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Search for:</label>
-                        <input type="text" id="organize-value-modal" class="input-secondary" placeholder="Type to search..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
-                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
-                </div>
-
-                <div id="organize-results-modal" class="d-none">
-                    <div class="info-box" style="background: #B6E3D4; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #33A7B5;">
-                        <div id="organize-results-title-modal" class="info-title" style="font-weight: 600; color: #000435; margin-bottom: 5px;"></div>
-                        <div id="organize-results-count-modal" class="info-text" style="color: #000080;"></div>
-                    </div>
-
-                    <div id="organize-matches-modal" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
-                        <!-- Results will appear here -->
-                    </div>
-                </div>
             </div>
         </div>
     </div>
