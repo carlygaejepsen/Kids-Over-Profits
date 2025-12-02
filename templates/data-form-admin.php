@@ -68,6 +68,12 @@ get_header();
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
+                        <div class="form-group" style="text-align: center; margin-top: 15px; padding: 15px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
+                            <label style="color: #856404; font-weight: 600;">🔄 Rebuild Location Projects</label>
+                            <p style="margin: 10px 0; color: #856404; font-size: 13px;">This will regenerate all location projects by aggregating facilities from company projects by state/country.</p>
+                            <button class="btn" id="rebuild-locations-btn" style="background: #ffc107; color: #000; font-weight: 600;">🔄 Rebuild All Location Projects</button>
+                            <div id="rebuild-status" style="margin-top: 10px; font-size: 13px;"></div>
+                        </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">Location projects aggregate facilities by state/country from company and referrer projects.</p>
                     </div>
 
