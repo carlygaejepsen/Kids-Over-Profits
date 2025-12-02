@@ -14,7 +14,7 @@ function generateHTMLReport() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${currentProjectName || 'Facility Report'}</title>
+    <title>${escapeHtml(currentProjectName) || 'Facility Report'}</title>
     <style>
         @media print {
             .no-print { display: none; }
@@ -267,7 +267,7 @@ function generateHTMLReport() {
 
     <div class="report-container">
         <div class="report-header">
-            <h1 class="report-title">${currentProjectName || 'Facility Data Report'}</h1>
+            <h1 class="report-title">${escapeHtml(currentProjectName) || 'Facility Data Report'}</h1>
             <div class="report-meta">
                 Generated: ${new Date().toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -301,15 +301,15 @@ function generateOperatorSection() {
     if (!op || !op.name) return '';
 
     // Build location string from city/state if location isn't already set
-    let locationDisplay = op.location;
+    let locationDisplay = safeString(op.location);
     if (!locationDisplay && (op.locationCity || op.locationState)) {
-        locationDisplay = [op.locationCity, op.locationState].filter(Boolean).join(', ');
+        locationDisplay = [safeString(op.locationCity), safeString(op.locationState)].filter(Boolean).join(', ');
     }
 
     // Build headquarters string from city/state if not already set
-    let headquartersDisplay = op.headquarters;
+    let headquartersDisplay = safeString(op.headquarters);
     if (!headquartersDisplay && (op.headquartersCity || op.headquartersState)) {
-        headquartersDisplay = [op.headquartersCity, op.headquartersState].filter(Boolean).join(', ');
+        headquartersDisplay = [safeString(op.headquartersCity), safeString(op.headquartersState)].filter(Boolean).join(', ');
     }
 
     return `
@@ -396,7 +396,7 @@ function generateReferrerSection() {
             <div class="subsection-title">Agency/Organization</div>
             <div class="info-grid">
                 ${agency.name ? `<div class="info-item"><span class="info-label">Name:</span><span class="info-value">${escapeHtml(agency.name)}</span></div>` : ''}
-                ${agency.city || agency.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([agency.city, agency.state].filter(Boolean).join(', '))}</span></div>` : ''}
+                ${agency.city || agency.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([safeString(agency.city), safeString(agency.state)].filter(Boolean).join(', '))}</span></div>` : ''}
                 ${agency.address ? `<div class="info-item"><span class="info-label">Address:</span><span class="info-value">${escapeHtml(agency.address)}</span></div>` : ''}
                 ${agency.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${formatWebsiteLink(agency.website)}</span></div>` : ''}
                 ${agency.founded ? `<div class="info-item"><span class="info-label">Founded:</span><span class="info-value">${escapeHtml(agency.founded)}</span></div>` : ''}
@@ -416,8 +416,8 @@ function generateReferrerSection() {
         consultants.forEach((consultant, index) => {
             if (!consultant) return;
 
-            const name = consultant.fullName || 
-                        [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') ||
+            const name = safeString(consultant.fullName) || 
+                        [safeString(consultant.firstName), safeString(consultant.lastName)].filter(Boolean).join(' ') ||
                         `Consultant ${index + 1}`;
 
             if (!name || name === `Consultant ${index + 1}` && !consultant.role && !consultant.email) {
@@ -430,7 +430,7 @@ function generateReferrerSection() {
                     <div class="info-grid">
                         ${consultant.role ? `<div class="info-item"><span class="info-label">Role:</span><span class="info-value">${escapeHtml(consultant.role)}</span></div>` : ''}
                         ${consultant.status ? `<div class="info-item"><span class="info-label">Status:</span><span class="info-value">${escapeHtml(consultant.status)}</span></div>` : ''}
-                        ${consultant.city || consultant.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([consultant.city, consultant.state].filter(Boolean).join(', '))}</span></div>` : ''}
+                        ${consultant.city || consultant.state ? `<div class="info-item"><span class="info-label">Location:</span><span class="info-value">${escapeHtml([safeString(consultant.city), safeString(consultant.state)].filter(Boolean).join(', '))}</span></div>` : ''}
                         ${consultant.email ? `<div class="info-item"><span class="info-label">Email:</span><span class="info-value">${formatEmailLink(consultant.email)}</span></div>` : ''}
                         ${consultant.phone ? `<div class="info-item"><span class="info-label">Phone:</span><span class="info-value">${formatPhoneLink(consultant.phone)}</span></div>` : ''}
                         ${consultant.website ? `<div class="info-item"><span class="info-label">Website:</span><span class="info-value">${formatWebsiteLink(consultant.website)}</span></div>` : ''}
@@ -482,9 +482,9 @@ function generateFacilityLocation(facility) {
     }
 
     // Build location string from city/state if location isn't already set
-    let locationDisplay = facility.location;
+    let locationDisplay = safeString(facility.location);
     if (!locationDisplay && (facility.city || facility.state)) {
-        locationDisplay = [facility.city, facility.state].filter(Boolean).join(', ');
+        locationDisplay = [safeString(facility.city), safeString(facility.state)].filter(Boolean).join(', ');
     }
 
     return `
@@ -520,9 +520,9 @@ function generateFacilityDetails(facility) {
         <div class="subsection-title">Facility Details</div>
         <div class="info-grid">
             ${details.type ? `<div class="info-item"><span class="info-label">Type:</span><span class="info-value">${escapeHtml(details.type)}</span></div>` : ''}
-            ${details.capacity ? `<div class="info-item"><span class="info-label">Capacity:</span><span class="info-value">${details.capacity}</span></div>` : ''}
-            ${details.currentCensus ? `<div class="info-item"><span class="info-label">Current Census:</span><span class="info-value">${details.currentCensus}</span></div>` : ''}
-            ${details.ageRange?.min || details.ageRange?.max ? `<div class="info-item"><span class="info-label">Age Range:</span><span class="info-value">${details.ageRange.min || '?'} - ${details.ageRange.max || '?'}</span></div>` : ''}
+            ${details.capacity ? `<div class="info-item"><span class="info-label">Capacity:</span><span class="info-value">${escapeHtml(details.capacity)}</span></div>` : ''}
+            ${details.currentCensus ? `<div class="info-item"><span class="info-label">Current Census:</span><span class="info-value">${escapeHtml(details.currentCensus)}</span></div>` : ''}
+            ${details.ageRange?.min || details.ageRange?.max ? `<div class="info-item"><span class="info-label">Age Range:</span><span class="info-value">${escapeHtml(details.ageRange.min) || '?'} - ${escapeHtml(details.ageRange.max) || '?'}</span></div>` : ''}
             ${details.gender ? `<div class="info-item"><span class="info-label">Gender:</span><span class="info-value">${escapeHtml(details.gender)}</span></div>` : ''}
         </div>
     `;
@@ -535,8 +535,8 @@ function generateFacilityOperations(facility) {
     return `
         <div class="subsection-title">Operating Information</div>
         <div class="info-grid">
-            ${op.startYear ? `<div class="info-item"><span class="info-label">Opened:</span><span class="info-value">${op.startYear}</span></div>` : ''}
-            ${op.endYear ? `<div class="info-item"><span class="info-label">Closed:</span><span class="info-value">${op.endYear}</span></div>` : ''}
+            ${op.startYear ? `<div class="info-item"><span class="info-label">Opened:</span><span class="info-value">${escapeHtml(op.startYear)}</span></div>` : ''}
+            ${op.endYear ? `<div class="info-item"><span class="info-label">Closed:</span><span class="info-value">${escapeHtml(op.endYear)}</span></div>` : ''}
             ${op.status ? `<div class="info-item"><span class="info-label">Status:</span><span class="info-value">${escapeHtml(op.status)}</span></div>` : ''}
             ${op.yearsOfOperation ? `<div class="info-item"><span class="info-label">Years of Operation:</span><span class="info-value">${escapeHtml(op.yearsOfOperation)}</span></div>` : ''}
         </div>
@@ -904,19 +904,39 @@ function renderStaffList(title, staffArray) {
             name = staff.trim();
             role = '';
         } else if (staff && typeof staff === 'object') {
-            // Try to get the name - use safeString for nested values
-            if (staff.firstName && staff.lastName) {
-                name = `${safeString(staff.firstName)} ${safeString(staff.lastName)}`.trim();
+            // Try to get the name - check multiple possible field names
+            // First check for firstName + lastName combo
+            const firstName = safeString(staff.firstName);
+            const lastName = safeString(staff.lastName);
+            if (firstName && lastName) {
+                name = `${firstName} ${lastName}`.trim();
+            } else if (firstName) {
+                name = firstName;
+            } else if (lastName) {
+                name = lastName;
             } else {
+                // Try other common name fields
                 name = safeString(staff.name) || safeString(staff.Name) || 
-                       safeString(staff.fullName) || safeString(staff.firstName) || 
-                       safeString(staff.lastName) || '';
+                       safeString(staff.fullName) || safeString(staff.displayName) ||
+                       safeString(staff.label) || safeString(staff.text) || '';
             }
             
-            // Get role
+            // Get role from multiple possible fields
             role = safeString(staff.role) || safeString(staff.Role) || 
                    safeString(staff.title) || safeString(staff.Title) || 
-                   safeString(staff.position) || safeString(staff.Position) || '';
+                   safeString(staff.position) || safeString(staff.Position) ||
+                   safeString(staff.jobTitle) || '';
+                   
+            // If we have a role but no name, try to use the whole object value as name
+            if (!name && role) {
+                // Object has role but no parseable name - skip displaying just a role
+                return '';
+            }
+            
+            // If still no name, try safeString on the whole object as last resort
+            if (!name) {
+                name = safeString(staff);
+            }
         } else if (staff !== null && staff !== undefined) {
             name = safeString(staff);
             role = '';
@@ -975,15 +995,36 @@ function safeString(value) {
                                 'url', 'link', 'label', 'display', 'content'];
         
         for (const field of possibleFields) {
-            if (value[field] && typeof value[field] === 'string' && value[field].trim()) {
-                return value[field].trim();
+            if (value[field]) {
+                // If it's a string, use it directly
+                if (typeof value[field] === 'string' && value[field].trim()) {
+                    return value[field].trim();
+                }
+                // If it's a nested object, try to recursively extract
+                if (typeof value[field] === 'object' && value[field] !== null) {
+                    const nested = safeString(value[field]);
+                    if (nested) return nested;
+                }
             }
         }
         
         // Try firstName + lastName combo
         if (value.firstName || value.lastName) {
-            const name = [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+            const firstName = typeof value.firstName === 'string' ? value.firstName : 
+                              (typeof value.firstName === 'object' ? safeString(value.firstName) : '');
+            const lastName = typeof value.lastName === 'string' ? value.lastName : 
+                             (typeof value.lastName === 'object' ? safeString(value.lastName) : '');
+            const name = [firstName, lastName].filter(Boolean).join(' ').trim();
             if (name) return name;
+        }
+        
+        // Try to get any string property from the object as last resort
+        const allKeys = Object.keys(value);
+        for (const key of allKeys) {
+            if (typeof value[key] === 'string' && value[key].trim() && 
+                !['id', 'type', 'class', 'style', 'timestamp', 'date', 'created', 'updated'].includes(key.toLowerCase())) {
+                return value[key].trim();
+            }
         }
         
         // Don't output objects as strings
