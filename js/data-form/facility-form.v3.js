@@ -3612,7 +3612,20 @@ function refreshSavedProjectPanels() {
     const locationContainer = document.getElementById('location-saved-projects-list');
     const referrerContainer = document.getElementById('referrer-saved-projects-list');
 
+    // DEBUG: Log project categorization
+    console.log('🔍 refreshSavedProjectPanels called');
+    console.log('Total projects:', projectNames.length);
+    console.log('US_STATE_SET defined?', typeof window.US_STATE_SET !== 'undefined');
+    console.log('COUNTRY_SET defined?', typeof window.COUNTRY_SET !== 'undefined');
+
+    // Log each project's category
+    projectNames.forEach(name => {
+        const category = determineProjectCategory(name);
+        console.log(`  - "${name}" → category: ${category}`);
+    });
+
     if (!companyContainer && !locationContainer && !referrerContainer) {
+        console.warn('⚠️ No project containers found in DOM');
         return;
     }
 
@@ -3658,16 +3671,19 @@ function refreshSavedProjectPanels() {
 
     if (companyContainer) {
         const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+        console.log(`📦 Company projects: ${companyNames.length}`, companyNames);
         companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
     }
 
     if (locationContainer) {
         const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+        console.log(`📍 Location projects: ${locationNames.length}`, locationNames);
         locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
     }
 
     if (referrerContainer) {
         const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'referrers');
+        console.log(`👥 Referrer projects: ${referrerNames.length}`, referrerNames);
         referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet. Create one using the "New Project" button.');
     }
 }
