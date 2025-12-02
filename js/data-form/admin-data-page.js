@@ -2084,12 +2084,13 @@
 
                 try {
                     // API is at site root /api/ not in theme directory
-                    const apiUrl = `${apiBase}/api/save-master.php?action=rebuild-locations`;
+                    const apiUrl = `${apiBase}/api/save-master.php`;
                     console.log('🔍 Calling API:', apiUrl);
 
                     const response = await fetch(apiUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'rebuild-locations' })
                     });
 
                     const result = await response.json();
