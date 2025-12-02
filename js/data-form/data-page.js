@@ -501,14 +501,43 @@
         const saveDraftBtn = document.getElementById('save-draft-locally-btn');
         if (saveDraftBtn) {
             saveDraftBtn.addEventListener('click', () => {
+                // Get project name from input field or current project
+                const projectNameInput = document.getElementById('project-name');
+                let projectName = projectNameInput ? projectNameInput.value.trim() : '';
+                
+                // If no project name entered, use current project name or prompt
+                if (!projectName) {
+                    if (window.currentProjectName) {
+                        projectName = window.currentProjectName;
+                    } else {
+                        projectName = prompt('Enter a name for this draft:');
+                        if (!projectName || !projectName.trim()) {
+                            if (typeof showUploadStatus === 'function') {
+                                showUploadStatus('❌ Draft name is required', 'error');
+                            }
+                            return;
+                        }
+                        projectName = projectName.trim();
+                        // Update the input field with the name
+                        if (projectNameInput) {
+                            projectNameInput.value = projectName;
+                        }
+                    }
+                }
+                
                 if (typeof window.persistProjectLocally === 'function') {
-                    const projectName = window.currentProjectName || 'Untitled Project';
                     const result = window.persistProjectLocally(projectName, {
                         showNotification: true,
-                        statusMessage: '💾 Draft saved locally! Your work is stored in this browser.'
+                        statusMessage: `💾 Draft "${projectName}" saved locally! Your work is stored in this browser.`
                     });
                     if (result) {
+                        window.currentProjectName = projectName;
                         console.log('✅ Draft saved locally for:', projectName);
+                        
+                        // Refresh the project lists if available
+                        if (typeof window.refreshSavedProjectPanels === 'function') {
+                            window.refreshSavedProjectPanels();
+                        }
                     }
                 } else {
                     console.error('❌ persistProjectLocally function not available');
