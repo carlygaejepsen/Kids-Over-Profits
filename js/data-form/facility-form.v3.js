@@ -1538,11 +1538,20 @@ async function saveProjectToCloud(projectName, action = 'save') {
 
         ensureReferrerDataStructures();
 
-        // Determine category: check project metadata first, then fall back to active tab
-        let category = window.projects?.[projectName]?.category;
-        if (!category) {
-            const activeTab = document.querySelector('.category-tab.active');
-            category = activeTab ? activeTab.dataset.category : 'companies';
+        // Determine category: state/country names MUST be locations, regardless of stored metadata
+        // This prevents state projects from being miscategorized if saved from wrong tab
+        const normalizedName = projectName.toLowerCase().trim();
+        let category;
+        if (window.US_STATE_SET?.has(normalizedName) || window.COUNTRY_SET?.has(normalizedName)) {
+            category = 'locations';
+            debugLog('Category forced to "locations" for state/country name:', projectName);
+        } else {
+            // For non-location projects, check stored metadata first, then fall back to active tab
+            category = window.projects?.[projectName]?.category;
+            if (!category) {
+                const activeTab = document.querySelector('.category-tab.active');
+                category = activeTab ? activeTab.dataset.category : 'companies';
+            }
         }
 
         const projectData = {
@@ -3591,14 +3600,21 @@ function getProjectStates(projectData = {}) {
 }
 
 function determineProjectCategory(name = '') {
-    // First, check if the project has stored category metadata
+    const normalized = name.toLowerCase().trim();
+    
+    // PRIORITY 1: State/country names are ALWAYS locations, regardless of stored metadata
+    // This prevents state projects from being miscategorized
+    if (window.US_STATE_SET?.has(normalized) || window.COUNTRY_SET?.has(normalized)) {
+        return 'locations';
+    }
+    
+    // PRIORITY 2: Check stored category metadata for non-location projects
     const project = window.projects?.[name];
     if (project && project.category) {
         return project.category;
     }
 
-    // Fallback to name-based heuristic for legacy projects
-    const normalized = name.toLowerCase().trim();
+    // PRIORITY 3: Name-based heuristic for legacy projects
     // A simple heuristic: if it contains referrer-related keywords, it's a referrer project
     if (normalized.includes('consultant') ||
         normalized.includes('district') ||
@@ -3608,9 +3624,7 @@ function determineProjectCategory(name = '') {
         normalized.includes('school')) {
         return 'referrers';
     }
-    if (window.US_STATE_SET.has(normalized) || window.COUNTRY_SET.has(normalized)) {
-        return 'locations';
-    }
+    
     return 'companies';
 }
 
