@@ -1971,6 +1971,12 @@ function enqueue_facility_form_script() {
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';
 
+    // Determine form mode based on which template is active
+    $form_mode = 'master'; // Default to master mode
+    if ($is_data_template || is_page('data')) {
+        $form_mode = 'suggestions';
+    }
+
     // Note: This is localized to the loader script, not the main form script
     $config = array(
         'fallbackProjectsUrl' => $fallback_url,
@@ -1980,6 +1986,7 @@ function enqueue_facility_form_script() {
         'restNonce' => wp_create_nonce('wp_rest'),
         'restSaveUrl' => esc_url_raw(rest_url('kop/v1/projects/save')),
         'restDeleteUrl' => esc_url_raw(rest_url('kop/v1/projects/delete')),
+        'mode' => $form_mode, // 'master' for admin page, 'suggestions' for public page
     );
 
     wp_localize_script(
