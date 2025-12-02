@@ -3032,6 +3032,11 @@ window.updateAllUI = function() {
         initializeNoteControls();
         updateToolbarFacilityInfo(); // Update toolbar when UI updates
 
+        // Update private ownership toggle state from facility data
+        if (typeof window.updatePrivateOwnershipSliderAppearance === 'function') {
+            window.updatePrivateOwnershipSliderAppearance();
+        }
+
         // Update location facilities overview for location projects
         const activeTab = document.querySelector('.category-tab.active');
         if (activeTab && activeTab.dataset.category === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {

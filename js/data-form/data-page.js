@@ -646,6 +646,12 @@
         function updatePrivateOwnershipSliderAppearance() {
             if (!privateOwnershipSliderTrack || !privateOwnershipSliderKnob || !privateOwnershipToggle) return;
 
+            // Restore toggle state from facility data
+            const currentFacility = window.formData?.facilities?.[window.currentFacilityIndex];
+            if (currentFacility && typeof currentFacility.isPrivatelyOwned === 'boolean') {
+                privateOwnershipToggle.checked = currentFacility.isPrivatelyOwned;
+            }
+
             if (privateOwnershipToggle.checked) {
                 // Private ownership - toggle is ON
                 privateOwnershipSliderTrack.style.backgroundColor = '#10b981';
@@ -1730,9 +1736,9 @@
                     organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
-                        // Check for privately owned facilities - use currentOwner if no operator
-                        const currentOwner = result.facility.identification?.currentOwner;
-                        const operator = result.operator || result.facility.identification?.currentOperator || (currentOwner ? 'Privately Owned' : 'Unknown Operator');
+                        // Check for privately owned facilities - use isPrivatelyOwned flag
+                        const isPrivate = result.facility.isPrivatelyOwned === true;
+                        const operator = result.operator || result.facility.identification?.currentOperator || (isPrivate ? 'Privately Owned' : 'Unknown Operator');
                         const location = result.facility.location || 'Unknown Location';
                         
                         const resultDiv = document.createElement('div');
@@ -2464,6 +2470,12 @@
                 const isPrivate = toggle.checked;
                 const operatorSection = document.getElementById('operator-section');
                 
+                // Save the private ownership flag to the current facility
+                if (window.formData && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+                    window.formData.facilities[window.currentFacilityIndex].isPrivatelyOwned = isPrivate;
+                    console.log(`📝 Set isPrivatelyOwned = ${isPrivate} for facility ${window.currentFacilityIndex}`);
+                }
+                
                 if (isPrivate) {
                     if (operatorSection) operatorSection.style.display = 'none';
                     // Clear operator data when switching to private mode
@@ -2474,6 +2486,11 @@
                     if (operatorSection) operatorSection.style.display = 'block';
                     // Restore Operations section for corporate ownership
                     modifyOperationsForPrivateOwnership(false);
+                }
+                
+                // Trigger autosave
+                if (typeof autoSave === 'function') {
+                    autoSave();
                 }
             }, { passive: true });
 

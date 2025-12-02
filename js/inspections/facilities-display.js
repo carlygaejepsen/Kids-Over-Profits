@@ -118,11 +118,8 @@ function displayFacilities(facilitiesData, containerId) {
         const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
         const facilities = toArray(operatorGroup && operatorGroup.facilities).slice();
 
-        // Check if this is a privately owned facility (no operator name but has currentOwner in facilities)
-        const hasPrivateOwner = facilities.some(f => {
-            const id = f && f.identification ? f.identification : {};
-            return cleanText(id.currentOwner);
-        });
+        // Check if this is a privately owned facility (has isPrivatelyOwned flag set)
+        const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
         
         const operatorNameRaw = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(operatorGroup && operatorGroup.name);
         let operatorName = operatorNameRaw || (hasPrivateOwner ? 'Privately Owned' : 'Unknown Operator');
