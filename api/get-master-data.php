@@ -23,8 +23,20 @@ try {
         $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+        // Mark location results with their source table
+        foreach ($locationsResults as &$row) {
+            $row['_source_table'] = 'locations';
+        }
     } catch (PDOException $e) {
         // Table doesn't exist yet, that's fine - continue without it
+    }
+
+    // Mark source tables for proper categorization
+    foreach ($facilitiesResults as &$row) {
+        $row['_source_table'] = 'facilities';
+    }
+    foreach ($referrersResults as &$row) {
+        $row['_source_table'] = 'referrers';
     }
 
     // Merge all result sets
@@ -47,10 +59,20 @@ try {
         // It's NEW format if data contains facilities OR operator
         $isNewFormat = $hasNestedFacilities || $hasNestedOperator;
         
+        // Determine category based on source table if not explicitly set
+        $defaultCategory = 'companies';
+        if (isset($row['_source_table'])) {
+            if ($row['_source_table'] === 'locations') {
+                $defaultCategory = 'locations';
+            } elseif ($row['_source_table'] === 'referrers') {
+                $defaultCategory = 'referrers';
+            }
+        }
+
         if ($isNewFormat) {
             // New format: data is already nested correctly, just pass through
             $stored['name'] = $stored['name'] ?? $row['unique_name'];
-            $stored['category'] = $stored['category'] ?? 'companies';
+            $stored['category'] = $stored['category'] ?? $defaultCategory;
             $stored['currentFacilityIndex'] = $stored['currentFacilityIndex'] ?? 0;
             $stored['timestamp'] = $stored['timestamp'] ?? date('c');
             $projects[$row['unique_name']] = $stored;
@@ -61,7 +83,7 @@ try {
                 'data' => $stored,
                 'timestamp' => $stored['timestamp'] ?? date('c'),
                 'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => $stored['category'] ?? 'companies'
+                'category' => $stored['category'] ?? $defaultCategory
             ];
         }
     }

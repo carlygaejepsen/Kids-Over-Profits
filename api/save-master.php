@@ -14,18 +14,6 @@
 // Set JSON header
 header('Content-Type: application/json');
 
-// DEBUG v2 - Immediate output before anything else
-$raw_input = file_get_contents('php://input');
-if (strpos($raw_input, 'rebuild') !== false) {
-    echo json_encode([
-        'debug_v2' => true,
-        'timestamp' => time(),
-        'raw_input' => $raw_input,
-        'message' => 'Debug intercept BEFORE processing'
-    ]);
-    exit;
-}
-
 // Enable error reporting for debugging (remove in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display errors in JSON response
@@ -51,17 +39,6 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 // Get POST data
 $input = file_get_contents('php://input');
 $request = json_decode($input, true);
-
-// DEBUG: Show raw input for rebuild-locations
-if (strpos($input, 'rebuild-locations') !== false) {
-    echo json_encode([
-        'debug' => true,
-        'raw_input' => $input,
-        'decoded_request' => $request,
-        'json_decode_error' => json_last_error_msg()
-    ]);
-    exit;
-}
 
 if (!$request) {
     echo json_encode([
@@ -90,18 +67,6 @@ $data = isset($request['data']) ? $request['data'] : null;
 $category = isset($request['category']) ? $request['category'] : 'companies';
 $currentFacilityIndex = isset($request['currentFacilityIndex']) ? intval($request['currentFacilityIndex']) : 0;
 $timestamp = isset($request['timestamp']) ? $request['timestamp'] : date('c');
-
-// DEBUG: Echo what we're receiving for rebuild-locations
-if (isset($request['action']) && $request['action'] === 'rebuild-locations') {
-    echo json_encode([
-        'debug' => true,
-        'received_action' => $action,
-        'received_projectName' => $projectName,
-        'validation_will_run' => (!$projectName && $action !== 'rebuild-locations'),
-        'full_request' => $request
-    ]);
-    exit; // Temporary - remove after debugging
-}
 
 // US State names for location project matching (used by multiple functions)
 $US_STATE_NAMES = [
