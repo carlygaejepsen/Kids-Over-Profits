@@ -40,6 +40,17 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 $input = file_get_contents('php://input');
 $request = json_decode($input, true);
 
+// DEBUG: Show raw input for rebuild-locations
+if (strpos($input, 'rebuild-locations') !== false) {
+    echo json_encode([
+        'debug' => true,
+        'raw_input' => $input,
+        'decoded_request' => $request,
+        'json_decode_error' => json_last_error_msg()
+    ]);
+    exit;
+}
+
 if (!$request) {
     echo json_encode([
         'success' => false,
