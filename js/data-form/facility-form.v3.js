@@ -3406,11 +3406,26 @@ async function performClone(targetProjectName, targetCategory = null) {
         return;
     }
 
-    const facilityToClone = deepClone(window.formData.facilities[window.currentFacilityIndex]);
+    // IMPORTANT: Capture the facility to clone IMMEDIATELY using deep clone
+    // This ensures we get exactly ONE facility, not a reference to the array
+    const sourceIndex = window.currentFacilityIndex;
+    const sourceFacility = window.formData.facilities[sourceIndex];
+    
+    if (!sourceFacility) {
+        alert('No facility selected to clone.');
+        return;
+    }
+    
+    // Deep clone the single facility to ensure complete isolation from source
+    const facilityToClone = JSON.parse(JSON.stringify(sourceFacility));
+    
     // Give the clone a new name to avoid confusion
     if (facilityToClone.identification && facilityToClone.identification.name) {
         facilityToClone.identification.name = `${facilityToClone.identification.name} (Clone)`;
     }
+    
+    debugLog(`🔄 Cloning facility "${sourceFacility.identification?.name || 'unnamed'}" (index ${sourceIndex}) to project "${targetProjectName}"`);
+    debugLog(`   Source project "${window.currentProjectName}" has ${window.formData.facilities.length} facilities`);
 
     // Case 1: Clone to the current project
     if (targetProjectName === window.currentProjectName) {
@@ -3425,17 +3440,22 @@ async function performClone(targetProjectName, targetCategory = null) {
     // Case 2 & 3: Clone to a new or different existing project
     const isNewProject = !window.projects[targetProjectName];
 
+    // Determine category: use provided category, or fall back to active tab
+    let category = targetCategory;
+    if (!category) {
+        const activeTab = document.querySelector('.category-tab.active');
+        category = activeTab ? activeTab.dataset.category : 'companies';
+    }
+
     if (isNewProject) {
         // Create new project with ONLY the cloned facility, no operator data
-        const newProjectData = createNewProjectData();
+        // Use JSON.parse/stringify to ensure completely fresh object with no shared references
+        const newProjectData = JSON.parse(JSON.stringify(createNewProjectData()));
+        
+        // Replace the default empty facility with ONLY our cloned facility
         newProjectData.facilities = [facilityToClone];
-
-        // Determine category: use provided category, or fall back to active tab
-        let category = targetCategory;
-        if (!category) {
-            const activeTab = document.querySelector('.category-tab.active');
-            category = activeTab ? activeTab.dataset.category : 'companies';
-        }
+        
+        debugLog(`   New project will have ${newProjectData.facilities.length} facility (should be 1)`);
 
         window.projects[targetProjectName] = {
             name: targetProjectName,
@@ -3450,7 +3470,7 @@ async function performClone(targetProjectName, targetCategory = null) {
             window.projects[targetProjectName].data.facilities = [];
         }
         window.projects[targetProjectName].data.facilities.push(facilityToClone);
-        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}".`);
+        debugLog(`✅ Added cloned facility to existing project "${targetProjectName}". Now has ${window.projects[targetProjectName].data.facilities.length} facilities.`);
     }
 
     // Persist the changes
@@ -3459,19 +3479,28 @@ async function performClone(targetProjectName, targetCategory = null) {
         alert(`✅ Facility cloned to project "${targetProjectName}" and saved as a local draft.`);
     } else {
         try {
-            // Save the target project to the cloud
-            const originalProject = { name: window.currentProjectName, data: deepClone(window.formData), index: window.currentFacilityIndex };
+            // Save ONLY the target project to the cloud
+            // We need to temporarily change context, but use deep clones to avoid any reference issues
+            const originalProjectName = window.currentProjectName;
+            const originalFormData = JSON.parse(JSON.stringify(window.formData));
+            const originalIndex = window.currentFacilityIndex;
+            
+            // Get a fresh deep clone of the target project's data for saving
+            const targetProjectData = JSON.parse(JSON.stringify(window.projects[targetProjectName].data));
+            
+            debugLog(`   Saving target project with ${targetProjectData.facilities.length} facilities`);
             
             // Temporarily switch context to save the target project
             window.currentProjectName = targetProjectName;
-            window.formData = window.projects[targetProjectName].data;
+            window.formData = targetProjectData;
+            window.currentFacilityIndex = 0;
             
             await saveProjectToCloud(targetProjectName);
             
-            // Restore original context
-            window.currentProjectName = originalProject.name;
-            window.formData = originalProject.data;
-            window.currentFacilityIndex = originalProject.index;
+            // Restore original context using our saved deep clones
+            window.currentProjectName = originalProjectName;
+            window.formData = originalFormData;
+            window.currentFacilityIndex = originalIndex;
 
             alert(`✅ Facility cloned and saved to project "${targetProjectName}" in the cloud.`);
         } catch (error) {
