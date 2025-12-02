@@ -1803,9 +1803,19 @@ function enqueue_facility_form_script() {
         return;
     }
 
-    // Check for data form templates
-    $is_data_template  = is_page_template('templates/data-form-public.php');
-    $is_admin_template = is_page_template('templates/data-form-admin.php') || is_page_template('page-tti-program-index.php');
+    // Check for data form templates (multiple possible paths WordPress might store)
+    // Also check by slug for pages that may not have template meta set correctly
+    $is_data_template  = is_page_template('page-data.php') 
+        || is_page_template('child/page-data.php')
+        || is_page_template('templates/data-form-public.php')
+        || is_page('tti-data-submission')
+        || is_page('data');
+    $is_admin_template = is_page_template('page-admin-data.php') 
+        || is_page_template('child/page-admin-data.php')
+        || is_page_template('templates/data-form-admin.php') 
+        || is_page_template('page-tti-program-index.php')
+        || is_page('admin-data')
+        || is_page('tti-admin-data');
     $is_data_form_page = $is_data_template || $is_admin_template;
 
     if (!$is_data_form_page) {
