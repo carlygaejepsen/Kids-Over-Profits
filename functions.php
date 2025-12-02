@@ -2012,7 +2012,7 @@ function enqueue_facility_form_script() {
             'admin-data-page-script',
             $admin_page_uri,
             array('jquery', 'facility-form-script'), // Depends on main form script
-            file_exists($admin_page_file_path) ? filemtime($admin_page_file_path) : time(),
+            time(), // Force cache bust - temporary during development
             true
         );
     }
