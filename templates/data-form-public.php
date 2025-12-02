@@ -530,9 +530,20 @@ get_header();
                         <input type="text" class="facility-field" data-field="identification.currentName" data-autocomplete-category="facility">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Current Operator</label>
+                <!-- Current Operator (shown for corporate ownership) -->
+                <div class="form-group" id="current-operator-group">
+                    <label id="current-operator-label">Current Operator</label>
                     <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
+                </div>
+                <!-- Current Owner (shown for private ownership) -->
+                <div class="form-group" id="current-owner-group" style="display: none;">
+                    <label>Current Owner</label>
+                    <input type="text" class="facility-field" data-field="identification.currentOwner" data-autocomplete-category="human">
+                </div>
+                <!-- Past Owners (shown for private ownership) -->
+                <div class="form-group" id="past-owners-group" style="display: none;">
+                    <label>Past Owners</label>
+                    <div class="array-container" data-path="identification.pastOwners" data-autocomplete-category="human"></div>
                 </div>
                 <div class="form-group">
                     <label>Other Names</label>

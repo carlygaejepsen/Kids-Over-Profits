@@ -303,6 +303,25 @@
 
         function modifyOperationsForPrivateOwnershipAdmin(isPrivate) {
             const operationsSection = document.getElementById('operations-section');
+            
+            // Handle Identification section changes
+            const currentOperatorGroup = document.getElementById('current-operator-group');
+            const currentOwnerGroup = document.getElementById('current-owner-group');
+            const pastOwnersGroup = document.getElementById('past-owners-group');
+            
+            if (isPrivate) {
+                // Show owner fields, hide operator field in Identification
+                if (currentOperatorGroup) currentOperatorGroup.style.display = 'none';
+                if (currentOwnerGroup) currentOwnerGroup.style.display = 'block';
+                if (pastOwnersGroup) pastOwnersGroup.style.display = 'block';
+            } else {
+                // Show operator field, hide owner fields in Identification
+                if (currentOperatorGroup) currentOperatorGroup.style.display = 'block';
+                if (currentOwnerGroup) currentOwnerGroup.style.display = 'none';
+                if (pastOwnersGroup) pastOwnersGroup.style.display = 'none';
+            }
+            
+            // Handle Operations section changes
             if (!operationsSection) return;
             
             const otherOperatorsGroup = operationsSection.querySelector('.array-container[data-path="otherOperators"]');
