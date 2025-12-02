@@ -2083,7 +2083,11 @@
                 if (statusDiv) statusDiv.innerHTML = '<span style="color: #0066cc;">🔄 Processing...</span>';
 
                 try {
-                    const response = await fetch(`${apiBase}/wp-content/themes/kadence-child/api/save-master.php?action=rebuild-locations`, {
+                    // API is at site root /api/ not in theme directory
+                    const apiUrl = `${apiBase}/api/save-master.php?action=rebuild-locations`;
+                    console.log('🔍 Calling API:', apiUrl);
+
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     });
