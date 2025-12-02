@@ -985,7 +985,7 @@ body:not(.admin-bar) .fixed-toolbar {
     .fixed-toolbar .toolbar-section {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 3px;
         justify-content: center;
         align-items: center;
     }
@@ -995,8 +995,8 @@ body:not(.admin-bar) .fixed-toolbar {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 3px;
-        padding: 3px 5px;
+        gap: 2px;
+        padding: 2px 3px;
         align-items: center;
     }
 
@@ -1033,17 +1033,23 @@ body:not(.admin-bar) .fixed-toolbar {
 
     /* Tiny navigation buttons */
     .fixed-toolbar .facility-selector .btn-toolbar {
-        width: 28px;
-        height: 28px;
-        padding: 4px;
-        font-size: 11px;
+        width: 24px;
+        height: 24px;
+        padding: 2px;
+        font-size: 10px;
+        min-width: 24px;
+        flex-shrink: 0;
     }
 
-    /* Compact all toolbar buttons - keep auto width */
+    /* COMPACT toolbar buttons - smaller for mobile */
     .fixed-toolbar .btn-toolbar {
-        padding: 6px 10px;
-        font-size: 11px;
-        min-height: 32px;
+        padding: 4px 6px;
+        font-size: 9px;
+        min-height: 26px;
+        white-space: nowrap;
+        min-width: auto;
+        max-width: none;
+        flex-shrink: 1;
     }
 }
 
@@ -1058,7 +1064,7 @@ body:not(.admin-bar) .fixed-toolbar {
     .fixed-toolbar .toolbar-section {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 2px;
         justify-content: center;
     }
 
@@ -1067,8 +1073,8 @@ body:not(.admin-bar) .fixed-toolbar {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 2px;
-        padding: 2px 4px;
+        gap: 1px;
+        padding: 1px 2px;
         align-items: center;
     }
 
@@ -1091,9 +1097,22 @@ body:not(.admin-bar) .fixed-toolbar {
 
     /* More compact buttons with short labels */
     .fixed-toolbar .btn-toolbar {
-        padding: 5px 8px;
-        font-size: 10px;
-        min-height: 28px;
+        padding: 3px 5px;
+        font-size: 9px;
+        min-height: 24px;
+        white-space: nowrap;
+        min-width: auto;
+        max-width: none;
+        flex-shrink: 1;
+    }
+
+    /* Even smaller nav arrows */
+    .fixed-toolbar .facility-selector .btn-toolbar {
+        width: 22px;
+        height: 22px;
+        padding: 1px;
+        font-size: 9px;
+        min-width: 22px;
     }
 
     /* Replace full text with short labels */
