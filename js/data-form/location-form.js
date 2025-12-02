@@ -301,7 +301,9 @@ function updateLocationFacilitiesOverview() {
     // Populate facility items
     facilities.forEach((facility, index) => {
         const facilityName = facility.identification?.name || 'Unnamed Facility';
-        const operator = facility.identification?.currentOperator || 'Unknown Operator';
+        // Check for privately owned facilities - use currentOwner if no operator
+        const currentOwner = facility.identification?.currentOwner;
+        const operator = facility.identification?.currentOperator || (currentOwner ? 'Privately Owned' : 'Unknown Operator');
         const programType = facility.facilityDetails?.type || '';
         const status = facility.operatingPeriod?.status || '';
 

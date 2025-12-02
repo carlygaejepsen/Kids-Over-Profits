@@ -1730,7 +1730,9 @@
                     organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
-                        const operator = result.operator || result.facility.identification?.currentOperator || 'Unknown Operator';
+                        // Check for privately owned facilities - use currentOwner if no operator
+                        const currentOwner = result.facility.identification?.currentOwner;
+                        const operator = result.operator || result.facility.identification?.currentOperator || (currentOwner ? 'Privately Owned' : 'Unknown Operator');
                         const location = result.facility.location || 'Unknown Location';
                         
                         const resultDiv = document.createElement('div');
