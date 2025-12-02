@@ -1318,11 +1318,24 @@ async function loadAllProjectsFromCloud() {
             })));
 
             // Deduplicate location projects: prefer uppercase versions with data
-            const deduplicatedProjects = deduplicateLocationProjects(result.projects);
-            
+            console.log('🔍 About to deduplicate and sync location projects');
+            console.log('window.deduplicateLocationProjects available?', typeof window.deduplicateLocationProjects !== 'undefined');
+            console.log('window.syncLocationProjectsFromSources available?', typeof window.syncLocationProjectsFromSources !== 'undefined');
+
+            const deduplicatedProjects = typeof window.deduplicateLocationProjects === 'function'
+                ? window.deduplicateLocationProjects(result.projects)
+                : result.projects;
+
             // Sync location projects with facilities from company/referrer projects
-            syncLocationProjectsFromSources(deduplicatedProjects);
-            
+            if (typeof window.syncLocationProjectsFromSources === 'function') {
+                console.log('✅ Calling syncLocationProjectsFromSources...');
+                window.syncLocationProjectsFromSources(deduplicatedProjects);
+                console.log('✅ Sync complete. Total projects after sync:', Object.keys(deduplicatedProjects).length);
+            } else {
+                console.error('❌ syncLocationProjectsFromSources function not found! Location projects will NOT auto-populate.');
+                console.error('This means location-form.js did not load properly or did not expose the function.');
+            }
+
             window.projects = deduplicatedProjects;
             projects = window.projects;
 
