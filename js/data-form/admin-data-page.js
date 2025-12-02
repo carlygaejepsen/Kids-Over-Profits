@@ -2064,3 +2064,61 @@
         if (typeof window.initializeOverviewTabSwitching === 'function') {
             initializeOverviewTabSwitching();
         }
+
+        // ============================================
+        // REBUILD LOCATIONS BUTTON HANDLER
+        // ============================================
+        const rebuildBtn = document.getElementById('rebuild-locations-btn');
+        if (rebuildBtn) {
+            rebuildBtn.addEventListener('click', async function() {
+                const statusDiv = document.getElementById('rebuild-status');
+                const apiBase = window.KOP_FACILITY_FORM_CONFIG?.apiBase || window.location.origin;
+
+                if (!confirm('This will rebuild ALL location projects from existing company/referrer data. Continue?')) {
+                    return;
+                }
+
+                rebuildBtn.disabled = true;
+                rebuildBtn.textContent = '⏳ Rebuilding...';
+                if (statusDiv) statusDiv.innerHTML = '<span style="color: #0066cc;">🔄 Processing...</span>';
+
+                try {
+                    const response = await fetch(`${apiBase}/wp-content/themes/kadence-child/api/save-master.php?action=rebuild-locations`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (statusDiv) {
+                            statusDiv.innerHTML = `<span style="color: #28a745;">✅ ${result.message}</span>`;
+                        }
+                        console.log('✅ Location rebuild successful:', result.details);
+
+                        // Reload projects to show the new location projects
+                        setTimeout(() => {
+                            if (typeof window.loadProjectsFromCloud === 'function') {
+                                window.loadProjectsFromCloud();
+                            }
+                        }, 1000);
+                    } else {
+                        if (statusDiv) {
+                            statusDiv.innerHTML = `<span style="color: #dc3545;">❌ Error: ${result.error}</span>`;
+                        }
+                        console.error('❌ Location rebuild failed:', result.error);
+                    }
+                } catch (error) {
+                    if (statusDiv) {
+                        statusDiv.innerHTML = `<span style="color: #dc3545;">❌ Network error: ${error.message}</span>`;
+                    }
+                    console.error('❌ Rebuild request failed:', error);
+                } finally {
+                    rebuildBtn.disabled = false;
+                    rebuildBtn.textContent = '🔄 Rebuild All Location Projects';
+                }
+            });
+            console.log('✅ Rebuild locations button handler attached');
+        }
+
+        console.log('[Admin Data Page] Initialization complete with rebuild handler');
