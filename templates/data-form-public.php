@@ -1,7 +1,8 @@
 <?php
 /**
- * Template Name: Public Data Form
- * Template Post Type: page
+ * Public Data Form Template Content
+ * 
+ * This file contains the form markup. It is loaded by page-data.php.
  */
 
 get_header();

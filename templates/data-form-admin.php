@@ -1,7 +1,8 @@
 <?php
 /**
- * Template Name: Admin Data Form
- * Template Post Type: page
+ * Admin Data Form Template Content
+ * 
+ * This file contains the form markup. It is loaded by page-admin-data.php.
  */
 
 get_header();
