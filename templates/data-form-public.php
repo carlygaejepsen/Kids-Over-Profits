@@ -32,50 +32,12 @@ get_header();
                     <div class="content-header">
                         <h3>🏢 Companies / Operators</h3>
                     </div>
-                    <div class="project-management" id="project-panel-inner">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
-                        </div>
-                        <div class="form-group" style="text-align: center;">
-                            <label>Project Management</label>
-                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <button class="btn" id="new-project-btn">New Project</button>
-                                <button class="btn" id="export-all-btn">Export All Projects</button>
-                                <button class="btn" id="generate-report-btn">Generate Report</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="upload-status" style="display: none;"></div>
                 </div>
 
                 <!-- States Content -->
                 <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
                         <h3>🌍 Locations / States</h3>
-                    </div>
-                    <div class="project-management location-project-management">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
-                        <div id="project-status-location" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                        <div class="form-group">
-                            <label>Saved Location Projects</label>
-                            <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
-                            </div>
-                            <div class="form-group" style="text-align: center;">
-                                <label>Project Management</label>
-                                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                    <button class="btn" id="new-project-btn-location">New Project</button>
-                                    <button class="btn" id="export-all-btn-location">Export All Projects</button>
-                                    <button class="btn" id="generate-report-btn-location">Generate Report</button>
-                                </div>
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
                     </div>
 
                     <!-- Facilities Overview for Locations -->
@@ -118,26 +80,6 @@ get_header();
                     <div class="content-header">
                         <h3>👥 Referrers (Education Consultants / School Districts)</h3>
                     </div>
-
-                    <div class="project-management" id="referrer-project-panel-inner">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
-                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Saved Referrer Projects</label>
-                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
-                        </div>
-                        <div class="form-group" style="text-align: center;">
-                            <label>Project Management</label>
-                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <button class="btn" id="new-referrer-project-btn">New Project</button>
-                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
-                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

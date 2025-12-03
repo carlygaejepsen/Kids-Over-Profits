@@ -880,8 +880,12 @@
                         if (!arr || arr.length === 0) return '';
                         let html = '<div class="detail-row"><div class="detail-label">' + label + '</div><div class="detail-value"><ul style="margin: 0; padding-left: 20px;">';
                         arr.forEach(item => {
-                            if (typeof item === 'object' && item.name) {
-                                html += '<li>' + (item.role ? '<strong>' + escapeHtml(item.role) + ':</strong> ' : '') + renderValue(item.name) + '</li>';
+                            if (typeof item === 'object' && item !== null) {
+                                if (item.name) {
+                                    html += '<li>' + (item.role ? '<strong>' + escapeHtml(item.role) + ':</strong> ' : '') + renderValue(item.name) + '</li>';
+                                } else {
+                                    html += '<li>' + renderValue(JSON.stringify(item)) + '</li>';
+                                }
                             } else if (hasValue(item)) {
                                 html += '<li>' + renderValue(item) + '</li>';
                             }

@@ -3916,15 +3916,10 @@ window.jumpToItem = function(index) {
         }
     } else {
         // Jump to facility
-        if (typeof window.switchToFacility === 'function') {
-            window.switchToFacility(index);
-            // Scroll to top of form
-            const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-            if (facilityMainWrapper) {
-                facilityMainWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+        if (typeof navigateToFacility === 'function') {
+            navigateToFacility(index);
         } else {
-            console.error('switchToFacility function not available');
+            console.error('navigateToFacility function not available');
         }
     }
 }
