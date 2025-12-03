@@ -344,34 +344,31 @@ get_header();
             </div>
         </div>
 
-        <!-- Facility & Project Loader Panel (Outside Toolbar) -->
-        <div class="loader-panels" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
-            <!-- Facility Loader -->
-            <div class="facility-loader-panel" style="background: #B6E3D4; border: 2px solid #33A7B5; border-radius: 8px; padding: 20px;">
-                <h2 style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">🏢 Jump to Facility</h2>
-                <div class="form-group">
-                    <label style="color: #000435; font-weight: 600;">All Facilities</label>
-                    <div id="quick-facilities-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #33A7B5; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
-                        <div style="color: #6b7280; font-style: italic;">No facilities yet...</div>
-                    </div>
+        <!-- Project Loader Panel -->
+        <div class="project-loader-panel" style="background: #FFF5CB; border: 2px solid #FC8ED6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <h2 style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">📂 Load Saved Project</h2>
+            <div class="form-group">
+                <label style="color: #000435; font-weight: 600;">Your Saved Projects</label>
+                <div id="quick-projects-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #FC8ED6; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
+                    <div style="color: #6b7280; font-style: italic;">Loading projects...</div>
                 </div>
             </div>
-
-            <!-- Project Loader -->
-            <div class="project-loader-panel" style="background: #FFF5CB; border: 2px solid #FC8ED6; border-radius: 8px; padding: 20px;">
-                <h2 style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">📂 Load Saved Project</h2>
-                <div class="form-group">
-                    <label style="color: #000435; font-weight: 600;">Your Saved Projects</label>
-                    <div id="quick-projects-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #FC8ED6; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
-                        <div style="color: #6b7280; font-style: italic;">Loading projects...</div>
-                    </div>
+            <div class="form-group" style="margin-top: 15px; text-align: center;">
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn" id="new-project-quick-btn" style="background: #33A7B5; color: white;">➕ New Project</button>
+                    <button class="btn" id="export-all-quick-btn" style="background: #FC8ED6; color: white;">💾 Export All</button>
+                    <button class="btn" id="generate-report-quick-btn" style="background: #B6E3D4; color: #000435;">📄 Generate Report</button>
                 </div>
-                <div class="form-group" style="margin-top: 15px; text-align: center;">
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button class="btn" id="new-project-quick-btn" style="background: #33A7B5; color: white;">➕ New Project</button>
-                        <button class="btn" id="export-all-quick-btn" style="background: #FC8ED6; color: white;">💾 Export All</button>
-                        <button class="btn" id="generate-report-quick-btn" style="background: #B6E3D4; color: #000435;">📄 Generate Report</button>
-                    </div>
+            </div>
+        </div>
+
+        <!-- Facility/Consultant Loader Panel -->
+        <div class="facility-loader-panel" style="background: #B6E3D4; border: 2px solid #33A7B5; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <h2 id="quick-loader-heading" style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">🏢 Jump to Facility</h2>
+            <div class="form-group">
+                <label id="quick-loader-label" style="color: #000435; font-weight: 600;">All Facilities in Current Project</label>
+                <div id="quick-facilities-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #33A7B5; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
+                    <div style="color: #6b7280; font-style: italic;">No facilities yet...</div>
                 </div>
             </div>
         </div>

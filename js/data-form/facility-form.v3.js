@@ -3831,40 +3831,107 @@ function refreshQuickFacilitiesList() {
     const quickFacilitiesContainer = document.getElementById('quick-facilities-list');
     if (!quickFacilitiesContainer) return;
 
-    const facilities = window.formData?.facilities || [];
+    // Detect current view
+    const activeTab = document.querySelector('.category-tab.active');
+    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
 
-    if (!facilities.length) {
-        quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
-        return;
+    // Update heading and label
+    const heading = document.getElementById('quick-loader-heading');
+    const label = document.getElementById('quick-loader-label');
+
+    if (isReferrerView) {
+        // Show consultants
+        if (heading) heading.textContent = '👥 Jump to Consultant';
+        if (label) label.textContent = 'All Consultants in Current Project';
+
+        const consultants = window.formData?.referrerConsultants || [];
+
+        if (!consultants.length) {
+            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No consultants in current project</div>';
+            return;
+        }
+
+        const consultantCards = consultants.map((consultant, index) => {
+            const fullName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`;
+            const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || '';
+            const role = consultant.role || consultant.credentials || '';
+
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
+                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(fullName)}</div>
+                    <div style="font-size: 12px; color: #6b7280;">
+                        ${location}${role ? ' • ' + escapeHtmlForAttr(role) : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        quickFacilitiesContainer.innerHTML = consultantCards;
+    } else {
+        // Show facilities
+        if (heading) heading.textContent = '🏢 Jump to Facility';
+        if (label) label.textContent = 'All Facilities in Current Project';
+
+        const facilities = window.formData?.facilities || [];
+
+        if (!facilities.length) {
+            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
+            return;
+        }
+
+        const facilityCards = facilities.map((facility, index) => {
+            const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
+            const location = facility.location || 'Unknown location';
+            const operator = facility.identification?.currentOperator || '';
+
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
+                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
+                    <div style="font-size: 12px; color: #6b7280;">
+                        ${location}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        quickFacilitiesContainer.innerHTML = facilityCards;
     }
-
-    const facilityCards = facilities.map((facility, index) => {
-        const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
-        const location = facility.location || 'Unknown location';
-        const operator = facility.identification?.currentOperator || '';
-
-        return `<div class="facility-quick-item" onclick="jumpToFacility(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
-                <div style="font-size: 12px; color: #6b7280;">
-                    ${location}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
-                </div>
-            </div>`;
-    }).join('');
-
-    quickFacilitiesContainer.innerHTML = facilityCards;
 }
 
-window.jumpToFacility = function(index) {
-    if (typeof window.switchToFacility === 'function') {
-        window.switchToFacility(index);
-        // Scroll to top of form
-        const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-        if (facilityMainWrapper) {
-            facilityMainWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// Jump to facility or consultant depending on current view
+window.jumpToItem = function(index) {
+    // Detect current view
+    const activeTab = document.querySelector('.category-tab.active');
+    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
+
+    if (isReferrerView) {
+        // Jump to consultant
+        window.currentConsultantIndex = index;
+        if (typeof window.loadConsultantData === 'function') {
+            window.loadConsultantData();
+        }
+        if (typeof window.updateConsultantsOverview === 'function') {
+            window.updateConsultantsOverview();
+        }
+        // Scroll to referrer section
+        const referrerSection = document.getElementById('referrer-section');
+        if (referrerSection) {
+            referrerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     } else {
-        console.error('switchToFacility function not available');
+        // Jump to facility
+        if (typeof window.switchToFacility === 'function') {
+            window.switchToFacility(index);
+            // Scroll to top of form
+            const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+            if (facilityMainWrapper) {
+                facilityMainWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            console.error('switchToFacility function not available');
+        }
     }
+}
+
+// Keep legacy function for backward compatibility
+window.jumpToFacility = function(index) {
+    window.jumpToItem(index);
 }
 
 function updateProjectStatus() {
