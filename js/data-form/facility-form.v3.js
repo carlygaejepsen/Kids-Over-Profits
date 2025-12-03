@@ -3031,8 +3031,7 @@ window.updateAllUI = function() {
         renderSavedProjectsList();
         initializeSectionToggles();
         updateProjectStatus();
-        refreshQuickFacilitiesList();
-
+        
         // Initialize autocomplete fields - use delegate or window function
         if (typeof delegateInitializeAutocompleteFields === 'function') {
             delegateInitializeAutocompleteFields();
@@ -3822,111 +3821,6 @@ function refreshSavedProjectPanels() {
         console.log(`🚀 Quick projects list: ${projectNames.length} total projects`);
         quickProjectsContainer.innerHTML = buildProjectCards(projectNames, '📭 No saved projects yet');
     }
-
-    // Populate quick facilities list (current project's facilities)
-    refreshQuickFacilitiesList();
-}
-
-function refreshQuickFacilitiesList() {
-    const quickFacilitiesContainer = document.getElementById('quick-facilities-list');
-    if (!quickFacilitiesContainer) return;
-
-    // Detect current view
-    const activeTab = document.querySelector('.category-tab.active');
-    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
-
-    // Update heading and label
-    const heading = document.getElementById('quick-loader-heading');
-    const label = document.getElementById('quick-loader-label');
-
-    if (isReferrerView) {
-        // Show consultants
-        if (heading) heading.textContent = '👥 Jump to Consultant';
-        if (label) label.textContent = 'All Consultants in Current Project';
-
-        const consultants = window.formData?.referrerConsultants || [];
-
-        if (!consultants.length) {
-            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No consultants in current project</div>';
-            return;
-        }
-
-        const consultantCards = consultants.map((consultant, index) => {
-            const fullName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`;
-            const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || '';
-            const role = consultant.role || consultant.credentials || '';
-
-            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(fullName)}</div>
-                    <div style="font-size: 12px; color: #6b7280;">
-                        ${location}${role ? ' • ' + escapeHtmlForAttr(role) : ''}
-                    </div>
-                </div>`;
-        }).join('');
-
-        quickFacilitiesContainer.innerHTML = consultantCards;
-    } else {
-        // Show facilities
-        if (heading) heading.textContent = '🏢 Jump to Facility';
-        if (label) label.textContent = 'All Facilities in Current Project';
-
-        const facilities = window.formData?.facilities || [];
-
-        if (!facilities.length) {
-            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
-            return;
-        }
-
-        const facilityCards = facilities.map((facility, index) => {
-            const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
-            const location = facility.location || 'Unknown location';
-            const operator = facility.identification?.currentOperator || '';
-
-            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
-                    <div style="font-size: 12px; color: #6b7280;">
-                        ${location}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
-                    </div>
-                </div>`;
-        }).join('');
-
-        quickFacilitiesContainer.innerHTML = facilityCards;
-    }
-}
-
-// Jump to facility or consultant depending on current view
-window.jumpToItem = function(index) {
-    // Detect current view
-    const activeTab = document.querySelector('.category-tab.active');
-    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
-
-    if (isReferrerView) {
-        // Jump to consultant
-        window.currentConsultantIndex = index;
-        if (typeof window.loadConsultantData === 'function') {
-            window.loadConsultantData();
-        }
-        if (typeof window.updateConsultantsOverview === 'function') {
-            window.updateConsultantsOverview();
-        }
-        // Scroll to referrer section
-        const referrerSection = document.getElementById('referrer-section');
-        if (referrerSection) {
-            referrerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    } else {
-        // Jump to facility
-        if (typeof navigateToFacility === 'function') {
-            navigateToFacility(index);
-        } else {
-            console.error('navigateToFacility function not available');
-        }
-    }
-}
-
-// Keep legacy function for backward compatibility
-window.jumpToFacility = function(index) {
-    window.jumpToItem(index);
 }
 
 function updateProjectStatus() {
