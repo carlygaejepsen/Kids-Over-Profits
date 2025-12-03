@@ -1115,45 +1115,19 @@ body:not(.admin-bar) .fixed-toolbar {
         min-width: 22px;
     }
 
-    /* Replace full text with short labels */
-    #add-facility-btn-toolbar {
-        font-size: 0;
-    }
-    #add-facility-btn-toolbar::after {
-        content: "➕ Add";
+    /* Mobile toolbar buttons - keep labels, just make them compact */
+    .fixed-toolbar .btn-toolbar {
         font-size: 10px;
+        padding: 4px 6px;
     }
 
-    #clone-facility-btn-toolbar {
-        font-size: 0;
+    /* Scroll to top button styling */
+    #scroll-to-top-btn-toolbar {
+        background: #6b7280;
+        color: white;
     }
-    #clone-facility-btn-toolbar::after {
-        content: "📋 Copy";
-        font-size: 10px;
-    }
-
-    #remove-facility-btn-toolbar {
-        font-size: 0;
-    }
-    #remove-facility-btn-toolbar::after {
-        content: "🗑️ Del";
-        font-size: 10px;
-    }
-
-    #show-organizer-modal-btn {
-        font-size: 0;
-    }
-    #show-organizer-modal-btn::after {
-        content: "🔍";
-        font-size: 10px;
-    }
-
-    #submit-suggestion-btn-toolbar {
-        font-size: 0;
-    }
-    #submit-suggestion-btn-toolbar::after {
-        content: "📮";
-        font-size: 10px;
+    #scroll-to-top-btn-toolbar:hover {
+        background: #4b5563;
     }
 
     .form-row,

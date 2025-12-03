@@ -326,7 +326,7 @@ get_header();
                 <div class="toolbar-section">
                     <div class="toolbar-group">
                         <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone this facility">📋 Clone</button>
+                        <button class="btn-toolbar" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>

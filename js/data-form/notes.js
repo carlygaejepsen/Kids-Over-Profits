@@ -1007,6 +1007,13 @@ function getRenderedNotesForField(field) {
  * @param {HTMLElement} checkbox - The checkbox element
  */
 function ensureCheckboxNote(checkbox) {
+    // Skip slider-style toggles (hidden checkboxes used for toggle switches)
+    const isSliderToggle = checkbox.style.display === 'none' && 
+                           checkbox.id && checkbox.id.endsWith('-toggle');
+    if (isSliderToggle) {
+        return;
+    }
+
     const group = checkbox.closest('.form-group') || checkbox.closest('.checkbox-group') || checkbox.parentElement;
     if (!group) {
         return;
@@ -1037,6 +1044,14 @@ function initializeCheckboxNoteTriggers() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
         if (checkbox.dataset.noteAutoInit === 'true') {
+            return;
+        }
+
+        // Skip slider-style toggles (hidden checkboxes used for toggle switches)
+        // These are identified by: hidden display + ID ending in '-toggle'
+        const isSliderToggle = checkbox.style.display === 'none' && 
+                               checkbox.id && checkbox.id.endsWith('-toggle');
+        if (isSliderToggle) {
             return;
         }
 

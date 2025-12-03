@@ -1354,7 +1354,11 @@ async function loadAllProjectsFromCloud() {
                 document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
                     delete field.dataset.autocompleteInit;
                 });
-                initializeAutocompleteFields();
+                if (typeof delegateInitializeAutocompleteFields === 'function') {
+                    delegateInitializeAutocompleteFields();
+                } else if (typeof window.initializeAutocompleteFields === 'function') {
+                    window.initializeAutocompleteFields();
+                }
 
                 // Refresh saved project panels now that projects are available
                 debugLog('Refreshing saved project panels...');
@@ -3027,7 +3031,14 @@ window.updateAllUI = function() {
         renderSavedProjectsList();
         initializeSectionToggles();
         updateProjectStatus();
-        initializeAutocompleteFields();
+        
+        // Initialize autocomplete fields - use delegate or window function
+        if (typeof delegateInitializeAutocompleteFields === 'function') {
+            delegateInitializeAutocompleteFields();
+        } else if (typeof window.initializeAutocompleteFields === 'function') {
+            window.initializeAutocompleteFields();
+        }
+        
         updateLabelsForProjectType(window.currentProjectName || '');
         initializeNoteControls();
         updateToolbarFacilityInfo(); // Update toolbar when UI updates
@@ -3358,11 +3369,13 @@ function initializeToolbarButtons() {
         addFacilityBtnToolbar.dataset.listenerAttached = 'true';
     }
 
-    // Clone Facility button
-    const cloneFacilityBtnToolbar = document.getElementById('clone-facility-btn-toolbar');
-    if (cloneFacilityBtnToolbar && !cloneFacilityBtnToolbar.dataset.listenerAttached) {
-        cloneFacilityBtnToolbar.addEventListener('click', cloneFacility);
-        cloneFacilityBtnToolbar.dataset.listenerAttached = 'true';
+    // Scroll to Top button
+    const scrollToTopBtnToolbar = document.getElementById('scroll-to-top-btn-toolbar');
+    if (scrollToTopBtnToolbar && !scrollToTopBtnToolbar.dataset.listenerAttached) {
+        scrollToTopBtnToolbar.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        scrollToTopBtnToolbar.dataset.listenerAttached = 'true';
     }
 
     // Remove Facility button
@@ -4815,7 +4828,11 @@ async function initializeForm() {
     });
 
     // Initialize autocomplete fields
-    initializeAutocompleteFields();
+    if (typeof delegateInitializeAutocompleteFields === 'function') {
+        delegateInitializeAutocompleteFields();
+    } else if (typeof window.initializeAutocompleteFields === 'function') {
+        window.initializeAutocompleteFields();
+    }
 
     initializeCategoryTabs();
     // Update all UI
