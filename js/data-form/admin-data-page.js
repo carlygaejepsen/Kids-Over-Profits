@@ -383,10 +383,23 @@
         if (privateOwnershipSliderTrack && privateOwnershipToggle) {
             privateOwnershipSliderTrack.addEventListener('click', function() {
                 privateOwnershipToggle.checked = !privateOwnershipToggle.checked;
+                
+                // Save the private ownership flag to the current facility
+                const isPrivate = privateOwnershipToggle.checked;
+                if (window.formData && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+                    window.formData.facilities[window.currentFacilityIndex].isPrivatelyOwned = isPrivate;
+                    console.log(`📝 Set isPrivatelyOwned = ${isPrivate} for facility ${window.currentFacilityIndex}`);
+                }
+                
                 updatePrivateOwnershipSliderAppearance();
                 
                 if (privateOwnershipToggle.checked) {
                     clearOperatorFieldsForPrivateAdmin();
+                }
+                
+                // Trigger autosave
+                if (typeof autoSave === 'function') {
+                    autoSave();
                 }
                 
                 // Trigger change event for form tracking

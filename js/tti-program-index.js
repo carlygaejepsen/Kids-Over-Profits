@@ -121,8 +121,18 @@ function displayFacilities(facilitiesData, containerId) {
         // Check if this is a privately owned facility (has isPrivatelyOwned flag set)
         const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
         
-        const operatorNameRaw = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(operatorGroup && operatorGroup.name);
-        let operatorName = operatorNameRaw || (hasPrivateOwner ? 'Privately Owned' : 'Unknown Operator');
+        // Get the actual operator name (not the project name)
+        const actualOperatorName = cleanText(operator.name) || cleanText(operator.currentName);
+        
+        // Determine display name: if privately owned, show that; otherwise use operator name or project name
+        let operatorName;
+        if (hasPrivateOwner && !actualOperatorName) {
+            operatorName = 'Privately Owned';
+        } else if (actualOperatorName) {
+            operatorName = actualOperatorName;
+        } else {
+            operatorName = cleanText(operatorGroup && operatorGroup.name) || 'Unknown Operator';
+        }
 
         // Do not display operators with an unknown name.
         if (operatorName === 'Unknown Operator') {
