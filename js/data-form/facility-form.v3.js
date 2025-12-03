@@ -3739,6 +3739,7 @@ function refreshSavedProjectPanels() {
     const companyContainer = document.getElementById('company-saved-projects-list');
     const locationContainer = document.getElementById('location-saved-projects-list');
     const referrerContainer = document.getElementById('referrer-saved-projects-list');
+    const quickProjectsContainer = document.getElementById('quick-projects-list');
 
     // DEBUG: Log project categorization
     console.log('🔍 refreshSavedProjectPanels called');
@@ -3813,6 +3814,12 @@ function refreshSavedProjectPanels() {
         const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'referrers');
         console.log(`👥 Referrer projects: ${referrerNames.length}`, referrerNames);
         referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet. Create one using the "New Project" button.');
+    }
+
+    // Populate quick projects list (all projects combined)
+    if (quickProjectsContainer) {
+        console.log(`🚀 Quick projects list: ${projectNames.length} total projects`);
+        quickProjectsContainer.innerHTML = buildProjectCards(projectNames, '📭 No saved projects yet');
     }
 }
 
@@ -4609,6 +4616,29 @@ function attachButtonListeners() {
             generateProjectsReport({ categories: ['locations'], filename: 'projects-report-locations.json' });
         };
         generateReportBtnLocation.dataset.listenerAttached = 'true';
+    }
+
+    // Quick buttons (duplicate panel outside toolbar)
+    const newBtnQuick = document.getElementById('new-project-quick-btn');
+    if (newBtnQuick && !newBtnQuick.dataset.listenerAttached) {
+        newBtnQuick.onclick = newProject;
+        newBtnQuick.dataset.listenerAttached = 'true';
+    }
+
+    const exportAllBtnQuick = document.getElementById('export-all-quick-btn');
+    if (exportAllBtnQuick && !exportAllBtnQuick.dataset.listenerAttached) {
+        exportAllBtnQuick.onclick = () => {
+            exportProjectsToFile({ filename: 'projects-export-all.json' });
+        };
+        exportAllBtnQuick.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtnQuick = document.getElementById('generate-report-quick-btn');
+    if (generateReportBtnQuick && !generateReportBtnQuick.dataset.listenerAttached) {
+        generateReportBtnQuick.onclick = () => {
+            generateProjectsReport({ filename: 'projects-report-all.json' });
+        };
+        generateReportBtnQuick.dataset.listenerAttached = 'true';
     }
 
     const newReferrerBtn = document.getElementById('new-referrer-project-btn');
