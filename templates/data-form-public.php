@@ -10,7 +10,7 @@ get_header();
 
     <div class="container">
         <div class="admin-header">
-            <h1>📮 Submit Facility Data Suggestions</h1>
+            <h1>📮 Submit TTI Data Suggestions</h1>
         </div>
 
         <div class="admin-warning">
