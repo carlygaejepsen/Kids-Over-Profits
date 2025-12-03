@@ -3133,6 +3133,11 @@ function updateTableOfContents() {
             facilityList.appendChild(item);
         });
     }
+
+    // Also update the quick facilities list
+    if (typeof refreshQuickFacilitiesList === 'function') {
+        refreshQuickFacilitiesList();
+    }
 }
 
 function updateFacilityControls() {
@@ -3820,6 +3825,51 @@ function refreshSavedProjectPanels() {
     if (quickProjectsContainer) {
         console.log(`🚀 Quick projects list: ${projectNames.length} total projects`);
         quickProjectsContainer.innerHTML = buildProjectCards(projectNames, '📭 No saved projects yet');
+    }
+
+    // Populate quick facilities list
+    refreshQuickFacilitiesList();
+}
+
+function refreshQuickFacilitiesList() {
+    const quickFacilitiesContainer = document.getElementById('quick-facilities-list');
+    if (!quickFacilitiesContainer) return;
+
+    const facilities = window.formData?.facilities || [];
+
+    if (!facilities.length) {
+        quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
+        return;
+    }
+
+    const facilityCards = facilities.map((facility, index) => {
+        const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
+        const location = facility.location || 'Unknown location';
+        const operator = facility.identification?.currentOperator || '';
+
+        return `<div class="facility-quick-item" onclick="jumpToFacility(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
+                <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
+                <div style="font-size: 12px; color: #6b7280;">
+                    ${location}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
+                </div>
+            </div>`;
+    }).join('');
+
+    quickFacilitiesContainer.innerHTML = facilityCards;
+}
+
+window.jumpToFacility = function(index) {
+    if (typeof window.switchToFacility === 'function') {
+        window.switchToFacility(index);
+        // Scroll to top of form
+        const facilityMainWrapper = document.getElementById('facility-main-wrapper');
+        if (facilityMainWrapper) {
+            facilityMainWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    } else if (typeof navigateToFacility === 'function') {
+        navigateToFacility(index);
+    } else {
+        console.error('No facility navigation function available');
     }
 }
 
