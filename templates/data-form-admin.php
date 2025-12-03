@@ -320,6 +320,37 @@ get_header();
 
         </div>
 
+        <!-- Fixed Toolbar -->
+        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations,referrers">
+            <div class="toolbar-header">
+                <div class="toolbar-title">
+                    <strong>📋 Admin Editor</strong>
+                    <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
+                </div>
+                <button class="toolbar-toggle" id="toolbar-toggle-btn" title="Minimize toolbar">−</button>
+            </div>
+            <div class="toolbar-content" id="toolbar-content">
+                <div class="toolbar-section">
+                    <div class="toolbar-group">
+                        <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
+                        <button class="btn-toolbar" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
+                    </div>
+                    <div class="toolbar-group facility-nav-group">
+                        <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
+                        <div class="facility-selector">
+                            <button class="btn-toolbar" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <select id="facility-dropdown" class="facility-dropdown"></select>
+                            <button class="btn-toolbar" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                        </div>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone current facility">📋 Clone</button>
+                        <button class="btn-toolbar btn-danger" id="delete-facility-btn-toolbar" title="Delete current facility">🗑️ Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="facility-main-wrapper" data-section-views="companies,locations">
         <!-- Facility Table of Contents (Companies only - Locations has its own in #states-content) -->
         <div class="facility-toc" id="facility-toc" data-section-views="companies">
@@ -335,30 +366,6 @@ get_header();
                 <div class="mt-15 d-flex gap-10 flex-center">
                     <button class="btn" id="add-facility-main-btn">Add New Facility</button>
                     <button class="btn" id="sort-facilities-btn">Sort Alphabetically</button>
-
-                </div>
-            </div>
-        </div>
-        
-        <!-- Facility Navigation -->
-        <div class="facility-controls">
-            <div class="facility-header">
-                <div class="d-flex align-items-center gap-15">
-                    <strong>Current Facility: <span id="facility-counter">1 of 1</span></strong>
-                    <span id="current-facility-name" class="text-muted fw-normal"></span>
-                    <button class="btn" id="facility-toolbar-toggle">🔽</button>
-                </div>
-                <div class="facility-toolbar-expandable" id="facility-toolbar-expandable">
-                    <div class="d-flex gap-5">
-                        <button class="btn d-none" id="prev-facility-btn">⬅️ Previous</button>
-                        <button class="btn d-none" id="next-facility-btn">Next ➡️</button>
-                    </div>
-                    <div class="controls">
-                        <button class="btn" id="add-facility-btn">Add Facility</button>
-                        <button class="btn d-none" id="remove-facility-btn">Remove Current</button>
-                        <button class="btn" id="clone-facility-btn">Clone Facility</button>
-
-                    </div>
                 </div>
             </div>
         </div>
