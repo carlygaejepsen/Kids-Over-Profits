@@ -44,6 +44,68 @@ function displayFacilities(facilitiesData, containerId) {
         });
         return combined;
     };
+    const formatFieldLabel = (key) => {
+        if (!key || typeof key !== 'string') return 'Field';
+        return key
+            .replace(/\./g, ' ')
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/has\s*/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim() || 'Field';
+    };
+    const getNotesForKey = (fieldNotes, key) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object' || !key) return [];
+        const notes = fieldNotes[key];
+        if (!notes) return [];
+        const collected = [];
+        const addNote = (text) => {
+            if (text && text.trim()) collected.push(text.trim());
+        };
+        if (Array.isArray(notes)) {
+            notes.forEach(note => {
+                if (typeof note === 'string') {
+                    addNote(note);
+                } else if (note && typeof note === 'object' && note.text) {
+                    addNote(note.text);
+                }
+            });
+        } else if (typeof notes === 'string') {
+            addNote(notes);
+        } else if (notes && typeof notes === 'object' && notes.text) {
+            addNote(notes.text);
+        }
+        return collected;
+    };
+    const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
+        const notes = getNotesForKey(fieldNotes, key);
+        if (!notes.length) return '';
+        if (usedKeys && key) usedKeys.add(key);
+        const noteText = notes.map(n => escapeHtml(n)).join('; ');
+        return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
+    };
+    const renderRemainingFieldNotes = (fieldNotes, usedKeys) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object') return '';
+        const items = [];
+        Object.keys(fieldNotes).forEach(key => {
+            if (usedKeys && usedKeys.has(key)) return;
+            const notes = getNotesForKey(fieldNotes, key);
+            if (!notes.length) return;
+            const label = formatFieldLabel(key);
+            notes.forEach(text => {
+                items.push({ label, text });
+            });
+        });
+        if (!items.length) return '';
+        const list = items.map(({ label, text }) =>
+            `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`
+        ).join('');
+        return `
+            <div class="facility-field-notes">
+                <p><strong>Additional Field Notes</strong></p>
+                <ul>${list}</ul>
+            </div>
+        `;
+    };
     const normalizeProjectCategory = project => {
         if (!project || typeof project !== 'object') {
             return 'companies';
@@ -258,6 +320,8 @@ function displayFacilities(facilitiesData, containerId) {
             const memberships = joinList(facility && facility.memberships);
             const licensing = joinList(facility && facility.licensing);
             const profileLinks = joinList(facility && facility.profileLinks);
+            const fieldNotes = (facility && facility.fieldNotes) || {};
+            const usedFieldNoteKeys = new Set();
 
             const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
             const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -323,6 +387,7 @@ function displayFacilities(facilitiesData, containerId) {
 
                 if (field.label) {
                     otherFacilityData += '<p><strong>' + escapeHtml(field.label) + ':</strong> ' + renderedValue + '</p>';
+                    otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 } else {
                     otherFacilityData += '<p>' + renderedValue + '</p>';
                 }
@@ -382,6 +447,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <div class="facility-extra-content">
                                 ${otherFacilityData}
                                 ${resourcesAvailable}
+                                ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                             </div>
                         </details>
                     </div>

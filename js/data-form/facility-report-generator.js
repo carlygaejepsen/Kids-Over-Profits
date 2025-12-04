@@ -808,7 +808,7 @@ function renderFieldNotes(fieldNotes, sectionLabel = 'Field') {
         if (!fieldLabel) {
             // Convert camelCase/dot notation to readable format
             fieldLabel = key
-                .replace(/\./g, ' → ')
+                .replace(/\./g, ' ')
                 .replace(/([A-Z])/g, ' $1')
                 .replace(/^./, str => str.toUpperCase())
                 .replace(/has\s*/gi, '')

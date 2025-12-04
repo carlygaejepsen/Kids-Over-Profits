@@ -378,6 +378,19 @@ function initializeNoteControls() {
  * @returns {object} - The notes object for the current facility
  */
 function getCurrentFacilityNotes() {
+    // Prefer the active facility on formData when available
+    if (typeof window.getCurrentFacilityData === 'function') {
+        const facilityData = window.getCurrentFacilityData();
+        if (facilityData) {
+            if (!facilityData.fieldNotes || typeof facilityData.fieldNotes !== 'object') {
+                facilityData.fieldNotes = {};
+            }
+            allFacilityNotes[notesCurrentFacilityIndex] = facilityData.fieldNotes;
+            return facilityData.fieldNotes;
+        }
+    }
+
+    // Fallback to the legacy per-facility cache
     if (!allFacilityNotes[notesCurrentFacilityIndex]) {
         allFacilityNotes[notesCurrentFacilityIndex] = {};
     }
@@ -1110,6 +1123,22 @@ function initializeFieldNotes() {
     });
 
     debugLog('Field notes functionality initialized');
+
+    // Keep in sync when the active facility changes
+    document.addEventListener('facilityChanged', () => {
+        // Refresh the active facility index
+        updateCurrentFacility();
+
+        // Pull any persisted notes from the current facility record if available
+        if (typeof window.getCurrentFacilityData === 'function') {
+            const facilityData = window.getCurrentFacilityData();
+            if (facilityData && facilityData.fieldNotes) {
+                allFacilityNotes[notesCurrentFacilityIndex] = facilityData.fieldNotes;
+            }
+        }
+
+        renderAllFieldNotes();
+    });
 }
 
 /**

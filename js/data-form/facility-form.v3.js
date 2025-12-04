@@ -5027,6 +5027,47 @@ function getCurrentFacilityNotes() {
     return {};
 }
 
+/**
+ * Expose the current facility record to modules (e.g., NotesModule)
+ */
+function getCurrentFacilityData() {
+    if (!window.formData || !Array.isArray(window.formData.facilities)) {
+        return null;
+    }
+    return window.formData.facilities[window.currentFacilityIndex] || null;
+}
+
+/**
+ * Allow modules to update the current facility (primarily fieldNotes) and persist
+ */
+function updateCurrentFacilityData(partial = {}) {
+    const facility = getCurrentFacilityData();
+    if (!facility || typeof partial !== 'object') {
+        return;
+    }
+
+    // Normalize and persist fieldNotes if provided
+    if (partial.fieldNotes && typeof partial.fieldNotes === 'object') {
+        if (typeof normalizeFieldNotesEntries === 'function') {
+            normalizeFieldNotesEntries(partial.fieldNotes);
+        }
+        facility.fieldNotes = partial.fieldNotes;
+    }
+
+    // Apply any additional updates (defensive copy)
+    Object.keys(partial).forEach((key) => {
+        if (key === 'fieldNotes') return;
+        facility[key] = partial[key];
+    });
+
+    if (typeof window.updateJSON === 'function') {
+        window.updateJSON();
+    }
+    if (typeof window.autoSave === 'function') {
+        window.autoSave();
+    }
+}
+
 function initializeFieldNotes() {
     if (window.NotesModule && typeof window.NotesModule.initializeFieldNotes === 'function') {
         window.NotesModule.initializeFieldNotes();

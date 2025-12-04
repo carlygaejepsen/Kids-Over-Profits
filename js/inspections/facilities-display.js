@@ -44,6 +44,58 @@ function displayFacilities(facilitiesData, containerId) {
         });
         return combined;
     };
+    const formatFieldLabel = (key) => {
+        if (!key || typeof key !== 'string') return 'Field';
+        return key
+            .replace(/\./g, ' ')
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/has\s*/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim() || 'Field';
+    };
+    const renderFieldNotes = (fieldNotes) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object') return '';
+
+        const items = [];
+        Object.keys(fieldNotes).forEach(key => {
+            const notes = fieldNotes[key];
+            if (!notes) return;
+
+            const label = formatFieldLabel(key);
+            const addNote = (text) => {
+                if (text && text.trim()) {
+                    items.push({ label, text: text.trim() });
+                }
+            };
+
+            if (Array.isArray(notes)) {
+                notes.forEach(note => {
+                    if (typeof note === 'string') {
+                        addNote(note);
+                    } else if (note && typeof note === 'object' && note.text) {
+                        addNote(note.text);
+                    }
+                });
+            } else if (typeof notes === 'string') {
+                addNote(notes);
+            } else if (notes && typeof notes === 'object' && notes.text) {
+                addNote(notes.text);
+            }
+        });
+
+        if (!items.length) return '';
+
+        const list = items.map(({ label, text }) =>
+            `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`
+        ).join('');
+
+        return `
+            <div class="facility-field-notes">
+                <p><strong>Field Notes</strong></p>
+                <ul>${list}</ul>
+            </div>
+        `;
+    };
     const normalizeProjectCategory = project => {
         if (!project || typeof project !== 'object') {
             return 'companies';
@@ -382,6 +434,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <div class="facility-extra-content">
                                 ${otherFacilityData}
                                 ${resourcesAvailable}
+                                ${renderFieldNotes(facility.fieldNotes)}
                             </div>
                         </details>
                     </div>
