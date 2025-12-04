@@ -2455,7 +2455,18 @@ function addNewArrayItem(path) {
     }
 
     const array = getNestedValue(target, normalizedPath);
-    if (Array.isArray(array)) {
+    let workingArray = array;
+
+    // If the stored value is not an array, normalize it into one while preserving existing data
+    if (!Array.isArray(workingArray)) {
+        workingArray = [];
+        if (array !== undefined && array !== null && array !== '') {
+            workingArray.push(array);
+        }
+        setNestedValue(target, normalizedPath, workingArray);
+    }
+
+    if (Array.isArray(workingArray)) {
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
@@ -2467,13 +2478,13 @@ function addNewArrayItem(path) {
         } else if (isAdditionalLocation) {
             newItem = { city: '', address: '' };
         }
-        array.push(newItem);
+        workingArray.push(newItem);
         if (path === 'identification.currentOwners') {
-            const firstOwner = array[0] || '';
+            const firstOwner = workingArray[0] || '';
             setNestedValue(target, 'identification.currentOwner', firstOwner || '');
         }
         const container = document.querySelector(`[data-path="${path}"]`);
-        if (container) renderArray(container, path, array);
+        if (container) renderArray(container, path, workingArray);
         updateJSON();
         autoSave();
     }
