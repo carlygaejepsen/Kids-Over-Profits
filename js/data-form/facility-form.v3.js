@@ -818,6 +818,9 @@ function saveToLocalStorage(key, value) {
 }
 
 function addCustomValue(category, value) {
+    if (window.KOP_Autocomplete?.addCustomValue) {
+        return window.KOP_Autocomplete.addCustomValue(category, value);
+    }
     // Delegate to autocomplete module if available
     if (window.addCustomValue && window.addCustomValue !== addCustomValue) {
         return window.addCustomValue(category, value);
@@ -828,6 +831,9 @@ function addCustomValue(category, value) {
 }
 
 function attachCustomValueRecorder(input, category) {
+    if (window.KOP_Autocomplete?.attachCustomValueRecorder) {
+        return window.KOP_Autocomplete.attachCustomValueRecorder(input, category);
+    }
     // Delegate to autocomplete module if available
     if (window.attachCustomValueRecorder && window.attachCustomValueRecorder !== attachCustomValueRecorder) {
         return window.attachCustomValueRecorder(input, category);
