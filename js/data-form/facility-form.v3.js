@@ -2944,10 +2944,7 @@ function renderArray(container, path, items) {
         addButton.type = 'button';
     }
 
-    // Always append at the end to ensure correct position
-    container.appendChild(addButton);
-
-    // Update button text and ensure path is set
+    // Update button text and ensure path is set BEFORE appending
     addButton.textContent = buttonLabel;
     addButton.dataset.arrayPath = path;
     if (!addButton.dataset.clickInit) {
@@ -2958,6 +2955,9 @@ function renderArray(container, path, items) {
         });
         addButton.dataset.clickInit = 'true';
     }
+
+    // Always append at the end to ensure correct position
+    container.appendChild(addButton);
 
     // Render notes for the array items
     renderAllFieldNotes();
