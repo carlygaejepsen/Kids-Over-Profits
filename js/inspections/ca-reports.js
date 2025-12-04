@@ -6,6 +6,59 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('typeof themeData:', typeof themeData);
     console.log('CA theme data:', themeData);
 
+    /**
+     * Safely extracts a displayable string from any value
+     * Handles objects, arrays, strings, numbers - prevents "[object Object]" display
+     * @param {*} value - The value to convert to a safe string
+     * @returns {string} - A clean string or empty string
+     */
+    const safeString = value => {
+        if (value === null || value === undefined) return '';
+
+        // Already a string
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
+        }
+
+        // Numbers and booleans - convert directly
+        if (typeof value === 'number' || typeof value === 'boolean') {
+            return String(value);
+        }
+
+        // Arrays - recursively join string values
+        if (Array.isArray(value)) {
+            const stringValues = value.map(v => safeString(v)).filter(Boolean);
+            return stringValues.join(', ');
+        }
+
+        // Objects - try to extract a meaningful value
+        if (typeof value === 'object') {
+            // Try common field names in order of preference
+            const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title',
+                                    'url', 'link', 'label', 'display', 'content'];
+
+            for (const field of possibleFields) {
+                if (value[field] && typeof value[field] === 'string' && value[field].trim()) {
+                    return value[field].trim();
+                }
+            }
+
+            // Try firstName + lastName combo
+            if (value.firstName || value.lastName) {
+                const name = [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+                if (name) return name;
+            }
+
+            // Don't output objects as strings
+            return '';
+        }
+
+        // Fallback - try String() but check result
+        const str = String(value);
+        return (str && str !== '[object Object]') ? str : '';
+    };
+
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
     const alphabetFilter = document.getElementById('alphabet-filter');
@@ -207,13 +260,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Filter across all facilities
             const filteredFacilities = allFacilities.filter(facility => {
-                const name = (facility.name || '').toLowerCase();
-                const facilityType = (facility.facility_type || '').toLowerCase();
-                const officer = (facility.officer || '').toLowerCase();
+                const name = safeString(facility.name).toLowerCase();
+                const facilityType = safeString(facility.facility_type).toLowerCase();
+                const officer = safeString(facility.officer).toLowerCase();
                 const facilityNumber = (facility.number || '').toString().toLowerCase();
-                
-                return name.includes(searchTerm) || 
-                       facilityType.includes(searchTerm) || 
+
+                return name.includes(searchTerm) ||
+                       facilityType.includes(searchTerm) ||
                        officer.includes(searchTerm) ||
                        facilityNumber.includes(searchTerm);
             });
@@ -356,9 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
             facilityElement.innerHTML = `
                 <details>
                     <summary class="facility-header">
-                        <h1>${toTitleCase(facility.name) || 'N/A'}</h1>
+                        <h1>${toTitleCase(safeString(facility.name)) || 'N/A'}</h1>
                         <h2>Facility Number: ${facility.number || 'N/A'}</h2>
-                        <p class="facility-details">Type: ${facility.facility_type || 'N/A'} | Administrator: ${toTitleCase(facility.officer) || 'N/A'} | Licensed Capacity: ${facility.capacity || 'N/A'}</p>
+                        <p class="facility-details">Type: ${safeString(facility.facility_type) || 'N/A'} | Administrator: ${toTitleCase(safeString(facility.officer)) || 'N/A'} | Licensed Capacity: ${facility.capacity || 'N/A'}</p>
                     </summary>
                     <div class="inspections-container">
                         ${(facility.inspections || []).map(createInspectionHTML).join('')}
@@ -439,17 +492,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
         <details class="inspection-box ${inspectionClass}">
             <summary class="inspection-header">
-                ${inspection.report_type || 'Report'} - ${inspection.visit_date || 'N/A'}
+                ${safeString(inspection.report_type) || 'Report'} - ${safeString(inspection.visit_date) || 'N/A'}
             </summary>
             <div class="inspection-content">
                 <div class="inspection-details-block">
-                    <strong>Report Type:</strong> ${inspection.report_type || 'N/A'}<br>
-                    <strong>Visit Date:</strong> ${inspection.visit_date || 'N/A'}<br>
-                    <strong>Report Date:</strong> ${inspection.report_date || 'N/A'}<br>
-                    <strong>Form Number:</strong> ${inspection.form_number || 'N/A'}<br>
-                    <strong>Census:</strong> ${inspection.census || 'N/A'}<br>
-                    <strong>Complaint Status:</strong> ${inspection.complaint_status || 'N/A'}<br>
-                    <strong>Met With:</strong> ${inspection.met_with || 'N/A'}<br>
+                    <strong>Report Type:</strong> ${safeString(inspection.report_type) || 'N/A'}<br>
+                    <strong>Visit Date:</strong> ${safeString(inspection.visit_date) || 'N/A'}<br>
+                    <strong>Report Date:</strong> ${safeString(inspection.report_date) || 'N/A'}<br>
+                    <strong>Form Number:</strong> ${safeString(inspection.form_number) || 'N/A'}<br>
+                    <strong>Census:</strong> ${safeString(inspection.census) || 'N/A'}<br>
+                    <strong>Complaint Status:</strong> ${safeString(inspection.complaint_status) || 'N/A'}<br>
+                    <strong>Met With:</strong> ${safeString(inspection.met_with) || 'N/A'}<br>
                     <strong>Source:</strong> ${facilityDetailLink}
                 </div>
                 ${narrative ? `<div class="narrative-section"><h4>Narrative:</h4><p>${narrative}</p></div>` : ''}
@@ -462,9 +515,9 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
     function createDeficiencyHTML(deficiency, index) {
-        const section = (deficiency.section_cited || '').replace(/\n/g, '<br>');
-        const description = (deficiency.description || '').replace(/\n/g, '<br>');
-        const poc = (deficiency.plan_of_correction || '').replace(/\n/g, '<br>');
+        const section = safeString(deficiency.section_cited || '').replace(/\n/g, '<br>');
+        const description = safeString(deficiency.description || '').replace(/\n/g, '<br>');
+        const poc = safeString(deficiency.plan_of_correction || '').replace(/\n/g, '<br>');
         return `
             <details class="violation-box">
                 <summary class="deficiency-header">Violation ${index + 1}</summary>
