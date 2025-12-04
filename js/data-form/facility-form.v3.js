@@ -2582,6 +2582,7 @@ function renderArray(container, path, items) {
 
     // Normalize items: convert strings to {role, name} for staff arrays
     const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+    const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
     const itemsToShow = itemsArray.map((item, idx) => {
         if (isStaff && typeof item === 'string') {
             // Parse legacy string format - check for "Role: Name" pattern
