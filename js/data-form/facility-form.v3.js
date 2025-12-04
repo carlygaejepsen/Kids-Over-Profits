@@ -501,10 +501,29 @@ function normalizeProjectData(data) {
                     name: ['name', 'Name', 'facilityName', 'facility_name'],
                     currentName: ['currentName', 'current_name', 'CurrentName'],
                     currentOperator: ['currentOperator', 'current_operator', 'CurrentOperator'],
+                    currentOwner: ['currentOwner', 'current_owner', 'owner'],
+                    currentOwners: ['currentOwners', 'current_owners', 'owners'],
                     otherNames: ['otherNames', 'other_names', 'aliases'],
                     pastNames: ['pastNames', 'past_names', 'formerNames'],
                     knownReferrers: ['knownReferrers', 'known_referrers', 'referrers']
                 });
+
+                // Normalize current owners to an array and keep legacy single value in sync
+                if (normalized.identification.currentOwners && !Array.isArray(normalized.identification.currentOwners)) {
+                    if (typeof normalized.identification.currentOwners === 'string') {
+                        normalized.identification.currentOwners = normalized.identification.currentOwners.trim() ? [normalized.identification.currentOwners.trim()] : [];
+                    } else {
+                        normalized.identification.currentOwners = [];
+                    }
+                } else if (!normalized.identification.currentOwners) {
+                    normalized.identification.currentOwners = [];
+                }
+                if (normalized.identification.currentOwner && normalized.identification.currentOwners.length === 0) {
+                    normalized.identification.currentOwners = [normalized.identification.currentOwner];
+                }
+                if (!normalized.identification.currentOwner && normalized.identification.currentOwners.length > 0) {
+                    normalized.identification.currentOwner = normalized.identification.currentOwners[0];
+                }
             }
 
             // Normalize facilityDetails - ensure it exists and check for root-level type fields
@@ -555,6 +574,33 @@ function normalizeProjectData(data) {
             // Normalize location fields
             normalized.location = getValue(normalized, 'location', 'Location');
             normalized.address = getValue(normalized, 'address', 'Address');
+
+            // Normalize structured location details (city/state/country + additional locations)
+            if (!normalized.locationDetails || typeof normalized.locationDetails !== 'object') {
+                normalized.locationDetails = {};
+            }
+            normalized.locationDetails = normalizeObject(normalized.locationDetails, {
+                city: ['city', 'City'],
+                state: ['state', 'State'],
+                country: ['country', 'Country'],
+                additionalLocations: ['additionalLocations', 'additional_locations']
+            });
+            const additionalLocations = normalized.locationDetails.additionalLocations;
+            if (Array.isArray(additionalLocations)) {
+                normalized.locationDetails.additionalLocations = additionalLocations.map(item => {
+                    if (typeof item === 'string') {
+                        return { city: '', address: item };
+                    }
+                    return {
+                        city: (item && typeof item.city === 'string') ? item.city : '',
+                        address: (item && typeof item.address === 'string') ? item.address : ''
+                    };
+                });
+            } else if (typeof additionalLocations === 'string' && additionalLocations.trim()) {
+                normalized.locationDetails.additionalLocations = [{ city: '', address: additionalLocations.trim() }];
+            } else {
+                normalized.locationDetails.additionalLocations = [];
+            }
 
             // Ensure array fields are actually arrays
             const arrayFields = ['otherOperators', 'memberships', 'certifications', 'licensing', 'profileLinks', 'notes'];
@@ -1880,7 +1926,8 @@ function createNewProjectData() {
             notes: [], fieldNotes: {}
         },
         facilities: [{
-            identification: { name: "", currentName: "", currentOperator: "", otherNames: [], knownReferrers: [] },
+            identification: { name: "", currentName: "", currentOperator: "", currentOwner: "", currentOwners: [], otherNames: [], knownReferrers: [] },
+            locationDetails: { city: "", state: "", country: "", additionalLocations: [] },
             location: "", address: "", otherOperators: [],
             operatingPeriod: { startYear: null, endYear: null, status: "", yearsOfOperation: "", notes: [] },
             staff: { administrator: [], notableStaff: [] },
@@ -2366,6 +2413,10 @@ function updateArrayItemValue(path, index, value) {
     const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         array[index] = value;
+        if (path === 'identification.currentOwners') {
+            const firstOwner = array[0] || '';
+            setNestedValue(target, 'identification.currentOwner', firstOwner || '');
+        }
         updateJSON();
         autoSave();
     }
@@ -2380,8 +2431,15 @@ function updateArrayObjectItemValue(path, index, field, value) {
     const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
+        const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
         if (typeof array[index] !== 'object' || array[index] === null) {
-            array[index] = isPastTTIJobs ? { role: '', organization: '' } : { role: '', name: '' };
+            if (isPastTTIJobs) {
+                array[index] = { role: '', organization: '' };
+            } else if (isAdditionalLocation) {
+                array[index] = { city: '', address: '' };
+            } else {
+                array[index] = { role: '', name: '' };
+            }
         }
         array[index][field] = value;
 
@@ -2400,13 +2458,20 @@ function addNewArrayItem(path) {
     if (Array.isArray(array)) {
         const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
+        const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
         let newItem = '';
         if (isStaff) {
             newItem = { role: '', name: '' };
         } else if (isPastTTIJobs) {
             newItem = { role: '', organization: '' };
+        } else if (isAdditionalLocation) {
+            newItem = { city: '', address: '' };
         }
         array.push(newItem);
+        if (path === 'identification.currentOwners') {
+            const firstOwner = array[0] || '';
+            setNestedValue(target, 'identification.currentOwner', firstOwner || '');
+        }
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) renderArray(container, path, array);
         updateJSON();
@@ -2423,6 +2488,10 @@ function removeArrayItemAtIndex(path, index) {
     const array = getNestedValue(target, normalizedPath);
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         array.splice(index, 1);
+        if (path === 'identification.currentOwners') {
+            const firstOwner = array[0] || '';
+            setNestedValue(target, 'identification.currentOwner', firstOwner || '');
+        }
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) renderArray(container, path, array);
         updateJSON();
@@ -2495,11 +2564,14 @@ function renderArray(container, path, items) {
         if (array.length === 0) {
             const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
             const isPastTTIJobs = /pastTTIJobs$/.test(path);
+            const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
             let emptyItem = '';
             if (isStaff) {
                 emptyItem = { role: '', name: '' };
             } else if (isPastTTIJobs) {
                 emptyItem = { role: '', organization: '' };
+            } else if (isAdditionalLocation) {
+                emptyItem = { city: '', address: '' };
             }
             array.push(emptyItem);
             // Re-render with the updated array
@@ -2593,6 +2665,22 @@ function renderArray(container, path, items) {
                 delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
                 orgInput.dataset.autocompleteInit = 'true';
             }, 100);
+        } else if (isAdditionalLocation) {
+            const cityInput = document.createElement('input');
+            cityInput.type = 'text';
+            cityInput.placeholder = 'City';
+            cityInput.value = (item && item.city) ? item.city : '';
+            cityInput.className = 'array-input array-input-name';
+            cityInput.oninput = () => updateArrayObjectItemValue(path, index, 'city', cityInput.value);
+            itemDiv.appendChild(cityInput);
+
+            const addressInput = document.createElement('input');
+            addressInput.type = 'text';
+            addressInput.placeholder = 'Address';
+            addressInput.value = (item && item.address) ? item.address : '';
+            addressInput.className = 'array-input array-input-name';
+            addressInput.oninput = () => updateArrayObjectItemValue(path, index, 'address', addressInput.value);
+            itemDiv.appendChild(addressInput);
         } else if (/websites$/.test(path) || /profileLinks$/.test(path)) {
             // URL fields with display text
             const urlInput = document.createElement('input');
@@ -2652,6 +2740,9 @@ function renderArray(container, path, items) {
             if (/identification\.otherNames$/.test(path)) {
                 category = 'facility';
                 dataFunc = getAllFacilityNames;
+            } else if (/identification\.currentOwners$/.test(path)) {
+                category = 'human';
+                dataFunc = getAllHumanNames;
             } else if (/identification\.knownReferrers$/.test(path)) {
                 category = 'referrer';
                 dataFunc = getAllReferrers;
@@ -2782,6 +2873,8 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Names';
     } else if (/identification\.otherNames$/.test(path)) {
         buttonLabel = 'Add More Names';
+    } else if (/^identification\.currentOwners$/.test(path)) {
+        buttonLabel = 'Add More Owners';
     } else if (/identification\.knownReferrers$/.test(path)) {
         buttonLabel = 'Add More Referrers';
     } else if (/otherOperators$/.test(path)) {
@@ -2806,6 +2899,8 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Operational Notes';
     } else if (/resources\.notes$/.test(path)) {
         buttonLabel = 'Add More Resource Notes';
+    } else if (/locationDetails\.additionalLocations$/.test(path)) {
+        buttonLabel = 'Add Another Location';
     } else if (/referrerGroup\.affiliations$/.test(path)) {
         buttonLabel = 'Add More Affiliations';
     } else if (/referrerIndividual\.affiliations$/.test(path)) {

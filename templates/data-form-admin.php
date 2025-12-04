@@ -508,10 +508,11 @@ get_header();
                     <label id="current-operator-label">Current Operator</label>
                     <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
                 </div>
-                <!-- Current Owner (shown for private ownership) -->
+                <!-- Current Owner(s) (shown for private ownership) -->
                 <div class="form-group" id="current-owner-group" style="display: none;">
-                    <label>Current Owner</label>
-                    <input type="text" class="facility-field" data-field="identification.currentOwner" data-autocomplete-category="human">
+                    <label>Current Owner(s)</label>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add one or more current owners.</div>
+                    <div class="array-container" data-path="identification.currentOwners" data-autocomplete-category="human"></div>
                 </div>
                 <!-- Past Owners (shown for private ownership) -->
                 <div class="form-group" id="past-owners-group" style="display: none;">
@@ -577,6 +578,11 @@ get_header();
                 <div class="form-group">
                     <label>Address</label>
                     <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Additional Locations</label>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city + address only).</div>
+                    <div class="array-container" data-path="locationDetails.additionalLocations"></div>
                 </div>
             </div>
         </div>
