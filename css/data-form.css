@@ -1505,6 +1505,25 @@ textarea {
     min-width: 0;
 }
 
+/* URL fields with display text */
+.array-input-url {
+    flex: 2;
+    min-width: 200px;
+    max-width: none;
+}
+
+.array-input-display-text {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+/* Style for URL input type */
+input[type="url"].array-input {
+    font-family: monospace;
+    font-size: 13px;
+}
+
 /* ============================================
    BUTTONS - CRITICAL STYLING
    ============================================ */

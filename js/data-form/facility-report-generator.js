@@ -1071,18 +1071,54 @@ function looksLikeEmail(str) {
 }
 
 /**
- * Format a URL as a clickable link
- * @param {*} url - The URL value (can be string or object with url property)
+ * Format a URL as a clickable link with clean display text
+ * @param {*} url - The URL value (can be string or object with url/displayText properties)
  * @returns {string} - HTML link or empty string
  */
 function formatWebsiteLink(url) {
-    // Extract string from object if needed
-    let urlStr = safeString(url);
+    // Handle object with url and displayText properties
+    let urlStr = '';
+    let customDisplayText = '';
+    
+    if (url && typeof url === 'object') {
+        urlStr = safeString(url.url || url.link || url.href || url);
+        customDisplayText = safeString(url.displayText || url.text || url.label || url.title || '');
+    } else {
+        urlStr = safeString(url);
+    }
+    
     if (!urlStr) return '';
     
-    // Ensure URL has protocol
+    // Ensure URL has protocol for href
     const href = urlStr.startsWith('http') ? urlStr : `https://${urlStr}`;
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(urlStr)}</a>`;
+    
+    // Use custom display text if provided, otherwise create clean display text
+    let displayText = customDisplayText;
+    if (!displayText) {
+        try {
+            // Try to parse the URL to get a cleaner display
+            const urlObj = new URL(href);
+            // Get hostname and remove www. prefix
+            displayText = urlObj.hostname.replace(/^www\./, '');
+            // If there's a meaningful path, add it (but truncate if too long)
+            const path = urlObj.pathname;
+            if (path && path !== '/' && path.length > 1) {
+                const cleanPath = path.length > 30 ? path.substring(0, 30) + '...' : path;
+                displayText += cleanPath;
+            }
+        } catch (e) {
+            // If URL parsing fails, use original but clean up common prefixes
+            displayText = urlStr
+                .replace(/^https?:\/\//, '')
+                .replace(/^www\./, '');
+            // Truncate if too long
+            if (displayText.length > 50) {
+                displayText = displayText.substring(0, 50) + '...';
+            }
+        }
+    }
+    
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(displayText)}</a>`;
 }
 
 /**

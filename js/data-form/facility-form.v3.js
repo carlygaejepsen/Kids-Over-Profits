@@ -2030,8 +2030,14 @@ function loadProject(projectName) { // Note: This function is now asynchronous
 
             showUploadStatus(`Project "${projectName}" loaded (${window.formData.facilities.length} facilities)`, 'success');
             
-            // Scroll to form input area after loading project
-            scrollToFormInput();
+            // Scroll to facility loader panel after loading project
+            const facilityLoaderPanel = document.querySelector('.facility-loader-panel');
+            if (facilityLoaderPanel) {
+                facilityLoaderPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // Fall back to form input if no facility loader
+                scrollToFormInput();
+            }
             
             resolve();
         }, 100); // A small delay to ensure DOM updates can happen
@@ -2581,10 +2587,57 @@ function renderArray(container, path, items) {
                 delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
                 orgInput.dataset.autocompleteInit = 'true';
             }, 100);
+        } else if (/websites$/.test(path) || /profileLinks$/.test(path)) {
+            // URL fields with display text
+            const urlInput = document.createElement('input');
+            urlInput.type = 'url';
+            urlInput.placeholder = 'URL (e.g., https://example.com)';
+            // Extract URL from item (could be string or object)
+            let urlValue = '';
+            let displayTextValue = '';
+            if (item) {
+                if (typeof item === 'string') {
+                    urlValue = item;
+                } else if (typeof item === 'object') {
+                    urlValue = item.url || item.link || item.href || '';
+                    displayTextValue = item.displayText || item.text || item.label || item.title || '';
+                }
+            }
+            urlInput.value = urlValue;
+            urlInput.className = 'array-input array-input-url';
+            urlInput.style.flex = '2';
+            urlInput.oninput = () => updateArrayObjectItemValue(path, index, 'url', urlInput.value);
+            itemDiv.appendChild(urlInput);
+
+            const displayTextInput = document.createElement('input');
+            displayTextInput.type = 'text';
+            displayTextInput.placeholder = 'Display Text (optional)';
+            displayTextInput.value = displayTextValue;
+            displayTextInput.className = 'array-input array-input-display-text';
+            displayTextInput.style.flex = '1';
+            displayTextInput.oninput = () => updateArrayObjectItemValue(path, index, 'displayText', displayTextInput.value);
+            itemDiv.appendChild(displayTextInput);
         } else {
             const input = document.createElement('input');
             input.type = 'text';
-            input.value = item || '';
+            // Safely extract string value from item (handles objects that might show as [object Object])
+            let displayValue = '';
+            if (item !== null && item !== undefined) {
+                if (typeof item === 'string') {
+                    displayValue = item;
+                } else if (typeof item === 'object') {
+                    // Try common field names that might hold the actual value
+                    displayValue = item.name || item.value || item.text || item.label || 
+                                   item.title || item.url || item.link || '';
+                    // If still an object, try to get first string property
+                    if (typeof displayValue === 'object') {
+                        displayValue = '';
+                    }
+                } else {
+                    displayValue = String(item);
+                }
+            }
+            input.value = displayValue;
             input.className = 'array-input';
             input.oninput = () => updateArrayItemValue(path, index, input.value);
 
@@ -3844,13 +3897,26 @@ function refreshQuickFacilitiesList() {
 
     const facilityCards = facilities.map((facility, index) => {
         const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
-        const location = facility.location || 'Unknown location';
+        // Safely extract location string (could be an object with city/state)
+        let location = 'Unknown location';
+        if (facility.location) {
+            if (typeof facility.location === 'string') {
+                location = facility.location;
+            } else if (typeof facility.location === 'object') {
+                // Try to build from city/state
+                const city = facility.location.city || facility.city || '';
+                const state = facility.location.state || facility.state || '';
+                location = [city, state].filter(Boolean).join(', ') || 'Unknown location';
+            }
+        } else if (facility.city || facility.state) {
+            location = [facility.city, facility.state].filter(Boolean).join(', ');
+        }
         const operator = facility.identification?.currentOperator || '';
 
         return `<div class="facility-quick-item" onclick="jumpToFacility(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
                 <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
                 <div style="font-size: 12px; color: #6b7280;">
-                    ${location}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
+                    ${escapeHtmlForAttr(location)}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
                 </div>
             </div>`;
     }).join('');
