@@ -829,7 +829,8 @@ function createAutocomplete(input, getDataFunction, category) {
         // Now set the value
         input.value = value;
         
-        // Dispatch events without triggering autocomplete
+        // Dispatch events so form listeners persist the value
+        input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
 
         // Reset flag after a longer delay to ensure all async operations complete
