@@ -2410,8 +2410,17 @@ function updateArrayItemValue(path, index, value) {
         return;
     }
 
-    const array = getNestedValue(target, normalizedPath);
-    if (Array.isArray(array) && index >= 0 && index < array.length) {
+    let array = getNestedValue(target, normalizedPath);
+    if (!Array.isArray(array)) {
+        array = [];
+        setNestedValue(target, normalizedPath, array);
+    }
+
+    if (Array.isArray(array)) {
+        // Ensure array has a slot for this index
+        while (array.length <= index) {
+            array.push('');
+        }
         array[index] = value;
         if (path === 'identification.currentOwners') {
             const firstOwner = array[0] || '';
@@ -2428,7 +2437,12 @@ function updateArrayObjectItemValue(path, index, field, value) {
         return;
     }
 
-    const array = getNestedValue(target, normalizedPath);
+    let array = getNestedValue(target, normalizedPath);
+    if (!Array.isArray(array)) {
+        array = [];
+        setNestedValue(target, normalizedPath, array);
+    }
+
     if (Array.isArray(array) && index >= 0 && index < array.length) {
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
@@ -2936,6 +2950,14 @@ function renderArray(container, path, items) {
     // Update button text and ensure path is set
     addButton.textContent = buttonLabel;
     addButton.dataset.arrayPath = path;
+    if (!addButton.dataset.clickInit) {
+        addButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addNewArrayItem(addButton.dataset.arrayPath || path);
+        });
+        addButton.dataset.clickInit = 'true';
+    }
 
     // Render notes for the array items
     renderAllFieldNotes();
