@@ -593,8 +593,8 @@ function addNoteButtons() {
             return;
         }
 
-        // Skip certain field types
-        if (field.type === 'hidden' || field.style.display === 'none') {
+        // Skip certain field types (only skip truly hidden input types, not fields in hidden sections)
+        if (field.type === 'hidden') {
             return;
         }
 

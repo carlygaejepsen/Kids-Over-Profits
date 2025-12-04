@@ -65,6 +65,13 @@
                 item.hiddenClasses.forEach(cls => cls && item.element.classList.add(cls));
             }
         });
+
+        // Re-add note buttons to newly visible fields
+        if (window.NotesModule && typeof window.NotesModule.addNoteButtons === 'function') {
+            setTimeout(() => {
+                window.NotesModule.addNoteButtons();
+            }, 50);
+        }
     }
 
     window.registerViewManagedElement = registerViewManagedElement;
