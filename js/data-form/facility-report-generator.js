@@ -966,34 +966,38 @@ function renderStaffList(title, staffArray) {
 /**
  * Safely extracts a displayable string from any value
  * @param {*} value - The value to convert to a safe string
+ * @param {number} depth - Current recursion depth (for internal use)
  * @returns {string} - A clean string or empty string
  */
-function safeString(value) {
+function safeString(value, depth = 0) {
+    // Prevent infinite recursion
+    if (depth > 3) return '';
+
     if (value === null || value === undefined) return '';
-    
+
     // Already a string
     if (typeof value === 'string') {
         const trimmed = value.trim();
         return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
     }
-    
+
     // Numbers and booleans - convert directly
     if (typeof value === 'number' || typeof value === 'boolean') {
         return String(value);
     }
-    
+
     // Arrays - try to join string values
     if (Array.isArray(value)) {
-        const stringValues = value.map(v => safeString(v)).filter(Boolean);
+        const stringValues = value.map(v => safeString(v, depth + 1)).filter(Boolean);
         return stringValues.join(', ');
     }
     
     // Objects - try to extract a meaningful value
     if (typeof value === 'object') {
         // Try common field names in order of preference
-        const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title', 
+        const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title',
                                 'url', 'link', 'label', 'display', 'content'];
-        
+
         for (const field of possibleFields) {
             if (value[field]) {
                 // If it's a string, use it directly
@@ -1007,7 +1011,7 @@ function safeString(value) {
                 }
             }
         }
-        
+
         // Try firstName + lastName combo
         if (value.firstName || value.lastName) {
             const firstName = typeof value.firstName === 'string' ? value.firstName : 
@@ -1017,17 +1021,29 @@ function safeString(value) {
             const name = [firstName, lastName].filter(Boolean).join(' ').trim();
             if (name) return name;
         }
-        
-        // Try to get any string property from the object as last resort
-        const allKeys = Object.keys(value);
-        for (const key of allKeys) {
-            if (typeof value[key] === 'string' && value[key].trim() && 
-                !['id', 'type', 'class', 'style', 'timestamp', 'date', 'created', 'updated'].includes(key.toLowerCase())) {
-                return value[key].trim();
-            }
+
+        // If object has a small number of properties, try to format them nicely
+        const entries = Object.entries(value).filter(([k, v]) => {
+            // Skip internal/meta properties
+            return !k.startsWith('_') && !k.startsWith('$') &&
+                   v !== null && v !== undefined && v !== '';
+        });
+
+        if (entries.length > 0 && entries.length <= 5) {
+            // Format as "key: value, key: value"
+            const formatted = entries.map(([k, v]) => {
+                const val = safeString(v, depth + 1);
+                if (!val) return '';
+                // Make key more readable
+                const readableKey = k.replace(/([A-Z])/g, ' $1').trim()
+                                    .replace(/^./, str => str.toUpperCase());
+                return `${readableKey}: ${val}`;
+            }).filter(Boolean).join(', ');
+
+            if (formatted) return formatted;
         }
-        
-        // Don't output objects as strings
+
+        // Last resort: don't show raw object notation
         return '';
     }
     

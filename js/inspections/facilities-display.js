@@ -9,17 +9,62 @@ function displayFacilities(facilitiesData, containerId) {
     }
     
     const toArray = value => Array.isArray(value) ? value : [];
-    const cleanText = value => {
+
+    /**
+     * Safely extracts a displayable string from any value
+     * Handles objects, arrays, strings, numbers - prevents "[object Object]" display
+     * @param {*} value - The value to convert to a safe string
+     * @returns {string} - A clean string or empty string
+     */
+    const safeString = value => {
+        if (value === null || value === undefined) return '';
+
+        // Already a string
         if (typeof value === 'string') {
-            return value.trim();
+            const trimmed = value.trim();
+            return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
         }
 
-        if (typeof value === 'number') {
+        // Numbers and booleans - convert directly
+        if (typeof value === 'number' || typeof value === 'boolean') {
             return String(value);
         }
 
-        return '';
+        // Arrays - recursively join string values
+        if (Array.isArray(value)) {
+            const stringValues = value.map(v => safeString(v)).filter(Boolean);
+            return stringValues.join(', ');
+        }
+
+        // Objects - try to extract a meaningful value
+        if (typeof value === 'object') {
+            // Try common field names in order of preference
+            const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title',
+                                    'url', 'link', 'label', 'display', 'content'];
+
+            for (const field of possibleFields) {
+                if (value[field] && typeof value[field] === 'string' && value[field].trim()) {
+                    return value[field].trim();
+                }
+            }
+
+            // Try firstName + lastName combo
+            if (value.firstName || value.lastName) {
+                const name = [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+                if (name) return name;
+            }
+
+            // Don't output objects as strings
+            return '';
+        }
+
+        // Fallback - try String() but check result
+        const str = String(value);
+        return (str && str !== '[object Object]') ? str : '';
     };
+
+    // Backwards compatibility wrapper
+    const cleanText = value => safeString(value);
     const htmlEscapeMap = {
         '&': '&amp;',
         '<': '&lt;',

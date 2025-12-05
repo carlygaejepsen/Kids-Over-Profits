@@ -15,7 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sortSelect) {
         sortSelect.addEventListener('change', filterAndSort);
     }
-    
+
+    // Safely convert any value to string, handling arrays and objects
+    const safeString = value => {
+        if (value === null || value === undefined) return '';
+        if (typeof value === 'string') return (value.trim() !== '[object Object]') ? value.trim() : '';
+        if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+        if (Array.isArray(value)) return value.map(v => safeString(v)).filter(Boolean).join(', ');
+        if (typeof value === 'object') {
+            const fields = ['name', 'Name', 'fullName', 'value', 'text', 'title'];
+            for (const f of fields) if (value[f]) return safeString(value[f]);
+            if (value.firstName || value.lastName) return [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+            return '';
+        }
+        const str = String(value);
+        return (str !== '[object Object]') ? str : '';
+    };
+
     const themeData = window.waReportsData || window.myThemeData || {};
 
     async function initializeReport() {

@@ -18,6 +18,38 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const themeData = window.azReportsData || window.myThemeData || {};
 
+    /**
+     * Safely extracts a displayable string from any value
+     * Handles objects, arrays, strings, numbers - prevents "[object Object]" display
+     */
+    const safeString = value => {
+        if (value === null || value === undefined) return '';
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
+        }
+        if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+        if (Array.isArray(value)) {
+            const stringValues = value.map(v => safeString(v)).filter(Boolean);
+            return stringValues.join(', ');
+        }
+        if (typeof value === 'object') {
+            const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title'];
+            for (const field of possibleFields) {
+                if (value[field] && typeof value[field] === 'string' && value[field].trim()) {
+                    return value[field].trim();
+                }
+            }
+            if (value.firstName || value.lastName) {
+                const name = [value.firstName, value.lastName].filter(Boolean).join(' ').trim();
+                if (name) return name;
+            }
+            return '';
+        }
+        const str = String(value);
+        return (str && str !== '[object Object]') ? str : '';
+    };
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Arizona report...');
@@ -322,15 +354,15 @@ document.addEventListener('DOMContentLoaded', () => {
             facilityElement.innerHTML = `
                 <details>
                     <summary class="facility-header">
-                        <h1>${toTitleCase(facility.name) || 'N/A'}</h1>
+                        <h1>${toTitleCase(safeString(facility.name)) || 'N/A'}</h1>
                         <h2>License Number: ${facility.license_number || 'N/A'}</h2>
                         <p class="facility-details">
-                            Status: ${facility.facility_status || 'N/A'} | 
-                            License Status: ${facility.license_status || 'N/A'} | 
+                            Status: ${safeString(facility.facility_status) || 'N/A'} |
+                            License Status: ${safeString(facility.license_status) || 'N/A'} |
                             Max Capacity: ${facility.max_capacity || 'N/A'}<br>
-                            Address: ${facility.address || 'N/A'}<br>
-                            Administrator: ${toTitleCase(facility.chief_officer) || 'N/A'} | 
-                            Owner/Licensee: ${toTitleCase(facility.owner_licensee) || 'N/A'}
+                            Address: ${safeString(facility.address) || 'N/A'}<br>
+                            Administrator: ${toTitleCase(safeString(facility.chief_officer)) || 'N/A'} |
+                            Owner/Licensee: ${toTitleCase(safeString(facility.owner_licensee)) || 'N/A'}
                         </p>
                     </summary>
                     <div class="inspections-container">
