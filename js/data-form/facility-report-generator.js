@@ -1,6 +1,8 @@
+// Facility Report Generator v2.0 - December 2025 - Array Fix Active
 // Add this to your facility-form.js or include it separately
 
 function generateHTMLReport() {
+    console.log('[Report Generator v2.0] Loaded successfully - staff/founder array fix active');
     const reportWindow = window.open('', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
 
     if (!reportWindow) {
