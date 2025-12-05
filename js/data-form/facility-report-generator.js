@@ -1012,14 +1012,40 @@ function safeString(value, depth = 0) {
             }
         }
 
-        // Try firstName + lastName combo
+        // Try firstName + lastName combo, optionally with role
         if (value.firstName || value.lastName) {
-            const firstName = typeof value.firstName === 'string' ? value.firstName : 
-                              (typeof value.firstName === 'object' ? safeString(value.firstName) : '');
-            const lastName = typeof value.lastName === 'string' ? value.lastName : 
-                             (typeof value.lastName === 'object' ? safeString(value.lastName) : '');
+            const firstName = typeof value.firstName === 'string' ? value.firstName :
+                              (typeof value.firstName === 'object' ? safeString(value.firstName, depth + 1) : '');
+            const lastName = typeof value.lastName === 'string' ? value.lastName :
+                             (typeof value.lastName === 'object' ? safeString(value.lastName, depth + 1) : '');
             const name = [firstName, lastName].filter(Boolean).join(' ').trim();
-            if (name) return name;
+
+            // If there's also a role/title field, format as "role: name"
+            if (name) {
+                // Get role - try string fields first
+                const roleField = value.role || value.Role || value.title || value.Title ||
+                                value.position || value.Position || value.jobTitle;
+                const role = typeof roleField === 'string' ? roleField.trim() :
+                           (roleField && typeof roleField === 'object' ? safeString(roleField, depth + 1) : '');
+                if (role) {
+                    return `${role}: ${name}`;
+                }
+                return name;
+            }
+        }
+
+        // Try role + name combination for staff objects
+        const roleField = value.role || value.Role || value.title || value.Title ||
+                        value.position || value.Position || value.jobTitle;
+        const role = typeof roleField === 'string' ? roleField.trim() :
+                   (roleField && typeof roleField === 'object' ? safeString(roleField, depth + 1) : '');
+
+        const nameField = value.name || value.Name || value.fullName;
+        const personName = typeof nameField === 'string' ? nameField.trim() :
+                         (nameField && typeof nameField === 'object' ? safeString(nameField, depth + 1) : '');
+
+        if (role && personName) {
+            return `${role}: ${personName}`;
         }
 
         // If object has a small number of properties, try to format them nicely
