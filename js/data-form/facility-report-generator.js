@@ -1,8 +1,8 @@
-// Facility Report Generator v2.0 - December 2025 - Array Fix Active
+// Facility Report Generator v2.1 - December 2025 - Staff normalization active
 // Add this to your facility-form.js or include it separately
 
 function generateHTMLReport() {
-    console.log('[Report Generator v2.0] Loaded successfully - staff/founder array fix active');
+    console.log('[Report Generator v2.1] Loaded successfully - staff normalization active');
     const reportWindow = window.open('', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
 
     if (!reportWindow) {
@@ -302,6 +302,9 @@ function generateOperatorSection() {
     const op = formData.operator;
     if (!op || !op.name) return '';
 
+    const founders = normalizeStaffArray(op.keyStaff?.founders);
+    const executives = normalizeStaffArray(op.keyStaff?.keyExecutives);
+
     // Build location string from city/state if location isn't already set
     let locationDisplay = safeString(op.location);
     if (!locationDisplay && (op.locationCity || op.locationState)) {
@@ -332,8 +335,8 @@ function generateOperatorSection() {
             ${renderList('Other Names', op.otherNames)}
             ${renderList('Parent Companies', op.parentCompanies)}
             ${renderList('Websites', op.websites)}
-            ${renderStaffList('Founders', op.keyStaff?.founders)}
-            ${renderStaffList('Key Executives', op.keyStaff?.keyExecutives)}
+            ${renderStaffList('Founders', founders)}
+            ${renderStaffList('Key Executives', executives)}
             ${renderList('Investors', op.investors)}
             ${renderList('Notes', op.notes)}
             ${renderFieldNotes(op.fieldNotes, 'Operator')}
@@ -502,14 +505,17 @@ function generateFacilityLocation(facility) {
 
 function generateFacilityStaff(facility) {
     const staff = facility.staff;
-    if (!staff || (!staff.administrator?.length && !staff.notableStaff?.length)) {
+    const admins = normalizeStaffArray(staff?.administrator);
+    const notable = normalizeStaffArray(staff?.notableStaff);
+
+    if (!staff || (!admins.length && !notable.length)) {
         return '';
     }
 
     return `
         <div class="subsection-title">Staff</div>
-        ${renderStaffList('Administrators', staff.administrator)}
-        ${renderStaffList('Notable Staff', staff.notableStaff)}
+        ${renderStaffList('Administrators', admins)}
+        ${renderStaffList('Notable Staff', notable)}
         ${renderList('Profile Links', facility.profileLinks)}
     `;
 }
@@ -895,54 +901,95 @@ function renderList(title, items) {
     `;
 }
 
-function renderStaffList(title, staffArray) {
-    if (!staffArray || staffArray.length === 0) return '';
+function normalizeStaffArray(rawStaff) {
+    if (!rawStaff) return [];
+
+    const entries = Array.isArray(rawStaff) ? rawStaff : (typeof rawStaff === 'object' ? Object.values(rawStaff) : [rawStaff]);
+    return entries.flatMap(normalizeStaffEntry).filter(item => item && item.name);
+}
+
+function normalizeStaffEntry(entry) {
+    if (entry === null || entry === undefined) return [];
+
+    // Strings: attempt JSON parse, then "Role: Name" split, then plain name
+    if (typeof entry === 'string') {
+        const trimmed = entry.trim();
+        if (!trimmed || /\[object\s+object\]/i.test(trimmed)) return [];
+
+        if (/^[\[{]/.test(trimmed)) {
+            try {
+                return normalizeStaffEntry(JSON.parse(trimmed));
+            } catch (err) {
+                console.warn('[Report Generator] Failed to parse staff JSON string', trimmed, err);
+            }
+        }
+
+        const roleNameMatch = trimmed.match(/^([^:]+):\s*(.+)$/);
+        if (roleNameMatch) {
+            return [{
+                role: safeString(roleNameMatch[1]),
+                name: safeString(roleNameMatch[2])
+            }].filter(item => item.name);
+        }
+
+        return [{ name: safeString(trimmed), role: '' }].filter(item => item.name);
+    }
+
+    // Arrays: flatten
+    if (Array.isArray(entry)) {
+        return entry.flatMap(normalizeStaffEntry);
+    }
+
+    // Objects: pull name/role hints, or build a readable summary
+    if (typeof entry === 'object') {
+        const nameFields = [
+            entry.name, entry.Name, entry.fullName, entry.label,
+            entry.value, entry.text, entry.display, entry.personName
+        ];
+        const roleFields = [
+            entry.role, entry.Role, entry.title, entry.Title,
+            entry.position, entry.Position, entry.jobTitle
+        ];
+
+        let name = safeString(nameFields.find(Boolean));
+
+        if (!name && (entry.firstName || entry.lastName)) {
+            name = [safeString(entry.firstName), safeString(entry.lastName)].filter(Boolean).join(' ').trim();
+        }
+
+        const role = safeString(roleFields.find(Boolean));
+
+        // Last resort: readable key/value summary if no explicit name
+        if (!name) {
+            name = buildKeyValueSummary(entry);
+        }
+
+        if (!name) return [];
+        return [{ name, role }];
+    }
+
+    // Anything else: stringify safely
+    return [{ name: safeString(entry), role: '' }].filter(item => item.name);
+}
+
+function buildKeyValueSummary(obj) {
+    if (!obj || typeof obj !== 'object') return '';
+    const parts = Object.entries(obj).map(([key, value]) => {
+        const val = safeString(value);
+        if (!val) return '';
+        const prettyKey = key.replace(/([A-Z])/g, ' $1').trim().replace(/^./, c => c.toUpperCase());
+        return `${prettyKey}: ${val}`;
+    }).filter(Boolean);
+    return parts.join(', ');
+}
+
+function renderStaffList(title, rawStaffArray) {
+    const staffArray = normalizeStaffArray(rawStaffArray);
+    if (!Array.isArray(staffArray) || staffArray.length === 0) return '';
 
     const staffItems = staffArray.map(staff => {
-        let name = '';
-        let role = '';
-
-        if (typeof staff === 'string') {
-            name = staff.trim();
-            role = '';
-        } else if (staff && typeof staff === 'object') {
-            // Try to get the name - check multiple possible field names
-            // First check for firstName + lastName combo
-            const firstName = safeString(staff.firstName);
-            const lastName = safeString(staff.lastName);
-            if (firstName && lastName) {
-                name = `${firstName} ${lastName}`.trim();
-            } else if (firstName) {
-                name = firstName;
-            } else if (lastName) {
-                name = lastName;
-            } else {
-                // Try other common name fields
-                name = safeString(staff.name) || safeString(staff.Name) || 
-                       safeString(staff.fullName) || safeString(staff.displayName) ||
-                       safeString(staff.label) || safeString(staff.text) || '';
-            }
-            
-            // Get role from multiple possible fields
-            role = safeString(staff.role) || safeString(staff.Role) || 
-                   safeString(staff.title) || safeString(staff.Title) || 
-                   safeString(staff.position) || safeString(staff.Position) ||
-                   safeString(staff.jobTitle) || '';
-                   
-            // If we have a role but no name, try to use the whole object value as name
-            if (!name && role) {
-                // Object has role but no parseable name - skip displaying just a role
-                return '';
-            }
-            
-            // If still no name, try safeString on the whole object as last resort
-            if (!name) {
-                name = safeString(staff);
-            }
-        } else if (staff !== null && staff !== undefined) {
-            name = safeString(staff);
-            role = '';
-        }
+        const name = safeString(staff?.name);
+        const role = safeString(staff?.role);
 
         // Skip if no valid name
         if (!name) return '';
@@ -980,7 +1027,15 @@ function safeString(value, depth = 0) {
     // Already a string
     if (typeof value === 'string') {
         const trimmed = value.trim();
-        return (trimmed && trimmed !== '[object Object]') ? trimmed : '';
+        if (!trimmed || /\[object\s+object\]/i.test(trimmed)) return '';
+        if (/^[\[{]/.test(trimmed)) {
+            try {
+                return safeString(JSON.parse(trimmed), depth + 1);
+            } catch (err) {
+                // Fall through if JSON parsing fails
+            }
+        }
+        return trimmed;
     }
 
     // Numbers and booleans - convert directly
