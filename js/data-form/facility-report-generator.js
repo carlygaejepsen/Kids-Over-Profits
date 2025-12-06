@@ -875,12 +875,25 @@ function renderList(title, items) {
     const listItems = items.map(item => {
         // Get a clean string value using safeString
         const displayValue = safeString(item);
+        const urlFromObject = (item && typeof item === 'object')
+            ? safeString(item.url || item.link || item.website || item.href)
+            : '';
         
         if (!displayValue) return '';
 
         // Check if it should be rendered as a link
-        if (isWebsiteList || looksLikeUrl(displayValue)) {
-            return `<li>${formatWebsiteLink(displayValue)}</li>`;
+        if (isWebsiteList) {
+            const urlToUse = urlFromObject || displayValue;
+            if (urlToUse) {
+                const linkPayload = (item && typeof item === 'object')
+                    ? { url: urlToUse, displayText: displayValue || urlToUse }
+                    : urlToUse;
+                return `<li>${formatWebsiteLink(linkPayload)}</li>`;
+            }
+        }
+
+        if (looksLikeUrl(displayValue) || looksLikeUrl(urlFromObject)) {
+            return `<li>${formatWebsiteLink(urlFromObject || displayValue)}</li>`;
         }
         
         // Check if it's an email
