@@ -1329,21 +1329,64 @@ function formatReportListItem(item) {
 
 function renderReportHTMLFromGenerator(data, skipHeader = false) {
     const renderField = (label, value) => {
+        const labelText = (label || '').toString().toLowerCase();
+        const isWebsiteLabel = labelText.includes('website') || labelText.includes('link') || labelText.includes('url') || labelText.includes('profile');
+        const isEmailLabel = labelText.includes('email');
+        const isPhoneLabel = labelText.includes('phone') || labelText.includes('contact');
+
         const cleaned = safeString(value);
-        if (!cleaned) return '';
-        return `<div class="info-item"><span class="info-label">${escapeHtml(label)}:</span><span class="info-value">${escapeHtml(cleaned)}</span></div>`;
+        const urlValue = (value && typeof value === 'object')
+            ? safeString(value.url || value.link || value.website || value.href)
+            : cleaned;
+
+        if (!cleaned && !urlValue) return '';
+
+        let renderedValue = escapeHtml(cleaned || urlValue);
+
+        if (isWebsiteLabel || looksLikeUrl(cleaned) || looksLikeUrl(urlValue)) {
+            const linkPayload = (value && typeof value === 'object')
+                ? { url: urlValue || cleaned, displayText: cleaned || urlValue }
+                : (urlValue || cleaned);
+            renderedValue = formatWebsiteLink(linkPayload);
+        } else if (isEmailLabel || looksLikeEmail(cleaned)) {
+            renderedValue = formatEmailLink(cleaned);
+        } else if (isPhoneLabel && cleaned) {
+            renderedValue = formatPhoneLink(cleaned);
+        }
+
+        return `<div class="info-item"><span class="info-label">${escapeHtml(label)}:</span><span class="info-value">${renderedValue}</span></div>`;
     };
 
     const renderList = (title, items) => {
+        const titleText = (title || '').toString().toLowerCase();
+        const isWebsiteList = titleText.includes('website') || titleText.includes('link') || titleText.includes('url') || titleText.includes('profile');
+
         const normalizedItems = normalizeReportListInput(items)
-            .map(formatReportListItem)
-            .filter(Boolean);
+            .map(item => {
+                const displayValue = formatReportListItem(item);
+                const urlValue = (item && typeof item === 'object')
+                    ? safeString(item.url || item.link || item.website || item.href)
+                    : displayValue;
+                return { displayValue, urlValue, item };
+            })
+            .filter(({ displayValue, urlValue }) => displayValue || urlValue);
 
         if (normalizedItems.length === 0) return '';
 
-        const listItems = normalizedItems
-            .map(item => `<li>${escapeHtml(item)}</li>`)
-            .join('');
+        const listItems = normalizedItems.map(({ displayValue, urlValue, item }) => {
+            if (isWebsiteList || looksLikeUrl(displayValue) || looksLikeUrl(urlValue)) {
+                const linkPayload = (item && typeof item === 'object')
+                    ? { url: urlValue || displayValue, displayText: displayValue || urlValue }
+                    : (urlValue || displayValue);
+                return `<li>${formatWebsiteLink(linkPayload)}</li>`;
+            }
+
+            if (looksLikeEmail(displayValue)) {
+                return `<li>${formatEmailLink(displayValue)}</li>`;
+            }
+
+            return `<li>${escapeHtml(displayValue || urlValue)}</li>`;
+        }).join('');
 
         return `
             <div class="list-section">
