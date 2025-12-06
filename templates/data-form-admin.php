@@ -10,7 +10,7 @@ get_header();
 
     <div class="container">
         <div class="admin-header">
-            <h1>🔐 Admin Facility Data Management</h1>
+            <h1>🔐 Admin TTI Data Management</h1>
             <p>You are in administrator mode. Changes saved here will directly update the master database.</p>
         </div>
         

@@ -745,16 +745,45 @@ function normalizeProjectData(data) {
     // Normalize consultants array
     if (Array.isArray(data.referrerConsultants)) {
         data.referrerConsultants = data.referrerConsultants.map(consultant => {
-            return normalizeObject(consultant, {
-                name: ['name', 'Name', 'fullName', 'full_name'],
-                title: ['title', 'Title'],
+            const normalized = normalizeObject(consultant, {
+                fullName: ['fullName', 'full_name', 'name', 'Name'],
+                firstName: ['firstName', 'first_name', 'FirstName'],
+                lastName: ['lastName', 'last_name', 'LastName'],
+                role: ['role', 'Role', 'title', 'Title'],
+                status: ['status', 'Status'],
+                education: ['education', 'Education', 'credentials', 'Credentials'],
+                credentials: ['credentials', 'Credentials', 'education', 'Education'],
                 city: ['city', 'City'],
                 state: ['state', 'State'],
-                website: ['website', 'Website', 'url'],
                 email: ['email', 'Email'],
                 phone: ['phone', 'Phone', 'phoneNumber'],
-                notes: ['notes', 'Notes']
+                website: ['website', 'Website', 'url'],
+                lawsuits: ['lawsuits', 'Lawsuits'],
+                notes: ['notes', 'Notes'],
+                affiliations: ['affiliations', 'Affiliations'],
+                knownReferrals: ['knownReferrals', 'known_referrals', 'facilitiesReferred', 'facilities_referred'],
+                facilitiesReferred: ['facilitiesReferred', 'facilities_referred', 'knownReferrals', 'known_referrals'],
+                pastTTIJobs: ['pastTTIJobs', 'past_tti_jobs', 'pastJobs'],
+                schoolDistricts: ['schoolDistricts', 'school_districts']
             });
+
+            // Ensure arrays are arrays
+            ['affiliations', 'knownReferrals', 'facilitiesReferred', 'pastTTIJobs', 'schoolDistricts'].forEach(field => {
+                if (normalized[field] && !Array.isArray(normalized[field])) {
+                    normalized[field] = typeof normalized[field] === 'string' ? [normalized[field]] : [];
+                } else if (!normalized[field]) {
+                    normalized[field] = [];
+                }
+            });
+
+            // Keep knownReferrals and facilitiesReferred in sync
+            if (normalized.knownReferrals.length === 0 && normalized.facilitiesReferred.length > 0) {
+                normalized.knownReferrals = normalized.facilitiesReferred.slice();
+            } else if (normalized.facilitiesReferred.length === 0 && normalized.knownReferrals.length > 0) {
+                normalized.facilitiesReferred = normalized.knownReferrals.slice();
+            }
+
+            return normalized;
         });
     }
 
@@ -793,9 +822,16 @@ function normalizeProjectData(data) {
         data.referrerConsultants = data.referrerConsultants.map(consultant => {
             const defaults = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : {};
             const merged = Object.assign(defaults, consultant || {});
-            if (!Array.isArray(merged.affiliations)) merged.affiliations = [];
-            if (!Array.isArray(merged.facilitiesReferred)) merged.facilitiesReferred = [];
-            if (!Array.isArray(merged.schoolDistricts)) merged.schoolDistricts = [];
+            // Ensure all array fields are arrays
+            ['affiliations', 'knownReferrals', 'facilitiesReferred', 'pastTTIJobs', 'schoolDistricts'].forEach(field => {
+                if (!Array.isArray(merged[field])) merged[field] = [];
+            });
+            // Keep knownReferrals and facilitiesReferred in sync
+            if (merged.knownReferrals.length === 0 && merged.facilitiesReferred.length > 0) {
+                merged.knownReferrals = merged.facilitiesReferred.slice();
+            } else if (merged.facilitiesReferred.length === 0 && merged.knownReferrals.length > 0) {
+                merged.facilitiesReferred = merged.knownReferrals.slice();
+            }
             if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
             normalizeFieldNotesEntries(merged.fieldNotes);
             return merged;
@@ -3828,22 +3864,22 @@ function updateLabelsForProjectType() {
 
     // Define default and referrer-specific labels
     const labels = {
-        toolbarTitle: { default: '📋 Project Editor', referrer: '📋 Referrer Editor' },
+        toolbarTitle: { default: '🔧 Toolbar', referrer: '🔧 Toolbar' },
         operatorSectionTitle: { default: 'Operator Information', referrer: 'Group/Agency Information' },
         operatorNameLabel: { default: 'Operator Name', referrer: 'Group/Agency Name' },
         facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
-        addFacilityButton: { default: 'Add New Facility', referrer: 'Add New Individual' },
-        addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New Individual' },
-        currentFacilityLabel: { default: 'Current Facility', referrer: 'Current Individual' },
-        addFacilityToolbar: { default: '➕ Add Facility', referrer: '➕ Add Individual' },
-        cloneFacilityToolbar: { default: '📋 Clone Facility', referrer: '📋 Clone Individual' },
-        removeFacilityToolbar: { default: '🗑️ Remove Facility', referrer: '🗑️ Remove Individual' },
+        addFacilityButton: { default: 'Add New Facility', referrer: 'Add New' },
+        addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New' },
+        currentFacilityLabel: { default: 'Current Facility', referrer: 'Current' },
+        addFacilityToolbar: { default: '➕ Add', referrer: '➕ Add' },
+        cloneFacilityToolbar: { default: '📋 Clone', referrer: '📋 Clone' },
+        removeFacilityToolbar: { default: '🗑️ Delete', referrer: '🗑️ Delete' },
         facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name' },
         facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
         facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
         facilityOperationsTitle: { default: 'Facility Operations', referrer: 'Individual\'s Operations' },
-        cloneModalTitle: { default: 'Clone Facility', referrer: 'Clone Individual' },
-        cloneModalButton: { default: 'Clone Facility', referrer: 'Clone Individual' }
+        cloneModalTitle: { default: 'Clone', referrer: 'Clone' },
+        cloneModalButton: { default: 'Clone', referrer: 'Clone' }
     };
 
     const setLabel = (elementId, text) => {
