@@ -43,14 +43,6 @@ get_header();
                         <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                             <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
                         </div>
-                        <div class="form-group" style="text-align: center;">
-                            <label>Project Management</label>
-                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <button class="btn" id="new-project-btn">New Project</button>
-                                <button class="btn" id="export-all-btn">Export All Projects</button>
-                                <button class="btn" id="generate-report-btn">Generate Report</button>
-                            </div>
-                        </div>
                     </div>
                     <div id="upload-status" style="display: none;"></div>
                 </div>
@@ -120,14 +112,6 @@ get_header();
                         <label>Saved Referrer Projects</label>
                         <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                             <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
-                        </div>
-                        <div class="form-group" style="text-align: center;">
-                            <label>Project Management</label>
-                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <button class="btn" id="new-referrer-project-btn">New Project</button>
-                                <button class="btn" id="export-referrer-projects-btn">Export All Projects</button>
-                                <button class="btn" id="generate-referrer-report-btn">Generate Report</button>
-                            </div>
                         </div>
                     </div>
 
@@ -332,19 +316,23 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
+                        <button class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">📄 New Project</button>
+                        <button class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊 Generate Report</button>
+                    </div>
+                    <div class="toolbar-group">
                         <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button class="btn-toolbar" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
+                        <button class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
-                            <button class="btn-toolbar" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <button class="btn-toolbar btn-secondary" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
-                            <button class="btn-toolbar" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                            <button class="btn-toolbar btn-secondary" id="next-facility-btn-toolbar" title="Next facility">▶</button>
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button class="btn-toolbar" id="clone-facility-btn-toolbar" title="Clone current facility">📋 Clone</button>
+                        <button class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋 Clone</button>
                         <button class="btn-toolbar btn-danger" id="delete-facility-btn-toolbar" title="Delete current facility">🗑️ Delete</button>
                     </div>
                 </div>
@@ -1095,6 +1083,14 @@ get_header();
                             <button class="btn" id="import-json-btn">Import JSON</button>
                             <button class="btn" id="clear-all-btn">Clear Form</button>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Export Projects</label>
+                        <button class="btn" id="export-all-btn">Export All Projects</button>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Export all saved projects as a JSON file for backup or transfer.
+                        </p>
                     </div>
                 <div class="json-output">
                     <div class="output-header">
