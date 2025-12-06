@@ -815,6 +815,11 @@ function normalizeProjectData(data) {
         normalizeFieldNotesEntries(data.referrerAgency.fieldNotes);
     }
 
+    // Recover legacy referrerIndividual if referrerConsultants is missing
+    if ((!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) && data.referrerIndividual && typeof data.referrerIndividual === 'object') {
+        data.referrerConsultants = [data.referrerIndividual];
+    }
+
     if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
         const defaultIndividual = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], fieldNotes: {} };
         data.referrerConsultants = [defaultIndividual];
