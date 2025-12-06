@@ -1466,7 +1466,9 @@ function persistProjectLocally(projectName, { showStatus = false, statusType = '
         window.projects = {};
     }
 
-    ensureReferrerDataStructures();
+    if (typeof window.ensureReferrerDataStructures === 'function') {
+        window.ensureReferrerDataStructures();
+    }
 
     // Determine category based on active tab
     const activeTab = document.querySelector('.category-tab.active');
@@ -1592,7 +1594,9 @@ async function saveProjectToCloud(projectName, action = 'save') {
         debugLog('Facility count:', window.formData.facilities?.length || 0);
         debugLog('Data size:', JSON.stringify(window.formData).length, 'characters');
 
-        ensureReferrerDataStructures();
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
 
         // Determine category: state/country names MUST be locations, regardless of stored metadata
         // This prevents state projects from being miscategorized if saved from wrong tab
@@ -1818,7 +1822,9 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('referrerGroup.')) {
-        ensureReferrerDataStructures();
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
         scope = 'referrerGroup';
         normalizedPath = path.replace('referrerGroup.', '');
         target = window.formData.referrerGroup;
@@ -1826,7 +1832,9 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('referrerIndividual.')) {
-        ensureReferrerDataStructures();
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
         scope = 'referrerIndividual';
         normalizedPath = path.replace('referrerIndividual.', '');
         target = window.formData.referrerIndividual;
@@ -1834,7 +1842,9 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('consultant.')) {
-        ensureReferrerDataStructures();
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
         scope = 'consultant';
         normalizedPath = path.replace('consultant.', '');
         target = window.formData.referrerIndividual;
@@ -1842,7 +1852,9 @@ function resolvePathTarget(path) {
     }
 
     if (path.startsWith('referrerAgency.')) {
-        ensureReferrerDataStructures();
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
         scope = 'referrerAgency';
         normalizedPath = path.replace('referrerAgency.', '');
         target = window.formData.referrerAgency;
@@ -1900,13 +1912,13 @@ function createNewProjectData() {
         }],
         // Referrer data structure
         referrer: [],
-        referrerAgency: createDefaultReferrerGroup(),
-        referrerConsultants: [createDefaultReferrerIndividual()],
+        referrerAgency: typeof window.createDefaultReferrerGroup === 'function' ? window.createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} },
+        referrerConsultants: [typeof window.createDefaultReferrerIndividual === 'function' ? window.createDefaultReferrerIndividual() : { firstName: "", lastName: "", knownReferrals: [], affiliations: [], fieldNotes: {} }],
         isIndependentConsultant: false,
         fieldNotes: {}
     };
 
-    project.referrer = buildReferrerEntries(project);
+    project.referrer = typeof window.buildReferrerEntries === 'function' ? window.buildReferrerEntries(project) : [];
 
     return project;
 }
@@ -1977,7 +1989,9 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             } else {
                 window.formData = createNewProjectData();
             }
-            ensureReferrerDataStructures();
+            if (typeof window.ensureReferrerDataStructures === 'function') {
+                window.ensureReferrerDataStructures();
+            }
             window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
 
             if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
@@ -2003,8 +2017,8 @@ function loadProject(projectName) { // Note: This function is now asynchronous
             }
 
             // Ensure the correct form wrapper is visible BEFORE updating UI
-            if (typeof handleReferrerToggle === 'function') {
-                handleReferrerToggle();
+            if (typeof window.handleReferrerToggle === 'function') {
+                window.handleReferrerToggle();
                 debugLog('✅ Updated form visibility for', projectCategory);
             }
 
@@ -2075,7 +2089,9 @@ function newProject() {
     updateLabelsForProjectType();
 
     // After labels are set, ensure the referrer toggle state is correct
-    handleReferrerToggle(); // Apply visibility rules based on the active tab
+    if (typeof window.handleReferrerToggle === 'function') {
+        window.handleReferrerToggle(); // Apply visibility rules based on the active tab
+    }
 
     showUploadStatus('New project created', 'info');
 }
@@ -2160,8 +2176,8 @@ function initializeCategoryTabs() {
         }
 
         // Handle main form visibility (facility vs. referrer form)
-        if (typeof handleReferrerToggle === 'function') {
-            handleReferrerToggle();
+        if (typeof window.handleReferrerToggle === 'function') {
+            window.handleReferrerToggle();
         }
 
         // Apply view layout to show/hide elements based on data-section-views
@@ -2316,7 +2332,9 @@ async function recategorizeProject(projectName) {
 // FORM DATA MANAGEMENT
 // ============================================
 function updateJSON() {
-    ensureReferrerDataStructures();
+    if (typeof window.ensureReferrerDataStructures === 'function') {
+        window.ensureReferrerDataStructures();
+    }
     const jsonDisplay = document.getElementById('json-display');
     if (jsonDisplay) {
         jsonDisplay.textContent = JSON.stringify(window.formData, null, 2);
@@ -3003,7 +3021,9 @@ window.updateAllUI = function() {
     isUpdatingUI = true;
     try {
         loadOperatorData();
-        loadReferrerData();
+        if (typeof window.loadReferrerData === 'function') {
+            window.loadReferrerData();
+        }
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
