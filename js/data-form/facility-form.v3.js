@@ -403,6 +403,39 @@ function normalizeProjectData(data) {
         isIndependentConsultant: ['isIndependentConsultant', 'is_independent_consultant', 'independent']
     });
 
+    // Normalize referrer individual data (legacy support)
+    if (data.referrerIndividual) {
+        data.referrerIndividual = normalizeObject(data.referrerIndividual, {
+            firstName: ['firstName', 'first_name', 'FirstName'],
+            lastName: ['lastName', 'last_name', 'LastName'],
+            fullName: ['fullName', 'full_name', 'name', 'Name', 'consultantName', 'consultant_name'],
+            role: ['role', 'Role', 'title', 'Title'],
+            email: ['email', 'Email'],
+            phone: ['phone', 'Phone'],
+            website: ['website', 'Website'],
+            notes: ['notes', 'Notes'],
+            knownReferrals: ['knownReferrals', 'known_referrals', 'facilitiesReferred', 'facilities_referred'],
+            facilitiesReferred: ['facilitiesReferred', 'facilities_referred', 'knownReferrals', 'known_referrals'],
+            affiliations: ['affiliations', 'Affiliations']
+        });
+        
+        // Ensure arrays
+        ['knownReferrals', 'facilitiesReferred', 'affiliations'].forEach(field => {
+             if (data.referrerIndividual[field] && !Array.isArray(data.referrerIndividual[field])) {
+                 data.referrerIndividual[field] = typeof data.referrerIndividual[field] === 'string' ? [data.referrerIndividual[field]] : [];
+             } else if (!data.referrerIndividual[field]) {
+                 data.referrerIndividual[field] = [];
+             }
+        });
+
+        // Sync referrals
+        if (data.referrerIndividual.knownReferrals.length === 0 && data.referrerIndividual.facilitiesReferred.length > 0) {
+            data.referrerIndividual.knownReferrals = data.referrerIndividual.facilitiesReferred.slice();
+        } else if (data.referrerIndividual.facilitiesReferred.length === 0 && data.referrerIndividual.knownReferrals.length > 0) {
+            data.referrerIndividual.facilitiesReferred = data.referrerIndividual.knownReferrals.slice();
+        }
+    }
+
     // Normalize operator data
     if (data.operator) {
         data.operator = normalizeObject(data.operator, {

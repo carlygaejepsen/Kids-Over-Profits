@@ -160,9 +160,14 @@ function ensureReferrerDataStructures() {
             merged.affiliations = [];
         }
         // Keep legacy facilitiesReferred in sync with canonical knownReferrals
-        const referrals = Array.isArray(merged.knownReferrals)
-            ? merged.knownReferrals
-            : Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
+        // Fix: Check length to avoid overwriting data with default empty array
+        let referrals = [];
+        if (Array.isArray(merged.knownReferrals) && merged.knownReferrals.length > 0) {
+            referrals = merged.knownReferrals;
+        } else if (Array.isArray(merged.facilitiesReferred) && merged.facilitiesReferred.length > 0) {
+            referrals = merged.facilitiesReferred.slice();
+        }
+        
         merged.knownReferrals = referrals;
         merged.facilitiesReferred = referrals;
         if (!Array.isArray(merged.pastTTIJobs)) {
