@@ -1782,54 +1782,6 @@ window.autoSave = autoSave;
 // These wrapper functions delegate to the module for backward compatibility.
 // ============================================
 
-function createDefaultReferrerGroup() {
-    if (window.createDefaultReferrerGroup && window.createDefaultReferrerGroup !== createDefaultReferrerGroup) {
-        return window.createDefaultReferrerGroup();
-    }
-    // Fallback implementation
-    return {
-        name: "", city: "", state: "", website: "", address: "", founded: "",
-        affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {}
-    };
-}
-
-function createDefaultReferrerIndividual() {
-    if (window.createDefaultReferrerIndividual && window.createDefaultReferrerIndividual !== createDefaultReferrerIndividual) {
-        return window.createDefaultReferrerIndividual();
-    }
-    // Fallback implementation
-    return {
-        firstName: "", lastName: "", fullName: "", role: "", status: "",
-        education: "", credentials: "", city: "", state: "", email: "", phone: "",
-        website: "", affiliations: [], facilitiesReferred: [], knownReferrals: [],
-        pastTTIJobs: [], schoolDistricts: [], lawsuits: "", notes: "", fieldNotes: {}
-    };
-}
-
-function buildReferrerEntries(formDataArg) {
-    if (window.buildReferrerEntries && window.buildReferrerEntries !== buildReferrerEntries) {
-        return window.buildReferrerEntries(formDataArg);
-    }
-    // Fallback - return empty array
-    return [];
-}
-
-function ensureReferrerDataStructures() {
-    if (window.ensureReferrerDataStructures && window.ensureReferrerDataStructures !== ensureReferrerDataStructures) {
-        return window.ensureReferrerDataStructures();
-    }
-    // Minimal fallback implementation
-    if (!window.formData) return;
-    if (!window.formData.referrerAgency) {
-        window.formData.referrerAgency = createDefaultReferrerGroup();
-    }
-    window.formData.referrerGroup = window.formData.referrerAgency;
-    if (!Array.isArray(window.formData.referrerConsultants)) {
-        window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
-    }
-    window.formData.referrerIndividual = window.formData.referrerConsultants[0];
-}
-
 function resolvePathTarget(path) {
     let scope = 'facility';
     let normalizedPath = path;
@@ -2126,40 +2078,6 @@ function newProject() {
     handleReferrerToggle(); // Apply visibility rules based on the active tab
 
     showUploadStatus('New project created', 'info');
-}
-
-function handleReferrerToggle() {
-    const activeTab = document.querySelector('.category-tab.active');
-    const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
-
-    const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
-    const facilityLoaderPanel = document.querySelector('.facility-loader-panel');
-    const facilityMainWrapper = document.getElementById('facility-main-wrapper');
-
-    const showElement = (element) => {
-        if (!element) return;
-        element.classList.remove('view-hidden');
-        element.style.display = '';
-    };
-
-    const hideElement = (element) => {
-        if (!element) return;
-        element.classList.add('view-hidden');
-        element.style.display = '';
-    };
-
-    if (activeCategory === 'referrers') {
-        hideElement(facilityMainWrapper);
-        hideElement(facilityLoaderPanel);
-        showElement(referrerMainWrapper);
-        if (typeof window.updateAgencySliderAppearance === 'function') {
-            window.updateAgencySliderAppearance();
-        }
-    } else {
-        hideElement(referrerMainWrapper);
-        showElement(facilityMainWrapper);
-        showElement(facilityLoaderPanel);
-    }
 }
 
 function initializeCategoryTabs() {
@@ -3039,135 +2957,6 @@ function loadOperatorData() {
             renderArray(container, path, getNestedValue(operator, path.replace('operator.', '')));
         }
     });
-}
-
-function loadReferrerData() {
-    ensureReferrerDataStructures();
-
-    const agency = window.formData.referrerAgency || createDefaultReferrerGroup();
-
-    if (typeof debugLog === 'function') {
-        debugLog('📋 loadReferrerData called', {
-            'currentProject': window.currentProjectName,
-            'referrerAgency': agency,
-            'referrerIndividual': window.formData.referrerIndividual,
-            'referrerConsultants': window.formData.referrerConsultants
-        });
-    }
-
-    const groupFieldMap = [
-        { ids: ['referrer-group-name', 'referrer-agency-name'], key: 'name' },
-        { ids: ['referrer-group-city', 'referrer-agency-city'], key: 'city' },
-        { ids: ['referrer-group-state', 'referrer-agency-state'], key: 'state' },
-        { ids: ['referrer-group-website', 'referrer-agency-website'], key: 'website' },
-        { ids: ['referrer-group-address'], key: 'address' },
-        { ids: ['referrer-group-founded'], key: 'founded' },
-        { ids: ['referrer-group-notes', 'referrer-agency-notes'], key: 'notes' },
-    ];
-
-    groupFieldMap.forEach(({ ids, key }) => {
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.value = agency[key] || '';
-                if (typeof debugLog === 'function') {
-                    debugLog(`  ✓ Set ${id} = "${agency[key] || ''}"`);
-                }
-            }
-        });
-    });
-
-    const groupAffiliationsContainer = document.querySelector('[data-path="referrerGroup.affiliations"]');
-    if (groupAffiliationsContainer && typeof renderArray === 'function') {
-        if (!Array.isArray(agency.affiliations)) {
-            agency.affiliations = [];
-        }
-        renderArray(groupAffiliationsContainer, 'referrerGroup.affiliations', agency.affiliations);
-    }
-
-    const keyPersonnelContainer = document.querySelector('[data-path="referrerAgency.keyPersonnel"]');
-    if (keyPersonnelContainer && typeof renderArray === 'function') {
-        if (!Array.isArray(agency.keyPersonnel)) {
-            agency.keyPersonnel = [];
-        }
-        renderArray(keyPersonnelContainer, 'referrerAgency.keyPersonnel', agency.keyPersonnel);
-    }
-
-    const referrerType = window.formData.referrerType || (window.formData.isIndependentConsultant ? 'individual' : 'group');
-    if (typeof window.applyReferrerToggleState === 'function') {
-        window.applyReferrerToggleState(referrerType === 'individual');
-    }
-
-    // Ensure currentConsultantIndex is valid
-    const consultants = window.formData.referrerConsultants || [];
-    if (typeof window.currentConsultantIndex !== 'number' || window.currentConsultantIndex < 0 || window.currentConsultantIndex >= consultants.length) {
-        window.currentConsultantIndex = 0;
-    }
-
-    const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
-    window.formData.referrerIndividual = consultant;
-    if (typeof debugLog === 'function') {
-        debugLog('📋 Consultant data:', consultant);
-    }
-
-    // Load consultant fields automatically using data-field attributes (like facilities do)
-    // This matches the HTML structure with class="consultant-field" data-field="firstName" etc.
-    document.querySelectorAll('.consultant-field').forEach(field => {
-        const fieldName = field.dataset.field;
-        if (fieldName) {
-            // Get value from consultant object
-            let value = consultant[fieldName];
-
-            // Handle special cases
-            if (fieldName === 'credentials' && !value) {
-                value = consultant.education; // Fallback to education
-            }
-
-            // Set field value
-            if (field.type === 'checkbox') {
-                field.checked = !!value;
-            } else {
-                field.value = value ?? '';
-            }
-
-            if (typeof debugLog === 'function') {
-                debugLog(`  ✓ Set consultant field ${fieldName} = "${value || ''}"`);
-            }
-        }
-    });
-
-    if (!Array.isArray(consultant.pastTTIJobs)) {
-        consultant.pastTTIJobs = [];
-    }
-    if (!Array.isArray(consultant.knownReferrals)) {
-        consultant.knownReferrals = [];
-    }
-    if (!Array.isArray(consultant.affiliations)) {
-        consultant.affiliations = [];
-    }
-    if (!Array.isArray(consultant.facilitiesReferred)) {
-        consultant.facilitiesReferred = consultant.knownReferrals.slice();
-    }
-    if (!Array.isArray(consultant.schoolDistricts)) {
-        consultant.schoolDistricts = [];
-    }
-
-    const individualArrays = [
-        { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
-        { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
-        { path: 'consultant.affiliations', data: consultant.affiliations },
-        { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
-        { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
-    ];
-
-    if (typeof renderArray === 'function') {
-        individualArrays.forEach(({ path, data }) => {
-            const container = document.querySelector(`[data-path="${path}"]`);
-            if (container) {
-                renderArray(container, path, data);
-            }
-        });
-    }
 }
 
 function loadFacilityData() {
@@ -4287,19 +4076,6 @@ function attachFieldListeners() {
         }
     });
 }
-
-window.handleReferrerTypeToggle = function(type) {
-    ensureReferrerDataStructures();
-    const normalized = type === 'individual' ? 'individual' : 'group';
-    window.formData.referrerType = normalized;
-
-    if (typeof window.applyReferrerToggleState === 'function') {
-        window.applyReferrerToggleState(normalized === 'individual');
-    }
-
-    updateJSON();
-    autoSave();
-};
 
 function attachButtonListeners() {
     // Facility navigation

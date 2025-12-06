@@ -419,6 +419,7 @@ function handleReferrerToggle() {
     const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
 
     const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+    const facilityLoaderPanel = document.querySelector('.facility-loader-panel');
     const facilityMainWrapper = document.getElementById('facility-main-wrapper');
 
     const showElement = (element) => {
@@ -435,6 +436,7 @@ function handleReferrerToggle() {
 
     if (activeCategory === 'referrers') {
         hideElement(facilityMainWrapper);
+        hideElement(facilityLoaderPanel);
         showElement(referrerMainWrapper);
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
@@ -442,6 +444,7 @@ function handleReferrerToggle() {
     } else {
         hideElement(referrerMainWrapper);
         showElement(facilityMainWrapper);
+        showElement(facilityLoaderPanel);
     }
 }
 
@@ -959,6 +962,22 @@ function attachReferrerFieldListeners() {
     }
 }
 
+/**
+ * Handle referrer type toggle (group vs individual)
+ */
+function handleReferrerTypeToggle(type) {
+    ensureReferrerDataStructures();
+    const normalized = type === 'individual' ? 'individual' : 'group';
+    window.formData.referrerType = normalized;
+
+    if (typeof window.applyReferrerToggleState === 'function') {
+        window.applyReferrerToggleState(normalized === 'individual');
+    }
+
+    if (typeof updateJSON === 'function') updateJSON();
+    if (typeof autoSave === 'function') autoSave();
+}
+
 // ============================================
 // EXPORTS & INITIALIZATION
 // ============================================
@@ -971,6 +990,7 @@ window.ensureReferrerDataStructures = ensureReferrerDataStructures;
 window.getAllReferrers = getAllReferrers;
 window.loadReferrerData = loadReferrerData;
 window.handleReferrerToggle = handleReferrerToggle;
+window.handleReferrerTypeToggle = handleReferrerTypeToggle;
 window.attachReferrerFieldListeners = attachReferrerFieldListeners;
 
 // Expose consultant navigation functions
