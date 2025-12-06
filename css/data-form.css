@@ -307,8 +307,8 @@ body:not(.admin-bar) .fixed-toolbar {
     border: 2px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.95);
-    color: #000435;
+    background: var(--kop-white, rgba(255, 255, 255, 0.95));
+    color: var(--kop-midnight-blue, #000435);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     flex-shrink: 0;
     white-space: nowrap;
@@ -322,44 +322,47 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary {
-    background: #33A7B5;
-    color: #000435;
-    border-color: #000435;
+    background: var(--kop-teal, #33A7B5);
+    color: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary:hover {
-    background: #000435;
-    color: #FFFFFF;
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #FFFFFF);
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary {
-    background: #FFF5CB;
-    color: #000435;
-    border-color: #000435;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: #B6E3D4;
+    background: var(--kop-mint-green, #B6E3D4);
+    color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-success {
-    background: #33A7B5;
-    color: #FFFFFF;
-    border-color: #000435;
+    background: var(--kop-mint-green, #B6E3D4);
+    color: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-success:hover {
-    background: #000435;
+    background: var(--kop-teal, #33A7B5);
+    color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger {
-    background: #C81E1E; /* deeper red for contrast */
-    color: #FFFFFF;
-    border-color: #7A0F0F;
+    background: var(--kop-coral-pink, #FE8088);
+    color: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger:hover {
-    background: #a41818;
+    background: var(--kop-orange, #EF9034);
+    color: var(--kop-midnight-blue, #000435);
 }
 
 .fixed-toolbar.minimized {
