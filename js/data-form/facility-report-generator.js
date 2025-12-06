@@ -1061,7 +1061,7 @@ function safeString(value, depth = 0) {
     if (typeof value === 'object') {
         // Try common field names in order of preference
         const possibleFields = ['name', 'Name', 'fullName', 'value', 'text', 'title',
-                                'url', 'link', 'label', 'display', 'content'];
+                                'url', 'link', 'website', 'href', 'label', 'display', 'content'];
 
         for (const field of possibleFields) {
             if (value[field]) {
@@ -1188,7 +1188,7 @@ function formatWebsiteLink(url) {
     let customDisplayText = '';
     
     if (url && typeof url === 'object') {
-        urlStr = safeString(url.url || url.link || url.href || url);
+        urlStr = safeString(url.url || url.link || url.href || url.website || url);
         customDisplayText = safeString(url.displayText || url.text || url.label || url.title || '');
     } else {
         urlStr = safeString(url);
