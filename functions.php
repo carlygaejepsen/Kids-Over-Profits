@@ -1968,6 +1968,19 @@ function enqueue_facility_form_script() {
         true
     );
 
+    // Enqueue the toolbar module (shared between admin/public)
+    $toolbar_script_relative_path = '/js/data-form/facility-toolbar.js';
+    $toolbar_script_file_path = get_stylesheet_directory() . $toolbar_script_relative_path;
+    $toolbar_script_uri = get_stylesheet_directory_uri() . $toolbar_script_relative_path;
+
+    wp_enqueue_script(
+        'facility-toolbar-script',
+        $toolbar_script_uri,
+        array('jquery', 'utilities-module-script'),
+        file_exists($toolbar_script_file_path) ? filemtime($toolbar_script_file_path) : time(),
+        true
+    );
+
     // Enqueue the main facility form script (depends on loader, referrer module, notes module, and autocomplete module)
     $script_relative_path = '/js/data-form/facility-form.v3.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
@@ -1976,7 +1989,7 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'utilities-module-script', 'db-form-loader', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script', 'facility-report-generator'),
+        array('jquery', 'utilities-module-script', 'facility-toolbar-script', 'db-form-loader', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script', 'facility-report-generator'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );

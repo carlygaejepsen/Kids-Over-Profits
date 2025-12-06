@@ -3232,7 +3232,9 @@ window.updateAllUI = function() {
         
         updateLabelsForProjectType(window.currentProjectName || '');
         initializeNoteControls();
-        updateToolbarFacilityInfo(); // Update toolbar when UI updates
+        if (typeof window.updateToolbarFacilityInfo === 'function') {
+            window.updateToolbarFacilityInfo(); // Update toolbar when UI updates
+        }
 
         // Update private ownership toggle state from facility data
         if (typeof window.updatePrivateOwnershipSliderAppearance === 'function') {
@@ -3355,7 +3357,9 @@ function navigateToFacility(index) {
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();
-        updateToolbarFacilityInfo();
+        if (typeof window.updateToolbarFacilityInfo === 'function') {
+            window.updateToolbarFacilityInfo();
+        }
         scrollToFormInput();
     }
 }
@@ -3389,199 +3393,6 @@ function scrollToFormInput() {
             });
         }
     }, 50);
-}
-
-// ============================================
-// TOOLBAR FUNCTIONALITY
-// ============================================
-function updateToolbarFacilityInfo() {
-    const dropdown = document.getElementById('facility-dropdown');
-    const projectNameSpan = document.getElementById('toolbar-project-name');
-
-    // Only proceed if toolbar elements exist (not all pages have the toolbar)
-    if (!dropdown) return;
-
-    debugLog('🔄 Updating toolbar facility info...', {
-        'formData exists': !!window.formData,
-        'facilities count': window.formData?.facilities?.length || 0,
-        'currentProjectName': window.currentProjectName
-    });
-
-    if (window.formData && window.formData.facilities) {
-        // Create array with facility data and original index
-        const facilitiesWithIndex = window.formData.facilities.map((facility, index) => ({
-            facility,
-            originalIndex: index,
-            name: facility.identification?.name || 'Unnamed Facility'
-        }));
-
-        // Sort alphabetically by name (case-insensitive, unnamed facilities last)
-        facilitiesWithIndex.sort((a, b) => {
-            const nameA = a.name.toLowerCase();
-            const nameB = b.name.toLowerCase();
-            if (nameA === 'unnamed facility' && nameB !== 'unnamed facility') return 1;
-            if (nameB === 'unnamed facility' && nameA !== 'unnamed facility') return -1;
-            return nameA.localeCompare(nameB);
-        });
-
-        // Clear and populate dropdown with alphabetically sorted facilities
-        dropdown.innerHTML = '';
-        facilitiesWithIndex.forEach(({ facility, originalIndex, name }, alphabeticalIndex) => {
-            const option = document.createElement('option');
-            option.value = originalIndex;
-            option.textContent = `${alphabeticalIndex + 1}. ${name}`;
-            dropdown.appendChild(option);
-        });
-
-        debugLog('✅ Populated dropdown with', window.formData.facilities.length, 'facilities (alphabetically sorted)');
-
-        // Set current selection
-        if (typeof window.currentFacilityIndex !== 'undefined') {
-            dropdown.value = window.currentFacilityIndex;
-        }
-    } else {
-        debugLog('⚠️ Could not update toolbar: no formData or facilities');
-        dropdown.innerHTML = '<option>No facilities</option>';
-    }
-
-    // Update project name
-    if (projectNameSpan) {
-        projectNameSpan.textContent = window.currentProjectName ? `(${window.currentProjectName})` : '';
-    }
-
-    // Show/hide remove button
-    const removeBtn = document.getElementById('remove-facility-btn-toolbar');
-    if (removeBtn && window.formData && window.formData.facilities) {
-        if (window.formData.facilities.length > 1) {
-            removeBtn.classList.remove('d-none');
-        } else {
-            removeBtn.classList.add('d-none');
-        }
-    }
-
-    // Update prev/next button states
-    updateToolbarNavButtons();
-}
-
-function updateToolbarNavButtons() {
-    const prevBtn = document.getElementById('prev-facility-btn-toolbar');
-    const nextBtn = document.getElementById('next-facility-btn-toolbar');
-    const dropdown = document.getElementById('facility-dropdown');
-
-    if (!prevBtn || !nextBtn || !dropdown) return;
-
-    const currentIndex = parseInt(dropdown.value) || 0;
-    const totalFacilities = dropdown.options.length;
-
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === totalFacilities - 1;
-
-    prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
-    nextBtn.style.opacity = currentIndex === totalFacilities - 1 ? '0.5' : '1';
-}
-
-// Make toolbar function globally accessible
-window.updateToolbarFacilityInfo = updateToolbarFacilityInfo;
-
-// Initialize toolbar button event listeners
-function initializeToolbarButtons() {
-    // Toolbar toggle (minimize/expand)
-    const toolbarToggle = document.getElementById('toolbar-toggle-btn');
-    const toolbar = document.getElementById('fixed-toolbar');
-    const toolbarContent = document.getElementById('toolbar-content');
-
-    if (toolbar) {
-        document.body.classList.add('toolbar-active');
-        document.body.classList.toggle('toolbar-minimized', toolbar.classList.contains('minimized'));
-        if (toolbarContent) {
-            toolbarContent.setAttribute('aria-hidden', toolbar.classList.contains('minimized') ? 'true' : 'false');
-        }
-    }
-
-    if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
-        const applyToolbarState = (isMinimized) => {
-            document.body.classList.toggle('toolbar-minimized', isMinimized);
-            if (toolbarContent) {
-                toolbarContent.setAttribute('aria-hidden', isMinimized ? 'true' : 'false');
-            }
-            toolbarToggle.textContent = isMinimized ? '▼' : '−';
-            toolbarToggle.title = isMinimized ? 'Expand toolbar' : 'Minimize toolbar';
-            toolbarToggle.setAttribute('aria-expanded', isMinimized ? 'false' : 'true');
-        };
-
-        toolbarToggle.setAttribute('aria-controls', 'toolbar-content');
-        applyToolbarState(toolbar.classList.contains('minimized'));
-
-        toolbarToggle.addEventListener('click', () => { // UI-only, can be passive
-            const isMinimized = toolbar.classList.toggle('minimized');
-            applyToolbarState(isMinimized);
-        }, { passive: true });
-
-        toolbarToggle.dataset.listenerAttached = 'true';
-    }
-
-    // Facility dropdown change handler
-    const facilityDropdown = document.getElementById('facility-dropdown');
-    if (facilityDropdown && !facilityDropdown.dataset.listenerAttached) {
-        facilityDropdown.addEventListener('change', (e) => {
-            const newIndex = parseInt(e.target.value);
-            if (!isNaN(newIndex)) {
-                navigateToFacility(newIndex);
-            }
-        }, { passive: true });
-        facilityDropdown.dataset.listenerAttached = 'true';
-    }
-
-    // Previous/Next facility buttons
-    const prevBtnToolbar = document.getElementById('prev-facility-btn-toolbar');
-    const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
-
-    if (prevBtnToolbar && !prevBtnToolbar.dataset.listenerAttached) {
-        prevBtnToolbar.addEventListener('click', () => { // UI-only, can be passive
-            const dropdown = document.getElementById('facility-dropdown');
-            if (dropdown && dropdown.selectedIndex > 0) {
-                dropdown.selectedIndex--;
-                navigateToFacility(parseInt(dropdown.value));
-            }
-        }, { passive: true });
-        prevBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    if (nextBtnToolbar && !nextBtnToolbar.dataset.listenerAttached) {
-        nextBtnToolbar.addEventListener('click', () => { // UI-only, can be passive
-            const dropdown = document.getElementById('facility-dropdown');
-            if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
-                dropdown.selectedIndex++;
-                navigateToFacility(parseInt(dropdown.value));
-            }
-        }, { passive: true });
-        nextBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    // Add Facility button
-    const addFacilityBtnToolbar = document.getElementById('add-facility-btn-toolbar');
-    if (addFacilityBtnToolbar && !addFacilityBtnToolbar.dataset.listenerAttached) {
-        addFacilityBtnToolbar.addEventListener('click', addFacility);
-        addFacilityBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    // Scroll to Top button
-    const scrollToTopBtnToolbar = document.getElementById('scroll-to-top-btn-toolbar');
-    if (scrollToTopBtnToolbar && !scrollToTopBtnToolbar.dataset.listenerAttached) {
-        scrollToTopBtnToolbar.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        scrollToTopBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    // Remove Facility button
-    const removeFacilityBtnToolbar = document.getElementById('remove-facility-btn-toolbar');
-    if (removeFacilityBtnToolbar && !removeFacilityBtnToolbar.dataset.listenerAttached) {
-        removeFacilityBtnToolbar.addEventListener('click', removeFacility);
-        removeFacilityBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    debugLog('✅ Toolbar buttons initialized');
 }
 
 function addFacility() {
@@ -4510,7 +4321,9 @@ function attachButtonListeners() {
     });
 
     // Toolbar buttons (if toolbar exists on this page)
-    initializeToolbarButtons();
+    if (typeof window.initializeToolbarButtons === 'function') {
+        window.initializeToolbarButtons();
+    }
 
     // Project management
     const saveBtn = document.getElementById('save-project-btn');
@@ -4639,32 +4452,6 @@ function attachButtonListeners() {
         };
         saveReferrerBtn.dataset.listenerAttached = 'true';
     }
-
-    // Toolbar navigation buttons
-    const prevBtnToolbar = document.getElementById('prev-facility-btn-toolbar');
-    if (prevBtnToolbar && !prevBtnToolbar.dataset.listenerAttached) {
-        prevBtnToolbar.addEventListener('click', () => {
-            const dropdown = document.getElementById('facility-dropdown');
-            if (dropdown && dropdown.selectedIndex > 0) {
-                dropdown.selectedIndex--;
-                dropdown.dispatchEvent(new Event('change'));
-            }
-        });
-        prevBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    const nextBtnToolbar = document.getElementById('next-facility-btn-toolbar');
-    if (nextBtnToolbar && !nextBtnToolbar.dataset.listenerAttached) {
-        nextBtnToolbar.addEventListener('click', () => {
-            const dropdown = document.getElementById('facility-dropdown');
-            if (dropdown && dropdown.selectedIndex < dropdown.options.length - 1) {
-                dropdown.selectedIndex++;
-                dropdown.dispatchEvent(new Event('change'));
-            }
-        });
-        nextBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
 
     // Import/Export
     const copyBtn = document.getElementById('copy-json-btn');
@@ -4840,7 +4627,9 @@ async function initializeForm() {
     // Initialize fixed toolbar (for data.html)
     console.log('📍 About to call initializeFixedToolbar...');
     try {
-        initializeFixedToolbar();
+        if (typeof window.initializeFixedToolbar === 'function') {
+            window.initializeFixedToolbar();
+        }
     } catch (error) {
         console.error('❌ Error initializing fixed toolbar:', error);
     }
@@ -5045,64 +4834,6 @@ if (document.readyState === 'loading') {
     initializeForm();
 }
 
-// ============================================
-// FIXED TOOLBAR INITIALIZATION (for data.html)
-// ============================================
-function initializeFixedToolbar() {
-    const toolbar = document.getElementById('fixed-toolbar');
-    if (!toolbar) {
-        debugLog('⚠️ Fixed toolbar element not found, skipping initialization.');
-        return;
-    }
-    debugLog('🔧 initializeFixedToolbar() called, delegating to initializeToolbarButtons()');
-    // The initializeToolbarButtons function already contains the correct logic.
-    initializeToolbarButtons();
-}
-
-// Make function globally accessible
-window.initializeFixedToolbar = initializeFixedToolbar;
-
-// BACKUP: Try to initialize toolbar immediately when DOM is ready
-console.log('⚡ Setting up toolbar initialization backups...');
-document.addEventListener('DOMContentLoaded', () => {
-    debugLog('⚡ DOMContentLoaded - attempting toolbar init');
-    // This is now redundant with the main initializeForm call, but safe.
-    initializeFixedToolbar();
-}, { once: true });
-
-// ============================================
-// FACILITY TOOLBAR TOGGLE
-// ============================================
-function initializeFacilityToolbarToggle() {
-    const toggleBtn = document.getElementById('facility-toolbar-toggle');
-    const expandable = document.getElementById('facility-toolbar-expandable');
-
-    if (!toggleBtn || !expandable) return;
-
-    // Start collapsed by default to save space
-    let isCollapsed = true;
-    expandable.style.display = 'none';
-    toggleBtn.textContent = '🔎';
-    toggleBtn.title = 'Expand toolbar';
-
-    // Remove any old listeners by cloning
-    const newToggleBtn = toggleBtn.cloneNode(true);
-    toggleBtn.parentNode.replaceChild(newToggleBtn, toggleBtn);
-
-    newToggleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        isCollapsed = !isCollapsed;
-        expandable.style.display = isCollapsed ? 'none' : 'block';
-        newToggleBtn.textContent = isCollapsed ? '🔎' : '🔽';
-        newToggleBtn.title = isCollapsed ? 'Expand toolbar' : 'Minimize toolbar';
-    }, { passive: false });
-
-    debugLog('✅ Facility toolbar toggle initialized (collapsed by default)');
-}
-
-window.initializeFacilityToolbarToggle = initializeFacilityToolbarToggle;
 
 // Fallback: sometimes remote resources or slow loads cause UI bits to render incorrectly.
 // Re-run lightweight initialization checks on window.load to recover from intermittent failures.
