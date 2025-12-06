@@ -1122,15 +1122,6 @@ body:not(.admin-bar) .fixed-toolbar {
         min-width: 26px;
     }
 
-    /* Scroll to top button styling */
-    #scroll-to-top-btn-toolbar {
-        background: #6b7280;
-        color: white;
-    }
-    #scroll-to-top-btn-toolbar:hover {
-        background: #1f2937;
-    }
-
     .form-row,
     .form-row-3 {
         grid-template-columns: 1fr;
