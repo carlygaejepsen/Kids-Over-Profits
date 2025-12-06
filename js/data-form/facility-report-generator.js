@@ -875,26 +875,28 @@ function renderList(title, items) {
 
     const listItems = items.map(item => {
         const { href: urlHref, displayText: linkText } = normalizeLinkInput(item);
-        const displayValue = safeString(item) || linkText || urlHref;
+        const rawDisplay = safeString(item) || linkText || urlHref;
+        const extractedUrl = urlHref || extractFirstUrlFromString(rawDisplay);
+        const cleanedDisplay = stripDisplayTextLabel(rawDisplay || linkText || urlHref);
 
-        if (!displayValue && !urlHref) return '';
+        if (!rawDisplay && !extractedUrl) return '';
 
         // Check if it should be rendered as a link
-        if (isWebsiteList || looksLikeUrl(urlHref) || looksLikeUrl(displayValue)) {
-            const linkPayload = urlHref || displayValue
-                ? (item && typeof item === 'object')
-                    ? { url: urlHref || displayValue, displayText: linkText || displayValue }
-                    : (urlHref || displayValue)
-                : '';
-            return linkPayload ? `<li>${formatWebsiteLink(linkPayload)}</li>` : '';
+        if (isWebsiteList || looksLikeUrl(extractedUrl) || looksLikeUrl(rawDisplay)) {
+            const hrefToUse = extractedUrl || rawDisplay;
+            const displayText = cleanedDisplay || hrefToUse;
+            const linkPayload = (item && typeof item === 'object')
+                ? { url: hrefToUse, displayText }
+                : hrefToUse;
+            return `<li>${formatWebsiteLink(linkPayload)}</li>`;
         }
         
         // Check if it's an email
-        if (looksLikeEmail(displayValue)) {
-            return `<li>${formatEmailLink(displayValue)}</li>`;
+        if (looksLikeEmail(rawDisplay)) {
+            return `<li>${formatEmailLink(rawDisplay)}</li>`;
         }
         
-        return `<li>${escapeHtml(displayValue)}</li>`;
+        return `<li>${escapeHtml(rawDisplay)}</li>`;
     }).filter(item => item).join('');
 
     if (!listItems) return '';
@@ -1184,6 +1186,33 @@ function looksLikeEmail(str) {
 }
 
 /**
+ * Extracts the first URL-like token from a string
+ * @param {string} str - The string to search
+ * @returns {string} - The first URL found or empty string
+ */
+function extractFirstUrlFromString(str) {
+    if (typeof str !== 'string') return '';
+    const match = str.match(/https?:\/\/\S+|www\.\S+/i);
+    if (!match) return '';
+    // Trim trailing punctuation that can ride along
+    return match[0].replace(/[)\],;]+$/, '');
+}
+
+/**
+ * Removes "Display Text:" or similar labels from a string
+ * @param {string} str - The string to clean
+ * @returns {string} - Cleaned string
+ */
+function stripDisplayTextLabel(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/display\s*text:\s*/i, '')
+        .replace(/url:\s*(https?:\/\/\S+|www\.\S+)/ig, '')
+        .replace(/\s*[,;]+\s*$/g, '')
+        .trim();
+}
+
+/**
  * Normalizes any link-like input into href and display text components
  * @param {*} input - String or object that may contain url/display fields
  * @returns {{href: string, displayText: string}}
@@ -1345,16 +1374,17 @@ function renderReportHTMLFromGenerator(data, skipHeader = false) {
         const isPhoneLabel = labelText.includes('phone') || labelText.includes('contact');
 
         const { href: urlValue, displayText: linkText } = normalizeLinkInput(value);
-        const cleaned = safeString(value) || linkText || urlValue;
+        const cleaned = stripDisplayTextLabel(safeString(value) || linkText || urlValue);
+        const extractedUrl = urlValue || extractFirstUrlFromString(cleaned);
 
-        if (!cleaned && !urlValue) return '';
+        if (!cleaned && !extractedUrl) return '';
 
-        let renderedValue = escapeHtml(cleaned || urlValue);
+        let renderedValue = escapeHtml(cleaned || extractedUrl);
 
-        if (isWebsiteLabel || looksLikeUrl(cleaned) || looksLikeUrl(urlValue)) {
+        if (isWebsiteLabel || looksLikeUrl(cleaned) || looksLikeUrl(extractedUrl)) {
             const linkPayload = (value && typeof value === 'object')
-                ? { url: urlValue || cleaned, displayText: linkText || cleaned || urlValue }
-                : (urlValue || cleaned);
+                ? { url: extractedUrl || cleaned, displayText: cleaned || extractedUrl || linkText }
+                : (extractedUrl || cleaned);
             renderedValue = formatWebsiteLink(linkPayload);
         } else if (isEmailLabel || looksLikeEmail(cleaned)) {
             renderedValue = formatEmailLink(cleaned);
@@ -1372,8 +1402,10 @@ function renderReportHTMLFromGenerator(data, skipHeader = false) {
         const normalizedItems = normalizeReportListInput(items)
             .map(item => {
                 const { href: urlValue, displayText: linkText } = normalizeLinkInput(item);
-                const displayValue = formatReportListItem(item) || linkText || urlValue;
-                return { displayValue, urlValue, linkText, item };
+                const displayValueRaw = formatReportListItem(item) || linkText || urlValue;
+                const displayValue = stripDisplayTextLabel(displayValueRaw);
+                const extractedUrl = urlValue || extractFirstUrlFromString(displayValueRaw);
+                return { displayValue, urlValue: extractedUrl || urlValue, linkText, item };
             })
             .filter(({ displayValue, urlValue }) => displayValue || urlValue);
 
