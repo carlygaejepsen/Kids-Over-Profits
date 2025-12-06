@@ -12,7 +12,10 @@
       "Bash(powershell -Command:*)",
       "Bash(cat:*)",
       "Bash(ls:*)",
-      "Bash(dir /b)"
+      "Bash(dir /b)",
+      "Bash(find:*)",
+      "Bash(dir /s /b *.html)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

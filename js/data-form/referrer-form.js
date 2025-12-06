@@ -47,7 +47,6 @@ function createDefaultReferrerIndividual() {
         phone: "",
         website: "",
         affiliations: [],
-        facilitiesReferred: [],
         knownReferrals: [],
         pastTTIJobs: [],
         schoolDistricts: [],
@@ -96,7 +95,7 @@ function buildReferrerEntries(formData) {
             },
             consultant: {
                 affiliations: [],
-                facilitiesReferred: [],
+                knownReferrals: [],
                 schoolDistricts: []
             }
         }];
@@ -104,7 +103,8 @@ function buildReferrerEntries(formData) {
 
     return consultants.map(consultant => {
         const affiliations = Array.isArray(consultant?.affiliations) ? consultant.affiliations.filter(item => item !== undefined && item !== null) : [];
-        const facilities = Array.isArray(consultant?.facilitiesReferred) ? consultant.facilitiesReferred.filter(item => item !== undefined && item !== null) : [];
+        const referrals = Array.isArray(consultant?.knownReferrals) ? consultant.knownReferrals.filter(item => item !== undefined && item !== null) :
+                         Array.isArray(consultant?.facilitiesReferred) ? consultant.facilitiesReferred.filter(item => item !== undefined && item !== null) : [];
         const districts = Array.isArray(consultant?.schoolDistricts) ? consultant.schoolDistricts.filter(item => item !== undefined && item !== null) : [];
         const consultantName = [consultant?.firstName, consultant?.lastName]
             .map(part => (typeof part === 'string' ? part.trim() : ''))
@@ -119,7 +119,7 @@ function buildReferrerEntries(formData) {
             },
             consultant: {
                 affiliations: affiliations.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
-                facilitiesReferred: facilities.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
+                knownReferrals: referrals.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim()),
                 schoolDistricts: districts.map(item => typeof item === 'string' ? item.trim() : String(item || '').trim())
             }
         };
@@ -159,11 +159,10 @@ function ensureReferrerDataStructures() {
         if (!Array.isArray(merged.affiliations)) {
             merged.affiliations = [];
         }
+        // Migrate from legacy facilitiesReferred to knownReferrals
         if (!Array.isArray(merged.knownReferrals)) {
             merged.knownReferrals = Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
         }
-        // Keep legacy facilitiesReferred array in sync with new knownReferrals field
-        merged.facilitiesReferred = merged.knownReferrals;
         if (!Array.isArray(merged.pastTTIJobs)) {
             merged.pastTTIJobs = [];
         }
@@ -221,7 +220,7 @@ function getAllReferrers() {
         const referrers = new Set(window.customReferrers || []);
 
         Object.values(window.projects || {}).forEach(project => {
-            // Collect from facility projects' knownReferrers fields
+            // Collect from facility projects' knownReferrers fields (facilities that were referred)
             project.data?.facilities?.forEach(facility => {
                 facility.identification?.knownReferrers?.forEach(ref => {
                     if (ref && typeof ref === 'string') {
@@ -386,9 +385,6 @@ function loadReferrerData() {
     if (!Array.isArray(consultant.affiliations)) {
         consultant.affiliations = [];
     }
-    if (!Array.isArray(consultant.facilitiesReferred)) {
-        consultant.facilitiesReferred = consultant.knownReferrals.slice();
-    }
     if (!Array.isArray(consultant.schoolDistricts)) {
         consultant.schoolDistricts = [];
     }
@@ -397,7 +393,7 @@ function loadReferrerData() {
         { path: 'referrerIndividual.pastTTIJobs', data: consultant.pastTTIJobs },
         { path: 'referrerIndividual.knownReferrals', data: consultant.knownReferrals },
         { path: 'consultant.affiliations', data: consultant.affiliations },
-        { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
+        { path: 'consultant.knownReferrals', data: consultant.knownReferrals },
         { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
     ];
 
@@ -413,6 +409,7 @@ function loadReferrerData() {
 
 /**
  * Handle showing/hiding referrer vs facility forms based on active category
+ * Note: facilityLoaderPanel and facilityMainWrapper refer to the facility category, not consultant data
  */
 function handleReferrerToggle() {
     const activeTab = document.querySelector('.category-tab.active');
@@ -536,7 +533,7 @@ function updateConsultantsOverview() {
         }
 
         const item = document.createElement('div');
-        item.className = 'facility-item' + (index === currentIndex ? ' active' : '');
+        item.className = 'consultant-item' + (index === currentIndex ? ' active' : '');
         item.tabIndex = 0;
         item.setAttribute('role', 'button');
         item.setAttribute('aria-label', `View ${fullName}`);
@@ -551,10 +548,10 @@ function updateConsultantsOverview() {
         const locationEscaped = locationDiv.innerHTML;
 
         item.innerHTML = `
-            <div class="facility-item-number">${index + 1}</div>
-            <div class="facility-item-info">
-                <div class="facility-item-name">${nameEscaped}</div>
-                <div class="facility-item-details">${locationEscaped}</div>
+            <div class="consultant-item-number">${index + 1}</div>
+            <div class="consultant-item-info">
+                <div class="consultant-item-name">${nameEscaped}</div>
+                <div class="consultant-item-details">${locationEscaped}</div>
             </div>
         `;
 
@@ -606,27 +603,24 @@ function loadConsultantData() {
     // Ensure fullName is built if not already set (prefer longest available name)
     getConsultantDisplayName(consultant, window.currentConsultantIndex);
 
-    // Load basic fields - map from input IDs to consultant data keys
-    const fields = {
-        'consultant-firstname': 'firstName',
-        'consultant-lastname': 'lastName',
-        'consultant-credentials': 'credentials',
-        'consultant-education': 'education',
-        'consultant-city': 'city',
-        'consultant-state': 'state',
-        'consultant-email': 'email',
-        'consultant-phone': 'phone',
-        'consultant-website': 'website',
-        'consultant-role': 'role',
-        'consultant-status': 'status',
-        'consultant-notes': 'notes',
-        'consultant-lawsuits': 'lawsuits'
-    };
+    // Load consultant fields using data-field attributes (consistent with loadReferrerData)
+    document.querySelectorAll('.consultant-field').forEach(field => {
+        const fieldName = field.dataset.field;
+        if (fieldName) {
+            // Get value from consultant object
+            let value = consultant[fieldName];
 
-    Object.keys(fields).forEach(fieldId => {
-        const element = document.getElementById(fieldId);
-        if (element) {
-            element.value = consultant[fields[fieldId]] || '';
+            // Handle special cases
+            if (fieldName === 'credentials' && !value) {
+                value = consultant.education; // Fallback to education
+            }
+
+            // Set field value
+            if (field.type === 'checkbox') {
+                field.checked = !!value;
+            } else {
+                field.value = value ?? '';
+            }
         }
     });
 
@@ -647,8 +641,8 @@ function loadConsultantData() {
     if (!Array.isArray(consultant.affiliations)) {
         consultant.affiliations = [];
     }
-    if (!Array.isArray(consultant.facilitiesReferred)) {
-        consultant.facilitiesReferred = [];
+    if (!Array.isArray(consultant.knownReferrals)) {
+        consultant.knownReferrals = [];
     }
     if (!Array.isArray(consultant.schoolDistricts)) {
         consultant.schoolDistricts = [];
@@ -657,7 +651,7 @@ function loadConsultantData() {
     // Render array fields
     const consultantArrays = [
         { path: 'consultant.affiliations', data: consultant.affiliations },
-        { path: 'consultant.facilitiesReferred', data: consultant.facilitiesReferred },
+        { path: 'consultant.knownReferrals', data: consultant.knownReferrals },
         { path: 'consultant.schoolDistricts', data: consultant.schoolDistricts }
     ];
 
@@ -731,20 +725,7 @@ function initializeConsultantNavigation() {
             if (!window.formData.referrerConsultants) {
                 window.formData.referrerConsultants = [];
             }
-            window.formData.referrerConsultants.push({
-                firstName: '',
-                lastName: '',
-                credentials: '',
-                city: '',
-                state: '',
-                email: '',
-                phone: '',
-                website: '',
-                affiliations: [],
-                facilitiesReferred: [],
-                schoolDistricts: [],
-                notes: ''
-            });
+            window.formData.referrerConsultants.push(createDefaultReferrerIndividual());
             window.currentConsultantIndex = window.formData.referrerConsultants.length - 1;
             updateConsultantsUI();
         });
