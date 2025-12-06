@@ -384,15 +384,17 @@
             const isSuccess = result.success || result.source || hasProjects;
 
             if (isSuccess && hasProjects) {
+                // Normalize projects to flatten nested payloads and keep categories intact
+                const normalizedProjects = normalizeProjectsPayload(result) || result.projects || {};
                 // DEBUG: Log sample project structures
                 debugLog('🔬 LOADED PROJECTS - Sample data structure:');
-                const firstFive = Object.keys(result.projects).slice(0, 5);
+                const firstFive = Object.keys(normalizedProjects).slice(0, 5);
                 firstFive.forEach(name => {
-                    const p = result.projects[name];
+                    const p = normalizedProjects[name];
                     debugLog(`  ${name}: data=${!!p.data}, data.facilities=${p.data?.facilities?.length || 0}, root.facilities=${p.facilities?.length || 0}`);
                 });
                 
-                window.projects = result.projects;
+                window.projects = normalizedProjects;
                 
                 // DEBUG: Verify structure immediately after assignment
                 const acadia = window.projects['Acadia'];

@@ -4527,16 +4527,20 @@ async function initializeForm() {
     if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadAllProjectsFromCloud === 'function') {
         try {
             await window.KOP_FormLoader.loadAllProjectsFromCloud();
+            // Keep local reference in sync with loader output
+            projects = window.projects || projects;
         } catch (error) {
             console.error('❌ Error loading projects:', error);
             showUploadStatus('Error loading projects: ' + error.message, 'error');
             // Ensure projects object exists even if loading failed
             window.projects = window.projects || {};
+            projects = window.projects;
         }
     } else {
         console.error('❌ loadAllProjectsFromCloud not available');
         // Ensure projects object exists
         window.projects = window.projects || {};
+        projects = window.projects;
     }
 
     // Initialize form data if needed
