@@ -247,7 +247,7 @@
                 data: normalizeProjectData(rawData),
                 timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
                 currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0,
-                category: source.category || rawData?.category || 'companies' // Preserve category
+                category: source.category || rawData?.category // Do not default to 'companies' so heuristics can work
             };
         };
 
