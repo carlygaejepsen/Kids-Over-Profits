@@ -277,7 +277,7 @@ get_header();
 
                         <div class="form-group">
                             <label>Facilities Referred To</label>
-                            <div class="array-container" data-path="consultant.facilitiesReferred"></div>
+                            <div class="array-container" data-path="consultant.knownReferrals"></div>
                         </div>
 
                         <div class="form-group">

@@ -159,10 +159,12 @@ function ensureReferrerDataStructures() {
         if (!Array.isArray(merged.affiliations)) {
             merged.affiliations = [];
         }
-        // Migrate from legacy facilitiesReferred to knownReferrals
-        if (!Array.isArray(merged.knownReferrals)) {
-            merged.knownReferrals = Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
-        }
+        // Keep legacy facilitiesReferred in sync with canonical knownReferrals
+        const referrals = Array.isArray(merged.knownReferrals)
+            ? merged.knownReferrals
+            : Array.isArray(merged.facilitiesReferred) ? merged.facilitiesReferred.slice() : [];
+        merged.knownReferrals = referrals;
+        merged.facilitiesReferred = referrals;
         if (!Array.isArray(merged.pastTTIJobs)) {
             merged.pastTTIJobs = [];
         }

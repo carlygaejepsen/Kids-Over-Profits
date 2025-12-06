@@ -268,7 +268,7 @@ get_header();
 
                         <div class="form-group">
                             <label>Facilities Referred To</label>
-                            <div class="array-container" data-path="consultant.facilitiesReferred"></div>
+                            <div class="array-container" data-path="consultant.knownReferrals"></div>
                         </div>
 
                         <div class="form-group">
@@ -1191,7 +1191,7 @@ get_header();
             };
 
             const consultant = getActiveConsultant();
-            ensureReferrerArray('consultant.facilitiesReferred', consultant.facilitiesReferred);
+            ensureReferrerArray('consultant.knownReferrals', consultant.knownReferrals);
             ensureReferrerArray('consultant.schoolDistricts', consultant.schoolDistricts);
         }, { once: true });
     </script>
