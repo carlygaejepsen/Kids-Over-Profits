@@ -5,6 +5,10 @@
         }
     };
 
+    const getRemoveButton = () =>
+        document.getElementById('remove-facility-btn-toolbar') ||
+        document.getElementById('delete-facility-btn-toolbar'); // Legacy ID in template
+
     const getElements = () => ({
         toolbar: document.getElementById('fixed-toolbar'),
         toolbarToggle: document.getElementById('toolbar-toggle-btn'),
@@ -15,7 +19,7 @@
         nextBtn: document.getElementById('next-facility-btn-toolbar'),
         addBtn: document.getElementById('add-facility-btn-toolbar'),
         scrollTopBtn: document.getElementById('scroll-to-top-btn-toolbar'),
-        removeBtn: document.getElementById('remove-facility-btn-toolbar')
+        removeBtn: getRemoveButton()
     });
 
     const applyToolbarState = (isMinimized, elements) => {

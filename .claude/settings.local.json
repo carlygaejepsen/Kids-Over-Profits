@@ -10,7 +10,9 @@
       "Bash(NUL)",
       "Bash(git push:*)",
       "Bash(powershell -Command:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(dir /b)"
     ],
     "deny": [],
     "ask": []

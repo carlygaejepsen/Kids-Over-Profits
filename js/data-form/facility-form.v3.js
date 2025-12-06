@@ -3984,6 +3984,7 @@ function updateLabelsForProjectType() {
     setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
     setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
     setLabel('remove-facility-btn-toolbar', labels.removeFacilityToolbar[mode]);
+    setLabel('delete-facility-btn-toolbar', labels.removeFacilityToolbar[mode]); // Legacy ID fallback
 
     // Update Facility-specific sections
     setLabelForQuery('#identification-section .section-title', labels.facilityIdentificationTitle[mode]);
