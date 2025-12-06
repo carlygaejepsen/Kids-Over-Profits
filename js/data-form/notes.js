@@ -568,13 +568,15 @@ function addNoteButtons() {
     debugLog('Found', formGroups.length, 'form groups');
 
     formGroups.forEach(group => {
-        // Skip if button already exists
-        if (group.querySelector('.field-note-btn')) {
+        // Always handle array items first so newly added rows get buttons even when the group already has other note buttons
+        addNoteButtonsToArrayItems(group);
+
+        // Skip adding a main-field button if one already exists outside of array items
+        const hasNonArrayNoteButton = Array.from(group.querySelectorAll('.field-note-btn'))
+            .some(btn => !btn.closest('.array-item'));
+        if (hasNonArrayNoteButton) {
             return;
         }
-
-        // First, handle array items within this group
-        addNoteButtonsToArrayItems(group);
 
         // Then handle the main field if it's not in an array item
         let field = group.querySelector('input:not([type="hidden"]):not([style*="display: none"]), textarea:not([style*="display: none"]), select:not([style*="display: none"])');
