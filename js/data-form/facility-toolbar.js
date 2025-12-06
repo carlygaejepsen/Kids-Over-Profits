@@ -51,7 +51,7 @@
 
     function updateToolbarFacilityInfo() {
         const elements = getElements();
-        const { dropdown, projectName, removeBtn } = elements;
+        const { dropdown, projectName } = elements;
 
         // Only proceed if toolbar elements exist (not all pages have the toolbar)
         if (!dropdown) return;
@@ -65,7 +65,31 @@
             currentProjectName: window.currentProjectName
         });
 
-        if (facilities.length) {
+        // Check if no project is loaded
+        if (!window.currentProjectName) {
+            dropdown.innerHTML = '<option>📂 Load a project to begin</option>';
+            dropdown.style.cursor = 'pointer';
+            dropdown.style.color = '#33A7B5';
+
+            // Make the dropdown clickable to scroll to project loader
+            if (!dropdown.dataset.noProjectClickAttached) {
+                dropdown.addEventListener('click', () => {
+                    if (!window.currentProjectName) {
+                        // Scroll to the project loader section
+                        const projectLoader = document.getElementById('companies-content') ||
+                                            document.getElementById('referrers-content') ||
+                                            document.querySelector('.category-content');
+                        if (projectLoader) {
+                            projectLoader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                }, { passive: true });
+                dropdown.dataset.noProjectClickAttached = 'true';
+            }
+        } else if (facilities.length) {
+            dropdown.style.cursor = '';
+            dropdown.style.color = '';
+
             const facilitiesWithIndex = facilities.map((facility, index) => ({
                 facility,
                 originalIndex: index,
@@ -90,15 +114,13 @@
 
             dropdown.value = currentIndex;
         } else {
-            dropdown.innerHTML = '<option>No facilities</option>';
+            dropdown.style.cursor = '';
+            dropdown.style.color = '';
+            dropdown.innerHTML = '<option>No facilities in project</option>';
         }
 
         if (projectName) {
             projectName.textContent = window.currentProjectName ? `(${window.currentProjectName})` : '';
-        }
-
-        if (removeBtn) {
-            removeBtn.classList.toggle('d-none', facilities.length <= 1);
         }
 
         updateToolbarNavButtons(elements);

@@ -325,15 +325,19 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
+                        <button class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">📄 New Project</button>
+                        <button class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊 Generate Report</button>
+                    </div>
+                    <div class="toolbar-group">
                         <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button class="btn-toolbar" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
+                        <button class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
-                            <button class="btn-toolbar" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <button class="btn-toolbar btn-secondary" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
-                            <button class="btn-toolbar" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                            <button class="btn-toolbar btn-secondary" id="next-facility-btn-toolbar" title="Next facility">▶</button>
                         </div>
                     </div>
                     <div class="toolbar-group">
@@ -346,9 +350,9 @@ get_header();
 
         <!-- Facility Loader Panel -->
         <div class="facility-loader-panel" style="background: #B6E3D4; border: 2px solid #33A7B5; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <h2 style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">🏢 Jump to Facility</h2>
+            <h2 id="quick-loader-heading" style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">🏢 Jump to Facility</h2>
             <div class="form-group">
-                <label style="color: #000435; font-weight: 600;">All Facilities in Current Project</label>
+                <label id="quick-loader-label" style="color: #000435; font-weight: 600;">All Facilities in Current Project</label>
                 <div id="quick-facilities-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #33A7B5; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
                     <div style="color: #6b7280; font-style: italic;">No facilities yet...</div>
                 </div>

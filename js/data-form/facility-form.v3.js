@@ -3579,14 +3579,8 @@ function refreshSavedProjectPanels() {
             return `<div class="projects-empty">${emptyMessage}</div>`;
         }
 
-        const sortedNames = names.slice().sort((a, b) => {
-            const timeA = projects[a]?.timestamp || '';
-            const timeB = projects[b]?.timestamp || '';
-            if (timeA === timeB) {
-                return a.localeCompare(b);
-            }
-            return timeB.localeCompare(timeA);
-        });
+        // Sort alphabetically by default
+        const sortedNames = names.slice().sort((a, b) => a.localeCompare(b));
 
         return sortedNames.map(name => {
             const project = window.projects[name];
@@ -3646,40 +3640,110 @@ function refreshQuickFacilitiesList() {
     const quickFacilitiesContainer = document.getElementById('quick-facilities-list');
     if (!quickFacilitiesContainer) return;
 
-    const facilities = window.formData?.facilities || [];
+    // Detect current view
+    const activeTab = document.querySelector('.category-tab.active');
+    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
 
-    if (!facilities.length) {
-        quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
-        return;
-    }
+    // Update heading and label
+    const heading = document.getElementById('quick-loader-heading');
+    const label = document.getElementById('quick-loader-label');
 
-    const facilityCards = facilities.map((facility, index) => {
-        const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
-        // Safely extract location string (could be an object with city/state)
-        let location = 'Unknown location';
-        if (facility.location) {
-            if (typeof facility.location === 'string') {
-                location = facility.location;
-            } else if (typeof facility.location === 'object') {
-                // Try to build from city/state
-                const city = facility.location.city || facility.city || '';
-                const state = facility.location.state || facility.state || '';
-                location = [city, state].filter(Boolean).join(', ') || 'Unknown location';
-            }
-        } else if (facility.city || facility.state) {
-            location = [facility.city, facility.state].filter(Boolean).join(', ');
+    if (isReferrerView) {
+        // Show consultants
+        if (heading) heading.textContent = '👥 Jump to Consultant';
+        if (label) label.textContent = 'All Consultants in Current Project';
+
+        const consultants = window.formData?.referrerConsultants || [];
+
+        if (!consultants.length) {
+            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No consultants in current project</div>';
+            return;
         }
-        const operator = facility.identification?.currentOperator || '';
 
-        return `<div class="facility-quick-item" onclick="jumpToFacility(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
-                <div style="font-size: 12px; color: #6b7280;">
-                    ${escapeHtmlForAttr(location)}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
-                </div>
-            </div>`;
-    }).join('');
+        // Create array with consultant data and original index, then sort alphabetically
+        const consultantsWithIndex = consultants.map((consultant, index) => ({
+            consultant,
+            originalIndex: index,
+            name: (consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`).toLowerCase()
+        }));
 
-    quickFacilitiesContainer.innerHTML = facilityCards;
+        // Sort alphabetically by name (case-insensitive)
+        consultantsWithIndex.sort((a, b) => {
+            if (a.name.startsWith('consultant ') && !b.name.startsWith('consultant ')) return 1;
+            if (b.name.startsWith('consultant ') && !a.name.startsWith('consultant ')) return -1;
+            return a.name.localeCompare(b.name);
+        });
+
+        const consultantCards = consultantsWithIndex.map(({ consultant, originalIndex }) => {
+            const index = originalIndex;
+            const fullName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`;
+            const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || '';
+            const role = consultant.role || consultant.credentials || '';
+
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
+                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(fullName)}</div>
+                    <div style="font-size: 12px; color: #6b7280;">
+                        ${location}${role ? ' • ' + escapeHtmlForAttr(role) : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        quickFacilitiesContainer.innerHTML = consultantCards;
+    } else {
+        // Show facilities
+        if (heading) heading.textContent = '🏢 Jump to Facility';
+        if (label) label.textContent = 'All Facilities in Current Project';
+
+        const facilities = window.formData?.facilities || [];
+
+        if (!facilities.length) {
+            quickFacilitiesContainer.innerHTML = '<div style="color: #6b7280; font-style: italic;">No facilities in current project</div>';
+            return;
+        }
+
+        // Create array with facility data and original index, then sort alphabetically
+        const facilitiesWithIndex = facilities.map((facility, index) => ({
+            facility,
+            originalIndex: index,
+            name: (facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`).toLowerCase()
+        }));
+
+        // Sort alphabetically by name (case-insensitive)
+        facilitiesWithIndex.sort((a, b) => {
+            if (a.name.startsWith('facility ') && !b.name.startsWith('facility ')) return 1;
+            if (b.name.startsWith('facility ') && !a.name.startsWith('facility ')) return -1;
+            return a.name.localeCompare(b.name);
+        });
+
+        const facilityCards = facilitiesWithIndex.map(({ facility, originalIndex }) => {
+            const index = originalIndex;
+            const name = facility.identification?.currentName || facility.identification?.name || `Facility ${index + 1}`;
+            // Safely extract location string (could be an object with city/state)
+            let location = 'Unknown location';
+            if (facility.location) {
+                if (typeof facility.location === 'string') {
+                    location = facility.location;
+                } else if (typeof facility.location === 'object') {
+                    // Try to build from city/state
+                    const city = facility.location.city || facility.city || '';
+                    const state = facility.location.state || facility.state || '';
+                    location = [city, state].filter(Boolean).join(', ') || 'Unknown location';
+                }
+            } else if (facility.city || facility.state) {
+                location = [facility.city, facility.state].filter(Boolean).join(', ');
+            }
+            const operator = facility.identification?.currentOperator || '';
+
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
+                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
+                    <div style="font-size: 12px; color: #6b7280;">
+                        ${escapeHtmlForAttr(location)}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        quickFacilitiesContainer.innerHTML = facilityCards;
+    }
 }
 
 window.jumpToFacility = function(index) {
@@ -3694,6 +3758,30 @@ window.jumpToFacility = function(index) {
         navigateToFacility(index);
     } else {
         console.error('No facility navigation function available');
+    }
+}
+
+window.jumpToItem = function(index) {
+    // Detect current view
+    const activeTab = document.querySelector('.category-tab.active');
+    const isReferrerView = activeTab && activeTab.dataset.category === 'referrers';
+
+    if (isReferrerView) {
+        // Jump to consultant
+        if (typeof window.loadConsultantData === 'function') {
+            window.currentConsultantIndex = index;
+            window.loadConsultantData();
+            // Scroll to referrer form
+            const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+            if (referrerMainWrapper) {
+                referrerMainWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            console.error('No consultant navigation function available');
+        }
+    } else {
+        // Jump to facility
+        window.jumpToFacility(index);
     }
 }
 

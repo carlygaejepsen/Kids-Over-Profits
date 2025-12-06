@@ -509,8 +509,25 @@ function updateConsultantsOverview() {
     // Clear list
     consultantsList.innerHTML = '';
 
-    // Populate consultant items
-    consultants.forEach((consultant, index) => {
+    // Create array with consultant data and original index, then sort alphabetically
+    const consultantsWithIndex = consultants.map((consultant, index) => ({
+        consultant,
+        originalIndex: index,
+        name: getConsultantDisplayName(consultant, index).toLowerCase()
+    }));
+
+    // Sort alphabetically by name (case-insensitive), with unnamed consultants at the end
+    consultantsWithIndex.sort((a, b) => {
+        const isUnnamedA = a.name === 'unnamed individual' || a.name.startsWith('individual ');
+        const isUnnamedB = b.name === 'unnamed individual' || b.name.startsWith('individual ');
+        if (isUnnamedA && !isUnnamedB) return 1;
+        if (isUnnamedB && !isUnnamedA) return -1;
+        return a.name.localeCompare(b.name);
+    });
+
+    // Populate consultant items in alphabetical order
+    consultantsWithIndex.forEach(({ consultant, originalIndex }) => {
+        const index = originalIndex;
         if (typeof debugLog === 'function') {
             debugLog(`Processing consultant ${index}:`, {
                 firstName: consultant.firstName,
