@@ -393,6 +393,16 @@ function normalizeProjectData(data) {
         return normalized;
     };
 
+    // Normalize root keys to handle snake_case or legacy variations
+    data = normalizeObject(data, {
+        operator: ['operator', 'Operator'],
+        facilities: ['facilities', 'Facilities', 'facility'],
+        referrerAgency: ['referrerAgency', 'referrer_agency', 'referrerGroup', 'referrer_group'],
+        referrerConsultants: ['referrerConsultants', 'referrer_consultants', 'consultants'],
+        referrerIndividual: ['referrerIndividual', 'referrer_individual', 'consultant'],
+        isIndependentConsultant: ['isIndependentConsultant', 'is_independent_consultant', 'independent']
+    });
+
     // Normalize operator data
     if (data.operator) {
         data.operator = normalizeObject(data.operator, {
