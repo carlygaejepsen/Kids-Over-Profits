@@ -904,7 +904,15 @@ function renderList(title, items) {
 function normalizeStaffArray(rawStaff) {
     if (!rawStaff) return [];
 
-    const entries = Array.isArray(rawStaff) ? rawStaff : (typeof rawStaff === 'object' ? Object.values(rawStaff) : [rawStaff]);
+    // If it's a single staff object (role/name keys), wrap it directly
+    const isSingleStaffObject = typeof rawStaff === 'object' && !Array.isArray(rawStaff) && rawStaff !== null &&
+        (rawStaff.role || rawStaff.Role || rawStaff.title || rawStaff.Title ||
+         rawStaff.position || rawStaff.Position || rawStaff.jobTitle ||
+         rawStaff.name || rawStaff.Name || rawStaff.fullName || rawStaff.firstName || rawStaff.lastName);
+
+    const entries = Array.isArray(rawStaff)
+        ? rawStaff
+        : (isSingleStaffObject ? [rawStaff] : (typeof rawStaff === 'object' ? Object.values(rawStaff) : [rawStaff]));
     return entries.flatMap(normalizeStaffEntry).filter(item => item && item.name);
 }
 
