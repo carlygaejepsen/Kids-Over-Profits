@@ -1253,3 +1253,422 @@ function formatPhoneLink(phone) {
     const cleanPhone = phoneStr.replace(/[\s\(\)\-\.]/g, '');
     return `<a href="tel:${escapeHtml(cleanPhone)}" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(phoneStr)}</a>`;
 }
+
+// ============================
+// Modal-based report generator
+// ============================
+
+function normalizeReportListInput(items) {
+    if (!items) return [];
+    if (Array.isArray(items)) return items;
+    if (typeof items === 'object') return Object.values(items);
+    return [items];
+}
+
+function formatReportListItem(item) {
+    if (item === null || item === undefined) return '';
+
+    if (typeof item === 'string') {
+        const trimmed = item.trim();
+        if (!trimmed || /\[object\s+object\]/i.test(trimmed)) return '';
+        if (/^[\[{]/.test(trimmed)) {
+            try {
+                return formatReportListItem(JSON.parse(trimmed));
+            } catch (e) {
+                // ignore
+            }
+        }
+        return trimmed;
+    }
+
+    if (typeof item === 'number' || typeof item === 'boolean') {
+        return String(item);
+    }
+
+    if (Array.isArray(item)) {
+        return item.map(formatReportListItem).filter(Boolean).join(', ');
+    }
+
+    if (typeof item === 'object') {
+        const name =
+            (item.firstName || item.lastName)
+                ? [formatReportListItem(item.firstName), formatReportListItem(item.lastName)].filter(Boolean).join(' ').trim()
+                : formatReportListItem(item.name || item.Name || item.fullName || item.label || item.text || item.value || item.personName);
+
+        const role = formatReportListItem(item.role || item.Role || item.title || item.Title || item.position || item.Position || item.jobTitle);
+
+        if (name && role) return `${role}: ${name}`;
+        if (name) return name;
+
+        const pairs = Object.entries(item)
+            .map(([k, v]) => {
+                const val = formatReportListItem(v);
+                if (!val) return '';
+                const prettyKey = k.replace(/([A-Z])/g, ' $1').trim().replace(/^./, c => c.toUpperCase());
+                return `${prettyKey}: ${val}`;
+            })
+            .filter(Boolean);
+        return pairs.join(', ');
+    }
+
+    return '';
+}
+
+function renderReportHTMLFromGenerator(data, skipHeader = false) {
+    const renderField = (label, value) => {
+        const cleaned = safeString(value);
+        if (!cleaned) return '';
+        return `<div class="info-item"><span class="info-label">${escapeHtml(label)}:</span><span class="info-value">${escapeHtml(cleaned)}</span></div>`;
+    };
+
+    const renderList = (title, items) => {
+        const normalizedItems = normalizeReportListInput(items)
+            .map(formatReportListItem)
+            .filter(Boolean);
+
+        if (normalizedItems.length === 0) return '';
+
+        const listItems = normalizedItems
+            .map(item => `<li>${escapeHtml(item)}</li>`)
+            .join('');
+
+        return `
+            <div class="list-section">
+                <div class="list-title">${escapeHtml(title)}</div>
+                <ul class="list-items">${listItems}</ul>
+            </div>
+        `;
+    };
+
+    let html = '';
+
+    if (!skipHeader) {
+        html = `
+            <div class="report-header">
+                <h1 class="report-title">${escapeHtml(window.currentProjectName || 'Project Data Report')}</h1>
+                <div class="report-meta">Generated: ${new Date().toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                })}</div>
+            </div>
+        `;
+    } else {
+        const projectName = data?.operator?.name ||
+                          data?.operator?.currentName ||
+                          data?.referrerAgency?.organizationName ||
+                          data?.referrerAgency?.name ||
+                          data?.projectName ||
+                          'Unnamed Project';
+        html += `
+            <div class="report-header" style="margin-bottom: 20px;">
+                <h2 class="report-title" style="font-size: 24px;">${escapeHtml(projectName)}</h2>
+            </div>
+        `;
+    }
+
+    const op = data?.operator;
+    if (op && (op.name || op.currentName)) {
+        html += `
+            <div class="report-section">
+                <h2 class="section-title">Operator Information</h2>
+                <div class="info-grid">
+                    ${renderField('Name', op.name)}
+                    ${renderField('Current Name', op.currentName)}
+                    ${renderField('Location', op.location)}
+                    ${renderField('Headquarters', op.headquarters)}
+                    ${renderField('Founded', op.founded)}
+                    ${renderField('Operating Period', op.operatingPeriod)}
+                    ${renderField('Status', op.status)}
+                    ${op.keyStaff?.ceo ? renderField('CEO', op.keyStaff.ceo) : ''}
+                </div>
+                ${renderList('Other Names', op.otherNames)}
+                ${renderList('Parent Companies', op.parentCompanies)}
+                ${renderList('Websites', op.websites)}
+                ${renderList('Founders', op.keyStaff?.founders)}
+                ${renderList('Key Executives', op.keyStaff?.keyExecutives)}
+                ${renderList('Investors', op.investors)}
+                ${renderList('Notes', op.notes)}
+            </div>
+        `;
+    }
+
+    if (data?.facilities && data.facilities.length > 0) {
+        const facilitiesHTML = data.facilities.map((facility, index) => {
+            const id = facility.identification || {};
+            const name = id.name || id.currentName || `Facility ${index + 1}`;
+            const details = facility.facilityDetails || {};
+            const period = facility.operatingPeriod || {};
+            const staff = facility.staff || {};
+            const acc = facility.accreditations || {};
+
+            return `
+                <div class="facility-card">
+                    <h3 class="facility-name">${escapeHtml(name)}</h3>
+                    
+                    <div class="info-grid">
+                        ${renderField('Current Name', id.currentName)}
+                        ${renderField('Current Operator', id.currentOperator)}
+                        ${renderField('Location', facility.location)}
+                        ${renderField('Address', facility.address)}
+                        ${renderField('Type', details.type)}
+                        ${renderField('Capacity', details.capacity)}
+                        ${renderField('Current Census', details.currentCensus)}
+                        ${details.ageRange?.min || details.ageRange?.max ? renderField('Age Range', `${details.ageRange.min || '?'} - ${details.ageRange.max || '?'}`) : ''}
+                        ${renderField('Gender', details.gender)}
+                        ${renderField('Opened', period.startYear)}
+                        ${renderField('Closed', period.endYear)}
+                        ${renderField('Status', period.status)}
+                    </div>
+                    
+                    ${renderList('Other Names', id.otherNames)}
+                    ${renderList('Other Operators', facility.otherOperators)}
+                    ${renderList('Administrators', staff.administrator)}
+                    ${renderList('Notable Staff', staff.notableStaff)}
+                    ${renderList('Current Accreditations', acc.current)}
+                    ${renderList('Past Accreditations', acc.past)}
+                    ${renderList('Memberships', facility.memberships)}
+                    ${renderList('Certifications', facility.certifications)}
+                    ${renderList('Licensing', facility.licensing)}
+                    ${renderList('Notes', period.notes)}
+                </div>
+            `;
+        }).join('');
+
+        html += `
+            <div class="report-section">
+                <h2 class="section-title">Facilities (${data.facilities.length})</h2>
+                ${facilitiesHTML}
+            </div>
+        `;
+    } else {
+        html += `
+            <div class="report-section">
+                <h2 class="section-title">Facilities</h2>
+                <p style="color: #6b7280; font-style: italic;">No facilities data available.</p>
+            </div>
+        `;
+    }
+
+    if (data?.referrerAgency && (data.referrerAgency.name || data.referrerAgency.organizationName)) {
+        const ref = data.referrerAgency;
+        html += `
+            <div class="report-section">
+                <h2 class="section-title">Referrer Information</h2>
+                <div class="info-grid">
+                    ${renderField('Organization Name', ref.organizationName || ref.name)}
+                    ${renderField('Type', ref.type)}
+                    ${renderField('Location', ref.location)}
+                    ${renderField('Contact', ref.contact)}
+                    ${renderField('Website', ref.website)}
+                </div>
+                ${renderList('Facilities Referred To', ref.facilitiesReferred)}
+                ${renderList('Key Personnel', ref.keyPersonnel)}
+                ${renderList('Notes', ref.notes)}
+            </div>
+        `;
+    }
+
+    if (data?.referrerConsultants && data.referrerConsultants.length > 0) {
+        const validConsultants = data.referrerConsultants.filter(c => c && (c.name || c.title || c.contact));
+        if (validConsultants.length > 0) {
+            const consultantsHTML = validConsultants.map((consultant, index) => `
+                <div class="facility-card">
+                    <h3 class="facility-name">${escapeHtml(consultant.name || `Consultant ${index + 1}`)}</h3>
+                    <div class="info-grid">
+                        ${renderField('Title', consultant.title)}
+                        ${renderField('Location', consultant.location)}
+                        ${renderField('Contact', consultant.contact)}
+                        ${renderField('Website', consultant.website)}
+                    </div>
+                    ${renderList('Affiliations', consultant.affiliations)}
+                    ${renderList('Facilities Referred To', consultant.facilitiesReferred)}
+                    ${renderList('School Districts', consultant.schoolDistricts)}
+                </div>
+            `).join('');
+
+            html += `
+                <div class="report-section">
+                    <h2 class="section-title">Independent Consultants (${validConsultants.length})</h2>
+                    ${consultantsHTML}
+                </div>
+            `;
+        }
+    }
+
+    if (data?.notes && Array.isArray(data.notes) && data.notes.length > 0) {
+        html += `
+            <div class="report-section">
+                <h2 class="section-title">General Notes</h2>
+                ${renderList('Notes', data.notes)}
+            </div>
+        `;
+    }
+
+    return html;
+}
+
+class FacilityReportGenerator {
+    constructor(projects, options = {}) {
+        this.projects = this.normalizeProjects(projects);
+        this.title = options.title || window.currentProjectName || 'Project Report';
+        this.modalId = options.modalId || 'report-modal';
+    }
+
+    normalizeProjects(projects) {
+        if (!projects) {
+            return window.formData ? [window.formData] : [];
+        }
+        if (Array.isArray(projects)) {
+            return projects.filter(Boolean);
+        }
+        if (typeof projects === 'object') {
+            return Object.values(projects).filter(Boolean);
+        }
+        return [];
+    }
+
+    generateReport() {
+        if (!this.projects.length) {
+            console.warn('[Report Generator] No projects available to render.');
+            return;
+        }
+        this.renderModal();
+    }
+
+    generatePopup() {
+        if (!this.projects.length) {
+            console.warn('[Report Generator] No projects available to render.');
+            return;
+        }
+        const html = FacilityReportGenerator.renderReportHTML(this.projects[0]);
+        this.openPrintWindow(html, this.title);
+    }
+
+    renderModal() {
+        const modal = this.ensureModal();
+        const reportBody = modal.querySelector('#report-modal-body');
+        const modalTitle = modal.querySelector('.modal-title');
+
+        if (modalTitle) {
+            modalTitle.textContent = this.title;
+        }
+
+        if (this.projects.length === 1) {
+            reportBody.innerHTML = FacilityReportGenerator.renderReportHTML(this.projects[0]);
+        } else {
+            let multiReportHTML = `
+                <div class="report-header">
+                    <h1 class="report-title">${escapeHtml(this.title)}</h1>
+                    <div class="report-meta">Generated: ${new Date().toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    })} | Total Projects: ${this.projects.length}</div>
+                </div>
+            `;
+
+            this.projects.forEach((project, index) => {
+                multiReportHTML += `
+                    <div style="page-break-before: ${index > 0 ? 'always' : 'auto'}; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #e5e7eb;">
+                        ${FacilityReportGenerator.renderReportHTML(project, true)}
+                    </div>
+                `;
+            });
+
+            reportBody.innerHTML = multiReportHTML;
+        }
+
+        modal.classList.add('active');
+    }
+
+    ensureModal() {
+        let modal = document.getElementById(this.modalId);
+        if (modal) return modal;
+
+        modal = document.createElement('div');
+        modal.id = this.modalId;
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 900px; width: 95%;">
+                <div class="modal-header">
+                    <h2 class="modal-title">${escapeHtml(this.title)}</h2>
+                    <button class="modal-close" id="report-modal-close">&times;</button>
+                </div>
+                <div class="modal-body" id="report-modal-body" style="max-height: 70vh; overflow-y: auto;"></div>
+                <div class="modal-footer">
+                    <button class="modal-btn modal-btn-secondary" id="report-modal-print">Print</button>
+                    <button class="modal-btn modal-btn-primary" id="report-modal-close-btn">Close</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('report-modal-close').addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+        document.getElementById('report-modal-close-btn').addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+        document.getElementById('report-modal-print').addEventListener('click', () => {
+            const html = document.getElementById('report-modal-body').innerHTML;
+            this.openPrintWindow(html, this.title);
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        return modal;
+    }
+
+    openPrintWindow(content, title) {
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert('Popup blocked! Please allow popups for this site and try again.');
+            return;
+        }
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${escapeHtml(title || 'Project Report')}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; padding: 20px; }
+                    .report-header { border-bottom: 3px solid #33A7B5; padding-bottom: 15px; margin-bottom: 20px; }
+                    .report-title { font-size: 28px; color: #33A7B5; margin: 0 0 5px 0; }
+                    .report-meta { color: #6b7280; font-size: 14px; }
+                    .report-section { margin-bottom: 25px; page-break-inside: avoid; }
+                    .section-title { font-size: 20px; color: #33A7B5; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 15px; }
+                    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+                    .info-item { display: flex; gap: 8px; }
+                    .info-label { font-weight: 600; color: #374151; min-width: 120px; }
+                    .info-value { color: #1f2937; }
+                    .facility-card { background: #f9fafb; border-left: 4px solid #33A7B5; padding: 15px; margin-bottom: 20px; page-break-inside: avoid; }
+                    .facility-name { font-size: 18px; font-weight: 700; color: #1f2937; margin-bottom: 10px; }
+                    .list-section { margin-top: 10px; }
+                    .list-title { font-weight: 600; color: #374151; margin-bottom: 5px; }
+                    .list-items { margin: 0; padding-left: 20px; }
+                    .list-items li { padding: 3px 0; }
+                    .subsection-title { font-size: 16px; color: #6b7280; font-weight: 600; margin: 15px 0 10px 0; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>${content}</body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    static renderReportHTML(data, skipHeader = false) {
+        return renderReportHTMLFromGenerator(data, skipHeader);
+    }
+}
+
+// Expose globally
+window.FacilityReportGenerator = FacilityReportGenerator;
+// Keep compatibility for any legacy callers
+window.generateHTMLReport = window.generateHTMLReport || function() {
+    const generator = new FacilityReportGenerator(window.formData ? [window.formData] : [], {
+        title: window.currentProjectName || 'Facility Data Report'
+    });
+    generator.generateReport();
+};
