@@ -2133,6 +2133,7 @@ function handleReferrerToggle() {
     const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
 
     const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
+    const facilityLoaderPanel = document.querySelector('.facility-loader-panel');
     const facilityMainWrapper = document.getElementById('facility-main-wrapper');
 
     const showElement = (element) => {
@@ -2149,6 +2150,7 @@ function handleReferrerToggle() {
 
     if (activeCategory === 'referrers') {
         hideElement(facilityMainWrapper);
+        hideElement(facilityLoaderPanel);
         showElement(referrerMainWrapper);
         if (typeof window.updateAgencySliderAppearance === 'function') {
             window.updateAgencySliderAppearance();
@@ -2156,6 +2158,7 @@ function handleReferrerToggle() {
     } else {
         hideElement(referrerMainWrapper);
         showElement(facilityMainWrapper);
+        showElement(facilityLoaderPanel);
     }
 }
 
