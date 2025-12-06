@@ -1253,7 +1253,7 @@ get_header();
                 <button class="organizer-modal-close" id="suggestion-modal-close">&times;</button>
             </div>
             <div class="organizer-modal-body">
-                <p style="margin-top: 0; margin-bottom: 15px; color: #4b5563;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
+                <p style="margin-top: 0; margin-bottom: 15px; color: #6b7280;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
                 <div class="form-group">
                     <label for="suggestion-summary" style="font-weight: 600;">Summary of Changes:</label>
                     <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>

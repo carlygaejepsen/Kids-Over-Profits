@@ -194,7 +194,7 @@ function generateHTMLReport() {
         }
 
         .btn-secondary:hover {
-            background: #4b5563;
+            background: #1f2937;
         }
 
         .empty-note {

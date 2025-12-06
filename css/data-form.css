@@ -782,7 +782,7 @@ body:not(.admin-bar) .fixed-toolbar {
 .toc-no-project {
     padding: 20px;
     text-align: center;
-    color: #4b5563;
+    color: #6b7280;
     font-style: italic;
 }
 
@@ -1128,7 +1128,7 @@ body:not(.admin-bar) .fixed-toolbar {
         color: white;
     }
     #scroll-to-top-btn-toolbar:hover {
-        background: #4b5563;
+        background: #1f2937;
     }
 
     .form-row,
@@ -1788,7 +1788,7 @@ input[type="url"].array-input {
 
 .info-text {
     font-size: 14px;
-    color: #4b5563;
+    color: #6b7280;
     line-height: 1.6;
 }
 

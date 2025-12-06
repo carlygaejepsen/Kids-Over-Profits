@@ -3714,9 +3714,9 @@ function updateProjectStatus() {
 
         statusTargets.forEach(target => {
             if (target.id === 'referrer-project-status') {
-                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Referrer profiles for this project are saved alongside the operator & facility data.</div>`;
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #6b7280;">Referrer profiles for this project are saved alongside the operator & facility data.</div>`;
             } else if (target.id === 'project-status-location') {
-                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #4b5563;">Location-focused projects load the same dataset for geographic review.</div>`;
+                target.innerHTML = `${baseMessage}<div style="margin-top: 6px; font-size: 13px; color: #6b7280;">Location-focused projects load the same dataset for geographic review.</div>`;
             } else {
                 target.innerHTML = baseMessage;
             }
