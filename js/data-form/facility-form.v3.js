@@ -3850,11 +3850,16 @@ function refreshQuickFacilitiesList() {
             const fullName = consultant.fullName || [consultant.firstName, consultant.lastName].filter(Boolean).join(' ') || `Consultant ${index + 1}`;
             const location = [consultant.city, consultant.state].filter(Boolean).join(', ') || '';
             const role = consultant.role || consultant.credentials || '';
+            const metaParts = [];
+            if (location) metaParts.push(escapeHtmlForAttr(location));
+            if (role) metaParts.push(escapeHtmlForAttr(role));
+            const meta = metaParts.join(' | ');
 
-            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(fullName)}</div>
-                    <div style="font-size: 12px; color: #6b7280;">
-                        ${location}${role ? ' • ' + escapeHtmlForAttr(role) : ''}
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})">
+                    <div class="facility-quick-number">${index + 1}</div>
+                    <div class="facility-quick-content">
+                        <div class="facility-quick-name">${escapeHtmlForAttr(fullName)}</div>
+                        <div class="facility-quick-meta">${meta || ''}</div>
                     </div>
                 </div>`;
         }).join('');
@@ -3904,11 +3909,16 @@ function refreshQuickFacilitiesList() {
                 location = [facility.city, facility.state].filter(Boolean).join(', ');
             }
             const operator = facility.identification?.currentOperator || '';
+            const metaParts = [];
+            if (location) metaParts.push(escapeHtmlForAttr(location));
+            if (operator) metaParts.push(escapeHtmlForAttr(operator));
+            const meta = metaParts.join(' | ');
 
-            return `<div class="facility-quick-item" onclick="jumpToItem(${index})" style="padding: 10px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background='white'">
-                    <div style="font-weight: 600; color: #000435;">${escapeHtmlForAttr(name)}</div>
-                    <div style="font-size: 12px; color: #6b7280;">
-                        ${escapeHtmlForAttr(location)}${operator ? ' • ' + escapeHtmlForAttr(operator) : ''}
+            return `<div class="facility-quick-item" onclick="jumpToItem(${index})">
+                    <div class="facility-quick-number">${index + 1}</div>
+                    <div class="facility-quick-content">
+                        <div class="facility-quick-name">${escapeHtmlForAttr(name)}</div>
+                        <div class="facility-quick-meta">${meta || ''}</div>
                     </div>
                 </div>`;
         }).join('');

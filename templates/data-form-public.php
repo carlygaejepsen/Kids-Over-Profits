@@ -62,20 +62,6 @@ get_header();
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
                     </div>
 
-                    <!-- Facilities Overview for Locations -->
-                    <div class="facility-toc" id="location-facilities-toc">
-                        <div class="toc-header">
-                            <h2 class="toc-title">Facilities in this Location</h2>
-                            <button class="toc-toggle" id="location-facilities-toc-toggle-btn">🔎</button>
-                        </div>
-                        <div class="toc-content">
-                            <div class="toc-stats" id="location-facilities-toc-stats">Total: 0 facilities</div>
-                            <div class="facility-list" id="location-facilities-list">
-                                <!-- Facility items will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Private Ownership Choice (popup-controlled) -->
                     <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
