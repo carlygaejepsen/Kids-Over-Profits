@@ -111,36 +111,55 @@ select:focus {
 }
 
 .btn {
-    background: #33A7B5;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     color: #FFFFFF;
-    border: 1px solid #000435;
+    border: 2px solid #33A7B5;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.2);
 }
 
 .btn:hover,
 .btn:focus {
-    background: #000435;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
     color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
 }
 
 .btn-secondary {
-    background: #000435;
-    color: #FFFFFF;
-    border-color: #000435;
+    background: linear-gradient(135deg, #AEE0ED 0%, #FFF5CB 100%);
+    color: #000435;
+    border: 2px solid #33A7B5;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
 }
 
 .btn-danger,
 .save-master-btn {
-    background: #FE8088;
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%);
     color: #000435;
-    border: 1px solid #000435;
+    border: 2px solid #FE8088;
+}
+
+.btn-danger:hover,
+.save-master-btn:hover {
+    background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%);
 }
 
 .btn-primary,
 .btn-success,
 .save-suggestion-btn {
-    background: #33A7B5;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     color: #FFFFFF;
-    border: 1px solid #000435;
+    border: 2px solid #33A7B5;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.save-suggestion-btn:hover {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
 }
 
 .info-text,
@@ -300,16 +319,16 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    padding: 8px 10px;
+    padding: 8px 12px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 6px;
-    border: 2px solid transparent;
+    border: 2px solid #33A7B5;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: var(--kop-white, rgba(255, 255, 255, 0.95));
-    color: var(--kop-midnight-blue, #000435);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    color: #000435;
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.2);
     flex-shrink: 0;
     white-space: nowrap;
     text-align: center;
@@ -317,52 +336,57 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .btn-toolbar:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary {
-    background: var(--kop-teal, #33A7B5);
-    color: var(--kop-midnight-blue, #000435);
-    border-color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: #FFFFFF;
+    border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary:hover {
-    background: var(--kop-midnight-blue, #000435);
-    color: var(--kop-white, #FFFFFF);
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary {
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
-    color: var(--kop-midnight-blue, #000435);
-    border-color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #AEE0ED 0%, #FFF5CB 100%);
+    color: #000435;
+    border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: var(--kop-mint-green, #B6E3D4);
-    color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    color: #000435;
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-success {
-    background: var(--kop-mint-green, #B6E3D4);
-    color: var(--kop-midnight-blue, #000435);
-    border-color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #B6E3D4 0%, #B2E102 100%);
+    color: #000435;
+    border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-success:hover {
-    background: var(--kop-teal, #33A7B5);
-    color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #B2E102 0%, #B6E3D4 100%);
+    color: #000435;
+    box-shadow: 0 4px 10px rgba(178, 225, 2, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger {
-    background: var(--kop-coral-pink, #FE8088);
-    color: var(--kop-midnight-blue, #000435);
-    border-color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%);
+    color: #000435;
+    border-color: #FE8088;
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger:hover {
-    background: var(--kop-orange, #EF9034);
-    color: var(--kop-midnight-blue, #000435);
+    background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%);
+    color: #000435;
+    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.4);
 }
 
 .fixed-toolbar.minimized {
