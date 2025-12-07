@@ -333,12 +333,12 @@ get_header();
         </div>
 
         <!-- Facility Loader Panel -->
-        <div class="facility-loader-panel" style="background: #B6E3D4; border: 2px solid #33A7B5; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <h2 id="quick-loader-heading" style="margin: 0 0 15px 0; color: #000435; font-size: 18px;">🏢 Jump to Facility</h2>
+        <div class="facility-loader-panel">
+            <h2 id="quick-loader-heading">🏢 Jump to Facility</h2>
             <div class="form-group">
-                <label id="quick-loader-label" style="color: #000435; font-weight: 600;">All Facilities in Current Project</label>
-                <div id="quick-facilities-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #33A7B5; border-radius: 6px; padding: 10px; background: #FFFFFF; margin-top: 8px;">
-                    <div style="color: #6b7280; font-style: italic;">No facilities yet...</div>
+                <label id="quick-loader-label">All Facilities in Current Project</label>
+                <div id="quick-facilities-list" class="quick-facilities-list">
+                    <div class="quick-facilities-empty">No facilities yet...</div>
                 </div>
             </div>
         </div>
