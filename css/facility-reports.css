@@ -69,18 +69,26 @@ details[open] > summary .open-text {
 #alphabet-filter a {
     padding: 8px 15px;
     text-decoration: none;
-    background-color: #00004d;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
+    border: 2px solid #33A7B5;
+    border-radius: 6px;
     font-weight: bold;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.2);
+}
+
+#alphabet-filter a:hover {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.3);
 }
 
 #alphabet-filter a.active {
-    background-color: #00004d;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
     color: #ffffff;
-    border-color: #dddddd;
+    border-color: #000080;
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.4);
 }
 
 /* Facility card text colors - using specificity instead of !important */
@@ -352,18 +360,22 @@ Inspection Details
 
 .facility-card.status-open {
     border-color: #ff6600;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF0E6 100%);
 }
 
 .facility-card.status-transferred {
     border-color: #888888;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
 }
 
 .facility-card.status-closed {
     border-color: #33a7b5;
+    background: linear-gradient(135deg, #FFFFFF 0%, #E6F7F9 100%);
 }
 
 .facility-card.status-unknown {
     border-color: #cccccc;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F9F9F9 100%);
 }
 
 /* =================================================================
@@ -453,8 +465,10 @@ Inspection Details
 .controls {
     margin-bottom: 20px;
     padding: 15px;
-    background: #f5f5f5;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    border-radius: 8px;
+    border: 2px solid #33A7B5;
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.2);
 }
 
 .controls input,
@@ -470,13 +484,19 @@ Inspection Details
 }
 
 .facility-card {
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 6px;
-    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
     color: #000000;
-    border: 5px solid #e0e0e0;
-    transition: none;
+    border: 2px solid #e0e0e0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.facility-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .facility-name {
@@ -526,13 +546,20 @@ Inspection Details
     padding: 15px;
     width: 220px;
     min-height: 100%;
-    background-color: #00004d;
+    background: linear-gradient(135deg, #000080 0%, #00004d 100%);
     color: #ffffff;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
-    border: 1px solid #dddddd;
+    border: 2px solid #33A7B5;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.25);
+    transition: all 0.2s ease;
+}
+
+.operator-section:hover {
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.35);
+    transform: translateY(-2px);
 }
 
 .operator-name {
@@ -712,8 +739,10 @@ CONTROLS
     grid-column: 1 / -1;
     margin-bottom: 10px;
     padding: 15px;
-    background: #f5f5f5;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    border-radius: 8px;
+    border: 2px solid #33A7B5;
+    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.2);
 }
 
 .facility-report-container .alphabet-filter {
