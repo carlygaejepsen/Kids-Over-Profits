@@ -2157,14 +2157,27 @@ function loadProject(projectName) { // Note: This function is now asynchronous
 function newProject() {
     if (!confirm('Start a new blank project? Any unsaved changes to the current project will be lost.')) return;
 
-    window.currentProjectName = null;
+    // Prompt for project name
+    let projectName = prompt('Enter a name for the new project:');
+
+    // If user cancels or enters empty name, abort
+    if (projectName === null) return;
+
+    // Trim and validate the project name
+    projectName = projectName.trim();
+    if (projectName === '') {
+        alert('Project name cannot be empty. Please try again.');
+        return;
+    }
+
+    window.currentProjectName = projectName;
     window.formData = createNewProjectData();
     window.currentFacilityIndex = 0;
 
-    // Clear the main project name input
+    // Set the main project name input
     const projectNameInput = document.getElementById('project-name');
     if (projectNameInput) {
-        projectNameInput.value = '';
+        projectNameInput.value = projectName;
     }
 
     // Get the currently active category tab
@@ -2184,7 +2197,7 @@ function newProject() {
         window.handleReferrerToggle(); // Apply visibility rules based on the active tab
     }
 
-    showUploadStatus('New project created', 'info');
+    showUploadStatus(`New project "${projectName}" created`, 'info');
 }
 
 function initializeCategoryTabs() {

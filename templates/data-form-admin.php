@@ -22,9 +22,9 @@ get_header();
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
-                <button class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
-                <button class="category-tab" data-category="locations">🌍 Locations / States</button>
-                <button class="category-tab" data-category="referrers">👥 Referrers</button>
+                <button type="button" class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
+                <button type="button" class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -311,29 +311,29 @@ get_header();
                     <strong>📋 Admin Editor</strong>
                     <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
                 </div>
-                <button class="toolbar-toggle" id="toolbar-toggle-btn" title="Minimize toolbar">−</button>
+                <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Minimize toolbar">−</button>
             </div>
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
-                        <button class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">📄 New Project</button>
-                        <button class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊 Generate Report</button>
+                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">📄 New Project</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊 Generate Report</button>
                     </div>
                     <div class="toolbar-group">
-                        <button class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
-                            <button class="btn-toolbar btn-secondary" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <button type="button" class="btn-toolbar btn-secondary" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
-                            <button class="btn-toolbar btn-secondary" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                            <button type="button" class="btn-toolbar btn-secondary" id="next-facility-btn-toolbar" title="Next facility">▶</button>
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋 Clone</button>
-                        <button class="btn-toolbar btn-danger" id="delete-facility-btn-toolbar" title="Delete current facility">🗑️ Delete</button>
+                        <button type="button" class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋 Clone</button>
+                        <button type="button" class="btn-toolbar btn-danger" id="remove-facility-btn-toolbar" title="Delete current facility">🗑️ Delete</button>
                     </div>
                 </div>
             </div>

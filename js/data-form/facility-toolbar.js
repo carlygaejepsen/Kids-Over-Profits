@@ -17,7 +17,9 @@
         projectName: document.getElementById('toolbar-project-name'),
         prevBtn: document.getElementById('prev-facility-btn-toolbar'),
         nextBtn: document.getElementById('next-facility-btn-toolbar'),
+        newProjectBtn: document.getElementById('new-project-btn-toolbar'),
         addBtn: document.getElementById('add-facility-btn-toolbar'),
+        cloneBtn: document.getElementById('clone-facility-btn-toolbar'),
         scrollTopBtn: document.getElementById('scroll-to-top-btn-toolbar'),
         removeBtn: getRemoveButton()
     });
@@ -128,7 +130,7 @@
 
     function initializeToolbarButtons() {
         const elements = getElements();
-        const { toolbar, toolbarToggle, toolbarContent, dropdown, prevBtn, nextBtn, addBtn, scrollTopBtn, removeBtn } = elements;
+        const { toolbar, toolbarToggle, toolbarContent, dropdown, prevBtn, nextBtn, newProjectBtn, addBtn, cloneBtn, scrollTopBtn, removeBtn } = elements;
 
         if (toolbar) {
             document.body.classList.add('toolbar-active');
@@ -182,6 +184,15 @@
             nextBtn.dataset.listenerAttached = 'true';
         }
 
+        if (newProjectBtn && !newProjectBtn.dataset.listenerAttached) {
+            newProjectBtn.addEventListener('click', () => {
+                if (typeof window.newProject === 'function') {
+                    window.newProject();
+                }
+            }, { passive: true });
+            newProjectBtn.dataset.listenerAttached = 'true';
+        }
+
         if (addBtn && !addBtn.dataset.listenerAttached) {
             addBtn.addEventListener('click', () => {
                 if (typeof window.addFacility === 'function') {
@@ -189,6 +200,15 @@
                 }
             }, { passive: true });
             addBtn.dataset.listenerAttached = 'true';
+        }
+
+        if (cloneBtn && !cloneBtn.dataset.listenerAttached) {
+            cloneBtn.addEventListener('click', () => {
+                if (typeof window.cloneFacility === 'function') {
+                    window.cloneFacility();
+                }
+            }, { passive: true });
+            cloneBtn.dataset.listenerAttached = 'true';
         }
 
         if (scrollTopBtn && !scrollTopBtn.dataset.listenerAttached) {
