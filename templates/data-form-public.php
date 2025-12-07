@@ -249,10 +249,10 @@ get_header();
                             <input type="tel" id="consultant-phone" class="consultant-field" data-field="phone" placeholder="(555) 123-4567">
                         </div>
 
-                            <div class="form-group">
-                                <label>Website/Profile</label>
+                        <div class="form-group">
+                            <label>Website/Profile</label>
                                 <div class="array-container" data-path="referrerIndividual.websites"></div>
-                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label>Professional Affiliations</label>
@@ -309,12 +309,12 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">📄 New Project</button>
-                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊 Generate Report</button>
+                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊</button>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕ Add Facility</button>
-                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️ Top</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕</button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️</button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
@@ -325,8 +325,8 @@ get_header();
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍 Search Data</button>
-                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion">📮 Submit</button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍</button>
+                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion">✅</button>
                     </div>
                 </div>
             </div>
