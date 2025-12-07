@@ -90,6 +90,17 @@ get_header();
                             Click "Edit ownership" to answer the popup. Your choice still hides/shows operator vs owner fields like the old toggle.
                         </p>
                     </div>
+                    <div id="ownership-modal" class="kop-modal" aria-hidden="true" role="dialog" aria-labelledby="ownership-modal-title" aria-modal="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+                        <div style="background:#fff; border-radius:10px; max-width:420px; width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.2); padding:22px; position:relative;">
+                            <h3 id="ownership-modal-title" style="margin-top:0; margin-bottom:12px; font-size:18px; color:#0f172a;">Is this a privately owned facility?</h3>
+                            <p style="margin:0 0 18px; color:#334155; line-height:1.5;">Choose "Yes" for independent facilities. Choose "No" for chain/corporate facilities.</p>
+                            <div style="display:flex; gap:12px; justify-content:flex-end;">
+                                <button type="button" data-action="ownership-no" class="kop-btn" style="background:#e2e8f0; color:#0f172a; padding:8px 14px; border-radius:6px; border:1px solid #cbd5e1;">No</button>
+                                <button type="button" data-action="ownership-yes" class="kop-btn" style="background:#10b981; color:#fff; padding:8px 14px; border-radius:6px; border:1px solid #0f9f7f;">Yes</button>
+                            </div>
+                            <button type="button" data-action="ownership-close" aria-label="Close" style="position:absolute; top:10px; right:10px; background:transparent; border:none; font-size:18px; color:#94a3b8; cursor:pointer;">×</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Referrers Content -->
@@ -116,20 +127,31 @@ get_header();
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
         <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
-                    <!-- Agency Choice (popup-controlled) -->
-                    <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
-                            <span>Independent Consultant (not part of an agency):</span>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <span id="referrer-independent-status" style="font-weight: 700; color: #0f172a;">Not set</span>
-                                <button type="button" id="referrer-independent-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit consultant type</button>
-                                <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Click "Edit consultant type" to choose via popup. Your choice still hides/shows the agency section like the old toggle.
-                        </p>
+            <!-- Agency Choice (popup-controlled) -->
+            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
+                    <span>Independent Consultant (not part of an agency):</span>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span id="referrer-independent-status" style="font-weight: 700; color: #0f172a;">Not set</span>
+                        <button type="button" id="referrer-independent-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit consultant type</button>
+                        <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
                     </div>
+                </div>
+                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                    Click "Edit consultant type" to choose via popup. Your choice still hides/shows the agency section like the old toggle.
+                </p>
+            </div>
+            <div id="consultant-modal" class="kop-modal" aria-hidden="true" role="dialog" aria-labelledby="consultant-modal-title" aria-modal="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+                <div style="background:#fff; border-radius:10px; max-width:420px; width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.2); padding:22px; position:relative;">
+                    <h3 id="consultant-modal-title" style="margin-top:0; margin-bottom:12px; font-size:18px; color:#0f172a;">Is this an independent consultant?</h3>
+                    <p style="margin:0 0 18px; color:#334155; line-height:1.5;">Choose "Yes" for independent consultants. Choose "No" for agency/group consultants.</p>
+                    <div style="display:flex; gap:12px; justify-content:flex-end;">
+                        <button type="button" data-action="consultant-no" class="kop-btn" style="background:#e2e8f0; color:#0f172a; padding:8px 14px; border-radius:6px; border:1px solid #cbd5e1;">No</button>
+                        <button type="button" data-action="consultant-yes" class="kop-btn" style="background:#10b981; color:#fff; padding:8px 14px; border-radius:6px; border:1px solid #0f9f7f;">Yes</button>
+                    </div>
+                    <button type="button" data-action="consultant-close" aria-label="Close" style="position:absolute; top:10px; right:10px; background:transparent; border:none; font-size:18px; color:#94a3b8; cursor:pointer;">×</button>
+                </div>
+            </div>
 
             <!-- Consultants Overview (Table of Contents) -->
             <div class="facility-toc" id="consultants-toc">

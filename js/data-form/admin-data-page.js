@@ -224,6 +224,7 @@ const independentToggle = document.getElementById('referrer-independent-toggle')
 const independentStatus = document.getElementById('referrer-independent-status');
 const independentEditBtn = document.getElementById('referrer-independent-edit-btn');
 const agencySection = document.getElementById('referrer-agency-section');
+const consultantModal = document.getElementById('consultant-modal');
 
 function isReferrersViewActive() {
     const activeTab = document.querySelector('.category-tab.active');
@@ -257,11 +258,43 @@ if (independentToggle && !independentToggle.dataset.listenerAttached) {
 
 if (independentEditBtn && independentToggle && !independentEditBtn.dataset.listenerAttached) {
     independentEditBtn.addEventListener('click', () => {
-        const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
-        independentToggle.checked = choice;
-        independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
+        if (!consultantModal) {
+            const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
+            independentToggle.checked = choice;
+            independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            return;
+        }
+
+        consultantModal.style.display = 'flex';
+        consultantModal.setAttribute('aria-hidden', 'false');
     });
     independentEditBtn.dataset.listenerAttached = 'true';
+}
+
+if (consultantModal && !consultantModal.dataset.bound) {
+    const yesBtn = consultantModal.querySelector('[data-action="consultant-yes"]');
+    const noBtn = consultantModal.querySelector('[data-action="consultant-no"]');
+    const closeBtn = consultantModal.querySelector('[data-action="consultant-close"]');
+    const hideModal = () => {
+        consultantModal.style.display = 'none';
+        consultantModal.setAttribute('aria-hidden', 'true');
+    };
+
+    const applyChoice = (isIndependent) => {
+        if (!independentToggle) return;
+        independentToggle.checked = isIndependent;
+        independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
+        hideModal();
+    };
+
+    if (yesBtn) yesBtn.addEventListener('click', () => applyChoice(true), { passive: true });
+    if (noBtn) noBtn.addEventListener('click', () => applyChoice(false), { passive: true });
+    if (closeBtn) closeBtn.addEventListener('click', hideModal, { passive: true });
+    consultantModal.addEventListener('click', (e) => {
+        if (e.target === consultantModal) hideModal();
+    });
+
+    consultantModal.dataset.bound = 'true';
 }
 
 window.updateAgencySliderAppearance = updateAgencySliderAppearance;
@@ -274,6 +307,7 @@ const privateOwnershipToggle = document.getElementById('private-ownership-toggle
 const privateOwnershipStatus = document.getElementById('private-ownership-status');
 const privateOwnershipEditBtn = document.getElementById('private-ownership-edit-btn');
 const operatorSection = document.getElementById('operator-section');
+const ownershipModal = document.getElementById('ownership-modal');
 
 function updatePrivateOwnershipSliderAppearance() {
     if (!privateOwnershipToggle) return;
@@ -419,16 +453,46 @@ if (privateOwnershipToggle && !privateOwnershipToggle.dataset.listenerAttached) 
 
 if (privateOwnershipEditBtn && privateOwnershipToggle && !privateOwnershipEditBtn.dataset.listenerAttached) {
     privateOwnershipEditBtn.addEventListener('click', () => {
-        const choice = confirm('Is this a privately owned facility (not part of a chain)?
+        if (!ownershipModal) {
+            const choice = confirm('Is this a privately owned facility (not part of a chain)?
 
 OK = Privately owned
 Cancel = Part of a chain/corporate');
-        privateOwnershipToggle.checked = choice;
-        privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            privateOwnershipToggle.checked = choice;
+            privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            return;
+        }
+        ownershipModal.style.display = 'flex';
+        ownershipModal.setAttribute('aria-hidden', 'false');
     });
     privateOwnershipEditBtn.dataset.listenerAttached = 'true';
 }
 
+if (ownershipModal && !ownershipModal.dataset.bound) {
+    const yesBtn = ownershipModal.querySelector('[data-action="ownership-yes"]');
+    const noBtn = ownershipModal.querySelector('[data-action="ownership-no"]');
+    const closeBtn = ownershipModal.querySelector('[data-action="ownership-close"]');
+    const hideModal = () => {
+        ownershipModal.style.display = 'none';
+        ownershipModal.setAttribute('aria-hidden', 'true');
+    };
+
+    const applyChoice = (isPrivate) => {
+        if (!privateOwnershipToggle) return;
+        privateOwnershipToggle.checked = isPrivate;
+        privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+        hideModal();
+    };
+
+    if (yesBtn) yesBtn.addEventListener('click', () => applyChoice(true), { passive: true });
+    if (noBtn) noBtn.addEventListener('click', () => applyChoice(false), { passive: true });
+    if (closeBtn) closeBtn.addEventListener('click', hideModal, { passive: true });
+    ownershipModal.addEventListener('click', (e) => {
+        if (e.target === ownershipModal) hideModal();
+    });
+
+    ownershipModal.dataset.bound = 'true';
+}
 window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppearance;
 
 // ============================================
