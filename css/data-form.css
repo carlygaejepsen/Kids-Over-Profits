@@ -919,18 +919,25 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 10px;
     padding: 10px 12px;
-    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    border: 2px solid #FC8ED6;
+    border-radius: 6px;
+    margin-bottom: 8px;
     cursor: pointer;
     align-items: flex-start;
-    transition: background 0.15s ease, transform 0.15s ease;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15);
 }
 
 .facility-quick-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .facility-quick-item:hover {
-    background: #f0f9ff;
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
+    border-color: #B2E102;
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.25);
+    transform: translateY(-2px);
 }
 
 .facility-quick-number {
