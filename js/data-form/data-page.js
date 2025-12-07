@@ -1215,7 +1215,7 @@
          * Collapse all collapsible sections
          */
         function collapseAllSections() {
-            const sections = document.querySelectorAll('.section:not(.view-hidden)');
+            const sections = document.querySelectorAll('.section:not(.view-hidden):not(#submission-section):not(#referrer-submission-section):not(#advanced-mode-section)');
             sections.forEach(section => {
                 const content = section.querySelector('.section-content');
                 const toggle = section.querySelector('.section-toggle');

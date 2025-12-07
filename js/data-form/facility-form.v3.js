@@ -1225,7 +1225,7 @@ function expandAllSections() {
  * Collapse all collapsible sections
  */
 function collapseAllSections() {
-    const sections = document.querySelectorAll('.section:not(.view-hidden)');
+    const sections = document.querySelectorAll('.section:not(.view-hidden):not(#submission-section):not(#referrer-submission-section):not(#advanced-mode-section)');
     sections.forEach(section => {
         const content = section.querySelector('.section-content');
         const toggle = section.querySelector('.section-toggle');
@@ -4082,9 +4082,36 @@ function generateProjectsReport({ categories = null, filename } = {}) {
     } else {
         const data = window.formData;
 
-        if (!data) {
-            showUploadStatus('No project data available. Please load or create a project first.', 'error');
-            return;
+        if (!data || !window.currentProjectName) {
+            // Show options for different types of reports
+            const message = 'No project is currently loaded. What kind of report would you like to generate?\n\n' +
+                          '1 - All Companies/Operators\n' +
+                          '2 - All Locations/States\n' +
+                          '3 - All Referrers\n' +
+                          '4 - Cancel';
+
+            const choice = prompt(message, '1');
+
+            if (choice === null || choice === '4' || choice === '') return;
+
+            let reportCategories, reportFilename;
+
+            if (choice === '1') {
+                reportCategories = ['companies'];
+                reportFilename = 'projects-report-companies.json';
+            } else if (choice === '2') {
+                reportCategories = ['locations'];
+                reportFilename = 'projects-report-locations.json';
+            } else if (choice === '3') {
+                reportCategories = ['referrers'];
+                reportFilename = 'projects-report-referrers.json';
+            } else {
+                alert('Invalid choice. Please enter 1, 2, 3, or 4.');
+                return;
+            }
+
+            // Recursively call with the selected category
+            return generateProjectsReport({ categories: reportCategories, filename: reportFilename });
         }
 
         projectsToReport = [data];
