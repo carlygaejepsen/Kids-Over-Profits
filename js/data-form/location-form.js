@@ -362,6 +362,14 @@ function updateLocationFacilitiesOverview() {
                 e.stopPropagation(); // Prevent selecting the facility
                 // Toggle private ownership status
                 window.formData.facilities[index].isPrivatelyOwned = !window.formData.facilities[index].isPrivatelyOwned;
+
+                // Update form UI if this is the current facility
+                if (index === window.currentFacilityIndex) {
+                    if (typeof window.updateAllUI === 'function') {
+                        window.updateAllUI();
+                    }
+                }
+
                 if (typeof updateJSON === 'function') updateJSON();
                 if (typeof autoSave === 'function') autoSave();
                 updateLocationFacilitiesOverview();

@@ -659,8 +659,8 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .project-action-btn {
     padding: 8px 14px;
-    background: linear-gradient(135deg, #33A7B5 0%, #AEE0ED 100%);
-    color: #000435;
+    background: #33A7B5;
+    color: #FFFFFF;
     border: 2px solid #000435;
     border-radius: 8px;
     font-weight: 700;
@@ -672,7 +672,7 @@ body:not(.admin-bar) .fixed-toolbar {
 .project-action-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0, 4, 53, 0.22);
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: #000080;
     color: #FFFFFF;
 }
 
@@ -818,16 +818,16 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .consultant-independent-badge.not-independent {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    background: linear-gradient(135deg, #000080 0%, #000435 100%);
     color: #FFFFFF;
-    border-color: #4b5563;
-    box-shadow: 0 2px 4px rgba(75, 85, 99, 0.25);
+    border-color: #000080;
+    box-shadow: 0 2px 4px rgba(0, 4, 53, 0.25);
 }
 
 .consultant-independent-badge.not-independent:hover {
-    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-    border-color: #374151;
-    box-shadow: 0 3px 6px rgba(75, 85, 99, 0.35);
+    background: linear-gradient(135deg, #000435 0%, #000080 100%);
+    border-color: #000435;
+    box-shadow: 0 3px 6px rgba(0, 4, 53, 0.35);
 }
 
 #referrer-saved-projects-list {

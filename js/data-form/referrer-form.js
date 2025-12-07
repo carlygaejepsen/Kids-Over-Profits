@@ -613,6 +613,16 @@ function updateConsultantsOverview() {
                 e.stopPropagation(); // Prevent selecting the consultant
                 // Toggle independent status
                 window.formData.referrerConsultants[index].isIndependent = !window.formData.referrerConsultants[index].isIndependent;
+
+                // Update agency section visibility if this is the current consultant
+                if (index === window.currentConsultantIndex) {
+                    const agencySection = document.getElementById('referrer-agency-section');
+                    const isIndependent = window.formData.referrerConsultants[index].isIndependent;
+                    if (agencySection) {
+                        agencySection.style.display = isIndependent ? 'none' : 'block';
+                    }
+                }
+
                 if (typeof updateJSON === 'function') updateJSON();
                 if (typeof autoSave === 'function') autoSave();
                 updateConsultantsOverview();
