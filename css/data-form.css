@@ -23,7 +23,7 @@ body {
    FIXED ADMIN TOOLBAR
    ============================================ */
 body.toolbar-active {
-    padding-top: 96px; /* 32px admin bar + compact toolbar */
+    padding-top: 140px; /* Extra offset so page header isn't hidden under toolbar */
 }
 
 /* ============================================
@@ -168,7 +168,7 @@ select:focus {
 }
 
 body.toolbar-active:not(.admin-bar) {
-    padding-top: 64px; /* Just compact toolbar, no admin bar */
+    padding-top: 120px; /* Just toolbar */
 }
 
 body.toolbar-minimized {
@@ -612,7 +612,7 @@ body:not(.admin-bar) .fixed-toolbar {
 
 #consultants-toc .toc-title,
 #facility-toc .toc-title {
-    color: #000435;
+    color: #fff;
 }
 
 #consultants-toc .toc-toggle,
