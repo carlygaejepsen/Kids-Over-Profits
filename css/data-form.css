@@ -729,8 +729,16 @@ body:not(.admin-bar) .fixed-toolbar {
     box-shadow: 0 3px 8px rgba(178, 225, 2, 0.4);
 }
 
-/* Saved project lists - centered */
-#company-saved-projects-list,
+/* Saved project lists - styled containers */
+#company-saved-projects-list {
+    background: #FFFFFF !important;
+    border: 2px solid #33A7B5 !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+    text-align: center;
+}
+
 #location-saved-projects-list,
 #referrer-saved-projects-list {
     text-align: center;

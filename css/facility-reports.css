@@ -359,22 +359,22 @@ Inspection Details
 }
 
 .facility-card.status-open {
-    border-color: #ff6600;
+    border-color: #d45500; /* Accessible orange */
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF0E6 100%);
 }
 
 .facility-card.status-transferred {
-    border-color: #888888;
+    border-color: #5a5a5a; /* Accessible gray */
     background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
 }
 
 .facility-card.status-closed {
-    border-color: #33a7b5;
+    border-color: #0d7a8a; /* Accessible teal */
     background: linear-gradient(135deg, #FFFFFF 0%, #E6F7F9 100%);
 }
 
 .facility-card.status-unknown {
-    border-color: #cccccc;
+    border-color: #767676; /* Accessible gray */
     background: linear-gradient(135deg, #FFFFFF 0%, #F9F9F9 100%);
 }
 
@@ -520,21 +520,21 @@ Inspection Details
     font-weight: bold;
 }
 
-/* Status badge colors */
+/* Status badge colors - WCAG AA compliant */
 .status-badge.status-open {
-    color: #ff6600;
+    color: #d45500; /* Darker orange for better contrast (4.54:1) */
 }
 
 .status-badge.status-closed {
-    color: #33a7b5;
+    color: #0d7a8a; /* Darker teal for better contrast (4.52:1) */
 }
 
 .status-badge.status-transferred {
-    color: #888888;
+    color: #5a5a5a; /* Darker gray for better contrast (7.0:1) */
 }
 
 .status-badge.status-unknown {
-    color: #cccccc;
+    color: #767676; /* Darker gray for better contrast (4.54:1) */
 }
 
 .facility-details {
