@@ -60,6 +60,11 @@ get_header();
                             </div>
                         </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                        <div class="d-flex gap-10" style="flex-wrap: wrap; margin: 10px 0 0;">
+                            <button type="button" id="new-project-btn-location" class="kop-btn" style="padding: 8px 12px;">New Location Project</button>
+                            <button type="button" id="export-all-btn-location" class="kop-btn" style="padding: 8px 12px;">Export Locations</button>
+                            <button type="button" id="generate-report-btn-location" class="kop-btn" style="padding: 8px 12px;">Generate Location Report</button>
+                        </div>
                     </div>
 
                     <!-- Private Ownership Choice (popup-controlled) -->

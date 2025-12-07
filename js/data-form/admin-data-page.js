@@ -454,10 +454,7 @@ if (privateOwnershipToggle && !privateOwnershipToggle.dataset.listenerAttached) 
 if (privateOwnershipEditBtn && privateOwnershipToggle && !privateOwnershipEditBtn.dataset.listenerAttached) {
     privateOwnershipEditBtn.addEventListener('click', () => {
         if (!ownershipModal) {
-            const choice = confirm('Is this a privately owned facility (not part of a chain)?
-
-OK = Privately owned
-Cancel = Part of a chain/corporate');
+            const choice = confirm('Is this a privately owned facility (not part of a chain)?\n\nOK = Privately owned\nCancel = Part of a chain/corporate');
             privateOwnershipToggle.checked = choice;
             privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
             return;
