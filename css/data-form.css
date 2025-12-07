@@ -912,6 +912,8 @@ body:not(.admin-bar) .fixed-toolbar {
 .consultant-item-name {
     font-weight: 600;
     color: #000435;
+    font-size: 14px; /* Match project-item */
+    margin-bottom: 2px; /* Match project-item spacing */
     line-height: 1.3;
 }
 
