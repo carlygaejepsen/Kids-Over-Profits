@@ -221,46 +221,62 @@ function loadProjectAndSync(projectName) {
 // ============================================
 
 const independentToggle = document.getElementById('referrer-independent-toggle');
-const agencySliderTrack = document.getElementById('referrer-agency-slider-track');
-const agencySliderKnob = document.getElementById('referrer-agency-slider-knob');
+const independentStatus = document.getElementById('referrer-independent-status');
+const independentEditBtn = document.getElementById('referrer-independent-edit-btn');
 const agencySection = document.getElementById('referrer-agency-section');
 
-function updateAgencySliderAppearance() {
-    if (!agencySliderTrack || !agencySliderKnob || !independentToggle) return;
+function isReferrersViewActive() {
+    const activeTab = document.querySelector('.category-tab.active');
+    const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
 
-    if (independentToggle.checked) {
-        // Independent consultant - toggle is ON
-        agencySliderTrack.style.backgroundColor = '#10b981';
-        agencySliderKnob.style.transform = 'translateX(24px)';
-        if (agencySection) agencySection.style.display = 'none';
-    } else {
-        // Agency-affiliated - toggle is OFF
-        agencySliderTrack.style.backgroundColor = '#e5e7eb';
-        agencySliderKnob.style.transform = 'translateX(0px)';
-        if (agencySection) agencySection.style.display = 'block';
+    if (activeCategory === 'referrers') {
+        return true;
     }
+
+    const referrerWrapper = document.getElementById('referrer-main-wrapper');
+    return referrerWrapper ? !referrerWrapper.classList.contains('view-hidden') && !referrerWrapper.classList.contains('d-none') : false;
 }
 
-if (agencySliderTrack && independentToggle) {
-    agencySliderTrack.addEventListener('click', function() {
-        independentToggle.checked = !independentToggle.checked;
+function updateAgencySliderAppearance() {
+    if (!independentToggle) return;
+    if (!isReferrersViewActive()) return;
+
+    const isIndependent = !!independentToggle.checked;
+    if (independentStatus) {
+        independentStatus.textContent = isIndependent ? 'Independent consultant' : 'Agency/Group consultant';
+    }
+    if (agencySection) agencySection.style.display = isIndependent ? 'none' : 'block';
+}
+
+if (independentToggle && !independentToggle.dataset.listenerAttached) {
+    independentToggle.addEventListener('change', () => {
         updateAgencySliderAppearance();
+    }, { passive: true });
+    independentToggle.dataset.listenerAttached = 'true';
+}
+
+if (independentEditBtn && independentToggle && !independentEditBtn.dataset.listenerAttached) {
+    independentEditBtn.addEventListener('click', () => {
+        const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
+        independentToggle.checked = choice;
+        independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
     });
+    independentEditBtn.dataset.listenerAttached = 'true';
 }
 
 window.updateAgencySliderAppearance = updateAgencySliderAppearance;
 
 // ============================================
-// PRIVATE OWNERSHIP TOGGLE
+// PRIVATE OWNERSHIP (popup-controlled)
 // ============================================
 
 const privateOwnershipToggle = document.getElementById('private-ownership-toggle');
-const privateOwnershipSliderTrack = document.getElementById('slider-track');
-const privateOwnershipSliderKnob = document.getElementById('slider-knob');
+const privateOwnershipStatus = document.getElementById('private-ownership-status');
+const privateOwnershipEditBtn = document.getElementById('private-ownership-edit-btn');
 const operatorSection = document.getElementById('operator-section');
 
 function updatePrivateOwnershipSliderAppearance() {
-    if (!privateOwnershipSliderTrack || !privateOwnershipSliderKnob || !privateOwnershipToggle) return;
+    if (!privateOwnershipToggle) return;
 
     // Restore toggle state from facility data
     const currentFacility = window.formData?.facilities?.[window.currentFacilityIndex];
@@ -268,19 +284,14 @@ function updatePrivateOwnershipSliderAppearance() {
         privateOwnershipToggle.checked = currentFacility.isPrivatelyOwned;
     }
 
-    if (privateOwnershipToggle.checked) {
-        // Private ownership - toggle is ON
-        privateOwnershipSliderTrack.style.backgroundColor = '#10b981';
-        privateOwnershipSliderKnob.style.transform = 'translateX(24px)';
-        if (operatorSection) operatorSection.style.display = 'none';
-        modifyOperationsForPrivateOwnership(true);
-    } else {
-        // Corporate ownership - toggle is OFF
-        privateOwnershipSliderTrack.style.backgroundColor = '#e5e7eb';
-        privateOwnershipSliderKnob.style.transform = 'translateX(0px)';
-        if (operatorSection) operatorSection.style.display = 'block';
-        modifyOperationsForPrivateOwnership(false);
+    const isPrivate = !!privateOwnershipToggle.checked;
+
+    if (privateOwnershipStatus) {
+        privateOwnershipStatus.textContent = isPrivate ? 'Privately owned' : 'Part of a chain/corporate';
     }
+
+    if (operatorSection) operatorSection.style.display = isPrivate ? 'none' : 'block';
+    modifyOperationsForPrivateOwnership(isPrivate);
 }
 
 function clearOperatorFields() {
@@ -382,20 +393,19 @@ function modifyOperationsForPrivateOwnership(isPrivate) {
     }
 }
 
-if (privateOwnershipSliderTrack && privateOwnershipToggle) {
-    privateOwnershipSliderTrack.addEventListener('click', function() {
-        privateOwnershipToggle.checked = !privateOwnershipToggle.checked;
+if (privateOwnershipToggle && !privateOwnershipToggle.dataset.listenerAttached) {
+    privateOwnershipToggle.addEventListener('change', function() {
+        const isPrivate = !!privateOwnershipToggle.checked;
 
         // Save the private ownership flag to the current facility
-        const isPrivate = privateOwnershipToggle.checked;
         if (window.formData && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
             window.formData.facilities[window.currentFacilityIndex].isPrivatelyOwned = isPrivate;
-            console.log(`📝 Set isPrivatelyOwned = ${isPrivate} for facility ${window.currentFacilityIndex}`);
+            console.log(`Set isPrivatelyOwned = ${isPrivate} for facility ${window.currentFacilityIndex}`);
         }
 
         updatePrivateOwnershipSliderAppearance();
 
-        if (privateOwnershipToggle.checked) {
+        if (isPrivate) {
             clearOperatorFields();
         }
 
@@ -403,10 +413,20 @@ if (privateOwnershipSliderTrack && privateOwnershipToggle) {
         if (typeof autoSave === 'function') {
             autoSave();
         }
+    }, { passive: true });
+    privateOwnershipToggle.dataset.listenerAttached = 'true';
+}
 
-        // Trigger change event for form tracking
+if (privateOwnershipEditBtn && privateOwnershipToggle && !privateOwnershipEditBtn.dataset.listenerAttached) {
+    privateOwnershipEditBtn.addEventListener('click', () => {
+        const choice = confirm('Is this a privately owned facility (not part of a chain)?
+
+OK = Privately owned
+Cancel = Part of a chain/corporate');
+        privateOwnershipToggle.checked = choice;
         privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
     });
+    privateOwnershipEditBtn.dataset.listenerAttached = 'true';
 }
 
 window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppearance;

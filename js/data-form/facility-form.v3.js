@@ -2198,6 +2198,39 @@ function newProject() {
     }
 
     showUploadStatus(`New project "${projectName}" created`, 'info');
+
+    // Scroll to and expand the first information section
+    setTimeout(() => {
+        let firstSection = null;
+
+        // Determine which section to scroll to based on active category
+        if (activeCategory === 'referrers') {
+            firstSection = document.getElementById('referrer-agency-section');
+        } else {
+            // For companies and locations, start with operator section
+            firstSection = document.getElementById('operator-section');
+        }
+
+        if (firstSection) {
+            // Expand the section if it's not already expanded
+            if (!firstSection.classList.contains('expanded')) {
+                const sectionContent = firstSection.querySelector('.section-content');
+                const sectionToggle = firstSection.querySelector('.section-toggle');
+
+                if (sectionContent) {
+                    firstSection.classList.add('expanded');
+                    sectionContent.style.display = 'block';
+                    if (sectionToggle) {
+                        sectionToggle.setAttribute('aria-expanded', 'true');
+                        sectionToggle.setAttribute('title', 'Collapse section');
+                    }
+                }
+            }
+
+            // Scroll to the section
+            firstSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 500); // Delay to allow UI update to complete
 }
 
 function initializeCategoryTabs() {
@@ -3309,10 +3342,44 @@ function scrollToFormInput() {
 }
 
 function addFacility() {
+    // Check which category view is currently active and visible
+    const getActiveCategoryView = () => {
+        const activeTab = document.querySelector('.category-tab.active');
+        const rawCategory = activeTab ? activeTab.dataset.category : 'companies';
+        const normalizedCategory = rawCategory === 'states' ? 'locations' : rawCategory;
+        const contentId = normalizedCategory === 'locations' ? 'states-content' : `${normalizedCategory}-content`;
+        const contentEl = document.getElementById(contentId);
+        const isVisible = contentEl ? !contentEl.classList.contains('view-hidden') && !contentEl.classList.contains('d-none') : false;
+        return { normalizedCategory, isVisible };
+    };
+    const { normalizedCategory: activeCategory, isVisible: isActiveContentVisible } = getActiveCategoryView();
+
     const newFacility = createNewProjectData().facilities[0];
+
+    // Only ask about ownership type in locations view
+    const inLocationsView = activeCategory === 'locations' && isActiveContentVisible;
+    if (inLocationsView) {
+        const isPrivatelyOwned = confirm('Is this a privately owned facility (not part of a chain)?\n\nClick OK for Yes (privately owned)\nClick Cancel for No (part of a chain/corporate owned)');
+
+        // Set the private ownership flag
+        newFacility.isPrivatelyOwned = isPrivatelyOwned;
+    }
+
     window.formData.facilities.push(newFacility);
     window.currentFacilityIndex = window.formData.facilities.length - 1;
     window.updateAllUI();
+
+    // Update the private ownership toggle to match the choice (locations view only)
+    if (inLocationsView) {
+        const privateToggle = document.getElementById('private-ownership-toggle');
+        if (privateToggle) {
+            privateToggle.checked = newFacility.isPrivatelyOwned;
+            // Trigger the toggle change event to update visibility
+            const event = new Event('change', { bubbles: true });
+            privateToggle.dispatchEvent(event);
+        }
+    }
+
     autoSave();
 
     // Dispatch custom event

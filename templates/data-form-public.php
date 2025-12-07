@@ -76,23 +76,18 @@ get_header();
                         </div>
                     </div>
 
-                    <!-- Private Ownership Toggle for Locations -->
+                    <!-- Private Ownership Choice (popup-controlled) -->
                     <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                             <span>Privately Owned Facility (not part of a chain):</span>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>No</span>
-                                <div style="position: relative; display: inline-block;">
-                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                                    <span id="slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                        <span id="slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                                    </span>
-                                </div>
-                                <span>Yes</span>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
+                                <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit ownership</button>
+                                <input type="checkbox" id="private-ownership-toggle" style="display: none;">
                             </div>
                         </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
+                            Click "Edit ownership" to answer the popup. Your choice still hides/shows operator vs owner fields like the old toggle.
                         </p>
                     </div>
                 </div>
@@ -121,25 +116,20 @@ get_header();
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
         <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
-            <!-- Agency Toggle -->
-            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                    <span>Independent Consultant (not part of an agency):</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span>No</span>
-                        <div style="position: relative; display: inline-block;">
-                            <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
-                            <span id="referrer-agency-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                <span id="referrer-agency-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                            </span>
+                    <!-- Agency Choice (popup-controlled) -->
+                    <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
+                            <span>Independent Consultant (not part of an agency):</span>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span id="referrer-independent-status" style="font-weight: 700; color: #0f172a;">Not set</span>
+                                <button type="button" id="referrer-independent-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit consultant type</button>
+                                <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
+                            </div>
                         </div>
-                        <span>Yes</span>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            Click "Edit consultant type" to choose via popup. Your choice still hides/shows the agency section like the old toggle.
+                        </p>
                     </div>
-                </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                    Toggle to "Yes" for independent consultants to hide the agency section.
-                </p>
-            </div>
 
             <!-- Consultants Overview (Table of Contents) -->
             <div class="facility-toc" id="consultants-toc">
