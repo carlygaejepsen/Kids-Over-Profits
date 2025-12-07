@@ -1682,6 +1682,10 @@ async function saveProjectToCloud(projectName, action = 'save') {
             window.ensureReferrerDataStructures();
         }
 
+        console.log('💾 SAVE: About to save project to cloud');
+        console.log('  - referrerConsultants count:', window.formData.referrerConsultants?.length);
+        console.log('  - referrerConsultants[0]:', JSON.stringify(window.formData.referrerConsultants?.[0]));
+
         // Determine category: state/country names MUST be locations, regardless of stored metadata
         // This prevents state projects from being miscategorized if saved from wrong tab
         const normalizedName = projectName.toLowerCase().trim();
@@ -1719,6 +1723,9 @@ async function saveProjectToCloud(projectName, action = 'save') {
         const API_ENDPOINTS = getAPIEndpoints();
         debugLog('Payload size:', payloadSize, 'characters');
         debugLog('Sending to:', API_ENDPOINTS.SAVE_PROJECT);
+
+        console.log('💾 SAVE: Payload being sent to database:');
+        console.log('  - payload.data.referrerConsultants:', JSON.stringify(payload.data.referrerConsultants));
 
         let response;
         let usedRestApi = false;

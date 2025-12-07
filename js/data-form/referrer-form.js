@@ -134,6 +134,11 @@ function ensureReferrerDataStructures() {
         return;
     }
 
+    console.log('🔧 ensureReferrerDataStructures() called for:', window.currentProjectName);
+    console.log('  - FORM_MODE:', window.FORM_MODE);
+    console.log('  - RAW referrerConsultants:', JSON.stringify(window.formData.referrerConsultants));
+    console.log('  - RAW referrerAgency:', JSON.stringify(window.formData.referrerAgency));
+
     const legacyAgency = window.formData.referrerAgency || window.formData.referrerGroup || {};
     const agency = Object.assign(createDefaultReferrerGroup(), legacyAgency);
     if (!Array.isArray(agency.affiliations)) {
@@ -213,6 +218,11 @@ function ensureReferrerDataStructures() {
     }
 
     window.formData.referrer = buildReferrerEntries(window.formData);
+
+    console.log('✅ ensureReferrerDataStructures() finished');
+    console.log('  - FINAL referrerConsultants count:', window.formData.referrerConsultants?.length);
+    console.log('  - FINAL currentConsultantIndex:', window.currentConsultantIndex);
+    console.log('  - FINAL referrerConsultants[0]:', JSON.stringify(window.formData.referrerConsultants?.[0]));
 }
 
 /**
