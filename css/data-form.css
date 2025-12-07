@@ -594,7 +594,8 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 /* Consultants TOC - match category navigation styling */
-#consultants-toc {
+#consultants-toc,
+#facility-toc {
     border: 2px solid #FC8ED6; /* Bubblegum Pink */
     background: #000080; /* Navy Blue */
     color: #FFFFFF;
@@ -602,29 +603,34 @@ body:not(.admin-bar) .fixed-toolbar {
     border-radius: 10px;
 }
 
-#consultants-toc .toc-header {
-    background: #FFF5CB; /* Soft Pastel Yellow */
-    color: #000435;
-    border-bottom: 2px solid #B2E102; /* Chartreuse */
+#consultants-toc .toc-header,
+#facility-toc .toc-header {
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Match admin-header */
+    color: #FFFFFF;
+    border-bottom: 3px solid #FE8088; /* Coral Pink accent */
 }
 
-#consultants-toc .toc-title {
+#consultants-toc .toc-title,
+#facility-toc .toc-title {
     color: #000435;
 }
 
-#consultants-toc .toc-toggle {
+#consultants-toc .toc-toggle,
+#facility-toc .toc-toggle {
     background: linear-gradient(135deg, #B6E3D4 0%, #FFF5CB 100%); /* Mint to Yellow */
     color: #000435;
     border-color: #33A7B5; /* Teal */
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
 }
 
-#consultants-toc .toc-toggle:hover {
+#consultants-toc .toc-toggle:hover,
+#facility-toc .toc-toggle:hover {
     background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     color: #FFFFFF;
 }
 
-#consultants-toc .toc-content {
+#consultants-toc .toc-content,
+#facility-toc .toc-content {
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
     color: #000435;
 }
@@ -1009,8 +1015,9 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Match admin-header */
     color: #FFFFFF;
+    border-bottom: 3px solid #FE8088; /* Coral Pink accent */
     padding: 15px 20px;
     cursor: pointer;
 }
@@ -1047,13 +1054,13 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .toc-stats {
-    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%); /* Soft Pastel Yellow to Mint Green */
+    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Match referrer-project-status */
     padding: 12px 14px;
     border-radius: 6px;
     margin-bottom: 15px;
-    font-weight: 600;
+    font-weight: 700;
     color: #000435;
-    border: 2px solid #33A7B5; /* Teal */
+    border: 2px solid #B2E102; /* Chartreuse accent to align with status */
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.18);
     font-size: 14px;
 }

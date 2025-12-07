@@ -20,6 +20,7 @@ function createDefaultReferrerGroup() {
         city: "",
         state: "",
         website: "",
+        websites: [],
         address: "",
         founded: "",
         affiliations: [],
@@ -46,6 +47,7 @@ function createDefaultReferrerIndividual() {
         email: "",
         phone: "",
         website: "",
+        websites: [],
         affiliations: [],
         knownReferrals: [],
         pastTTIJobs: [],
@@ -142,6 +144,17 @@ function ensureReferrerDataStructures() {
 
     const legacyAgency = window.formData.referrerAgency || window.formData.referrerGroup || {};
     const agency = Object.assign(createDefaultReferrerGroup(), legacyAgency);
+    if (typeof agency.website === 'string' && agency.website.trim()) {
+        if (!Array.isArray(agency.websites) || agency.websites.length === 0) {
+            agency.websites = [{ url: agency.website.trim(), displayText: "" }];
+        }
+    }
+    if (!Array.isArray(agency.websites)) {
+        agency.websites = [];
+    }
+    if (agency.websites.length && (!agency.website || typeof agency.website !== 'string')) {
+        agency.website = agency.websites[0]?.url || "";
+    }
     if (!Array.isArray(agency.affiliations)) {
         agency.affiliations = [];
     }
@@ -162,6 +175,17 @@ function ensureReferrerDataStructures() {
 
     window.formData.referrerConsultants = window.formData.referrerConsultants.map((consultant) => {
         const merged = Object.assign(createDefaultReferrerIndividual(), consultant || {});
+        if (typeof merged.website === 'string' && merged.website.trim()) {
+            if (!Array.isArray(merged.websites) || merged.websites.length === 0) {
+                merged.websites = [{ url: merged.website.trim(), displayText: "" }];
+            }
+        }
+        if (!Array.isArray(merged.websites)) {
+            merged.websites = [];
+        }
+        if (merged.websites.length && (!merged.website || typeof merged.website !== 'string')) {
+            merged.website = merged.websites[0]?.url || "";
+        }
         if (!Array.isArray(merged.affiliations)) {
             merged.affiliations = [];
         }
@@ -301,7 +325,6 @@ function loadReferrerData() {
         { ids: ['referrer-group-name', 'referrer-agency-name'], key: 'name' },
         { ids: ['referrer-group-city', 'referrer-agency-city'], key: 'city' },
         { ids: ['referrer-group-state', 'referrer-agency-state'], key: 'state' },
-        { ids: ['referrer-group-website', 'referrer-agency-website'], key: 'website' },
         { ids: ['referrer-group-address'], key: 'address' },
         { ids: ['referrer-group-founded'], key: 'founded' },
         { ids: ['referrer-group-notes', 'referrer-agency-notes'], key: 'notes' },
@@ -333,6 +356,14 @@ function loadReferrerData() {
             agency.keyPersonnel = [];
         }
         renderArray(keyPersonnelContainer, 'referrerAgency.keyPersonnel', agency.keyPersonnel);
+    }
+
+    const agencyWebsitesContainer = document.querySelector('[data-path="referrerAgency.websites"]');
+    if (agencyWebsitesContainer && typeof renderArray === 'function') {
+        if (!Array.isArray(agency.websites)) {
+            agency.websites = [];
+        }
+        renderArray(agencyWebsitesContainer, 'referrerAgency.websites', agency.websites);
     }
 
     const referrerType = window.formData.referrerType || (window.formData.isIndependentConsultant ? 'individual' : 'group');
@@ -393,6 +424,14 @@ function loadReferrerData() {
             }
         }
     });
+
+    const consultantWebsitesContainer = document.querySelector('[data-path="referrerIndividual.websites"]');
+    if (consultantWebsitesContainer && typeof renderArray === 'function') {
+        if (!Array.isArray(consultant.websites)) {
+            consultant.websites = [];
+        }
+        renderArray(consultantWebsitesContainer, 'referrerIndividual.websites', consultant.websites);
+    }
 
     if (!Array.isArray(consultant.pastTTIJobs)) {
         consultant.pastTTIJobs = [];

@@ -188,7 +188,7 @@ get_header();
 
                     <div class="form-group">
                         <label>Website</label>
-                        <input type="url" id="referrer-agency-website" class="input-form" placeholder="https://">
+                        <div class="array-container" data-path="referrerAgency.websites"></div>
                     </div>
 
                     <div class="form-group">
@@ -249,10 +249,10 @@ get_header();
                             <input type="tel" id="consultant-phone" class="consultant-field" data-field="phone" placeholder="(555) 123-4567">
                         </div>
 
-                        <div class="form-group">
-                            <label>Website/Profile</label>
-                            <input type="url" id="consultant-website" class="consultant-field" data-field="website" placeholder="https://">
-                        </div>
+                            <div class="form-group">
+                                <label>Website/Profile</label>
+                                <div class="array-container" data-path="referrerIndividual.websites"></div>
+                            </div>
 
                         <div class="form-group">
                             <label>Professional Affiliations</label>

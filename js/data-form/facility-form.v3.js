@@ -758,6 +758,17 @@ function normalizeProjectData(data) {
         } else if (!data.referrerAgency.affiliations) {
             data.referrerAgency.affiliations = [];
         }
+        if (typeof data.referrerAgency.website === 'string' && data.referrerAgency.website.trim()) {
+            if (!Array.isArray(data.referrerAgency.websites) || data.referrerAgency.websites.length === 0) {
+                data.referrerAgency.websites = [{ url: data.referrerAgency.website.trim(), displayText: "" }];
+            }
+        }
+        if (!Array.isArray(data.referrerAgency.websites)) {
+            data.referrerAgency.websites = [];
+        }
+        if (data.referrerAgency.websites.length && (!data.referrerAgency.website || typeof data.referrerAgency.website !== 'string')) {
+            data.referrerAgency.website = data.referrerAgency.websites[0]?.url || "";
+        }
     }
 
     // Normalize referrer group (alternative field)
@@ -782,6 +793,17 @@ function normalizeProjectData(data) {
             }
         } else if (!data.referrerGroup.affiliations) {
             data.referrerGroup.affiliations = [];
+        }
+        if (typeof data.referrerGroup.website === 'string' && data.referrerGroup.website.trim()) {
+            if (!Array.isArray(data.referrerGroup.websites) || data.referrerGroup.websites.length === 0) {
+                data.referrerGroup.websites = [{ url: data.referrerGroup.website.trim(), displayText: "" }];
+            }
+        }
+        if (!Array.isArray(data.referrerGroup.websites)) {
+            data.referrerGroup.websites = [];
+        }
+        if (data.referrerGroup.websites.length && (!data.referrerGroup.website || typeof data.referrerGroup.website !== 'string')) {
+            data.referrerGroup.website = data.referrerGroup.websites[0]?.url || "";
         }
     }
 
@@ -852,6 +874,17 @@ function normalizeProjectData(data) {
         if (!Array.isArray(data.referrerAgency.keyPersonnel)) {
             data.referrerAgency.keyPersonnel = [];
         }
+        if (typeof data.referrerAgency.website === 'string' && data.referrerAgency.website.trim()) {
+            if (!Array.isArray(data.referrerAgency.websites) || data.referrerAgency.websites.length === 0) {
+                data.referrerAgency.websites = [{ url: data.referrerAgency.website.trim(), displayText: "" }];
+            }
+        }
+        if (!Array.isArray(data.referrerAgency.websites)) {
+            data.referrerAgency.websites = [];
+        }
+        if (data.referrerAgency.websites.length && (!data.referrerAgency.website || typeof data.referrerAgency.website !== 'string')) {
+            data.referrerAgency.website = data.referrerAgency.websites[0]?.url || "";
+        }
         if (!data.referrerAgency.fieldNotes || typeof data.referrerAgency.fieldNotes !== 'object') {
             data.referrerAgency.fieldNotes = {};
         }
@@ -874,6 +907,17 @@ function normalizeProjectData(data) {
             ['affiliations', 'knownReferrals', 'facilitiesReferred', 'pastTTIJobs', 'schoolDistricts'].forEach(field => {
                 if (!Array.isArray(merged[field])) merged[field] = [];
             });
+            if (typeof merged.website === 'string' && merged.website.trim()) {
+                if (!Array.isArray(merged.websites) || merged.websites.length === 0) {
+                    merged.websites = [{ url: merged.website.trim(), displayText: "" }];
+                }
+            }
+            if (!Array.isArray(merged.websites)) {
+                merged.websites = [];
+            }
+            if (merged.websites.length && (!merged.website || typeof merged.website !== 'string')) {
+                merged.website = merged.websites[0]?.url || "";
+            }
             // Keep knownReferrals and facilitiesReferred in sync
             if (merged.knownReferrals.length === 0 && merged.facilitiesReferred.length > 0) {
                 merged.knownReferrals = merged.facilitiesReferred.slice();
