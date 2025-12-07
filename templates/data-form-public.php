@@ -67,8 +67,8 @@ get_header();
                         </div>
                     </div>
 
-                    <!-- Private Ownership Choice (popup-controlled) -->
-                    <div id="private-ownership-toggle-section" class="location-card">
+                    <!-- Private Ownership Choice - HIDDEN: Now using per-facility badges in overview -->
+                    <div id="private-ownership-toggle-section" class="location-card" style="display: none;">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                             <span>Privately Owned Facility (not part of a chain):</span>
                             <div style="display: flex; align-items: center; gap: 12px;">

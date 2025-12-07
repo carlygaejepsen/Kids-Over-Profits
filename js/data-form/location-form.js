@@ -331,6 +331,11 @@ function updateLocationFacilitiesOverview() {
         div4.textContent = status;
         const statusEscaped = div4.innerHTML;
 
+        // Add private ownership badge
+        const badgeHTML = isPrivate
+            ? '<span class="facility-ownership-badge" title="Click to toggle ownership status">Private</span>'
+            : '<span class="facility-ownership-badge not-private" title="Click to toggle ownership status">Chain/Corporate</span>';
+
         item.innerHTML = `
             <div class="facility-item-number">${index + 1}</div>
             <div class="facility-item-info">
@@ -339,6 +344,7 @@ function updateLocationFacilitiesOverview() {
                     ${operatorEscaped}${programType ? ' • ' + typeEscaped : ''}${status ? ' • ' + statusEscaped : ''}
                 </div>
             </div>
+            ${badgeHTML}
         `;
 
         const selectFacility = () => {
@@ -348,6 +354,19 @@ function updateLocationFacilitiesOverview() {
             }
             updateLocationFacilitiesOverview();
         };
+
+        // Add click handler for ownership badge toggle
+        const badge = item.querySelector('.facility-ownership-badge');
+        if (badge) {
+            badge.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent selecting the facility
+                // Toggle private ownership status
+                window.formData.facilities[index].isPrivatelyOwned = !window.formData.facilities[index].isPrivatelyOwned;
+                if (typeof updateJSON === 'function') updateJSON();
+                if (typeof autoSave === 'function') autoSave();
+                updateLocationFacilitiesOverview();
+            });
+        }
 
         item.addEventListener('click', selectFacility);
         item.addEventListener('keydown', function(event) { // Note: cannot be passive
