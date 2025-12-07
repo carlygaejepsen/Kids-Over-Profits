@@ -593,6 +593,42 @@ body:not(.admin-bar) .fixed-toolbar {
     font-style: italic;
 }
 
+/* Consultants TOC - match category navigation styling */
+#consultants-toc {
+    border: 2px solid #FC8ED6; /* Bubblegum Pink */
+    background: #000080; /* Navy Blue */
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 128, 0.2);
+    border-radius: 10px;
+}
+
+#consultants-toc .toc-header {
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    color: #000435;
+    border-bottom: 2px solid #B2E102; /* Chartreuse */
+}
+
+#consultants-toc .toc-title {
+    color: #000435;
+}
+
+#consultants-toc .toc-toggle {
+    background: linear-gradient(135deg, #B6E3D4 0%, #FFF5CB 100%); /* Mint to Yellow */
+    color: #000435;
+    border-color: #33A7B5; /* Teal */
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+}
+
+#consultants-toc .toc-toggle:hover {
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: #FFFFFF;
+}
+
+#consultants-toc .toc-content {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    color: #000435;
+}
+
 /* Category content containers */
 .category-contents-wrapper {
     margin-top: 15px;
