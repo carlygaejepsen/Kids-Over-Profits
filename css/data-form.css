@@ -286,7 +286,7 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 12px;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap; /* Allow nav dropdown to sit on its own row */
     justify-content: space-between;
     position: relative;
 }
@@ -305,9 +305,13 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .fixed-toolbar .toolbar-group.facility-nav-group {
     flex-grow: 0;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    left: auto;
+    transform: none;
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
 }
 
 .fixed-toolbar .toolbar-label {
@@ -326,7 +330,7 @@ body:not(.admin-bar) .fixed-toolbar {
     border: 2px solid #33A7B5;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    background: #FFFFFF; /* Flat, no gradients */
     color: #000435;
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.2);
     flex-shrink: 0;
@@ -338,53 +342,53 @@ body:not(.admin-bar) .fixed-toolbar {
 .fixed-toolbar .btn-toolbar:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
-    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
+    background: #FFF5CB;
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: #33A7B5;
     color: #FFFFFF;
     border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-primary:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: #000080;
     color: #FFFFFF;
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary {
-    background: linear-gradient(135deg, #AEE0ED 0%, #FFF5CB 100%);
+    background: #F2EEDF;
     color: #000435;
     border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    background: #E6DCC7;
     color: #000435;
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-success {
-    background: linear-gradient(135deg, #B6E3D4 0%, #B2E102 100%);
+    background: #B2E102;
     color: #000435;
     border-color: #33A7B5;
 }
 
 .fixed-toolbar .btn-toolbar.btn-success:hover {
-    background: linear-gradient(135deg, #B2E102 0%, #B6E3D4 100%);
+    background: #9AC000;
     color: #000435;
     box-shadow: 0 4px 10px rgba(178, 225, 2, 0.4);
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger {
-    background: linear-gradient(135deg, #FE8088 0%, #FC8ED6 100%);
+    background: #FE8088;
     color: #000435;
     border-color: #FE8088;
 }
 
 .fixed-toolbar .btn-toolbar.btn-danger:hover {
-    background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%);
+    background: #FA5F69;
     color: #000435;
     box-shadow: 0 4px 10px rgba(254, 128, 136, 0.4);
 }
@@ -775,14 +779,15 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 10px;
     padding: 10px 12px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
-    border: 2px solid #FC8ED6;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%); /* Match project-item */
+    border: 2px solid #FC8ED6; /* Match project-item */
     border-radius: 6px;
     margin-bottom: 8px;
     cursor: pointer;
     align-items: center;
     transition: all 0.15s ease;
-    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15);
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15); /* Match project-item */
+    color: #000435;
 }
 
 .consultant-item:last-child {
@@ -2011,9 +2016,11 @@ input[type="url"].array-input {
     padding: 0 !important;
     min-width: 28px !important;
     max-width: 28px !important;
+    min-height: 28px !important;
+    max-height: 28px !important;
     background: #FE8088; /* Coral Pink */
     color: white;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 1;
     flex: 0 0 28px !important; /* Prevent stretching */
     border-radius: 4px;
@@ -2022,6 +2029,7 @@ input[type="url"].array-input {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
 }
 
 .remove-btn:hover {
@@ -2802,17 +2810,20 @@ input[type="url"].array-input {
    ============================================ */
 .form-group.has-note-button .field-content {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: flex-start;
     gap: 8px;
+    flex-wrap: nowrap; /* keep note button inline */
 }
 
 /* Horizontal wrapper for field + plus button */
 .field-input-wrapper {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 /* Fields with note buttons now respect their max-width to leave room for + button */
@@ -2828,7 +2839,8 @@ input[type="url"].array-input {
 }
 
 .form-group.has-note-button .field-content > .field-note-btn {
-    flex: 0 0 auto;
+    flex: 0 0 28px;
+    align-self: flex-start;
 }
 
 .note-controls .note-add-btn {
@@ -2848,6 +2860,16 @@ input[type="url"].array-input {
     gap: 8px;
     width: 100%;
     align-items: flex-start;
+}
+
+/* Keep note buttons inline with fields by allowing the input to shrink */
+.form-group.has-note-button .field-content input,
+.form-group.has-note-button .field-content textarea,
+.form-group.has-note-button .field-content select {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: calc(100% - 48px); /* leave space for 28px button + gap */
+    min-width: 140px;
 }
 
 .array-item .field-note-btn {
@@ -3331,12 +3353,14 @@ input[type="url"].array-input {
 
     .array-item .remove-btn {
         align-self: center;
-        width: 36px !important;
-        max-width: 36px !important;
-        min-width: 36px !important;
-        height: 36px !important;
-        flex: 0 0 36px !important;
-        font-size: 18px;
+        width: 28px !important;
+        max-width: 28px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        max-height: 28px !important;
+        min-height: 28px !important;
+        flex: 0 0 28px !important;
+        font-size: 16px;
         order: 10;
     }
 
@@ -3505,6 +3529,20 @@ input[type="url"].array-input {
 
     .array-item-notes {
         margin: 8px 0 12px 0;
+    }
+
+    /* Facility / consultant cards – stack badges below info */
+    .facility-item,
+    .facility-quick-item,
+    .consultant-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .facility-ownership-badge,
+    .consultant-independent-badge {
+        margin-top: 4px;
     }
 
     /* Consultant navigation - make it wrap on mobile */
