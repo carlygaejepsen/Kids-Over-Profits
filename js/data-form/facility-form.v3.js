@@ -4509,6 +4509,28 @@ function attachButtonListeners() {
         generateReportBtnQuick.dataset.listenerAttached = 'true';
     }
 
+    const newBtnReferrer = document.getElementById('new-project-btn-referrer');
+    if (newBtnReferrer && !newBtnReferrer.dataset.listenerAttached) {
+        newBtnReferrer.onclick = newProject;
+        newBtnReferrer.dataset.listenerAttached = 'true';
+    }
+
+    const exportAllBtnReferrer = document.getElementById('export-all-btn-referrer');
+    if (exportAllBtnReferrer && !exportAllBtnReferrer.dataset.listenerAttached) {
+        exportAllBtnReferrer.onclick = () => {
+            exportProjectsToFile({ categories: ['referrers'], filename: 'projects-export-referrers.json' });
+        };
+        exportAllBtnReferrer.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtnReferrer = document.getElementById('generate-report-btn-referrer');
+    if (generateReportBtnReferrer && !generateReportBtnReferrer.dataset.listenerAttached) {
+        generateReportBtnReferrer.onclick = () => {
+            generateProjectsReport({ categories: ['referrers'], filename: 'projects-report-referrers.json' });
+        };
+        generateReportBtnReferrer.dataset.listenerAttached = 'true';
+    }
+
     const newReferrerBtn = document.getElementById('new-referrer-project-btn');
     if (newReferrerBtn && !newReferrerBtn.dataset.listenerAttached) {
         newReferrerBtn.onclick = newProject;

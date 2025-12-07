@@ -584,24 +584,29 @@ body:not(.admin-bar) .fixed-toolbar {
    PROJECT MANAGEMENT SECTIONS
    ============================================ */
 .project-management {
-    text-align: center;
+    text-align: left;
     margin-bottom: 20px;
+    padding: 16px;
+    border: 2px solid #33A7B5;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
 }
 
 .project-management h2 {
-    text-align: center;
+    text-align: left;
     color: #000435 !important;
     font-size: 18px !important;
     font-weight: 700 !important;
-    margin: 20px 0 !important;
+    margin: 5px 0 12px 0 !important;
 }
 
 .project-management .form-group {
-    text-align: center;
+    text-align: left;
 }
 
 .project-management .form-group label {
-    text-align: center;
+    text-align: left;
     display: block;
     width: 100%;
     font-weight: 700;
@@ -610,6 +615,90 @@ body:not(.admin-bar) .fixed-toolbar {
 
 .project-management .btn {
     margin: 5px;
+}
+
+/* Project action groups */
+.project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.project-action-btn {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #33A7B5 0%, #AEE0ED 100%);
+    color: #000435;
+    border: 2px solid #000435;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 4, 53, 0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.project-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 4, 53, 0.22);
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: #FFFFFF;
+}
+
+/* ============================================
+   LOCATION TAB POLISH
+   ============================================ */
+#states-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.location-project-management {
+    margin-bottom: 0;
+}
+
+.location-card {
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
+    border: 2px solid #33A7B5;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
+}
+
+.location-card .kop-btn {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    color: #FFFFFF;
+    border-color: #000435;
+}
+
+#location-saved-projects-list {
+    background: #FFFFFF !important;
+    border: 2px solid #33A7B5 !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+}
+
+/* Referrers view polish */
+#referrers-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.referrer-card {
+    background: linear-gradient(135deg, #AEE0ED 0%, #FFF5CB 100%);
+    border: 2px solid #33A7B5;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
+}
+
+#referrer-saved-projects-list {
+    background: #FFFFFF !important;
+    border: 2px solid #33A7B5 !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
 }
 
 /* Project status text - highlighted */

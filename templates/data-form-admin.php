@@ -60,16 +60,16 @@ get_header();
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <div class="d-flex gap-10" style="flex-wrap: wrap; margin: 10px 0 0;">
-                            <button type="button" id="new-project-btn-location" class="kop-btn" style="padding: 8px 12px;">New Location Project</button>
-                            <button type="button" id="export-all-btn-location" class="kop-btn" style="padding: 8px 12px;">Export Locations</button>
-                            <button type="button" id="generate-report-btn-location" class="kop-btn" style="padding: 8px 12px;">Generate Location Report</button>
+                        <div class="project-actions">
+                            <button type="button" id="new-project-btn-location" class="kop-btn project-action-btn">New Location Project</button>
+                            <button type="button" id="export-all-btn-location" class="kop-btn project-action-btn">Export Locations</button>
+                            <button type="button" id="generate-report-btn-location" class="kop-btn project-action-btn">Generate Location Report</button>
                         </div>
 
                     </div>
 
                     <!-- Private Ownership Choice (popup-controlled) -->
-                    <div id="private-ownership-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <div id="private-ownership-toggle-section" class="location-card">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                             <span>Privately Owned Facility (not part of a chain):</span>
                             <div style="display: flex; align-items: center; gap: 12px;">
@@ -102,13 +102,18 @@ get_header();
                     </div>
 
                     <div class="project-management" id="referrer-project-panel-inner">
-                        <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Referrer Projects &amp; Data Import</h2>
-                        <div id="referrer-project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Saved Referrer Projects</label>
-                        <div id="referrer-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                        <h2>Referrer Projects &amp; Data Import</h2>
+                        <div id="referrer-project-status"></div>
+                        <div class="form-group">
+                            <label>Saved Referrer Projects</label>
+                            <div id="referrer-saved-projects-list" class="saved-projects-list">
+                                <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                            </div>
+                        </div>
+                        <div class="project-actions">
+                            <button type="button" id="new-project-btn-referrer" class="kop-btn project-action-btn">New Referrer Project</button>
+                            <button type="button" id="export-all-btn-referrer" class="kop-btn project-action-btn">Export Referrers</button>
+                            <button type="button" id="generate-report-btn-referrer" class="kop-btn project-action-btn">Generate Referrer Report</button>
                         </div>
                     </div>
 
@@ -120,7 +125,7 @@ get_header();
         <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
             <!-- Agency Choice (popup-controlled) -->
-            <div id="referrer-agency-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+            <div id="referrer-agency-toggle-section" class="referrer-card">
                 <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                     <span>Independent Consultant (not part of an agency):</span>
                     <div style="display: flex; align-items: center; gap: 12px;">
