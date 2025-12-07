@@ -564,6 +564,13 @@ body:not(.admin-bar) .fixed-toolbar {
     margin-bottom: 12px;
 }
 
+.content-header h3 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000435;
+}
+
 .content-header .input-primary {
     height: 36px;
     max-width: 300px;
@@ -611,6 +618,7 @@ body:not(.admin-bar) .fixed-toolbar {
     width: 100%;
     font-weight: 700;
     color: #000435;
+    font-size: 14px;
 }
 
 .project-management .btn {
@@ -632,6 +640,7 @@ body:not(.admin-bar) .fixed-toolbar {
     border: 2px solid #000435;
     border-radius: 8px;
     font-weight: 700;
+    font-size: 14px;
     box-shadow: 0 2px 6px rgba(0, 4, 53, 0.15);
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
@@ -662,6 +671,7 @@ body:not(.admin-bar) .fixed-toolbar {
     border-radius: 10px;
     padding: 16px;
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
+    color: #0f172a;
 }
 
 .location-card .kop-btn {
@@ -691,6 +701,7 @@ body:not(.admin-bar) .fixed-toolbar {
     border-radius: 10px;
     padding: 16px;
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
+    color: #0f172a;
 }
 
 #referrer-saved-projects-list {
@@ -730,17 +741,19 @@ body:not(.admin-bar) .fixed-toolbar {
    ============================================ */
 .facility-toc {
     border: 2px solid #33A7B5; /* Teal */
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 25px;
     overflow: hidden;
+    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.2);
 }
 
 .toc-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #33A7B5, #2a8c97); /* Teal Gradient */
-    color: white;
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Teal to Navy */
+    color: #FFFFFF;
     padding: 15px 20px;
     cursor: pointer;
 }
@@ -752,23 +765,24 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .toc-toggle {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
-    color: white;
-    border: 2px solid #FE8088; /* Coral Pink */
+    background: linear-gradient(135deg, #33A7B5 0%, #AEE0ED 100%);
+    color: #000435;
+    border: 2px solid #000435;
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 4, 53, 0.2);
 }
 
 .toc-toggle:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
-    border-color: #FE8088; /* Coral Pink */
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: #FFFFFF;
+    border-color: #000435;
     transform: scale(1.05);
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 8px rgba(254, 128, 136, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 4, 53, 0.28);
 }
 
 .toc-content {
@@ -776,25 +790,26 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .toc-stats {
-    background: linear-gradient(135deg, #FFF5CB 0%, #ECF385 100%); /* Soft Pastel Yellow to Pale Spring Yellow */
-    padding: 12px;
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%); /* Soft Pastel Yellow to Mint Green */
+    padding: 12px 14px;
     border-radius: 6px;
     margin-bottom: 15px;
     font-weight: 600;
     color: #000435;
-    border: 2px solid #B2E102; /* Chartreuse */
-    box-shadow: 0 2px 6px rgba(178, 225, 2, 0.2);
+    border: 2px solid #33A7B5; /* Teal */
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.18);
+    font-size: 14px;
 }
 
 .facility-list {
     background: #FFFFFF;
-    border: 2px solid #FC8ED6; /* Bubblegum Pink */
-    border-radius: 6px;
+    border: 2px solid #33A7B5; /* Teal */
+    border-radius: 10px;
     padding: 15px;
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(252, 142, 214, 0.2);
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.15);
 }
 
 .facility-item {
@@ -802,8 +817,8 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
-    border: 2px solid #F2EEDF; /* Sand / Warm Ivory */
+    background: linear-gradient(135deg, #FFFFFF 0%, #ECF385 100%);
+    border: 2px solid #33A7B5; /* Teal */
     border-radius: 8px;
     color: #000435; /* Midnight Blue for high contrast */
     cursor: pointer;
@@ -815,8 +830,8 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .facility-item:hover {
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.25);
+    border-color: #000080; /* Navy */
+    box-shadow: 0 4px 12px rgba(0, 4, 53, 0.25);
     transform: translateY(-1px);
 }
 
