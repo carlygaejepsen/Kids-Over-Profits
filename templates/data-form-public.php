@@ -123,8 +123,8 @@ get_header();
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
         <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
 
-            <!-- Agency Choice (popup-controlled) -->
-            <div id="referrer-agency-toggle-section" class="referrer-card">
+            <!-- Agency Choice - HIDDEN: Now using per-consultant badges in overview -->
+            <div id="referrer-agency-toggle-section" class="referrer-card" style="display: none;">
                 <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                     <span>Independent Consultant (not part of an agency):</span>
                     <div style="display: flex; align-items: center; gap: 12px;">

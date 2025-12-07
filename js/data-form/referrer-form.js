@@ -52,7 +52,8 @@ function createDefaultReferrerIndividual() {
         schoolDistricts: [],
         lawsuits: "",
         notes: "",
-        fieldNotes: {}
+        fieldNotes: {},
+        isIndependent: false
     };
 }
 
@@ -581,12 +582,19 @@ function updateConsultantsOverview() {
         locationDiv.textContent = location;
         const locationEscaped = locationDiv.innerHTML;
 
+        // Add independent badge if consultant is independent
+        const isIndependent = consultant.isIndependent || false;
+        const badgeHTML = isIndependent
+            ? '<span class="consultant-independent-badge" title="Click to toggle independent status">Independent</span>'
+            : '<span class="consultant-independent-badge not-independent" title="Click to toggle independent status">Agency</span>';
+
         item.innerHTML = `
             <div class="consultant-item-number">${index + 1}</div>
             <div class="consultant-item-info">
                 <div class="consultant-item-name">${nameEscaped}</div>
                 <div class="consultant-item-details">${locationEscaped}</div>
             </div>
+            ${badgeHTML}
         `;
 
         const selectConsultant = () => {
@@ -597,6 +605,19 @@ function updateConsultantsOverview() {
             loadConsultantData();
             updateConsultantsOverview();
         };
+
+        // Add click handler for independent badge toggle
+        const badge = item.querySelector('.consultant-independent-badge');
+        if (badge) {
+            badge.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent selecting the consultant
+                // Toggle independent status
+                window.formData.referrerConsultants[index].isIndependent = !window.formData.referrerConsultants[index].isIndependent;
+                if (typeof updateJSON === 'function') updateJSON();
+                if (typeof autoSave === 'function') autoSave();
+                updateConsultantsOverview();
+            });
+        }
 
         item.addEventListener('click', selectConsultant, { passive: true });
         item.addEventListener('keydown', function(event) {
