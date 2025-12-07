@@ -653,18 +653,21 @@ body:not(.admin-bar) .fixed-toolbar {
 .project-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     margin-top: 10px;
+    align-items: center;
 }
 
 .project-action-btn {
-    padding: 8px 14px;
+    padding: 8px 12px;
     background: #33A7B5;
     color: #FFFFFF;
     border: 2px solid #000435;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
     box-shadow: 0 2px 6px rgba(0, 4, 53, 0.15);
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
@@ -674,6 +677,31 @@ body:not(.admin-bar) .fixed-toolbar {
     box-shadow: 0 4px 10px rgba(0, 4, 53, 0.22);
     background: #000080;
     color: #FFFFFF;
+}
+
+/* Responsive layout for project actions */
+@media (max-width: 768px) {
+    .project-actions {
+        gap: 6px;
+    }
+
+    .project-action-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .project-action-btn {
+        width: 100%;
+    }
 }
 
 /* ============================================
@@ -704,6 +732,13 @@ body:not(.admin-bar) .fixed-toolbar {
     border-color: #000435;
 }
 
+/* Responsive location card layout */
+@media (max-width: 768px) {
+    .location-card {
+        padding: 12px;
+    }
+}
+
 #location-saved-projects-list {
     background: #FFFFFF !important;
     border: 2px solid #33A7B5 !important;
@@ -726,6 +761,13 @@ body:not(.admin-bar) .fixed-toolbar {
     padding: 16px;
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.18);
     color: #0f172a;
+}
+
+/* Responsive referrer card layout */
+@media (max-width: 768px) {
+    .referrer-card {
+        padding: 12px;
+    }
 }
 
 /* Consultant items in overview - matching facility-quick-item styling */
@@ -950,23 +992,25 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 14px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #ECF385 100%);
-    border: 2px solid #33A7B5; /* Teal */
-    border-radius: 8px;
-    color: #000435; /* Midnight Blue for high contrast */
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
+    border: 2px solid #FC8ED6;
+    border-radius: 6px;
+    color: #000435;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(252, 142, 214, 0.15);
 }
 
 .facility-item:not(:last-child) {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .facility-item:hover {
-    border-color: #000080; /* Navy */
-    box-shadow: 0 4px 12px rgba(0, 4, 53, 0.25);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
+    border-color: #B2E102;
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.25);
+    transform: translateY(-2px);
 }
 
 .facility-item:focus {
@@ -974,21 +1018,21 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .facility-item:focus-visible {
-    outline: 3px solid #33A7B5; /* Teal */
+    outline: 3px solid #B2E102;
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(51, 167, 181, 0.2);
+    box-shadow: 0 0 0 4px rgba(178, 225, 2, 0.2);
 }
 
 .facility-item.active {
-    border-color: #000080; /* Navy Blue */
-    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
-    box-shadow: 0 4px 14px rgba(0, 0, 128, 0.25);
+    border-color: #B2E102;
+    background: linear-gradient(135deg, #FFF5CB 0%, #B6E3D4 100%);
+    box-shadow: 0 3px 8px rgba(178, 225, 2, 0.3);
 }
 
 .facility-item-number {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 999px;
     background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
     color: #FFFFFF;
@@ -997,6 +1041,7 @@ body:not(.admin-bar) .fixed-toolbar {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 6px rgba(0, 4, 53, 0.25);
+    font-size: 12px;
 }
 
 .facility-item-info {
