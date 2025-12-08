@@ -21,8 +21,29 @@
         addBtn: document.getElementById('add-facility-btn-toolbar'),
         cloneBtn: document.getElementById('clone-facility-btn-toolbar'),
         scrollTopBtn: document.getElementById('scroll-to-top-btn-toolbar'),
+        generateReportBtn: document.getElementById('generate-report-btn-toolbar'),
         removeBtn: getRemoveButton()
     });
+
+    const applyButtonTooltips = (elements) => {
+        const map = {
+            newProjectBtn: 'Create a new project',
+            generateReportBtn: 'Generate report for current project',
+            addBtn: 'Add a new facility',
+            cloneBtn: 'Clone current facility',
+            scrollTopBtn: 'Scroll to top',
+            removeBtn: 'Delete current facility',
+            prevBtn: 'Previous facility',
+            nextBtn: 'Next facility'
+        };
+        Object.entries(map).forEach(([key, label]) => {
+            const el = elements[key];
+            if (el) {
+                el.title = el.title || label;
+                el.setAttribute('aria-label', el.getAttribute('aria-label') || label);
+            }
+        });
+    };
 
     const applyToolbarState = (isMinimized, elements) => {
         const { toolbarContent, toolbarToggle } = elements;
@@ -133,6 +154,7 @@
         const { toolbar, toolbarToggle, toolbarContent, dropdown, prevBtn, nextBtn, newProjectBtn, addBtn, cloneBtn, scrollTopBtn, removeBtn } = elements;
 
         if (toolbar) {
+            applyButtonTooltips(elements);
             document.body.classList.add('toolbar-active');
             document.body.classList.toggle('toolbar-minimized', toolbar.classList.contains('minimized'));
             if (toolbarContent) {

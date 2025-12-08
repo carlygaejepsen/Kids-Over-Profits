@@ -280,24 +280,25 @@ body:not(.admin-bar) .fixed-toolbar {
     padding: 10px 16px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
+    overflow-x: auto;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
-    flex-wrap: wrap; /* Allow nav dropdown to sit on its own row */
-    justify-content: space-between;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     position: relative;
 }
 
 .fixed-toolbar .toolbar-group {
     display: inline-flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     flex-shrink: 0;
     white-space: nowrap;
-    padding: 6px 12px;
+    padding: 0;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
@@ -308,10 +309,10 @@ body:not(.admin-bar) .fixed-toolbar {
     position: relative;
     left: auto;
     transform: none;
-    order: 2;
-    width: 100%;
+    order: 0;
+    width: auto;
     justify-content: center;
-    margin-top: 8px;
+    margin-top: 0;
 }
 
 .fixed-toolbar .toolbar-label {
@@ -322,11 +323,13 @@ body:not(.admin-bar) .fixed-toolbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 6px;
+    gap: 4px;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 8px;
     border: 2px solid #33A7B5;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -336,7 +339,8 @@ body:not(.admin-bar) .fixed-toolbar {
     flex-shrink: 0;
     white-space: nowrap;
     text-align: center;
-    min-height: 36px;
+    min-height: 40px;
+    overflow: hidden;
 }
 
 .fixed-toolbar .btn-toolbar:hover {
