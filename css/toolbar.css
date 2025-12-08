@@ -123,14 +123,14 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
     position: relative;
 }
@@ -152,10 +152,10 @@ body:not(.admin-bar) .fixed-toolbar {
     position: relative;
     left: auto;
     transform: none;
-    order: 0;
-    width: auto;
+    order: 1;
+    width: 100%;
     justify-content: center;
-    margin-top: 0;
+    margin-top: 4px;
 }
 
 .fixed-toolbar .toolbar-label {
@@ -363,7 +363,8 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-group.facility-nav-group {
         justify-content: center;
-        order: 0;
+        order: 1;
+        width: 100%;
     }
 
     .fixed-toolbar .toolbar-label {
@@ -424,6 +425,12 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-group {
         gap: 4px;
+    }
+
+    .fixed-toolbar .toolbar-group.facility-nav-group {
+        width: 100%;
+        order: 1;
+        justify-content: center;
     }
 
     .fixed-toolbar .toolbar-label {
