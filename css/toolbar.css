@@ -107,10 +107,11 @@ body:not(.admin-bar) .fixed-toolbar {
 }
 
 .fixed-toolbar .facility-selector .btn-toolbar {
-    width: 32px;
-    height: 32px;
-    padding: 4px;
-    min-height: 32px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    min-width: 30px;
+    min-height: 30px;
 }
 
 /* Toolbar Content */
@@ -119,6 +120,10 @@ body:not(.admin-bar) .fixed-toolbar {
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
     overflow-x: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
 }
 
 .fixed-toolbar .toolbar-section {
@@ -161,23 +166,23 @@ body:not(.admin-bar) .fixed-toolbar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 0;
     padding: 0;
-    width: 40px;
-    height: 40px;
-    font-size: 14px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    font-size: 11px;
     font-weight: 700;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 2px solid #33A7B5;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: #FFFFFF; /* Flat, no gradients */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: #FFFFFF;
     color: #000435;
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.2);
     flex-shrink: 0;
-    white-space: nowrap;
     text-align: center;
-    min-height: 40px;
     overflow: hidden;
 }
 
@@ -324,197 +329,81 @@ body:not(.admin-bar) .fixed-toolbar {
 
 /* Aggressive space-saving for mobile screens <= 768px */
 @media (max-width: 768px) {
-    /* Minimize toolbar header height */
     .fixed-toolbar .toolbar-header {
-        padding: 3px 6px;
-        min-height: 30px;
+        padding: 4px 8px;
+        min-height: 32px;
     }
 
-    /* Smaller toolbar title */
     .fixed-toolbar .toolbar-title {
         font-size: 11px;
     }
 
-    /* Hide project name on mobile */
     .fixed-toolbar .toolbar-title #toolbar-project-name {
         display: none;
     }
 
-    /* Smaller toggle button */
     .fixed-toolbar .toolbar-toggle {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         font-size: 14px;
     }
 
-    /* Minimal toolbar content padding - saves vertical space */
     .fixed-toolbar .toolbar-content {
-        padding: 8px 10px;
-        overflow-x: visible;
+        padding: 6px 10px;
+        overflow-x: auto;
     }
 
-    /* TWO ROW LAYOUT on mobile - wrap to prevent overlap */
     .fixed-toolbar .toolbar-section {
-        display: flex;
-        flex-wrap: wrap;
         gap: 6px;
-        justify-content: center;
-        align-items: center;
     }
 
-    /* Compact toolbar groups - keep buttons HORIZONTAL within each group */
     .fixed-toolbar .toolbar-group {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
         gap: 4px;
-        padding: 4px 6px;
-        align-items: center;
     }
 
-    /* First row: action buttons - keep them together */
-    .fixed-toolbar .toolbar-group:not(.facility-nav-group) {
-        order: 1;
-        flex-shrink: 1;
-        flex-grow: 0;
-    }
-
-    /* Second row: facility nav group - full width, centered */
     .fixed-toolbar .toolbar-group.facility-nav-group {
-        position: relative !important;
-        left: auto !important;
-        transform: none !important;
-        flex-grow: 0;
-        order: 2; /* Put in second row */
-        width: 100%; /* Full width for second row */
         justify-content: center;
+        order: 0;
     }
 
-    /* Hide "Current Facility:" label */
     .fixed-toolbar .toolbar-label {
         display: none;
     }
 
-    /* Compact facility dropdown */
     .fixed-toolbar .facility-dropdown {
-        min-width: 100px;
-        max-width: 140px;
-        font-size: 11px;
-        padding: 5px 8px;
-        height: 28px;
+        min-width: 110px;
+        max-width: 150px;
+        font-size: 12px;
+        padding: 4px 8px;
+        height: 32px;
     }
 
-    /* Tiny navigation buttons */
     .fixed-toolbar .facility-selector .btn-toolbar {
         width: 28px;
         height: 28px;
-        padding: 3px;
-        font-size: 11px;
+        padding: 0;
         min-width: 28px;
+        min-height: 28px;
+        font-size: 11px;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        width: 30px;
+        min-width: 30px;
+        height: 30px;
+        min-height: 30px;
+        font-size: 10px;
+        padding: 0;
         flex-shrink: 0;
     }
-
-    /* COMPACT toolbar buttons - smaller for mobile */
-    .fixed-toolbar .btn-toolbar {
-        padding: 6px 8px;
-        font-size: 11px;
-        min-height: 30px;
-        white-space: nowrap;
-        min-width: auto;
-        max-width: none;
-        flex-shrink: 1;
-    }
 }
 
-/* Short labels on mobile (640px and below) - saves horizontal space */
-@media (max-width: 640px) {
-    /* Keep two-row layout with wrapping */
-    .fixed-toolbar .toolbar-content {
-        overflow-x: visible;
-        padding: 6px 8px;
-    }
-
-    .fixed-toolbar .toolbar-section {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        justify-content: center;
-    }
-
-    /* Compact toolbar groups - HORIZONTAL layout within groups */
-    .fixed-toolbar .toolbar-group {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 3px;
-        padding: 3px 5px;
-        align-items: center;
-    }
-
-    /* Other groups in first row */
-    .fixed-toolbar .toolbar-group:not(.facility-nav-group) {
-        order: 1;
-        flex-shrink: 1;
-        flex-grow: 0;
-    }
-
-    /* Facility nav group stays in second row, full width */
-    .fixed-toolbar .toolbar-group.facility-nav-group {
-        position: relative !important;
-        left: auto !important;
-        transform: none !important;
-        order: 2;
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* More compact buttons with short labels */
-    .fixed-toolbar .btn-toolbar {
-        padding: 5px 6px;
-        font-size: 10px;
-        min-height: 28px;
-        white-space: nowrap;
-        min-width: auto;
-        max-width: none;
-        flex-shrink: 1;
-    }
-
-    /* Even smaller nav arrows */
-    .fixed-toolbar .facility-selector .btn-toolbar {
-        width: 26px;
-        height: 26px;
-        padding: 2px;
-        font-size: 10px;
-        min-width: 26px;
-    }
-}
-
-/* Stacked toolbar layout when space is tight */
-@media (max-width: 768px) {
-    .fixed-toolbar .toolbar-section {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-
-    .fixed-toolbar .toolbar-group {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .fixed-toolbar .btn-toolbar {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Additional compact tweaks for very small screens */
+/* Small-screen tweaks that keep the toolbar in one row */
 @media (max-width: 640px) {
     body.toolbar-active {
         padding-top: 200px;
     }
 
-    /* Fixed Toolbar Mobile */
     .fixed-toolbar .toolbar-header {
         padding: 10px 15px;
         flex-wrap: wrap;
@@ -526,23 +415,44 @@ body:not(.admin-bar) .fixed-toolbar {
     }
 
     .fixed-toolbar .toolbar-content {
-        padding: 10px 15px;
+        padding: 6px 10px;
     }
 
     .fixed-toolbar .toolbar-section {
-        gap: 10px;
+        gap: 6px;
     }
 
     .fixed-toolbar .toolbar-group {
-        gap: 8px;
+        gap: 4px;
     }
 
     .fixed-toolbar .toolbar-label {
         font-size: 13px;
     }
 
+    .fixed-toolbar .facility-dropdown {
+        min-width: 90px;
+        max-width: 120px;
+        font-size: 11px;
+        padding: 3px 6px;
+        height: 28px;
+    }
+
+    .fixed-toolbar .facility-selector .btn-toolbar {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+        padding: 0;
+        min-width: 26px;
+        min-height: 26px;
+    }
+
     .fixed-toolbar .btn-toolbar {
-        font-size: 13px;
-        padding: 8px 12px;
+        width: 28px;
+        min-width: 28px;
+        height: 28px;
+        min-height: 28px;
+        font-size: 11px;
+        padding: 6px 8px;
     }
 }
