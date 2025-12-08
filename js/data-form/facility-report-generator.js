@@ -1608,16 +1608,46 @@ class FacilityReportGenerator {
     }
 
     normalizeProjects(projects) {
-        if (!projects) {
-            return window.formData ? [window.formData] : [];
+        let source = projects;
+
+        if (!source || (Array.isArray(source) && source.length === 0)) {
+            // Fall back to loaded projects map or current form data
+            source = window.projects && Object.keys(window.projects).length
+                ? window.projects
+                : (window.formData ? [window.formData] : []);
         }
-        if (Array.isArray(projects)) {
-            return projects.filter(Boolean);
+
+        // Preserve projectName when source is a keyed object (window.projects)
+        let list;
+        if (Array.isArray(source)) {
+            list = source;
+        } else if (typeof source === 'object') {
+            list = Object.entries(source).map(([key, value]) => {
+                if (value && !value.projectName) {
+                    return { ...value, projectName: key };
+                }
+                return value;
+            });
+        } else {
+            list = [];
         }
-        if (typeof projects === 'object') {
-            return Object.values(projects).filter(Boolean);
-        }
-        return [];
+
+        return list
+            .filter(Boolean)
+            .map(item => {
+                // Unwrap loader-saved structure: { data, projectName, savedAt, ... }
+                if (item.data && typeof item.data === 'object') {
+                    const unwrapped = { ...item.data };
+                    if (!unwrapped.projectName && item.projectName) {
+                        unwrapped.projectName = item.projectName;
+                    }
+                    if (!unwrapped.savedAt && item.savedAt) {
+                        unwrapped.savedAt = item.savedAt;
+                    }
+                    return unwrapped;
+                }
+                return item;
+            });
     }
 
     generateReport() {
