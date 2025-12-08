@@ -1877,6 +1877,17 @@ function enqueue_facility_form_script() {
         );
     }
 
+    // Enqueue the toolbar stylesheet
+    $toolbar_css = get_stylesheet_directory() . '/css/toolbar.css';
+    if (file_exists($toolbar_css)) {
+        wp_enqueue_style(
+            'kop-toolbar-style',
+            get_stylesheet_directory_uri() . '/css/toolbar.css',
+            array('kop-data-form-style'),
+            filemtime($toolbar_css)
+        );
+    }
+
     // Enqueue utilities module first (provides basic helper functions)
     $utilities_relative_path = '/js/data-form/utilities.js';
     $utilities_file_path = get_stylesheet_directory() . $utilities_relative_path;

@@ -334,9 +334,9 @@ get_header();
                     <div class="toolbar-group facility-nav-group">
                         <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
-                            <button type="button" class="btn-toolbar btn-secondary" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
+                            <button type="button" class="btn-toolbar btn-secondary toolbar-nav-btn" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
-                            <button type="button" class="btn-toolbar btn-secondary" id="next-facility-btn-toolbar" title="Next facility">▶</button>
+                            <button type="button" class="btn-toolbar btn-secondary toolbar-nav-btn" id="next-facility-btn-toolbar" title="Next facility">▶</button>
                         </div>
                     </div>
                     <div class="toolbar-group">

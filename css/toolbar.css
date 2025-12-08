@@ -1,0 +1,33 @@
+/* Toolbar Navigation Buttons */
+.toolbar-nav-btn {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.toolbar-nav-btn:disabled {
+    opacity: 0.5;
+}
+
+/* Toolbar Dropdown States */
+.toolbar-dropdown-no-project {
+    cursor: pointer;
+    color: #33A7B5;
+}
+
+/* Toolbar Expandable Section */
+.toolbar-expandable-collapsed {
+    display: none;
+}
+
+.toolbar-expandable-expanded {
+    display: block;
+}
+
+/* Facility Navigation Buttons - Multi-facility display control */
+.facility-nav-btn-hidden {
+    display: none;
+}
+
+.facility-nav-btn-visible {
+    display: inline-block;
+}

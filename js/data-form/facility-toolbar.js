@@ -67,9 +67,6 @@
 
         prevBtn.disabled = currentIndex <= 0;
         nextBtn.disabled = currentIndex >= totalFacilities - 1;
-
-        prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
-        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
     }
 
     function updateToolbarFacilityInfo() {
@@ -91,8 +88,7 @@
         // Check if no project is loaded
         if (!window.currentProjectName) {
             dropdown.innerHTML = '<option>📂 Load a project to begin</option>';
-            dropdown.style.cursor = 'pointer';
-            dropdown.style.color = '#33A7B5';
+            dropdown.classList.add('toolbar-dropdown-no-project');
 
             // Make the dropdown clickable to scroll to project loader
             if (!dropdown.dataset.noProjectClickAttached) {
@@ -110,8 +106,7 @@
                 dropdown.dataset.noProjectClickAttached = 'true';
             }
         } else if (facilities.length) {
-            dropdown.style.cursor = '';
-            dropdown.style.color = '';
+            dropdown.classList.remove('toolbar-dropdown-no-project');
 
             const facilitiesWithIndex = facilities.map((facility, index) => ({
                 facility,
@@ -137,8 +132,7 @@
 
             dropdown.value = currentIndex;
         } else {
-            dropdown.style.cursor = '';
-            dropdown.style.color = '';
+            dropdown.classList.remove('toolbar-dropdown-no-project');
             dropdown.innerHTML = '<option>No facilities in project</option>';
         }
 
@@ -268,7 +262,8 @@
         if (!toggleBtn || !expandable) return;
 
         let isCollapsed = true;
-        expandable.style.display = 'none';
+        expandable.classList.add('toolbar-expandable-collapsed');
+        expandable.classList.remove('toolbar-expandable-expanded');
         toggleBtn.textContent = '▼';
         toggleBtn.title = 'Expand toolbar';
         toggleBtn.setAttribute('aria-expanded', 'false');
@@ -281,7 +276,8 @@
             event.stopPropagation();
 
             isCollapsed = !isCollapsed;
-            expandable.style.display = isCollapsed ? 'none' : 'block';
+            expandable.classList.toggle('toolbar-expandable-collapsed', isCollapsed);
+            expandable.classList.toggle('toolbar-expandable-expanded', !isCollapsed);
             newToggleBtn.textContent = isCollapsed ? '▼' : '▲';
             newToggleBtn.title = isCollapsed ? 'Expand toolbar' : 'Minimize toolbar';
             newToggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');

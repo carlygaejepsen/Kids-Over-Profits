@@ -386,9 +386,9 @@ preg_match('/-reports$/', $slug)         → State reports
 ```
 
 ### Documentation Files
--   `AGENTS.md` - This file! Central developer guide (architecture, conventions, design principles)
--   `environment-summary.md` - Environment and access details
--   `COLOR_SYSTEM_SUMMARY.md` - Color palette and design system
+    -   `AGENTS.md` - This file! Central developer guide (architecture, conventions, design principles)
+    -   `environment-summary.md` - Environment and access details
+    -   Color system & accessibility guidance (consolidated here; COLOR_SYSTEM_SUMMARY.md kept only for legacy reference)
 
 ## Collaboration Preferences
 - **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `facility-form.v4.js`). Preserve prior versions unless instructed otherwise.
@@ -413,6 +413,14 @@ Use the preferred campaign color palette for new UI work:
 - Bubblegum Pink — `#FC8ED6`
 
 Favor accessible contrasts and align UI accents with the bold blues and teals. Reserve the brighter lime and pink tones (`Chartreuse`, `Coral Pink`, `Bubblegum Pink`) for borders, outlines, and other highlight treatments rather than full backgrounds. When working with the softer pastels, use them as glow or shadow accents layered over neutral bases to preserve legibility. When styling text, ensure headings remain readable against light backgrounds from the palette.
+
+## Color System & Accessibility (consolidated)
+- **Palette source:** Colors live as CSS custom properties in `css/colors.css` with primary blues/teal/greens, bright accents (Orange, Chartreuse, Coral Pink, Bubblegum Pink), and light backgrounds (Sand, Soft Pastel Yellow, Pale Spring Yellow, White).
+- **Enqueue order:** `functions.php` registers `kop-colors` globally; dependent styles include `data-form.css` (global + page templates), `wiki-editor.css`, `news-processor.css`, `facility-reports.css`, and `anonymous-portal.css` so color variables load before page styles.
+- **Adoption status:** `wiki-editor.css` and `news-processor.css` are fully converted to the palette and WCAG AA compliant; `data-form.css`, `facility-reports.css`, and `anonymous-portal.css` still need conversion to variables and a contrast audit.
+- **Accessibility guardrails:** Target WCAG AA (4.5:1 normal text, 3:1 large text/UI). Safe pairings: Midnight/Navy text on light backgrounds; White text on Navy/Midnight/Teal/Orange/Chartreuse. Avoid Teal text on dark blues and White on the light pastels.
+- **Bright accents:** Keep Chartreuse, Coral Pink, and Bubblegum Pink for borders, outlines, focus states, and highlights rather than full backgrounds.
+- **Next steps:** Replace remaining hardcoded colors with `var(--kop-*)`, run axe or WAVE on key pages, and document standard buttons/fields that use the palette.
 
 Thanks for contributing! Maintain consistency with the structure above to ensure smooth collaboration.
 

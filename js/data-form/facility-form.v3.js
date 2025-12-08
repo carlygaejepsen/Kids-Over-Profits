@@ -3336,9 +3336,19 @@ function updateFacilityControls() {
     const nextBtn = document.getElementById('next-facility-btn');
     const removeBtn = document.getElementById('remove-facility-btn');
 
-    if (prevBtn) prevBtn.style.display = total > 1 ? 'inline-block' : 'none';
-    if (nextBtn) nextBtn.style.display = total > 1 ? 'inline-block' : 'none';
-    if (removeBtn) removeBtn.style.display = total > 1 ? 'inline-block' : 'none';
+    const isMultipleFacilities = total > 1;
+    if (prevBtn) {
+        prevBtn.classList.toggle('facility-nav-btn-visible', isMultipleFacilities);
+        prevBtn.classList.toggle('facility-nav-btn-hidden', !isMultipleFacilities);
+    }
+    if (nextBtn) {
+        nextBtn.classList.toggle('facility-nav-btn-visible', isMultipleFacilities);
+        nextBtn.classList.toggle('facility-nav-btn-hidden', !isMultipleFacilities);
+    }
+    if (removeBtn) {
+        removeBtn.classList.toggle('facility-nav-btn-visible', isMultipleFacilities);
+        removeBtn.classList.toggle('facility-nav-btn-hidden', !isMultipleFacilities);
+    }
 }
 
 function navigateToFacility(index) {
