@@ -25,6 +25,11 @@
         removeBtn: getRemoveButton()
     });
 
+    const getActiveCategory = () => {
+        const activeTab = document.querySelector('.category-tab.active');
+        return activeTab ? activeTab.dataset.category : 'companies';
+    };
+
     const applyButtonTooltips = (elements) => {
         const map = {
             newProjectBtn: 'Create a new project',
@@ -243,6 +248,30 @@
             removeBtn.dataset.listenerAttached = 'true';
         }
 
+        if (elements.generateReportBtn && !elements.generateReportBtn.dataset.listenerAttached) {
+            elements.generateReportBtn.addEventListener('click', () => {
+                if (typeof window.generateProjectsReport !== 'function') return;
+
+                const category = getActiveCategory();
+                let categories;
+                let filename;
+
+                if (category === 'referrers') {
+                    categories = ['referrers'];
+                    filename = 'projects-report-referrers.json';
+                } else if (category === 'locations') {
+                    categories = ['locations'];
+                    filename = 'projects-report-locations.json';
+                } else {
+                    categories = undefined;
+                    filename = 'projects-report-all.json';
+                }
+
+                window.generateProjectsReport({ categories, filename });
+            }, { passive: true });
+            elements.generateReportBtn.dataset.listenerAttached = 'true';
+        }
+
         log('Toolbar buttons initialized');
     }
 
@@ -301,7 +330,11 @@
     window.initializeFixedToolbar = initializeFixedToolbar;
     window.initializeFacilityToolbarToggle = initializeFacilityToolbarToggle;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeFixedToolbar();
-    }, { once: true });
+    const bootToolbar = () => initializeFixedToolbar();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootToolbar, { once: true });
+    } else {
+        bootToolbar();
+    }
 })(window);

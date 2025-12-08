@@ -4642,37 +4642,6 @@ function attachButtonListeners() {
         generateReferrerReportBtn.dataset.listenerAttached = 'true';
     }
 
-    // Toolbar buttons
-    const newProjectBtnToolbar = document.getElementById('new-project-btn-toolbar');
-    if (newProjectBtnToolbar && !newProjectBtnToolbar.dataset.listenerAttached) {
-        newProjectBtnToolbar.onclick = newProject;
-        newProjectBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
-    const generateReportBtnToolbar = document.getElementById('generate-report-btn-toolbar');
-    if (generateReportBtnToolbar && !generateReportBtnToolbar.dataset.listenerAttached) {
-        generateReportBtnToolbar.onclick = () => {
-            // Determine current category from active tab
-            const activeTab = document.querySelector('.category-tab.active');
-            const category = activeTab ? activeTab.dataset.category : 'companies';
-
-            let categories, filename;
-            if (category === 'referrers') {
-                categories = ['referrers'];
-                filename = 'projects-report-referrers.json';
-            } else if (category === 'locations') {
-                categories = ['locations'];
-                filename = 'projects-report-locations.json';
-            } else {
-                categories = undefined; // All projects
-                filename = 'projects-report-all.json';
-            }
-
-            generateProjectsReport({ categories, filename });
-        };
-        generateReportBtnToolbar.dataset.listenerAttached = 'true';
-    }
-
     const saveReferrerBtn = document.getElementById('save-referrer-project-btn');
     if (saveReferrerBtn && !saveReferrerBtn.dataset.listenerAttached) {
         saveReferrerBtn.onclick = () => {
@@ -4862,17 +4831,6 @@ async function initializeForm() {
     } catch (error) {
         console.error('Error initializing field notes:', error);
     }
-
-    // Initialize fixed toolbar (for data.html)
-    console.log('📍 About to call initializeFixedToolbar...');
-    try {
-        if (typeof window.initializeFixedToolbar === 'function') {
-            window.initializeFixedToolbar();
-        }
-    } catch (error) {
-        console.error('❌ Error initializing fixed toolbar:', error);
-    }
-    console.log('📍 Finished calling initializeFixedToolbar');
 
     // Signal that the form and its functions are ready
     window.formReady = true;
