@@ -602,7 +602,8 @@ function normalizeProjectData(data) {
             if (normalized.staff) {
                 normalized.staff = normalizeObject(normalized.staff, {
                     administrator: ['administrator', 'Administrator', 'administrators'],
-                    notableStaff: ['notableStaff', 'notable_staff', 'NotableStaff', 'staff']
+                    notableStaff: ['notableStaff', 'notable_staff', 'NotableStaff', 'staff'],
+                    pastTTIJobs: ['pastTTIJobs', 'past_tti_jobs', 'pastTTIRoles']
                 });
             }
 
@@ -687,7 +688,7 @@ function normalizeProjectData(data) {
             }
 
             if (normalized.staff) {
-                ['administrator', 'notableStaff'].forEach(field => {
+                ['administrator', 'notableStaff', 'pastTTIJobs'].forEach(field => {
                     if (normalized.staff[field] && !Array.isArray(normalized.staff[field])) {
                         if (typeof normalized.staff[field] === 'string') {
                             normalized.staff[field] = [normalized.staff[field]];
@@ -698,6 +699,23 @@ function normalizeProjectData(data) {
                         normalized.staff[field] = [];
                     }
                 });
+
+                if (normalized.staff.pastTTIJobs) {
+                    normalized.staff.pastTTIJobs = normalized.staff.pastTTIJobs.map(item => {
+                        const role = (item && typeof item.role === 'string') ? item.role : '';
+                        const org = (item && typeof item.organization === 'string')
+                            ? item.organization
+                            : (item && typeof item.employer === 'string')
+                                ? item.employer
+                                : (item && typeof item.name === 'string' ? item.name : (typeof item === 'string' ? item : ''));
+
+                        return {
+                            role,
+                            organization: org,
+                            employer: org
+                        };
+                    });
+                }
             }
 
             if (normalized.accreditations) {
@@ -897,7 +915,7 @@ function normalizeProjectData(data) {
     }
 
     if (!Array.isArray(data.referrerConsultants) || data.referrerConsultants.length === 0) {
-        const defaultIndividual = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], fieldNotes: {} };
+        const defaultIndividual = typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], knownReferrals: [], pastTTIJobs: [], schoolDistricts: [], fieldNotes: {} };
         data.referrerConsultants = [defaultIndividual];
     } else {
         data.referrerConsultants = data.referrerConsultants.map(consultant => {
@@ -2029,7 +2047,7 @@ function createNewProjectData() {
             locationDetails: { city: "", state: "", country: "", additionalLocations: [] },
             location: "", address: "", otherOperators: [],
             operatingPeriod: { startYear: null, endYear: null, status: "", yearsOfOperation: "", notes: [] },
-            staff: { administrator: [], notableStaff: [] },
+            staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },
             profileLinks: [],
             facilityDetails: { type: "", capacity: null, currentCensus: null, ageRange: { min: null, max: null }, gender: "" },
             accreditations: { current: [], past: [] },
@@ -2048,7 +2066,7 @@ function createNewProjectData() {
         // Referrer data structure
         referrer: [],
         referrerAgency: typeof window.createDefaultReferrerGroup === 'function' ? window.createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} },
-        referrerConsultants: [typeof window.createDefaultReferrerIndividual === 'function' ? window.createDefaultReferrerIndividual() : { firstName: "", lastName: "", knownReferrals: [], affiliations: [], fieldNotes: {} }],
+        referrerConsultants: [typeof window.createDefaultReferrerIndividual === 'function' ? window.createDefaultReferrerIndividual() : { firstName: "", lastName: "", knownReferrals: [], facilitiesReferred: [], affiliations: [], pastTTIJobs: [], schoolDistricts: [], fieldNotes: {} }],
         isIndependentConsultant: false,
         fieldNotes: {}
     };
@@ -2568,14 +2586,24 @@ function updateArrayObjectItemValue(path, index, field, value) {
         const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
         if (typeof array[index] !== 'object' || array[index] === null) {
             if (isPastTTIJobs) {
-                array[index] = { role: '', organization: '' };
+                array[index] = { role: '', organization: '', employer: '' };
             } else if (isAdditionalLocation) {
                 array[index] = { city: '', address: '' };
             } else {
                 array[index] = { role: '', name: '' };
             }
         }
-        array[index][field] = value;
+        if (isPastTTIJobs && field === 'employer') {
+            array[index].employer = value;
+            array[index].organization = value;
+        } else if (isPastTTIJobs && field === 'organization') {
+            array[index].organization = value;
+            if (!array[index].employer) {
+                array[index].employer = value;
+            }
+        } else {
+            array[index][field] = value;
+        }
 
         updateJSON();
         autoSave();
@@ -2601,14 +2629,14 @@ function addNewArrayItem(path) {
     }
 
     if (Array.isArray(workingArray)) {
-        const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isPastTTIJobs = /pastTTIJobs$/.test(path);
+        const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
         const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
         let newItem = '';
-        if (isStaff) {
+        if (isPastTTIJobs) {
+            newItem = { role: '', organization: '', employer: '' };
+        } else if (isStaff) {
             newItem = { role: '', name: '' };
-        } else if (isPastTTIJobs) {
-            newItem = { role: '', organization: '' };
         } else if (isAdditionalLocation) {
             newItem = { city: '', address: '' };
         }
@@ -2696,6 +2724,11 @@ function renderArray(container, path, items) {
     const sourceItems = items !== undefined ? items : getNestedValue(target, normalizedPath);
     const itemsArray = Array.isArray(sourceItems) ? sourceItems : (sourceItems ? [sourceItems] : []);
 
+    const isPastTTIJobs = /pastTTIJobs$/.test(path);
+    const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
+    const isStaffRoleName = isStaff && !isPastTTIJobs;
+    const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
+
     // If array is empty, initialize it with one empty item so user input gets saved
     if (itemsArray.length === 0) {
         let array = getNestedValue(target, normalizedPath);
@@ -2707,14 +2740,11 @@ function renderArray(container, path, items) {
         }
 
         if (array.length === 0) {
-            const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
-            const isPastTTIJobs = /pastTTIJobs$/.test(path);
-            const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
             let emptyItem = '';
-            if (isStaff) {
-                emptyItem = { role: '', name: '' };
-            } else if (isPastTTIJobs) {
+            if (isPastTTIJobs) {
                 emptyItem = { role: '', organization: '' };
+            } else if (isStaffRoleName) {
+                emptyItem = { role: '', name: '' };
             } else if (isAdditionalLocation) {
                 emptyItem = { city: '', address: '' };
             }
@@ -2725,11 +2755,17 @@ function renderArray(container, path, items) {
         }
     }
 
-    // Normalize items: convert strings to {role, name} for staff arrays
-    const isStaff = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
-    const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
+    // Normalize items: convert strings to structured objects for staff arrays
     const itemsToShow = itemsArray.map((item, idx) => {
-        if (isStaff && typeof item === 'string') {
+        if (isPastTTIJobs && typeof item === 'string') {
+            const normalizedItem = { role: '', organization: item, employer: item };
+            const array = getNestedValue(target, normalizedPath);
+            if (Array.isArray(array)) {
+                array[idx] = normalizedItem;
+            }
+            return normalizedItem;
+        }
+        if (isStaffRoleName && typeof item === 'string') {
             // Parse legacy string format - check for "Role: Name" pattern
             const colonMatch = item.match(/^([^:]+):\s*(.+)$/);
             let role = '';
@@ -2751,11 +2787,38 @@ function renderArray(container, path, items) {
     itemsToShow.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'array-item';
-        const isPastTTIJobs = /pastTTIJobs$/.test(path);
         const scopeForNotes = scope;
         const noteKey = `${path}.${index}`;
 
-        if (isStaff) {
+        if (isPastTTIJobs) {
+            const roleInput = document.createElement('input');
+            roleInput.type = 'text';
+            roleInput.placeholder = 'Role';
+            roleInput.value = (item && item.role) ? item.role : '';
+            roleInput.className = 'array-input array-input-role';
+            roleInput.oninput = () => updateArrayObjectItemValue(path, index, 'role', roleInput.value);
+            attachCustomValueRecorder(roleInput, 'role');
+            setTimeout(() => {
+                if (!roleInput.dataset.autocompleteInit) {
+                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
+                    roleInput.dataset.autocompleteInit = 'true';
+                }
+            }, 100);
+            itemDiv.appendChild(roleInput);
+
+            const orgInput = document.createElement('input');
+            orgInput.type = 'text';
+            orgInput.placeholder = 'Employer';
+            orgInput.value = (item && (item.employer || item.organization)) ? (item.employer || item.organization) : '';
+            orgInput.className = 'array-input array-input-name';
+            orgInput.oninput = () => updateArrayObjectItemValue(path, index, 'employer', orgInput.value);
+            attachCustomValueRecorder(orgInput, 'operator');
+            itemDiv.appendChild(orgInput);
+            setTimeout(() => {
+                delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
+                orgInput.dataset.autocompleteInit = 'true';
+            }, 100);
+        } else if (isStaffRoleName) {
             const roleInput = document.createElement('input');
             roleInput.type = 'text';
             roleInput.placeholder = 'Role';
@@ -2782,34 +2845,6 @@ function renderArray(container, path, items) {
             setTimeout(() => {
                 delegateCreateAutocomplete(nameInput, getAllHumanNames, 'human');
                 nameInput.dataset.autocompleteInit = 'true';
-            }, 100);
-        } else if (isPastTTIJobs) {
-            const roleInput = document.createElement('input');
-            roleInput.type = 'text';
-            roleInput.placeholder = 'Role';
-            roleInput.value = (item && item.role) ? item.role : '';
-            roleInput.className = 'array-input array-input-role';
-            roleInput.oninput = () => updateArrayObjectItemValue(path, index, 'role', roleInput.value);
-            attachCustomValueRecorder(roleInput, 'role');
-            setTimeout(() => {
-                if (!roleInput.dataset.autocompleteInit) {
-                    delegateCreateAutocomplete(roleInput, getAllStaffRoles, 'role');
-                    roleInput.dataset.autocompleteInit = 'true';
-                }
-            }, 100);
-            itemDiv.appendChild(roleInput);
-
-            const orgInput = document.createElement('input');
-            orgInput.type = 'text';
-            orgInput.placeholder = 'Organization/Company';
-            orgInput.value = (item && item.organization) ? item.organization : '';
-            orgInput.className = 'array-input array-input-name';
-            orgInput.oninput = () => updateArrayObjectItemValue(path, index, 'organization', orgInput.value);
-            attachCustomValueRecorder(orgInput, 'operator');
-            itemDiv.appendChild(orgInput);
-            setTimeout(() => {
-                delegateCreateAutocomplete(orgInput, getAllOperators, 'operator');
-                orgInput.dataset.autocompleteInit = 'true';
             }, 100);
         } else if (isAdditionalLocation) {
             const cityInput = document.createElement('input');
@@ -3053,7 +3088,7 @@ function renderArray(container, path, items) {
         buttonLabel = 'Add More Affiliations';
     } else if (/referrerIndividual\.knownReferrals$/.test(path)) {
         buttonLabel = 'Add More Referrals';
-    } else if (/referrerIndividual\.pastTTIJobs$/.test(path)) {
+    } else if (/pastTTIJobs$/.test(path)) {
         buttonLabel = 'Add More TTI Roles';
     }
 
@@ -3188,7 +3223,7 @@ function loadFacilityData() {
     const facilityType = document.getElementById('facility-type');
     if (facilityType) facilityType.value = facility.facilityDetails?.type || '';
 
-    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes'];
+    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'staff.pastTTIJobs', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {

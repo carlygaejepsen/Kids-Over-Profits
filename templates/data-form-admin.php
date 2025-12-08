@@ -285,6 +285,11 @@ get_header();
                         </div>
 
                         <div class="form-group">
+                            <label>Past TTI Jobs (Role + Employer)</label>
+                            <div class="array-container" data-path="referrerIndividual.pastTTIJobs"></div>
+                        </div>
+
+                        <div class="form-group">
                             <label>Notes</label>
                             <textarea id="consultant-notes" class="consultant-field" data-field="notes" rows="4" placeholder="Add notes about this consultant..."></textarea>
                         </div>
@@ -635,6 +640,10 @@ get_header();
                 <div class="form-group">
                     <label>Notable Staff</label>
                     <div class="array-container" data-path="staff.notableStaff"></div>
+                </div>
+                <div class="form-group">
+                    <label>Past TTI Employment (Role + Employer)</label>
+                    <div class="array-container" data-path="staff.pastTTIJobs"></div>
                 </div>
                 <div class="form-group">
                     <label>Profile Links</label>
