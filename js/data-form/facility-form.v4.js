@@ -1213,6 +1213,15 @@ function attachButtonListeners() {
         generateReportBtnLocation.dataset.listenerAttached = 'true';
     }
 
+    // Export All Locations button (bottom section with unique ID)
+    const exportAllLocationsBtn = document.getElementById('export-all-locations-btn');
+    if (exportAllLocationsBtn && !exportAllLocationsBtn.dataset.listenerAttached) {
+        exportAllLocationsBtn.onclick = () => {
+            exportProjectsToFile({ categories: ['locations'], filename: 'projects-export-locations.json' });
+        };
+        exportAllLocationsBtn.dataset.listenerAttached = 'true';
+    }
+
     // Quick buttons (duplicate panel outside toolbar)
     const newBtnQuick = document.getElementById('new-project-quick-btn');
     if (newBtnQuick && !newBtnQuick.dataset.listenerAttached) {

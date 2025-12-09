@@ -1147,7 +1147,7 @@ get_header();
                     <p style="margin-bottom: 10px; color: #6b7280; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button type="button" class="btn" id="export-all-btn">Export All Companies</button>
-                        <button type="button" class="btn" id="export-all-btn-location">Export All Locations</button>
+                        <button type="button" class="btn" id="export-all-locations-btn">Export All Locations</button>
                         <button type="button" class="btn" id="export-referrer-projects-btn">Export All Referrers</button>
                     </div>
                 </div>
