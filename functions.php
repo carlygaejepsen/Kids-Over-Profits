@@ -2109,6 +2109,19 @@ function enqueue_facility_form_script() {
         true
     );
 
+    // Enqueue custom modals module (modern replacement for alert/confirm/prompt)
+    $modals_script_relative_path = '/js/data-form/custom-modals.js';
+    $modals_script_file_path = get_stylesheet_directory() . $modals_script_relative_path;
+    $modals_script_uri = get_stylesheet_directory_uri() . $modals_script_relative_path;
+
+    wp_enqueue_script(
+        'custom-modals-script',
+        $modals_script_uri,
+        array(), // No dependencies - pure JS
+        file_exists($modals_script_file_path) ? filemtime($modals_script_file_path) : time(),
+        true
+    );
+
     // Enqueue the main facility form script (depends on loader, referrer module, notes module, and autocomplete module)
     $script_relative_path = '/js/data-form/facility-form.v4.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
@@ -2117,10 +2130,25 @@ function enqueue_facility_form_script() {
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'kop-form-config-script', 'kop-data-normalizer-script', 'kop-api-script', 'kop-project-script', 'kop-ui-script', 'kop-ui-events-script', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-actions-script', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
+        array('jquery', 'custom-modals-script', 'kop-form-config-script', 'kop-data-normalizer-script', 'kop-api-script', 'kop-project-script', 'kop-ui-script', 'kop-ui-events-script', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-actions-script', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );
+
+    // Enqueue the facility form diagnostic helpers when explicitly enabled (e.g., via wp-config.php)
+    if (defined('KOP_ENABLE_FORM_TEST_SUITE') && KOP_ENABLE_FORM_TEST_SUITE) {
+        $tests_script_relative_path = '/js/data-form/tests.js';
+        $tests_script_file_path = get_stylesheet_directory() . $tests_script_relative_path;
+        $tests_script_uri = get_stylesheet_directory_uri() . $tests_script_relative_path;
+
+        wp_enqueue_script(
+            'facility-form-tests-script',
+            $tests_script_uri,
+            array('facility-form-script'),
+            file_exists($tests_script_file_path) ? filemtime($tests_script_file_path) : time(),
+            true
+        );
+    }
 
     $dataset_urls = kop_get_facility_projects_dataset_urls();
     $fallback_url = !empty($dataset_urls) ? $dataset_urls[0] : '';

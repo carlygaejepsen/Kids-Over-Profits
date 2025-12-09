@@ -400,18 +400,20 @@
             const closeButton = document.getElementById('suggestion-modal-close');
 
             if (!modal || !summaryInput || !cancelButton || !confirmButton) {
-                console.warn('Suggestion modal not available; falling back to prompt workflow.');
-                const fallbackSummary = window.prompt(
+                console.warn('Suggestion modal not available; falling back to custom prompt.');
+                customPrompt(
                     'Please summarize the key changes you made:\n\n' +
-                    '(Examples: "Added missing facility location", "Corrected operator founding date", "Added 3 new staff members", "Updated facility closure information", etc.)'
-                );
+                    '(Examples: "Added missing facility location", "Corrected operator founding date", "Added 3 new staff members", "Updated facility closure information", etc.)',
+                    '',
+                    'Summarize Your Changes'
+                ).then(fallbackSummary => {
+                    if (!fallbackSummary || !fallbackSummary.trim()) {
+                        showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
+                        return;
+                    }
 
-                if (!fallbackSummary || !fallbackSummary.trim()) {
-                    showSuggestionStatus('Please provide a summary of your changes to continue.', 'error');
-                    return;
-                }
-
-                performSuggestionSubmission(fallbackSummary);
+                    performSuggestionSubmission(fallbackSummary);
+                });
                 return;
             }
 
@@ -511,46 +513,54 @@
                 // Get project name from input field or current project
                 const projectNameInput = document.getElementById('project-name');
                 let projectName = projectNameInput ? projectNameInput.value.trim() : '';
-                
+
+                // Function to save the draft once we have the project name
+                const saveDraft = (finalProjectName) => {
+                    if (typeof window.persistProjectLocally === 'function') {
+                        const result = window.persistProjectLocally(finalProjectName, {
+                            showNotification: true,
+                            statusMessage: `💾 Draft "${finalProjectName}" saved locally! Your work is stored in this browser.`
+                        });
+                        if (result) {
+                            window.currentProjectName = finalProjectName;
+                            console.log('✅ Draft saved locally for:', finalProjectName);
+
+                            // Refresh the project lists if available
+                            if (typeof window.refreshSavedProjectPanels === 'function') {
+                                window.refreshSavedProjectPanels();
+                            }
+                        }
+                    } else {
+                        console.error('❌ persistProjectLocally function not available');
+                        if (typeof showUploadStatus === 'function') {
+                            showUploadStatus('❌ Unable to save draft - function not available', 'error');
+                        }
+                    }
+                };
+
                 // If no project name entered, use current project name or prompt
                 if (!projectName) {
                     if (window.currentProjectName) {
                         projectName = window.currentProjectName;
+                        saveDraft(projectName);
                     } else {
-                        projectName = prompt('Enter a name for this draft:');
-                        if (!projectName || !projectName.trim()) {
-                            if (typeof showUploadStatus === 'function') {
-                                showUploadStatus('❌ Draft name is required', 'error');
+                        customPrompt('Enter a name for this draft:', '', 'Draft Name').then(enteredName => {
+                            if (!enteredName || !enteredName.trim()) {
+                                if (typeof showUploadStatus === 'function') {
+                                    showUploadStatus('❌ Draft name is required', 'error');
+                                }
+                                return;
                             }
-                            return;
-                        }
-                        projectName = projectName.trim();
-                        // Update the input field with the name
-                        if (projectNameInput) {
-                            projectNameInput.value = projectName;
-                        }
-                    }
-                }
-                
-                if (typeof window.persistProjectLocally === 'function') {
-                    const result = window.persistProjectLocally(projectName, {
-                        showNotification: true,
-                        statusMessage: `💾 Draft "${projectName}" saved locally! Your work is stored in this browser.`
-                    });
-                    if (result) {
-                        window.currentProjectName = projectName;
-                        console.log('✅ Draft saved locally for:', projectName);
-                        
-                        // Refresh the project lists if available
-                        if (typeof window.refreshSavedProjectPanels === 'function') {
-                            window.refreshSavedProjectPanels();
-                        }
+                            projectName = enteredName.trim();
+                            // Update the input field with the name
+                            if (projectNameInput) {
+                                projectNameInput.value = projectName;
+                            }
+                            saveDraft(projectName);
+                        });
                     }
                 } else {
-                    console.error('❌ persistProjectLocally function not available');
-                    if (typeof showUploadStatus === 'function') {
-                        showUploadStatus('❌ Unable to save draft - function not available', 'error');
-                    }
+                    saveDraft(projectName);
                 }
             });
         }
@@ -594,9 +604,14 @@
         if (independentEditBtn && independentToggle && !independentEditBtn.dataset.listenerAttached) {
             independentEditBtn.addEventListener('click', () => {
                 if (!consultantModal) {
-                    const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
-                    independentToggle.checked = choice;
-                    independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    customConfirm(
+                        'Is this an independent consultant or part of an agency/group?',
+                        'Consultant Type',
+                        { yesText: 'Independent Consultant', noText: 'Part of Agency/Group' }
+                    ).then(choice => {
+                        independentToggle.checked = choice;
+                        independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
                     return;
                 }
                 consultantModal.style.display = 'flex';
@@ -842,9 +857,14 @@
         if (privateOwnershipEditBtn && privateOwnershipToggle && !privateOwnershipEditBtn.dataset.listenerAttached) {
             privateOwnershipEditBtn.addEventListener('click', () => {
                 if (!ownershipModal) {
-                    const choice = confirm(`Is this a privately owned facility (not part of a chain)?\n\nOK = Privately owned\nCancel = Part of a chain/corporate`);
-                    privateOwnershipToggle.checked = choice;
-                    privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    customConfirm(
+                        'Is this a privately owned facility or part of a chain/corporate?',
+                        'Facility Ownership',
+                        { yesText: 'Privately Owned', noText: 'Part of Chain/Corporate' }
+                    ).then(choice => {
+                        privateOwnershipToggle.checked = choice;
+                        privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
                     return;
                 }
                 ownershipModal.style.display = 'flex';
