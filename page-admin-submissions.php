@@ -13,9 +13,6 @@
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/admin-submissions.css">
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/admin-submissions.js" defer></script>
-
 <div class="admin-submissions-page">
     <div class="admin-submissions-container">
         <header class="admin-header">

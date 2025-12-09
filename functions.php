@@ -35,6 +35,29 @@ function kadence_child_enqueue_styles() {
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
 /**
+ * Enqueue admin submissions page scripts and styles
+ */
+function kop_enqueue_admin_submissions() {
+    if (is_page_template('page-admin-submissions.php')) {
+        wp_enqueue_style(
+            'kop-admin-submissions',
+            get_stylesheet_directory_uri() . '/css/admin-submissions.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/css/admin-submissions.css')
+        );
+
+        wp_enqueue_script(
+            'kop-admin-submissions',
+            get_stylesheet_directory_uri() . '/js/admin-submissions.js',
+            array(),
+            filemtime(get_stylesheet_directory() . '/js/admin-submissions.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_admin_submissions');
+
+/**
  * Determine whether the current request is for a headerless layout.
  * This is used to conditionally remove the default theme header/footer
  * when the data form pages are being displayed.

@@ -71,16 +71,25 @@ try {
         $total = $countStmt->fetchColumn();
         
         // Get submissions
-        $sql = "SELECT id, program_name, city_state, program_type, years_active, status, 
-                       submitted_by, created_at, updated_at 
-                FROM wiki_submissions $whereClause 
-                ORDER BY created_at DESC 
-                LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-        
+        $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
+                       submitted_by, created_at, updated_at
+                FROM wiki_submissions $whereClause
+                ORDER BY created_at DESC
+                LIMIT :limit OFFSET :offset";
+
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
+
+        // Bind the WHERE clause params
+        $paramIndex = 1;
+        foreach ($params as $param) {
+            $stmt->bindValue($paramIndex++, $param);
+        }
+
+        // Bind LIMIT and OFFSET as integers
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
         $submissions = $stmt->fetchAll();
         
         echo json_encode([

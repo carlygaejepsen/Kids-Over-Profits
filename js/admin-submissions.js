@@ -130,15 +130,28 @@ document.addEventListener('DOMContentLoaded', () => {
         noSubmissions.style.display = 'none';
 
         try {
-            const response = await fetch(`${SUBMISSIONS_API}?${params.toString()}`);
+            const url = `${SUBMISSIONS_API}?${params.toString()}`;
+            console.log('Fetching submissions from:', url);
+
+            const response = await fetch(url);
+            console.log('Response status:', response.status);
+
             const result = await response.json();
+            console.log('API Response:', result);
 
             loadingMessage.style.display = 'none';
 
             if (result.success && result.data && result.data.length > 0) {
+                console.log('Found submissions:', result.data.length);
                 allSubmissions = result.data;
                 renderSubmissions(result.data);
             } else {
+                console.log('No submissions found or result structure unexpected:', {
+                    success: result.success,
+                    hasData: !!result.data,
+                    dataLength: result.data?.length,
+                    fullResult: result
+                });
                 noSubmissions.style.display = 'block';
             }
         } catch (error) {
