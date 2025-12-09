@@ -894,27 +894,135 @@ async function showProjectSelectionModal(categories = null) {
     // Step 2: Sort alphabetically by project name (case-insensitive)
     projectEntries.sort((a, b) => a[0].toLowerCase().localeCompare(b[0].toLowerCase()));
 
-    // Step 3: Build project selection options
+    // Step 3: Build project selection options with detailed information
     const projectOptions = projectEntries.map(([name, project]) => {
+        const data = project.data || project; // Handle wrapped data structure
+
         const savedAt = project.savedAt
             ? new Date(project.savedAt).toLocaleDateString('en-US', {
                 year: 'numeric', month: 'short', day: 'numeric'
               })
             : 'Unknown date';
+
+        // Extract location information based on project type
+        let locationInfo = '';
+
+        // For companies/operators - show headquarters and locations
+        if (data.operator) {
+            const hq = data.operator.headquarters ||
+                      (data.operator.headquartersCity && data.operator.headquartersState
+                        ? `${data.operator.headquartersCity}, ${data.operator.headquartersState}`
+                        : '') ||
+                      data.operator.location ||
+                      (data.operator.locationCity && data.operator.locationState
+                        ? `${data.operator.locationCity}, ${data.operator.locationState}`
+                        : '');
+
+            if (hq) {
+                locationInfo = `HQ: ${hq}`;
+            }
+
+            // Add facility locations if available
+            if (data.facilities && data.facilities.length > 0) {
+                const states = new Set();
+                const countries = new Set();
+
+                data.facilities.forEach(facility => {
+                    if (facility.state) states.add(facility.state);
+                    if (facility.country && facility.country !== 'USA' && facility.country !== 'United States') {
+                        countries.add(facility.country);
+                    }
+                });
+
+                const locations = [];
+                if (states.size > 0) {
+                    locations.push(`States: ${Array.from(states).sort().join(', ')}`);
+                }
+                if (countries.size > 0) {
+                    locations.push(`Countries: ${Array.from(countries).sort().join(', ')}`);
+                }
+
+                if (locations.length > 0) {
+                    locationInfo += (locationInfo ? ' | ' : '') + locations.join(' | ');
+                }
+            }
+        }
+
+        // For locations - show state/country info
+        if (data.state || data.city || data.location) {
+            const loc = data.location ||
+                       (data.city && data.state ? `${data.city}, ${data.state}` : '') ||
+                       data.state ||
+                       data.city;
+            if (loc) {
+                locationInfo = `Location: ${loc}`;
+            }
+        }
+
+        const description = locationInfo
+            ? `${locationInfo} | Last saved: ${savedAt}`
+            : `Last saved: ${savedAt}`;
+
         return {
             value: name,
             label: name,
-            description: `Last saved: ${savedAt}`
+            description: description
         };
     });
 
     // Step 4: Show project selection modal (checkboxes)
-    const selectedProjectNames = await customChoice(
+    const selectionPromise = customChoice(
         `Select one or more projects to include in the report (${projectEntries.length} available):`,
         projectOptions,
         'Select Projects',
         { type: 'checkbox' }
     );
+
+    // Add Select All / Deselect All buttons after modal is shown
+    setTimeout(() => {
+        const modal = document.querySelector('.custom-modal-container.active');
+        if (modal) {
+            const modalBody = modal.querySelector('.modal-body');
+            const modalChoices = modal.querySelector('.modal-choices');
+
+            if (modalBody && modalChoices && !modalBody.querySelector('.select-all-controls')) {
+                // Create button container
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'select-all-controls';
+                buttonContainer.style.cssText = 'margin: 10px 0; display: flex; gap: 10px;';
+
+                // Select All button
+                const selectAllBtn = document.createElement('button');
+                selectAllBtn.textContent = 'Select All';
+                selectAllBtn.className = 'modal-btn modal-btn-secondary';
+                selectAllBtn.style.cssText = 'padding: 6px 12px; font-size: 13px;';
+                selectAllBtn.onclick = (e) => {
+                    e.preventDefault();
+                    const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = true);
+                };
+
+                // Deselect All button
+                const deselectAllBtn = document.createElement('button');
+                deselectAllBtn.textContent = 'Deselect All';
+                deselectAllBtn.className = 'modal-btn modal-btn-secondary';
+                deselectAllBtn.style.cssText = 'padding: 6px 12px; font-size: 13px;';
+                deselectAllBtn.onclick = (e) => {
+                    e.preventDefault();
+                    const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = false);
+                };
+
+                buttonContainer.appendChild(selectAllBtn);
+                buttonContainer.appendChild(deselectAllBtn);
+
+                // Insert before the choices
+                modalBody.insertBefore(buttonContainer, modalChoices);
+            }
+        }
+    }, 50);
+
+    const selectedProjectNames = await selectionPromise;
 
     if (!selectedProjectNames || selectedProjectNames.length === 0) {
         return null; // User cancelled or selected nothing
@@ -957,9 +1065,15 @@ async function generateProjectsReport({ categories = null, filename } = {}) {
         const { selectedProjects, reportType: selectedReportType } = selection;
         reportType = selectedReportType;
 
-        // Get selected project data
+        // Get selected project data and ensure alphabetical order
         const filtered = buildProjectExport(categories);
-        projectsToReport = selectedProjects.map(name => {
+
+        // Sort selected project names alphabetically (case-insensitive)
+        const sortedProjectNames = selectedProjects.sort((a, b) =>
+            a.toLowerCase().localeCompare(b.toLowerCase())
+        );
+
+        projectsToReport = sortedProjectNames.map(name => {
             const project = filtered[name];
             if (!project) return null;
 
@@ -1454,6 +1568,52 @@ function attachButtonListeners() {
     if (fileUpload && !fileUpload.dataset.listenerAttached) {
         fileUpload.addEventListener('change', handleFileUpload, { passive: true });
         fileUpload.dataset.listenerAttached = 'true';
+    }
+
+    // Search input event listeners
+    const companySearchInput = document.getElementById('company-search-input');
+    if (companySearchInput && !companySearchInput.dataset.listenerAttached) {
+        companySearchInput.addEventListener('input', function() {
+            const searchQueries = {
+                company: this.value,
+                location: document.getElementById('location-search-input')?.value || '',
+                referrer: document.getElementById('referrer-search-input')?.value || ''
+            };
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
+                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
+            }
+        }, { passive: true });
+        companySearchInput.dataset.listenerAttached = 'true';
+    }
+
+    const locationSearchInput = document.getElementById('location-search-input');
+    if (locationSearchInput && !locationSearchInput.dataset.listenerAttached) {
+        locationSearchInput.addEventListener('input', function() {
+            const searchQueries = {
+                company: document.getElementById('company-search-input')?.value || '',
+                location: this.value,
+                referrer: document.getElementById('referrer-search-input')?.value || ''
+            };
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
+                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
+            }
+        }, { passive: true });
+        locationSearchInput.dataset.listenerAttached = 'true';
+    }
+
+    const referrerSearchInput = document.getElementById('referrer-search-input');
+    if (referrerSearchInput && !referrerSearchInput.dataset.listenerAttached) {
+        referrerSearchInput.addEventListener('input', function() {
+            const searchQueries = {
+                company: document.getElementById('company-search-input')?.value || '',
+                location: document.getElementById('location-search-input')?.value || '',
+                referrer: this.value
+            };
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
+                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
+            }
+        }, { passive: true });
+        referrerSearchInput.dataset.listenerAttached = 'true';
     }
 }
 

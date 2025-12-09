@@ -336,6 +336,27 @@ function updateLocationFacilitiesOverview() {
             ? '<span class="facility-ownership-badge" title="Click to toggle ownership status">Private</span>'
             : '<span class="facility-ownership-badge not-private" title="Click to toggle ownership status">Chain/Corporate</span>';
 
+        // Add source badge (Independent vs Company/Referrer)
+        let sourceBadgeHTML = '';
+        if (facility._sourceProject) {
+            // Facility synced from another project
+            const sourceCategory = facility._sourceCategory || '';
+            const div5 = document.createElement('div');
+            div5.textContent = facility._sourceProject;
+            const sourceProjectEscaped = div5.innerHTML;
+
+            if (sourceCategory === 'company' || sourceCategory === 'companies') {
+                sourceBadgeHTML = `<span class="facility-source-badge source-company" title="From company project: ${sourceProjectEscaped}">Company</span>`;
+            } else if (sourceCategory === 'referrers') {
+                sourceBadgeHTML = `<span class="facility-source-badge source-referrer" title="From referrer project: ${sourceProjectEscaped}">Referrer</span>`;
+            } else {
+                sourceBadgeHTML = `<span class="facility-source-badge source-other" title="From project: ${sourceProjectEscaped}">Other</span>`;
+            }
+        } else {
+            // Independent facility created directly in location
+            sourceBadgeHTML = '<span class="facility-source-badge source-independent" title="Independent facility">Independent</span>';
+        }
+
         item.innerHTML = `
             <div class="facility-item-number">${index + 1}</div>
             <div class="facility-item-info">
@@ -344,7 +365,10 @@ function updateLocationFacilitiesOverview() {
                     ${operatorEscaped}${programType ? ' • ' + typeEscaped : ''}${status ? ' • ' + statusEscaped : ''}
                 </div>
             </div>
-            ${badgeHTML}
+            <div class="facility-badges">
+                ${sourceBadgeHTML}
+                ${badgeHTML}
+            </div>
         `;
 
         const selectFacility = () => {

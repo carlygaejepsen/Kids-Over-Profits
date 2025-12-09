@@ -103,6 +103,27 @@ select:focus {
     box-shadow: 0 0 0 2px rgba(51, 167, 181, 0.25);
 }
 
+/* Project search input styling */
+.project-search-input {
+    background: #FFFFFF;
+    border: 2px solid #d1d5db;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.project-search-input:focus {
+    border-color: #33A7B5;
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
+    outline: none;
+}
+
+.project-search-input::placeholder {
+    color: #6b7280;
+    font-style: italic;
+}
+
 .btn {
     background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
     color: #FFFFFF;
@@ -918,6 +939,86 @@ select:focus {
     background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     border-color: #b45309;
     box-shadow: 0 3px 6px rgba(217, 119, 6, 0.35);
+}
+
+/* Container for badges in facility items */
+.facility-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+/* Source badge for facility items in location overview */
+.facility-source-badge {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    border: 2px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+/* Independent facility (created directly in location) */
+.facility-source-badge.source-independent {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #FFFFFF;
+    border-color: #059669;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);
+}
+
+.facility-source-badge.source-independent:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    border-color: #047857;
+    box-shadow: 0 3px 6px rgba(5, 150, 105, 0.35);
+}
+
+/* Company facility (synced from company project) */
+.facility-source-badge.source-company {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #FFFFFF;
+    border-color: #2563eb;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}
+
+.facility-source-badge.source-company:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-color: #1d4ed8;
+    box-shadow: 0 3px 6px rgba(37, 99, 235, 0.35);
+}
+
+/* Referrer facility (synced from referrer project) */
+.facility-source-badge.source-referrer {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    color: #FFFFFF;
+    border-color: #0d9488;
+    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.25);
+}
+
+.facility-source-badge.source-referrer:hover {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    border-color: #0f766e;
+    box-shadow: 0 3px 6px rgba(13, 148, 136, 0.35);
+}
+
+/* Other source facility */
+.facility-source-badge.source-other {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: #FFFFFF;
+    border-color: #4b5563;
+    box-shadow: 0 2px 4px rgba(75, 85, 99, 0.25);
+}
+
+.facility-source-badge.source-other:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    border-color: #374151;
+    box-shadow: 0 3px 6px rgba(75, 85, 99, 0.35);
 }
 
 .facility-quick-item {

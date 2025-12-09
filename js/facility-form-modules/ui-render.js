@@ -447,11 +447,85 @@ window.KOP_UI_Render = {
         renderAllFieldNotes();
     },
 
+    /**
+     * Filter projects based on search query
+     * Searches by project name, facility program type, and keywords
+     */
+    filterProjectsBySearch: function(projects, searchQuery) {
+        if (!searchQuery || searchQuery.trim() === '') {
+            return projects;
+        }
+
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = {};
+
+        Object.entries(projects).forEach(([name, project]) => {
+            const data = project.data || project;
+
+            // Search in project name
+            if (name.toLowerCase().includes(query)) {
+                filtered[name] = project;
+                return;
+            }
+
+            // Search in operator name
+            if (data.operator?.name && data.operator.name.toLowerCase().includes(query)) {
+                filtered[name] = project;
+                return;
+            }
+
+            // Search in facilities
+            const facilities = data.facilities || [];
+            const hasMatch = facilities.some(facility => {
+                // Search in facility name
+                if (facility.identification?.name && facility.identification.name.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                // Search in program type (facility type)
+                if (facility.facilityDetails?.type && facility.facilityDetails.type.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                // Search in operator name
+                if (facility.identification?.currentOperator && facility.identification.currentOperator.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                // Search in location
+                if (facility.location && typeof facility.location === 'string' && facility.location.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                if (facility.locationCity && facility.locationCity.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                if (facility.locationState && facility.locationState.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                // Search in status
+                if (facility.operatingPeriod?.status && facility.operatingPeriod.status.toLowerCase().includes(query)) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            if (hasMatch) {
+                filtered[name] = project;
+            }
+        });
+
+        return filtered;
+    },
+
     renderSavedProjectsList: function() {
         if (window.KOP_UI_Render) window.KOP_UI_Render.refreshSavedProjectPanels();
     },
 
-    refreshSavedProjectPanels: function() {
+    refreshSavedProjectPanels: function(searchQueries = {}) {
         const projects = window.projects || {};
         const projectNames = Object.keys(projects);
         const companyContainer = document.getElementById('company-saved-projects-list');
@@ -511,21 +585,69 @@ window.KOP_UI_Render = {
         };
 
         if (companyContainer) {
-            const companyNames = projectNames.filter(name => determineProjectCategory(name) === 'companies');
+            // Filter by category first, then by search query
+            let companyProjects = {};
+            projectNames.forEach(name => {
+                if (determineProjectCategory(name) === 'companies') {
+                    companyProjects[name] = projects[name];
+                }
+            });
+
+            // Apply search filter if query exists
+            if (searchQueries.company) {
+                companyProjects = this.filterProjectsBySearch(companyProjects, searchQueries.company);
+            }
+
+            const companyNames = Object.keys(companyProjects);
             console.log(`📦 Company projects: ${companyNames.length}`, companyNames);
-            companyContainer.innerHTML = buildProjectCards(companyNames, '📭 No saved company projects yet');
+            const emptyMessage = searchQueries.company
+                ? `📭 No company projects match "${searchQueries.company}"`
+                : '📭 No saved company projects yet';
+            companyContainer.innerHTML = buildProjectCards(companyNames, emptyMessage);
         }
 
         if (locationContainer) {
-            const locationNames = projectNames.filter(name => determineProjectCategory(name) === 'locations');
+            // Filter by category first, then by search query
+            let locationProjects = {};
+            projectNames.forEach(name => {
+                if (determineProjectCategory(name) === 'locations') {
+                    locationProjects[name] = projects[name];
+                }
+            });
+
+            // Apply search filter if query exists
+            if (searchQueries.location) {
+                locationProjects = this.filterProjectsBySearch(locationProjects, searchQueries.location);
+            }
+
+            const locationNames = Object.keys(locationProjects);
             console.log(`📍 Location projects: ${locationNames.length}`, locationNames);
-            locationContainer.innerHTML = buildProjectCards(locationNames, '📭 No saved location projects yet');
+            const emptyMessage = searchQueries.location
+                ? `📭 No location projects match "${searchQueries.location}"`
+                : '📭 No saved location projects yet';
+            locationContainer.innerHTML = buildProjectCards(locationNames, emptyMessage);
         }
 
         if (referrerContainer) {
-            const referrerNames = projectNames.filter(name => determineProjectCategory(name) === 'referrers');
+            // Filter by category first, then by search query
+            let referrerProjects = {};
+            projectNames.forEach(name => {
+                if (determineProjectCategory(name) === 'referrers') {
+                    referrerProjects[name] = projects[name];
+                }
+            });
+
+            // Apply search filter if query exists
+            if (searchQueries.referrer) {
+                referrerProjects = this.filterProjectsBySearch(referrerProjects, searchQueries.referrer);
+            }
+
+            const referrerNames = Object.keys(referrerProjects);
             console.log(`👥 Referrer projects: ${referrerNames.length}`, referrerNames);
-            referrerContainer.innerHTML = buildProjectCards(referrerNames, '📭 No saved referrer projects yet. Create one using the "New Project" button.');
+            const emptyMessage = searchQueries.referrer
+                ? `📭 No referrer projects match "${searchQueries.referrer}"`
+                : '📭 No saved referrer projects yet. Create one using the "New Project" button.';
+            referrerContainer.innerHTML = buildProjectCards(referrerNames, emptyMessage);
         }
 
         // Populate quick projects list (all projects combined)

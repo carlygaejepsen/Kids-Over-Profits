@@ -38,6 +38,9 @@ get_header();
                     </div>
                     <div class="form-group">
                         <label>Saved Projects</label>
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                        </div>
                         <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                             <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
                         </div>
@@ -55,6 +58,9 @@ get_header();
                         <div id="project-status-location" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
                         <div class="form-group">
                             <label>Saved Location Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="location-search-input" class="input-form project-search-input" placeholder="🔍 Search by location, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
                             <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
                             </div>
@@ -105,6 +111,9 @@ get_header();
                         <div id="referrer-project-status"></div>
                         <div class="form-group">
                             <label>Saved Referrer Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="referrer-search-input" class="input-form project-search-input" placeholder="🔍 Search by referrer name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
                             <div id="referrer-saved-projects-list" class="saved-projects-list">
                                 <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
                             </div>
