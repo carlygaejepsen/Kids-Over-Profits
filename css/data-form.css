@@ -2903,21 +2903,37 @@ input[type="url"].array-input {
         padding: 10px;
     }
 
-    /* Array Items - Keep in one row on Mobile */
+    /* Array Items - Stack fields vertically, small buttons on the right */
     .array-item {
-        flex-direction: row;
-        align-items: center;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: start;
         padding: 10px;
         gap: 8px;
-        flex-wrap: nowrap;
     }
 
     .array-item input,
-    .array-item textarea {
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 100px;
-        max-width: none;
+    .array-item textarea,
+    .array-item select,
+    .array-item .field-input-wrapper {
+        grid-column: 1;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Small field buttons on the right side */
+    .array-item .field-note-btn,
+    .array-item .add-plus-btn,
+    .array-item .remove-btn {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* Regular buttons (like Add) stack below fields */
+    .array-item > .btn,
+    .array-item > button:not(.field-note-btn):not(.add-plus-btn):not(.remove-btn) {
+        grid-column: 1 / -1;
+        width: 100%;
     }
 
     .array-input {
