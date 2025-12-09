@@ -2122,6 +2122,19 @@ function enqueue_facility_form_script() {
         true
     );
 
+    // Enqueue report configuration module (report presets and filtering)
+    $report_config_script_relative_path = '/js/data-form/report-config.js';
+    $report_config_script_file_path = get_stylesheet_directory() . $report_config_script_relative_path;
+    $report_config_script_uri = get_stylesheet_directory_uri() . $report_config_script_relative_path;
+
+    wp_enqueue_script(
+        'report-config-script',
+        $report_config_script_uri,
+        array('utilities-module-script', 'custom-modals-script'),
+        file_exists($report_config_script_file_path) ? filemtime($report_config_script_file_path) : time(),
+        true
+    );
+
     // Enqueue the main facility form script (depends on loader, referrer module, notes module, and autocomplete module)
     $script_relative_path = '/js/data-form/facility-form.v4.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;

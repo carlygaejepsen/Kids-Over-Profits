@@ -875,20 +875,108 @@ function exportProjectsToFile({ categories = null, filename } = {}) {
     showUploadStatus(`Exported ${count} project(s).`, 'success');
 }
 
-function generateProjectsReport({ categories = null, filename } = {}) {
+/**
+ * Show modal to select projects and report type
+ * @param {Array} categories - Categories to filter projects by
+ * @returns {Promise<Object|null>} - {selectedProjects: [], reportType: 'quick'|'standard'|'full'}
+ */
+async function showProjectSelectionModal(categories = null) {
+    // Step 1: Get projects from current category
+    const filtered = buildProjectExport(categories);
+    const projectEntries = Object.entries(filtered);
+
+    if (projectEntries.length === 0) {
+        const categoryLabel = categories ? categories.join(', ') : 'this category';
+        await customAlert(`No projects found in ${categoryLabel}.`, 'No Projects');
+        return null;
+    }
+
+    // Step 2: Sort alphabetically by project name (case-insensitive)
+    projectEntries.sort((a, b) => a[0].toLowerCase().localeCompare(b[0].toLowerCase()));
+
+    // Step 3: Build project selection options
+    const projectOptions = projectEntries.map(([name, project]) => {
+        const savedAt = project.savedAt
+            ? new Date(project.savedAt).toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric'
+              })
+            : 'Unknown date';
+        return {
+            value: name,
+            label: name,
+            description: `Last saved: ${savedAt}`
+        };
+    });
+
+    // Step 4: Show project selection modal (checkboxes)
+    const selectedProjectNames = await customChoice(
+        `Select one or more projects to include in the report (${projectEntries.length} available):`,
+        projectOptions,
+        'Select Projects',
+        { type: 'checkbox' }
+    );
+
+    if (!selectedProjectNames || selectedProjectNames.length === 0) {
+        return null; // User cancelled or selected nothing
+    }
+
+    // Step 5: Show report type selection (radio buttons)
+    const reportConfig = new window.ReportConfig();
+    const reportTypeOptions = reportConfig.getAllPresets();
+
+    const reportType = await customChoice(
+        `Selected ${selectedProjectNames.length} project(s). Choose report detail level:`,
+        reportTypeOptions,
+        'Select Report Type',
+        { type: 'radio' }
+    );
+
+    if (!reportType) {
+        return null; // User cancelled
+    }
+
+    return {
+        selectedProjects: selectedProjectNames,
+        reportType: reportType
+    };
+}
+
+async function generateProjectsReport({ categories = null, filename } = {}) {
     const hasCategories = categories && categories.length > 0;
     let projectsToReport;
+    let reportType = 'full'; // Default to full report
 
     if (hasCategories) {
+        // Multiple project selection flow
+        const selection = await showProjectSelectionModal(categories);
+
+        if (!selection) {
+            return; // User cancelled
+        }
+
+        const { selectedProjects, reportType: selectedReportType } = selection;
+        reportType = selectedReportType;
+
+        // Get selected project data
         const filtered = buildProjectExport(categories);
-        projectsToReport = Object.values(filtered).filter(Boolean);
+        projectsToReport = selectedProjects.map(name => {
+            const project = filtered[name];
+            if (!project) return null;
+
+            // Apply report preset filtering
+            if (reportType !== 'full' && window.ReportConfig) {
+                const config = new window.ReportConfig();
+                return config.filterFormData(project, reportType);
+            }
+            return project;
+        }).filter(Boolean);
 
         if (projectsToReport.length === 0) {
-            const categoryLabel = categories.join(', ');
-            showUploadStatus(`No ${categoryLabel} projects available to generate report.`, 'error');
+            showUploadStatus('No valid projects selected.', 'error');
             return;
         }
     } else {
+        // Single project flow
         const data = window.formData;
 
         if (!data || !window.currentProjectName) {
@@ -912,47 +1000,72 @@ function generateProjectsReport({ categories = null, filename } = {}) {
             ];
 
             // Use custom modal with radio buttons for clear options
-            customChoice(
+            const choice = await customChoice(
                 'No project is currently loaded. What kind of report would you like to generate?',
                 options,
                 'Select Report Type',
                 { type: 'radio' }
-            ).then(choice => {
-                if (!choice) return; // User cancelled
+            );
 
-                let reportCategories, reportFilename;
+            if (!choice) return; // User cancelled
 
-                if (choice === '1') {
-                    reportCategories = ['companies'];
-                    reportFilename = 'projects-report-companies.json';
-                } else if (choice === '2') {
-                    reportCategories = ['locations'];
-                    reportFilename = 'projects-report-locations.json';
-                } else if (choice === '3') {
-                    reportCategories = ['referrers'];
-                    reportFilename = 'projects-report-referrers.json';
-                }
+            let reportCategories, reportFilename;
 
-                // Recursively call with the selected category
-                if (reportCategories) {
-                    return generateProjectsReport({ categories: reportCategories, filename: reportFilename });
-                }
-            });
+            if (choice === '1') {
+                reportCategories = ['companies'];
+                reportFilename = 'projects-report-companies.json';
+            } else if (choice === '2') {
+                reportCategories = ['locations'];
+                reportFilename = 'projects-report-locations.json';
+            } else if (choice === '3') {
+                reportCategories = ['referrers'];
+                reportFilename = 'projects-report-referrers.json';
+            }
 
-            return; // Exit here since we're now async
+            // Recursively call with the selected category
+            if (reportCategories) {
+                return generateProjectsReport({ categories: reportCategories, filename: reportFilename });
+            }
+
+            return;
         }
 
-        projectsToReport = [data];
+        // Show report type selection for single project
+        const reportConfig = new window.ReportConfig();
+        const reportTypeOptions = reportConfig.getAllPresets();
+
+        const selectedReportType = await customChoice(
+            `Generate report for: ${window.currentProjectName}`,
+            reportTypeOptions,
+            'Select Report Type',
+            { type: 'radio' }
+        );
+
+        if (!selectedReportType) {
+            return; // User cancelled
+        }
+
+        reportType = selectedReportType;
+
+        // Apply preset filtering
+        let reportData = data;
+        if (reportType !== 'full' && window.ReportConfig) {
+            const config = new window.ReportConfig();
+            reportData = config.filterFormData(data, reportType);
+        }
+
+        projectsToReport = [reportData];
     }
 
+    // Generate the report
     if (typeof window.FacilityReportGenerator !== 'function') {
         showUploadStatus('Report generator unavailable. Please reload the page.', 'error');
         return;
     }
 
     const title = hasCategories
-        ? `${categories.join(', ').toUpperCase()} Report`
-        : (window.currentProjectName ? `Report: ${window.currentProjectName}` : 'Project Report');
+        ? `${categories.join(', ').toUpperCase()} Report (${reportType.toUpperCase()})`
+        : (window.currentProjectName ? `Report: ${window.currentProjectName} (${reportType.toUpperCase()})` : 'Project Report');
 
     const generator = new window.FacilityReportGenerator(projectsToReport, { title });
     generator.generateReport();
