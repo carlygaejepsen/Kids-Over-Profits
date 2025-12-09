@@ -2878,10 +2878,19 @@ input[type="url"].array-input {
     .field-input-wrapper input,
     .field-input-wrapper textarea,
     .field-input-wrapper select {
-        flex: 1 1 auto;
-        width: auto;
-        min-width: 100px;
-        max-width: none;
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 100px !important;
+        max-width: none !important;
+    }
+
+    /* Ensure field-content containers are flex */
+    .form-group.has-note-button .field-content,
+    .field-input-wrapper {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
     }
 
     textarea {
