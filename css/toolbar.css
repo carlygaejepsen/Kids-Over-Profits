@@ -130,7 +130,7 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
     position: relative;
 }
@@ -403,7 +403,7 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-section {
         gap: 8px;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
     }
 
     .fixed-toolbar .toolbar-group {

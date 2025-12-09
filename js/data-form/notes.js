@@ -1168,7 +1168,7 @@ function syncFieldNotes(facilityData) {
     }
 }
 
-// Export noteFieldRegistry globally for backward compatibility with facility-form.v3.js
+// Export noteFieldRegistry globally for backward compatibility with facility-form.v4.js
 window.noteFieldRegistry = noteFieldRegistry;
 
 // Export functions for use in other modules

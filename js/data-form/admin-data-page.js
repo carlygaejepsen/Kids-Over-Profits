@@ -637,7 +637,7 @@ const initializeAdminPage = () => {
 
     console.log('🚀 Initializing admin data page...');
 
-    // Initialize facility toolbar toggle (defined in facility-form.v3.js)
+    // Initialize facility toolbar toggle (defined in facility-form.v4.js)
     if (typeof window.initializeFacilityToolbarToggle === 'function') {
         window.initializeFacilityToolbarToggle();
     }

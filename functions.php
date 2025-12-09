@@ -1901,6 +1901,123 @@ function enqueue_facility_form_script() {
         true
     );
 
+    // Enqueue the new configuration module
+    $config_module_relative_path = '/js/facility-form-modules/config.js';
+    $config_module_file_path = get_stylesheet_directory() . $config_module_relative_path;
+    $config_module_uri = get_stylesheet_directory_uri() . $config_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-form-config-script',
+        $config_module_uri,
+        array('jquery'), // It accesses window but doesn't depend on other form modules
+        file_exists($config_module_file_path) ? filemtime($config_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new data normalizer module
+    $normalizer_module_relative_path = '/js/facility-form-modules/data-normalizer.js';
+    $normalizer_module_file_path = get_stylesheet_directory() . $normalizer_module_relative_path;
+    $normalizer_module_uri = get_stylesheet_directory_uri() . $normalizer_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-data-normalizer-script',
+        $normalizer_module_uri,
+        array('jquery', 'referrer-form-script'), // Depends on referrer form for create functions
+        file_exists($normalizer_module_file_path) ? filemtime($normalizer_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new API module
+    $api_module_relative_path = '/js/facility-form-modules/api.js';
+    $api_module_file_path = get_stylesheet_directory() . $api_module_relative_path;
+    $api_module_uri = get_stylesheet_directory_uri() . $api_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-api-script',
+        $api_module_uri,
+        array('jquery', 'kop-form-config-script', 'kop-data-normalizer-script'),
+        file_exists($api_module_file_path) ? filemtime($api_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new project management module
+    $project_module_relative_path = '/js/facility-form-modules/project.js';
+    $project_module_file_path = get_stylesheet_directory() . $project_module_relative_path;
+    $project_module_uri = get_stylesheet_directory_uri() . $project_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-project-script',
+        $project_module_uri,
+        array('jquery', 'kop-api-script'),
+        file_exists($project_module_file_path) ? filemtime($project_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new UI module
+    $ui_module_relative_path = '/js/facility-form-modules/ui.js';
+    $ui_module_file_path = get_stylesheet_directory() . $ui_module_relative_path;
+    $ui_module_uri = get_stylesheet_directory_uri() . $ui_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-ui-script',
+        $ui_module_uri,
+        array('jquery', 'kop-project-script'),
+        file_exists($ui_module_file_path) ? filemtime($ui_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new UI Events module
+    $ui_events_module_relative_path = '/js/facility-form-modules/ui-events.js';
+    $ui_events_module_file_path = get_stylesheet_directory() . $ui_events_module_relative_path;
+    $ui_events_module_uri = get_stylesheet_directory_uri() . $ui_events_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-ui-events-script',
+        $ui_events_module_uri,
+        array('jquery'), // Depends only on jQuery
+        file_exists($ui_events_module_file_path) ? filemtime($ui_events_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new UI Render module
+    $ui_render_module_relative_path = '/js/facility-form-modules/ui-render.js';
+    $ui_render_module_file_path = get_stylesheet_directory() . $ui_render_module_relative_path;
+    $ui_render_module_uri = get_stylesheet_directory_uri() . $ui_render_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-ui-render-script',
+        $ui_render_module_uri,
+        array('jquery', 'kop-ui-events-script'), // Depends on events for path resolution
+        file_exists($ui_render_module_file_path) ? filemtime($ui_render_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new UI State module
+    $ui_state_module_relative_path = '/js/facility-form-modules/ui-state.js';
+    $ui_state_module_file_path = get_stylesheet_directory() . $ui_state_module_relative_path;
+    $ui_state_module_uri = get_stylesheet_directory_uri() . $ui_state_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-ui-state-script',
+        $ui_state_module_uri,
+        array('jquery', 'kop-ui-render-script'), // Depends on jQuery and rendering functions
+        file_exists($ui_state_module_file_path) ? filemtime($ui_state_module_file_path) : time(),
+        true
+    );
+
+    // Enqueue the new UI Actions module
+    $ui_actions_module_relative_path = '/js/facility-form-modules/ui-actions.js';
+    $ui_actions_module_file_path = get_stylesheet_directory() . $ui_actions_module_relative_path;
+    $ui_actions_module_uri = get_stylesheet_directory_uri() . $ui_actions_module_relative_path;
+
+    wp_enqueue_script(
+        'kop-ui-actions-script',
+        $ui_actions_module_uri,
+        array('jquery', 'utilities-module-script', 'kop-form-config-script', 'kop-data-normalizer-script', 'kop-project-script', 'kop-api-script', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script'),
+        file_exists($ui_actions_module_file_path) ? filemtime($ui_actions_module_file_path) : time(),
+        true
+    );
+
     // Enqueue the DB form loader (handles data loading, depends on utilities)
     $loader_relative_path = '/js/data-form/db-form-loader.js';
     $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
@@ -1993,14 +2110,14 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the main facility form script (depends on loader, referrer module, notes module, and autocomplete module)
-    $script_relative_path = '/js/data-form/facility-form.v3.js';
+    $script_relative_path = '/js/data-form/facility-form.v4.js';
     $script_file_path = get_stylesheet_directory() . $script_relative_path;
     $script_uri = get_stylesheet_directory_uri() . $script_relative_path;
 
     wp_enqueue_script(
         'facility-form-script',
         $script_uri,
-        array('jquery', 'utilities-module-script', 'facility-toolbar-script', 'db-form-loader', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script', 'facility-report-generator'),
+        array('jquery', 'kop-form-config-script', 'kop-data-normalizer-script', 'kop-api-script', 'kop-project-script', 'kop-ui-script', 'kop-ui-events-script', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-actions-script', 'db-form-loader', 'referrer-form-script', 'notes-module-script', 'autocomplete-module-script'),
         file_exists($script_file_path) ? filemtime($script_file_path) : time(),
         true
     );

@@ -23,7 +23,7 @@ header('Content-Type: application/json');
 echo json_encode([
     'functions_php_path' => $functions_path,
     'script_relative_path_in_code' => $matches[1] ?? 'NOT FOUND',
-    'expected_file_path' => get_stylesheet_directory() . ($matches[1] ?? '/js/facility-form.v3.js'),
-    'file_exists' => file_exists(get_stylesheet_directory() . ($matches[1] ?? '/js/facility-form.v3.js')),
+    'expected_file_path' => get_stylesheet_directory() . ($matches[1] ?? '/js/facility-form.v4.js'),
+    'file_exists' => file_exists(get_stylesheet_directory() . ($matches[1] ?? '/js/facility-form.v4.js')),
     'functions_php_modified' => date('Y-m-d H:i:s', filemtime($functions_path))
 ], JSON_PRETTY_PRINT);

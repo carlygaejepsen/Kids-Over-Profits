@@ -432,6 +432,106 @@ function buildProjectExport(categories) {
 // ============================================
 
 // Expose functions to window for global access
+
+/**
+ * Resolve a given path to its target object and normalized path within window.formData
+ * Supports 'operator', 'referrerGroup', 'referrerIndividual', 'consultant', 'referrerAgency', and 'facility' scopes.
+ *
+ * @param {string} path - The original dot-separated path (e.g., "operator.name", "facilities.0.identification.name")
+ * @returns {{scope: string, normalizedPath: string, target: object|null}} An object containing the scope, normalized path, and target object.
+ */
+function resolvePathTarget(path) {
+    let scope = 'facility';
+    let normalizedPath = path;
+    let target = null;
+
+    if (!window.formData) {
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('operator.')) {
+        // Check if we're in a location project - if so, use facility's sourceOperator
+        const activeTab = document.querySelector('.category-tab.active');
+        const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+        
+        if (isLocationProject && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
+            const currentFacility = window.formData.facilities[window.currentFacilityIndex];
+            if (!currentFacility.sourceOperator) {
+                currentFacility.sourceOperator = {};
+            }
+            scope = 'operator';
+            normalizedPath = path.replace('operator.', '');
+            target = currentFacility.sourceOperator;
+            return { scope, normalizedPath, target };
+        }
+        
+        // For non-location projects, use project-level operator
+        if (!window.formData.operator) {
+            window.formData.operator = createNewProjectData().operator;
+        }
+        scope = 'operator';
+        normalizedPath = path.replace('operator.', '');
+        target = window.formData.operator;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerGroup.')) {
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
+        scope = 'referrerGroup';
+        normalizedPath = path.replace('referrerGroup.', '');
+        target = window.formData.referrerGroup;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerIndividual.')) {
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
+        scope = 'referrerIndividual';
+        normalizedPath = path.replace('referrerIndividual.', '');
+        target = window.formData.referrerIndividual;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('consultant.')) {
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
+        scope = 'consultant';
+        normalizedPath = path.replace('consultant.', '');
+        target = window.formData.referrerIndividual;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('referrerAgency.')) {
+        if (typeof window.ensureReferrerDataStructures === 'function') {
+            window.ensureReferrerDataStructures();
+        }
+        scope = 'referrerAgency';
+        normalizedPath = path.replace('referrerAgency.', '');
+        target = window.formData.referrerAgency;
+        return { scope, normalizedPath, target };
+    }
+
+    scope = 'facility';
+    normalizedPath = path;
+    if (!Array.isArray(window.formData.facilities) || !window.formData.facilities.length) {
+        window.formData.facilities = createNewProjectData().facilities;
+        window.currentFacilityIndex = 0;
+    }
+
+    if (!window.formData.facilities[window.currentFacilityIndex]) {
+        window.formData.facilities[window.currentFacilityIndex] = deepClone(createNewProjectData().facilities[0]);
+    }
+
+    target = window.formData.facilities[window.currentFacilityIndex];
+    return { scope, normalizedPath, target };
+}
+
+// Expose resolvePathTarget globally
+window.resolvePathTarget = resolvePathTarget;
 window.debugLog = debugLog;
 window.escapeHtmlForAttr = escapeHtmlForAttr;
 window.toCamelCase = toCamelCase;
@@ -455,3 +555,4 @@ if (document.readyState === 'loading') {
 } else {
     console.log('🔧 Utilities module loaded');
 }
+

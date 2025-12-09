@@ -189,50 +189,117 @@ Here's a breakdown of the key components:
 
 -   **`js/`**: Client-side JavaScript files (modular architecture)
 
-    -   **`js/data-form/`**: Facility data entry form system
+    -   **`js/data-form/`**: Facility data entry form system (modular architecture)
 
-        -   `utilities.js` (~330 lines) - **Shared utility library (no dependencies)**
+        -   `utilities.js` (~430 lines) - **Shared utility library (no dependencies)**
             - Debug logging with conditional output
-            - Data manipulation (deepClone, nested getters/setters)
+            - Data manipulation (deepClone, nested getters/setters, resolvePathTarget)
             - String utilities (escapeHtmlForAttr, case conversion, city/state parsing)
             - Export utilities (copyToClipboard, downloadJSON, buildProjectExport)
             - UI helpers (showUploadStatus)
             - **This file provides global functions used by all other form modules**
 
-        -   `facility-form.v3.js` (~5,800 lines) - **Main form controller**
-            - Complete facility data entry form lifecycle
-            - Dynamic field generation, validation, conditional display
-            - API communication (save, load, delete, clone operations)
-            - Project management and data export
+        -   `facility-form.v4.js` (~1,900 lines) - **Main form orchestrator**
+            - Form initialization and lifecycle coordination
+            - Event listener attachment and field mapping
+            - Data loading/saving orchestration via module delegation
             - Reads `KOP_FACILITY_FORM_CONFIG` localized by `functions.php`
-            - Dependencies: `utilities.js` (via global functions)
+            - Dependencies: All modules below (loaded via functions.php)
             - Modes: `master` (admin) or `suggestion` (public)
+            - **Delegates most functionality to specialized modules**
 
-        -   `location-form.js` (~550 lines) - **Location data entry**
+        -   `location-form.js` (~550 lines) - **Location data management**
             - Location/address field management
             - City, state, postal code handling
-            - Dependencies: `facility-form.v3.js`, `utilities.js`
+            - US state and country constants (US_STATE_SET, COUNTRY_SET)
+            - Dependencies: `utilities.js`, `db-form-loader.js`
 
-        -   `referrer-form.js` (~1,200 lines) - **Referrer data entry**
+        -   `referrer-form.js` (~1,200 lines) - **Referrer data management**
             - Referrer information management
             - Auto-population from referrers_master table
-            - Dependencies: `facility-form.v3.js`, `utilities.js`
+            - Consultant navigation and data structures
+            - Dependencies: `utilities.js`, `db-form-loader.js`
 
-        -   `notes.js` (~1,200 lines) - **Facility notes system**
-            - CRUD operations for facility notes
-            - Note threading and reply functionality
-            - Dependencies: `facility-form.v3.js`, `utilities.js`
+        -   `notes.js` (~1,200 lines) - **Field notes system**
+            - CRUD operations for field-level notes
+            - Note registration and rendering
+            - Exports `window.NotesModule` namespace
+            - Dependencies: `db-form-loader.js`, `referrer-form.js`
 
-        -   `db-form-loader.js` (~630 lines) - **Project loading**
-            - Fetches project lists from `api/get-master-data.php`
-            - Project selection UI and management
-            - Coordinates with `facility-form.v3.js` for data loading
-            - Dependencies: `facility-form.v3.js`, `utilities.js`
+        -   `db-form-loader.js` (~630 lines) - **Data loading infrastructure**
+            - Project list fetching and caching
+            - Custom data loading from localStorage
+            - Exports `window.KOP_FormLoader` namespace
+            - Dependencies: `utilities.js`
 
         -   `facility-report-generator.js` (~1,300 lines) - **Report generation**
             - Generates printable HTML reports from form data
             - Export and download functionality
-            - Dependencies: `facility-form.v3.js`
+            - Dependencies: `utilities.js`
+
+    -   **`js/facility-form-modules/`**: Core facility form modules (new modular architecture)
+
+        -   `config.js` (~179 lines) - **Configuration module**
+            - API endpoint resolution and normalization
+            - Form mode detection (master vs. suggestions)
+            - Debug logging configuration
+            - Exports `window.KOP_FormConfig` namespace
+            - **No dependencies - loads first**
+
+        -   `data-normalizer.js` (~677 lines) - **Data normalization**
+            - Project data structure normalization
+            - Field name standardization
+            - Default value initialization
+            - Exports `window.KOP_DataNormalizer.normalizeProjectData()`
+            - Dependencies: `referrer-form.js` (for create functions)
+
+        -   `api.js` (~412 lines) - **API communication layer**
+            - Cloud data loading (`loadAllProjectsFromCloud`)
+            - Project persistence (`saveProjectToCloud`, `persistProjectLocally`)
+            - Fallback dataset loading
+            - Exports `window.KOP_API` namespace
+            - Dependencies: `config.js`, `data-normalizer.js`
+
+        -   `project.js` (~361 lines) - **Project management**
+            - Project CRUD operations (create, load, delete, rename, recategorize)
+            - Category determination and switching
+            - New project initialization
+            - Exports `window.KOP_Project` namespace
+            - Dependencies: `api.js`
+
+        -   `ui.js` (~68 lines) - **UI base module**
+            - Array value update helpers
+            - Provides `updateArrayItemValue` and `updateArrayObjectItemValue`
+            - Exports `window.KOP_UI` namespace
+            - Dependencies: Global utilities (`resolvePathTarget`, `getNestedValue`, `setNestedValue`)
+
+        -   `ui-events.js` (~161 lines) - **UI event handlers**
+            - Section toggle controls
+            - Mobile section controls
+            - Overview tab switching
+            - Exports `window.KOP_UI_Events` namespace
+            - Dependencies: jQuery only
+
+        -   `ui-render.js` (~804 lines) - **UI rendering engine**
+            - Facility controls rendering
+            - Table of contents generation
+            - Saved projects list rendering
+            - Array rendering and management
+            - Exports `window.KOP_UI_Render` namespace
+            - Dependencies: `ui-events.js`
+
+        -   `ui-state.js` (~109 lines) - **UI state management**
+            - Project status tracking
+            - Label updates for project types
+            - Exports `window.KOP_UI_State` namespace
+            - Dependencies: `ui-render.js`
+
+        -   `ui-actions.js` (~373 lines) - **UI actions and mutations**
+            - Facility operations (add, remove, clone, sort)
+            - Facility navigation (previous, next)
+            - Array item management
+            - Exports `window.KOP_UI_Actions` namespace
+            - Dependencies: All UI modules + `project.js` + `api.js`
 
         -   `kadence-nav-guard.js` (~330 lines) - **Navigation conflict prevention**
             - Prevents Kadence theme errors on headerless pages
@@ -322,12 +389,18 @@ Template includes templates/data-form-admin.php
     ↓
 functions.php::enqueue_facility_form_script() detects template
     ↓
-Loads: css/data-form.css, js/data-form/utilities.js,
-       js/data-form/facility-form.v3.js, js/data-form/admin-data-page.js
+Loads modules in dependency order:
+  1. utilities.js (global helpers)
+  2. config.js → data-normalizer.js → api.js → project.js
+  3. ui.js → ui-events.js → ui-render.js → ui-state.js → ui-actions.js
+  4. db-form-loader.js, location-form.js, referrer-form.js, notes.js
+  5. autocomplete.js, facility-report-generator.js, facility-toolbar.js
+  6. facility-form.v4.js (orchestrator)
+  7. admin-data-page.js (page-specific logic)
     ↓
 Localizes KOP_FACILITY_FORM_CONFIG with: mode='master', apiBase, endpoints
     ↓
-User interacts → API calls → Saves to facilities_master table
+User interacts → KOP_API module → Saves to facilities_master table
 ```
 
 **2. Public Suggestion Page**
@@ -430,8 +503,8 @@ Thanks for contributing! Maintain consistency with the structure above to ensure
 
 ## Facility form configuration contract
 
-- **Localized config object** — `wp_localize_script('facility-form-script', 'KOP_FACILITY_FORM_CONFIG', …)` guarantees every page that embeds `[facility_form]` exposes at least `fallbackProjectsUrl`, `fallbackProjectsUrls`, and `apiBase` (`functions.php`). The JavaScript loader (`js/facility-form.v3.js`) normalizes those inputs into ordered fallback lists, supplements them with optional `apiBaseFallbacks`, and resolves endpoint overrides supplied via `KOP_FACILITY_FORM_CONFIG.endpoints` before falling back to bundled resolver targets such as `/wp-content/themes/child/api/save-master.php`, `get-master-data.php`, and `get-autocomplete.php` (`api/save-master.php`, `api/get-master-data.php`, `api/get-autocomplete.php`). It also reads `mode` (or global `FORM_MODE`) to toggle between master and suggestion workflows, inspects `debug` / `debugLogging` flags (plus `window.KOP_FACILITY_FORM_DEBUG` or storage toggles) to enable verbose logging, and records the prioritized fallback dataset URL list so the form can hydrate itself when the API is offline.
-- **Endpoint resolution helpers** — During boot the script looks for `window.KOP_API.getEndpoint()` and `window.KOP_THEME_BASES` to augment the localized config, ensuring custom hosting setups can centralize path discovery without editing the bundle. Contributors configuring staging environments should populate the localized object (or global helpers) instead of hard-coding paths so that API requests continue to point at the intended WordPress root even when the theme directory moves (`js/facility-form.v3.js`).
+- **Localized config object** — `wp_localize_script('facility-form-script', 'KOP_FACILITY_FORM_CONFIG', …)` guarantees every page that embeds `[facility_form]` exposes at least `fallbackProjectsUrl`, `fallbackProjectsUrls`, and `apiBase` (`functions.php`). The JavaScript loader (`js/facility-form.v4.js`) normalizes those inputs into ordered fallback lists, supplements them with optional `apiBaseFallbacks`, and resolves endpoint overrides supplied via `KOP_FACILITY_FORM_CONFIG.endpoints` before falling back to bundled resolver targets such as `/wp-content/themes/child/api/save-master.php`, `get-master-data.php`, and `get-autocomplete.php` (`api/save-master.php`, `api/get-master-data.php`, `api/get-autocomplete.php`). It also reads `mode` (or global `FORM_MODE`) to toggle between master and suggestion workflows, inspects `debug` / `debugLogging` flags (plus `window.KOP_FACILITY_FORM_DEBUG` or storage toggles) to enable verbose logging, and records the prioritized fallback dataset URL list so the form can hydrate itself when the API is offline.
+- **Endpoint resolution helpers** — During boot the script looks for `window.KOP_API.getEndpoint()` and `window.KOP_THEME_BASES` to augment the localized config, ensuring custom hosting setups can centralize path discovery without editing the bundle. Contributors configuring staging environments should populate the localized object (or global helpers) instead of hard-coding paths so that API requests continue to point at the intended WordPress root even when the theme directory moves (`js/facility-form.v4.js`).
 
 ## Anonymous document portal guidance
 

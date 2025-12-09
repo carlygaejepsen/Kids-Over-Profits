@@ -1,22 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git config:*)",
-      "Bash(git commit:*)",
-      "Bash(test:*)",
-      "Bash(php -l:*)",
-      "Bash(node -c:*)",
-      "Bash(NUL)",
-      "Bash(git push:*)",
-      "Bash(powershell -Command:*)",
-      "Bash(cat:*)",
-      "Bash(ls:*)",
-      "Bash(dir /b)",
-      "Bash(find:*)",
-      "Bash(dir /s /b *.html)",
-      "Bash(findstr:*)",
-      "Bash(grep:*)"
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

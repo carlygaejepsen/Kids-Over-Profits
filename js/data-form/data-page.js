@@ -2286,9 +2286,8 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
 
         // ============================================
         // FIELD NOTES FUNCTIONALITY
-        // ============================================
-        // Note: Field notes functionality has been moved to facility-form.v3.js
-        // Note: Field notes functionality has been moved to facility-form.v3.js
+// Note: Field notes functionality has been moved to facility-form.v4.js
+        // Note: Field notes functionality has been moved to facility-form.v4.js
         // It is automatically initialized when the form loads
         
         // ============================================
@@ -2711,7 +2710,7 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
 
             initializeCategoryNavigation();
 
-            // Initialize facility toolbar toggle (defined in facility-form.v3.js)
+            // Initialize facility toolbar toggle (defined in facility-form.v4.js)
             if (typeof window.initializeFacilityToolbarToggle === 'function') {
                 window.initializeFacilityToolbarToggle();
             }
@@ -2735,8 +2734,8 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 console.log('✅ Initialized', activeCategory, 'view');
             }
 
-            // Refresh saved project panels (from facility-form.v3.js)
-            // facility-form.v3.js handles this automatically after cloud load,
+            // Refresh saved project panels (from facility-form.v4.js)
+            // facility-form.v4.js handles this automatically after cloud load,
             // but we also trigger it here in case the timing is different
             if (typeof window.refreshSavedProjectPanels === 'function') {
                 console.log('Calling refreshSavedProjectPanels from data.html');
@@ -2864,7 +2863,7 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 }
             }
 
-            // Initialize overview features (functions defined in facility-form.v3.js)
+            // Initialize overview features (functions defined in facility-form.v4.js)
             if (typeof window.initializeConsultantsTocToggle === 'function') {
                 initializeConsultantsTocToggle();
             }
@@ -2895,7 +2894,7 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
             ensureAdminPageInitialization();
         });
 
-        // Initialize tab-switching for overviews (function defined in facility-form.v3.js)
+        // Initialize tab-switching for overviews (function defined in facility-form.v4.js)
         if (typeof window.initializeOverviewTabSwitching === 'function') {
             initializeOverviewTabSwitching();
         }
