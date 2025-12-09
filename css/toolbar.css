@@ -123,14 +123,14 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .fixed-toolbar .toolbar-section {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     position: relative;
 }
@@ -403,14 +403,14 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-section {
         gap: 8px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .fixed-toolbar .toolbar-group {
         width: 100%;
         gap: 8px;
         justify-content: space-between;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .fixed-toolbar .toolbar-group.facility-nav-group {
@@ -440,12 +440,14 @@ body:not(.admin-bar) .fixed-toolbar {
     }
 
     .fixed-toolbar .btn-toolbar {
-        flex: 1 1 calc(25% - 8px);
-        min-width: 0;
+        flex: 1 1 0;
+        aspect-ratio: 1;
+        min-width: 28px;
+        max-width: 48px;
         width: auto;
-        height: 48px;
-        min-height: 48px;
-        font-size: 20px;
+        height: auto;
+        min-height: 28px;
+        font-size: 14px;
         padding: 0;
     }
 }
