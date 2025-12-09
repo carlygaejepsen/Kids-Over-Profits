@@ -4,7 +4,8 @@
       "Bash(node -e:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(php -r:*)"
     ],
     "deny": [],
     "ask": []
