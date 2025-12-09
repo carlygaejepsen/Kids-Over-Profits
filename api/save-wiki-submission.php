@@ -51,45 +51,37 @@ try {
         // List submissions
         $where = [];
         $params = [];
-        
+
         if ($status) {
-            $where[] = "status = ?";
-            $params[] = $status;
+            $where[] = "status = :status";
+            $params[':status'] = $status;
         }
-        
+
         if ($search) {
-            $where[] = "(program_name LIKE ? OR city_state LIKE ?)";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
+            $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
         }
-        
+
         $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-        
+
         // Get total count
         $countStmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_submissions $whereClause");
         $countStmt->execute($params);
         $total = $countStmt->fetchColumn();
-        
-        // Get submissions
+
+        // Get submissions - add limit/offset to params
         $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
                        submitted_by, created_at, updated_at
                 FROM wiki_submissions $whereClause
                 ORDER BY created_at DESC
                 LIMIT :limit OFFSET :offset";
 
+        $params[':limit'] = $limit;
+        $params[':offset'] = $offset;
+
         $stmt = $pdo->prepare($sql);
-
-        // Bind the WHERE clause params
-        $paramIndex = 1;
-        foreach ($params as $param) {
-            $stmt->bindValue($paramIndex++, $param);
-        }
-
-        // Bind LIMIT and OFFSET as integers
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-
-        $stmt->execute();
+        $stmt->execute($params);
         $submissions = $stmt->fetchAll();
         
         echo json_encode([
