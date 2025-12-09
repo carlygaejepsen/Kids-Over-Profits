@@ -2871,6 +2871,19 @@ input[type="url"].array-input {
         padding: 10px 12px;
     }
 
+    /* Fields with buttons should shrink to fit */
+    .form-group.has-note-button .field-content input,
+    .form-group.has-note-button .field-content textarea,
+    .form-group.has-note-button .field-content select,
+    .field-input-wrapper input,
+    .field-input-wrapper textarea,
+    .field-input-wrapper select {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 100px;
+        max-width: none;
+    }
+
     textarea {
         min-height: 80px;
     }
@@ -2890,18 +2903,21 @@ input[type="url"].array-input {
         padding: 10px;
     }
 
-    /* Array Items - Stack on Mobile */
+    /* Array Items - Keep in one row on Mobile */
     .array-item {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: center;
         padding: 10px;
-        gap: 10px;
+        gap: 8px;
+        flex-wrap: nowrap;
     }
 
     .array-item input,
     .array-item textarea {
-        max-width: 100%;
-        width: 100%;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 100px;
+        max-width: none;
     }
 
     .array-input {
@@ -3111,18 +3127,19 @@ input[type="url"].array-input {
         margin: 8px 0 12px 0;
     }
 
-    /* Facility / consultant cards – stack badges below info */
+    /* Facility / consultant cards – keep badges inline */
     .facility-item,
     .facility-quick-item,
     .consultant-item {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
         gap: 8px;
+        flex-wrap: nowrap;
     }
 
     .facility-ownership-badge,
     .consultant-independent-badge {
-        margin-top: 4px;
+        flex-shrink: 0;
     }
 
     /* Consultant navigation - make it wrap on mobile */
