@@ -328,6 +328,44 @@ body:not(.admin-bar) .fixed-toolbar {
     font-size: 16px;
 }
 
+/* Tablet view optimizations (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .fixed-toolbar .toolbar-content {
+        padding: 10px 12px;
+        justify-content: center;
+        overflow-x: auto;
+    }
+
+    .fixed-toolbar .toolbar-section {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .fixed-toolbar .toolbar-group {
+        justify-content: center;
+    }
+
+    .fixed-toolbar .toolbar-group.facility-nav-group {
+        width: 100%;
+        justify-content: center;
+        margin: 8px 0;
+    }
+
+    .fixed-toolbar .btn-toolbar {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        min-height: 48px;
+        font-size: 15px;
+    }
+
+    .fixed-toolbar .facility-dropdown {
+        min-width: 150px;
+        max-width: 200px;
+    }
+}
+
 /* Aggressive space-saving for mobile screens <= 768px */
 @media (max-width: 768px) {
     .fixed-toolbar .toolbar-header {

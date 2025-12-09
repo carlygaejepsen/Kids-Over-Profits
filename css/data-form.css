@@ -1136,7 +1136,55 @@ select:focus {
     margin-bottom: 20px;
 }
 
-@media (max-width: 640px) {
+/* Tablet view - better field sizing (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .form-row {
+        gap: 15px;
+    }
+
+    .form-row-3 {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    /* Reduce max-width for inputs on tablets to fit better */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    select,
+    .input-form,
+    .input-primary,
+    .input-secondary {
+        max-width: 100%;
+    }
+
+    /* Keep small fields small */
+    input[data-field*="ageRange.min"],
+    input[data-field*="ageRange.max"],
+    input[placeholder*="Min"],
+    input[placeholder*="Max"] {
+        max-width: 80px;
+    }
+
+    /* Year fields stay compact */
+    input[data-field*="Year"],
+    input[data-field*="year"],
+    input[placeholder*="Year"],
+    input[placeholder*="year"] {
+        max-width: 120px;
+    }
+
+    /* Phone and number fields */
+    input[type="tel"],
+    input[data-field*="phone"],
+    input[data-field*="capacity"],
+    input[data-field*="census"] {
+        max-width: 180px;
+    }
+}
+
+@media (max-width: 768px) {
     .form-row,
     .form-row-3 {
         grid-template-columns: 1fr;
@@ -2890,6 +2938,123 @@ input[type="url"].array-input {
 .scroll-container::-webkit-scrollbar-thumb:hover,
 #json-display::-webkit-scrollbar-thumb:hover {
     background: #000435;
+}
+
+/* ============================================
+   TABLET RESPONSIVE STYLES (769px to 1024px)
+   ============================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Container adjustments */
+    body {
+        padding: 20px;
+    }
+
+    .form-container,
+    .facility-controls,
+    .section {
+        max-width: 100%;
+    }
+
+    /* Array containers - full width on tablets */
+    .array-container {
+        width: 100%;
+    }
+
+    .array-item {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .array-input {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    /* Buttons - stack better */
+    .controls {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .controls .btn {
+        flex: 1 1 auto;
+        min-width: 140px;
+    }
+
+    /* Section headers */
+    .section-header {
+        padding: 15px 20px;
+    }
+
+    .section-content {
+        padding: 20px;
+    }
+
+    /* Notes and textareas - full width */
+    textarea {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    /* Checkboxes and radio groups - better spacing */
+    .checkbox-group,
+    .radio-group {
+        gap: 12px;
+    }
+
+    /* Staff arrays and complex inputs */
+    .staff-item,
+    .facility-item {
+        width: 100%;
+    }
+
+    /* Field content in note groups */
+    .form-group.has-note-button .field-content {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.has-note-button .field-content input,
+    .form-group.has-note-button .field-content textarea,
+    .form-group.has-note-button .field-content select {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Facility header - better alignment */
+    .facility-header {
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .facility-header h2 {
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Table of contents - compact */
+    .toc-header {
+        flex-wrap: wrap;
+    }
+
+    /* Project management panel */
+    .project-management {
+        padding: 15px;
+    }
+
+    /* Output display */
+    #json-display {
+        font-size: 11px;
+        padding: 12px;
+    }
+
+    /* Modal adjustments for tablets */
+    .modal-content {
+        width: 90%;
+        max-width: 700px;
+    }
 }
 
 /* ============================================
