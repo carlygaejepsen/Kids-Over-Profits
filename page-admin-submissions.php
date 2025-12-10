@@ -112,7 +112,23 @@ get_header();
                             <h3>Generated Wiki Markdown</h3>
                             <button type="button" id="copyMarkdownBtn" class="btn-secondary">📋 Copy Markdown</button>
                         </div>
-                        <textarea id="modalMarkdown" readonly></textarea>
+                        <textarea id="modalMarkdown"></textarea>
+                    </div>
+
+                    <div id="modalDiffSection" class="modal-diff-section">
+                        <div class="modal-diff-header">
+                            <h3>Uploaded Markdown vs. Generated Output</h3>
+                            <p>Lines highlighted in coral show where the original submission diverged from the generated version.</p>
+                        </div>
+                        <div id="modalDiff" class="modal-diff-grid"></div>
+                    </div>
+
+                    <div class="markdown-preview original-markdown-preview">
+                        <div class="markdown-header">
+                            <h3>Uploaded Markdown (Read Only)</h3>
+                            <span class="markdown-note">Full, unedited content that was uploaded or imported.</span>
+                        </div>
+                        <textarea id="modalOriginalMarkdown" rows="8" readonly placeholder="No uploaded markdown was provided for this submission."></textarea>
                     </div>
 
                     <!-- Form Data Preview -->

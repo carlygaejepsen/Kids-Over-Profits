@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return `No media coverage or related links for ${name} have been noted yet. Please add articles, videos, interviews, or press releases that mention the program so the media section can point readers to source material.`;
         }
 
-        return `No information is known about ${category} at ${name}. If you attended ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain8910.`;
+        return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please share them so this section can stay accurate.`;
     };
 
     // --- Helper: Normalize/Sanitize URLs for Markdown ---

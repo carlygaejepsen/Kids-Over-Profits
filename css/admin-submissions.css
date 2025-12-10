@@ -334,6 +334,94 @@
     white-space: pre-wrap;
 }
 
+.modal-diff-section {
+    border-radius: 14px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-white);
+    padding: 20px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    max-height: 360px;
+    overflow: hidden;
+}
+
+.modal-diff-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--kop-midnight-blue);
+}
+
+.modal-diff-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--kop-text-secondary);
+}
+
+.modal-diff-grid {
+    margin-top: 16px;
+    display: grid;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.diff-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--kop-border-secondary);
+    font-size: 13px;
+}
+
+.diff-row--header {
+    border-bottom: 1px solid var(--kop-border-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--kop-text-secondary);
+}
+
+.diff-row--changed {
+    background: rgba(254, 128, 136, 0.08);
+    border-left: 4px solid var(--kop-coral-pink);
+    padding-left: 10px;
+}
+
+.diff-row--empty {
+    border-bottom: none;
+}
+
+.diff-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.diff-line-number {
+    font-size: 11px;
+    color: var(--kop-text-secondary);
+    letter-spacing: 0.08em;
+}
+
+.diff-line-text {
+    font-family: 'Source Code Pro', 'Consolas', 'Monaco', monospace;
+    line-height: 1.5;
+    color: var(--kop-midnight-blue);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.diff-line-empty {
+    color: var(--kop-border-secondary);
+    font-style: italic;
+}
+
+.diff-empty-message {
+    grid-column: 1 / -1;
+    color: var(--kop-text-secondary);
+    font-size: 14px;
+}
+
 .markdown-preview textarea,
 .reviewer-notes-input textarea,
 .reviewer-identity input {
@@ -357,6 +445,20 @@
 #modalMarkdown {
     min-height: 260px;
     border: 1px solid var(--kop-border-secondary);
+}
+
+.original-markdown-preview textarea {
+    min-height: 220px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-soft-pastel-yellow);
+    font-family: 'Source Code Pro', 'Consolas', monospace;
+    color: var(--kop-midnight-blue);
+    resize: vertical;
+}
+
+.markdown-note {
+    font-size: 12px;
+    color: var(--kop-text-secondary);
 }
 
 .form-data-preview details {

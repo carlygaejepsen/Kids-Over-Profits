@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitterNotesSection = document.getElementById('submitterNotesSection');
     const submitterNotes = document.getElementById('submitterNotes');
     const modalMarkdown = document.getElementById('modalMarkdown');
+    const modalOriginalMarkdown = document.getElementById('modalOriginalMarkdown');
+    const modalDiff = document.getElementById('modalDiff');
     const modalFormData = document.getElementById('modalFormData');
     const copyMarkdownBtn = document.getElementById('copyMarkdownBtn');
     const reviewerNotes = document.getElementById('reviewerNotes');
@@ -53,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // State
     let currentSubmission = null;
     let allSubmissions = [];
+    let currentOriginalMarkdown = '';
 
     // API endpoints
     const API_BASE = '/wp-content/themes/child/api';
@@ -84,6 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
             performAction('delete');
         }
     });
+
+    if (modalMarkdown) {
+        modalMarkdown.addEventListener('input', () => {
+            renderDiff(currentOriginalMarkdown, modalMarkdown.value);
+        });
+    }
 
     // Functions
 
@@ -252,6 +261,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Markdown
         modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
+        const originalMarkdown = submission.original_markdown || '';
+        currentOriginalMarkdown = originalMarkdown;
+        if (modalOriginalMarkdown) {
+            modalOriginalMarkdown.value = originalMarkdown;
+        }
+        renderDiff(originalMarkdown, modalMarkdown.value);
 
         // Form data
         modalFormData.textContent = JSON.stringify(jsonData, null, 2);
@@ -320,6 +335,55 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000);
         } catch (error) {
             alert('Failed to copy to clipboard');
+        }
+    }
+
+    function renderDiff(original, generated) {
+        if (!modalDiff) return;
+        const sourceOriginal = original || '';
+        const sourceGenerated = generated || '';
+        modalDiff.innerHTML = '';
+
+        const headerRow = document.createElement('div');
+        headerRow.className = 'diff-row diff-row--header';
+        headerRow.innerHTML = `
+            <div>Uploaded Markdown</div>
+            <div>Generated Markdown</div>
+        `;
+        modalDiff.appendChild(headerRow);
+
+        if (!sourceOriginal.trim()) {
+            const emptyRow = document.createElement('div');
+            emptyRow.className = 'diff-row diff-row--empty';
+            emptyRow.innerHTML = '<div class="diff-empty-message">No uploaded markdown was provided for this submission.</div>';
+            modalDiff.appendChild(emptyRow);
+            return;
+        }
+
+        const originalLines = sourceOriginal.split(/\r?\n/);
+        const generatedLines = sourceGenerated.split(/\r?\n/);
+        const maxLines = Math.max(originalLines.length, generatedLines.length, 1);
+        const formatLine = (line) => line ? escapeHtml(line) : '<span class="diff-line-empty">—</span>';
+
+        for (let i = 0; i < maxLines; i += 1) {
+            const origLine = originalLines[i] ?? '';
+            const genLine = generatedLines[i] ?? '';
+            const changed = origLine.trim() !== genLine.trim();
+            const row = document.createElement('div');
+            row.className = 'diff-row';
+            if (changed) row.classList.add('diff-row--changed');
+
+            row.innerHTML = `
+                <div class="diff-cell">
+                    <span class="diff-line-number">#${i + 1}</span>
+                    <span class="diff-line-text">${formatLine(origLine)}</span>
+                </div>
+                <div class="diff-cell">
+                    <span class="diff-line-number">#${i + 1}</span>
+                    <span class="diff-line-text">${formatLine(genLine)}</span>
+                </div>
+            `;
+            modalDiff.appendChild(row);
         }
     }
 

@@ -5,7 +5,8 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(dir:*)",
-      "Bash(php -r:*)"
+      "Bash(php -r:*)",
+      "Bash(php -l:*)"
     ],
     "deny": [],
     "ask": []

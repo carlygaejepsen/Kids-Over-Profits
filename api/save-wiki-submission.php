@@ -72,7 +72,7 @@ try {
 
         // Get submissions - add limit/offset to params
         $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
-                       submitted_by, created_at, updated_at
+                       submitted_by, created_at, updated_at, original_markdown
                 FROM wiki_submissions $whereClause
                 ORDER BY created_at DESC
                 LIMIT :limit OFFSET :offset";
@@ -120,6 +120,7 @@ try {
     $status = $data['status'] ?? 'submitted';
     $submittedBy = $data['submittedBy'] ?? $data['submitted_by'] ?? '';
     $submissionNotes = $data['submissionNotes'] ?? $data['submission_notes'] ?? '';
+    $originalMarkdown = $data['originalMarkdown'] ?? $data['original_markdown'] ?? '';
     $submissionId = $data['id'] ?? null;
     
     // Validate required fields
@@ -132,6 +133,7 @@ try {
     // Remove meta fields from JSON data to avoid duplication
     $jsonData = $data;
     unset($jsonData['generatedMarkdown'], $jsonData['generated_markdown']);
+    unset($jsonData['originalMarkdown'], $jsonData['original_markdown']);
     unset($jsonData['status'], $jsonData['submittedBy'], $jsonData['submitted_by']);
     unset($jsonData['submissionNotes'], $jsonData['submission_notes']);
     unset($jsonData['id']);
@@ -145,6 +147,7 @@ try {
                     years_active = ?,
                     json_data = ?,
                     generated_markdown = ?,
+                    original_markdown = ?,
                     status = ?,
                     submitted_by = ?,
                     submission_notes = ?,
@@ -159,6 +162,7 @@ try {
             $yearsActive,
             json_encode($jsonData, JSON_UNESCAPED_UNICODE),
             $generatedMarkdown,
+            $originalMarkdown,
             $status,
             $submittedBy,
             $submissionNotes,
@@ -180,8 +184,8 @@ try {
         // Create new submission
         $sql = "INSERT INTO wiki_submissions 
                     (program_name, city_state, program_type, years_active, json_data, 
-                     generated_markdown, status, submitted_by, submission_notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     generated_markdown, original_markdown, status, submitted_by, submission_notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -191,6 +195,7 @@ try {
             $yearsActive,
             json_encode($jsonData, JSON_UNESCAPED_UNICODE),
             $generatedMarkdown,
+            $originalMarkdown,
             $status,
             $submittedBy,
             $submissionNotes
