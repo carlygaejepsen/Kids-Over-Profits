@@ -464,7 +464,7 @@ get_header();
 
         <h2>Generated Wiki Code</h2>
         <p>Copy the text below and paste it directly into the Reddit wiki editor.</p>
-        <textarea id="outputCode" readonly></textarea>
+        <textarea id="outputCode" placeholder="Generated markdown will appear here. You can edit it before copying or submitting."></textarea>
         <div class="output-actions">
             <button type="button" id="convertPastBtn">Convert to Past Tense</button>
             <button type="button" id="copyBtn">Copy to Clipboard</button>
