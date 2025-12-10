@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rules = [];
     let allegations = [];
     let therapies = [];
+    let importedMarkdown = ''; // Store original imported markdown
 
     const staffNameInput = document.getElementById('staffName');
     const staffRoleInput = document.getElementById('staffRole');
@@ -1212,6 +1213,8 @@ ${relatedMediaSection}
             console.log('First 200 characters:', markdown.substring(0, 200));
 
             try {
+                // Store the imported markdown before clearing
+                importedMarkdown = markdown;
                 parseAndPopulate(markdown);
                 alert('Import successful! Form fields have been populated. Review and edit as needed.');
                 if (importPanel) importPanel.style.display = 'none';
@@ -2329,6 +2332,8 @@ ${relatedMediaSection}
                 therapies: therapies,
                 // Generated output
                 generatedMarkdown: outputCode,
+                // Original imported markdown
+                originalMarkdown: importedMarkdown,
                 // Submission metadata
                 submittedBy: document.getElementById('submitterEmail')?.value || '',
                 submissionNotes: document.getElementById('submissionNotes')?.value || ''

@@ -142,9 +142,9 @@ body:not(.admin-bar) .fixed-toolbar {
     flex-shrink: 0;
     white-space: nowrap;
     padding: 0;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 }
 
 .fixed-toolbar .toolbar-group.facility-nav-group {
