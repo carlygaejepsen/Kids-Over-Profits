@@ -235,6 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helper: Get Placeholder Text ---
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
+        const lowerCategory = (category || '').toLowerCase();
+        if (lowerCategory.includes('media')) {
+            return `No media coverage or related links for ${name} have been noted yet. Please add articles, videos, interviews, or press releases that mention the program so the media section can point readers to source material.`;
+        }
+
         return `No information is known about ${category} at ${name}. If you attended ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain8910.`;
     };
 
@@ -962,7 +967,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `- ${linkText}${sourceDate}`;
             }).join('\n');
             const combinedMedia = [mediaList, newsList].filter(Boolean).join('\n\n');
-            const mediaSection = combinedMedia || getPlaceholder('In the Media', programName);
+            const mediaSection = combinedMedia || getPlaceholder('Media Coverage', programName);
 
             // --- Build Testimonies Section ---
             let testimoniesSection;
