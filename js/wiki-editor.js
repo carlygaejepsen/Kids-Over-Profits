@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = programName || '[Program Name]';
         const lowerCategory = (category || '').toLowerCase();
         if (lowerCategory.includes('media')) {
-            return `No media coverage or related links for ${name} have been noted yet. Please add articles, videos, interviews, or press releases that mention the program so the media section can point readers to source material.`;
+            return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain8910.`;
         }
 
         return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please share them so this section can stay accurate.`;
