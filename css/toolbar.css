@@ -410,6 +410,14 @@ body:not(.admin-bar) .fixed-toolbar {
         display: none;
     }
 
+    .fixed-toolbar .btn-toolbar {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 14px;
+    }
+
     .fixed-toolbar .facility-dropdown {
         min-width: 110px;
         max-width: 150px;
@@ -480,11 +488,11 @@ body:not(.admin-bar) .fixed-toolbar {
     .fixed-toolbar .btn-toolbar {
         flex: 1 1 0;
         aspect-ratio: 1;
-        min-width: 28px;
+        min-width: 40px;
         max-width: 48px;
         width: auto;
         height: auto;
-        min-height: 28px;
+        min-height: 40px;
         font-size: 14px;
         padding: 0;
     }
