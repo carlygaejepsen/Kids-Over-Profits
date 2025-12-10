@@ -1,80 +1,86 @@
 /**
  * Admin Submissions Review Interface Styles
- * Updated to align with the Kids Over Profits palette from AGENTS.md.
+ * Palette aligned with AGENTS.md color system.
  */
+
+:root {
+    color-scheme: light;
+}
 
 .admin-submissions-page {
     background: var(--kop-bg-primary);
     color: var(--kop-text-primary);
-    padding: 40px 24px 60px;
     min-height: 100vh;
+    padding: 48px 20px 64px;
 }
 
 .admin-submissions-container {
-    max-width: 1400px;
     margin: 0 auto;
+    max-width: 1400px;
     background: var(--kop-bg-secondary);
-    border-radius: 20px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+    border-radius: 24px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
     border: 1px solid var(--kop-border-secondary);
     overflow: hidden;
 }
 
 .admin-header {
-    padding: 32px 40px;
+    padding: 36px 40px 30px;
     border-bottom: 1px solid var(--kop-border-secondary);
-    background: var(--kop-bg-secondary);
 }
 
 .admin-header h1 {
-    margin: 0 0 16px;
+    margin: 0;
     font-size: 32px;
     color: var(--kop-midnight-blue);
-    letter-spacing: 0.01em;
+    letter-spacing: 0.04em;
 }
 
 .admin-stats {
+    margin-top: 18px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
-    margin-top: 12px;
 }
 
 .stat-card {
-    border-radius: 14px;
-    padding: 18px 20px;
+    border-radius: 16px;
+    padding: 20px 18px;
     color: #fff;
-    min-height: 100px;
+    min-height: 96px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: var(--kop-midnight-blue);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.stat-card:nth-child(1) {
+    background: linear-gradient(135deg, var(--kop-midnight-blue), var(--kop-navy-blue));
 }
 
 .stat-card:nth-child(2) {
-    background: var(--kop-teal);
+    background: linear-gradient(135deg, var(--kop-teal), var(--kop-mint-green));
 }
 
 .stat-card:nth-child(3) {
-    background: var(--kop-orange);
+    background: linear-gradient(135deg, var(--kop-orange), var(--kop-coral-pink));
 }
 
 .stat-card:nth-child(4) {
-    background: var(--kop-chartreuse);
+    background: linear-gradient(135deg, var(--kop-chartreuse), #d5f368);
     color: var(--kop-midnight-blue);
 }
 
 .stat-label {
     font-size: 12px;
-    text-transform: uppercase;
-    opacity: 0.8;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
     margin-bottom: 6px;
 }
 
 .stat-value {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
     line-height: 1;
 }
@@ -101,48 +107,34 @@
 .filter-controls select,
 .filter-controls input[type="text"] {
     padding: 10px 14px;
-    border-radius: 10px;
+    border-radius: 14px;
     border: 1px solid var(--kop-border-primary);
-    font-size: 14px;
-    font-family: inherit;
     background: var(--kop-white);
+    font-size: 14px;
     color: var(--kop-midnight-blue);
-    min-width: 180px;
-}
-
-.filter-controls input[type="text"] {
-    min-width: 260px;
+    font-family: inherit;
 }
 
 .btn-secondary {
+    border-radius: 14px;
+    padding: 10px 22px;
     border: none;
-    border-radius: 12px;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
     background: var(--kop-teal);
-    color: #fff;
+    color: var(--kop-white);
+    font-weight: 700;
+    letter-spacing: 0.08em;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-secondary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(51, 167, 181, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(51, 167, 181, 0.35);
 }
 
 .submissions-list-container {
-    padding: 30px 40px 40px;
+    padding: 28px 40px 40px;
     background: var(--kop-bg-secondary);
-}
-
-.loading-message,
-.no-submissions {
-    text-align: center;
-    padding: 80px 20px;
-    font-size: 16px;
-    color: var(--kop-text-secondary);
 }
 
 .submissions-list {
@@ -152,66 +144,61 @@
 }
 
 .submission-card {
-    border-radius: 16px;
     padding: 22px;
+    border-radius: 18px;
     background: var(--kop-white);
     border: 1px solid var(--kop-border-secondary);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
     gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .submission-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15);
 }
 
 .submission-header {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .submission-header h3 {
     margin: 0;
     font-size: 18px;
     color: var(--kop-midnight-blue);
-    flex: 1;
 }
 
 .status-badge {
-    border-radius: 999px;
     padding: 6px 14px;
-    font-size: 11px;
+    border-radius: 40px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    border: 1px solid transparent;
+    background: var(--kop-soft-pastel-yellow);
+    color: var(--kop-midnight-blue);
+    border: 1px solid var(--kop-border-secondary);
 }
 
 .status-submitted {
-    background: rgba(255, 245, 203, 0.7);
-    color: var(--kop-midnight-blue);
-    border-color: rgba(255, 245, 203, 0.9);
+    background: rgba(255, 245, 203, 0.8);
 }
 
 .status-approved {
-    background: rgba(178, 227, 212, 0.9);
-    color: var(--kop-midnight-blue);
-    border-color: rgba(178, 227, 212, 1);
+    background: rgba(182, 227, 212, 0.8);
 }
 
 .status-published {
-    background: rgba(174, 224, 237, 0.9);
-    color: var(--kop-midnight-blue);
-    border-color: rgba(174, 224, 237, 1);
+    background: rgba(174, 224, 237, 0.8);
 }
 
 .status-rejected {
-    background: rgba(254, 128, 136, 0.25);
-    color: var(--kop-midnight-blue);
-    border-color: rgba(254, 128, 136, 1);
+    background: rgba(254, 128, 136, 0.3);
 }
 
 .submission-meta {
@@ -223,23 +210,23 @@
 }
 
 .submission-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-size: 12px;
     color: var(--kop-text-secondary);
     border-top: 1px solid var(--kop-border-secondary);
     padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .btn-view {
-    border-radius: 999px;
     border: none;
-    padding: 8px 18px;
-    background: var(--kop-button-primary);
-    color: #fff;
-    font-weight: 600;
+    border-radius: 999px;
+    padding: 8px 20px;
     cursor: pointer;
+    font-weight: 600;
+    color: #fff;
+    background: var(--kop-button-primary);
     transition: background 0.2s ease;
 }
 
@@ -255,30 +242,30 @@
     z-index: 10000;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 18px;
 }
 
 .submission-modal-content {
-    background: var(--kop-white);
-    border-radius: 18px;
     width: min(900px, 100%);
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+    max-height: 92vh;
+    background: var(--kop-white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
 }
 
 .modal-header {
-    padding: 30px 30px 10px;
-    border-bottom: 1px solid var(--kop-border-secondary);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    padding: 28px 32px 16px;
+    border-bottom: 1px solid var(--kop-border-secondary);
 }
 
 .modal-header h2 {
     margin: 0;
-    color: var(--kop-midnight-blue);
     font-size: 26px;
+    color: var(--kop-midnight-blue);
 }
 
 .modal-close {
@@ -287,27 +274,35 @@
     font-size: 32px;
     color: var(--kop-text-secondary);
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .modal-close:hover {
-    color: var(--kop-midnight-blue);
+    color: var(--kop-text-primary);
 }
 
 .modal-body {
     padding: 30px;
-    gap: 25px;
     display: flex;
     flex-direction: column;
+    gap: 22px;
+    background: var(--kop-bg-primary);
+}
+
+.submission-info,
+.submission-notes,
+.markdown-preview,
+.reviewer-section,
+.form-data-preview details,
+#existingReviewSection {
+    border-radius: 14px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-white);
 }
 
 .submission-info {
+    padding: 16px 20px;
     background: var(--kop-soft-pastel-yellow);
-    border-radius: 12px;
-    padding: 18px;
-    border: 1px solid var(--kop-border-primary);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
 }
 
 .info-row {
@@ -317,107 +312,86 @@
 }
 
 .info-label {
-    font-weight: 600;
     min-width: 120px;
+    font-weight: 600;
     color: var(--kop-text-secondary);
 }
 
 .submission-notes,
-.reviewer-section {
-    border-radius: 12px;
-    padding: 20px;
-    background: var(--kop-bg-primary);
-    border: 1px solid var(--kop-border-secondary);
-}
-
-.submission-notes h3,
-.reviewer-section h3,
-.markdown-preview h3 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    color: var(--kop-midnight-blue);
+.reviewer-section,
+.markdown-preview {
+    padding: 22px;
+    gap: 12px;
 }
 
 .notes-content,
 .existing-notes {
-    background: var(--kop-white);
-    padding: 16px;
+    background: var(--kop-bg-primary);
+    padding: 14px;
     border-radius: 10px;
     border: 1px solid var(--kop-border-primary);
-    color: var(--kop-text-secondary);
-    line-height: 1.6;
-    min-height: 60px;
+    min-height: 70px;
+    color: var(--kop-midnight-blue);
+    white-space: pre-wrap;
 }
 
-.markdown-preview {
-    border-radius: 12px;
+.markdown-preview textarea,
+.reviewer-notes-input textarea,
+.reviewer-identity input {
+    width: 100%;
+    font-family: inherit;
+    border-radius: 10px;
     border: 1px solid var(--kop-border-primary);
-    padding: 16px;
-    background: var(--kop-soft-pastel-yellow);
+    padding: 12px 14px;
+    font-size: 14px;
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
 }
 
 .markdown-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
 
 #modalMarkdown {
-    width: 100%;
-    min-height: 280px;
-    padding: 16px;
+    min-height: 260px;
     border: 1px solid var(--kop-border-secondary);
-    border-radius: 10px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    background: var(--kop-white);
-    color: var(--kop-midnight-blue);
-    resize: vertical;
 }
 
 .form-data-preview details {
-    border: 1px solid var(--kop-border-primary);
-    border-radius: 10px;
-    padding: 12px;
+    padding: 16px;
     background: var(--kop-bg-primary);
 }
 
 .form-data-preview summary {
+    cursor: pointer;
     font-weight: 600;
     color: var(--kop-midnight-blue);
-    cursor: pointer;
-    outline: none;
 }
 
 .form-data-preview pre {
-    margin: 12px 0 0;
-    padding: 14px;
+    margin-top: 12px;
+    padding: 12px;
     background: var(--kop-white);
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid var(--kop-border-secondary);
     overflow-x: auto;
     font-size: 13px;
 }
 
-.reviewer-notes-input textarea,
-.reviewer-identity input {
-    width: 100%;
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-secondary);
-    padding: 10px 12px;
-    font-size: 14px;
-    background: var(--kop-white);
+.reviewer-section h3,
+.markdown-preview h3,
+.submission-notes h3 {
+    margin: 0 0 12px;
     color: var(--kop-midnight-blue);
-    font-family: inherit;
 }
 
 #existingReviewSection {
-    margin-top: 20px;
-    border-radius: 10px;
-    padding: 16px;
-    background: rgba(174, 224, 237, 0.35);
-    border: 1px solid rgba(174, 224, 237, 1);
+    padding: 18px;
+    background: rgba(174, 224, 237, 0.25);
+    border-color: rgba(174, 224, 237, 1);
 }
 
 #existingReviewSection h4 {
@@ -430,55 +404,43 @@
 .modal-footer {
     padding: 24px 30px 30px;
     border-top: 1px solid var(--kop-border-secondary);
-    background: var(--kop-bg-primary);
+    background: var(--kop-bg-secondary);
 }
 
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 10px;
 }
 
 .action-buttons button {
     border: none;
     border-radius: 12px;
-    padding: 12px 22px;
-    font-size: 14px;
+    padding: 12px 24px;
     font-weight: 700;
+    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    letter-spacing: 0.04em;
-}
-
-.action-buttons button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
+    transition: transform 0.2s ease;
 }
 
 .btn-approve {
     background: var(--kop-chartreuse);
     color: var(--kop-midnight-blue);
-    box-shadow: 0 10px 20px rgba(178, 225, 212, 0.35);
 }
 
 .btn-reject {
     background: var(--kop-coral-pink);
-    color: #fff;
-    box-shadow: 0 10px 20px rgba(254, 128, 136, 0.45);
+    color: var(--kop-white);
 }
 
 .btn-publish {
     background: var(--kop-orange);
-    color: #fff;
-    box-shadow: 0 10px 20px rgba(239, 144, 52, 0.4);
+    color: var(--kop-white);
 }
 
 .btn-delete {
     background: var(--kop-midnight-blue);
-    color: #fff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+    color: var(--kop-white);
 }
 
 .action-buttons button:hover:not(:disabled) {
@@ -489,7 +451,7 @@
     min-height: 30px;
     font-weight: 600;
     text-align: center;
-    color: var(--kop-midnight-blue);
+    color: var(--kop-navy-blue);
 }
 
 .action-status .loading {
@@ -505,17 +467,17 @@
 }
 
 .error-message {
-    background: rgba(254, 128, 136, 0.15);
-    color: var(--kop-midnight-blue);
     border-radius: 12px;
-    padding: 40px 24px;
+    padding: 42px 26px;
+    background: rgba(254, 128, 136, 0.15);
     border: 1px solid rgba(254, 128, 136, 0.6);
-    font-weight: 600;
+    color: var(--kop-midnight-blue);
+    font-weight: 700;
 }
 
 @media (max-width: 768px) {
     .admin-submissions-page {
-        padding: 20px 12px 40px;
+        padding: 24px 12px 36px;
     }
 
     .admin-header,
@@ -523,17 +485,13 @@
     .submissions-list-container,
     .modal-body,
     .modal-footer {
-        padding: 18px;
+        padding-left: 18px;
+        padding-right: 18px;
     }
 
     .filter-controls {
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .filter-controls input,
-    .filter-controls select {
-        min-width: 100%;
     }
 
     .submissions-list {

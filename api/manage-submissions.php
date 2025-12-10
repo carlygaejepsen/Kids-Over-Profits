@@ -87,10 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                    submitted_by, created_at, updated_at, json_data
             FROM $table $whereClause
             ORDER BY created_at DESC
-            LIMIT :limit OFFSET :offset";
-
-    $params[':limit'] = $limit;
-    $params[':offset'] = $offset;
+            LIMIT {$limit} OFFSET {$offset}";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
