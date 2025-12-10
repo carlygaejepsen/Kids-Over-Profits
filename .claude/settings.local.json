@@ -6,7 +6,9 @@
       "Bash(grep:*)",
       "Bash(dir:*)",
       "Bash(php -r:*)",
-      "Bash(php -l:*)"
+      "Bash(php -l:*)",
+      "Bash(node scripts/scrape-all-programs.js:*)",
+      "Bash(node scripts/rebuild-search-index.js:*)"
     ],
     "deny": [],
     "ask": []

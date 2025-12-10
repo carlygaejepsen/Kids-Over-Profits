@@ -1,0 +1,18 @@
+{
+    "totalPrograms":  1122,
+    "totalStates":  10,
+    "states":  {
+                   "VA":  28,
+                   "TN":  4,
+                   "WV":  1,
+                   "VT":  1,
+                   "SD":  4,
+                   "TX":  2,
+                   "WI":  962,
+                   "UT":  65,
+                   "WA":  35,
+                   "MT":  20
+               },
+    "generatedFrom":  "tti-program-links.json",
+    "generated":  "2025-12-10T16:40:12.0057361-05:00"
+}

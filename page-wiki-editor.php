@@ -459,6 +459,15 @@ get_header();
                 <div class="list-preview" id="mediaListOutput"></div>
             </fieldset>
 
+            <!-- Auto-linking Options -->
+            <div class="auto-linking-options">
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="autoLinkPrograms" checked>
+                    <span>🔗 Automatically link TTI program mentions</span>
+                </label>
+                <p class="auto-linking-help">When enabled, mentions of other TTI programs will automatically be linked to their Reddit wiki pages.</p>
+            </div>
+
             <button type="button" id="generateBtn">Generate Wiki Code</button>
         </form>
 

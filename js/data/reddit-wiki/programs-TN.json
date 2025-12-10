@@ -1,0 +1,27 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Memphis Youth Academy/Varangon Academy",
+                         "url":  "/r/troubledteens/wiki/index/memphisyouth/",
+                         "normalizedName":  "memphis youth academy/varangon academy"
+                     },
+                     {
+                         "name":  "Natchez Trace Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/natcheztrace/",
+                         "normalizedName":  "natchez trace youth academy"
+                     },
+                     {
+                         "name":  "Youth Villages",
+                         "url":  "/r/troubledteens/wiki/index/youthvillagestn/",
+                         "normalizedName":  "youth villages"
+                     },
+                     {
+                         "name":  "Newport News Behavioral Health Center",
+                         "url":  "/r/troubledteens/wiki/index/newportnews/",
+                         "normalizedName":  "newport news behavioral health center"
+                     }
+                 ],
+    "programCount":  4,
+    "generated":  "2025-12-10T16:34:17.2628719-05:00",
+    "state":  "TN"
+}

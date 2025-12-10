@@ -1,0 +1,182 @@
+{
+    "programs":  [
+                     {
+                         "name":  "WWASP",
+                         "url":  "/r/troubledteens/wiki/index/wwasp/",
+                         "normalizedName":  "wwasp"
+                     },
+                     {
+                         "name":  "Oxbow Academy",
+                         "url":  "/r/troubledteens/wiki/index/oxbowacademy/",
+                         "normalizedName":  "oxbow academy"
+                     },
+                     {
+                         "name":  "SageWalk Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/sagewalk/",
+                         "normalizedName":  "sagewalk wilderness"
+                     },
+                     {
+                         "name":  "Woodward Academy",
+                         "url":  "/r/troubledteens/wiki/index/woodwardaca/",
+                         "normalizedName":  "woodward academy"
+                     },
+                     {
+                         "name":  "Woodward Community Based Services",
+                         "url":  "/r/troubledteens/wiki/index/woodwardcomm/",
+                         "normalizedName":  "woodward community based services"
+                     },
+                     {
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewaytc/",
+                         "normalizedName":  "gateway academy"
+                     },
+                     {
+                         "name":  "WWASP",
+                         "url":  "/r/troubledteens/wiki/index/wwasp/",
+                         "normalizedName":  "wwasp"
+                     },
+                     {
+                         "name":  "Brightway Adolescent Hospital",
+                         "url":  "/r/troubledteens/wiki/index/brightway/",
+                         "normalizedName":  "brightway adolescent hospital"
+                     },
+                     {
+                         "name":  "Pathways Argentina",
+                         "url":  "/r/troubledteens/wiki/index/pathwaysarg/",
+                         "normalizedName":  "pathways argentina"
+                     },
+                     {
+                         "name":  "Lyman Ward Military Academy / Southern Preparatory School",
+                         "url":  "/r/troubledteens/wiki/index/lymanward/",
+                         "normalizedName":  "lyman ward military academy / southern preparatory school"
+                     },
+                     {
+                         "name":  "Wayside Union Academy",
+                         "url":  "/r/troubledteens/wiki/index/waysideunion/",
+                         "normalizedName":  "wayside union academy"
+                     },
+                     {
+                         "name":  "Pathway Family Center",
+                         "url":  "/r/troubledteens/wiki/index/pathway/",
+                         "normalizedName":  "pathway family center"
+                     },
+                     {
+                         "name":  "The Bridgeway",
+                         "url":  "/r/troubledteens/wiki/index/bridgeway/",
+                         "normalizedName":  "the bridgeway"
+                     },
+                     {
+                         "name":  "Devereux Cleo Wallace Center",
+                         "url":  "/r/troubledteens/wiki/index/cleowallace/",
+                         "normalizedName":  "devereux cleo wallace center"
+                     },
+                     {
+                         "name":  "Anneewakee School",
+                         "url":  "/r/troubledteens/wiki/index/anneewakee/",
+                         "normalizedName":  "anneewakee school"
+                     },
+                     {
+                         "name":  "The Wardle Home",
+                         "url":  "/r/troubledteens/wiki/index/wardle/",
+                         "normalizedName":  "the wardle home"
+                     },
+                     {
+                         "name":  "Pathway Family Center",
+                         "url":  "/r/troubledteens/wiki/index/pathway/",
+                         "normalizedName":  "pathway family center"
+                     },
+                     {
+                         "name":  "Woodward Academy",
+                         "url":  "/r/troubledteens/wiki/index/woodwardaca/",
+                         "normalizedName":  "woodward academy"
+                     },
+                     {
+                         "name":  "Woodward Community Based Services",
+                         "url":  "/r/troubledteens/wiki/index/woodwardcomm/",
+                         "normalizedName":  "woodward community based services"
+                     },
+                     {
+                         "name":  "Leak \u0026 Watts Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/leakandwatts/",
+                         "normalizedName":  "leak \u0026 watts residential treatment center"
+                     },
+                     {
+                         "name":  "Wilderness Way Girls Camp",
+                         "url":  "/r/troubledteens/wiki/index/wildernessway/",
+                         "normalizedName":  "wilderness way girls camp"
+                     },
+                     {
+                         "name":  "Living Water Refuge",
+                         "url":  "/r/troubledteens/wiki/index/livingwater/",
+                         "normalizedName":  "living water refuge"
+                     },
+                     {
+                         "name":  "One Way Farm",
+                         "url":  "/r/troubledteens/wiki/index/onewayfarm/",
+                         "normalizedName":  "one way farm"
+                     },
+                     {
+                         "name":  "Pathway Family Center",
+                         "url":  "/r/troubledteens/wiki/index/pathway/",
+                         "normalizedName":  "pathway family center"
+                     },
+                     {
+                         "name":  "SageWalk Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/sagewalk/",
+                         "normalizedName":  "sagewalk wilderness"
+                     },
+                     {
+                         "name":  "Azleway Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/azleway/",
+                         "normalizedName":  "azleway boys ranch"
+                     },
+                     {
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewayaca/",
+                         "normalizedName":  "gateway academy"
+                     },
+                     {
+                         "name":  "Oxbow Academy",
+                         "url":  "/r/troubledteens/wiki/index/oxbowacademy/",
+                         "normalizedName":  "oxbow academy"
+                     },
+                     {
+                         "name":  "Wasatch Canyons Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/wasatchcanyons/",
+                         "normalizedName":  "wasatch canyons behavioral health"
+                     },
+                     {
+                         "name":  "Waterfall Canyon Academy",
+                         "url":  "/r/troubledteens/wiki/index/waterfallcanyon/",
+                         "normalizedName":  "waterfall canyon academy"
+                     },
+                     {
+                         "name":  "WayPoint Academy/Cascades Lodge for Boys",
+                         "url":  "/r/troubledteens/wiki/index/waypoint/",
+                         "normalizedName":  "waypoint academy/cascades lodge for boys"
+                     },
+                     {
+                         "name":  "Brightway Adolescent Hospital",
+                         "url":  "/r/troubledteens/wiki/index/brightway/",
+                         "normalizedName":  "brightway adolescent hospital"
+                     },
+                     {
+                         "name":  "River View Academy",
+                         "url":  "/r/troubledteens/wiki/index/riverviewacademy/",
+                         "normalizedName":  "river view academy"
+                     },
+                     {
+                         "name":  "Blackwater Outdoor Experiences",
+                         "url":  "/r/troubledteens/wiki/index/blackwater/",
+                         "normalizedName":  "blackwater outdoor experiences"
+                     },
+                     {
+                         "name":  "ReSTART Leadership Academy",
+                         "url":  "/r/troubledteens/wiki/index/restartwashington/",
+                         "normalizedName":  "restart leadership academy"
+                     }
+                 ],
+    "programCount":  35,
+    "generated":  "2025-12-10T16:34:17.2981473-05:00",
+    "state":  "WA"
+}

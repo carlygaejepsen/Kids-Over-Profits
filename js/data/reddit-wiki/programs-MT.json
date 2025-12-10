@@ -1,0 +1,107 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Acadia Montana",
+                         "url":  "/r/troubledteens/wiki/index/acadiamont/",
+                         "normalizedName":  "acadia montana"
+                     },
+                     {
+                         "name":  "Paradigm Treatment Centers",
+                         "url":  "/r/troubledteens/wiki/index/paradigmtc/",
+                         "normalizedName":  "paradigm treatment centers"
+                     },
+                     {
+                         "name":  "The Brown Schools of Montana",
+                         "url":  "/r/troubledteens/wiki/index/BSmontana/",
+                         "normalizedName":  "the brown schools of montana"
+                     },
+                     {
+                         "name":  "Anchor Home for Boys / Anchor Academy",
+                         "url":  "/r/troubledteens/wiki/index/anchoracademy/",
+                         "normalizedName":  "anchor home for boys / anchor academy"
+                     },
+                     {
+                         "name":  "Bloom Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/bloomtc/",
+                         "normalizedName":  "bloom teen challenge"
+                     },
+                     {
+                         "name":  "Prayer Mountain / Pine Mountain Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/prayermtn/",
+                         "normalizedName":  "prayer mountain / pine mountain boys academy"
+                     },
+                     {
+                         "name":  "Mount Saint John School",
+                         "url":  "/r/troubledteens/wiki/index/mtstjohn/",
+                         "normalizedName":  "mount saint john school"
+                     },
+                     {
+                         "name":  "Pine Mountain / Prayer Mountain Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/prayermtn/",
+                         "normalizedName":  "pine mountain / prayer mountain boys academy"
+                     },
+                     {
+                         "name":  "Beulah Mountain Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/beulahmt/",
+                         "normalizedName":  "beulah mountain christian academy"
+                     },
+                     {
+                         "name":  "Anchor Academy",
+                         "url":  "/r/troubledteens/wiki/index/anchoracademy/",
+                         "normalizedName":  "anchor academy"
+                     },
+                     {
+                         "name":  "Acadia Montana",
+                         "url":  "/r/troubledteens/wiki/index/acadiaMT/",
+                         "normalizedName":  "acadia montana"
+                     },
+                     {
+                         "name":  "Spring Mountain Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/springmtntc/",
+                         "normalizedName":  "spring mountain treatment center"
+                     },
+                     {
+                         "name":  "Shadow Mountain Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/shadowmtn/",
+                         "normalizedName":  "shadow mountain behavioral health system"
+                     },
+                     {
+                         "name":  "Yes Academy",
+                         "url":  "/r/troubledteens/wiki/index/yesacademy/",
+                         "normalizedName":  "yes academy"
+                     },
+                     {
+                         "name":  "Anchor Academy",
+                         "url":  "/r/troubledteens/wiki/index/anchoracademy/",
+                         "normalizedName":  "anchor academy"
+                     },
+                     {
+                         "name":  "Mountain Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/mtnyouth/",
+                         "normalizedName":  "mountain youth academy"
+                     },
+                     {
+                         "name":  "Achievement Valley Ranch",
+                         "url":  "/r/troubledteens/wiki/index/achievemtvalley/",
+                         "normalizedName":  "achievement valley ranch"
+                     },
+                     {
+                         "name":  "The Journey at Mount Pleasant",
+                         "url":  "/r/troubledteens/wiki/index/journeymtpleasant/",
+                         "normalizedName":  "the journey at mount pleasant"
+                     },
+                     {
+                         "name":  "Morning Star Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/morningstarboysmtwa/",
+                         "normalizedName":  "morning star boys ranch"
+                     },
+                     {
+                         "name":  "Rocky Mountain Frontier",
+                         "url":  "/r/troubledteens/wiki/index/rockymtnfrontier/",
+                         "normalizedName":  "rocky mountain frontier"
+                     }
+                 ],
+    "programCount":  20,
+    "generated":  "2025-12-10T16:34:17.2369084-05:00",
+    "state":  "MT"
+}

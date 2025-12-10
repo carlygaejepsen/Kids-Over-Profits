@@ -1053,7 +1053,20 @@ ${relatedMediaSection}
             `;
 
             if (outputCode) {
-                outputCode.value = output.trim();
+                let finalOutput = output.trim();
+
+                // Apply auto-linking if enabled and available
+                const autoLinkCheckbox = document.getElementById('autoLinkPrograms');
+                if (autoLinkCheckbox && autoLinkCheckbox.checked &&
+                    window.ttiAutoLinker && window.ttiAutoLinker.loaded) {
+                    console.log('Applying auto-linking to generated wiki entry...');
+                    finalOutput = window.ttiAutoLinker.autoLink(finalOutput, {
+                        currentProgramName: programName,
+                        linkCurrentProgram: false  // Don't link the program to itself
+                    });
+                }
+
+                outputCode.value = finalOutput;
                 outputCode.focus();
                 outputCode.select();
             }

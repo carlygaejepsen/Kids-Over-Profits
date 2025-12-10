@@ -1,0 +1,147 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Vantage Point Behavioral Health Hospital RTP",
+                         "url":  "/r/troubledteens/wiki/index/vantagepoint/",
+                         "normalizedName":  "vantage point behavioral health hospital rtp"
+                     },
+                     {
+                         "name":  "Vivant Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/vivantbh/",
+                         "normalizedName":  "vivant behavioral health"
+                     },
+                     {
+                         "name":  "Embark at Flathead Valley",
+                         "url":  "/r/troubledteens/wiki/index/flatheadvalley/",
+                         "normalizedName":  "embark at flathead valley"
+                     },
+                     {
+                         "name":  "Elevations RTC",
+                         "url":  "/r/troubledteens/wiki/index/elevationsrtc/",
+                         "normalizedName":  "elevations rtc"
+                     },
+                     {
+                         "name":  "Duval Academy",
+                         "url":  "/r/troubledteens/wiki/index/duval/",
+                         "normalizedName":  "duval academy"
+                     },
+                     {
+                         "name":  "Lava Heights Academy",
+                         "url":  "/r/troubledteens/wiki/index/lavaheights/",
+                         "normalizedName":  "lava heights academy"
+                     },
+                     {
+                         "name":  "Evangel House Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/evangelhouse/",
+                         "normalizedName":  "evangel house christian academy"
+                     },
+                     {
+                         "name":  "Youth of Vision Academy (YOVA)",
+                         "url":  "/r/troubledteens/wiki/index/yova/",
+                         "normalizedName":  "youth of vision academy (yova)"
+                     },
+                     {
+                         "name":  "Morava Academy",
+                         "url":  "/r/troubledteens/wiki/index/morava/",
+                         "normalizedName":  "morava academy"
+                     },
+                     {
+                         "name":  "Arivaca Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/arivaca/",
+                         "normalizedName":  "arivaca boys ranch"
+                     },
+                     {
+                         "name":  "Valley View School",
+                         "url":  "/r/troubledteens/wiki/index/valleyview/",
+                         "normalizedName":  "valley view school"
+                     },
+                     {
+                         "name":  "Vantage Point Behavioral Health Hospital",
+                         "url":  "/r/troubledteens/wiki/index/vantageptar/",
+                         "normalizedName":  "vantage point behavioral health hospital"
+                     },
+                     {
+                         "name":  "Ashley Valley Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/ashleyvalley/",
+                         "normalizedName":  "ashley valley wilderness"
+                     },
+                     {
+                         "name":  "Valle Vista Health System",
+                         "url":  "/r/troubledteens/wiki/index/vallevista/",
+                         "normalizedName":  "valle vista health system"
+                     },
+                     {
+                         "name":  "Evangel House Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/evangelhouse/",
+                         "normalizedName":  "evangel house christian academy"
+                     },
+                     {
+                         "name":  "Embark at Flathead Valley",
+                         "url":  "/r/troubledteens/wiki/index/flatheadvalley/",
+                         "normalizedName":  "embark at flathead valley"
+                     },
+                     {
+                         "name":  "Mountain Valley Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/mountvalley/",
+                         "normalizedName":  "mountain valley treatment center"
+                     },
+                     {
+                         "name":  "Mesilla Valley Hospital",
+                         "url":  "/r/troubledteens/wiki/index/mesillavalley/",
+                         "normalizedName":  "mesilla valley hospital"
+                     },
+                     {
+                         "name":  "Rancho Valmora",
+                         "url":  "/r/troubledteens/wiki/index/ranchovalmora/",
+                         "normalizedName":  "rancho valmora"
+                     },
+                     {
+                         "name":  "Calvalry Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/calvalry/",
+                         "normalizedName":  "calvalry boys ranch"
+                     },
+                     {
+                         "name":  "Scotts Valley School",
+                         "url":  "/r/troubledteens/wiki/index/scottsvalley/",
+                         "normalizedName":  "scotts valley school"
+                     },
+                     {
+                         "name":  "Embark at Flathead Valley",
+                         "url":  "/r/troubledteens/wiki/index/flatheadvalley/",
+                         "normalizedName":  "embark at flathead valley"
+                     },
+                     {
+                         "name":  "Avalon Hills Eating Disorder Program",
+                         "url":  "/r/troubledteens/wiki/index/avalonhills/",
+                         "normalizedName":  "avalon hills eating disorder program"
+                     },
+                     {
+                         "name":  "Elevations RTC",
+                         "url":  "/r/troubledteens/wiki/index/elevationsrtc/",
+                         "normalizedName":  "elevations rtc"
+                     },
+                     {
+                         "name":  "Eva Carlston Academy",
+                         "url":  "/r/troubledteens/wiki/index/evacarlston/",
+                         "normalizedName":  "eva carlston academy"
+                     },
+                     {
+                         "name":  "Lava Heights Academy",
+                         "url":  "/r/troubledteens/wiki/index/lavaheights/",
+                         "normalizedName":  "lava heights academy"
+                     },
+                     {
+                         "name":  "Discovery School of Virginia",
+                         "url":  "/r/troubledteens/wiki/index/discoveryva/",
+                         "normalizedName":  "discovery school of virginia"
+                     },
+                     {
+                         "name":  "New Dominion School of Virginia",
+                         "url":  "/r/troubledteens/wiki/index/newdominion/",
+                         "normalizedName":  "new dominion school of virginia"
+                     }
+                 ],
+    "programCount":  28,
+    "generated":  "2025-12-10T16:34:17.2841298-05:00",
+    "state":  "VA"
+}

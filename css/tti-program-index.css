@@ -81,21 +81,25 @@
     border-color: #dddddd;
 }
 
-/* Facility card text colors - using specificity instead of !important */
-.tti-program-index-wrapper .facility-card {
-    color: #000000;
+/* Facility card text colors - WHITE backgrounds get BLACK text */
+.tti-program-index-wrapper .facility-card,
+.tti-program-index-wrapper .facility-card *,
+.tti-program-index-wrapper .facility-card p,
+.tti-program-index-wrapper .facility-card span,
+.tti-program-index-wrapper .facility-card div {
+    color: #000000 !important;
 }
 
 .tti-program-index-wrapper .facility-card .facility-details p {
-    color: #000000;
+    color: #000000 !important;
 }
 
 .tti-program-index-wrapper .facility-card .facility-details strong {
-    color: #333333;
+    color: #333333 !important;
 }
 
 .tti-program-index-wrapper .facility-card .facility-name {
-    color: #000000;
+    color: #000000 !important;
 }
 
 /* =================================================================
@@ -220,12 +224,13 @@
     font-size: 0.9em;
 }
 
+/* Operator section - NAVY backgrounds get WHITE text */
 .operator-section {
     padding: 15px;
     width: 220px;
     min-height: 100%;
     background: linear-gradient(135deg, #000080 0%, #00004d 100%);
-    color: #ffffff;
+    color: #ffffff !important;
     border-radius: 8px;
     box-sizing: border-box;
     border: 2px solid #33A7B5;
@@ -233,6 +238,15 @@
     flex-direction: column;
     transition: all 0.3s ease;
     box-shadow: 0 3px 8px rgba(51, 167, 181, 0.25);
+}
+
+/* Ensure ALL text within operator sections is white */
+.operator-section *,
+.operator-section p,
+.operator-section span,
+.operator-section div,
+.operator-section strong {
+    color: #ffffff !important;
 }
 
 .operator-section:hover {

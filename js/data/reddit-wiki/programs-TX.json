@@ -1,0 +1,17 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Meridell Achievement Center",
+                         "url":  "/r/troubledteens/wiki/index/meridellachievement/",
+                         "normalizedName":  "meridell achievement center"
+                     },
+                     {
+                         "name":  "Shiloh Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/shilohrtc/",
+                         "normalizedName":  "shiloh treatment center"
+                     }
+                 ],
+    "programCount":  2,
+    "generated":  "2025-12-10T16:34:17.2680406-05:00",
+    "state":  "TX"
+}

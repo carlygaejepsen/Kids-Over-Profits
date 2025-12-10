@@ -1,0 +1,12 @@
+{
+    "components":  {
+                       "programsArray":  "programs-array.json",
+                       "index":  "index.json",
+                       "searchIndex":  "search-index.json",
+                       "metadata":  "metadata.json"
+                   },
+    "source":  "Reddit r/troubledteens wiki (expanded database)",
+    "programCount":  1187,
+    "generated":  "2025-12-10T20:03:09.284Z",
+    "searchIndexSize":  3790
+}
