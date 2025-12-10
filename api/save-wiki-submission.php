@@ -122,6 +122,9 @@ try {
     $submissionNotes = $data['submissionNotes'] ?? $data['submission_notes'] ?? '';
     $originalMarkdown = $data['originalMarkdown'] ?? $data['original_markdown'] ?? '';
     $submissionId = $data['id'] ?? null;
+
+    // DEBUG: Log if originalMarkdown is being received
+    error_log("Save Wiki Submission - originalMarkdown length: " . strlen($originalMarkdown));
     
     // Validate required fields
     if (empty($programName)) {
