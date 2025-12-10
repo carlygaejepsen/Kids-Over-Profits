@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // API endpoints
     const API_BASE = '/wp-content/themes/child/api';
-    const SUBMISSIONS_API = `${API_BASE}/save-wiki-submission.php`;
     const MANAGE_API = `${API_BASE}/manage-submissions.php`;
 
     // Initialize
@@ -120,17 +119,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const search = searchFilter.value.trim();
 
         // Build query parameters
-        const params = new URLSearchParams();
-        if (status) params.append('status', status);
-        if (search) params.append('search', search);
-        params.append('limit', '100');
+        const params = new URLSearchParams({
+            action: 'list',
+            type: 'wiki',
+            limit: '100'
+        });
+        if (status) params.set('status', status);
+        if (search) params.set('search', search);
 
         loadingMessage.style.display = 'block';
         submissionsList.innerHTML = '';
         noSubmissions.style.display = 'none';
 
         try {
-            const url = `${SUBMISSIONS_API}?${params.toString()}`;
+            const url = `${MANAGE_API}?${params.toString()}`;
             console.log('Fetching submissions from:', url);
 
             const response = await fetch(url);
@@ -201,7 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function viewSubmission(id) {
         try {
-            const response = await fetch(`${SUBMISSIONS_API}?id=${id}`);
+            const detailParams = new URLSearchParams({
+                action: 'get',
+                type: 'wiki',
+                id: id
+            });
+            const response = await fetch(`${MANAGE_API}?${detailParams.toString()}`);
             const result = await response.json();
 
             if (result.success && result.data) {

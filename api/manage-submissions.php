@@ -13,7 +13,7 @@
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Handle preflight
@@ -24,10 +24,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 
-// Only POST allowed
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $type = $_GET['type'] ?? 'wiki';
+    if (!in_array($type, ['wiki', 'news'], true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki" or "news"']);
+        exit;
+    }
+
+    $table = $type === 'wiki' ? 'wiki_submissions' : 'news_submissions';
+    $action = $_GET['action'] ?? 'list';
+
+    if ($action === 'get') {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Submission ID is required']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM $table WHERE id = ?");
+        $stmt->execute([(int)$id]);
+        $submission = $stmt->fetch();
+
+        if (!$submission) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Submission not found']);
+            exit;
+        }
+
+        $submission['json_data'] = json_decode($submission['json_data'] ?? '', true);
+        echo json_encode(['success' => true, 'data' => $submission]);
+        exit;
+    }
+
+    $status = $_GET['status'] ?? null;
+    $search = trim($_GET['search'] ?? '');
+    $limit = min(max((int)($_GET['limit'] ?? 100), 1), 200);
+    $offset = max((int)($_GET['offset'] ?? 0), 0);
+
+    $where = [];
+    $params = [];
+
+    if ($status) {
+        $where[] = "status = :status";
+        $params[':status'] = $status;
+    }
+
+    if ($search) {
+        $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2)";
+        $params[':search1'] = "%$search%";
+        $params[':search2'] = "%$search%";
+    }
+
+    $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM $table $whereClause");
+    $countStmt->execute($params);
+    $total = (int)$countStmt->fetchColumn();
+
+    $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
+                   submitted_by, created_at, updated_at, json_data
+            FROM $table $whereClause
+            ORDER BY created_at DESC
+            LIMIT :limit OFFSET :offset";
+
+    $params[':limit'] = $limit;
+    $params[':offset'] = $offset;
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $submissions = $stmt->fetchAll();
+
+    foreach ($submissions as &$row) {
+        $row['json_data'] = json_decode($row['json_data'] ?? '', true);
+    }
+    unset($row);
+
+    echo json_encode([
+        'success' => true,
+        'data' => $submissions,
+        'total' => $total,
+        'limit' => $limit,
+        'offset' => $offset
+    ]);
     exit;
 }
 
