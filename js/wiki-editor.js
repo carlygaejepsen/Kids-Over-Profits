@@ -242,10 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = programName || '[Program Name]';
         const lowerCategory = (category || '').toLowerCase();
         if (lowerCategory.includes('media')) {
-            return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain8910.`;
+            return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain9810.`;
         }
 
-        return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please share them so this section can stay accurate.`;
+        return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please contact u/Signal-Strain9810.`;
     };
 
     // --- Helper: Normalize/Sanitize URLs for Markdown ---
