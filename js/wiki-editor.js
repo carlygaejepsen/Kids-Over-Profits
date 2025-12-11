@@ -1,3 +1,6 @@
+// NOTE: This script requires wiki-parser.js to be loaded first
+// Add <script src="js/wiki-parser.js"></script> before this file in your HTML
+
 document.addEventListener('DOMContentLoaded', () => {
     const wikiForm = document.getElementById('wikiForm');
 
@@ -829,18 +832,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (l.duration) desc += ` (typically ${escapeMarkdown(l.duration)})`;
                     desc += ':';
                     const details = [];
-                    if (l.restrictions) {
-                        const restrictionList = l.restrictions.split(',').map(r => r.trim()).filter(Boolean);
-                        if (restrictionList.length > 0) {
-                            details.push(`Restrictions include ${joinWithAnd(restrictionList.map(r => escapeMarkdown(r)))}.`);
+
+                    // If there's a freeform description (from import), use that
+                    if (l.desc) {
+                        details.push(escapeMarkdown(l.desc));
+                    } else {
+                        // Otherwise use the structured restrictions/privileges
+                        if (l.restrictions) {
+                            const restrictionList = l.restrictions.split(',').map(r => r.trim()).filter(Boolean);
+                            if (restrictionList.length > 0) {
+                                details.push(`Restrictions include ${joinWithAnd(restrictionList.map(r => escapeMarkdown(r)))}.`);
+                            }
+                        }
+                        if (l.privileges) {
+                            const privilegeList = l.privileges.split(',').map(p => p.trim()).filter(Boolean);
+                            if (privilegeList.length > 0) {
+                                details.push(`Privileges earned include ${joinWithAnd(privilegeList.map(p => escapeMarkdown(p)))}.`);
+                            }
                         }
                     }
-                    if (l.privileges) {
-                        const privilegeList = l.privileges.split(',').map(p => p.trim()).filter(Boolean);
-                        if (privilegeList.length > 0) {
-                            details.push(`Privileges earned include ${joinWithAnd(privilegeList.map(p => escapeMarkdown(p)))}.`);
-                        }
-                    }
+
                     return desc + (details.length ? ' ' + details.join(' ') : ' No specific details available.');
                 }).join('\n\n');
                 structureParts.push(levelDescriptions);
@@ -1245,8 +1256,18 @@ ${relatedMediaSection}
     }
 
     // --- PARSER FUNCTION ---
+    // Uses the parseWikiMarkdown function from wiki-parser.js
     function parseAndPopulate(markdown) {
         console.log('parseAndPopulate called');
+
+        // Check if parser module is loaded
+        if (typeof parseWikiMarkdown !== 'function') {
+            console.error('parseWikiMarkdown is not defined. Make sure wiki-parser.js is loaded before wiki-editor.js');
+            alert('Parser module not loaded. Please check the console for errors.');
+            return;
+        }
+
+        // Clear existing data
         staffMembers = [];
         programLevels = [];
         punishments = [];
@@ -1256,16 +1277,18 @@ ${relatedMediaSection}
         relatedMedia = [];
         campuses = [];
         ownershipChanges = [];
+        rules = [];
+        allegations = [];
+        therapies = [];
+
         resetStaffForm();
         renderStaffList();
-        // Clear the ownership changes display
+
+        // Clear list displays
         const ownerChangeListEl = document.getElementById('ownerChangeListOutput');
         if (ownerChangeListEl) ownerChangeListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
         const campusListEl = document.getElementById('campusListOutput');
         if (campusListEl) campusListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
-
-        // Normalize newlines so regex parsing works with Windows CRLF input
-        const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
         // Helper to safely set element values
         const setValue = (id, value) => {
@@ -1278,973 +1301,99 @@ ${relatedMediaSection}
             }
         };
 
-        // Common acronym expansions for TTI industry companies
-        const companyAcronyms = {
-            'UHS': 'Universal Health Services',
-            'CRC': 'CRC Health Group',
-            'AAC': 'American Addiction Centers',
-            'BHC': 'Behavioral Healthcare Corporation',
-            'CEDU': 'CEDU Education',
-            'WWASP': 'World Wide Association of Specialty Programs',
-            'PCS': 'Provo Canyon School',
-            'NWA': 'Northwest Academy',
-            'SLS': 'Sequel Logan Services',
-            'YFA': 'Youth for America'
-        };
+        // Call the external parser
+        const parsedData = parseWikiMarkdown(markdown);
 
-        // Expand known acronyms to full company names
-        const expandAcronym = (name) => {
-            if (!name) return name;
-            const trimmed = name.trim();
-            // Check if it's a known acronym (case-insensitive)
-            const upperName = trimmed.toUpperCase();
-            if (companyAcronyms[upperName]) {
-                return companyAcronyms[upperName];
-            }
-            // Check if the name starts with a known acronym
-            for (const [acronym, fullName] of Object.entries(companyAcronyms)) {
-                if (trimmed.toUpperCase().startsWith(acronym + ' ') || trimmed.toUpperCase() === acronym) {
-                    return fullName;
-                }
-            }
-            return trimmed;
-        };
+        // Populate basic form fields
+        setValue('programName', parsedData.programName);
+        setValue('yearsActive', parsedData.yearsActive);
+        setValue('cityState', parsedData.cityState);
+        setValue('programType', parsedData.programType);
+        setValue('yearFounded', parsedData.yearFounded);
+        setValue('ownerName', parsedData.ownerName);
+        setValue('ownerLink', parsedData.ownerLink);
+        setValue('ageRange', parsedData.ageRange);
+        setValue('diagnosesList', parsedData.diagnosesList);
+        setValue('avgStay', parsedData.avgStay);
+        setValue('tuition', parsedData.tuition);
+        setValue('natsapMember', parsedData.natsapMember);
+        setValue('natsapYear', parsedData.natsapYear);
+        setValue('mainAddress', parsedData.mainAddress);
+        setValue('addressLink', parsedData.addressLink);
+        setValue('accreditingBody', parsedData.accreditingBody);
+        setValue('accreditingBodyLink', parsedData.accreditingBodyLink);
+        setValue('historyMisc', parsedData.historyMisc);
+        setValue('levelSystemDesc', parsedData.levelSystemDesc);
+        setValue('structureMisc', parsedData.structureMisc);
+        setValue('punishmentsMisc', parsedData.punishmentsMisc);
+        setValue('lawsuitsMisc', parsedData.lawsuitsMisc);
+        setValue('rulesList', parsedData.rulesList);
+        setValue('mainComplaints', parsedData.mainComplaints);
+        setValue('otherAllegationsList', parsedData.otherAllegationsList);
 
-        const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Populate structured data arrays
+        staffMembers = parsedData.staffMembers || [];
+        programLevels = parsedData.programLevels || [];
+        punishments = parsedData.punishments || [];
+        lawsuits = parsedData.lawsuits || [];
+        newsArticles = parsedData.newsArticles || [];
+        testimonies = parsedData.testimonies || [];
+        relatedMedia = parsedData.relatedMedia || [];
+        campuses = parsedData.campuses || [];
+        ownershipChanges = parsedData.ownershipChanges || [];
+        rules = parsedData.rules || [];
+        allegations = parsedData.allegations || [];
+        therapies = parsedData.therapies || [];
 
-        const getSection = (source, sectionTitle) => {
-            // Simple approach: find ##**Title** and capture until next ## or end
-            const escapedTitle = escapeRegex(sectionTitle);
+        // Render lists
+        renderStaffList();
 
-            // Build pattern to match section header with various formats:
-            // ##**Title**, ## **Title**, ##Title, etc.
-            const headerPattern = `##\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
-
-            // Capture everything after header until next ## section or end of string
-            const regex = new RegExp( // Look for header, then capture until the next header OR a section break (***) OR end of string
-                headerPattern + '\\n([\\s\\S]*?)(?=\\n##|\\n\\*\\*\\*|$)',
-                'i'
-            );
-
-            const match = source.match(regex);
-            let result = match ? match[1].trim() : '';
-
-            // Remove trailing *** separator if present
-            result = result.replace(/^\*\*\*|(?:\r\n|\n|\r)?\*\*\*$/g, '').trim();
-
-            console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
-            return result;
-        };
-
-        const getSectionAny = (source, titles) => {
-            for (const title of titles) {
-                const section = getSection(source, title);
-                if (section) return section;
-            }
-            return '';
-        };
-
-        // Parse header - handles multiple formats:
-        // Format 1: #**Name** (Years) City, ST
-        // Format 2: ## Name (Years) City, ST  
-        // Format 3: ##**Name** (Years) City, ST
-        let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
-        console.log('Header match:', headerMatch);
-        if (headerMatch) {
-            setValue('programName', headerMatch[1].trim());
-            setValue('yearsActive', headerMatch[2].trim());
-            setValue('cityState', headerMatch[3].trim());
-        } else {
-            console.warn('No header match found. Looking for pattern: #**ProgramName** (Years) City, ST');
-        }
-
-        // Parse program type
-        const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
-        if (typeMatch) {
-            setValue('programType', typeMatch[1].trim());
-        }
-
-        // Parse History section
-        const historySection = getSection(normalizedMarkdown, 'History and Background Information');
-        console.log('History section content:', historySection);
-        if (historySection && !historySection.includes('No information is known')) {
-            const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
-            console.log('Normalized history:', normalizedHistory);
-
-            const yearFoundedMatch = normalizedHistory.match(/(?:founded|opened|started|established|began)\s+(?:in\s+)?(\d{4})/i);
-            if (yearFoundedMatch) {
-                setValue('yearFounded', yearFoundedMatch[1].trim());
-            }
-
-            const assignOwner = (name, link) => {
-                if (!name) return false;
-                setValue('ownerName', name.trim());
-                if (link) {
-                    setValue('ownerLink', sanitizeUrl(link));
-                }
-                return true;
-            };
-
-            let ownerCaptured = false;
-            const ownerPatternsWithLinks = [
-                /is\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center|behavior))/i,
-                /owned by \[([^\]]+)\]\(([^)]+)\)/i,
-                /operated by \[([^\]]+)\]\(([^)]+)\)/i,
-                /run by \[([^\]]+)\]\(([^)]+)\)/i,
-                /part of \[([^\]]+)\]\(([^)]+)\)/i,
-                /was\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center))/i
-            ];
-            for (const pattern of ownerPatternsWithLinks) {
-                const match = normalizedHistory.match(pattern);
-                if (match && assignOwner(match[1], match[2])) {
-                    ownerCaptured = true;
-                    break;
-                }
-            }
-            if (!ownerCaptured) {
-                const ownerTextPatterns = [
-                    /owned by ([^.\n]+)/i,
-                    /operated by ([^.\n]+)/i,
-                    /run by ([^.\n]+)/i,
-                    /part of ([^.\n]+)/i,
-                    /was\s+(?:an?|the)?\s*([^.\n]+?)\s+(?:behavior|residential|therapeutic|treatment)[^.\n]*program/i
-                ];
-                for (const pattern of ownerTextPatterns) {
-                    const match = normalizedHistory.match(pattern);
-                    if (match && assignOwner(match[1])) {
-                        break;
-                    }
-                }
-            }
-
-            // Parse ownership changes from history
-            // Pattern: "Prior to being purchased/acquired by NewOwner in YEAR, Alabama Clinical Schools was owned by [PreviousOwner](link)"
-            console.log('=== OWNERSHIP CHANGE PARSING ===');
-            console.log('Looking for pattern in:', normalizedHistory.substring(0, 500));
-            
-            const priorOwnerLinkMatch = normalizedHistory.match(
-                /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?owned by \[([^\]]+)\]\(([^)]+)\)/i
-            );
-            console.log('Prior owner link match result:', priorOwnerLinkMatch);
-            
-            if (priorOwnerLinkMatch) {
-                const newOwner = expandAcronym(priorOwnerLinkMatch[1]);
-                const year = priorOwnerLinkMatch[2].trim();
-                const previousOwner = priorOwnerLinkMatch[3].trim();
-                const previousLink = priorOwnerLinkMatch[4].trim();
-                console.log('SUCCESS! Parsed ownership change:', { year, previous: previousOwner, previousLink, newOwner });
-                ownershipChanges.push({ year, previous: previousOwner, previousLink, newOwner, newOwnerLink: '' });
-                console.log('ownershipChanges array now:', ownershipChanges);
-                renderList(ownershipChanges, 'ownerChangeListOutput', item => {
-                    const prevDisplay = item.previousLink 
-                        ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
-                        : escapeHtml(item.previous || '?');
-                    const newDisplay = item.newOwnerLink
-                        ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
-                        : escapeHtml(item.newOwner || '?');
-                    return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
-                });
-                console.log('renderList called for ownership changes');
-            } else {
-                // Try without markdown link: "Prior to being purchased by NewOwner in YEAR, was owned by PreviousOwner"
-                const priorOwnerTextMatch = normalizedHistory.match(
-                    /prior to (?:being )?(?:purchased|acquired|bought) by ([^\s,]+(?:\s+[^\s,]+)?)\s+in\s+(\d{4})[^.]*?owned by ([^.\n\[]+)/i
-                );
-                console.log('Prior owner text match:', priorOwnerTextMatch);
-                if (priorOwnerTextMatch) {
-                    const newOwner = expandAcronym(priorOwnerTextMatch[1]);
-                    const year = priorOwnerTextMatch[2].trim();
-                    const previousOwner = expandAcronym(priorOwnerTextMatch[3]);
-                    ownershipChanges.push({ year, previous: previousOwner, previousLink: '', newOwner, newOwnerLink: '' });
-                    renderList(ownershipChanges, 'ownerChangeListOutput', item => {
-                        const prevDisplay = item.previousLink 
-                            ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
-                            : escapeHtml(item.previous || '?');
-                        const newDisplay = item.newOwnerLink
-                            ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
-                            : escapeHtml(item.newOwner || '?');
-                        return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
-                    });
-                }
-            }
-
-            // Also parse: "In YEAR, was purchased/acquired by NewOwner" or "NewOwner purchased/acquired in YEAR"
-            const purchasedInYearMatch = normalizedHistory.match(
-                /in\s+(\d{4})[^.]*?(?:was\s+)?(?:purchased|acquired|bought)\s+by\s+\[([^\]]+)\]\(([^)]+)\)/i
-            );
-            if (purchasedInYearMatch && ownershipChanges.length === 0) {
-                const year = purchasedInYearMatch[1].trim();
-                const newOwner = expandAcronym(purchasedInYearMatch[2]);
-                const newOwnerLink = purchasedInYearMatch[3].trim();
-                ownershipChanges.push({ year, previous: '', previousLink: '', newOwner, newOwnerLink });
-                renderList(ownershipChanges, 'ownerChangeListOutput', item => {
-                    const prevDisplay = item.previousLink 
-                        ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
-                        : escapeHtml(item.previous || '?');
-                    const newDisplay = item.newOwnerLink
-                        ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
-                        : escapeHtml(item.newOwner || '?');
-                    return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
-                });
-            }
-
-            const agePatterns = [
-                /\((\d{1,2})\s*-\s*(\d{1,2})\)/i,  // Match (9-18) format in parentheses
-                /aged?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
-                /ages?\s+(?:between\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
-                /age range\s+(?:of\s+)?(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
-                /serves\s+[^.\n]*?ages?\s+(\d{1,2})\s*(?:-|to)\s*(\d{1,2})/i,
-                /aged?\s+(\d{1,2})\s*\+/i
-            ];
-            for (const pattern of agePatterns) {
-                const match = normalizedHistory.match(pattern);
-                if (match) {
-                    const normalizedRange = match[2]
-                        ? `${match[1]}-${match[2]}`
-                        : `${match[1]}+`;
-                    setValue('ageRange', normalizedRange);
-                    break;
-                }
-            }
-
-            const diagnosisSnippets = [];
-            const pushDiagnosis = (text) => {
-                const cleaned = (text || '')
-                    .replace(/["*_]/g, '')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-                if (cleaned) {
-                    diagnosisSnippets.push(cleaned.replace(/\.$/, ''));
-                }
-            };
-            const diagnosisPatterns = [
-                /diagnoses\/behaviors:\s*([^\n]+)/i,
-                /any of the following:\s*([^\.]+)\./i,
-                /specializes? in treating\s+([^\.]+?)(?:\.|, but)/i,
-                /specialized in treating\s+([^\.]+?)(?:\.|, but)/i,
-                /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i,
-                /struggling with\s+([^\.]+?)(?:\.|, and more)/i,  // Match "struggling with X, Y, Z"
-                /who are\s+(?:struggling|dealing)\s+with\s+([^\.]+?)(?:\.|, and)/i
-            ];
-            diagnosisPatterns.forEach(pattern => {
-                const match = normalizedHistory.match(pattern);
-                if (match && match[1]) {
-                    pushDiagnosis(match[1]);
-                }
-            });
-            if (diagnosisSnippets.length > 0) {
-                const uniqueDiagnoses = Array.from(new Set(diagnosisSnippets));
-                setValue('diagnosesList', uniqueDiagnoses.join('; '));
-            }
-
-            // Average stay - must have time unit words like days, weeks, months
-            const stayMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
-            if (stayMatch) {
-                setValue('avgStay', stayMatch[1].trim());
-            }
-
-            const tuitionMatch = normalizedHistory.match(/tuition[^$]*(\$[^\.\n]+)/i);
-            if (tuitionMatch) {
-                setValue('tuition', tuitionMatch[1].trim());
-            }
-
-            // NATSAP membership - check for various patterns and set the dropdown
-            const natsapPatterns = [
-                { pattern: /is\s+(?:a\s+)?(?:current\s+)?NATSAP\s+member/i, value: 'yes' },
-                { pattern: /has\s+been\s+(?:a\s+)?NATSAP\s+member\s+since\s+(\d{4})/i, value: 'yes', yearGroup: 1 },
-                { pattern: /NATSAP\s+member\s+since\s+(\d{4})/i, value: 'yes', yearGroup: 1 },
-                { pattern: /is\s+(?:a\s+)?former\s+NATSAP\s+member/i, value: 'former' },
-                { pattern: /was\s+(?:a\s+)?NATSAP\s+member/i, value: 'former' },
-                { pattern: /is\s+not\s+(?:a\s+)?NATSAP\s+member/i, value: 'no' },
-                { pattern: /not\s+(?:a\s+)?NATSAP\s+member/i, value: 'no' }
-            ];
-            
-            for (const { pattern, value, yearGroup } of natsapPatterns) {
-                const natsapMatch = normalizedHistory.match(pattern);
-                if (natsapMatch) {
-                    setValue('natsapMember', value);
-                    if (yearGroup && natsapMatch[yearGroup]) {
-                        setValue('natsapYear', natsapMatch[yearGroup]);
-                    }
-                    break;
-                }
-            }
-
-            // Extract address (allow variations like "located at/as/in")
-            const addressMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+\[([^\]]+)\]\(([^)]+)\)/i);
-            if (addressMatch) {
-                setValue('mainAddress', addressMatch[1]);
-                setValue('addressLink', sanitizeUrl(addressMatch[2]));
-            } else {
-                const addressTextMatch = normalizedHistory.match(/located\s+(?:at|as|in)\s+([^\.\n]+)/i);
-                if (addressTextMatch) {
-                    setValue('mainAddress', addressTextMatch[1].trim());
-                }
-            }
-
-            // Extract accrediting body
-            const accreditMatch = normalizedHistory.match(/accredited through the \[([^\]]+)\]\(([^)]+)\)/i);
-            if (accreditMatch) {
-                setValue('accreditingBody', accreditMatch[1]);
-                setValue('accreditingBodyLink', sanitizeUrl(accreditMatch[2]));
-            }
-
-            // Capture sentences that weren't matched by any specific pattern
-            // Split into sentences and filter out ones we already captured
-            const knownPatterns = [
-                /(?:founded|opened|started|established|began)\s+(?:in\s+)?\d{4}/i,
-                /is\s+(?:an?|the)?\s*\[.+?\]\(.+?\)\s+(?:behavior|program|school|facility)/i,
-                /owned by|operated by|run by|part of/i,
-                /prior to (?:being )?(?:purchased|acquired|bought)/i,
-                /(?:was\s+)?(?:purchased|acquired|bought)\s+by/i,
-                /\(\d{1,2}\s*-\s*\d{1,2}\)/i,
-                /aged?\s+(?:between\s+)?\d{1,2}/i,
-                /ages?\s+(?:between\s+)?\d{1,2}/i,
-                /struggling with/i,
-                /average length of stay/i,
-                /tuition/i,
-                /NATSAP/i,
-                /located\s+(?:at|as|in)/i,
-                /accredited/i,
-                /serves\s+.*?(?:children|boys|girls|teens|youth|young people)/i,
-                /specializes?\s+in\s+treating/i
-            ];
-            
-            const sentences = historySection.split(/(?<=[.!?])\s+/);
-            const extraSentences = sentences.filter(sentence => {
-                const trimmed = sentence.trim();
-                if (!trimmed) return false;
-                // Keep if it doesn't match any known patterns
-                return !knownPatterns.some(pattern => pattern.test(trimmed));
-            });
-            
-            if (extraSentences.length > 0) {
-                setValue('historyNotes', extraSentences.join(' '));
-            }
-        }
-
-        // Parse Staff section
-        const staffSection = getSectionAny(normalizedMarkdown, [
-            'Founders and Notable Staff',
-            'Founders & Notable Staff',
-            'Notable Staff',
-            'Founders'
-        ]);
-        console.log('Staff section raw content:', staffSection ? `Found (${staffSection.length} chars)` : 'Not found');
-        if (staffSection && !staffSection.includes('No information is known')) {
-            const addStaff = (name, role, bio, previousRoles) => {
-                if (!name || !role) return;
-                const normalizedRole = role.trim();
-                const isFormer = /\b(former|previous|ex[\s-])/i.test(normalizedRole.toLowerCase());
-                staffMembers.push({
-                    name: name.trim(),
-                    role: normalizedRole,
-                    bio: (bio || '').trim(),
-                    previousRoles: previousRoles || [],
-                    isFormer
-                });
-            };
-
-            const cleanStaffBlock = (text) => text
-                // Only strip bullet markers when they are followed by whitespace,
-                // so regular bold names like **Name** stay intact.
-                .replace(/^\s*[-*]\s+(?=\S)/, '')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            // Split by blank lines to get individual staff entries
-            const staffParagraphs = staffSection.split(/\n\n+/).filter(p => {
-                const trimmed = p.trim();
-                return trimmed.startsWith('**');
-            });
-            console.log(`Staff split into ${staffParagraphs.length} paragraphs starting with **`);
-
-            staffParagraphs.forEach((block, idx) => {
-                const normalized = cleanStaffBlock(block);
-                console.log(`Staff paragraph ${idx + 1}:`, normalized.substring(0, 100));
-
-                // Extract name from **Name** at the start
-                const nameMatch = normalized.match(/^\*\*([^*]+)\*\*/);
-                if (!nameMatch) {
-                    console.warn(`  → No name match for paragraph ${idx + 1}`);
-                    return;
-                }
-
-                const name = nameMatch[1].trim();
-                console.log(`  → Found name: "${name}"`);
-
-                // Extract role from first sentence - find the first real sentence end
-                // The first sentence pattern: **Name** is/was the Role at Place.
-                const afterName = normalized.substring(normalized.indexOf('**', 2) + 2).trim();
-                
-                // Find first real sentence end (period followed by space+capital or end)
-                let roleEndIdx = -1;
-                for (let i = 0; i < afterName.length; i++) {
-                    if (afterName[i] === '.') {
-                        const next = afterName[i + 1];
-                        const nextNext = afterName[i + 2];
-                        // Skip if followed by lowercase (URL like .com)
-                        if (next && /[a-z]/.test(next)) continue;
-                        // Skip if inside parentheses (likely a URL)
-                        const before = afterName.substring(Math.max(0, i - 5), i);
-                        if (/https?:|www\./i.test(before)) continue;
-                        // Real sentence end
-                        if (!next || next === ' ') {
-                            roleEndIdx = i;
-                            break;
-                        }
-                    }
-                }
-                
-                let role = '';
-                if (roleEndIdx > 0) {
-                    const firstSentence = afterName.substring(0, roleEndIdx);
-                    // Extract role: "is/was (the) ROLE"
-                    const roleMatch = firstSentence.match(/^(?:was|is)\s+(?:the|a|an)?\s*(.+)/i);
-                    if (roleMatch) {
-                        role = roleMatch[1].trim();
-                    } else {
-                        role = firstSentence.trim();
-                    }
-                    console.log(`  → Role: "${role}"`);
-                } else {
-                    console.warn(`  → Could not extract role for: ${name}, using default`);
-                    role = 'Staff Member';
-                }
-
-                // For bio, get everything after the first sentence
-                const bioStart = roleEndIdx > 0 ? roleEndIdx + 1 : 0;
-                let bioText = afterName.substring(bioStart).trim();
-                
-                // Extract previous roles from bio text
-                // Pattern: "Previously worked as X at Y" or "Previously worked at X"
-                const previousRoles = [];
-                const prevWorkedMatch = bioText.match(/Previously worked\s+(?:as\s+)?([^.]+)\./i);
-                if (prevWorkedMatch) {
-                    const prevWorkText = prevWorkedMatch[1].trim();
-                    // Split by "and" or commas to get individual roles
-                    const roleList = prevWorkText.split(/\s*(?:,|and)\s*/i);
-                    roleList.forEach(item => {
-                        const itemTrimmed = item.trim();
-                        if (!itemTrimmed) return;
-                        // Parse "Role at Employer" format
-                        const atMatch = itemTrimmed.match(/^(.+?)\s+at\s+(.+)$/i);
-                        if (atMatch) {
-                            previousRoles.push({ role: atMatch[1].trim(), employer: atMatch[2].trim() });
-                        } else {
-                            // Just employer or just role
-                            previousRoles.push({ role: '', employer: itemTrimmed });
-                        }
-                    });
-                    // Remove the "Previously worked..." sentence from bio
-                    bioText = bioText.replace(/Previously worked\s+(?:as\s+)?[^.]+\.\s*/i, '').trim();
-                }
-                
-                // Keep the remaining bio text - it contains markdown links we want to preserve
-                const bio = bioText;
-
-                addStaff(name, role, bio, previousRoles);
-            });
-
-            renderStaffList();
-            console.log(`✓ Parsed ${staffMembers.length} staff members`);
-        } else {
-            renderStaffList();
-        }
-
-        // Parse Structure section
-        const structureSection = getSectionAny(normalizedMarkdown, [
-            'Program Structure',
-            'Structure',
-            'Program Model',
-            'Level System',
-            'Level Systems',
-            'Phase System',
-            'Phases',
-            'Program Phases'
-        ]);
-        if (structureSection && !structureSection.includes('No information is known')) {
-            // Extract level system description
-            const levelDescMatch = structureSection.match(/(?:uses|used|utilizes|utilized|implements|implemented)\s+([^\.]*level[^\.]+)/i);
-            if (levelDescMatch) {
-                setValue('levelSystemDesc', levelDescMatch[1].trim());
-            }
-
-            // Extract individual levels - handle multiple formats
-            // Format 1: * **"Name"** - Description (generated format)
-            // Format 2: - Name — Description (with em dash)
-            // Format 3: - Name (simple format)
-            // Format 4: * Name (simple format)
-
-            const lines = structureSection.split('\n');
-            lines.forEach(line => {
-                const trimmed = line.trim();
-
-                // Format 0a: **Name:** Description (bold name with colon)
-                // Examples: **Green:** Description, **Phase 1:** Description
-                let match = trimmed.match(/^\*\*([^:*]+):\*\*\s*(.*)$/);
-                if (match) {
-                    programLevels.push({
-                        name: match[1].trim(),
-                        desc: match[2].trim()
-                    });
-                    return;
-                }
-
-                // Format 0b: **Name** (bold name without colon - just the level name)
-                // Examples: **Green**, **Phase 1**, **Yellow**
-                match = trimmed.match(/^\*\*([^*]+)\*\*$/);
-                if (match) {
-                    const name = match[1].trim();
-                    // Only add if it looks like a level name (short, starts with capital or number)
-                    if (name.length < 50 && /^[A-Z0-9]/.test(name)) {
-                        programLevels.push({
-                            name: name,
-                            desc: ''
-                        });
-                    }
-                    return;
-                }
-
-                // Format 1: * **"Name"** - Description or - **"Name"** — Description
-                match = trimmed.match(/^[*-]\s+\*\*"([^"]+)"\*\*\s*[—\-]\s*(.+)$/);
-                if (match) {
-                    programLevels.push({
-                        name: match[1].trim(),
-                        desc: match[2].trim()
-                    });
-                    return;
-                }
-
-                // Format 2: - Name — Description or - Name - Description
-                match = trimmed.match(/^[*-]\s+([^—\-]+?)\s*[—\-]\s*(.+)$/);
-                if (match && !match[1].includes('*')) {
-                    programLevels.push({
-                        name: match[1].trim(),
-                        desc: match[2].trim()
-                    });
-                    return;
-                }
-
-                // Format 3: - Name or * Name (simple, no description)
-                match = trimmed.match(/^[*-]\s+([^—\-\n]+)$/);
-                if (match && !match[1].includes('*') && match[1].trim().length > 0) {
-                    // Only add if it looks like a level name (short, capitalized)
-                    const name = match[1].trim();
-                    if (name.length < 50 && /^[A-Z]/.test(name)) {
-                        programLevels.push({
-                            name: name,
-                            desc: ''
-                        });
-                    }
-                }
-            });
-
+        if (programLevels.length > 0) {
             renderList(programLevels, 'levelListOutput', item => `<strong>"${escapeHtml(item.name)}"</strong>`);
-            console.log(`✓ Parsed ${programLevels.length} program levels`);
-
-            // Extract misc structure info
-            const miscStructureParts = structureSection.split('\n\n')
-                .map(block => block.split('\n')
-                    .filter(line => !line.trim().match(/^[*-]\s+/))
-                    .join('\n')
-                    .trim())
-                .filter(block => block && !block.includes('No information is known'));
-            if (miscStructureParts.length > 0) {
-                setValue('structureMisc', miscStructureParts.join('\n\n'));
-            }
+            console.log(`✓ Loaded ${programLevels.length} program levels`);
         }
 
-        // Parse Rules section
-        const rulesSection = getSectionAny(normalizedMarkdown, [
-            'Rules and Punishments',
-            'Rules & Punishments',
-            'Rules/Punishments',
-            'Punishments'
-        ]);
-        if (rulesSection && !rulesSection.includes('No information is known')) {
-            // Extract rules list - handle both * and - bullets
-            const rulesMatch = rulesSection.match(/Some of these rules include:\s*\n((?:[*-][^\n]+\n?)+)/i);
-            if (rulesMatch) {
-                const rulesList = rulesMatch[1]
-                    .split('\n')
-                    .filter(line => {
-                        const trimmed = line.trim();
-                        return trimmed.startsWith('*') || trimmed.startsWith('-');
-                    })
-                    .map(line => line.replace(/^[*-]\s*/, '').trim())
-                    .filter(Boolean)
-                    .join('\n');
-                setValue('rulesList', rulesList);
-            }
-
-            // Extract structured punishments - format: **Name**: Description
-            const punishmentBlocks = rulesSection.match(/\*\*([^*:]+):\*\*\s*([^\n]+)/g);
-            if (punishmentBlocks) {
-                punishmentBlocks.forEach(block => {
-                    const match = block.match(/\*\*([^*:]+):\*\*\s*(.+)/);
-                    if (match) {
-                        punishments.push({
-                            name: match[1].trim(),
-                            desc: match[2].trim()
-                        });
-                    }
-                });
-                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
-            }
-
-            // Extract misc punishment text (paragraphs that don't match structured format)
-            const punishmentLines = rulesSection.split('\n\n').filter(para => {
-                const trimmed = para.trim();
-                return !para.includes('Some of these rules include') &&
-                       !para.includes('uses various punishments') &&
-                       !trimmed.match(/^\*\*[^*:]+:\*\*/) &&
-                       !trimmed.startsWith('*') &&
-                       !trimmed.startsWith('-') &&
-                       trimmed.length > 0;
-            });
-            if (punishmentLines.length > 0) {
-                setValue('punishmentsMisc', punishmentLines.join('\n\n').trim());
-            }
+        if (punishments.length > 0) {
+            renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
         }
 
-        // Parse Abuse section
-        const abuseSection = getSectionAny(normalizedMarkdown, [
-            'Abuse/Neglect Allegations and Lawsuits',
-            'Abuse Allegations',
-            'Abuse/Neglect Allegations',
-            'Allegations and Lawsuits'
-        ]);
-        if (abuseSection && !abuseSection.includes('No information is known')) {
-            // Extract main complaints
-            const complaintsMatch = abuseSection.match(/main complaints are of ([^\.]+)/i);
-            if (complaintsMatch) {
-                setValue('mainComplaints', complaintsMatch[1].trim());
-            }
-
-            // Extract other allegations list - handle both * and - bullets
-            const allegationsMatch = abuseSection.match(/reported by survivors included:\s*\n((?:[*-][^\n]+\n?)+)/i);
-            if (allegationsMatch) {
-                const allegationsList = allegationsMatch[1]
-                    .split('\n')
-                    .filter(line => {
-                        const trimmed = line.trim();
-                        return trimmed.startsWith('*') || trimmed.startsWith('-');
-                    })
-                    .map(line => line.replace(/^[*-]\s*/, '').trim())
-                    .filter(Boolean)
-                    .join('\n');
-                setValue('otherAllegationsList', allegationsList);
-            }
-
-            // Extract structured lawsuits
-            // Pattern: "In YEAR, PLAINTIFF sued PROGRAM alleging ALLEGATIONS. The lawsuit OUTCOME. DETAILS"
-            const lawsuitParagraphs = abuseSection.split('\n\n');
-            lawsuitParagraphs.forEach(para => {
-                const trimmed = para.trim();
-
-                // Look for lawsuit pattern
-                const lawsuitMatch = trimmed.match(/In (\d{4}),\s*([^s]+?)\s+sued[^a]*alleging\s+([^\.]+)\./i);
-                if (lawsuitMatch) {
-                    const year = lawsuitMatch[1].trim();
-                    const plaintiff = lawsuitMatch[2].trim();
-                    const allegations = lawsuitMatch[3].trim();
-
-                    // Try to extract outcome
-                    let outcome = '';
-                    const outcomeMatch = trimmed.match(/The lawsuit ([^\.]+)\./i);
-                    if (outcomeMatch) {
-                        outcome = outcomeMatch[1].trim();
-                    }
-
-                    // Extract remaining details (everything after outcome or allegations)
-                    let details = '';
-                    if (outcomeMatch) {
-                        const afterOutcome = trimmed.substring(trimmed.indexOf(outcomeMatch[0]) + outcomeMatch[0].length).trim();
-                        details = afterOutcome;
-                    } else {
-                        const afterAllegations = trimmed.substring(trimmed.indexOf(lawsuitMatch[0]) + lawsuitMatch[0].length).trim();
-                        details = afterAllegations;
-                    }
-
-                    lawsuits.push({ year, plaintiff, allegations, outcome, details });
-                }
-            });
-
-            if (lawsuits.length > 0) {
-                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
-            }
-
-            // Extract misc lawsuit text (paragraphs that don't match structured format)
-            const lawsuitLines = abuseSection.split('\n\n').filter(para => {
-                const trimmed = para.trim();
-                return !para.includes('main complaints are') &&
-                       !para.includes('Other allegations') &&
-                       !trimmed.match(/^In \d{4},/) &&
-                       !trimmed.startsWith('*') &&
-                       !trimmed.startsWith('-') &&
-                       trimmed.length > 0;
-            });
-            if (lawsuitLines.length > 0) {
-                setValue('lawsuitsMisc', lawsuitLines.join('\n\n').trim());
-            }
+        if (lawsuits.length > 0) {
+            renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
         }
 
-        // Parse Media section
-        const mediaSection = getSectionAny(normalizedMarkdown, [
-            'In the Media',
-            'Media',
-            'In the Media & News',
-            'In the Media and News'
-        ]);
-        if (mediaSection && !mediaSection.includes('No information is known')) {
-            const lines = mediaSection.split('\n');
-            const mediaLines = [];
-
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (!trimmed) return;
-
-                // Pattern 1: * [Article Title](url) (Source, Date)
-                // Pattern 2: - [Article Title](url) (Source, Date)
-                let match = trimmed.match(/^[*-]\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:\(([^)]+)\))?/);
-                if (match) {
-                    const title = match[1].trim();
-                    const url = sanitizeUrl(match[2].trim());
-                    const sourceDate = match[3] || '';
-
-                    // Try to split source and date
-                    let source = '';
-                    let date = '';
-                    if (sourceDate) {
-                        const parts = sourceDate.split(',').map(p => p.trim());
-                        if (parts.length === 2) {
-                            source = parts[0];
-                            date = parts[1];
-                        } else if (parts.length === 1) {
-                            // Could be either source or date - try to detect
-                            if (/\d{1,2}\/\d{1,2}\/\d{2,4}|\d{4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i.test(parts[0])) {
-                                date = parts[0];
-                            } else {
-                                source = parts[0];
-                            }
-                        }
-                    }
-
-                    newsArticles.push({ title, url, source, date });
-                    return;
-                }
-
-                // Pattern 3: * General media text (not a link)
-                if (trimmed.startsWith('*') || trimmed.startsWith('-')) {
-                    const text = trimmed.replace(/^[*-]\s*/, '').trim();
-                    if (text && !text.startsWith('[')) {
-                        mediaLines.push(text);
-                    }
-                }
+        if (ownershipChanges.length > 0) {
+            renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+                const prevDisplay = item.previousLink
+                    ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                    : escapeHtml(item.previous || '?');
+                const newDisplay = item.newOwnerLink
+                    ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                    : escapeHtml(item.newOwner || '?');
+                return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
             });
-
-            if (mediaLines.length > 0) {
-                setValue('mediaInfo', mediaLines.join('\n'));
-            }
-
-            renderList(newsArticles, 'articleListOutput', item => `<strong>${escapeHtml(item.title)}</strong> (${escapeHtml(item.source || 'No Source')})`);
         }
 
-        // Parse Testimonies section
-        const testimoniesSection = getSectionAny(normalizedMarkdown, [
-            'Survivor Testimonies',
-            'Survivor/Parent Testimonials',
-            'Survivor/Parent Testimonies',
-            'Survivor Testimonials',
-            'Survivor and Parent Testimonials'
-        ]);
-        console.log('Testimonies section:', testimoniesSection ? `Found (${testimoniesSection.length} chars)` : 'Not found');
-        if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-            // Helper to parse source string into sourceName and platform
-            // Examples: "Brooke (Google Reviews)" -> { sourceName: "Brooke", platform: "Google Reviews" }
-            //           "Reddit" -> { sourceName: "", platform: "Reddit" }
-            //           "u/username" -> { sourceName: "u/username", platform: "Reddit" }
-            const parseSourceIntoParts = (sourceStr) => {
-                const knownPlatforms = ['Reddit', 'Google Reviews', 'YouTube', 'Facebook', 'Yelp', 'News Article', 'Documentary', 'Podcast'];
-                let sourceName = sourceStr;
-                let platform = '';
+        if (campuses.length > 0) {
+            renderList(campuses, 'campusListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.location)}`);
+        }
 
-                // Check for "Name (Platform)" format
-                const parenMatch = sourceStr.match(/^(.+?)\s*\(([^)]+)\)$/);
-                if (parenMatch) {
-                    sourceName = parenMatch[1].trim();
-                    platform = parenMatch[2].trim();
-                } else {
-                    // Check if the source itself is a known platform
-                    const lowerSource = sourceStr.toLowerCase();
-                    for (const p of knownPlatforms) {
-                        if (lowerSource === p.toLowerCase()) {
-                            sourceName = '';
-                            platform = p;
-                            break;
-                        }
-                    }
-                    // Check for Reddit username patterns
-                    if (sourceStr.match(/^u\/|^\/u\//i)) {
-                        platform = 'Reddit';
-                    }
-                }
+        if (newsArticles.length > 0) {
+            renderList(newsArticles, 'articleListOutput', item => `[${escapeHtml(item.title)}]`);
+        }
 
-                return { sourceName, platform, source: sourceStr };
-            };
-
-            // Split by double newlines. This is more robust for varying formats.
-            const blocks = testimoniesSection.split(/\n\n+/);
-            console.log(`Testimonies split into ${blocks.length} blocks`);
-
-            blocks.forEach((block, idx) => {
-                const trimmed = block.trim();
-                if (!trimmed || trimmed.length === 0) return;
-                
-                // Skip non-testimony lines (like "No other survivor testimonies...")
-                if (trimmed.startsWith('*No ') || trimmed.startsWith('_No ')) return;
-
-                const cleaned = trimmed
-                    // Drop bullet markers only if followed by whitespace
-                    .replace(/^\s*[-*]\s+(?=\S)/, '')
-                    .replace(/\n+/g, ' ') // flatten multiline entries
-                    // Normalize quotes and dashes
-                    .replace(/[""]/g, '"') // smart quotes to straight quotes
-                    .replace(/[–—]/g, '-') // en-dash and em-dash to hyphen
-                    .trim();
-
-                console.log(`Testimony block ${idx + 1}:`, cleaned.substring(0, 80));
-
-                // Pattern 1: **Date: (TYPE)** "quote" - [Source](url)
-                // More flexible quote matching - allows any text between quotes
-                let match = cleaned.match(/^\*\*([^:]+):\s*\(([^)]+)\)\*\*\s+"(.+?)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
-                if (match) {
-                    console.log(`  → Matched pattern 1 (Date+Type)`);
-                    const parsed = parseSourceIntoParts(match[4].trim());
-                    testimonies.push({
-                        date: match[1].trim(),
-                        type: match[2].trim().toUpperCase(),
-                        quote: match[3].trim(),
-                        sourceName: parsed.sourceName,
-                        platform: parsed.platform,
-                        source: parsed.source,
-                        url: sanitizeUrl(match[5].trim())
-                    });
-                    return;
-                }
-
-                // Pattern 2: **(TYPE)** "quote" - [Source](url)
-                match = cleaned.match(/^\*\*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
-                if (match) {
-                    console.log(`  → Matched pattern 2 (Type only)`);
-                    const parsed = parseSourceIntoParts(match[3].trim());
-                    testimonies.push({
-                        date: '',
-                        type: match[1].trim().toUpperCase(),
-                        quote: match[2].trim(),
-                        sourceName: parsed.sourceName,
-                        platform: parsed.platform,
-                        source: parsed.source,
-                        url: sanitizeUrl(match[4].trim())
-                    });
-                    return;
-                }
-
-                // Pattern 1b: **Date: (TYPE)** "quote" - Source (no link)
-                match = cleaned.match(/^\*\*(.*?):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*-\s*([^\(\[]+)$/i);
-                if (match) {
-                    console.log('  ✓ Matched pattern 1b (Date+Type, no link)');
-                    const parsed = parseSourceIntoParts(match[4].trim());
-                    testimonies.push({
-                        date: match[1].trim(),
-                        type: match[2].trim().toUpperCase(),
-                        quote: match[3].trim(),
-                        sourceName: parsed.sourceName,
-                        platform: parsed.platform,
-                        source: parsed.source,
-                        url: ''
-                    });
-                    return;
-                }
-
-                // Pattern 3: Date: (TYPE) "quote" - [Source](url) (no bold)
-                match = cleaned.match(/^(.*?):\s*\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
-                if (match) {
-                    console.log(`  → Matched pattern 3 (Date+Type, no bold)`);
-                    const parsed = parseSourceIntoParts(match[4].trim());
-                    testimonies.push({
-                        date: match[1].trim(),
-                        type: match[2].trim().toUpperCase(),
-                        quote: match[3].trim(),
-                        sourceName: parsed.sourceName,
-                        platform: parsed.platform,
-                        source: parsed.source,
-                        url: sanitizeUrl(match[5].trim())
-                    });
-                    return;
-                }
-
-                // Pattern 4: (TYPE) "quote" - [Source](url) (no date, no bold)
-                match = cleaned.match(/^\(([^)]+)\)\s+"([^"]+)"\s*-\s*\[([^\]]+)\]\(([^)]+)\)/i);
-                if (match) {
-                    console.log(`  → Matched pattern 4 (Type only, no bold)`);
-                    const parsed = parseSourceIntoParts(match[3].trim());
-                    testimonies.push({
-                        date: '',
-                        type: match[1].trim().toUpperCase(),
-                        quote: match[2].trim(),
-                        sourceName: parsed.sourceName,
-                        platform: parsed.platform,
-                        source: parsed.source,
-                        url: sanitizeUrl(match[4].trim())
-                    });
-                    return;
-                }
-
-                console.warn(`  → No pattern matched for block ${idx + 1}`);
-            });
-
+        if (testimonies.length > 0) {
             renderList(testimonies, 'testimonyListOutput', item => {
                 const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
                 return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`;
             });
-            console.log(`✓ Parsed ${testimonies.length} testimonies`);
         }
 
-        // Parse Related Media section
-        const relatedMediaSection = getSection(normalizedMarkdown, 'Related Media');
-        console.log('Related Media section:', relatedMediaSection ? `Found (${relatedMediaSection.length} chars)` : 'Not found');
-        if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
-            const lines = relatedMediaSection.split('\n');
-
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (!trimmed) return;
-
-                // Pattern 1: * [Title](url) or - [Title](url)
-                let match = trimmed.match(/^[*-]\s+\[([^\]]+)\]\(([^)]+)\)/);
-                if (match) {
-                    relatedMedia.push({
-                        title: match[1].trim(),
-                        url: sanitizeUrl(match[2].trim())
-                    });
-                    return;
-                }
-
-                // Pattern 2: [Title](url) without bullet
-                match = trimmed.match(/^\[([^\]]+)\]\(([^)]+)\)/);
-                if (match) {
-                    relatedMedia.push({
-                        title: match[1].trim(),
-                        url: sanitizeUrl(match[2].trim())
-                    });
-                }
-            });
-
+        if (relatedMedia.length > 0) {
             renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
-            console.log(`✓ Parsed ${relatedMedia.length} related media items`);
         }
+
+        console.log('✓ Import complete!');
+        console.log('Parsed data:', parsedData);
     }
 
     // --- UTILITY FUNCTIONS ---
@@ -2264,7 +1413,7 @@ ${relatedMediaSection}
         // The bio and other fields may contain intentional markdown
         return String(text);
     }
-    
+
     function escapeMarkdownBasic(text) {
         return String(text)
             .replace(/\\/g, '\\\\')
@@ -2299,7 +1448,7 @@ ${relatedMediaSection}
         confirmSubmitBtn.addEventListener('click', async () => {
             const programName = document.getElementById('programName')?.value || '';
             const outputCode = document.getElementById('outputCode')?.value || '';
-            
+
             if (!programName.trim()) {
                 submitStatus.innerHTML = '<span class="error">❌ Program name is required</span>';
                 return;
@@ -2371,13 +1520,14 @@ ${relatedMediaSection}
                     submitStatus.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${result.id})</span>`;
                     setTimeout(() => {
                         submitModal.style.display = 'none';
-                    }, 2000);
+                        submitStatus.innerHTML = '';
+                    }, 3000);
                 } else {
-                    submitStatus.innerHTML = `<span class="error">❌ ${result.error || 'Submission failed'}</span>`;
+                    submitStatus.innerHTML = `<span class="error">❌ ${result.message || 'Submission failed'}</span>`;
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                submitStatus.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+                submitStatus.innerHTML = '<span class="error">❌ Network error. Please try again.</span>';
             } finally {
                 confirmSubmitBtn.disabled = false;
             }
