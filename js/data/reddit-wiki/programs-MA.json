@@ -1,0 +1,77 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Bloom Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/bloomtc/",
+                         "normalizedName":  "bloom teen challenge"
+                     },
+                     {
+                         "name":  "Chamberlain International School",
+                         "url":  "/r/troubledteens/wiki/index/chamberlain/",
+                         "normalizedName":  "chamberlain international school"
+                     },
+                     {
+                         "name":  "Fuller Hospital",
+                         "url":  "/r/troubledteens/wiki/index/fullerhos/",
+                         "normalizedName":  "fuller hospital"
+                     },
+                     {
+                         "name":  "Judge Rotenberg Center",
+                         "url":  "/r/troubledteens/wiki/index/jrotenberg/",
+                         "normalizedName":  "judge rotenberg center"
+                     },
+                     {
+                         "name":  "Meadowridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/meadowridge/",
+                         "normalizedName":  "meadowridge academy"
+                     },
+                     {
+                         "name":  "Pelham Academy",
+                         "url":  "/r/troubledteens/wiki/index/pelham/",
+                         "normalizedName":  "pelham academy"
+                     },
+                     {
+                         "name":  "Pembroke Hospital",
+                         "url":  "/r/troubledteens/wiki/index/pembroke/",
+                         "normalizedName":  "pembroke hospital"
+                     },
+                     {
+                         "name":  "Valley View School",
+                         "url":  "/r/troubledteens/wiki/index/valleyview/",
+                         "normalizedName":  "valley view school"
+                     },
+                     {
+                         "name":  "Academy at Swift River",
+                         "url":  "/r/troubledteens/wiki/index/swiftriver/",
+                         "normalizedName":  "academy at swift river"
+                     },
+                     {
+                         "name":  "Ashby Academy",
+                         "url":  "/r/troubledteens/wiki/index/ashbyacademy/",
+                         "normalizedName":  "ashby academy"
+                     },
+                     {
+                         "name":  "DeSisto at Stockbridge School",
+                         "url":  "/r/troubledteens/wiki/index/desistostockbrid/",
+                         "normalizedName":  "desisto at stockbridge school"
+                     },
+                     {
+                         "name":  "John Dewey Academy",
+                         "url":  "/r/troubledteens/wiki/index/johndewey/",
+                         "normalizedName":  "john dewey academy"
+                     },
+                     {
+                         "name":  "Wayside Union Academy",
+                         "url":  "/r/troubledteens/wiki/index/waysideunion/",
+                         "normalizedName":  "wayside union academy"
+                     },
+                     {
+                         "name":  "Westwood Lodge",
+                         "url":  "/r/troubledteens/wiki/index/westwoodlodge/",
+                         "normalizedName":  "westwood lodge"
+                     }
+                 ],
+    "programCount":  14,
+    "generated":  "2025-12-10T17:55:09.0982764-05:00",
+    "state":  "MA"
+}

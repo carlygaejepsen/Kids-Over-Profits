@@ -1,0 +1,52 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Embark Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/embark/",
+                         "normalizedName":  "embark behavioral health"
+                     },
+                     {
+                         "name":  "Embark Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/embarkco/",
+                         "normalizedName":  "embark behavioral health"
+                     },
+                     {
+                         "name":  "Forest Heights Lodge",
+                         "url":  "/r/troubledteens/wiki/index/forestheights/",
+                         "normalizedName":  "forest heights lodge"
+                     },
+                     {
+                         "name":  "The Link School",
+                         "url":  "/r/troubledteens/wiki/index/linkschool/",
+                         "normalizedName":  "the link school"
+                     },
+                     {
+                         "name":  "Seeds Wilderness Therapy",
+                         "url":  "/r/troubledteens/wiki/index/seedswilderness/",
+                         "normalizedName":  "seeds wilderness therapy"
+                     },
+                     {
+                         "name":  "Red Mountain Colorado",
+                         "url":  "/r/troubledteens/wiki/index/redmountainco/",
+                         "normalizedName":  "red mountain colorado"
+                     },
+                     {
+                         "name":  "El Pueblo Boys and Girls Ranch",
+                         "url":  "/r/troubledteens/wiki/index/puebloranch/",
+                         "normalizedName":  "el pueblo boys and girls ranch"
+                     },
+                     {
+                         "name":  "Royal Gorge Academy",
+                         "url":  "/r/troubledteens/wiki/index/royalgorge/",
+                         "normalizedName":  "royal gorge academy"
+                     },
+                     {
+                         "name":  "The Brown Schools at Cedar Springs",
+                         "url":  "/r/troubledteens/wiki/index/BScedarsprings/",
+                         "normalizedName":  "the brown schools at cedar springs"
+                     }
+                 ],
+    "programCount":  9,
+    "generated":  "2025-12-10T17:55:07.8327485-05:00",
+    "state":  "CO"
+}

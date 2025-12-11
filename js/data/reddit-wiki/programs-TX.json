@@ -1,17 +1,237 @@
 {
     "programs":  [
                      {
+                         "name":  "Azleway Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/azleway/",
+                         "normalizedName":  "azleway boys ranch"
+                     },
+                     {
+                         "name":  "Brookhaven Youth Ranch",
+                         "url":  "/r/troubledteens/wiki/index/brookhaven/",
+                         "normalizedName":  "brookhaven youth ranch"
+                     },
+                     {
+                         "name":  "Cedar Crest Hospital \u0026 RTC",
+                         "url":  "/r/troubledteens/wiki/index/cedarcrest/",
+                         "normalizedName":  "cedar crest hospital \u0026 rtc"
+                     },
+                     {
+                         "name":  "El Paso Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/elpasobhs/",
+                         "normalizedName":  "el paso behavioral health system"
+                     },
+                     {
+                         "name":  "Fulshear Ranch Academy/Fulshear Treatment to Transition",
+                         "url":  "/r/troubledteens/wiki/index/fulshear/",
+                         "normalizedName":  "fulshear ranch academy/fulshear treatment to transition"
+                     },
+                     {
+                         "name":  "Heartlight Ministries",
+                         "url":  "/r/troubledteens/wiki/index/heartlightmini/",
+                         "normalizedName":  "heartlight ministries"
+                     },
+                     {
+                         "name":  "Hickory Trail Hospital",
+                         "url":  "/r/troubledteens/wiki/index/hickorytrail/",
+                         "normalizedName":  "hickory trail hospital"
+                     },
+                     {
+                         "name":  "Kingwood Pines Hospital",
+                         "url":  "/r/troubledteens/wiki/index/kingwoodpines/",
+                         "normalizedName":  "kingwood pines hospital"
+                     },
+                     {
+                         "name":  "Laurel Ridge Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/BSlaurelridge/",
+                         "normalizedName":  "laurel ridge treatment center"
+                     },
+                     {
+                         "name":  "Laurel Ridge Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/laurelridge/",
+                         "normalizedName":  "laurel ridge treatment center"
+                     },
+                     {
+                         "name":  "Mayhill Hospital",
+                         "url":  "/r/troubledteens/wiki/index/mayhill/",
+                         "normalizedName":  "mayhill hospital"
+                     },
+                     {
                          "name":  "Meridell Achievement Center",
                          "url":  "/r/troubledteens/wiki/index/meridellachievement/",
                          "normalizedName":  "meridell achievement center"
                      },
                      {
+                         "name":  "Millwood Hospital",
+                         "url":  "/r/troubledteens/wiki/index/millwood/",
+                         "normalizedName":  "millwood hospital"
+                     },
+                     {
+                         "name":  "New Hope Boys Home",
+                         "url":  "/r/troubledteens/wiki/index/newhopetc/",
+                         "normalizedName":  "new hope boys home"
+                     },
+                     {
+                         "name":  "Resolution Ranch Academy",
+                         "url":  "/r/troubledteens/wiki/index/resolution/",
+                         "normalizedName":  "resolution ranch academy"
+                     },
+                     {
+                         "name":  "River Crest Hospital",
+                         "url":  "/r/troubledteens/wiki/index/rivercrest/",
+                         "normalizedName":  "river crest hospital"
+                     },
+                     {
+                         "name":  "River View Christian Academy/Julian Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
+                         "normalizedName":  "river view christian academy/julian youth academy"
+                     },
+                     {
+                         "name":  "San Marcos Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/BSsanmarcos/",
+                         "normalizedName":  "san marcos treatment center"
+                     },
+                     {
+                         "name":  "San Marcos Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/sanmarcos/",
+                         "normalizedName":  "san marcos treatment center"
+                     },
+                     {
                          "name":  "Shiloh Treatment Center",
                          "url":  "/r/troubledteens/wiki/index/shilohrtc/",
                          "normalizedName":  "shiloh treatment center"
+                     },
+                     {
+                         "name":  "Starlight Recovery Center",
+                         "url":  "/r/troubledteens/wiki/index/starlight/",
+                         "normalizedName":  "starlight recovery center"
+                     },
+                     {
+                         "name":  "The Refuge Ranch",
+                         "url":  "/r/troubledteens/wiki/index/refugeranch/",
+                         "normalizedName":  "the refuge ranch"
+                     },
+                     {
+                         "name":  "THRIVE Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/thrivetc/",
+                         "normalizedName":  "thrive girls academy"
+                     },
+                     {
+                         "name":  "Waco Center for Youth",
+                         "url":  "/r/troubledteens/wiki/index/wacoyouth/",
+                         "normalizedName":  "waco center for youth"
+                     },
+                     {
+                         "name":  "West Oaks Hospital",
+                         "url":  "/r/troubledteens/wiki/index/westoaks/",
+                         "normalizedName":  "west oaks hospital"
+                     },
+                     {
+                         "name":  "Anchor Home for Boys",
+                         "url":  "/r/troubledteens/wiki/index/anchorboys/",
+                         "normalizedName":  "anchor home for boys"
+                     },
+                     {
+                         "name":  "Abilene Youth Center",
+                         "url":  "/r/troubledteens/wiki/index/abilene/",
+                         "normalizedName":  "abilene youth center"
+                     },
+                     {
+                         "name":  "Behavior Training Research",
+                         "url":  "/r/troubledteens/wiki/index/behaviortraining/",
+                         "normalizedName":  "behavior training research"
+                     },
+                     {
+                         "name":  "Bristol Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/bristolyouth/",
+                         "normalizedName":  "bristol youth academy"
+                     },
+                     {
+                         "name":  "Camp Woodland Springs",
+                         "url":  "/r/troubledteens/wiki/index/woodlandsprings/",
+                         "normalizedName":  "camp woodland springs"
+                     },
+                     {
+                         "name":  "Daystar Residential Inc.",
+                         "url":  "/r/troubledteens/wiki/index/daystar/",
+                         "normalizedName":  "daystar residential inc."
+                     },
+                     {
+                         "name":  "Excel Academy",
+                         "url":  "/r/troubledteens/wiki/index/excelacademy/",
+                         "normalizedName":  "excel academy"
+                     },
+                     {
+                         "name":  "Five Oaks Achievement Center",
+                         "url":  "/r/troubledteens/wiki/index/fiveoaks/",
+                         "normalizedName":  "five oaks achievement center"
+                     },
+                     {
+                         "name":  "Grace of God Boys\u0027 Home",
+                         "url":  "/r/troubledteens/wiki/index/graceofgod/",
+                         "normalizedName":  "grace of god boys\u0027 home"
+                     },
+                     {
+                         "name":  "High Frontier",
+                         "url":  "/r/troubledteens/wiki/index/highfrontier/",
+                         "normalizedName":  "high frontier"
+                     },
+                     {
+                         "name":  "Lighthouse Children\u0027s Homes",
+                         "url":  "/r/troubledteens/wiki/index/lighthousechildren/",
+                         "normalizedName":  "lighthouse children\u0027s homes"
+                     },
+                     {
+                         "name":  "Lone Star Expeditions",
+                         "url":  "/r/troubledteens/wiki/index/lonestarexp/",
+                         "normalizedName":  "lone star expeditions"
+                     },
+                     {
+                         "name":  "On Track",
+                         "url":  "/r/troubledteens/wiki/index/ontrack/",
+                         "normalizedName":  "on track"
+                     },
+                     {
+                         "name":  "Rebekah Home for Girls",
+                         "url":  "/r/troubledteens/wiki/index/rebekah/",
+                         "normalizedName":  "rebekah home for girls"
+                     },
+                     {
+                         "name":  "Timberlawn Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/timberlawn/",
+                         "normalizedName":  "timberlawn behavioral health system"
+                     },
+                     {
+                         "name":  "Anchor Home for Boys / Anchor Academy",
+                         "url":  "/r/troubledteens/wiki/index/anchoracademy/",
+                         "normalizedName":  "anchor home for boys / anchor academy"
+                     },
+                     {
+                         "name":  "The Brown Schools Rehabilitation Center",
+                         "url":  "/r/troubledteens/wiki/index/BSrehab/",
+                         "normalizedName":  "the brown schools rehabilitation center"
+                     },
+                     {
+                         "name":  "Cypress Creek",
+                         "url":  "/r/troubledteens/wiki/index/BScypresscreek/",
+                         "normalizedName":  "cypress creek"
+                     },
+                     {
+                         "name":  "West Oaks",
+                         "url":  "/r/troubledteens/wiki/index/BSwestoaks/",
+                         "normalizedName":  "west oaks"
+                     },
+                     {
+                         "name":  "The Brown Schools Community Living Programs",
+                         "url":  "/r/troubledteens/wiki/index/BScomm/",
+                         "normalizedName":  "the brown schools community living programs"
+                     },
+                     {
+                         "name":  "The Brown Schools at The Oaks",
+                         "url":  "/r/troubledteens/wiki/index/BStheoaks/",
+                         "normalizedName":  "the brown schools at the oaks"
                      }
                  ],
-    "programCount":  2,
-    "generated":  "2025-12-10T16:34:17.2680406-05:00",
+    "programCount":  46,
+    "generated":  "2025-12-10T17:55:10.5742579-05:00",
     "state":  "TX"
 }

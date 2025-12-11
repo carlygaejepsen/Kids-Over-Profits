@@ -1,0 +1,47 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Granite Hill School",
+                         "url":  "/r/troubledteens/wiki/index/granitehill/",
+                         "normalizedName":  "granite hill school"
+                     },
+                     {
+                         "name":  "Mount Prospect Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountprospect/",
+                         "normalizedName":  "mount prospect academy"
+                     },
+                     {
+                         "name":  "Mountain Valley Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/mountvalley/",
+                         "normalizedName":  "mountain valley treatment center"
+                     },
+                     {
+                         "name":  "The Oliverian School",
+                         "url":  "/r/troubledteens/wiki/index/oliverian/",
+                         "normalizedName":  "the oliverian school"
+                     },
+                     {
+                         "name":  "The Ridge RTC",
+                         "url":  "/r/troubledteens/wiki/index/theridge/",
+                         "normalizedName":  "the ridge rtc"
+                     },
+                     {
+                         "name":  "Hunter School",
+                         "url":  "/r/troubledteens/wiki/index/hunterschool/",
+                         "normalizedName":  "hunter school"
+                     },
+                     {
+                         "name":  "Shortridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/shortridgeacademy/",
+                         "normalizedName":  "shortridge academy"
+                     },
+                     {
+                         "name":  "The Ridge RTC NH",
+                         "url":  "/r/troubledteens/wiki/index/shortridge/",
+                         "normalizedName":  "the ridge rtc nh"
+                     }
+                 ],
+    "programCount":  8,
+    "generated":  "2025-12-10T18:06:15.0531426-05:00",
+    "state":  "NH"
+}

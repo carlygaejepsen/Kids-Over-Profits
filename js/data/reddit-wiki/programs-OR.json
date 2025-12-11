@@ -1,0 +1,137 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Bob Belloni Ranch",
+                         "url":  "/r/troubledteens/wiki/index/belloni/",
+                         "normalizedName":  "bob belloni ranch"
+                     },
+                     {
+                         "name":  "Children\u0027s Farm Home",
+                         "url":  "/r/troubledteens/wiki/index/childfarm/",
+                         "normalizedName":  "children\u0027s farm home"
+                     },
+                     {
+                         "name":  "J. Bar J. Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/jbarjboys/",
+                         "normalizedName":  "j. bar j. boys ranch"
+                     },
+                     {
+                         "name":  "Jasper Mountain",
+                         "url":  "/r/troubledteens/wiki/index/jaspermount/",
+                         "normalizedName":  "jasper mountain"
+                     },
+                     {
+                         "name":  "New Leaf Academy of Oregon",
+                         "url":  "/r/troubledteens/wiki/index/newleaforegon/",
+                         "normalizedName":  "new leaf academy of oregon"
+                     },
+                     {
+                         "name":  "Parry Center for Children",
+                         "url":  "/r/troubledteens/wiki/index/parrycenter/",
+                         "normalizedName":  "parry center for children"
+                     },
+                     {
+                         "name":  "Rimrock Trails",
+                         "url":  "/r/troubledteens/wiki/index/rimrocktrails/",
+                         "normalizedName":  "rimrock trails"
+                     },
+                     {
+                         "name":  "St. Mary\u0027s Home for Boys",
+                         "url":  "/r/troubledteens/wiki/index/stmarysboys/",
+                         "normalizedName":  "st. mary\u0027s home for boys"
+                     },
+                     {
+                         "name":  "Academy at Sisters",
+                         "url":  "/r/troubledteens/wiki/index/academysister/",
+                         "normalizedName":  "academy at sisters"
+                     },
+                     {
+                         "name":  "Bridges Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/bridgesboys/",
+                         "normalizedName":  "bridges boys academy"
+                     },
+                     {
+                         "name":  "Crater Lake School",
+                         "url":  "/r/troubledteens/wiki/index/craterlake/",
+                         "normalizedName":  "crater lake school"
+                     },
+                     {
+                         "name":  "Deschutes Wilderness Therapy",
+                         "url":  "/r/troubledteens/wiki/index/deschuteswild/",
+                         "normalizedName":  "deschutes wilderness therapy"
+                     },
+                     {
+                         "name":  "Deschutes Wilderness Therapy",
+                         "url":  "/r/troubledteens/wiki/index/deschuteswild/",
+                         "normalizedName":  "deschutes wilderness therapy"
+                     },
+                     {
+                         "name":  "Dragonfly Transitions",
+                         "url":  "/r/troubledteens/wiki/index/dragonflytransitions/",
+                         "normalizedName":  "dragonfly transitions"
+                     },
+                     {
+                         "name":  "Evoke Cascades",
+                         "url":  "/r/troubledteens/wiki/index/evokecascades/",
+                         "normalizedName":  "evoke cascades"
+                     },
+                     {
+                         "name":  "Mount Bachelor Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountbachelor/",
+                         "normalizedName":  "mount bachelor academy"
+                     },
+                     {
+                         "name":  "Mount Bachelor Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountbachelor/",
+                         "normalizedName":  "mount bachelor academy"
+                     },
+                     {
+                         "name":  "NorthStar Center",
+                         "url":  "/r/troubledteens/wiki/index/northstar/",
+                         "normalizedName":  "northstar center"
+                     },
+                     {
+                         "name":  "NorthStar Center",
+                         "url":  "/r/troubledteens/wiki/index/northstar/",
+                         "normalizedName":  "northstar center"
+                     },
+                     {
+                         "name":  "Obsidian Trails Outdoor School",
+                         "url":  "/r/troubledteens/wiki/index/obsidiantrails/",
+                         "normalizedName":  "obsidian trails outdoor school"
+                     },
+                     {
+                         "name":  "Royal Haven",
+                         "url":  "/r/troubledteens/wiki/index/royalhaven/",
+                         "normalizedName":  "royal haven"
+                     },
+                     {
+                         "name":  "SageWalk Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/sagewalk/",
+                         "normalizedName":  "sagewalk wilderness"
+                     },
+                     {
+                         "name":  "SageWalk Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/sagewalk/",
+                         "normalizedName":  "sagewalk wilderness"
+                     },
+                     {
+                         "name":  "Santiam Crossing",
+                         "url":  "/r/troubledteens/wiki/index/santiamxing/",
+                         "normalizedName":  "santiam crossing"
+                     },
+                     {
+                         "name":  "Scotts Valley School",
+                         "url":  "/r/troubledteens/wiki/index/scottsvalley/",
+                         "normalizedName":  "scotts valley school"
+                     },
+                     {
+                         "name":  "Second Nature Cascades",
+                         "url":  "/r/troubledteens/wiki/index/sncascades/",
+                         "normalizedName":  "second nature cascades"
+                     }
+                 ],
+    "programCount":  26,
+    "generated":  "2025-12-10T17:55:09.8741222-05:00",
+    "state":  "OR"
+}

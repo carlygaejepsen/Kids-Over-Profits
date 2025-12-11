@@ -1,0 +1,152 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Alachua Academy",
+                         "url":  "/r/troubledteens/wiki/index/alachua/",
+                         "normalizedName":  "alachua academy"
+                     },
+                     {
+                         "name":  "Columbus Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/columbusyouth/",
+                         "normalizedName":  "columbus youth academy"
+                     },
+                     {
+                         "name":  "Duval Academy",
+                         "url":  "/r/troubledteens/wiki/index/duval/",
+                         "normalizedName":  "duval academy"
+                     },
+                     {
+                         "name":  "Eckerd Youth Alternatives",
+                         "url":  "/r/troubledteens/wiki/index/eckerdfl/",
+                         "normalizedName":  "eckerd youth alternatives"
+                     },
+                     {
+                         "name":  "Eckerd Youth Alternatives",
+                         "url":  "/r/troubledteens/wiki/index/eckerdnc/",
+                         "normalizedName":  "eckerd youth alternatives"
+                     },
+                     {
+                         "name":  "Emerald Coast Behavioral Hospital",
+                         "url":  "/r/troubledteens/wiki/index/emeraldcoast/",
+                         "normalizedName":  "emerald coast behavioral hospital"
+                     },
+                     {
+                         "name":  "Fort Lauderdale Behavioral Health Center",
+                         "url":  "/r/troubledteens/wiki/index/ftlaudbhc/",
+                         "normalizedName":  "fort lauderdale behavioral health center"
+                     },
+                     {
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewaytc/",
+                         "normalizedName":  "gateway academy"
+                     },
+                     {
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewayaca/",
+                         "normalizedName":  "gateway academy"
+                     },
+                     {
+                         "name":  "Gator Wilderness Camp",
+                         "url":  "/r/troubledteens/wiki/index/gatorwild/",
+                         "normalizedName":  "gator wilderness camp"
+                     },
+                     {
+                         "name":  "Gulf Coast Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/gulfcoasttc/",
+                         "normalizedName":  "gulf coast treatment center"
+                     },
+                     {
+                         "name":  "JAM Youth Connection, Inc",
+                         "url":  "/r/troubledteens/wiki/index/jamyouth/",
+                         "normalizedName":  "jam youth connection, inc"
+                     },
+                     {
+                         "name":  "La Amistad Behavioral Health Services",
+                         "url":  "/r/troubledteens/wiki/index/laamistad/",
+                         "normalizedName":  "la amistad behavioral health services"
+                     },
+                     {
+                         "name":  "Lakeland Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/lakelandgirls/",
+                         "normalizedName":  "lakeland girls academy"
+                     },
+                     {
+                         "name":  "Marion Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/marionyouth/",
+                         "normalizedName":  "marion youth academy"
+                     },
+                     {
+                         "name":  "Palm Beach Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/palmbeach/",
+                         "normalizedName":  "palm beach youth academy"
+                     },
+                     {
+                         "name":  "Palm Shores Behavioral Health Center",
+                         "url":  "/r/troubledteens/wiki/index/palmshoresbhc/",
+                         "normalizedName":  "palm shores behavioral health center"
+                     },
+                     {
+                         "name":  "Pompano Youth Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/pompano/",
+                         "normalizedName":  "pompano youth treatment center"
+                     },
+                     {
+                         "name":  "River Point Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/riverpointbh/",
+                         "normalizedName":  "river point behavioral health"
+                     },
+                     {
+                         "name":  "Safe Harbor Academy for Boys",
+                         "url":  "/r/troubledteens/wiki/index/safeharbor/",
+                         "normalizedName":  "safe harbor academy for boys"
+                     },
+                     {
+                         "name":  "SandyPines Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/sandypines/",
+                         "normalizedName":  "sandypines residential treatment center"
+                     },
+                     {
+                         "name":  "St. John\u0027s Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/stjohnsyouth/",
+                         "normalizedName":  "st. john\u0027s youth academy"
+                     },
+                     {
+                         "name":  "The Brown Schools of Florida",
+                         "url":  "/r/troubledteens/wiki/index/BSflorida/",
+                         "normalizedName":  "the brown schools of florida"
+                     },
+                     {
+                         "name":  "Charles Britt Academy",
+                         "url":  "/r/troubledteens/wiki/index/charlesbritt/",
+                         "normalizedName":  "charles britt academy"
+                     },
+                     {
+                         "name":  "Victory Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/lighthousefl/",
+                         "normalizedName":  "victory christian academy"
+                     },
+                     {
+                         "name":  "New Beginnings Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/newbeginningsmo/",
+                         "normalizedName":  "new beginnings girls academy"
+                     },
+                     {
+                         "name":  "Treasure Coast Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/treasurecoast/",
+                         "normalizedName":  "treasure coast boys academy"
+                     },
+                     {
+                         "name":  "The Academy / Coral Island Academy",
+                         "url":  "/r/troubledteens/wiki/index/coralisland/",
+                         "normalizedName":  "the academy / coral island academy"
+                     },
+                     {
+                         "name":  "Wellspring Camps",
+                         "url":  "/r/troubledteens/wiki/index/wellspringcamps/",
+                         "normalizedName":  "wellspring camps"
+                     }
+                 ],
+    "programCount":  29,
+    "generated":  "2025-12-10T17:55:08.1983786-05:00",
+    "state":  "FL"
+}

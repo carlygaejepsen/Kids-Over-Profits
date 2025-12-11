@@ -1,0 +1,42 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Heart of America Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/heartofamericatc/",
+                         "normalizedName":  "heart of america teen challenge"
+                     },
+                     {
+                         "name":  "Lakeside Academy",
+                         "url":  "/r/troubledteens/wiki/index/lakesideacademy/",
+                         "normalizedName":  "lakeside academy"
+                     },
+                     {
+                         "name":  "Victory House Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/victoryhouse/",
+                         "normalizedName":  "victory house christian academy"
+                     },
+                     {
+                         "name":  "Lakeside Academy - Kansas",
+                         "url":  "/r/troubledteens/wiki/index/lakesidekansas/",
+                         "normalizedName":  "lakeside academy - kansas"
+                     },
+                     {
+                         "name":  "Beattie Academy",
+                         "url":  "/r/troubledteens/wiki/index/beattie/",
+                         "normalizedName":  "beattie academy"
+                     },
+                     {
+                         "name":  "Tipton Academy",
+                         "url":  "/r/troubledteens/wiki/index/tipton/",
+                         "normalizedName":  "tipton academy"
+                     },
+                     {
+                         "name":  "White Rock Academy",
+                         "url":  "/r/troubledteens/wiki/index/whiterock/",
+                         "normalizedName":  "white rock academy"
+                     }
+                 ],
+    "programCount":  7,
+    "generated":  "2025-12-10T17:55:08.8269493-05:00",
+    "state":  "KS"
+}

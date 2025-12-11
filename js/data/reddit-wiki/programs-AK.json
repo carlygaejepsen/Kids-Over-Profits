@@ -1,0 +1,22 @@
+{
+    "programs":  [
+                     {
+                         "name":  "DeBarr Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/debarr/",
+                         "normalizedName":  "debarr residential treatment center"
+                     },
+                     {
+                         "name":  "North Star Hospital",
+                         "url":  "/r/troubledteens/wiki/index/northstarbhs/",
+                         "normalizedName":  "north star hospital"
+                     },
+                     {
+                         "name":  "Palmer Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/palmerrtc/",
+                         "normalizedName":  "palmer residential treatment center"
+                     }
+                 ],
+    "programCount":  3,
+    "generated":  "2025-12-10T17:55:07.3425671-05:00",
+    "state":  "AK"
+}

@@ -1,0 +1,87 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Adolescent Growth",
+                         "url":  "/r/troubledteens/wiki/index/adolescentgrowth/",
+                         "normalizedName":  "adolescent growth"
+                     },
+                     {
+                         "name":  "Athena House",
+                         "url":  "/r/troubledteens/wiki/index/athena/",
+                         "normalizedName":  "athena house"
+                     },
+                     {
+                         "name":  "Benchmark Transitions",
+                         "url":  "/r/troubledteens/wiki/index/benchmark/",
+                         "normalizedName":  "benchmark transitions"
+                     },
+                     {
+                         "name":  "Embark at San Martin",
+                         "url":  "/r/troubledteens/wiki/index/sanmartin/",
+                         "normalizedName":  "embark at san martin"
+                     },
+                     {
+                         "name":  "Newport Academy",
+                         "url":  "/r/troubledteens/wiki/index/newport/",
+                         "normalizedName":  "newport academy"
+                     },
+                     {
+                         "name":  "Paradigm Treatment Centers",
+                         "url":  "/r/troubledteens/wiki/index/paradigmtc/",
+                         "normalizedName":  "paradigm treatment centers"
+                     },
+                     {
+                         "name":  "Polaris Teen Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/polarisca/",
+                         "normalizedName":  "polaris teen treatment center"
+                     },
+                     {
+                         "name":  "River View Christian Academy/Julian Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
+                         "normalizedName":  "river view christian academy/julian youth academy"
+                     },
+                     {
+                         "name":  "CEDU",
+                         "url":  "/r/troubledteens/wiki/index/cedu/",
+                         "normalizedName":  "cedu"
+                     },
+                     {
+                         "name":  "CEDU High School",
+                         "url":  "/r/troubledteens/wiki/index/ceduhs/",
+                         "normalizedName":  "cedu high school"
+                     },
+                     {
+                         "name":  "CEDU Middle School",
+                         "url":  "/r/troubledteens/wiki/index/cedums/",
+                         "normalizedName":  "cedu middle school"
+                     },
+                     {
+                         "name":  "Synanon",
+                         "url":  "/r/troubledteens/wiki/index/synanon/",
+                         "normalizedName":  "synanon"
+                     },
+                     {
+                         "name":  "Bell Academy",
+                         "url":  "/r/troubledteens/wiki/index/bell/",
+                         "normalizedName":  "bell academy"
+                     },
+                     {
+                         "name":  "Del Amo Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/delamobhs/",
+                         "normalizedName":  "del amo behavioral health system"
+                     },
+                     {
+                         "name":  "Fremont Hospital",
+                         "url":  "/r/troubledteens/wiki/index/fremonthos/",
+                         "normalizedName":  "fremont hospital"
+                     },
+                     {
+                         "name":  "Heritage Oaks Hospital",
+                         "url":  "/r/troubledteens/wiki/index/heritageoaks/",
+                         "normalizedName":  "heritage oaks hospital"
+                     }
+                 ],
+    "programCount":  16,
+    "generated":  "2025-12-10T17:55:07.7808820-05:00",
+    "state":  "CA"
+}

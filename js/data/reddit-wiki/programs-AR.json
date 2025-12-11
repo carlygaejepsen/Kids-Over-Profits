@@ -1,0 +1,107 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Capstone Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/capstonetc/",
+                         "normalizedName":  "capstone treatment center"
+                     },
+                     {
+                         "name":  "Little Creek Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/littlecreek/",
+                         "normalizedName":  "little creek behavioral health"
+                     },
+                     {
+                         "name":  "Millcreek Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/millcreekbh/",
+                         "normalizedName":  "millcreek behavioral health"
+                     },
+                     {
+                         "name":  "Ouachita Hills Academy",
+                         "url":  "/r/troubledteens/wiki/index/ouachitahills/",
+                         "normalizedName":  "ouachita hills academy"
+                     },
+                     {
+                         "name":  "Piney Ridge Center",
+                         "url":  "/r/troubledteens/wiki/index/pineyridge/",
+                         "normalizedName":  "piney ridge center"
+                     },
+                     {
+                         "name":  "Piney Ridge Center",
+                         "url":  "/r/troubledteens/wiki/index/pineyridgemo/",
+                         "normalizedName":  "piney ridge center"
+                     },
+                     {
+                         "name":  "Pinnacle Pointe Behavioral Healthcare System",
+                         "url":  "/r/troubledteens/wiki/index/pinnaclepointe/",
+                         "normalizedName":  "pinnacle pointe behavioral healthcare system"
+                     },
+                     {
+                         "name":  "Rivendell of Arkansas",
+                         "url":  "/r/troubledteens/wiki/index/rivendellarkansas/",
+                         "normalizedName":  "rivendell of arkansas"
+                     },
+                     {
+                         "name":  "Teen Challenge Adventure Ranch",
+                         "url":  "/r/troubledteens/wiki/index/adventureranchtc/",
+                         "normalizedName":  "teen challenge adventure ranch"
+                     },
+                     {
+                         "name":  "The Bridgeway",
+                         "url":  "/r/troubledteens/wiki/index/bridgeway/",
+                         "normalizedName":  "the bridgeway"
+                     },
+                     {
+                         "name":  "Vantage Point Behavioral Health Hospital",
+                         "url":  "/r/troubledteens/wiki/index/vantageptar/",
+                         "normalizedName":  "vantage point behavioral health hospital"
+                     },
+                     {
+                         "name":  "WoodRidge Behavioral Center",
+                         "url":  "/r/troubledteens/wiki/index/woodridgeBC/",
+                         "normalizedName":  "woodridge behavioral center"
+                     },
+                     {
+                         "name":  "WoodRidge of Forrest City",
+                         "url":  "/r/troubledteens/wiki/index/woodridgeFC/",
+                         "normalizedName":  "woodridge of forrest city"
+                     },
+                     {
+                         "name":  "WoodRidge Northeast",
+                         "url":  "/r/troubledteens/wiki/index/woodridgeNE/",
+                         "normalizedName":  "woodridge northeast"
+                     },
+                     {
+                         "name":  "WoodRidge of the Ozarks",
+                         "url":  "/r/troubledteens/wiki/index/woodridgeOZ/",
+                         "normalizedName":  "woodridge of the ozarks"
+                     },
+                     {
+                         "name":  "The Lord\u0027s Ranch / Trinity Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/lordsranch/",
+                         "normalizedName":  "the lord\u0027s ranch / trinity behavioral health"
+                     },
+                     {
+                         "name":  "Gulf Coast Academy",
+                         "url":  "/r/troubledteens/wiki/index/gulfcoast/",
+                         "normalizedName":  "gulf coast academy"
+                     },
+                     {
+                         "name":  "Ridgeview Group Home",
+                         "url":  "/r/troubledteens/wiki/index/ridgeviewgh/",
+                         "normalizedName":  "ridgeview group home"
+                     },
+                     {
+                         "name":  "Vantage Point Behavioral Health Hospital RTP",
+                         "url":  "/r/troubledteens/wiki/index/vantagepoint/",
+                         "normalizedName":  "vantage point behavioral health hospital rtp"
+                     },
+                     {
+                         "name":  "Millcreek Behavioral Health PRTF",
+                         "url":  "/r/troubledteens/wiki/index/millcreekbh/",
+                         "normalizedName":  "millcreek behavioral health prtf"
+                     }
+                 ],
+    "programCount":  20,
+    "generated":  "2025-12-10T17:55:07.6512132-05:00",
+    "state":  "AR"
+}

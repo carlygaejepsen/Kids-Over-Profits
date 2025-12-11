@@ -1,0 +1,147 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Anchor Academy",
+                         "url":  "/r/troubledteens/wiki/index/anchoracademy/",
+                         "normalizedName":  "anchor academy"
+                     },
+                     {
+                         "name":  "CALO Preteens",
+                         "url":  "/r/troubledteens/wiki/index/calopre/",
+                         "normalizedName":  "calo preteens"
+                     },
+                     {
+                         "name":  "CALO Teens",
+                         "url":  "/r/troubledteens/wiki/index/calo/",
+                         "normalizedName":  "calo teens"
+                     },
+                     {
+                         "name":  "Future Men",
+                         "url":  "/r/troubledteens/wiki/index/futuremen/",
+                         "normalizedName":  "future men"
+                     },
+                     {
+                         "name":  "Heartland Behavioral Health Services",
+                         "url":  "/r/troubledteens/wiki/index/heartlandbhs/",
+                         "normalizedName":  "heartland behavioral health services"
+                     },
+                     {
+                         "name":  "Heartland Christian Ministries",
+                         "url":  "/r/troubledteens/wiki/index/heartland/",
+                         "normalizedName":  "heartland christian ministries"
+                     },
+                     {
+                         "name":  "Kansas City Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/kansascitytc/",
+                         "normalizedName":  "kansas city girls academy"
+                     },
+                     {
+                         "name":  "Lakeland Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/lakelandbhs/",
+                         "normalizedName":  "lakeland behavioral health system"
+                     },
+                     {
+                         "name":  "Ozark Trails Academy",
+                         "url":  "/r/troubledteens/wiki/index/ozarkstrails/",
+                         "normalizedName":  "ozark trails academy"
+                     },
+                     {
+                         "name":  "Ozarks Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/ozarkstc/",
+                         "normalizedName":  "ozarks teen challenge"
+                     },
+                     {
+                         "name":  "Piney Ridge Center",
+                         "url":  "/r/troubledteens/wiki/index/pineyridge/",
+                         "normalizedName":  "piney ridge center"
+                     },
+                     {
+                         "name":  "Piney Ridge Center",
+                         "url":  "/r/troubledteens/wiki/index/pineyridgemo/",
+                         "normalizedName":  "piney ridge center"
+                     },
+                     {
+                         "name":  "Shelterwood RTC",
+                         "url":  "/r/troubledteens/wiki/index/shelterwood/",
+                         "normalizedName":  "shelterwood rtc"
+                     },
+                     {
+                         "name":  "Victory Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/victoryboys/",
+                         "normalizedName":  "victory boys academy"
+                     },
+                     {
+                         "name":  "Vision Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/visionboys/",
+                         "normalizedName":  "vision boys academy"
+                     },
+                     {
+                         "name":  "Agapé Boarding School",
+                         "url":  "/r/troubledteens/wiki/index/agape/",
+                         "normalizedName":  "agapé boarding school"
+                     },
+                     {
+                         "name":  "Circle Of Hope Girls Ranch",
+                         "url":  "/r/troubledteens/wiki/index/circleofhope/",
+                         "normalizedName":  "circle of hope girls ranch"
+                     },
+                     {
+                         "name":  "Master\u0027s Ranch Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/mastersranch/",
+                         "normalizedName":  "master\u0027s ranch christian academy"
+                     },
+                     {
+                         "name":  "Master\u0027s Ranch Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/mastersranchgirls/",
+                         "normalizedName":  "master\u0027s ranch girls academy"
+                     },
+                     {
+                         "name":  "ABM Ministries / Lighthouse Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/ABMministries/",
+                         "normalizedName":  "abm ministries / lighthouse christian academy"
+                     },
+                     {
+                         "name":  "Eagle Summit",
+                         "url":  "/r/troubledteens/wiki/index/eaglesummit/",
+                         "normalizedName":  "eagle summit"
+                     },
+                     {
+                         "name":  "Heaven\u0027s View Christian Boarding Academy",
+                         "url":  "/r/troubledteens/wiki/index/heavensview/",
+                         "normalizedName":  "heaven\u0027s view christian boarding academy"
+                     },
+                     {
+                         "name":  "Living Water Refuge",
+                         "url":  "/r/troubledteens/wiki/index/livingwater/",
+                         "normalizedName":  "living water refuge"
+                     },
+                     {
+                         "name":  "Mountain Park Boarding Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountainpark/",
+                         "normalizedName":  "mountain park boarding academy"
+                     },
+                     {
+                         "name":  "Renovo Academy",
+                         "url":  "/r/troubledteens/wiki/index/renovo/",
+                         "normalizedName":  "renovo academy"
+                     },
+                     {
+                         "name":  "Thayer Learning Center",
+                         "url":  "/r/troubledteens/wiki/index/thayerlearningcenter/",
+                         "normalizedName":  "thayer learning center"
+                     },
+                     {
+                         "name":  "Two Rivers Psychiatric Hospital",
+                         "url":  "/r/troubledteens/wiki/index/tworivers/",
+                         "normalizedName":  "two rivers psychiatric hospital"
+                     },
+                     {
+                         "name":  "Wings of Faith Girls Academy / Refuge",
+                         "url":  "/r/troubledteens/wiki/index/wingsoffaith/",
+                         "normalizedName":  "wings of faith girls academy / refuge"
+                     }
+                 ],
+    "programCount":  28,
+    "generated":  "2025-12-10T17:55:09.3804178-05:00",
+    "state":  "MO"
+}

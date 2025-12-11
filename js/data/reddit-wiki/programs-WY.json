@@ -1,0 +1,52 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Meadowlark Academy",
+                         "url":  "/r/troubledteens/wiki/index/meadowlark/",
+                         "normalizedName":  "meadowlark academy"
+                     },
+                     {
+                         "name":  "Meadowlark Academy",
+                         "url":  "/r/troubledteens/wiki/index/meadowlarkWY/",
+                         "normalizedName":  "meadowlark academy"
+                     },
+                     {
+                         "name":  "Rocky Mountain Frontier",
+                         "url":  "/r/troubledteens/wiki/index/rockymtnfrontier/",
+                         "normalizedName":  "rocky mountain frontier"
+                     },
+                     {
+                         "name":  "Triangle Cross Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/trianglecross/",
+                         "normalizedName":  "triangle cross boys ranch"
+                     },
+                     {
+                         "name":  "Trinity Teen Solutions",
+                         "url":  "/r/troubledteens/wiki/index/trinityteen/",
+                         "normalizedName":  "trinity teen solutions"
+                     },
+                     {
+                         "name":  "Wyoming Behavioral Institute",
+                         "url":  "/r/troubledteens/wiki/index/wyomingbi/",
+                         "normalizedName":  "wyoming behavioral institute"
+                     },
+                     {
+                         "name":  "Heart Mountain New Beginnings",
+                         "url":  "/r/troubledteens/wiki/index/heartmountain/",
+                         "normalizedName":  "heart mountain new beginnings"
+                     },
+                     {
+                         "name":  "Mount Carmel Youth Ranch",
+                         "url":  "/r/troubledteens/wiki/index/mountcarmel/",
+                         "normalizedName":  "mount carmel youth ranch"
+                     },
+                     {
+                         "name":  "Normative Services Academy Inc.",
+                         "url":  "/r/troubledteens/wiki/index/normative/",
+                         "normalizedName":  "normative services academy inc."
+                     }
+                 ],
+    "programCount":  9,
+    "generated":  "2025-12-10T18:03:51.7880944-05:00",
+    "state":  "WY"
+}

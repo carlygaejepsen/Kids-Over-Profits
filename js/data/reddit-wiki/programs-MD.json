@@ -1,0 +1,32 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Allegany Boys Camp",
+                         "url":  "/r/troubledteens/wiki/index/allegany/",
+                         "normalizedName":  "allegany boys camp"
+                     },
+                     {
+                         "name":  "Sheppard Pratt Hospital",
+                         "url":  "/r/troubledteens/wiki/index/sheppardpratt/",
+                         "normalizedName":  "sheppard pratt hospital"
+                     },
+                     {
+                         "name":  "Three Springs New Dominion Maryland",
+                         "url":  "/r/troubledteens/wiki/index/3springsnewdominion/",
+                         "normalizedName":  "three springs new dominion maryland"
+                     },
+                     {
+                         "name":  "Forest Haven Asylum",
+                         "url":  "/r/troubledteens/wiki/index/foresthaven/",
+                         "normalizedName":  "forest haven asylum"
+                     },
+                     {
+                         "name":  "Taylor Manor Hospital",
+                         "url":  "/r/troubledteens/wiki/index/taylormanor/",
+                         "normalizedName":  "taylor manor hospital"
+                     }
+                 ],
+    "programCount":  5,
+    "generated":  "2025-12-10T17:55:09.0269070-05:00",
+    "state":  "MD"
+}

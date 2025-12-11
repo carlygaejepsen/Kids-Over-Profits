@@ -1,0 +1,67 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Brush Creek Academy",
+                         "url":  "/r/troubledteens/wiki/index/brushcreek/",
+                         "normalizedName":  "brush creek academy"
+                     },
+                     {
+                         "name":  "Calvalry Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/calvalry/",
+                         "normalizedName":  "calvalry boys ranch"
+                     },
+                     {
+                         "name":  "Cedar Ridge Behavioral Hospital",
+                         "url":  "/r/troubledteens/wiki/index/cedarridgeok/",
+                         "normalizedName":  "cedar ridge behavioral hospital"
+                     },
+                     {
+                         "name":  "Cookson Hills Christian School",
+                         "url":  "/r/troubledteens/wiki/index/cooksonhills/",
+                         "normalizedName":  "cookson hills christian school"
+                     },
+                     {
+                         "name":  "New Lifehouse Academy",
+                         "url":  "/r/troubledteens/wiki/index/newlifehouse/",
+                         "normalizedName":  "new lifehouse academy"
+                     },
+                     {
+                         "name":  "Tulsa Boys\u0027 Home",
+                         "url":  "/r/troubledteens/wiki/index/tulsaboys/",
+                         "normalizedName":  "tulsa boys\u0027 home"
+                     },
+                     {
+                         "name":  "Four Winds Ranch",
+                         "url":  "/r/troubledteens/wiki/index/fourwindsranch/",
+                         "normalizedName":  "four winds ranch"
+                     },
+                     {
+                         "name":  "High Pointe Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/highpointe/",
+                         "normalizedName":  "high pointe treatment center"
+                     },
+                     {
+                         "name":  "Morning Star Adolescent Treatment Unit",
+                         "url":  "/r/troubledteens/wiki/index/morningstar/",
+                         "normalizedName":  "morning star adolescent treatment unit"
+                     },
+                     {
+                         "name":  "Rose Rock Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/roserock/",
+                         "normalizedName":  "rose rock treatment center"
+                     },
+                     {
+                         "name":  "Shadow Mountain Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/shadowmtn/",
+                         "normalizedName":  "shadow mountain behavioral health system"
+                     },
+                     {
+                         "name":  "The Brown Schools at Shadow Mountain",
+                         "url":  "/r/troubledteens/wiki/index/BSshadowmountain/",
+                         "normalizedName":  "the brown schools at shadow mountain"
+                     }
+                 ],
+    "programCount":  12,
+    "generated":  "2025-12-10T17:55:09.7938207-05:00",
+    "state":  "OK"
+}

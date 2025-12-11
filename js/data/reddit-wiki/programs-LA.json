@@ -1,0 +1,27 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Evangel House Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/evangelhouse/",
+                         "normalizedName":  "evangel house christian academy"
+                     },
+                     {
+                         "name":  "River Oaks Hospital",
+                         "url":  "/r/troubledteens/wiki/index/riverriveroaks/",
+                         "normalizedName":  "river oaks hospital"
+                     },
+                     {
+                         "name":  "New Bethany Home for Boys",
+                         "url":  "/r/troubledteens/wiki/index/newbethboys/",
+                         "normalizedName":  "new bethany home for boys"
+                     },
+                     {
+                         "name":  "New Bethany Home for Girls",
+                         "url":  "/r/troubledteens/wiki/index/newbethgirls/",
+                         "normalizedName":  "new bethany home for girls"
+                     }
+                 ],
+    "programCount":  4,
+    "generated":  "2025-12-10T17:55:08.9226301-05:00",
+    "state":  "LA"
+}

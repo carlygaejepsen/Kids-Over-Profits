@@ -1,0 +1,77 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Aurora Center for Healing",
+                         "url":  "/r/troubledteens/wiki/index/auroracenter/",
+                         "normalizedName":  "aurora center for healing"
+                     },
+                     {
+                         "name":  "KW Legacy Ranch",
+                         "url":  "/r/troubledteens/wiki/index/kwlegacy/",
+                         "normalizedName":  "kw legacy ranch"
+                     },
+                     {
+                         "name":  "Rite of Passage",
+                         "url":  "/r/troubledteens/wiki/index/riteofpassage/",
+                         "normalizedName":  "rite of passage"
+                     },
+                     {
+                         "name":  "Rite Of Passage",
+                         "url":  "/r/troubledteens/wiki/index/riteofpassage/",
+                         "normalizedName":  "rite of passage"
+                     },
+                     {
+                         "name":  "Reno Adolescent Boy\u0027s Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/renoboystc/",
+                         "normalizedName":  "reno adolescent boy\u0027s teen challenge"
+                     },
+                     {
+                         "name":  "Sierra Nevada Teen Ranch",
+                         "url":  "/r/troubledteens/wiki/index/snteenranch/",
+                         "normalizedName":  "sierra nevada teen ranch"
+                     },
+                     {
+                         "name":  "Spring Mountain Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/springmtntc/",
+                         "normalizedName":  "spring mountain treatment center"
+                     },
+                     {
+                         "name":  "Teen Challenge Girls Las Vegas",
+                         "url":  "/r/troubledteens/wiki/index/lasvegastc/",
+                         "normalizedName":  "teen challenge girls las vegas"
+                     },
+                     {
+                         "name":  "Willow Springs Center",
+                         "url":  "/r/troubledteens/wiki/index/willowsprings/",
+                         "normalizedName":  "willow springs center"
+                     },
+                     {
+                         "name":  "Catherine Freer Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/catherinefreer/",
+                         "normalizedName":  "catherine freer wilderness program"
+                     },
+                     {
+                         "name":  "Focal Point Academy",
+                         "url":  "/r/troubledteens/wiki/index/focalpoint/",
+                         "normalizedName":  "focal point academy"
+                     },
+                     {
+                         "name":  "Never Give Up Youth Healing Center",
+                         "url":  "/r/troubledteens/wiki/index/nevergiveup/",
+                         "normalizedName":  "never give up youth healing center"
+                     },
+                     {
+                         "name":  "Sky View Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/skyview/",
+                         "normalizedName":  "sky view christian academy"
+                     },
+                     {
+                         "name":  "Summit Quest Academy",
+                         "url":  "/r/troubledteens/wiki/index/summitquest/",
+                         "normalizedName":  "summit quest academy"
+                     }
+                 ],
+    "programCount":  14,
+    "generated":  "2025-12-10T17:55:09.6464754-05:00",
+    "state":  "NV"
+}

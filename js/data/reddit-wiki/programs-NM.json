@@ -1,0 +1,72 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Mesilla Valley Hospital",
+                         "url":  "/r/troubledteens/wiki/index/mesillavalley/",
+                         "normalizedName":  "mesilla valley hospital"
+                     },
+                     {
+                         "name":  "New Sunrise Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/newsunrise/",
+                         "normalizedName":  "new sunrise treatment center"
+                     },
+                     {
+                         "name":  "Sandhill Center",
+                         "url":  "/r/troubledteens/wiki/index/sandhill/",
+                         "normalizedName":  "sandhill center"
+                     },
+                     {
+                         "name":  "Serenity Mesa Youth Recovery Center",
+                         "url":  "/r/troubledteens/wiki/index/serenitymesa/",
+                         "normalizedName":  "serenity mesa youth recovery center"
+                     },
+                     {
+                         "name":  "Desert Hills of New Mexico",
+                         "url":  "/r/troubledteens/wiki/index/deserthills/",
+                         "normalizedName":  "desert hills of new mexico"
+                     },
+                     {
+                         "name":  "Bernalillo Academy",
+                         "url":  "/r/troubledteens/wiki/index/bernalillo/",
+                         "normalizedName":  "bernalillo academy"
+                     },
+                     {
+                         "name":  "Mace-Kingsley Ranch School",
+                         "url":  "/r/troubledteens/wiki/index/macekingsley/",
+                         "normalizedName":  "mace-kingsley ranch school"
+                     },
+                     {
+                         "name":  "Namaste Child \u0026 Family Development Center",
+                         "url":  "/r/troubledteens/wiki/index/namastenm/",
+                         "normalizedName":  "namaste child \u0026 family development center"
+                     },
+                     {
+                         "name":  "Pathfinders Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/pathfinders/",
+                         "normalizedName":  "pathfinders wilderness program"
+                     },
+                     {
+                         "name":  "Rancho Valmora",
+                         "url":  "/r/troubledteens/wiki/index/ranchovalmora/",
+                         "normalizedName":  "rancho valmora"
+                     },
+                     {
+                         "name":  "San Cristobal Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/sancristobal/",
+                         "normalizedName":  "san cristobal treatment center"
+                     },
+                     {
+                         "name":  "Tierra Blanca Ranch",
+                         "url":  "/r/troubledteens/wiki/index/tierrablanca/",
+                         "normalizedName":  "tierra blanca ranch"
+                     },
+                     {
+                         "name":  "Villa Santa Maria",
+                         "url":  "/r/troubledteens/wiki/index/santamaria/",
+                         "normalizedName":  "villa santa maria"
+                     }
+                 ],
+    "programCount":  13,
+    "generated":  "2025-12-10T18:07:00.0687188-05:00",
+    "state":  "NM"
+}

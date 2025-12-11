@@ -1,0 +1,17 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Lakeside Academy",
+                         "url":  "/r/troubledteens/wiki/index/lakesideacademy/",
+                         "normalizedName":  "lakeside academy"
+                     },
+                     {
+                         "name":  "Hope Harbor",
+                         "url":  "/r/troubledteens/wiki/index/hopeharbor/",
+                         "normalizedName":  "hope harbor"
+                     }
+                 ],
+    "programCount":  2,
+    "generated":  "2025-12-10T17:55:09.1770953-05:00",
+    "state":  "MN"
+}

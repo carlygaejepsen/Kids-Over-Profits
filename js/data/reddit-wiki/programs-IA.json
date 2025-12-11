@@ -1,0 +1,32 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Forest Ridge Youth Services",
+                         "url":  "/r/troubledteens/wiki/index/forestridge/",
+                         "normalizedName":  "forest ridge youth services"
+                     },
+                     {
+                         "name":  "Woodward Academy",
+                         "url":  "/r/troubledteens/wiki/index/woodwardaca/",
+                         "normalizedName":  "woodward academy"
+                     },
+                     {
+                         "name":  "Woodward Community Based Services",
+                         "url":  "/r/troubledteens/wiki/index/woodwardcomm/",
+                         "normalizedName":  "woodward community based services"
+                     },
+                     {
+                         "name":  "Beloit Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/beloitrtc/",
+                         "normalizedName":  "beloit residential treatment center"
+                     },
+                     {
+                         "name":  "Clarinda Academy",
+                         "url":  "/r/troubledteens/wiki/index/clarinda/",
+                         "normalizedName":  "clarinda academy"
+                     }
+                 ],
+    "programCount":  5,
+    "generated":  "2025-12-10T17:55:08.7902138-05:00",
+    "state":  "IA"
+}

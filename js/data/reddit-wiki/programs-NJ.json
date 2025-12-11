@@ -1,0 +1,27 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Capital Academy",
+                         "url":  "/r/troubledteens/wiki/index/capital/",
+                         "normalizedName":  "capital academy"
+                     },
+                     {
+                         "name":  "Summit Oaks Hospital",
+                         "url":  "/r/troubledteens/wiki/index/summitoaks/",
+                         "normalizedName":  "summit oaks hospital"
+                     },
+                     {
+                         "name":  "Arthur Brisbane Child Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/arthurbrisbane/",
+                         "normalizedName":  "arthur brisbane child treatment center"
+                     },
+                     {
+                         "name":  "KIDS Centers of America",
+                         "url":  "/r/troubledteens/wiki/index/kidscenters/",
+                         "normalizedName":  "kids centers of america"
+                     }
+                 ],
+    "programCount":  4,
+    "generated":  "2025-12-10T18:06:34.9874304-05:00",
+    "state":  "NJ"
+}

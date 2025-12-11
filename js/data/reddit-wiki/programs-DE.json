@@ -1,0 +1,22 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Dover Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/doverbhs/",
+                         "normalizedName":  "dover behavioral health system"
+                     },
+                     {
+                         "name":  "Rockford Center",
+                         "url":  "/r/troubledteens/wiki/index/rockford/",
+                         "normalizedName":  "rockford center"
+                     },
+                     {
+                         "name":  "Cedars Academy",
+                         "url":  "/r/troubledteens/wiki/index/cedarsacademy/",
+                         "normalizedName":  "cedars academy"
+                     }
+                 ],
+    "programCount":  3,
+    "generated":  "2025-12-10T17:55:07.9032932-05:00",
+    "state":  "DE"
+}

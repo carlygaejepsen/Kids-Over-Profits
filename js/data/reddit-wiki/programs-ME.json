@@ -1,0 +1,57 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Beacon House",
+                         "url":  "/r/troubledteens/wiki/index/beaconhouse/",
+                         "normalizedName":  "beacon house"
+                     },
+                     {
+                         "name":  "Day One",
+                         "url":  "/r/troubledteens/wiki/index/dayone/",
+                         "normalizedName":  "day one"
+                     },
+                     {
+                         "name":  "Hyde School",
+                         "url":  "/r/troubledteens/wiki/index/hydeme/",
+                         "normalizedName":  "hyde school"
+                     },
+                     {
+                         "name":  "Hyde School",
+                         "url":  "/r/troubledteens/wiki/index/hydect/",
+                         "normalizedName":  "hyde school"
+                     },
+                     {
+                         "name":  "Ironwood Maine",
+                         "url":  "/r/troubledteens/wiki/index/ironwoodme/",
+                         "normalizedName":  "ironwood maine"
+                     },
+                     {
+                         "name":  "Long Creek Youth Development Center",
+                         "url":  "/r/troubledteens/wiki/index/longcreek/",
+                         "normalizedName":  "long creek youth development center"
+                     },
+                     {
+                         "name":  "Summit Achievement",
+                         "url":  "/r/troubledteens/wiki/index/summitme/",
+                         "normalizedName":  "summit achievement"
+                     },
+                     {
+                         "name":  "The Ridge RTC Maine",
+                         "url":  "/r/troubledteens/wiki/index/ironwoodme/",
+                         "normalizedName":  "the ridge rtc maine"
+                     },
+                     {
+                         "name":  "Elan School",
+                         "url":  "/r/troubledteens/wiki/index/elan/",
+                         "normalizedName":  "elan school"
+                     },
+                     {
+                         "name":  "New Horizons for Young Women",
+                         "url":  "/r/troubledteens/wiki/index/newhorizonsme/",
+                         "normalizedName":  "new horizons for young women"
+                     }
+                 ],
+    "programCount":  10,
+    "generated":  "2025-12-10T17:55:09.0026094-05:00",
+    "state":  "ME"
+}

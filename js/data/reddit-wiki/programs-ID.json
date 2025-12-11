@@ -1,0 +1,147 @@
+{
+    "programs":  [
+                     {
+                         "name":  "BlueFire Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/bluefireidaho/",
+                         "normalizedName":  "bluefire wilderness"
+                     },
+                     {
+                         "name":  "Boise Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/boisegirls/",
+                         "normalizedName":  "boise girls academy"
+                     },
+                     {
+                         "name":  "Cherry Gulch",
+                         "url":  "/r/troubledteens/wiki/index/cherrygulch/",
+                         "normalizedName":  "cherry gulch"
+                     },
+                     {
+                         "name":  "Clearview Horizon",
+                         "url":  "/r/troubledteens/wiki/index/clearviewhorizon/",
+                         "normalizedName":  "clearview horizon"
+                     },
+                     {
+                         "name":  "Cornerstone Cottage",
+                         "url":  "/r/troubledteens/wiki/index/cornerstoneid/",
+                         "normalizedName":  "cornerstone cottage"
+                     },
+                     {
+                         "name":  "Elk Mountain Academy",
+                         "url":  "/r/troubledteens/wiki/index/elkmountain/",
+                         "normalizedName":  "elk mountain academy"
+                     },
+                     {
+                         "name":  "Hawk\u0027s Landing",
+                         "url":  "/r/troubledteens/wiki/index/hawkslanding/",
+                         "normalizedName":  "hawk\u0027s landing"
+                     },
+                     {
+                         "name":  "Idaho Youth Ranch",
+                         "url":  "/r/troubledteens/wiki/index/idahoyouth/",
+                         "normalizedName":  "idaho youth ranch"
+                     },
+                     {
+                         "name":  "Innercept",
+                         "url":  "/r/troubledteens/wiki/index/innercept/",
+                         "normalizedName":  "innercept"
+                     },
+                     {
+                         "name":  "Intermountain Hospital",
+                         "url":  "/r/troubledteens/wiki/index/intermountain/",
+                         "normalizedName":  "intermountain hospital"
+                     },
+                     {
+                         "name":  "Northwoods",
+                         "url":  "/r/troubledteens/wiki/index/northwoods/",
+                         "normalizedName":  "northwoods"
+                     },
+                     {
+                         "name":  "Novitas Academy",
+                         "url":  "/r/troubledteens/wiki/index/novitas/",
+                         "normalizedName":  "novitas academy"
+                     },
+                     {
+                         "name":  "Project PATCH",
+                         "url":  "/r/troubledteens/wiki/index/projectpatch/",
+                         "normalizedName":  "project patch"
+                     },
+                     {
+                         "name":  "Summit Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/summityouth/",
+                         "normalizedName":  "summit youth academy"
+                     },
+                     {
+                         "name":  "Teen Challenge Idaho",
+                         "url":  "/r/troubledteens/wiki/index/tcid/",
+                         "normalizedName":  "teen challenge idaho"
+                     },
+                     {
+                         "name":  "SUWS in Idaho",
+                         "url":  "/r/troubledteens/wiki/index/suwsidaho/",
+                         "normalizedName":  "suws in idaho"
+                     },
+                     {
+                         "name":  "SUWS Idaho",
+                         "url":  "/r/troubledteens/wiki/index/suwsidaho/",
+                         "normalizedName":  "suws idaho"
+                     },
+                     {
+                         "name":  "Alamar Ranch",
+                         "url":  "/r/troubledteens/wiki/index/alamar/",
+                         "normalizedName":  "alamar ranch"
+                     },
+                     {
+                         "name":  "Ascent Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/ascentwild/",
+                         "normalizedName":  "ascent wilderness program"
+                     },
+                     {
+                         "name":  "Boulder Creek Academy",
+                         "url":  "/r/troubledteens/wiki/index/bouldercreek/",
+                         "normalizedName":  "boulder creek academy"
+                     },
+                     {
+                         "name":  "College Bound",
+                         "url":  "/r/troubledteens/wiki/index/collegebound/",
+                         "normalizedName":  "college bound"
+                     },
+                     {
+                         "name":  "Eagle Mountain Outpost",
+                         "url":  "/r/troubledteens/wiki/index/eaglemountain/",
+                         "normalizedName":  "eagle mountain outpost"
+                     },
+                     {
+                         "name":  "Glacier Mountain Expeditions",
+                         "url":  "/r/troubledteens/wiki/index/glaciermountain/",
+                         "normalizedName":  "glacier mountain expeditions"
+                     },
+                     {
+                         "name":  "Mountain Home Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountainhome/",
+                         "normalizedName":  "mountain home academy"
+                     },
+                     {
+                         "name":  "Northwest Academy",
+                         "url":  "/r/troubledteens/wiki/index/northwest/",
+                         "normalizedName":  "northwest academy"
+                     },
+                     {
+                         "name":  "Rocky Mountain Academy",
+                         "url":  "/r/troubledteens/wiki/index/rockymountain/",
+                         "normalizedName":  "rocky mountain academy"
+                     },
+                     {
+                         "name":  "The Wardle Home",
+                         "url":  "/r/troubledteens/wiki/index/wardle/",
+                         "normalizedName":  "the wardle home"
+                     },
+                     {
+                         "name":  "Timber Ridge Preparatory School for Girls",
+                         "url":  "/r/troubledteens/wiki/index/timberridgegirls/",
+                         "normalizedName":  "timber ridge preparatory school for girls"
+                     }
+                 ],
+    "programCount":  28,
+    "generated":  "2025-12-10T17:55:08.5419654-05:00",
+    "state":  "ID"
+}

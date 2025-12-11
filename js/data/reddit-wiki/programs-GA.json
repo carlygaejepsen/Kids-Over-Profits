@@ -1,0 +1,142 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Anchor Hospital",
+                         "url":  "/r/troubledteens/wiki/index/anchorhos/",
+                         "normalizedName":  "anchor hospital"
+                     },
+                     {
+                         "name":  "Blue Ridge Therapeutic Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/blueridge/",
+                         "normalizedName":  "blue ridge therapeutic wilderness"
+                     },
+                     {
+                         "name":  "Broken Shackle Ranch",
+                         "url":  "/r/troubledteens/wiki/index/brokenshackle/",
+                         "normalizedName":  "broken shackle ranch"
+                     },
+                     {
+                         "name":  "Coastal Harbor Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/coastalharbor/",
+                         "normalizedName":  "coastal harbor treatment center"
+                     },
+                     {
+                         "name":  "Columbus Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/columbusgirls/",
+                         "normalizedName":  "columbus girls academy"
+                     },
+                     {
+                         "name":  "Hillside Atlanta",
+                         "url":  "/r/troubledteens/wiki/index/hillsideatlanta/",
+                         "normalizedName":  "hillside atlanta"
+                     },
+                     {
+                         "name":  "Inner Harbour",
+                         "url":  "/r/troubledteens/wiki/index/innerharbour/",
+                         "normalizedName":  "inner harbour"
+                     },
+                     {
+                         "name":  "The Joy House",
+                         "url":  "/r/troubledteens/wiki/index/joyhouse/",
+                         "normalizedName":  "the joy house"
+                     },
+                     {
+                         "name":  "Laurel Heights Hospital",
+                         "url":  "/r/troubledteens/wiki/index/laurelheights/",
+                         "normalizedName":  "laurel heights hospital"
+                     },
+                     {
+                         "name":  "Lighthouse Care Center of Augusta",
+                         "url":  "/r/troubledteens/wiki/index/lighthousecare/",
+                         "normalizedName":  "lighthouse care center of augusta"
+                     },
+                     {
+                         "name":  "Peachford Hospital",
+                         "url":  "/r/troubledteens/wiki/index/peachford/",
+                         "normalizedName":  "peachford hospital"
+                     },
+                     {
+                         "name":  "Saint Simons by-the-Sea",
+                         "url":  "/r/troubledteens/wiki/index/stsimons/",
+                         "normalizedName":  "saint simons by-the-sea"
+                     },
+                     {
+                         "name":  "Skyland Trails RTC",
+                         "url":  "/r/troubledteens/wiki/index/skyland/",
+                         "normalizedName":  "skyland trails rtc"
+                     },
+                     {
+                         "name":  "Teen Challenge Columbus",
+                         "url":  "/r/troubledteens/wiki/index/columbustc/",
+                         "normalizedName":  "teen challenge columbus"
+                     },
+                     {
+                         "name":  "Anneewakee School",
+                         "url":  "/r/troubledteens/wiki/index/anneewakee/",
+                         "normalizedName":  "anneewakee school"
+                     },
+                     {
+                         "name":  "Appalachian Wilderness Camp",
+                         "url":  "/r/troubledteens/wiki/index/appalachianwild/",
+                         "normalizedName":  "appalachian wilderness camp"
+                     },
+                     {
+                         "name":  "Creekside Wilderness Academy",
+                         "url":  "/r/troubledteens/wiki/index/creekside/",
+                         "normalizedName":  "creekside wilderness academy"
+                     },
+                     {
+                         "name":  "Darrington Academy",
+                         "url":  "/r/troubledteens/wiki/index/darrington/",
+                         "normalizedName":  "darrington academy"
+                     },
+                     {
+                         "name":  "First Light Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/firstlight/",
+                         "normalizedName":  "first light wilderness"
+                     },
+                     {
+                         "name":  "Hidden Lake Academy",
+                         "url":  "/r/troubledteens/wiki/index/hiddenlake/",
+                         "normalizedName":  "hidden lake academy"
+                     },
+                     {
+                         "name":  "Mountain Brook Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountainbrook/",
+                         "normalizedName":  "mountain brook academy"
+                     },
+                     {
+                         "name":  "Phoenix Institute for Adolescents",
+                         "url":  "/r/troubledteens/wiki/index/phoenixinstitute/",
+                         "normalizedName":  "phoenix institute for adolescents"
+                     },
+                     {
+                         "name":  "Ridge Creek School",
+                         "url":  "/r/troubledteens/wiki/index/ridgecreek/",
+                         "normalizedName":  "ridge creek school"
+                     },
+                     {
+                         "name":  "Second Nature Blue Ridge",
+                         "url":  "/r/troubledteens/wiki/index/snblueridge/",
+                         "normalizedName":  "second nature blue ridge"
+                     },
+                     {
+                         "name":  "Shepherd\u0027s Hill Farm / Academy",
+                         "url":  "/r/troubledteens/wiki/index/shepherdshill/",
+                         "normalizedName":  "shepherd\u0027s hill farm / academy"
+                     },
+                     {
+                         "name":  "Three Springs Inc. (TSI)",
+                         "url":  "/r/troubledteens/wiki/index/threesprings/",
+                         "normalizedName":  "three springs inc. (tsi)"
+                     },
+                     {
+                         "name":  "Three Springs",
+                         "url":  "/r/troubledteens/wiki/index/threesprings/",
+                         "normalizedName":  "three springs"
+                     }
+                 ],
+    "programCount":  27,
+    "generated":  "2025-12-10T17:55:08.3641974-05:00",
+    "state":  "GA"
+}

@@ -1,0 +1,82 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Central Indiana Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/indianatc/",
+                         "normalizedName":  "central indiana teen challenge"
+                     },
+                     {
+                         "name":  "Columbus Behavioral Center",
+                         "url":  "/r/troubledteens/wiki/index/columbuscenter/",
+                         "normalizedName":  "columbus behavioral center"
+                     },
+                     {
+                         "name":  "Compass Rose Academy",
+                         "url":  "/r/troubledteens/wiki/index/compassrose/",
+                         "normalizedName":  "compass rose academy"
+                     },
+                     {
+                         "name":  "Crossroad Family Services",
+                         "url":  "/r/troubledteens/wiki/index/xroad/",
+                         "normalizedName":  "crossroad family services"
+                     },
+                     {
+                         "name":  "Michiana Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/michiana/",
+                         "normalizedName":  "michiana behavioral health"
+                     },
+                     {
+                         "name":  "Midwest Center for Youth and Families",
+                         "url":  "/r/troubledteens/wiki/index/midwestcenter/",
+                         "normalizedName":  "midwest center for youth and families"
+                     },
+                     {
+                         "name":  "Pierceton Woods Academy",
+                         "url":  "/r/troubledteens/wiki/index/piercetonwoods/",
+                         "normalizedName":  "pierceton woods academy"
+                     },
+                     {
+                         "name":  "Valle Vista Health System",
+                         "url":  "/r/troubledteens/wiki/index/vallevista/",
+                         "normalizedName":  "valle vista health system"
+                     },
+                     {
+                         "name":  "Wellstone Regional Hospital",
+                         "url":  "/r/troubledteens/wiki/index/wellstone/",
+                         "normalizedName":  "wellstone regional hospital"
+                     },
+                     {
+                         "name":  "Indianapolis Training Center",
+                         "url":  "/r/troubledteens/wiki/index/trainingcenterIN/",
+                         "normalizedName":  "indianapolis training center"
+                     },
+                     {
+                         "name":  "Hephzibah House",
+                         "url":  "/r/troubledteens/wiki/index/hephzibah/",
+                         "normalizedName":  "hephzibah house"
+                     },
+                     {
+                         "name":  "New Creations Christian Boarding School",
+                         "url":  "/r/troubledteens/wiki/index/newcreations/",
+                         "normalizedName":  "new creations christian boarding school"
+                     },
+                     {
+                         "name":  "New Horizon Academy",
+                         "url":  "/r/troubledteens/wiki/index/newhorizonIN/",
+                         "normalizedName":  "new horizon academy"
+                     },
+                     {
+                         "name":  "Pathway Family Center",
+                         "url":  "/r/troubledteens/wiki/index/pathway/",
+                         "normalizedName":  "pathway family center"
+                     },
+                     {
+                         "name":  "Well of Grace Boarding Academy",
+                         "url":  "/r/troubledteens/wiki/index/wellofgrace/",
+                         "normalizedName":  "well of grace boarding academy"
+                     }
+                 ],
+    "programCount":  15,
+    "generated":  "2025-12-10T17:55:08.7546806-05:00",
+    "state":  "IN"
+}

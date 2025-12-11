@@ -1,264 +1,179 @@
 {
     "programs":  [
                      {
-                         "name":  "Turn-About Ranch",
-                         "url":  "/r/troubledteens/wiki/index/turnaboutranch/",
-                         "normalizedName":  "turn-about ranch"
-                     },
-                     {
-                         "name":  "Provo Canyon School",
-                         "url":  "/r/troubledteens/wiki/index/provocanyon/",
-                         "normalizedName":  "provo canyon school"
-                     },
-                     {
-                         "name":  "Southwood Psychiatric Hospital",
-                         "url":  "/r/troubledteens/wiki/index/southwood/",
-                         "normalizedName":  "southwood psychiatric hospital"
-                     },
-                     {
-                         "name":  "Youth Care of Utah",
-                         "url":  "/r/troubledteens/wiki/index/youthcareinc/",
-                         "normalizedName":  "youth care of utah"
-                     },
-                     {
-                         "name":  "Aspen Institute for Behavioral Assessment",
-                         "url":  "/r/troubledteens/wiki/index/aspeninstitute/",
-                         "normalizedName":  "aspen institute for behavioral assessment"
-                     },
-                     {
-                         "name":  "Aspen Youth Alternatives",
-                         "url":  "/r/troubledteens/wiki/index/alternativeyouth/",
-                         "normalizedName":  "aspen youth alternatives"
-                     },
-                     {
-                         "name":  "Outback Therapeutic Expeditions",
-                         "url":  "/r/troubledteens/wiki/index/outbackexp/",
-                         "normalizedName":  "outback therapeutic expeditions"
-                     },
-                     {
-                         "name":  "Phoenix Outdoor",
-                         "url":  "/r/troubledteens/wiki/index/phoenixoutdoor/",
-                         "normalizedName":  "phoenix outdoor"
-                     },
-                     {
                          "name":  "Alpine Academy",
                          "url":  "/r/troubledteens/wiki/index/alpineacademy/",
                          "normalizedName":  "alpine academy"
                      },
                      {
-                         "name":  "J Bar J Youth Services",
-                         "url":  "/r/troubledteens/wiki/index/jbarjyouth/",
-                         "normalizedName":  "j bar j youth services"
+                         "name":  "Ashcreek Ranch Academy",
+                         "url":  "/r/troubledteens/wiki/index/achreekranch/",
+                         "normalizedName":  "ashcreek ranch academy"
                      },
                      {
-                         "name":  "Sequel Youth and Family Services",
-                         "url":  "/r/troubledteens/wiki/index/sequelyouth/",
-                         "normalizedName":  "sequel youth and family services"
+                         "name":  "Avalon Hills Eating Disorder Program",
+                         "url":  "/r/troubledteens/wiki/index/avalonhills/",
+                         "normalizedName":  "avalon hills eating disorder program"
                      },
                      {
-                         "name":  "Youth Opportunity Investments",
-                         "url":  "/r/troubledteens/wiki/index/youthopportunity/",
-                         "normalizedName":  "youth opportunity investments"
+                         "name":  "Cascade Academy",
+                         "url":  "/r/troubledteens/wiki/index/cascadeacademy/",
+                         "normalizedName":  "cascade academy"
                      },
                      {
-                         "name":  "Youth Villages",
-                         "url":  "/r/troubledteens/wiki/index/youthvillages/",
-                         "normalizedName":  "youth villages"
+                         "name":  "Catalyst RTC",
+                         "url":  "/r/troubledteens/wiki/index/catalyst/",
+                         "normalizedName":  "catalyst rtc"
                      },
                      {
-                         "name":  "Deschutes Wilderness Therapy",
-                         "url":  "/r/troubledteens/wiki/index/deschuteswild/",
-                         "normalizedName":  "deschutes wilderness therapy"
+                         "name":  "Cinnamon Hills Youth Crisis Center",
+                         "url":  "/r/troubledteens/wiki/index/cinnamonhills/",
+                         "normalizedName":  "cinnamon hills youth crisis center"
                      },
                      {
-                         "name":  "The Aspen Institute for Behavioral Assessment",
-                         "url":  "/r/troubledteens/wiki/index/aspeninstitute/",
-                         "normalizedName":  "the aspen institute for behavioral assessment"
+                         "name":  "Crossroads Academy RTC",
+                         "url":  "/r/troubledteens/wiki/index/crossroads/",
+                         "normalizedName":  "crossroads academy rtc"
                      },
                      {
-                         "name":  "Outback Therapeutic Expeditions",
-                         "url":  "/r/troubledteens/wiki/index/outbackexp/",
-                         "normalizedName":  "outback therapeutic expeditions"
+                         "name":  "Copper Hills Youth Center",
+                         "url":  "/r/troubledteens/wiki/index/copperhills/",
+                         "normalizedName":  "copper hills youth center"
                      },
                      {
-                         "name":  "Sequel Youth",
-                         "url":  "/r/troubledteens/wiki/index/sequelyouth/",
-                         "normalizedName":  "sequel youth"
+                         "name":  "Discover Seven Stars",
+                         "url":  "/r/troubledteens/wiki/index/sevenstars/",
+                         "normalizedName":  "discover seven stars"
                      },
                      {
-                         "name":  "Columbus Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/columbusyouth/",
-                         "normalizedName":  "columbus youth academy"
+                         "name":  "Discovery Academy",
+                         "url":  "/r/troubledteens/wiki/index/discoveryacademy/",
+                         "normalizedName":  "discovery academy"
                      },
                      {
-                         "name":  "Marion Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/marionyouth/",
-                         "normalizedName":  "marion youth academy"
+                         "name":  "Discovery Academy",
+                         "url":  "/r/troubledteens/wiki/index/discoveryaca/",
+                         "normalizedName":  "discovery academy"
                      },
                      {
-                         "name":  "St. John\u0027s Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/stjohnsyouth/",
-                         "normalizedName":  "st. john\u0027s youth academy"
+                         "name":  "Discovery Connections",
+                         "url":  "/r/troubledteens/wiki/index/discoveryconnect/",
+                         "normalizedName":  "discovery connections"
                      },
                      {
-                         "name":  "Yes We Can Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/yeswecanyouth/",
-                         "normalizedName":  "yes we can youth center"
+                         "name":  "Discovery Ranch",
+                         "url":  "/r/troubledteens/wiki/index/discoveryranch/",
+                         "normalizedName":  "discovery ranch"
                      },
                      {
-                         "name":  "Future Expectations Today",
-                         "url":  "/r/troubledteens/wiki/index/futureexpectations/",
-                         "normalizedName":  "future expectations today"
+                         "name":  "Discovery Ranch for Girls",
+                         "url":  "/r/troubledteens/wiki/index/discoveryranchgirls/",
+                         "normalizedName":  "discovery ranch for girls"
                      },
                      {
-                         "name":  "Haut de la Garenne",
-                         "url":  "/r/troubledteens/wiki/index/hautgarenne/",
-                         "normalizedName":  "haut de la garenne"
+                         "name":  "Eagle Ranch Academy",
+                         "url":  "/r/troubledteens/wiki/index/eagleranch/",
+                         "normalizedName":  "eagle ranch academy"
                      },
                      {
-                         "name":  "Restoration Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/restorationyouth/",
-                         "normalizedName":  "restoration youth academy"
+                         "name":  "Eagle Quest Outdoor Youth Development Program",
+                         "url":  "/r/troubledteens/wiki/index/eaglequest/",
+                         "normalizedName":  "eagle quest outdoor youth development program"
                      },
                      {
-                         "name":  "Saving Youth Foundation",
-                         "url":  "/r/troubledteens/wiki/index/savingyouth/",
-                         "normalizedName":  "saving youth foundation"
+                         "name":  "Eagles Rest Ranch",
+                         "url":  "/r/troubledteens/wiki/index/eaglesrest/",
+                         "normalizedName":  "eagles rest ranch"
                      },
                      {
-                         "name":  "Hope Youth Ranch",
-                         "url":  "/r/troubledteens/wiki/index/hopeyouthranch/",
-                         "normalizedName":  "hope youth ranch"
+                         "name":  "Elements Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/elementswild/",
+                         "normalizedName":  "elements wilderness program"
                      },
                      {
-                         "name":  "JAM Youth Connection, Inc",
-                         "url":  "/r/troubledteens/wiki/index/jamyouth/",
-                         "normalizedName":  "jam youth connection, inc"
+                         "name":  "Elevations RTC",
+                         "url":  "/r/troubledteens/wiki/index/elevationsrtc/",
+                         "normalizedName":  "elevations rtc"
                      },
                      {
-                         "name":  "River View Christian Academy / Julian Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
-                         "normalizedName":  "river view christian academy / julian youth academy"
+                         "name":  "Embark at Hobble Creek",
+                         "url":  "/r/troubledteens/wiki/index/hobblecreek/",
+                         "normalizedName":  "embark at hobble creek"
                      },
                      {
-                         "name":  "River View Christian Academy / Julian Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
-                         "normalizedName":  "river view christian academy / julian youth academy"
+                         "name":  "Eva Carlston Academy",
+                         "url":  "/r/troubledteens/wiki/index/evacarlston/",
+                         "normalizedName":  "eva carlston academy"
                      },
                      {
-                         "name":  "Alternative Youth Adventures",
-                         "url":  "/r/troubledteens/wiki/index/alternativeyouth/",
-                         "normalizedName":  "alternative youth adventures"
+                         "name":  "Falcon Ridge Ranch",
+                         "url":  "/r/troubledteens/wiki/index/falconridge/",
+                         "normalizedName":  "falcon ridge ranch"
                      },
                      {
-                         "name":  "Phoenix Institute for Adolescents",
-                         "url":  "/r/troubledteens/wiki/index/phoenixinstitute/",
-                         "normalizedName":  "phoenix institute for adolescents"
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewaytc/",
+                         "normalizedName":  "gateway academy"
                      },
                      {
-                         "name":  "Youth Developmental Enterprises",
-                         "url":  "/r/troubledteens/wiki/index/youthdev/",
-                         "normalizedName":  "youth developmental enterprises"
+                         "name":  "Gateway Academy",
+                         "url":  "/r/troubledteens/wiki/index/gatewayaca/",
+                         "normalizedName":  "gateway academy"
                      },
                      {
-                         "name":  "Idaho Youth Ranch",
-                         "url":  "/r/troubledteens/wiki/index/idahoyouth/",
-                         "normalizedName":  "idaho youth ranch"
+                         "name":  "Havenwood Academy",
+                         "url":  "/r/troubledteens/wiki/index/havenwood/",
+                         "normalizedName":  "havenwood academy"
                      },
                      {
-                         "name":  "Summit Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/summityouth/",
-                         "normalizedName":  "summit youth academy"
+                         "name":  "Heritage Schools Inc.",
+                         "url":  "/r/troubledteens/wiki/index/heritageschools/",
+                         "normalizedName":  "heritage schools inc."
                      },
                      {
-                         "name":  "Kentucky Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/kentuckyyouth/",
-                         "normalizedName":  "kentucky youth academy"
+                         "name":  "Highland Ridge Hospital",
+                         "url":  "/r/troubledteens/wiki/index/highlandridge/",
+                         "normalizedName":  "highland ridge hospital"
                      },
                      {
-                         "name":  "Hutchings Psychiatric Center",
-                         "url":  "/r/troubledteens/wiki/index/hutchings/",
-                         "normalizedName":  "hutchings psychiatric center"
+                         "name":  "Horseshoe Mountain Academy",
+                         "url":  "/r/troubledteens/wiki/index/horseshoe/",
+                         "normalizedName":  "horseshoe mountain academy"
                      },
                      {
-                         "name":  "Hope Youth Ranch",
-                         "url":  "/r/troubledteens/wiki/index/hopeyouthranch/",
-                         "normalizedName":  "hope youth ranch"
+                         "name":  "Huntsman Mental Health Institute",
+                         "url":  "/r/troubledteens/wiki/index/huntsman/",
+                         "normalizedName":  "huntsman mental health institute"
                      },
                      {
-                         "name":  "Future Men",
-                         "url":  "/r/troubledteens/wiki/index/futuremen/",
-                         "normalizedName":  "future men"
+                         "name":  "Imperial Healing House",
+                         "url":  "/r/troubledteens/wiki/index/imperialhealing/",
+                         "normalizedName":  "imperial healing house"
                      },
                      {
-                         "name":  "Aspen Youth Alternatives / Alternative Youth Adventures",
-                         "url":  "/r/troubledteens/wiki/index/alternativeyouth/",
-                         "normalizedName":  "aspen youth alternatives / alternative youth adventures"
+                         "name":  "Kaizen Academy/Birdseye Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/kaizenbirdseye/",
+                         "normalizedName":  "kaizen academy/birdseye boys ranch"
                      },
                      {
-                         "name":  "Uta Halee Academy",
-                         "url":  "/r/troubledteens/wiki/index/utahalee/",
-                         "normalizedName":  "uta halee academy"
+                         "name":  "Kolob Canyon RTC",
+                         "url":  "/r/troubledteens/wiki/index/kolobcanyon/",
+                         "normalizedName":  "kolob canyon rtc"
                      },
                      {
-                         "name":  "Uta Halee Girls Village",
-                         "url":  "/r/troubledteens/wiki/index/utahaleegirls/",
-                         "normalizedName":  "uta halee girls village"
+                         "name":  "La Europa Academy",
+                         "url":  "/r/troubledteens/wiki/index/laeuropa/",
+                         "normalizedName":  "la europa academy"
                      },
                      {
-                         "name":  "Phoenix Outdoor",
-                         "url":  "/r/troubledteens/wiki/index/phoenixoutdoor/",
-                         "normalizedName":  "phoenix outdoor"
+                         "name":  "Lava Heights Academy",
+                         "url":  "/r/troubledteens/wiki/index/lavaheights/",
+                         "normalizedName":  "lava heights academy"
                      },
                      {
-                         "name":  "Luther Hall",
-                         "url":  "/r/troubledteens/wiki/index/lutherhall/",
-                         "normalizedName":  "luther hall"
-                     },
-                     {
-                         "name":  "Deschutes Wilderness Therapy",
-                         "url":  "/r/troubledteens/wiki/index/deschuteswild/",
-                         "normalizedName":  "deschutes wilderness therapy"
-                     },
-                     {
-                         "name":  "Montco Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/montcoyouth/",
-                         "normalizedName":  "montco youth center"
-                     },
-                     {
-                         "name":  "Southwood Psychiatric Hospital",
-                         "url":  "/r/troubledteens/wiki/index/southwood/",
-                         "normalizedName":  "southwood psychiatric hospital"
-                     },
-                     {
-                         "name":  "Chad Youth Enhancement Center",
-                         "url":  "/r/troubledteens/wiki/index/chadyouth/",
-                         "normalizedName":  "chad youth enhancement center"
-                     },
-                     {
-                         "name":  "Resolution Ranch Academy",
-                         "url":  "/r/troubledteens/wiki/index/resolution/",
-                         "normalizedName":  "resolution ranch academy"
-                     },
-                     {
-                         "name":  "River View Christian Academy/Julian Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
-                         "normalizedName":  "river view christian academy/julian youth academy"
-                     },
-                     {
-                         "name":  "Waco Center for Youth",
-                         "url":  "/r/troubledteens/wiki/index/wacoyouth/",
-                         "normalizedName":  "waco center for youth"
-                     },
-                     {
-                         "name":  "Bristol Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/bristolyouth/",
-                         "normalizedName":  "bristol youth academy"
-                     },
-                     {
-                         "name":  "Alpine Academy",
-                         "url":  "/r/troubledteens/wiki/index/alpineacademy/",
-                         "normalizedName":  "alpine academy"
+                         "name":  "Liahona Academy",
+                         "url":  "/r/troubledteens/wiki/index/liahona/",
+                         "normalizedName":  "liahona academy"
                      },
                      {
                          "name":  "Life Quest Girls Academy",
@@ -266,9 +181,134 @@
                          "normalizedName":  "life quest girls academy"
                      },
                      {
+                         "name":  "Live Strong House",
+                         "url":  "/r/troubledteens/wiki/index/livestrong/",
+                         "normalizedName":  "live strong house"
+                     },
+                     {
+                         "name":  "Logan River Academy",
+                         "url":  "/r/troubledteens/wiki/index/loganriver/",
+                         "normalizedName":  "logan river academy"
+                     },
+                     {
+                         "name":  "Makana Leadership Academy",
+                         "url":  "/r/troubledteens/wiki/index/makana/",
+                         "normalizedName":  "makana leadership academy"
+                     },
+                     {
+                         "name":  "Maple Lake Academy",
+                         "url":  "/r/troubledteens/wiki/index/maplelake/",
+                         "normalizedName":  "maple lake academy"
+                     },
+                     {
+                         "name":  "Moonridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/moonridge/",
+                         "normalizedName":  "moonridge academy"
+                     },
+                     {
+                         "name":  "Mountain Springs Preparatory Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountainsprings/",
+                         "normalizedName":  "mountain springs preparatory academy"
+                     },
+                     {
+                         "name":  "New Focus Academy",
+                         "url":  "/r/troubledteens/wiki/index/newfocus/",
+                         "normalizedName":  "new focus academy"
+                     },
+                     {
+                         "name":  "New Haven RTC",
+                         "url":  "/r/troubledteens/wiki/index/newhavenrtc/",
+                         "normalizedName":  "new haven rtc"
+                     },
+                     {
+                         "name":  "Newport Academy",
+                         "url":  "/r/troubledteens/wiki/index/newport/",
+                         "normalizedName":  "newport academy"
+                     },
+                     {
+                         "name":  "Oasis Ascent",
+                         "url":  "/r/troubledteens/wiki/index/oasisascent/",
+                         "normalizedName":  "oasis ascent"
+                     },
+                     {
+                         "name":  "Odyssey House of Utah",
+                         "url":  "/r/troubledteens/wiki/index/odysseyhouse/",
+                         "normalizedName":  "odyssey house of utah"
+                     },
+                     {
+                         "name":  "Oxbow Academy",
+                         "url":  "/r/troubledteens/wiki/index/oxbowacademy/",
+                         "normalizedName":  "oxbow academy"
+                     },
+                     {
                          "name":  "Provo Canyon School",
                          "url":  "/r/troubledteens/wiki/index/provocanyon/",
                          "normalizedName":  "provo canyon school"
+                     },
+                     {
+                         "name":  "Redcliff Ascent Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/redcliffascent/",
+                         "normalizedName":  "redcliff ascent wilderness program"
+                     },
+                     {
+                         "name":  "Renewed Hope Ranch",
+                         "url":  "/r/troubledteens/wiki/index/renewedhope/",
+                         "normalizedName":  "renewed hope ranch"
+                     },
+                     {
+                         "name":  "ROOTs Transition",
+                         "url":  "/r/troubledteens/wiki/index/rootstransition/",
+                         "normalizedName":  "roots transition"
+                     },
+                     {
+                         "name":  "Second Nature Uintas",
+                         "url":  "/r/troubledteens/wiki/index/snuintas/",
+                         "normalizedName":  "second nature uintas"
+                     },
+                     {
+                         "name":  "Slate Canyon Youth Center",
+                         "url":  "/r/troubledteens/wiki/index/slatecanyon/",
+                         "normalizedName":  "slate canyon youth center"
+                     },
+                     {
+                         "name":  "Solstice RTC",
+                         "url":  "/r/troubledteens/wiki/index/solsticewest/",
+                         "normalizedName":  "solstice rtc"
+                     },
+                     {
+                         "name":  "Sorenson\u0027s Ranch School",
+                         "url":  "/r/troubledteens/wiki/index/sorensons/",
+                         "normalizedName":  "sorenson\u0027s ranch school"
+                     },
+                     {
+                         "name":  "Star Guides Wilderness Therapy",
+                         "url":  "/r/troubledteens/wiki/index/starguides/",
+                         "normalizedName":  "star guides wilderness therapy"
+                     },
+                     {
+                         "name":  "Storm Ridge Ranch",
+                         "url":  "/r/troubledteens/wiki/index/stormridge/",
+                         "normalizedName":  "storm ridge ranch"
+                     },
+                     {
+                         "name":  "Sundance Canyon Academy",
+                         "url":  "/r/troubledteens/wiki/index/sundancecanyon/",
+                         "normalizedName":  "sundance canyon academy"
+                     },
+                     {
+                         "name":  "Sunrise RTC",
+                         "url":  "/r/troubledteens/wiki/index/sunrisertc/",
+                         "normalizedName":  "sunrise rtc"
+                     },
+                     {
+                         "name":  "Telos RTC",
+                         "url":  "/r/troubledteens/wiki/index/telosrtc/",
+                         "normalizedName":  "telos rtc"
+                     },
+                     {
+                         "name":  "Turn-About Ranch",
+                         "url":  "/r/troubledteens/wiki/index/turnaboutranch/",
+                         "normalizedName":  "turn-about ranch"
                      },
                      {
                          "name":  "Turn-About Ranch",
@@ -281,6 +321,41 @@
                          "normalizedName":  "turnabout/stillwater academy"
                      },
                      {
+                         "name":  "Uinta Academy",
+                         "url":  "/r/troubledteens/wiki/index/uintaacademy/",
+                         "normalizedName":  "uinta academy"
+                     },
+                     {
+                         "name":  "Wasatch Canyons Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/wasatchcanyons/",
+                         "normalizedName":  "wasatch canyons behavioral health"
+                     },
+                     {
+                         "name":  "Waterfall Canyon Academy",
+                         "url":  "/r/troubledteens/wiki/index/waterfallcanyon/",
+                         "normalizedName":  "waterfall canyon academy"
+                     },
+                     {
+                         "name":  "WayPoint Academy/Cascades Lodge for Boys",
+                         "url":  "/r/troubledteens/wiki/index/waypoint/",
+                         "normalizedName":  "waypoint academy/cascades lodge for boys"
+                     },
+                     {
+                         "name":  "White River Academy",
+                         "url":  "/r/troubledteens/wiki/index/whiteriver/",
+                         "normalizedName":  "white river academy"
+                     },
+                     {
+                         "name":  "Wildflower Mountain Ranch",
+                         "url":  "/r/troubledteens/wiki/index/wildflowermountain/",
+                         "normalizedName":  "wildflower mountain ranch"
+                     },
+                     {
+                         "name":  "Viewpoint Center",
+                         "url":  "/r/troubledteens/wiki/index/viewpoint/",
+                         "normalizedName":  "viewpoint center"
+                     },
+                     {
                          "name":  "Vive Adolescent Care",
                          "url":  "/r/troubledteens/wiki/index/viveut/",
                          "normalizedName":  "vive adolescent care"
@@ -291,9 +366,24 @@
                          "normalizedName":  "youth care inc."
                      },
                      {
+                         "name":  "Zion Hills Academy",
+                         "url":  "/r/troubledteens/wiki/index/zionhills/",
+                         "normalizedName":  "zion hills academy"
+                     },
+                     {
+                         "name":  "180 Ministries for Girls",
+                         "url":  "/r/troubledteens/wiki/index/180ministries/",
+                         "normalizedName":  "180 ministries for girls"
+                     },
+                     {
                          "name":  "Abundant Life Academy",
                          "url":  "/r/troubledteens/wiki/index/abundantlifeut/",
                          "normalizedName":  "abundant life academy"
+                     },
+                     {
+                         "name":  "Aspen Achievement Academy",
+                         "url":  "/r/troubledteens/wiki/index/aspenachievement/",
+                         "normalizedName":  "aspen achievement academy"
                      },
                      {
                          "name":  "Aspen Institute for Behavioral Assessment",
@@ -301,9 +391,154 @@
                          "normalizedName":  "aspen institute for behavioral assessment"
                      },
                      {
+                         "name":  "Aspen Ranch",
+                         "url":  "/r/troubledteens/wiki/index/aspenranch/",
+                         "normalizedName":  "aspen ranch"
+                     },
+                     {
+                         "name":  "Aspiro Wilderness Adventure Therapy",
+                         "url":  "/r/troubledteens/wiki/index/aspiro/",
+                         "normalizedName":  "aspiro wilderness adventure therapy"
+                     },
+                     {
+                         "name":  "Birdseye RTC",
+                         "url":  "/r/troubledteens/wiki/index/birdseye/",
+                         "normalizedName":  "birdseye rtc"
+                     },
+                     {
+                         "name":  "Brightway Adolescent Hospital",
+                         "url":  "/r/troubledteens/wiki/index/brightway/",
+                         "normalizedName":  "brightway adolescent hospital"
+                     },
+                     {
+                         "name":  "Bryce Canyon Academy",
+                         "url":  "/r/troubledteens/wiki/index/brycecanyon/",
+                         "normalizedName":  "bryce canyon academy"
+                     },
+                     {
+                         "name":  "Canyon River Ranch",
+                         "url":  "/r/troubledteens/wiki/index/canyonriver/",
+                         "normalizedName":  "canyon river ranch"
+                     },
+                     {
+                         "name":  "Cedar Breaks Academy",
+                         "url":  "/r/troubledteens/wiki/index/cedarbreaks/",
+                         "normalizedName":  "cedar breaks academy"
+                     },
+                     {
+                         "name":  "Cedar Ridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/cedarridge/",
+                         "normalizedName":  "cedar ridge academy"
+                     },
+                     {
+                         "name":  "Challenger Foundation",
+                         "url":  "/r/troubledteens/wiki/index/challengerfnd/",
+                         "normalizedName":  "challenger foundation"
+                     },
+                     {
+                         "name":  "Cottonwood Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/cottonwood/",
+                         "normalizedName":  "cottonwood treatment center"
+                     },
+                     {
+                         "name":  "Cross Creek Programs",
+                         "url":  "/r/troubledteens/wiki/index/crosscreek/",
+                         "normalizedName":  "cross creek programs"
+                     },
+                     {
+                         "name":  "Daniels Academy",
+                         "url":  "/r/troubledteens/wiki/index/daniels/",
+                         "normalizedName":  "daniels academy"
+                     },
+                     {
+                         "name":  "Diamond Ranch Academy",
+                         "url":  "/r/troubledteens/wiki/index/diamondranch/",
+                         "normalizedName":  "diamond ranch academy"
+                     },
+                     {
+                         "name":  "Distant Drums Beginnings",
+                         "url":  "/r/troubledteens/wiki/index/distantdrums/",
+                         "normalizedName":  "distant drums beginnings"
+                     },
+                     {
+                         "name":  "Evoke Entrada",
+                         "url":  "/r/troubledteens/wiki/index/evokeentrada/",
+                         "normalizedName":  "evoke entrada"
+                     },
+                     {
+                         "name":  "High Peaks Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/highpeaks/",
+                         "normalizedName":  "high peaks wilderness program"
+                     },
+                     {
+                         "name":  "High Top Ranch",
+                         "url":  "/r/troubledteens/wiki/index/hightopranch/",
+                         "normalizedName":  "high top ranch"
+                     },
+                     {
+                         "name":  "Horizon Academy",
+                         "url":  "/r/troubledteens/wiki/index/horizonacademy/",
+                         "normalizedName":  "horizon academy"
+                     },
+                     {
+                         "name":  "Integrity House for Girls",
+                         "url":  "/r/troubledteens/wiki/index/integrity/",
+                         "normalizedName":  "integrity house for girls"
+                     },
+                     {
+                         "name":  "Island View RTC",
+                         "url":  "/r/troubledteens/wiki/index/islandview/",
+                         "normalizedName":  "island view rtc"
+                     },
+                     {
+                         "name":  "Key Point Academy",
+                         "url":  "/r/troubledteens/wiki/index/keypoiny/",
+                         "normalizedName":  "key point academy"
+                     },
+                     {
                          "name":  "Lifeline for Youth",
                          "url":  "/r/troubledteens/wiki/index/lifelineut/",
                          "normalizedName":  "lifeline for youth"
+                     },
+                     {
+                         "name":  "Lost and Found Academy",
+                         "url":  "/r/troubledteens/wiki/index/lostandfound/",
+                         "normalizedName":  "lost and found academy"
+                     },
+                     {
+                         "name":  "Majestic Ranch",
+                         "url":  "/r/troubledteens/wiki/index/majesticranch/",
+                         "normalizedName":  "majestic ranch"
+                     },
+                     {
+                         "name":  "Maximum Life Skills Academy",
+                         "url":  "/r/troubledteens/wiki/index/maxlife/",
+                         "normalizedName":  "maximum life skills academy"
+                     },
+                     {
+                         "name":  "Monuments RTC",
+                         "url":  "/r/troubledteens/wiki/index/monuments/",
+                         "normalizedName":  "monuments rtc"
+                     },
+                     {
+                         "name":  "Mount Pleasant Academy",
+                         "url":  "/r/troubledteens/wiki/index/mountpleasant/",
+                         "normalizedName":  "mount pleasant academy"
+                     },
+                     {
+                         "name":  "Mountain Homes Youth Ranch",
+                         "url":  "/r/troubledteens/wiki/index/mountainhomes/",
+                         "normalizedName":  "mountain homes youth ranch"
+                     },
+                     {
+                         "name":  "New Beginnings/New Hope Maternity Homes",
+                         "url":  "/r/troubledteens/wiki/index/newbeginnings/",
+                         "normalizedName":  "new beginnings/new hope maternity homes"
+                     },
+                     {
+                         "name":  "Northstar Expeditions",
+                         "url":  "/r/troubledteens/wiki/index/northstarexp/",
+                         "normalizedName":  "northstar expeditions"
                      },
                      {
                          "name":  "Northstar Youth Academy",
@@ -311,9 +546,189 @@
                          "normalizedName":  "northstar youth academy"
                      },
                      {
+                         "name":  "Oakley School",
+                         "url":  "/r/troubledteens/wiki/index/oakley/",
+                         "normalizedName":  "oakley school"
+                     },
+                     {
+                         "name":  "Oasis Academy",
+                         "url":  "/r/troubledteens/wiki/index/oasis/",
+                         "normalizedName":  "oasis academy"
+                     },
+                     {
+                         "name":  "Old West Academy",
+                         "url":  "/r/troubledteens/wiki/index/oldwest/",
+                         "normalizedName":  "old west academy"
+                     },
+                     {
+                         "name":  "Olympus Academy",
+                         "url":  "/r/troubledteens/wiki/index/olympusacademy/",
+                         "normalizedName":  "olympus academy"
+                     },
+                     {
+                         "name":  "Olympus View Hospital",
+                         "url":  "/r/troubledteens/wiki/index/olympusview/",
+                         "normalizedName":  "olympus view hospital"
+                     },
+                     {
+                         "name":  "Open Sky Wilderness Program",
+                         "url":  "/r/troubledteens/wiki/index/openskywild/",
+                         "normalizedName":  "open sky wilderness program"
+                     },
+                     {
                          "name":  "Outback Therapeutic Expeditions",
                          "url":  "/r/troubledteens/wiki/index/outbackexp/",
                          "normalizedName":  "outback therapeutic expeditions"
+                     },
+                     {
+                         "name":  "Passages to Recovery",
+                         "url":  "/r/troubledteens/wiki/index/passagesrecovery/",
+                         "normalizedName":  "passages to recovery"
+                     },
+                     {
+                         "name":  "Pine Creek Ranch",
+                         "url":  "/r/troubledteens/wiki/index/pinecreek/",
+                         "normalizedName":  "pine creek ranch"
+                     },
+                     {
+                         "name":  "Pine Ridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/pineridge/",
+                         "normalizedName":  "pine ridge academy"
+                     },
+                     {
+                         "name":  "Proctor Advocate",
+                         "url":  "/r/troubledteens/wiki/index/proctoradvocate/",
+                         "normalizedName":  "proctor advocate"
+                     },
+                     {
+                         "name":  "Reality Trek",
+                         "url":  "/r/troubledteens/wiki/index/realitytrek/",
+                         "normalizedName":  "reality trek"
+                     },
+                     {
+                         "name":  "Red Rock Canyon School",
+                         "url":  "/r/troubledteens/wiki/index/redrockcanyon/",
+                         "normalizedName":  "red rock canyon school"
+                     },
+                     {
+                         "name":  "Red Rock Ranch Academy",
+                         "url":  "/r/troubledteens/wiki/index/redrockranch/",
+                         "normalizedName":  "red rock ranch academy"
+                     },
+                     {
+                         "name":  "River View Academy",
+                         "url":  "/r/troubledteens/wiki/index/riverviewacademy/",
+                         "normalizedName":  "river view academy"
+                     },
+                     {
+                         "name":  "Rivendell of Utah",
+                         "url":  "/r/troubledteens/wiki/index/rivendell/",
+                         "normalizedName":  "rivendell of utah"
+                     },
+                     {
+                         "name":  "Samaya RTC",
+                         "url":  "/r/troubledteens/wiki/index/samaya/",
+                         "normalizedName":  "samaya rtc"
+                     },
+                     {
+                         "name":  "Second Chances in Southern Utah",
+                         "url":  "/r/troubledteens/wiki/index/secondchances/",
+                         "normalizedName":  "second chances in southern utah"
+                     },
+                     {
+                         "name":  "Second Nature Entrada",
+                         "url":  "/r/troubledteens/wiki/index/snentrada/",
+                         "normalizedName":  "second nature entrada"
+                     },
+                     {
+                         "name":  "Silverado Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/silverado/",
+                         "normalizedName":  "silverado boys ranch"
+                     },
+                     {
+                         "name":  "Skyline Journey",
+                         "url":  "/r/troubledteens/wiki/index/skylinejourney/",
+                         "normalizedName":  "skyline journey"
+                     },
+                     {
+                         "name":  "Somerset Program/Academy at Canyon Creek",
+                         "url":  "/r/troubledteens/wiki/index/somerset/",
+                         "normalizedName":  "somerset program/academy at canyon creek"
+                     },
+                     {
+                         "name":  "Summit Quest",
+                         "url":  "/r/troubledteens/wiki/index/summitquest/",
+                         "normalizedName":  "summit quest"
+                     },
+                     {
+                         "name":  "SunHawk Academy",
+                         "url":  "/r/troubledteens/wiki/index/sunhawk/",
+                         "normalizedName":  "sunhawk academy"
+                     },
+                     {
+                         "name":  "The Journey at Mount Pleasant",
+                         "url":  "/r/troubledteens/wiki/index/journeymtpleasant/",
+                         "normalizedName":  "the journey at mount pleasant"
+                     },
+                     {
+                         "name":  "Three Points Center",
+                         "url":  "/r/troubledteens/wiki/index/threepoints/",
+                         "normalizedName":  "three points center"
+                     },
+                     {
+                         "name":  "Top Flight Academy",
+                         "url":  "/r/troubledteens/wiki/index/topflight/",
+                         "normalizedName":  "top flight academy"
+                     },
+                     {
+                         "name":  "Turning Point in Granita Park",
+                         "url":  "/r/troubledteens/wiki/index/turningpoint/",
+                         "normalizedName":  "turning point in granita park"
+                     },
+                     {
+                         "name":  "Vista Treatment Centers",
+                         "url":  "/r/troubledteens/wiki/index/vistacenters/",
+                         "normalizedName":  "vista treatment centers"
+                     },
+                     {
+                         "name":  "West Ridge Academy/Utah Boys Ranch",
+                         "url":  "/r/troubledteens/wiki/index/westridge/",
+                         "normalizedName":  "west ridge academy/utah boys ranch"
+                     },
+                     {
+                         "name":  "Whitmore Academy",
+                         "url":  "/r/troubledteens/wiki/index/whitmore/",
+                         "normalizedName":  "whitmore academy"
+                     },
+                     {
+                         "name":  "Willow Creek School",
+                         "url":  "/r/troubledteens/wiki/index/willowcreek/",
+                         "normalizedName":  "willow creek school"
+                     },
+                     {
+                         "name":  "Wilderness Quest",
+                         "url":  "/r/troubledteens/wiki/index/wildernessquest/",
+                         "normalizedName":  "wilderness quest"
+                     },
+                     {
+                         "name":  "WinGate Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/wingate/",
+                         "normalizedName":  "wingate wilderness"
+                     },
+                     {
+                         "name":  "Wingate Wilderness",
+                         "url":  "/r/troubledteens/wiki/index/wingate/",
+                         "normalizedName":  "wingate wilderness"
+                     },
+                     {
+                         "name":  "Woodland Hills Maternity Home",
+                         "url":  "/r/troubledteens/wiki/index/woodlandhills/",
+                         "normalizedName":  "woodland hills maternity home"
+                     },
+                     {
+                         "name":  "Yes Families",
+                         "url":  "/r/troubledteens/wiki/index/yesfamilies/",
+                         "normalizedName":  "yes families"
                      },
                      {
                          "name":  "Youth Foundation Success Inc/Academy",
@@ -324,9 +739,49 @@
                          "name":  "Alpine Boys Ranch",
                          "url":  "/r/troubledteens/wiki/index/alpineboys/",
                          "normalizedName":  "alpine boys ranch"
+                     },
+                     {
+                         "name":  "Youth Care of Utah",
+                         "url":  "/r/troubledteens/wiki/index/youthcareinc/",
+                         "normalizedName":  "youth care of utah"
+                     },
+                     {
+                         "name":  "The Aspen Institute for Behavioral Assessment",
+                         "url":  "/r/troubledteens/wiki/index/aspeninstitute/",
+                         "normalizedName":  "the aspen institute for behavioral assessment"
+                     },
+                     {
+                         "name":  "Marvelous Grace Girls Academy / New Beginnings Rebekah Home",
+                         "url":  "/r/troubledteens/wiki/index/marvelousgrace/",
+                         "normalizedName":  "marvelous grace girls academy / new beginnings rebekah home"
+                     },
+                     {
+                         "name":  "Heart Mountain New Beginnings",
+                         "url":  "/r/troubledteens/wiki/index/heartmountain/",
+                         "normalizedName":  "heart mountain new beginnings"
+                     },
+                     {
+                         "name":  "Linden House",
+                         "url":  "/r/troubledteens/wiki/index/lindenhouse/",
+                         "normalizedName":  "linden house"
+                     },
+                     {
+                         "name":  "Discovery Ranch South",
+                         "url":  "/r/troubledteens/wiki/index/discoveryranchgirls/",
+                         "normalizedName":  "discovery ranch south"
+                     },
+                     {
+                         "name":  "Redcliff Ascent",
+                         "url":  "/r/troubledteens/wiki/index/redcliffascent/",
+                         "normalizedName":  "redcliff ascent"
+                     },
+                     {
+                         "name":  "Cross Creek Manor",
+                         "url":  "/r/troubledteens/wiki/index/crosscreek/",
+                         "normalizedName":  "cross creek manor"
                      }
                  ],
-    "programCount":  65,
-    "generated":  "2025-12-10T16:34:17.2742046-05:00",
+    "programCount":  156,
+    "generated":  "2025-12-10T17:55:11.8987496-05:00",
     "state":  "UT"
 }

@@ -1,0 +1,232 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Aspen Education Group",
+                         "url":  "/r/troubledteens/wiki/index/aspeneducation/",
+                         "normalizedName":  "aspen education group"
+                     },
+                     {
+                         "name":  "Universal Health Services",
+                         "url":  "/r/troubledteens/wiki/index/uhs/",
+                         "normalizedName":  "universal health services"
+                     },
+                     {
+                         "name":  "WWASP",
+                         "url":  "/r/troubledteens/wiki/index/wwasp/",
+                         "normalizedName":  "wwasp"
+                     },
+                     {
+                         "name":  "Sequel Youth Services",
+                         "url":  "/r/troubledteens/wiki/index/sequelts/",
+                         "normalizedName":  "sequel youth services"
+                     },
+                     {
+                         "name":  "CRC Health Group",
+                         "url":  "/r/troubledteens/wiki/index/crchealth/",
+                         "normalizedName":  "crc health group"
+                     },
+                     {
+                         "name":  "Second Nature",
+                         "url":  "/r/troubledteens/wiki/index/secondnature/",
+                         "normalizedName":  "second nature"
+                     },
+                     {
+                         "name":  "Acadia Healthcare",
+                         "url":  "/r/troubledteens/wiki/index/acadiahealth/",
+                         "normalizedName":  "acadia healthcare"
+                     },
+                     {
+                         "name":  "Altior Healthcare",
+                         "url":  "/r/troubledteens/wiki/index/altior/",
+                         "normalizedName":  "altior healthcare"
+                     },
+                     {
+                         "name":  "Bill Lane \u0026 Associates Transport",
+                         "url":  "/r/troubledteens/wiki/index/billlane/",
+                         "normalizedName":  "bill lane \u0026 associates transport"
+                     },
+                     {
+                         "name":  "The Ascent Company",
+                         "url":  "/r/troubledteens/wiki/index/ascentco/",
+                         "normalizedName":  "the ascent company"
+                     },
+                     {
+                         "name":  "NATSAP",
+                         "url":  "/r/troubledteens/wiki/index/natsap/",
+                         "normalizedName":  "natsap"
+                     },
+                     {
+                         "name":  "Brown Schools Inc.",
+                         "url":  "/r/troubledteens/wiki/index/brownschools/",
+                         "normalizedName":  "brown schools inc."
+                     },
+                     {
+                         "name":  "Crosswinds",
+                         "url":  "/r/troubledteens/wiki/index/crosswinds/",
+                         "normalizedName":  "crosswinds"
+                     },
+                     {
+                         "name":  "Devereux Foundation",
+                         "url":  "/r/troubledteens/wiki/index/devereuxfoundation/",
+                         "normalizedName":  "devereux foundation"
+                     },
+                     {
+                         "name":  "Eckerd Connects",
+                         "url":  "/r/troubledteens/wiki/index/eckerd/",
+                         "normalizedName":  "eckerd connects"
+                     },
+                     {
+                         "name":  "Family Help \u0026 Wellness",
+                         "url":  "/r/troubledteens/wiki/index/famhelp/",
+                         "normalizedName":  "family help \u0026 wellness"
+                     },
+                     {
+                         "name":  "HOPE Group",
+                         "url":  "/r/troubledteens/wiki/index/hopegroup/",
+                         "normalizedName":  "hope group"
+                     },
+                     {
+                         "name":  "InnerChange",
+                         "url":  "/r/troubledteens/wiki/index/innerchange/",
+                         "normalizedName":  "innerchange"
+                     },
+                     {
+                         "name":  "J Bar J Youth Services",
+                         "url":  "/r/troubledteens/wiki/index/jbarjyouth/",
+                         "normalizedName":  "j bar j youth services"
+                     },
+                     {
+                         "name":  "Keystone Education \u0026 Youth Services, LLC",
+                         "url":  "/r/troubledteens/wiki/index/keystone/",
+                         "normalizedName":  "keystone education \u0026 youth services, llc"
+                     },
+                     {
+                         "name":  "KidsPeace",
+                         "url":  "/r/troubledteens/wiki/index/kidspeace/",
+                         "normalizedName":  "kidspeace"
+                     },
+                     {
+                         "name":  "NeuroRestorative",
+                         "url":  "/r/troubledteens/wiki/index/neurorestorative/",
+                         "normalizedName":  "neurorestorative"
+                     },
+                     {
+                         "name":  "Newport Healthcare",
+                         "url":  "/r/troubledteens/wiki/index/newport/",
+                         "normalizedName":  "newport healthcare"
+                     },
+                     {
+                         "name":  "Perimeter Healthcare",
+                         "url":  "/r/troubledteens/wiki/index/perimeterhc/",
+                         "normalizedName":  "perimeter healthcare"
+                     },
+                     {
+                         "name":  "Pinnacle Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/pinnacleinc/",
+                         "normalizedName":  "pinnacle behavioral health"
+                     },
+                     {
+                         "name":  "Project Extreme",
+                         "url":  "/r/troubledteens/wiki/index/projectextreme/",
+                         "normalizedName":  "project extreme"
+                     },
+                     {
+                         "name":  "Psychiatric Solutions",
+                         "url":  "/r/troubledteens/wiki/index/psi/",
+                         "normalizedName":  "psychiatric solutions"
+                     },
+                     {
+                         "name":  "Roloff Homes",
+                         "url":  "/r/troubledteens/wiki/index/roloff/",
+                         "normalizedName":  "roloff homes"
+                     },
+                     {
+                         "name":  "Sequel Youth and Family Services",
+                         "url":  "/r/troubledteens/wiki/index/sequelyouth/",
+                         "normalizedName":  "sequel youth and family services"
+                     },
+                     {
+                         "name":  "Social Learning Environments",
+                         "url":  "/r/troubledteens/wiki/index/sle/",
+                         "normalizedName":  "social learning environments"
+                     },
+                     {
+                         "name":  "Straight, Inc.",
+                         "url":  "/r/troubledteens/wiki/index/straightinc/",
+                         "normalizedName":  "straight, inc."
+                     },
+                     {
+                         "name":  "Sunrise Children\u0027s Services",
+                         "url":  "/r/troubledteens/wiki/index/sunrisecs/",
+                         "normalizedName":  "sunrise children\u0027s services"
+                     },
+                     {
+                         "name":  "Teen Challenge",
+                         "url":  "/r/troubledteens/wiki/index/teenchallenge/",
+                         "normalizedName":  "teen challenge"
+                     },
+                     {
+                         "name":  "ViaQuest Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/viaquest/",
+                         "normalizedName":  "viaquest behavioral health"
+                     },
+                     {
+                         "name":  "Vivant Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/vivantbh/",
+                         "normalizedName":  "vivant behavioral health"
+                     },
+                     {
+                         "name":  "Youth Opportunity Investments",
+                         "url":  "/r/troubledteens/wiki/index/youthopportunity/",
+                         "normalizedName":  "youth opportunity investments"
+                     },
+                     {
+                         "name":  "Youth Services International",
+                         "url":  "/r/troubledteens/wiki/index/ysi/",
+                         "normalizedName":  "youth services international"
+                     },
+                     {
+                         "name":  "Zion Educational Systems",
+                         "url":  "/r/troubledteens/wiki/index/zioned/",
+                         "normalizedName":  "zion educational systems"
+                     },
+                     {
+                         "name":  "FamHelp",
+                         "url":  "/r/troubledteens/wiki/index/famhelp/",
+                         "normalizedName":  "famhelp"
+                     },
+                     {
+                         "name":  "Sequel Youth",
+                         "url":  "/r/troubledteens/wiki/index/sequelyouth/",
+                         "normalizedName":  "sequel youth"
+                     },
+                     {
+                         "name":  "Teen Help Inc.",
+                         "url":  "/r/troubledteens/wiki/index/teenhelp/",
+                         "normalizedName":  "teen help inc."
+                     },
+                     {
+                         "name":  "Help My Teen",
+                         "url":  "/r/troubledteens/wiki/index/helpmyteen/",
+                         "normalizedName":  "help my teen"
+                     },
+                     {
+                         "name":  "Teens in Crisis",
+                         "url":  "/r/troubledteens/wiki/index/teensincrisis/",
+                         "normalizedName":  "teens in crisis"
+                     },
+                     {
+                         "name":  "Boot Camps for Teens",
+                         "url":  "/r/troubledteens/wiki/index/bootcampsforteens/",
+                         "normalizedName":  "boot camps for teens"
+                     },
+                     {
+                         "name":  "UHS",
+                         "url":  "/r/troubledteens/wiki/index/uhs/",
+                         "normalizedName":  "uhs"
+                     }
+                 ],
+    "programCount":  45,
+    "generated":  "2025-12-10T20:00:18.1799675-05:00",
+    "state":  "CORPORATE"
+}

@@ -1,0 +1,77 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Allendale Association",
+                         "url":  "/r/troubledteens/wiki/index/allendale/",
+                         "normalizedName":  "allendale association"
+                     },
+                     {
+                         "name":  "Garfield Park Hospital",
+                         "url":  "/r/troubledteens/wiki/index/garfieldpark/",
+                         "normalizedName":  "garfield park hospital"
+                     },
+                     {
+                         "name":  "Hartgrove Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/hartgrove/",
+                         "normalizedName":  "hartgrove behavioral health system"
+                     },
+                     {
+                         "name":  "Lincoln Prairie Behavioral Health Center",
+                         "url":  "/r/troubledteens/wiki/index/lincolnprairie/",
+                         "normalizedName":  "lincoln prairie behavioral health center"
+                     },
+                     {
+                         "name":  "Maryville Academy",
+                         "url":  "/r/troubledteens/wiki/index/maryville/",
+                         "normalizedName":  "maryville academy"
+                     },
+                     {
+                         "name":  "Nexus-Indian Oaks Family Healing",
+                         "url":  "/r/troubledteens/wiki/index/indianoaksnexus/",
+                         "normalizedName":  "nexus-indian oaks family healing"
+                     },
+                     {
+                         "name":  "Pinnacle Treatment Centers",
+                         "url":  "/r/troubledteens/wiki/index/pinnacletc/",
+                         "normalizedName":  "pinnacle treatment centers"
+                     },
+                     {
+                         "name":  "Teen Challenge of Illinois",
+                         "url":  "/r/troubledteens/wiki/index/tcil/",
+                         "normalizedName":  "teen challenge of illinois"
+                     },
+                     {
+                         "name":  "The Pavilion Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/pavilionbhs/",
+                         "normalizedName":  "the pavilion behavioral health system"
+                     },
+                     {
+                         "name":  "Northern Illinois Academy",
+                         "url":  "/r/troubledteens/wiki/index/northernil/",
+                         "normalizedName":  "northern illinois academy"
+                     },
+                     {
+                         "name":  "Rock Creek Center",
+                         "url":  "/r/troubledteens/wiki/index/rockcreek/",
+                         "normalizedName":  "rock creek center"
+                     },
+                     {
+                         "name":  "Rock River Academy",
+                         "url":  "/r/troubledteens/wiki/index/rockriver/",
+                         "normalizedName":  "rock river academy"
+                     },
+                     {
+                         "name":  "Timberline Knolls RTC",
+                         "url":  "/r/troubledteens/wiki/index/timberline/",
+                         "normalizedName":  "timberline knolls rtc"
+                     },
+                     {
+                         "name":  "Timberline Knolls",
+                         "url":  "/r/troubledteens/wiki/index/timberline/",
+                         "normalizedName":  "timberline knolls"
+                     }
+                 ],
+    "programCount":  14,
+    "generated":  "2025-12-10T17:55:08.6509767-05:00",
+    "state":  "IL"
+}

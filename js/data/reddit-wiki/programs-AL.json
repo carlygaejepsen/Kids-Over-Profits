@@ -1,0 +1,67 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Columbus Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/columbusgirls/",
+                         "normalizedName":  "columbus girls academy"
+                     },
+                     {
+                         "name":  "Hill Crest Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/hillcrestbh/",
+                         "normalizedName":  "hill crest behavioral health"
+                     },
+                     {
+                         "name":  "Laurel Oaks Behavioral Health Center",
+                         "url":  "/r/troubledteens/wiki/index/laureloaksbhc/",
+                         "normalizedName":  "laurel oaks behavioral health center"
+                     },
+                     {
+                         "name":  "Sequel TSI of Courtland",
+                         "url":  "/r/troubledteens/wiki/index/sequelcourtland/",
+                         "normalizedName":  "sequel tsi of courtland"
+                     },
+                     {
+                         "name":  "Sequel TSI of Montgomery",
+                         "url":  "/r/troubledteens/wiki/index/sequelmont/",
+                         "normalizedName":  "sequel tsi of montgomery"
+                     },
+                     {
+                         "name":  "Sequel TSI of Owens Cross Roads",
+                         "url":  "/r/troubledteens/wiki/index/owenscross/",
+                         "normalizedName":  "sequel tsi of owens cross roads"
+                     },
+                     {
+                         "name":  "Sequel TSI of Tuskegee",
+                         "url":  "/r/troubledteens/wiki/index/sequeltuskegee/",
+                         "normalizedName":  "sequel tsi of tuskegee"
+                     },
+                     {
+                         "name":  "Southeast Alabama Youth Leadership Academy (SAYLA)",
+                         "url":  "/r/troubledteens/wiki/index/sayla/",
+                         "normalizedName":  "southeast alabama youth leadership academy (sayla)"
+                     },
+                     {
+                         "name":  "Sequel TSI of Madison",
+                         "url":  "/r/troubledteens/wiki/index/sequelmadison/",
+                         "normalizedName":  "sequel tsi of madison"
+                     },
+                     {
+                         "name":  "Three Springs Incorporated",
+                         "url":  "/r/troubledteens/wiki/index/threesprings/",
+                         "normalizedName":  "three springs incorporated"
+                     },
+                     {
+                         "name":  "Reclamation Ranch",
+                         "url":  "/r/troubledteens/wiki/index/reclamation/",
+                         "normalizedName":  "reclamation ranch"
+                     },
+                     {
+                         "name":  "Elk River Treatment Program / Pinnacle Schools",
+                         "url":  "/r/troubledteens/wiki/index/elkriver/",
+                         "normalizedName":  "elk river treatment program / pinnacle schools"
+                     }
+                 ],
+    "programCount":  12,
+    "generated":  "2025-12-10T17:55:07.3009371-05:00",
+    "state":  "AL"
+}

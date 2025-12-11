@@ -1,0 +1,67 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Camp Huntington",
+                         "url":  "/r/troubledteens/wiki/index/camphunt/",
+                         "normalizedName":  "camp huntington"
+                     },
+                     {
+                         "name":  "Camp Huntington",
+                         "url":  "/r/troubledteens/wiki/index/cmphuntington/",
+                         "normalizedName":  "camp huntington"
+                     },
+                     {
+                         "name":  "Children\u0027s Village",
+                         "url":  "/r/troubledteens/wiki/index/CVdobbs/",
+                         "normalizedName":  "children\u0027s village"
+                     },
+                     {
+                         "name":  "Green Chimneys",
+                         "url":  "/r/troubledteens/wiki/index/greenchimneys/",
+                         "normalizedName":  "green chimneys"
+                     },
+                     {
+                         "name":  "Hutchings Psychiatric Center",
+                         "url":  "/r/troubledteens/wiki/index/hutchings/",
+                         "normalizedName":  "hutchings psychiatric center"
+                     },
+                     {
+                         "name":  "Academy at Ivy Ridge",
+                         "url":  "/r/troubledteens/wiki/index/ivyridge/",
+                         "normalizedName":  "academy at ivy ridge"
+                     },
+                     {
+                         "name":  "Academy of New Horizons",
+                         "url":  "/r/troubledteens/wiki/index/academynewhorizons/",
+                         "normalizedName":  "academy of new horizons"
+                     },
+                     {
+                         "name":  "Adirondack Leadership Expeditions",
+                         "url":  "/r/troubledteens/wiki/index/adirondackleader/",
+                         "normalizedName":  "adirondack leadership expeditions"
+                     },
+                     {
+                         "name":  "Hawthorne Cedar Knolls Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/cedarknolls/",
+                         "normalizedName":  "hawthorne cedar knolls treatment center"
+                     },
+                     {
+                         "name":  "Leak \u0026 Watts Residential Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/leakandwatts/",
+                         "normalizedName":  "leak \u0026 watts residential treatment center"
+                     },
+                     {
+                         "name":  "The Family Foundation School / Allynwood Academy",
+                         "url":  "/r/troubledteens/wiki/index/familyfoundation/",
+                         "normalizedName":  "the family foundation school / allynwood academy"
+                     },
+                     {
+                         "name":  "Willowbrook State School",
+                         "url":  "/r/troubledteens/wiki/index/willowbrook/",
+                         "normalizedName":  "willowbrook state school"
+                     }
+                 ],
+    "programCount":  12,
+    "generated":  "2025-12-10T18:07:18.8354262-05:00",
+    "state":  "NY"
+}

@@ -1,16 +1,6 @@
 {
     "programs":  [
                      {
-                         "name":  "Bethesda Home for Girls",
-                         "url":  "/r/troubledteens/wiki/index/bethesdagirls/",
-                         "normalizedName":  "bethesda home for girls"
-                     },
-                     {
-                         "name":  "Bethesda Home for Girls",
-                         "url":  "/r/troubledteens/wiki/index/bethesdagirls/",
-                         "normalizedName":  "bethesda home for girls"
-                     },
-                     {
                          "name":  "Black Hills Children\u0027s Home",
                          "url":  "/r/troubledteens/wiki/index/blackhills/",
                          "normalizedName":  "black hills children\u0027s home"
@@ -19,9 +9,14 @@
                          "name":  "McCrossan Boys Ranch",
                          "url":  "/r/troubledteens/wiki/index/mccrossan/",
                          "normalizedName":  "mccrossan boys ranch"
+                     },
+                     {
+                         "name":  "Sequel Transition Academy",
+                         "url":  "/r/troubledteens/wiki/index/sequeltrans/",
+                         "normalizedName":  "sequel transition academy"
                      }
                  ],
-    "programCount":  4,
-    "generated":  "2025-12-10T16:34:17.2586835-05:00",
+    "programCount":  3,
+    "generated":  "2025-12-10T17:56:46.9853696-05:00",
     "state":  "SD"
 }

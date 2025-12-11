@@ -1,0 +1,102 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Bald Eagles Boys Camp",
+                         "url":  "/r/troubledteens/wiki/index/baldeaglesboys/",
+                         "normalizedName":  "bald eagles boys camp"
+                     },
+                     {
+                         "name":  "Beneto Center",
+                         "url":  "/r/troubledteens/wiki/index/beneto/",
+                         "normalizedName":  "beneto center"
+                     },
+                     {
+                         "name":  "Blue Ridge Academy",
+                         "url":  "/r/troubledteens/wiki/index/blueridgeVQ/",
+                         "normalizedName":  "blue ridge academy"
+                     },
+                     {
+                         "name":  "The Bradley Center",
+                         "url":  "/r/troubledteens/wiki/index/bradleycenter/",
+                         "normalizedName":  "the bradley center"
+                     },
+                     {
+                         "name":  "Embark at The Poconos",
+                         "url":  "/r/troubledteens/wiki/index/thepoconos/",
+                         "normalizedName":  "embark at the poconos"
+                     },
+                     {
+                         "name":  "Fairmount Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/fairmountbhs/",
+                         "normalizedName":  "fairmount behavioral health system"
+                     },
+                     {
+                         "name":  "Friends Hospital",
+                         "url":  "/r/troubledteens/wiki/index/friendshos/",
+                         "normalizedName":  "friends hospital"
+                     },
+                     {
+                         "name":  "Foundations Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/foundationsBH/",
+                         "normalizedName":  "foundations behavioral health"
+                     },
+                     {
+                         "name":  "Mars Home for Youth",
+                         "url":  "/r/troubledteens/wiki/index/marshome/",
+                         "normalizedName":  "mars home for youth"
+                     },
+                     {
+                         "name":  "Montco Youth Center",
+                         "url":  "/r/troubledteens/wiki/index/montcoyouth/",
+                         "normalizedName":  "montco youth center"
+                     },
+                     {
+                         "name":  "Roxbury Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/roxburytc/",
+                         "normalizedName":  "roxbury treatment center"
+                     },
+                     {
+                         "name":  "Southwood Psychiatric Hospital",
+                         "url":  "/r/troubledteens/wiki/index/southwood/",
+                         "normalizedName":  "southwood psychiatric hospital"
+                     },
+                     {
+                         "name":  "The Horsham Clinic",
+                         "url":  "/r/troubledteens/wiki/index/horsham/",
+                         "normalizedName":  "the horsham clinic"
+                     },
+                     {
+                         "name":  "The Meadows Psychiatric Center",
+                         "url":  "/r/troubledteens/wiki/index/meadowspc/",
+                         "normalizedName":  "the meadows psychiatric center"
+                     },
+                     {
+                         "name":  "Circle C Youth and Family Services",
+                         "url":  "/r/troubledteens/wiki/index/circlec/",
+                         "normalizedName":  "circle c youth and family services"
+                     },
+                     {
+                         "name":  "Glen Mills School",
+                         "url":  "/r/troubledteens/wiki/index/glenmills/",
+                         "normalizedName":  "glen mills school"
+                     },
+                     {
+                         "name":  "Western Center",
+                         "url":  "/r/troubledteens/wiki/index/westerncenter/",
+                         "normalizedName":  "western center"
+                     },
+                     {
+                         "name":  "Wordsworth Academy",
+                         "url":  "/r/troubledteens/wiki/index/wordsworth/",
+                         "normalizedName":  "wordsworth academy"
+                     },
+                     {
+                         "name":  "Yes Academy",
+                         "url":  "/r/troubledteens/wiki/index/yesacademy/",
+                         "normalizedName":  "yes academy"
+                     }
+                 ],
+    "programCount":  19,
+    "generated":  "2025-12-10T17:55:10.0097386-05:00",
+    "state":  "PA"
+}

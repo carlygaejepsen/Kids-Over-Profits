@@ -1,0 +1,52 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Fox Run Center for Children and Adolescents",
+                         "url":  "/r/troubledteens/wiki/index/foxrun/",
+                         "normalizedName":  "fox run center for children and adolescents"
+                     },
+                     {
+                         "name":  "Grand River Academy",
+                         "url":  "/r/troubledteens/wiki/index/grandriver/",
+                         "normalizedName":  "grand river academy"
+                     },
+                     {
+                         "name":  "New Lifehouse Academy",
+                         "url":  "/r/troubledteens/wiki/index/newlifehouse/",
+                         "normalizedName":  "new lifehouse academy"
+                     },
+                     {
+                         "name":  "Ohio Wilderness Boys Camp",
+                         "url":  "/r/troubledteens/wiki/index/ohioboys/",
+                         "normalizedName":  "ohio wilderness boys camp"
+                     },
+                     {
+                         "name":  "One Way Farm",
+                         "url":  "/r/troubledteens/wiki/index/onewayfarm/",
+                         "normalizedName":  "one way farm"
+                     },
+                     {
+                         "name":  "Sequel Pomegranate Health Systems",
+                         "url":  "/r/troubledteens/wiki/index/sequelpom/",
+                         "normalizedName":  "sequel pomegranate health systems"
+                     },
+                     {
+                         "name":  "Windsor Laurelwood Center for Behavioral Medicine",
+                         "url":  "/r/troubledteens/wiki/index/windsorlaurel/",
+                         "normalizedName":  "windsor laurelwood center for behavioral medicine"
+                     },
+                     {
+                         "name":  "Eagle\u0027s Nest Ranch \u0026 Academy",
+                         "url":  "/r/troubledteens/wiki/index/eaglesnest/",
+                         "normalizedName":  "eagle\u0027s nest ranch \u0026 academy"
+                     },
+                     {
+                         "name":  "Torii Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/torii/",
+                         "normalizedName":  "torii behavioral health"
+                     }
+                 ],
+    "programCount":  9,
+    "generated":  "2025-12-10T17:55:09.7123619-05:00",
+    "state":  "OH"
+}

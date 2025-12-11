@@ -1,0 +1,27 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Boys Town",
+                         "url":  "/r/troubledteens/wiki/index/boystown/",
+                         "normalizedName":  "boys town"
+                     },
+                     {
+                         "name":  "Uta Halee Academy",
+                         "url":  "/r/troubledteens/wiki/index/utahalee/",
+                         "normalizedName":  "uta halee academy"
+                     },
+                     {
+                         "name":  "Uta Halee Girls Village",
+                         "url":  "/r/troubledteens/wiki/index/utahaleegirls/",
+                         "normalizedName":  "uta halee girls village"
+                     },
+                     {
+                         "name":  "Ponca Pines Academy",
+                         "url":  "/r/troubledteens/wiki/index/poncapines/",
+                         "normalizedName":  "ponca pines academy"
+                     }
+                 ],
+    "programCount":  4,
+    "generated":  "2025-12-10T17:55:09.5738107-05:00",
+    "state":  "NE"
+}

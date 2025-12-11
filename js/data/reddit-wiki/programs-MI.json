@@ -1,0 +1,52 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Forest View Hospital",
+                         "url":  "/r/troubledteens/wiki/index/forestview/",
+                         "normalizedName":  "forest view hospital"
+                     },
+                     {
+                         "name":  "Harbor Oaks Hospital",
+                         "url":  "/r/troubledteens/wiki/index/harboroaks/",
+                         "normalizedName":  "harbor oaks hospital"
+                     },
+                     {
+                         "name":  "Havenwyck Hospital",
+                         "url":  "/r/troubledteens/wiki/index/havenwyck/",
+                         "normalizedName":  "havenwyck hospital"
+                     },
+                     {
+                         "name":  "Pineview Homes",
+                         "url":  "/r/troubledteens/wiki/index/pineviewhomes/",
+                         "normalizedName":  "pineview homes"
+                     },
+                     {
+                         "name":  "Turning Point Youth Center",
+                         "url":  "/r/troubledteens/wiki/index/turningpointmi/",
+                         "normalizedName":  "turning point youth center"
+                     },
+                     {
+                         "name":  "Whaley Children\u0027s Center",
+                         "url":  "/r/troubledteens/wiki/index/whaleycenter/",
+                         "normalizedName":  "whaley children\u0027s center"
+                     },
+                     {
+                         "name":  "Montcalm School for Boys",
+                         "url":  "/r/troubledteens/wiki/index/montcalmboys/",
+                         "normalizedName":  "montcalm school for boys"
+                     },
+                     {
+                         "name":  "Montcalm School for Girls",
+                         "url":  "/r/troubledteens/wiki/index/montcalmgirls/",
+                         "normalizedName":  "montcalm school for girls"
+                     },
+                     {
+                         "name":  "Starr Albion Prep",
+                         "url":  "/r/troubledteens/wiki/index/starralbion/",
+                         "normalizedName":  "starr albion prep"
+                     }
+                 ],
+    "programCount":  9,
+    "generated":  "2025-12-10T17:55:09.1539922-05:00",
+    "state":  "MI"
+}

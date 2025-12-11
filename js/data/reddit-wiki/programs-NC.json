@@ -1,0 +1,162 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Black Mountain Academy",
+                         "url":  "/r/troubledteens/wiki/index/blackmountain/",
+                         "normalizedName":  "black mountain academy"
+                     },
+                     {
+                         "name":  "Eckerd Youth Alternatives",
+                         "url":  "/r/troubledteens/wiki/index/eckerdfl/",
+                         "normalizedName":  "eckerd youth alternatives"
+                     },
+                     {
+                         "name":  "Eckerd Youth Alternatives",
+                         "url":  "/r/troubledteens/wiki/index/eckerdnc/",
+                         "normalizedName":  "eckerd youth alternatives"
+                     },
+                     {
+                         "name":  "Eliada Homes",
+                         "url":  "/r/troubledteens/wiki/index/eliada/",
+                         "normalizedName":  "eliada homes"
+                     },
+                     {
+                         "name":  "Foothills at Red Oak Recovery",
+                         "url":  "/r/troubledteens/wiki/index/foothillsredoak/",
+                         "normalizedName":  "foothills at red oak recovery"
+                     },
+                     {
+                         "name":  "Holly Hill Hospital",
+                         "url":  "/r/troubledteens/wiki/index/hollyhill/",
+                         "normalizedName":  "holly hill hospital"
+                     },
+                     {
+                         "name":  "Journey Home East",
+                         "url":  "/r/troubledteens/wiki/index/jheast/",
+                         "normalizedName":  "journey home east"
+                     },
+                     {
+                         "name":  "North Carolina Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/ncboystc/",
+                         "normalizedName":  "north carolina boys academy"
+                     },
+                     {
+                         "name":  "Old Vineyard Behavioral Health Services",
+                         "url":  "/r/troubledteens/wiki/index/oldvineyard/",
+                         "normalizedName":  "old vineyard behavioral health services"
+                     },
+                     {
+                         "name":  "Phoenix Outdoor",
+                         "url":  "/r/troubledteens/wiki/index/phoenixoutdoor/",
+                         "normalizedName":  "phoenix outdoor"
+                     },
+                     {
+                         "name":  "Talisman Camps",
+                         "url":  "/r/troubledteens/wiki/index/talismancamps/",
+                         "normalizedName":  "talisman camps"
+                     },
+                     {
+                         "name":  "New Leaf Academy of North Carolina",
+                         "url":  "/r/troubledteens/wiki/index/newleafnc/",
+                         "normalizedName":  "new leaf academy of north carolina"
+                     },
+                     {
+                         "name":  "SUWS of North Carolina",
+                         "url":  "/r/troubledteens/wiki/index/suwsnc/",
+                         "normalizedName":  "suws of north carolina"
+                     },
+                     {
+                         "name":  "Abounding Grace School for Boys",
+                         "url":  "/r/troubledteens/wiki/index/aboundinggrace/",
+                         "normalizedName":  "abounding grace school for boys"
+                     },
+                     {
+                         "name":  "Asheville Academy for Girls",
+                         "url":  "/r/troubledteens/wiki/index/ashevilleacademy/",
+                         "normalizedName":  "asheville academy for girls"
+                     },
+                     {
+                         "name":  "Auldern Academy",
+                         "url":  "/r/troubledteens/wiki/index/auldern/",
+                         "normalizedName":  "auldern academy"
+                     },
+                     {
+                         "name":  "Equinox RTC",
+                         "url":  "/r/troubledteens/wiki/index/equinox/",
+                         "normalizedName":  "equinox rtc"
+                     },
+                     {
+                         "name":  "Four Circles Recovery Center",
+                         "url":  "/r/troubledteens/wiki/index/fourcirclesnc/",
+                         "normalizedName":  "four circles recovery center"
+                     },
+                     {
+                         "name":  "The Goodale School",
+                         "url":  "/r/troubledteens/wiki/index/goodale/",
+                         "normalizedName":  "the goodale school"
+                     },
+                     {
+                         "name":  "Keys of Carolina",
+                         "url":  "/r/troubledteens/wiki/index/keyscarolina/",
+                         "normalizedName":  "keys of carolina"
+                     },
+                     {
+                         "name":  "Lake House Academy",
+                         "url":  "/r/troubledteens/wiki/index/lakehouse/",
+                         "normalizedName":  "lake house academy"
+                     },
+                     {
+                         "name":  "Magnolia Mill School",
+                         "url":  "/r/troubledteens/wiki/index/magnoliamill/",
+                         "normalizedName":  "magnolia mill school"
+                     },
+                     {
+                         "name":  "Montford Hall",
+                         "url":  "/r/troubledteens/wiki/index/montford/",
+                         "normalizedName":  "montford hall"
+                     },
+                     {
+                         "name":  "Solstice East",
+                         "url":  "/r/troubledteens/wiki/index/solsticeeast/",
+                         "normalizedName":  "solstice east"
+                     },
+                     {
+                         "name":  "Stone Mountain School",
+                         "url":  "/r/troubledteens/wiki/index/stonemountain/",
+                         "normalizedName":  "stone mountain school"
+                     },
+                     {
+                         "name":  "SUWS of the Carolinas",
+                         "url":  "/r/troubledteens/wiki/index/suwsnc/",
+                         "normalizedName":  "suws of the carolinas"
+                     },
+                     {
+                         "name":  "Talisman Academy",
+                         "url":  "/r/troubledteens/wiki/index/talismanacademy/",
+                         "normalizedName":  "talisman academy"
+                     },
+                     {
+                         "name":  "Trails Carolina",
+                         "url":  "/r/troubledteens/wiki/index/trailscarolina/",
+                         "normalizedName":  "trails carolina"
+                     },
+                     {
+                         "name":  "Wellspring Academy/Academy of the Sierras",
+                         "url":  "/r/troubledteens/wiki/index/wellspringcali/",
+                         "normalizedName":  "wellspring academy/academy of the sierras"
+                     },
+                     {
+                         "name":  "Wellspring Academy",
+                         "url":  "/r/troubledteens/wiki/index/wellspringacademy/",
+                         "normalizedName":  "wellspring academy"
+                     },
+                     {
+                         "name":  "Grow at Momentum",
+                         "url":  "/r/troubledteens/wiki/index/momentum/",
+                         "normalizedName":  "grow at momentum"
+                     }
+                 ],
+    "programCount":  31,
+    "generated":  "2025-12-10T18:07:38.5698246-05:00",
+    "state":  "NC"
+}

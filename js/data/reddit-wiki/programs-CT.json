@@ -1,0 +1,32 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Grove School",
+                         "url":  "/r/troubledteens/wiki/index/grove/",
+                         "normalizedName":  "grove school"
+                     },
+                     {
+                         "name":  "The Glenholme School",
+                         "url":  "/r/troubledteens/wiki/index/devereux/",
+                         "normalizedName":  "the glenholme school"
+                     },
+                     {
+                         "name":  "Newport Academy",
+                         "url":  "/r/troubledteens/wiki/index/newport/",
+                         "normalizedName":  "newport academy"
+                     },
+                     {
+                         "name":  "Turnbridge",
+                         "url":  "/r/troubledteens/wiki/index/turnbridge/",
+                         "normalizedName":  "turnbridge"
+                     },
+                     {
+                         "name":  "Mount Saint John School",
+                         "url":  "/r/troubledteens/wiki/index/mtstjohn/",
+                         "normalizedName":  "mount saint john school"
+                     }
+                 ],
+    "programCount":  5,
+    "generated":  "2025-12-10T17:55:07.8795320-05:00",
+    "state":  "CT"
+}

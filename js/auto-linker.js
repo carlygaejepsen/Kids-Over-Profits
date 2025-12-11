@@ -14,8 +14,55 @@ class TTIProgramAutoLinker {
 
     /**
      * Load the program links database
+     * Tries component files first (reddit-wiki/), then falls back to monolithic file
      */
     async loadDatabase() {
+        // Try loading from component files first (preferred method)
+        const componentSuccess = await this.loadFromComponents();
+        if (componentSuccess) {
+            console.log(`✓ Loaded ${this.programLinks.length} TTI programs for auto-linking (from components)`);
+            return true;
+        }
+
+        // Fall back to monolithic file
+        console.log('⚠ Component files not found, falling back to monolithic file...');
+        return await this.loadFromMonolithic();
+    }
+
+    /**
+     * Load from component files (programs-array.json + search-index.json)
+     */
+    async loadFromComponents() {
+        try {
+            const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+
+            // Load programs array
+            const programsResponse = await fetch(`${basePath}/programs-array.json`);
+            if (!programsResponse.ok) return false;
+
+            const programsData = await programsResponse.json();
+
+            // Load search index
+            const searchResponse = await fetch(`${basePath}/search-index.json`);
+            if (!searchResponse.ok) return false;
+
+            const searchData = await searchResponse.json();
+
+            this.programLinks = programsData.programs || [];
+            this.searchIndex = searchData.searchIndex || {};
+            this.loaded = true;
+
+            return true;
+        } catch (error) {
+            console.warn('Failed to load component files:', error.message);
+            return false;
+        }
+    }
+
+    /**
+     * Load from monolithic file (fallback)
+     */
+    async loadFromMonolithic() {
         try {
             const response = await fetch('/wp-content/themes/child/js/data/tti-program-links.json');
             if (!response.ok) {
@@ -28,11 +75,58 @@ class TTIProgramAutoLinker {
             this.searchIndex = data.searchIndex || {};
             this.loaded = true;
 
-            console.log(`✓ Loaded ${this.programLinks.length} TTI programs for auto-linking`);
+            console.log(`✓ Loaded ${this.programLinks.length} TTI programs for auto-linking (from monolithic)`);
             return true;
         } catch (error) {
             console.error('Failed to load TTI program links:', error);
             return false;
+        }
+    }
+
+    /**
+     * Load specific state files on demand
+     * Useful for lazy loading or state-specific features
+     *
+     * @param {string[]} states - Array of state codes (e.g., ['UT', 'CA', 'TX'])
+     * @returns {Promise<object[]>} Array of programs from specified states
+     */
+    async loadStateFiles(states) {
+        const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+        const allPrograms = [];
+
+        for (const state of states) {
+            try {
+                const response = await fetch(`${basePath}/programs-${state}.json`);
+                if (!response.ok) {
+                    console.warn(`State file not found: programs-${state}.json`);
+                    continue;
+                }
+
+                const data = await response.json();
+                allPrograms.push(...(data.programs || []));
+            } catch (error) {
+                console.warn(`Failed to load state ${state}:`, error.message);
+            }
+        }
+
+        return allPrograms;
+    }
+
+    /**
+     * Get available states (from index file)
+     * @returns {Promise<object>} State information with program counts
+     */
+    async getAvailableStates() {
+        try {
+            const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+            const response = await fetch(`${basePath}/index.json`);
+            if (!response.ok) return null;
+
+            const data = await response.json();
+            return data.states || {};
+        } catch (error) {
+            console.warn('Failed to load state index:', error.message);
+            return null;
         }
     }
 

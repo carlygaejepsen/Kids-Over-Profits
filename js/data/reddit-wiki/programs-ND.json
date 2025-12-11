@@ -1,0 +1,22 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Dakota Boys and Girls Ranch",
+                         "url":  "/r/troubledteens/wiki/index/dakotaranch/",
+                         "normalizedName":  "dakota boys and girls ranch"
+                     },
+                     {
+                         "name":  "Luther Hall",
+                         "url":  "/r/troubledteens/wiki/index/lutherhall/",
+                         "normalizedName":  "luther hall"
+                     },
+                     {
+                         "name":  "Prairie St. John\u0027s",
+                         "url":  "/r/troubledteens/wiki/index/prairiesj/",
+                         "normalizedName":  "prairie st. john\u0027s"
+                     }
+                 ],
+    "programCount":  3,
+    "generated":  "2025-12-10T18:09:21.9777071-05:00",
+    "state":  "ND"
+}

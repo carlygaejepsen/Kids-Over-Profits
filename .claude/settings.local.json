@@ -8,7 +8,10 @@
       "Bash(php -r:*)",
       "Bash(php -l:*)",
       "Bash(node scripts/scrape-all-programs.js:*)",
-      "Bash(node scripts/rebuild-search-index.js:*)"
+      "Bash(node scripts/rebuild-search-index.js:*)",
+      "Bash(cat:*)",
+      "Bash(git rm:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

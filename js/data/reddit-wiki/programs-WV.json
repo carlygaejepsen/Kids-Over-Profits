@@ -1,12 +1,42 @@
 {
     "programs":  [
                      {
-                         "name":  "New Vision Wilderness",
-                         "url":  "/r/troubledteens/wiki/index/newvisionwild/",
-                         "normalizedName":  "new vision wilderness"
+                         "name":  "Academy Programs",
+                         "url":  "/r/troubledteens/wiki/index/academyprograms/",
+                         "normalizedName":  "academy programs"
+                     },
+                     {
+                         "name":  "Pressley Ridge",
+                         "url":  "/r/troubledteens/wiki/index/pressleyridge/",
+                         "normalizedName":  "pressley ridge"
+                     },
+                     {
+                         "name":  "River Park Hospital",
+                         "url":  "/r/troubledteens/wiki/index/riverpark/",
+                         "normalizedName":  "river park hospital"
+                     },
+                     {
+                         "name":  "Alldredge Academy/Wilderness Journey",
+                         "url":  "/r/troubledteens/wiki/index/alldredge/",
+                         "normalizedName":  "alldredge academy/wilderness journey"
+                     },
+                     {
+                         "name":  "Blue Creek Academy",
+                         "url":  "/r/troubledteens/wiki/index/bluecreek/",
+                         "normalizedName":  "blue creek academy"
+                     },
+                     {
+                         "name":  "Greenbrier Academy for Girls",
+                         "url":  "/r/troubledteens/wiki/index/greenbrier/",
+                         "normalizedName":  "greenbrier academy for girls"
+                     },
+                     {
+                         "name":  "Miracle Meadows School",
+                         "url":  "/r/troubledteens/wiki/index/miraclemeadows/",
+                         "normalizedName":  "miracle meadows school"
                      }
                  ],
-    "programCount":  1,
-    "generated":  "2025-12-10T16:34:17.3248157-05:00",
+    "programCount":  7,
+    "generated":  "2025-12-10T18:18:19.5814920-05:00",
     "state":  "WV"
 }

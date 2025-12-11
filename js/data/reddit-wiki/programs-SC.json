@@ -1,0 +1,92 @@
+{
+    "programs":  [
+                     {
+                         "name":  "AMIkids Sand Hills",
+                         "url":  "/r/troubledteens/wiki/index/amikids/",
+                         "normalizedName":  "amikids sand hills"
+                     },
+                     {
+                         "name":  "Cherokee Creek Boys School",
+                         "url":  "/r/troubledteens/wiki/index/cherokeecreek/",
+                         "normalizedName":  "cherokee creek boys school"
+                     },
+                     {
+                         "name":  "Fair Play Camp School",
+                         "url":  "/r/troubledteens/wiki/index/fairplay/",
+                         "normalizedName":  "fair play camp school"
+                     },
+                     {
+                         "name":  "Palmetto Lowcountry Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/palmettolow/",
+                         "normalizedName":  "palmetto lowcountry behavioral health"
+                     },
+                     {
+                         "name":  "Palmetto Summerville Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/palmettosummer/",
+                         "normalizedName":  "palmetto summerville behavioral health"
+                     },
+                     {
+                         "name":  "Three Rivers Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/threeriversbh/",
+                         "normalizedName":  "three rivers behavioral health"
+                     },
+                     {
+                         "name":  "Three Rivers Midlands",
+                         "url":  "/r/troubledteens/wiki/index/threeriversmidlands/",
+                         "normalizedName":  "three rivers midlands"
+                     },
+                     {
+                         "name":  "Whetstone Academy",
+                         "url":  "/r/troubledteens/wiki/index/whetstone/",
+                         "normalizedName":  "whetstone academy"
+                     },
+                     {
+                         "name":  "Wilderness Way Girls Camp",
+                         "url":  "/r/troubledteens/wiki/index/wildernessway/",
+                         "normalizedName":  "wilderness way girls camp"
+                     },
+                     {
+                         "name":  "Cambio Academy",
+                         "url":  "/r/troubledteens/wiki/index/cambio/",
+                         "normalizedName":  "cambio academy"
+                     },
+                     {
+                         "name":  "Carolina Springs Academy",
+                         "url":  "/r/troubledteens/wiki/index/carolinasprings/",
+                         "normalizedName":  "carolina springs academy"
+                     },
+                     {
+                         "name":  "Charles Aiken Boys Home",
+                         "url":  "/r/troubledteens/wiki/index/aiken/",
+                         "normalizedName":  "charles aiken boys home"
+                     },
+                     {
+                         "name":  "Magnolia Hills Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/magnoliahills/",
+                         "normalizedName":  "magnolia hills christian academy"
+                     },
+                     {
+                         "name":  "New Hope Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/newhopesc/",
+                         "normalizedName":  "new hope treatment center"
+                     },
+                     {
+                         "name":  "Palmetto Pee Dee Behavioral Health",
+                         "url":  "/r/troubledteens/wiki/index/peedee/",
+                         "normalizedName":  "palmetto pee dee behavioral health"
+                     },
+                     {
+                         "name":  "Palmetto Therapeutic Boarding School",
+                         "url":  "/r/troubledteens/wiki/index/palmetto/",
+                         "normalizedName":  "palmetto therapeutic boarding school"
+                     },
+                     {
+                         "name":  "Seneca Ranch",
+                         "url":  "/r/troubledteens/wiki/index/senecaranch/",
+                         "normalizedName":  "seneca ranch"
+                     }
+                 ],
+    "programCount":  17,
+    "generated":  "2025-12-10T18:10:30.1987079-05:00",
+    "state":  "SC"
+}

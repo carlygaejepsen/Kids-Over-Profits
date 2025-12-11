@@ -4,9 +4,24 @@
                          "name":  "True North Wilderness Program",
                          "url":  "/r/troubledteens/wiki/index/truenorth/",
                          "normalizedName":  "true north wilderness program"
+                     },
+                     {
+                         "url":  "/r/troubledteens/wiki/index/bromelybrook/",
+                         "name":  "Bromely Brook School",
+                         "normalizedName":  "bromely brook school"
+                     },
+                     {
+                         "url":  "/r/troubledteens/wiki/index/kinggeorge/",
+                         "name":  "King George School",
+                         "normalizedName":  "king george school"
+                     },
+                     {
+                         "url":  "/r/troubledteens/wiki/index/sovjourney/",
+                         "name":  "Sovereign Journey",
+                         "normalizedName":  "sovereign journey"
                      }
                  ],
-    "programCount":  1,
-    "generated":  "2025-12-10T16:34:17.2918660-05:00",
+    "programCount":  4,
+    "generated":  "2025-12-10T17:55:11.9153823-05:00",
     "state":  "VT"
 }

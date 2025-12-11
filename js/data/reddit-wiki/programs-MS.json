@@ -1,0 +1,57 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Diamond Grove Center for Children",
+                         "url":  "/r/troubledteens/wiki/index/diamondgrove/",
+                         "normalizedName":  "diamond grove center for children"
+                     },
+                     {
+                         "name":  "Gulfport Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/gulfportbhs/",
+                         "normalizedName":  "gulfport behavioral health system"
+                     },
+                     {
+                         "name":  "Millcreek of Pontotoc Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/millcreekpontotoc/",
+                         "normalizedName":  "millcreek of pontotoc treatment center"
+                     },
+                     {
+                         "name":  "Millcreek of Magee Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/millcreekmagee/",
+                         "normalizedName":  "millcreek of magee treatment center"
+                     },
+                     {
+                         "name":  "Parkwood Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/parkwoodbhs/",
+                         "normalizedName":  "parkwood behavioral health system"
+                     },
+                     {
+                         "name":  "Accendo Academy",
+                         "url":  "/r/troubledteens/wiki/index/accendo/",
+                         "normalizedName":  "accendo academy"
+                     },
+                     {
+                         "name":  "Bethel Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/bethelboys/",
+                         "normalizedName":  "bethel boys academy"
+                     },
+                     {
+                         "name":  "Bethel Girls Academy",
+                         "url":  "/r/troubledteens/wiki/index/bethelgirls/",
+                         "normalizedName":  "bethel girls academy"
+                     },
+                     {
+                         "name":  "Bethesda Home for Girls",
+                         "url":  "/r/troubledteens/wiki/index/bethesdagirls/",
+                         "normalizedName":  "bethesda home for girls"
+                     },
+                     {
+                         "name":  "Eagle Point Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/eaglept/",
+                         "normalizedName":  "eagle point christian academy"
+                     }
+                 ],
+    "programCount":  10,
+    "generated":  "2025-12-10T17:55:09.2320324-05:00",
+    "state":  "MS"
+}

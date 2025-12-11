@@ -1,0 +1,67 @@
+{
+    "programs":  [
+                     {
+                         "name":  "Cumberland Adventure Program",
+                         "url":  "/r/troubledteens/wiki/index/cumberlandadventure/",
+                         "normalizedName":  "cumberland adventure program"
+                     },
+                     {
+                         "name":  "Glen Dale Center",
+                         "url":  "/r/troubledteens/wiki/index/glendale/",
+                         "normalizedName":  "glen dale center"
+                     },
+                     {
+                         "name":  "Heartland Boys Academy",
+                         "url":  "/r/troubledteens/wiki/index/heartlandboys/",
+                         "normalizedName":  "heartland boys academy"
+                     },
+                     {
+                         "name":  "Lincoln Trail Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/lincolntrail/",
+                         "normalizedName":  "lincoln trail behavioral health system"
+                     },
+                     {
+                         "name":  "Oneida Baptist Institute",
+                         "url":  "/r/troubledteens/wiki/index/oneidabaptist/",
+                         "normalizedName":  "oneida baptist institute"
+                     },
+                     {
+                         "name":  "Rivendell Behavioral Health Hospital",
+                         "url":  "/r/troubledteens/wiki/index/rivendellbh/",
+                         "normalizedName":  "rivendell behavioral health hospital"
+                     },
+                     {
+                         "name":  "Spring Meadows Center",
+                         "url":  "/r/troubledteens/wiki/index/springmeadows/",
+                         "normalizedName":  "spring meadows center"
+                     },
+                     {
+                         "name":  "The Ridge Behavioral Health System",
+                         "url":  "/r/troubledteens/wiki/index/theridgebhs/",
+                         "normalizedName":  "the ridge behavioral health system"
+                     },
+                     {
+                         "name":  "Kentucky Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/kentuckyyouth/",
+                         "normalizedName":  "kentucky youth academy"
+                     },
+                     {
+                         "name":  "Beulah Mountain Christian Academy",
+                         "url":  "/r/troubledteens/wiki/index/beulahmt/",
+                         "normalizedName":  "beulah mountain christian academy"
+                     },
+                     {
+                         "name":  "Pilgrim\u0027s Rest Ministry of Reconciliation",
+                         "url":  "/r/troubledteens/wiki/index/pilgrimsrest/",
+                         "normalizedName":  "pilgrim\u0027s rest ministry of reconciliation"
+                     },
+                     {
+                         "name":  "Straight - Midwest",
+                         "url":  "/r/troubledteens/wiki/index/straightKY/",
+                         "normalizedName":  "straight - midwest"
+                     }
+                 ],
+    "programCount":  12,
+    "generated":  "2025-12-10T17:55:08.9003768-05:00",
+    "state":  "KY"
+}

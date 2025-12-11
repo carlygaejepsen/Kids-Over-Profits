@@ -1,9 +1,54 @@
 {
     "programs":  [
                      {
+                         "name":  "Cedar Grove RTC",
+                         "url":  "/r/troubledteens/wiki/index/cedargrove/",
+                         "normalizedName":  "cedar grove rtc"
+                     },
+                     {
+                         "name":  "Cumberland Heights",
+                         "url":  "/r/troubledteens/wiki/index/cumberlandheights/",
+                         "normalizedName":  "cumberland heights"
+                     },
+                     {
+                         "name":  "Eagle Cove Academy",
+                         "url":  "/r/troubledteens/wiki/index/eaglecove/",
+                         "normalizedName":  "eagle cove academy"
+                     },
+                     {
+                         "name":  "Embark at The Forge",
+                         "url":  "/r/troubledteens/wiki/index/theforge/",
+                         "normalizedName":  "embark at the forge"
+                     },
+                     {
+                         "name":  "Hermitage Hall",
+                         "url":  "/r/troubledteens/wiki/index/hermitage/",
+                         "normalizedName":  "hermitage hall"
+                     },
+                     {
+                         "name":  "Madison Oaks Academy",
+                         "url":  "/r/troubledteens/wiki/index/madisonoaks/",
+                         "normalizedName":  "madison oaks academy"
+                     },
+                     {
+                         "name":  "McDowell Center for Children",
+                         "url":  "/r/troubledteens/wiki/index/mcdowell/",
+                         "normalizedName":  "mcdowell center for children"
+                     },
+                     {
                          "name":  "Memphis Youth Academy/Varangon Academy",
                          "url":  "/r/troubledteens/wiki/index/memphisyouth/",
                          "normalizedName":  "memphis youth academy/varangon academy"
+                     },
+                     {
+                         "name":  "Mercy Multiplied",
+                         "url":  "/r/troubledteens/wiki/index/mercymultiplied/",
+                         "normalizedName":  "mercy multiplied"
+                     },
+                     {
+                         "name":  "Mountain Youth Academy",
+                         "url":  "/r/troubledteens/wiki/index/mtnyouth/",
+                         "normalizedName":  "mountain youth academy"
                      },
                      {
                          "name":  "Natchez Trace Youth Academy",
@@ -11,17 +56,57 @@
                          "normalizedName":  "natchez trace youth academy"
                      },
                      {
+                         "name":  "Norris Academy",
+                         "url":  "/r/troubledteens/wiki/index/norris/",
+                         "normalizedName":  "norris academy"
+                     },
+                     {
+                         "name":  "Oak Plains Academy",
+                         "url":  "/r/troubledteens/wiki/index/oakplains/",
+                         "normalizedName":  "oak plains academy"
+                     },
+                     {
+                         "name":  "Village Behavioral Health Treatment Center",
+                         "url":  "/r/troubledteens/wiki/index/thevillage/",
+                         "normalizedName":  "village behavioral health treatment center"
+                     },
+                     {
+                         "name":  "Youth Villages",
+                         "url":  "/r/troubledteens/wiki/index/youthvillages/",
+                         "normalizedName":  "youth villages"
+                     },
+                     {
                          "name":  "Youth Villages",
                          "url":  "/r/troubledteens/wiki/index/youthvillagestn/",
                          "normalizedName":  "youth villages"
                      },
                      {
-                         "name":  "Newport News Behavioral Health Center",
-                         "url":  "/r/troubledteens/wiki/index/newportnews/",
-                         "normalizedName":  "newport news behavioral health center"
+                         "name":  "Achievement Valley Ranch",
+                         "url":  "/r/troubledteens/wiki/index/achievemtvalley/",
+                         "normalizedName":  "achievement valley ranch"
+                     },
+                     {
+                         "name":  "Advent Home Learning Center",
+                         "url":  "/r/troubledteens/wiki/index/adventhome/",
+                         "normalizedName":  "advent home learning center"
+                     },
+                     {
+                         "name":  "Duck River Boys",
+                         "url":  "/r/troubledteens/wiki/index/duckriver/",
+                         "normalizedName":  "duck river boys"
+                     },
+                     {
+                         "name":  "Chad Youth Enhancement Center",
+                         "url":  "/r/troubledteens/wiki/index/chadyouth/",
+                         "normalizedName":  "chad youth enhancement center"
+                     },
+                     {
+                         "name":  "Freedom Mountain Academy",
+                         "url":  "/r/troubledteens/wiki/index/freedommountain/",
+                         "normalizedName":  "freedom mountain academy"
                      }
                  ],
-    "programCount":  4,
-    "generated":  "2025-12-10T16:34:17.2628719-05:00",
+    "programCount":  21,
+    "generated":  "2025-12-10T17:55:10.1860433-05:00",
     "state":  "TN"
 }
