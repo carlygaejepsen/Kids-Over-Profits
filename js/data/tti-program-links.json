@@ -1,342 +1,272 @@
 {
-    "source":  "Remaining Leftovers",
-    "programCount":  67,
-    "generated":  "2025-12-10T18:52:27.9060491-05:00",
-    "programs":  [
-                     {
-                         "name":  "Cascade School",
-                         "url":  "/r/troubledteens/wiki/index/cascade/",
-                         "normalizedName":  "cascade school"
-                     },
-                     {
-                         "name":  "Milestones Transitional Program",
-                         "url":  "/r/troubledteens/wiki/index/milestones/",
-                         "normalizedName":  "milestones transitional program"
-                     },
-                     {
-                         "name":  "Bromley Brook School",
-                         "url":  "/r/troubledteens/wiki/index/bromelybrook/",
-                         "normalizedName":  "bromley brook school"
-                     },
-                     {
-                         "name":  "Elmcrest Mental Hospital",
-                         "url":  "/r/troubledteens/wiki/index/elmcrest/",
-                         "normalizedName":  "elmcrest mental hospital"
-                     },
-                     {
-                         "name":  "Fulshear Treatment to Transition",
-                         "url":  "/r/troubledteens/wiki/index/fulshear/",
-                         "normalizedName":  "fulshear treatment to transition"
-                     },
-                     {
-                         "name":  "Roloff",
-                         "url":  "/r/troubledteens/wiki/index/roloff/",
-                         "normalizedName":  "roloff"
-                     },
-                     {
-                         "name":  "Lakeside Teen Challenge",
-                         "url":  "/r/troubledteens/wiki/index/lakesidetc/",
-                         "normalizedName":  "lakeside teen challenge"
-                     },
-                     {
-                         "name":  "Prayer Mountain / Pine Mountain Boys Academy",
-                         "url":  "/r/troubledteens/wiki/index/prayermtn/",
-                         "normalizedName":  "prayer mountain / pine mountain boys academy"
-                     },
-                     {
-                         "name":  "Anderson Academy",
-                         "url":  "/r/troubledteens/wiki/index/anderson/",
-                         "normalizedName":  "anderson academy"
-                     },
-                     {
-                         "name":  "Aloha Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/aloha/",
-                         "normalizedName":  "aloha youth academy"
-                     },
-                     {
-                         "name":  "Amity School",
-                         "url":  "/r/troubledteens/wiki/index/amity/",
-                         "normalizedName":  "amity school"
-                     },
-                     {
-                         "name":  "Banham Marshalls College / Old Rectory",
-                         "url":  "/r/troubledteens/wiki/index/banham/",
-                         "normalizedName":  "banham marshalls college / old rectory"
-                     },
-                     {
-                         "name":  "Campbell Park",
-                         "url":  "/r/troubledteens/wiki/index/campbellpark/",
-                         "normalizedName":  "campbell park"
-                     },
-                     {
-                         "name":  "Chilanko Lodge Treatment Center",
-                         "url":  "/r/troubledteens/wiki/index/chilanko/",
-                         "normalizedName":  "chilanko lodge treatment center"
-                     },
-                     {
-                         "name":  "Coronado Academy",
-                         "url":  "/r/troubledteens/wiki/index/coronado/",
-                         "normalizedName":  "coronado academy"
-                     },
-                     {
-                         "name":  "Future Expectations Today",
-                         "url":  "/r/troubledteens/wiki/index/futureexpectations/",
-                         "normalizedName":  "future expectations today"
-                     },
-                     {
-                         "name":  "House of Hope Academy",
-                         "url":  "/r/troubledteens/wiki/index/houseofhope/",
-                         "normalizedName":  "house of hope academy"
-                     },
-                     {
-                         "name":  "Genesis by the Sea",
-                         "url":  "/r/troubledteens/wiki/index/genesisbythesea/",
-                         "normalizedName":  "genesis by the sea"
-                     },
-                     {
-                         "name":  "Missanabie Woods Academy",
-                         "url":  "/r/troubledteens/wiki/index/missanabie/",
-                         "normalizedName":  "missanabie woods academy"
-                     },
-                     {
-                         "name":  "Pacific Coast Academy",
-                         "url":  "/r/troubledteens/wiki/index/pacificcoast/",
-                         "normalizedName":  "pacific coast academy"
-                     },
-                     {
-                         "name":  "Pacific Life Program",
-                         "url":  "/r/troubledteens/wiki/index/pacificlife/",
-                         "normalizedName":  "pacific life program"
-                     },
-                     {
-                         "name":  "Positive Impact",
-                         "url":  "/r/troubledteens/wiki/index/positiveimpact/",
-                         "normalizedName":  "positive impact"
-                     },
-                     {
-                         "name":  "Rocklyn Academy",
-                         "url":  "/r/troubledteens/wiki/index/rocklyn/",
-                         "normalizedName":  "rocklyn academy"
-                     },
-                     {
-                         "name":  "Lyman Ward Military Academy / Southern Preparatory School",
-                         "url":  "/r/troubledteens/wiki/index/lymanward/",
-                         "normalizedName":  "lyman ward military academy / southern preparatory school"
-                     },
-                     {
-                         "name":  "Restoration Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/restorationyouth/",
-                         "normalizedName":  "restoration youth academy"
-                     },
-                     {
-                         "name":  "Saving Youth Foundation",
-                         "url":  "/r/troubledteens/wiki/index/savingyouth/",
-                         "normalizedName":  "saving youth foundation"
-                     },
-                     {
-                         "name":  "Joann Bridges Academy / Bridges Academy",
-                         "url":  "/r/troubledteens/wiki/index/joannbridges/",
-                         "normalizedName":  "joann bridges academy / bridges academy"
-                     },
-                     {
-                         "name":  "Great River Residential Academy",
-                         "url":  "/r/troubledteens/wiki/index/greatriver/",
-                         "normalizedName":  "great river residential academy"
-                     },
-                     {
-                         "name":  "Adeona Healthcare / Sovereign Health",
-                         "url":  "/r/troubledteens/wiki/index/adeonasovereign/",
-                         "normalizedName":  "adeona healthcare / sovereign health"
-                     },
-                     {
-                         "name":  "River View Christian Academy / Julian Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
-                         "normalizedName":  "river view christian academy / julian youth academy"
-                     },
-                     {
-                         "name":  "Visions Adolescent Treatment Centers",
-                         "url":  "/r/troubledteens/wiki/index/visionsca/",
-                         "normalizedName":  "visions adolescent treatment centers"
-                     },
-                     {
-                         "name":  "Blue Mountain Wilderness Program",
-                         "url":  "/r/troubledteens/wiki/index/bluemountainwild/",
-                         "normalizedName":  "blue mountain wilderness program"
-                     },
-                     {
-                         "name":  "Camp O\u0027Neal",
-                         "url":  "/r/troubledteens/wiki/index/camponeal/",
-                         "normalizedName":  "camp o\u0027neal"
-                     },
-                     {
-                         "name":  "Fred D. Jones Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/freddjones/",
-                         "normalizedName":  "fred d. jones youth center"
-                     },
-                     {
-                         "name":  "Gentle Spirit Ranch",
-                         "url":  "/r/troubledteens/wiki/index/gentlespirit/",
-                         "normalizedName":  "gentle spirit ranch"
-                     },
-                     {
-                         "name":  "Gladman Hospital",
-                         "url":  "/r/troubledteens/wiki/index/gladman/",
-                         "normalizedName":  "gladman hospital"
-                     },
-                     {
-                         "name":  "Morningside Recovery",
-                         "url":  "/r/troubledteens/wiki/index/morningside/",
-                         "normalizedName":  "morningside recovery"
-                     },
-                     {
-                         "name":  "Shepherd\u0027s Ranch Christian Academy",
-                         "url":  "/r/troubledteens/wiki/index/shepherdsranch/",
-                         "normalizedName":  "shepherd\u0027s ranch christian academy"
-                     },
-                     {
-                         "name":  "Adeona Healthcare / Sovereign Health",
-                         "url":  "/r/troubledteens/wiki/index/adeonasovereign/",
-                         "normalizedName":  "adeona healthcare / sovereign health"
-                     },
-                     {
-                         "name":  "River View Christian Academy / Julian Youth Academy",
-                         "url":  "/r/troubledteens/wiki/index/julianyouth/",
-                         "normalizedName":  "river view christian academy / julian youth academy"
-                     },
-                     {
-                         "name":  "Visions Adolescent Treatment Centers",
-                         "url":  "/r/troubledteens/wiki/index/visionsca/",
-                         "normalizedName":  "visions adolescent treatment centers"
-                     },
-                     {
-                         "name":  "Blue Mountain Wilderness Program",
-                         "url":  "/r/troubledteens/wiki/index/bluemountainwild/",
-                         "normalizedName":  "blue mountain wilderness program"
-                     },
-                     {
-                         "name":  "Camp O\u0027Neal",
-                         "url":  "/r/troubledteens/wiki/index/camponeal/",
-                         "normalizedName":  "camp o\u0027neal"
-                     },
-                     {
-                         "name":  "Fred D. Jones Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/freddjones/",
-                         "normalizedName":  "fred d. jones youth center"
-                     },
-                     {
-                         "name":  "Gentle Spirit Ranch",
-                         "url":  "/r/troubledteens/wiki/index/gentlespirit/",
-                         "normalizedName":  "gentle spirit ranch"
-                     },
-                     {
-                         "name":  "Gladman Hospital",
-                         "url":  "/r/troubledteens/wiki/index/gladman/",
-                         "normalizedName":  "gladman hospital"
-                     },
-                     {
-                         "name":  "Morningside Recovery",
-                         "url":  "/r/troubledteens/wiki/index/morningside/",
-                         "normalizedName":  "morningside recovery"
-                     },
-                     {
-                         "name":  "Ashley Valley Wilderness",
-                         "url":  "/r/troubledteens/wiki/index/ashleyvalley/",
-                         "normalizedName":  "ashley valley wilderness"
-                     },
-                     {
-                         "name":  "Devereux Cleo Wallace Center",
-                         "url":  "/r/troubledteens/wiki/index/cleowallace/",
-                         "normalizedName":  "devereux cleo wallace center"
-                     },
-                     {
-                         "name":  "Emily Griffith Center",
-                         "url":  "/r/troubledteens/wiki/index/emilygriffith/",
-                         "normalizedName":  "emily griffith center"
-                     },
-                     {
-                         "name":  "Excelsior Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/excelsior/",
-                         "normalizedName":  "excelsior youth center"
-                     },
-                     {
-                         "name":  "Fire Mountain RTC",
-                         "url":  "/r/troubledteens/wiki/index/firemountain/",
-                         "normalizedName":  "fire mountain rtc"
-                     },
-                     {
-                         "name":  "Mountain Crest RTC",
-                         "url":  "/r/troubledteens/wiki/index/mountaincrest/",
-                         "normalizedName":  "mountain crest rtc"
-                     },
-                     {
-                         "name":  "Remington House RTC",
-                         "url":  "/r/troubledteens/wiki/index/remingtonhouse/",
-                         "normalizedName":  "remington house rtc"
-                     },
-                     {
-                         "name":  "San Juan Wilderness Therapy",
-                         "url":  "/r/troubledteens/wiki/index/sanjuan/",
-                         "normalizedName":  "san juan wilderness therapy"
-                     },
-                     {
-                         "name":  "Tennyson Center for Children",
-                         "url":  "/r/troubledteens/wiki/index/tennyson/",
-                         "normalizedName":  "tennyson center for children"
-                     },
-                     {
-                         "name":  "Three Strands Wilderness",
-                         "url":  "/r/troubledteens/wiki/index/threestrands/",
-                         "normalizedName":  "three strands wilderness"
-                     },
-                     {
-                         "name":  "Trailhead Wilderness / Monarch Center for Family Healing",
-                         "url":  "/r/troubledteens/wiki/index/trailheadmonarch/",
-                         "normalizedName":  "trailhead wilderness / monarch center for family healing"
-                     },
-                     {
-                         "name":  "Elmcrest Mental Hospital",
-                         "url":  "/r/troubledteens/wiki/index/elmcrest/",
-                         "normalizedName":  "elmcrest mental hospital"
-                     },
-                     {
-                         "name":  "Pine Mountain / Prayer Mountain Boys Academy",
-                         "url":  "/r/troubledteens/wiki/index/prayermtn/",
-                         "normalizedName":  "pine mountain / prayer mountain boys academy"
-                     },
-                     {
-                         "name":  "Youth Developmental Enterprises",
-                         "url":  "/r/troubledteens/wiki/index/youthdev/",
-                         "normalizedName":  "youth developmental enterprises"
-                     },
-                     {
-                         "name":  "Salem Ranch / Salem Children\u0027s Home",
-                         "url":  "/r/troubledteens/wiki/index/salemranch/",
-                         "normalizedName":  "salem ranch / salem children\u0027s home"
-                     },
-                     {
-                         "name":  "Summit School / Children\u0027s Residence Center",
-                         "url":  "/r/troubledteens/wiki/index/summitschool/",
-                         "normalizedName":  "summit school / children\u0027s residence center"
-                     },
-                     {
-                         "name":  "Camp E-Hun-tee",
-                         "url":  "/r/troubledteens/wiki/index/campehuntee/",
-                         "normalizedName":  "camp e-hun-tee"
-                     },
-                     {
-                         "name":  "Wolf Creek Academy / Harbor Oaks Boarding School",
-                         "url":  "/r/troubledteens/wiki/index/wolfcreek/",
-                         "normalizedName":  "wolf creek academy / harbor oaks boarding school"
-                     },
-                     {
-                         "name":  "Red River Youth Academy of Norman / Varangon Academy",
-                         "url":  "/r/troubledteens/wiki/index/redrivernorman/",
-                         "normalizedName":  "red river youth academy of norman / varangon academy"
-                     },
-                     {
-                         "name":  "Keswick School",
-                         "url":  "/r/troubledteens/wiki/index/keswick/",
-                         "normalizedName":  "keswick school"
-                     }
-                 ]
+  "source": "Remaining Leftovers",
+  "programCount": 53,
+  "generated": "2025-12-11T02:48:00.836Z",
+  "programs": [
+    {
+      "name": "Cascade School",
+      "url": "/r/troubledteens/wiki/index/cascade/",
+      "normalizedName": "cascade school"
+    },
+    {
+      "name": "Milestones Transitional Program",
+      "url": "/r/troubledteens/wiki/index/milestones/",
+      "normalizedName": "milestones transitional program"
+    },
+    {
+      "name": "Bromley Brook School",
+      "url": "/r/troubledteens/wiki/index/bromelybrook/",
+      "normalizedName": "bromley brook school"
+    },
+    {
+      "name": "Elmcrest Mental Hospital",
+      "url": "/r/troubledteens/wiki/index/elmcrest/",
+      "normalizedName": "elmcrest mental hospital"
+    },
+    {
+      "name": "Fulshear Treatment to Transition",
+      "url": "/r/troubledteens/wiki/index/fulshear/",
+      "normalizedName": "fulshear treatment to transition"
+    },
+    {
+      "name": "Roloff",
+      "url": "/r/troubledteens/wiki/index/roloff/",
+      "normalizedName": "roloff"
+    },
+    {
+      "name": "Lakeside Teen Challenge",
+      "url": "/r/troubledteens/wiki/index/lakesidetc/",
+      "normalizedName": "lakeside teen challenge"
+    },
+    {
+      "name": "Prayer Mountain / Pine Mountain Boys Academy",
+      "url": "/r/troubledteens/wiki/index/prayermtn/",
+      "normalizedName": "prayer mountain / pine mountain boys academy"
+    },
+    {
+      "name": "Anderson Academy",
+      "url": "/r/troubledteens/wiki/index/anderson/",
+      "normalizedName": "anderson academy"
+    },
+    {
+      "name": "Lyman Ward Military Academy / Southern Preparatory School",
+      "url": "/r/troubledteens/wiki/index/lymanward/",
+      "normalizedName": "lyman ward military academy / southern preparatory school"
+    },
+    {
+      "name": "Restoration Youth Academy",
+      "url": "/r/troubledteens/wiki/index/restorationyouth/",
+      "normalizedName": "restoration youth academy"
+    },
+    {
+      "name": "Saving Youth Foundation",
+      "url": "/r/troubledteens/wiki/index/savingyouth/",
+      "normalizedName": "saving youth foundation"
+    },
+    {
+      "name": "Joann Bridges Academy / Bridges Academy",
+      "url": "/r/troubledteens/wiki/index/joannbridges/",
+      "normalizedName": "joann bridges academy / bridges academy"
+    },
+    {
+      "name": "Great River Residential Academy",
+      "url": "/r/troubledteens/wiki/index/greatriver/",
+      "normalizedName": "great river residential academy"
+    },
+    {
+      "name": "Adeona Healthcare / Sovereign Health",
+      "url": "/r/troubledteens/wiki/index/adeonasovereign/",
+      "normalizedName": "adeona healthcare / sovereign health"
+    },
+    {
+      "name": "River View Christian Academy / Julian Youth Academy",
+      "url": "/r/troubledteens/wiki/index/julianyouth/",
+      "normalizedName": "river view christian academy / julian youth academy"
+    },
+    {
+      "name": "Visions Adolescent Treatment Centers",
+      "url": "/r/troubledteens/wiki/index/visionsca/",
+      "normalizedName": "visions adolescent treatment centers"
+    },
+    {
+      "name": "Blue Mountain Wilderness Program",
+      "url": "/r/troubledteens/wiki/index/bluemountainwild/",
+      "normalizedName": "blue mountain wilderness program"
+    },
+    {
+      "name": "Camp O'Neal",
+      "url": "/r/troubledteens/wiki/index/camponeal/",
+      "normalizedName": "camp o'neal"
+    },
+    {
+      "name": "Fred D. Jones Youth Center",
+      "url": "/r/troubledteens/wiki/index/freddjones/",
+      "normalizedName": "fred d. jones youth center"
+    },
+    {
+      "name": "Gentle Spirit Ranch",
+      "url": "/r/troubledteens/wiki/index/gentlespirit/",
+      "normalizedName": "gentle spirit ranch"
+    },
+    {
+      "name": "Gladman Hospital",
+      "url": "/r/troubledteens/wiki/index/gladman/",
+      "normalizedName": "gladman hospital"
+    },
+    {
+      "name": "Morningside Recovery",
+      "url": "/r/troubledteens/wiki/index/morningside/",
+      "normalizedName": "morningside recovery"
+    },
+    {
+      "name": "Shepherd's Ranch Christian Academy",
+      "url": "/r/troubledteens/wiki/index/shepherdsranch/",
+      "normalizedName": "shepherd's ranch christian academy"
+    },
+    {
+      "name": "Adeona Healthcare / Sovereign Health",
+      "url": "/r/troubledteens/wiki/index/adeonasovereign/",
+      "normalizedName": "adeona healthcare / sovereign health"
+    },
+    {
+      "name": "River View Christian Academy / Julian Youth Academy",
+      "url": "/r/troubledteens/wiki/index/julianyouth/",
+      "normalizedName": "river view christian academy / julian youth academy"
+    },
+    {
+      "name": "Visions Adolescent Treatment Centers",
+      "url": "/r/troubledteens/wiki/index/visionsca/",
+      "normalizedName": "visions adolescent treatment centers"
+    },
+    {
+      "name": "Blue Mountain Wilderness Program",
+      "url": "/r/troubledteens/wiki/index/bluemountainwild/",
+      "normalizedName": "blue mountain wilderness program"
+    },
+    {
+      "name": "Camp O'Neal",
+      "url": "/r/troubledteens/wiki/index/camponeal/",
+      "normalizedName": "camp o'neal"
+    },
+    {
+      "name": "Fred D. Jones Youth Center",
+      "url": "/r/troubledteens/wiki/index/freddjones/",
+      "normalizedName": "fred d. jones youth center"
+    },
+    {
+      "name": "Gentle Spirit Ranch",
+      "url": "/r/troubledteens/wiki/index/gentlespirit/",
+      "normalizedName": "gentle spirit ranch"
+    },
+    {
+      "name": "Gladman Hospital",
+      "url": "/r/troubledteens/wiki/index/gladman/",
+      "normalizedName": "gladman hospital"
+    },
+    {
+      "name": "Morningside Recovery",
+      "url": "/r/troubledteens/wiki/index/morningside/",
+      "normalizedName": "morningside recovery"
+    },
+    {
+      "name": "Ashley Valley Wilderness",
+      "url": "/r/troubledteens/wiki/index/ashleyvalley/",
+      "normalizedName": "ashley valley wilderness"
+    },
+    {
+      "name": "Devereux Cleo Wallace Center",
+      "url": "/r/troubledteens/wiki/index/cleowallace/",
+      "normalizedName": "devereux cleo wallace center"
+    },
+    {
+      "name": "Emily Griffith Center",
+      "url": "/r/troubledteens/wiki/index/emilygriffith/",
+      "normalizedName": "emily griffith center"
+    },
+    {
+      "name": "Excelsior Youth Center",
+      "url": "/r/troubledteens/wiki/index/excelsior/",
+      "normalizedName": "excelsior youth center"
+    },
+    {
+      "name": "Fire Mountain RTC",
+      "url": "/r/troubledteens/wiki/index/firemountain/",
+      "normalizedName": "fire mountain rtc"
+    },
+    {
+      "name": "Mountain Crest RTC",
+      "url": "/r/troubledteens/wiki/index/mountaincrest/",
+      "normalizedName": "mountain crest rtc"
+    },
+    {
+      "name": "Remington House RTC",
+      "url": "/r/troubledteens/wiki/index/remingtonhouse/",
+      "normalizedName": "remington house rtc"
+    },
+    {
+      "name": "San Juan Wilderness Therapy",
+      "url": "/r/troubledteens/wiki/index/sanjuan/",
+      "normalizedName": "san juan wilderness therapy"
+    },
+    {
+      "name": "Tennyson Center for Children",
+      "url": "/r/troubledteens/wiki/index/tennyson/",
+      "normalizedName": "tennyson center for children"
+    },
+    {
+      "name": "Three Strands Wilderness",
+      "url": "/r/troubledteens/wiki/index/threestrands/",
+      "normalizedName": "three strands wilderness"
+    },
+    {
+      "name": "Trailhead Wilderness / Monarch Center for Family Healing",
+      "url": "/r/troubledteens/wiki/index/trailheadmonarch/",
+      "normalizedName": "trailhead wilderness / monarch center for family healing"
+    },
+    {
+      "name": "Elmcrest Mental Hospital",
+      "url": "/r/troubledteens/wiki/index/elmcrest/",
+      "normalizedName": "elmcrest mental hospital"
+    },
+    {
+      "name": "Pine Mountain / Prayer Mountain Boys Academy",
+      "url": "/r/troubledteens/wiki/index/prayermtn/",
+      "normalizedName": "pine mountain / prayer mountain boys academy"
+    },
+    {
+      "name": "Youth Developmental Enterprises",
+      "url": "/r/troubledteens/wiki/index/youthdev/",
+      "normalizedName": "youth developmental enterprises"
+    },
+    {
+      "name": "Salem Ranch / Salem Children's Home",
+      "url": "/r/troubledteens/wiki/index/salemranch/",
+      "normalizedName": "salem ranch / salem children's home"
+    },
+    {
+      "name": "Summit School / Children's Residence Center",
+      "url": "/r/troubledteens/wiki/index/summitschool/",
+      "normalizedName": "summit school / children's residence center"
+    },
+    {
+      "name": "Camp E-Hun-tee",
+      "url": "/r/troubledteens/wiki/index/campehuntee/",
+      "normalizedName": "camp e-hun-tee"
+    },
+    {
+      "name": "Wolf Creek Academy / Harbor Oaks Boarding School",
+      "url": "/r/troubledteens/wiki/index/wolfcreek/",
+      "normalizedName": "wolf creek academy / harbor oaks boarding school"
+    },
+    {
+      "name": "Red River Youth Academy of Norman / Varangon Academy",
+      "url": "/r/troubledteens/wiki/index/redrivernorman/",
+      "normalizedName": "red river youth academy of norman / varangon academy"
+    },
+    {
+      "name": "Keswick School",
+      "url": "/r/troubledteens/wiki/index/keswick/",
+      "normalizedName": "keswick school"
+    }
+  ]
 }

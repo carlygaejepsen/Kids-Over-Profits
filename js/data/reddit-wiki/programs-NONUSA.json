@@ -1,147 +1,217 @@
 {
-    "programs":  [
-                     {
-                         "name":  "Alberta Adolescent Recovery Centre",
-                         "url":  "/r/troubledteens/wiki/index/aarc/",
-                         "normalizedName":  "alberta adolescent recovery centre"
-                     },
-                     {
-                         "name":  "Caribbean Mountain Academy",
-                         "url":  "/r/troubledteens/wiki/index/carribeanmountain/",
-                         "normalizedName":  "caribbean mountain academy"
-                     },
-                     {
-                         "name":  "Coral Reef Academy",
-                         "url":  "/r/troubledteens/wiki/index/coralreef/",
-                         "normalizedName":  "coral reef academy"
-                     },
-                     {
-                         "name":  "Healing Wings St. George",
-                         "url":  "/r/troubledteens/wiki/index/healingwingssg/",
-                         "normalizedName":  "healing wings st. george"
-                     },
-                     {
-                         "name":  "New Summit Academy Costa Rica",
-                         "url":  "/r/troubledteens/wiki/index/newsummitcr/",
-                         "normalizedName":  "new summit academy costa rica"
-                     },
-                     {
-                         "name":  "Pine River Institute",
-                         "url":  "/r/troubledteens/wiki/index/pineriver/",
-                         "normalizedName":  "pine river institute"
-                     },
-                     {
-                         "name":  "Pure Life Adventure",
-                         "url":  "/r/troubledteens/wiki/index/purelife/",
-                         "normalizedName":  "pure life adventure"
-                     },
-                     {
-                         "name":  "Royal Alexandra Hospital",
-                         "url":  "/r/troubledteens/wiki/index/royalalexandra/",
-                         "normalizedName":  "royal alexandra hospital"
-                     },
-                     {
-                         "name":  "Sunset Bay Academy",
-                         "url":  "/r/troubledteens/wiki/index/sunsetbay/",
-                         "normalizedName":  "sunset bay academy"
-                     },
-                     {
-                         "name":  "Yes We Can Youth Center",
-                         "url":  "/r/troubledteens/wiki/index/yeswecanyouth/",
-                         "normalizedName":  "yes we can youth center"
-                     },
-                     {
-                         "name":  "Youth of Vision Academy (YOVA)",
-                         "url":  "/r/troubledteens/wiki/index/yova/",
-                         "normalizedName":  "youth of vision academy (yova)"
-                     },
-                     {
-                         "name":  "Tranquility Bay",
-                         "url":  "/r/troubledteens/wiki/index/tranquilitybay/",
-                         "normalizedName":  "tranquility bay"
-                     },
-                     {
-                         "name":  "Casa by the Sea",
-                         "url":  "/r/troubledteens/wiki/index/casabythesea/",
-                         "normalizedName":  "casa by the sea"
-                     },
-                     {
-                         "name":  "Escuela Caribe / Caribe Vista School",
-                         "url":  "/r/troubledteens/wiki/index/escuelacariba/",
-                         "normalizedName":  "escuela caribe / caribe vista school"
-                     },
-                     {
-                         "name":  "Haut de la Garenne",
-                         "url":  "/r/troubledteens/wiki/index/hautgarenne/",
-                         "normalizedName":  "haut de la garenne"
-                     },
-                     {
-                         "name":  "Morava Academy",
-                         "url":  "/r/troubledteens/wiki/index/morava/",
-                         "normalizedName":  "morava academy"
-                     },
-                     {
-                         "name":  "Paradise Cove",
-                         "url":  "/r/troubledteens/wiki/index/paradisecove/",
-                         "normalizedName":  "paradise cove"
-                     },
-                     {
-                         "name":  "Pathways Argentina",
-                         "url":  "/r/troubledteens/wiki/index/pathwaysarg/",
-                         "normalizedName":  "pathways argentina"
-                     },
-                     {
-                         "name":  "Pillars of Hope",
-                         "url":  "/r/troubledteens/wiki/index/pillarofhope/",
-                         "normalizedName":  "pillars of hope"
-                     },
-                     {
-                         "name":  "Programa Ibicuy",
-                         "url":  "/r/troubledteens/wiki/index/ibicuy/",
-                         "normalizedName":  "programa ibicuy"
-                     },
-                     {
-                         "name":  "Robert Land Academy",
-                         "url":  "/r/troubledteens/wiki/index/robertland/",
-                         "normalizedName":  "robert land academy"
-                     },
-                     {
-                         "name":  "Sunrise Beach",
-                         "url":  "/r/troubledteens/wiki/index/sunrisebeach/",
-                         "normalizedName":  "sunrise beach"
-                     },
-                     {
-                         "name":  "Venture Academy",
-                         "url":  "/r/troubledteens/wiki/index/venturecanada/",
-                         "normalizedName":  "venture academy"
-                     },
-                     {
-                         "name":  "New Hope Academy (Samoa)",
-                         "url":  "/r/troubledteens/wiki/index/newhopesamoa/",
-                         "normalizedName":  "new hope academy (samoa)"
-                     },
-                     {
-                         "name":  "Academy at Dundee Ranch",
-                         "url":  "/r/troubledteens/wiki/index/dundee/",
-                         "normalizedName":  "academy at dundee ranch"
-                     },
-                     {
-                         "name":  "Atlantis Leadership Academy",
-                         "url":  "/r/troubledteens/wiki/index/atlantisleadership/",
-                         "normalizedName":  "atlantis leadership academy"
-                     },
-                     {
-                         "name":  "High Impact",
-                         "url":  "/r/troubledteens/wiki/index/highimpact/",
-                         "normalizedName":  "high impact"
-                     },
-                     {
-                         "name":  "The Brown Schools of San Juan",
-                         "url":  "/r/troubledteens/wiki/index/BSsanjuan/",
-                         "normalizedName":  "the brown schools of san juan"
-                     }
-                 ],
-    "programCount":  28,
-    "generated":  "2025-12-10T18:22:35.3591468-05:00",
-    "state":  "NONUSA"
+  "programs": [
+    {
+      "name": "Academy at Dundee Ranch",
+      "url": "/r/troubledteens/wiki/index/dundee/",
+      "normalizedName": "academy at dundee ranch"
+    },
+    {
+      "name": "Alberta Adolescent Recovery Centre",
+      "url": "/r/troubledteens/wiki/index/aarc/",
+      "normalizedName": "alberta adolescent recovery centre"
+    },
+    {
+      "name": "Aloha Youth Academy",
+      "url": "/r/troubledteens/wiki/index/aloha/",
+      "normalizedName": "aloha youth academy"
+    },
+    {
+      "name": "Amity School",
+      "url": "/r/troubledteens/wiki/index/amity/",
+      "normalizedName": "amity school"
+    },
+    {
+      "name": "Atlantis Leadership Academy",
+      "url": "/r/troubledteens/wiki/index/atlantisleadership/",
+      "normalizedName": "atlantis leadership academy"
+    },
+    {
+      "name": "Banham Marshalls College / Old Rectory",
+      "url": "/r/troubledteens/wiki/index/banham/",
+      "normalizedName": "banham marshalls college / old rectory"
+    },
+    {
+      "name": "Campbell Park",
+      "url": "/r/troubledteens/wiki/index/campbellpark/",
+      "normalizedName": "campbell park"
+    },
+    {
+      "name": "Caribbean Mountain Academy",
+      "url": "/r/troubledteens/wiki/index/carribeanmountain/",
+      "normalizedName": "caribbean mountain academy"
+    },
+    {
+      "name": "Casa by the Sea",
+      "url": "/r/troubledteens/wiki/index/casabythesea/",
+      "normalizedName": "casa by the sea"
+    },
+    {
+      "name": "Chilanko Lodge Treatment Center",
+      "url": "/r/troubledteens/wiki/index/chilanko/",
+      "normalizedName": "chilanko lodge treatment center"
+    },
+    {
+      "name": "Coral Reef Academy",
+      "url": "/r/troubledteens/wiki/index/coralreef/",
+      "normalizedName": "coral reef academy"
+    },
+    {
+      "name": "Coronado Academy",
+      "url": "/r/troubledteens/wiki/index/coronado/",
+      "normalizedName": "coronado academy"
+    },
+    {
+      "name": "Escuela Caribe / Caribe Vista School",
+      "url": "/r/troubledteens/wiki/index/escuelacariba/",
+      "normalizedName": "escuela caribe / caribe vista school"
+    },
+    {
+      "name": "Future Expectations Today",
+      "url": "/r/troubledteens/wiki/index/futureexpectations/",
+      "normalizedName": "future expectations today"
+    },
+    {
+      "name": "Genesis by the Sea",
+      "url": "/r/troubledteens/wiki/index/genesisbythesea/",
+      "normalizedName": "genesis by the sea"
+    },
+    {
+      "name": "Haut de la Garenne",
+      "url": "/r/troubledteens/wiki/index/hautgarenne/",
+      "normalizedName": "haut de la garenne"
+    },
+    {
+      "name": "Healing Wings St. George",
+      "url": "/r/troubledteens/wiki/index/healingwingssg/",
+      "normalizedName": "healing wings st. george"
+    },
+    {
+      "name": "High Impact",
+      "url": "/r/troubledteens/wiki/index/highimpact/",
+      "normalizedName": "high impact"
+    },
+    {
+      "name": "House of Hope Academy",
+      "url": "/r/troubledteens/wiki/index/houseofhope/",
+      "normalizedName": "house of hope academy"
+    },
+    {
+      "name": "Missanabie Woods Academy",
+      "url": "/r/troubledteens/wiki/index/missanabie/",
+      "normalizedName": "missanabie woods academy"
+    },
+    {
+      "name": "Morava Academy",
+      "url": "/r/troubledteens/wiki/index/morava/",
+      "normalizedName": "morava academy"
+    },
+    {
+      "name": "New Hope Academy (Samoa)",
+      "url": "/r/troubledteens/wiki/index/newhopesamoa/",
+      "normalizedName": "new hope academy (samoa)"
+    },
+    {
+      "name": "New Summit Academy Costa Rica",
+      "url": "/r/troubledteens/wiki/index/newsummitcr/",
+      "normalizedName": "new summit academy costa rica"
+    },
+    {
+      "name": "Pacific Coast Academy",
+      "url": "/r/troubledteens/wiki/index/pacificcoast/",
+      "normalizedName": "pacific coast academy"
+    },
+    {
+      "name": "Pacific Life Program",
+      "url": "/r/troubledteens/wiki/index/pacificlife/",
+      "normalizedName": "pacific life program"
+    },
+    {
+      "name": "Paradise Cove",
+      "url": "/r/troubledteens/wiki/index/paradisecove/",
+      "normalizedName": "paradise cove"
+    },
+    {
+      "name": "Pathways Argentina",
+      "url": "/r/troubledteens/wiki/index/pathwaysarg/",
+      "normalizedName": "pathways argentina"
+    },
+    {
+      "name": "Pillars of Hope",
+      "url": "/r/troubledteens/wiki/index/pillarofhope/",
+      "normalizedName": "pillars of hope"
+    },
+    {
+      "name": "Pine River Institute",
+      "url": "/r/troubledteens/wiki/index/pineriver/",
+      "normalizedName": "pine river institute"
+    },
+    {
+      "name": "Positive Impact",
+      "url": "/r/troubledteens/wiki/index/positiveimpact/",
+      "normalizedName": "positive impact"
+    },
+    {
+      "name": "Programa Ibicuy",
+      "url": "/r/troubledteens/wiki/index/ibicuy/",
+      "normalizedName": "programa ibicuy"
+    },
+    {
+      "name": "Pure Life Adventure",
+      "url": "/r/troubledteens/wiki/index/purelife/",
+      "normalizedName": "pure life adventure"
+    },
+    {
+      "name": "Robert Land Academy",
+      "url": "/r/troubledteens/wiki/index/robertland/",
+      "normalizedName": "robert land academy"
+    },
+    {
+      "name": "Rocklyn Academy",
+      "url": "/r/troubledteens/wiki/index/rocklyn/",
+      "normalizedName": "rocklyn academy"
+    },
+    {
+      "name": "Royal Alexandra Hospital",
+      "url": "/r/troubledteens/wiki/index/royalalexandra/",
+      "normalizedName": "royal alexandra hospital"
+    },
+    {
+      "name": "Sunrise Beach",
+      "url": "/r/troubledteens/wiki/index/sunrisebeach/",
+      "normalizedName": "sunrise beach"
+    },
+    {
+      "name": "Sunset Bay Academy",
+      "url": "/r/troubledteens/wiki/index/sunsetbay/",
+      "normalizedName": "sunset bay academy"
+    },
+    {
+      "name": "The Brown Schools of San Juan",
+      "url": "/r/troubledteens/wiki/index/BSsanjuan/",
+      "normalizedName": "the brown schools of san juan"
+    },
+    {
+      "name": "Tranquility Bay",
+      "url": "/r/troubledteens/wiki/index/tranquilitybay/",
+      "normalizedName": "tranquility bay"
+    },
+    {
+      "name": "Venture Academy",
+      "url": "/r/troubledteens/wiki/index/venturecanada/",
+      "normalizedName": "venture academy"
+    },
+    {
+      "name": "Yes We Can Youth Center",
+      "url": "/r/troubledteens/wiki/index/yeswecanyouth/",
+      "normalizedName": "yes we can youth center"
+    },
+    {
+      "name": "Youth of Vision Academy (YOVA)",
+      "url": "/r/troubledteens/wiki/index/yova/",
+      "normalizedName": "youth of vision academy (yova)"
+    }
+  ],
+  "programCount": 42,
+  "generated": "2025-12-11T02:48:00.829Z",
+  "state": "NONUSA"
 }
