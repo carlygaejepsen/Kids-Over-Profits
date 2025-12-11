@@ -223,17 +223,17 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Plaintiffs</label>
-                            <input type="text" name="plaintiffs" class="news-input" value="${formData.plaintiffs || ''}">
+                            <input type="text" name="plaintiffs" class="news-input" data-autocomplete-category="human" value="${formData.plaintiffs || ''}">
                         </div>
                         <div class="news-form-group">
                             <label>Defendants</label>
-                            <input type="text" name="defendants" class="news-input" value="${formData.defendants || ''}">
+                            <input type="text" name="defendants" class="news-input" data-autocomplete-category="human" value="${formData.defendants || ''}">
                         </div>
                     </div>
                     <div class="news-form-group">
                         <label>Legal Representation</label>
                         <div class="news-input-with-save">
-                            <input type="text" name="legalRep" class="news-input" list="legalReps-list" value="${formData.legalRep || ''}">
+                            <input type="text" name="legalRep" class="news-input" data-autocomplete-category="human" list="legalReps-list" value="${formData.legalRep || ''}">
                             <datalist id="legalReps-list"></datalist>
                             <button class="news-save-btn" data-save="legalReps" data-field="legalRep">💾</button>
                         </div>
@@ -247,7 +247,7 @@
                         <div class="news-form-group">
                             <label>Jurisdiction</label>
                             <div class="news-input-with-save">
-                                <input type="text" name="jurisdiction" class="news-input" list="jurisdictions-list" value="${formData.jurisdiction || ''}">
+                                <input type="text" name="jurisdiction" class="news-input" data-autocomplete-category="location" list="jurisdictions-list" value="${formData.jurisdiction || ''}">
                                 <datalist id="jurisdictions-list"></datalist>
                                 <button class="news-save-btn" data-save="jurisdictions" data-field="jurisdiction">💾</button>
                             </div>
@@ -277,11 +277,11 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Staff Member Name</label>
-                            <input type="text" name="staffMemberName" class="news-input" value="${formData.staffMemberName || ''}">
+                            <input type="text" name="staffMemberName" class="news-input" data-autocomplete-category="human" value="${formData.staffMemberName || ''}">
                         </div>
                         <div class="news-form-group">
                             <label>Facility Name</label>
-                            <input type="text" name="arrestFacilityName" class="news-input" value="${formData.arrestFacilityName || ''}">
+                            <input type="text" name="arrestFacilityName" class="news-input" data-autocomplete-category="facility" value="${formData.arrestFacilityName || ''}">
                         </div>
                     </div>
                     <div class="news-form-group">
@@ -292,10 +292,10 @@
                         <label>Charges</label>
                         <textarea name="charges" class="news-textarea" rows="2">${formData.charges || ''}</textarea>
                     </div>
-                    <div class="news-form-group">
-                        <label>Case Status</label>
-                        <input type="text" name="caseStatus" class="news-input" placeholder="e.g., awaiting trial, convicted" value="${formData.caseStatus || ''}">
-                    </div>
+                        <div class="news-form-group">
+                            <label>Case Status</label>
+                            <input type="text" name="caseStatus" class="news-input" data-autocomplete-category="status" placeholder="e.g., awaiting trial, convicted" value="${formData.caseStatus || ''}">
+                        </div>
                 </div>
             `;
         } else if (type === 'closure') {
@@ -305,11 +305,11 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Facility Name</label>
-                            <input type="text" name="closureFacilityName" class="news-input" value="${formData.closureFacilityName || ''}">
+                            <input type="text" name="closureFacilityName" class="news-input" data-autocomplete-category="facility" value="${formData.closureFacilityName || ''}">
                         </div>
                         <div class="news-form-group">
                             <label>Location (City, State)</label>
-                            <input type="text" name="closureLocation" class="news-input" value="${formData.closureLocation || ''}">
+                            <input type="text" name="closureLocation" class="news-input" data-autocomplete-category="location" value="${formData.closureLocation || ''}">
                         </div>
                     </div>
                     <div class="news-form-group">
@@ -332,7 +332,7 @@
                     </div>
                     <div class="news-form-group">
                         <label>Location (City, State)</label>
-                        <input type="text" name="corporateLocation" class="news-input" value="${formData.corporateLocation || ''}">
+                        <input type="text" name="corporateLocation" class="news-input" data-autocomplete-category="location" value="${formData.corporateLocation || ''}">
                     </div>
                     <div class="news-form-group">
                         <label>Key Personnel</label>
@@ -736,8 +736,10 @@
         setupDatabaseSubmission();
         restoreFormState();
         restoreSavedValues();
+        if (typeof initializeAutocompleteFields === 'function') {
+            initializeAutocompleteFields();
+        }
     }
 
     document.addEventListener('DOMContentLoaded', init);
 })();
-

@@ -1818,6 +1818,56 @@ function kop_enqueue_report_scripts() {
 add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 
 /**
+ * Enqueue shared scripts that power the autocomplete module.
+ */
+function kop_enqueue_autocomplete_dependencies() {
+    static $enqueued = false;
+    if ($enqueued) {
+        return;
+    }
+    $enqueued = true;
+
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+
+    $utilities_relative_path = '/js/data-form/utilities.js';
+    $utilities_file_path = $theme_dir . $utilities_relative_path;
+    $utilities_uri = $theme_uri . $utilities_relative_path;
+
+    wp_enqueue_script(
+        'utilities-module-script',
+        $utilities_uri,
+        array('jquery'),
+        file_exists($utilities_file_path) ? filemtime($utilities_file_path) : time(),
+        true
+    );
+
+    $loader_relative_path = '/js/data-form/db-form-loader.js';
+    $loader_file_path = $theme_dir . $loader_relative_path;
+    $loader_uri = $theme_uri . $loader_relative_path;
+
+    wp_enqueue_script(
+        'db-form-loader',
+        $loader_uri,
+        array('jquery', 'utilities-module-script'),
+        file_exists($loader_file_path) ? filemtime($loader_file_path) : time(),
+        true
+    );
+
+    $autocomplete_relative_path = '/js/autocomplete.js';
+    $autocomplete_file_path = $theme_dir . $autocomplete_relative_path;
+    $autocomplete_uri = $theme_uri . $autocomplete_relative_path;
+
+    wp_enqueue_script(
+        'autocomplete-module-script',
+        $autocomplete_uri,
+        array('jquery', 'utilities-module-script', 'db-form-loader'),
+        file_exists($autocomplete_file_path) ? filemtime($autocomplete_file_path) : time(),
+        true
+    );
+}
+
+/**
  * Load facility form script
  */
 function enqueue_facility_form_script() {
@@ -1873,6 +1923,8 @@ function enqueue_facility_form_script() {
         return;
     }
 
+    kop_enqueue_autocomplete_dependencies();
+
     add_action('wp_footer', function() {
         echo '<script>console.log("✅ DEBUG: Template check PASSED - proceeding to enqueue scripts");</script>';
     }, 1);
@@ -1910,19 +1962,6 @@ function enqueue_facility_form_script() {
             filemtime($toolbar_css)
         );
     }
-
-    // Enqueue utilities module first (provides basic helper functions)
-    $utilities_relative_path = '/js/data-form/utilities.js';
-    $utilities_file_path = get_stylesheet_directory() . $utilities_relative_path;
-    $utilities_uri = get_stylesheet_directory_uri() . $utilities_relative_path;
-
-    wp_enqueue_script(
-        'utilities-module-script',
-        $utilities_uri,
-        array('jquery'),
-        file_exists($utilities_file_path) ? filemtime($utilities_file_path) : time(),
-        true
-    );
 
     // Enqueue the new configuration module
     $config_module_relative_path = '/js/facility-form-modules/config.js';
@@ -2041,19 +2080,6 @@ function enqueue_facility_form_script() {
         true
     );
 
-    // Enqueue the DB form loader (handles data loading, depends on utilities)
-    $loader_relative_path = '/js/data-form/db-form-loader.js';
-    $loader_file_path = get_stylesheet_directory() . $loader_relative_path;
-    $loader_uri = get_stylesheet_directory_uri() . $loader_relative_path;
-
-    wp_enqueue_script(
-        'db-form-loader',
-        $loader_uri,
-        array('jquery', 'utilities-module-script'),
-        file_exists($loader_file_path) ? filemtime($loader_file_path) : time(),
-        true
-    );
-
     // Enqueue the location form module (depends on utilities and loader)
     $location_script_relative_path = '/js/data-form/location-form.js';
     $location_script_file_path = get_stylesheet_directory() . $location_script_relative_path;
@@ -2090,19 +2116,6 @@ function enqueue_facility_form_script() {
         $notes_script_uri,
         array('jquery', 'db-form-loader', 'referrer-form-script'),
         file_exists($notes_script_file_path) ? filemtime($notes_script_file_path) : time(),
-        true
-    );
-
-    // Enqueue the autocomplete module (depends on loader)
-    $autocomplete_script_relative_path = '/js/autocomplete.js';
-    $autocomplete_script_file_path = get_stylesheet_directory() . $autocomplete_script_relative_path;
-    $autocomplete_script_uri = get_stylesheet_directory_uri() . $autocomplete_script_relative_path;
-
-    wp_enqueue_script(
-        'autocomplete-module-script',
-        $autocomplete_script_uri,
-        array('jquery', 'utilities-module-script', 'db-form-loader'),
-        file_exists($autocomplete_script_file_path) ? filemtime($autocomplete_script_file_path) : time(),
         true
     );
 
@@ -2251,6 +2264,8 @@ function enqueue_news_processor_scripts() {
     if (!is_page_template('page-news-processor.php')) {
         return;
     }
+
+    kop_enqueue_autocomplete_dependencies();
     
     $style_relative = '/css/news-processor.css';
     $style_path = get_stylesheet_directory() . $style_relative;
@@ -2266,7 +2281,7 @@ function enqueue_news_processor_scripts() {
     wp_enqueue_script(
         'news-processor-script',
         get_stylesheet_directory_uri() . $script_relative,
-        array(),
+        array('jquery', 'autocomplete-module-script'),
         file_exists($script_path) ? filemtime($script_path) : time(),
         true
     );
@@ -2346,6 +2361,8 @@ function kop_enqueue_wiki_editor_assets() {
         return;
     }
 
+    kop_enqueue_autocomplete_dependencies();
+
     $style_relative = '/css/wiki-editor.css';
     $style_path = get_stylesheet_directory() . $style_relative;
     wp_enqueue_style(
@@ -2371,7 +2388,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_script(
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
-        array('kop-auto-linker-script'),
+        array('kop-auto-linker-script', 'autocomplete-module-script'),
         file_exists($script_path) ? filemtime($script_path) : time(),
         true
     );

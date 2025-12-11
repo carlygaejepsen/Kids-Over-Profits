@@ -31,16 +31,16 @@ get_header();
             <fieldset>
                 <legend>Basic Information</legend>
                 <label for="programName">Program Name:</label>
-                <input type="text" id="programName" name="programName" placeholder="e.g., Turn-About Ranch">
+                <input type="text" id="programName" name="programName" data-autocomplete-category="facility" placeholder="e.g., Turn-About Ranch">
 
                 <label for="yearsActive">Years Active:</label>
                 <input type="text" id="yearsActive" name="yearsActive" placeholder="e.g., 1989-present">
 
                 <label for="cityState">City, ST:</label>
-                <input type="text" id="cityState" name="cityState" placeholder="e.g., Escalante, UT">
+                <input type="text" id="cityState" name="cityState" data-autocomplete-category="location" placeholder="e.g., Escalante, UT">
 
                 <label for="programType">Program Type:</label>
-                <input type="text" id="programType" name="programType" placeholder="e.g., Residential Treatment Center">
+                <input type="text" id="programType" name="programType" data-autocomplete-category="type" placeholder="e.g., Residential Treatment Center">
             </fieldset>
 
             <fieldset>
@@ -58,7 +58,7 @@ get_header();
                 <div class="field-row">
                     <div class="field-group">
                         <label for="ownerName">Owner/Operator:</label>
-                        <input type="text" id="ownerName" name="ownerName" placeholder="e.g., Aspen Education Group">
+                        <input type="text" id="ownerName" name="ownerName" data-autocomplete-category="operator" placeholder="e.g., Aspen Education Group">
                     </div>
                     <div class="field-group">
                         <label for="ownerLink">Owner Wiki Link:</label>
@@ -95,7 +95,7 @@ get_header();
                 <div class="field-row">
                     <div class="field-group flex-2">
                         <label for="mainAddress">Main Address:</label>
-                        <input type="text" id="mainAddress" name="mainAddress" placeholder="e.g., 280 N 300 E, Escalante, UT 84726">
+                        <input type="text" id="mainAddress" name="mainAddress" data-autocomplete-category="location" placeholder="e.g., 280 N 300 E, Escalante, UT 84726">
                     </div>
                     <div class="field-group">
                         <label for="addressLink">Google Maps Link:</label>
@@ -105,7 +105,7 @@ get_header();
                 <div class="field-row">
                     <div class="field-group">
                         <label for="accreditingBody">Accrediting Body:</label>
-                        <input type="text" id="accreditingBody" name="accreditingBody" placeholder="e.g., NWAC">
+                        <input type="text" id="accreditingBody" name="accreditingBody" data-autocomplete-category="accreditation" placeholder="e.g., NWAC">
                     </div>
                     <div class="field-group">
                         <label for="accreditingBodyLink">Accreditor Wiki Link:</label>
@@ -123,8 +123,8 @@ get_header();
                             <input type="text" id="campusName" placeholder="e.g., Girls Campus">
                         </div>
                         <div class="field-group">
-                            <label for="campusLocation">Location:</label>
-                            <input type="text" id="campusLocation" placeholder="e.g., Cedar City, UT">
+                        <label for="campusLocation">Location:</label>
+                        <input type="text" id="campusLocation" data-autocomplete-category="location" placeholder="e.g., Cedar City, UT">
                         </div>
                     </div>
                     <button type="button" class="add-btn" id="addCampusBtn">Add Campus</button>
@@ -139,8 +139,8 @@ get_header();
                             <input type="text" id="ownerChangeYear" placeholder="e.g., 2015">
                         </div>
                         <div class="field-group">
-                            <label for="ownerChangePrevious">Previous Owner:</label>
-                            <input type="text" id="ownerChangePrevious" placeholder="e.g., Aspen Education">
+                        <label for="ownerChangePrevious">Previous Owner:</label>
+                        <input type="text" id="ownerChangePrevious" data-autocomplete-category="operator" placeholder="e.g., Aspen Education">
                         </div>
                         <div class="field-group">
                             <label for="ownerChangePreviousLink">Previous Owner Link (optional):</label>
@@ -149,8 +149,8 @@ get_header();
                     </div>
                     <div class="field-row">
                         <div class="field-group">
-                            <label for="ownerChangeNew">New Owner:</label>
-                            <input type="text" id="ownerChangeNew" placeholder="e.g., Sequel Youth">
+                        <label for="ownerChangeNew">New Owner:</label>
+                        <input type="text" id="ownerChangeNew" data-autocomplete-category="operator" placeholder="e.g., Sequel Youth">
                         </div>
                         <div class="field-group">
                             <label for="ownerChangeNewLink">New Owner Link (optional):</label>
@@ -166,9 +166,9 @@ get_header();
                 <legend>Founders and Notable Staff</legend>
                 <div class="form-adder">
                     <label for="staffName">Name:</label>
-                    <input type="text" id="staffName">
+                    <input type="text" id="staffName" data-autocomplete-category="human">
                     <label for="staffRole">Role:</label>
-                    <input type="text" id="staffRole">
+                    <input type="text" id="staffRole" data-autocomplete-category="role">
                     <label for="staffBio">Bio/Details (can include Markdown links):</label>
                     <textarea id="staffBio" rows="3" placeholder="e.g., Previously worked at [Another Program](link)..."></textarea>
                     
@@ -365,12 +365,12 @@ get_header();
                             <input type="text" id="lawsuitYear" placeholder="e.g., 2018">
                         </div>
                         <div class="field-group">
-                            <label for="lawsuitPlaintiff">Plaintiff(s):</label>
-                            <input type="text" id="lawsuitPlaintiff" placeholder="e.g., John Doe">
+                        <label for="lawsuitPlaintiff">Plaintiff(s):</label>
+                        <input type="text" id="lawsuitPlaintiff" data-autocomplete-category="human" placeholder="e.g., John Doe">
                         </div>
                         <div class="field-group">
-                            <label for="lawsuitDefendant">Defendant(s):</label>
-                            <input type="text" id="lawsuitDefendant" placeholder="e.g., program name, owner">
+                        <label for="lawsuitDefendant">Defendant(s):</label>
+                        <input type="text" id="lawsuitDefendant" data-autocomplete-category="human" placeholder="e.g., program name, owner">
                         </div>
                     </div>
                     <div class="field-row">
@@ -396,8 +396,8 @@ get_header();
                             <input type="text" id="lawsuitAmount" placeholder="e.g., $500,000, undisclosed">
                         </div>
                         <div class="field-group">
-                            <label for="lawsuitCourt">Court/Jurisdiction:</label>
-                            <input type="text" id="lawsuitCourt" placeholder="e.g., Utah District Court">
+                        <label for="lawsuitCourt">Court/Jurisdiction:</label>
+                        <input type="text" id="lawsuitCourt" data-autocomplete-category="location" placeholder="e.g., Utah District Court">
                         </div>
                     </div>
                     <button type="button" class="add-btn" id="addLawsuitBtn">Add Lawsuit</button>
@@ -439,7 +439,7 @@ get_header();
                     <label for="testimonyQuote">Quote or Description:</label>
                     <textarea id="testimonyQuote" rows="3" placeholder="e.g., 'This place thrives...' or 'Reddit Post by u/...'"></textarea>
                     <label for="testimonySource">Source Name:</label>
-                    <input type="text" id="testimonySource" placeholder="e.g., Brooke (Google Reviews) or Reddit">
+                    <input type="text" id="testimonySource" data-autocomplete-category="human" placeholder="e.g., Brooke (Google Reviews) or Reddit">
                     <label for="testimonyUrl">Source URL:</label>
                     <input type="text" id="testimonyUrl">
                     <button type="button" class="add-btn" id="addTestimonyBtn">Add Testimony</button>

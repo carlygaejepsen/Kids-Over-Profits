@@ -37,7 +37,7 @@ get_header();
                         <div class="news-form-group">
                             <label>Author</label>
                             <div class="news-input-with-save">
-                                <input type="text" name="author" class="news-input" list="authors-list" placeholder="Author name">
+                                <input type="text" name="author" class="news-input" data-autocomplete-category="human" list="authors-list" placeholder="Author name">
                                 <datalist id="authors-list"></datalist>
                                 <button class="news-save-btn" data-save="authors" data-field="author">💾</button>
                             </div>
@@ -194,4 +194,3 @@ get_header();
 <?php
 get_footer();
 ?>
-

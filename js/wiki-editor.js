@@ -43,6 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     initializeEmptyLists();
 
+    if (typeof initializeAutocompleteFields === 'function') {
+        initializeAutocompleteFields();
+    }
+
     function getStaffPreviousRolesFromInput() {
         if (!previousRolesContainer) return [];
         const entries = previousRolesContainer.querySelectorAll('.previous-role-entry');
