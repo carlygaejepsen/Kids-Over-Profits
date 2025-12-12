@@ -626,4 +626,8 @@ function parseWikiMarkdown(markdown) {
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { parseWikiMarkdown, sanitizeUrl };
+} else if (typeof window !== 'undefined') {
+    // Expose to global scope for browser usage
+    window.parseWikiMarkdown = parseWikiMarkdown;
+    window.sanitizeUrl = sanitizeUrl;
 }
