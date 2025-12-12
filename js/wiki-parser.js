@@ -77,7 +77,8 @@ function parseWikiMarkdown(markdown) {
         lawsuitsMisc: '',
         rulesList: '',
         mainComplaints: '',
-        otherAllegationsList: ''
+        otherAllegationsList: '',
+        unparsedContent: ''  // Capture any content that wasn't matched by specific patterns
     };
 
     // Normalize newlines so regex parsing works with Windows CRLF input
@@ -617,6 +618,53 @@ function parseWikiMarkdown(markdown) {
         if (lawsuitLines.length > 0) {
             parsedData.lawsuitsMisc = lawsuitLines.join('\n\n').trim();
         }
+    }
+
+    // Collect unparsed sections
+    const parsedSectionTitles = [
+        'History and Background Information',
+        'Founders and Notable Staff',
+        'Staff',
+        'Notable Staff',
+        'Founders',
+        'Program Structure',
+        'Structure',
+        'Program Model',
+        'Level System',
+        'Level Systems',
+        'Phase System',
+        'Phases',
+        'Program Phases',
+        'Abuse/Neglect Allegations and Lawsuits',
+        'Abuse Allegations',
+        'Abuse/Neglect Allegations',
+        'Allegations and Lawsuits',
+        'Abuse Allegations and Lawsuits'
+    ];
+
+    // Split markdown into sections
+    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##|\n\*\*\*|$)/g;
+    const unparsedSections = [];
+    let match;
+
+    while ((match = sectionPattern.exec(normalizedMarkdown)) !== null) {
+        const sectionTitle = match[1].trim();
+        const sectionContent = match[2].trim();
+
+        // Check if this section was parsed
+        const wasParsed = parsedSectionTitles.some(title =>
+            sectionTitle.toLowerCase().includes(title.toLowerCase()) ||
+            title.toLowerCase().includes(sectionTitle.toLowerCase())
+        );
+
+        if (!wasParsed && sectionContent && !sectionContent.includes('No information is known')) {
+            unparsedSections.push(`## ${sectionTitle}\n${sectionContent}`);
+        }
+    }
+
+    if (unparsedSections.length > 0) {
+        parsedData.unparsedContent = unparsedSections.join('\n\n');
+        console.log(`Found ${unparsedSections.length} unparsed section(s)`);
     }
 
     console.log('Parsing complete:', parsedData);

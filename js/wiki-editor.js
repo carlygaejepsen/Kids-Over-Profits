@@ -1331,6 +1331,16 @@ ${relatedMediaSection}
         setValue('mainComplaints', parsedData.mainComplaints);
         setValue('otherAllegationsList', parsedData.otherAllegationsList);
 
+        // Append any unparsed content to historyNotes
+        if (parsedData.unparsedContent && parsedData.unparsedContent.trim()) {
+            const existingNotes = parsedData.historyMisc || '';
+            const combined = [existingNotes, parsedData.unparsedContent]
+                .filter(text => text && text.trim())
+                .join('\n\n');
+            setValue('historyNotes', combined);
+            console.log(`✓ Added ${parsedData.unparsedContent.length} chars of unparsed content to historyNotes`);
+        }
+
         // Populate structured data arrays
         staffMembers = parsedData.staffMembers || [];
         programLevels = parsedData.programLevels || [];
