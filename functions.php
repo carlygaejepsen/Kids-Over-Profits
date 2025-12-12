@@ -2383,12 +2383,23 @@ function kop_enqueue_wiki_editor_assets() {
         true
     );
 
+    // Enqueue wiki-parser (wiki-editor depends on it)
+    $parser_relative = '/js/wiki-parser.js';
+    $parser_path = get_stylesheet_directory() . $parser_relative;
+    wp_enqueue_script(
+        'kop-wiki-parser-script',
+        get_stylesheet_directory_uri() . $parser_relative,
+        array(),
+        file_exists($parser_path) ? filemtime($parser_path) : time(),
+        true
+    );
+
     $script_relative = '/js/wiki-editor.js';
     $script_path = get_stylesheet_directory() . $script_relative;
     wp_enqueue_script(
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
-        array('kop-auto-linker-script', 'autocomplete-module-script'),
+        array('kop-auto-linker-script', 'kop-wiki-parser-script', 'autocomplete-module-script'),
         file_exists($script_path) ? filemtime($script_path) : time(),
         true
     );
