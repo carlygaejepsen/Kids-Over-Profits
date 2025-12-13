@@ -118,25 +118,6 @@
         }
     };
 
-    // Initialize
-    function init() {
-        loadFromLocalStorage();
-        setupSectionToggles();
-        setupFormInputs();
-        setupContentWarnings();
-        setupArticleTypes();
-        setupSaveButtons();
-        setupExportButtons();
-        setupAlnewstle();
-        setupClearButton();
-        setupTemplates();
-        setupDynamicFields();
-        setupAIToggle();
-        setupDatabaseSubmission();
-        restoreFormState();
-        restoreSavedValues();
-    }
-
     function restoreFormState() {
         Object.keys(formData).forEach(key => {
             const input = document.querySelector(`[name="${key}"]`);
@@ -1064,6 +1045,9 @@
         setupExportButtons();
         setupAlnewstle();
         setupClearButton();
+        setupTemplates();
+        setupDynamicFields();
+        setupAIToggle();
         setupDatabaseSubmission();
         restoreFormState();
         restoreSavedValues();
