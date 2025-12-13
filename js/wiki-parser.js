@@ -78,7 +78,10 @@ function parseWikiMarkdown(markdown) {
         rulesList: '',
         mainComplaints: '',
         otherAllegationsList: '',
-        unparsedContent: ''  // Capture any content that wasn't matched by specific patterns
+        mediaInfo: '',           // Full Media & News section content
+        testimoniesMisc: '',     // Full Testimonies section content
+        relatedMediaMisc: '',    // Full Related Media section content
+        unparsedContent: ''      // Capture any content that wasn't matched by specific patterns
     };
 
     // Normalize newlines so regex parsing works with Windows CRLF input
@@ -341,36 +344,8 @@ function parseWikiMarkdown(markdown) {
             parsedData.accreditingBodyLink = sanitizeUrl(accreditMatch[2]);
         }
 
-        // Misc history text (sentences not matched by specific patterns)
-        const knownPatterns = [
-            /(?:founded|opened|started|established|began)\s+(?:in\s+)?\d{4}/i,
-            /is\s+(?:an?|the)?\s*\[.+?\]\(.+?\)\s+(?:behavior|program|school|facility)/i,
-            /owned by|operated by|run by|part of/i,
-            /prior to (?:being )?(?:purchased|acquired|bought)/i,
-            /(?:was\s+)?(?:purchased|acquired|bought)\s+by/i,
-            /\(\d{1,2}\s*-\s*\d{1,2}\)/i,
-            /aged?\s+(?:between\s+)?\d{1,2}/i,
-            /ages?\s+(?:between\s+)?\d{1,2}/i,
-            /struggling with/i,
-            /average length of stay/i,
-            /tuition/i,
-            /NATSAP/i,
-            /located\s+(?:at|as|in)/i,
-            /accredited/i,
-            /serves\s+.*?(?:children|boys|girls|teens|youth|young people)/i,
-            /specializes?\s+in\s+treating/i
-        ];
-
-        const sentences = historySection.split(/(?<=[.!?])\s+/);
-        const extraSentences = sentences.filter(sentence => {
-            const trimmed = sentence.trim();
-            if (!trimmed || trimmed.length < 20) return false;
-            return !knownPatterns.some(pattern => pattern.test(trimmed));
-        });
-
-        if (extraSentences.length > 0) {
-            parsedData.historyMisc = extraSentences.join(' ').trim();
-        }
+        // Store the ENTIRE history section in historyMisc to preserve all content
+        parsedData.historyMisc = historySection;
     }
 
     // Parse Staff section
@@ -517,16 +492,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Extract misc structure info
-        const miscStructureParts = structureSection.split('\n\n')
-            .map(block => block.split('\n')
-                .filter(line => !line.trim().match(/^[*-]\s+/))
-                .join('\n')
-                .trim())
-            .filter(block => block && !block.includes('No information is known'));
-        if (miscStructureParts.length > 0) {
-            parsedData.structureMisc = miscStructureParts.join('\n\n');
-        }
+        // Store the ENTIRE structure section in structureMisc to preserve all content
+        parsedData.structureMisc = structureSection;
     }
 
     // Parse Abuse section
@@ -605,19 +572,120 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Misc lawsuit text (paragraphs that weren't parsed as structured lawsuits)
-        const lawsuitLines = abuseSection.split('\n\n').filter(para => {
-            const trimmed = para.trim();
-            return !para.includes('main complaints are') &&
-                   !para.includes('Other allegations') &&
-                   !parsedLawsuitParagraphs.has(trimmed) &&
-                   !trimmed.startsWith('*') &&
-                   !trimmed.startsWith('-') &&
-                   trimmed.length > 0;
-        });
-        if (lawsuitLines.length > 0) {
-            parsedData.lawsuitsMisc = lawsuitLines.join('\n\n').trim();
+        // Store the ENTIRE abuse section in lawsuitsMisc to preserve all content
+        parsedData.lawsuitsMisc = abuseSection;
+    }
+
+    // Parse Rules and Punishments section
+    const rulesSection = getSectionAny(normalizedMarkdown, [
+        'Rules and Punishments',
+        'Rules & Punishments',
+        'Rules',
+        'Punishments'
+    ]);
+
+    if (rulesSection && !rulesSection.includes('No information is known')) {
+        // Extract rules (bulleted list)
+        const ruleMatches = rulesSection.matchAll(/^[*-]\s+(.+)$/gm);
+        for (const match of ruleMatches) {
+            const ruleText = match[1].trim();
+            // Only add if it doesn't look like a punishment (doesn't contain punishment keywords)
+            if (!ruleText.match(/punishment|consequence|discipline/i)) {
+                parsedData.rules.push(ruleText);
+            }
         }
+
+        // Extract punishments (look for structured punishment descriptions)
+        const punishmentPatterns = rulesSection.split('\n\n');
+        punishmentPatterns.forEach(block => {
+            const trimmed = block.trim();
+            // Match patterns like "**Name:** description" or "**Name** - description"
+            const punishmentMatch = trimmed.match(/^\*\*([^*:]+?)(?::|–|-)\*\*\s*(.+)$/m);
+            if (punishmentMatch) {
+                parsedData.punishments.push({
+                    name: punishmentMatch[1].trim(),
+                    description: punishmentMatch[2].trim()
+                });
+            }
+        });
+
+        // Store the ENTIRE rules/punishments section in punishmentsMisc to preserve all content
+        parsedData.punishmentsMisc = rulesSection;
+    }
+
+    // Parse In the Media & News section
+    const mediaSection = getSectionAny(normalizedMarkdown, [
+        'In the Media & News',
+        'In the Media',
+        'Media & News',
+        'Media and News',
+        'News'
+    ]);
+
+    if (mediaSection && !mediaSection.includes('No information is known')) {
+        // Extract news articles with links [Title](URL)
+        const articleMatches = mediaSection.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g);
+        for (const match of articleMatches) {
+            parsedData.newsArticles.push({
+                title: match[1].trim(),
+                url: sanitizeUrl(match[2])
+            });
+        }
+
+        // Store the ENTIRE media section in mediaInfo to preserve all content
+        parsedData.mediaInfo = mediaSection;
+    }
+
+    // Parse Survivor Testimonies section
+    const testimoniesSection = getSectionAny(normalizedMarkdown, [
+        'Survivor Testimonies',
+        'Testimonies',
+        'Survivor Accounts',
+        'Survivor Stories'
+    ]);
+
+    if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
+        // Parse testimonies - look for quoted text followed by source
+        const testimonyBlocks = testimoniesSection.split(/\n\n+/);
+        testimonyBlocks.forEach(block => {
+            const trimmed = block.trim();
+            if (!trimmed) return;
+
+            // Match pattern: "quote" - Source [Link](URL)
+            const testimonyMatch = trimmed.match(/"([^"]+)"\s*[-–—]\s*([^[\n]+)(?:\[([^\]]+)\]\(([^)]+)\))?/);
+            if (testimonyMatch) {
+                parsedData.testimonies.push({
+                    quote: testimonyMatch[1].trim(),
+                    source: testimonyMatch[2].trim(),
+                    url: testimonyMatch[4] ? sanitizeUrl(testimonyMatch[4]) : ''
+                });
+            }
+        });
+
+        // Store the ENTIRE testimonies section in testimoniesMisc to preserve all content
+        parsedData.testimoniesMisc = testimoniesSection;
+    }
+
+    // Parse Related Media section
+    const relatedMediaSection = getSectionAny(normalizedMarkdown, [
+        'Related Media',
+        'Related Media (Links)',
+        'Related Links',
+        'External Links'
+    ]);
+
+    if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
+        // Extract links [Title](URL)
+        const mediaMatches = relatedMediaSection.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g);
+        for (const match of mediaMatches) {
+            parsedData.relatedMedia.push({
+                title: match[1].trim(),
+                url: sanitizeUrl(match[2])
+            });
+        }
+
+        // Store the ENTIRE related media section in relatedMediaMisc to preserve all content
+        parsedData.relatedMediaMisc = relatedMediaSection;
     }
 
     // Collect unparsed sections
@@ -639,7 +707,24 @@ function parseWikiMarkdown(markdown) {
         'Abuse Allegations',
         'Abuse/Neglect Allegations',
         'Allegations and Lawsuits',
-        'Abuse Allegations and Lawsuits'
+        'Abuse Allegations and Lawsuits',
+        'Rules and Punishments',
+        'Rules & Punishments',
+        'Rules',
+        'Punishments',
+        'In the Media & News',
+        'In the Media',
+        'Media & News',
+        'Media and News',
+        'News',
+        'Survivor Testimonies',
+        'Testimonies',
+        'Survivor Accounts',
+        'Survivor Stories',
+        'Related Media',
+        'Related Media (Links)',
+        'Related Links',
+        'External Links'
     ];
 
     // Split markdown into sections

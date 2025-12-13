@@ -1081,6 +1081,12 @@ ${relatedMediaSection}
                     });
                 }
 
+                // Append any unparsed content from import at the end
+                if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
+                    finalOutput += '\n\n***\n\n' + window.unparsedContentFromImport;
+                    console.log('✓ Appended unparsed content to end of output');
+                }
+
                 outputCode.value = finalOutput;
                 outputCode.focus();
                 outputCode.select();
@@ -1330,15 +1336,15 @@ ${relatedMediaSection}
         setValue('rulesList', parsedData.rulesList);
         setValue('mainComplaints', parsedData.mainComplaints);
         setValue('otherAllegationsList', parsedData.otherAllegationsList);
+        setValue('mediaInfo', parsedData.mediaInfo);
 
-        // Append any unparsed content to historyNotes
+        // Store unparsed content to append at the end of generated output
         if (parsedData.unparsedContent && parsedData.unparsedContent.trim()) {
-            const existingNotes = parsedData.historyMisc || '';
-            const combined = [existingNotes, parsedData.unparsedContent]
-                .filter(text => text && text.trim())
-                .join('\n\n');
-            setValue('historyNotes', combined);
-            console.log(`✓ Added ${parsedData.unparsedContent.length} chars of unparsed content to historyNotes`);
+            // Store in a global variable so it can be appended during generation
+            window.unparsedContentFromImport = parsedData.unparsedContent.trim();
+            console.log(`✓ Stored ${parsedData.unparsedContent.length} chars of unparsed content for appending`);
+        } else {
+            window.unparsedContentFromImport = '';
         }
 
         // Populate structured data arrays
@@ -1365,6 +1371,11 @@ ${relatedMediaSection}
 
         if (punishments.length > 0) {
             renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
+        }
+
+        if (rules.length > 0) {
+            renderList(rules, 'ruleListOutput', item => escapeHtml(item));
+            console.log(`✓ Loaded ${rules.length} rules`);
         }
 
         if (lawsuits.length > 0) {
