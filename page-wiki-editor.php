@@ -217,25 +217,8 @@ get_header();
                         <input type="text" id="levelCount" name="levelCount" placeholder="e.g., 4">
                     </div>
                 </div>
-                <h4>Level/Phase Details</h4>
-                <div class="form-adder">
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="levelName">Level Name:</label>
-                            <input type="text" id="levelName" placeholder="e.g., Orientation, Level 1">
-                        </div>
-                        <div class="field-group">
-                            <label for="levelDuration">Typical Duration:</label>
-                            <input type="text" id="levelDuration" placeholder="e.g., 2 weeks">
-                        </div>
-                    </div>
-                    <label for="levelPrivileges">Privileges Earned (comma-separated):</label>
-                    <input type="text" id="levelPrivileges" placeholder="e.g., phone calls, letters, outdoor time">
-                    <label for="levelRestrictions">Restrictions (comma-separated):</label>
-                    <input type="text" id="levelRestrictions" placeholder="e.g., no talking, no eye contact, constant supervision">
-                    <button type="button" class="add-btn" id="addLevelBtn">Add Level</button>
-                </div>
-                <div class="list-preview" id="levelListOutput"></div>
+                <label for="levelSystemDesc">Level/Phase System Details:</label>
+                <textarea id="levelSystemDesc" name="levelSystemDesc" rows="6" placeholder="Describe the level or phase system here. Include level names, durations, privileges, restrictions, etc."></textarea>
                 <hr>
                 <h4>Education</h4>
                 <div class="field-row">
@@ -283,6 +266,9 @@ get_header();
                     <button type="button" class="add-btn" id="addTherapyBtn">Add Therapy Type</button>
                 </div>
                 <div class="list-preview" id="therapyListOutput"></div>
+                <hr>
+                <label for="structureMisc">Additional Structure Notes (will be included as-is):</label>
+                <textarea id="structureMisc" name="structureMisc" rows="4" placeholder="Any additional program structure information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -321,6 +307,9 @@ get_header();
                     <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
                 </div>
                 <div class="list-preview" id="punishmentListOutput"></div>
+                <hr>
+                <label for="punishmentsMisc">Additional Rules/Punishments Notes (will be included as-is):</label>
+                <textarea id="punishmentsMisc" name="punishmentsMisc" rows="4" placeholder="Any additional rules or punishment information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -403,6 +392,9 @@ get_header();
                     <button type="button" class="add-btn" id="addLawsuitBtn">Add Lawsuit</button>
                 </div>
                 <div class="list-preview" id="lawsuitListOutput"></div>
+                <hr>
+                <label for="lawsuitsMisc">Additional Abuse/Lawsuit Notes (will be included as-is):</label>
+                <textarea id="lawsuitsMisc" name="lawsuitsMisc" rows="4" placeholder="Any additional abuse allegations or lawsuit information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -445,6 +437,9 @@ get_header();
                     <button type="button" class="add-btn" id="addTestimonyBtn">Add Testimony</button>
                 </div>
                 <div class="list-preview" id="testimonyListOutput"></div>
+                <hr>
+                <label for="testimoniesMisc">Additional Testimony Notes (will be included as-is):</label>
+                <textarea id="testimoniesMisc" name="testimoniesMisc" rows="4" placeholder="Any additional survivor testimony information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -457,6 +452,9 @@ get_header();
                     <button type="button" class="add-btn" id="addMediaBtn">Add Media Link</button>
                 </div>
                 <div class="list-preview" id="mediaListOutput"></div>
+                <hr>
+                <label for="relatedMediaMisc">Additional Related Media Notes (will be included as-is):</label>
+                <textarea id="relatedMediaMisc" name="relatedMediaMisc" rows="4" placeholder="Any additional related media information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <!-- Auto-linking Options -->

@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Storage ---
     let staffMembers = [];
-    let programLevels = [];
     let punishments = [];
     let lawsuits = [];
     let newsArticles = [];
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
         const emptyHtml = '<p style="color:#999;">No items added yet</p>';
-        const listIds = ['staffListOutput', 'levelListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput'];
+        const listIds = ['staffListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput'];
         listIds.forEach(id => {
             const element = document.getElementById(id);
             if (element && !element.innerHTML.trim()) {
@@ -369,24 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Add Button: Levels ---
-    const addLevelBtn = document.getElementById('addLevelBtn');
-    if (addLevelBtn) {
-        addLevelBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('levelName')?.value.trim() || '';
-            const duration = document.getElementById('levelDuration')?.value.trim() || '';
-            const privileges = document.getElementById('levelPrivileges')?.value.trim() || '';
-            const restrictions = document.getElementById('levelRestrictions')?.value.trim() || '';
-            if (name) {
-                programLevels.push({ name, duration, privileges, restrictions });
-                renderList(programLevels, 'levelListOutput', item => `<strong>${escapeHtml(item.name)}</strong>${item.duration ? ` (${escapeHtml(item.duration)})` : ''}`);
-                clearInputs(['levelName', 'levelDuration', 'levelPrivileges', 'levelRestrictions']);
-            } else {
-                alert('Please enter at least a level name.');
-            }
-        });
-    }
+    // Level system now uses simple textarea (levelSystemDesc) instead of structured fields
 
     // --- Add Button: Punishments ---
     const addPunishmentBtn = document.getElementById('addPunishmentBtn');
@@ -817,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let structureSection = '';
             const structureParts = [];
 
-            // Build level system description from dropdown selections
+            // Build level system description from dropdown selections and textarea
             const levelSystemTypes = { level: 'level system', phase: 'phase system', point: 'point system', tier: 'tier system' };
             if (vals.levelSystemType && vals.levelCount) {
                 structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType} consisting of ${escapeMarkdown(vals.levelCount)} ${vals.levelSystemType === 'phase' ? 'phases' : 'levels'}.`);
@@ -825,36 +807,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType}.`);
             }
 
-            // Build level descriptions from structured data
-            if (programLevels.length > 0) {
-                const levelDescriptions = programLevels.map(l => {
-                    let desc = `**${escapeMarkdown(l.name)}**`;
-                    if (l.duration) desc += ` (typically ${escapeMarkdown(l.duration)})`;
-                    desc += ':';
-                    const details = [];
-
-                    // If there's a freeform description (from import), use that
-                    if (l.desc) {
-                        details.push(escapeMarkdown(l.desc));
-                    } else {
-                        // Otherwise use the structured restrictions/privileges
-                        if (l.restrictions) {
-                            const restrictionList = l.restrictions.split(',').map(r => r.trim()).filter(Boolean);
-                            if (restrictionList.length > 0) {
-                                details.push(`Restrictions include ${joinWithAnd(restrictionList.map(r => escapeMarkdown(r)))}.`);
-                            }
-                        }
-                        if (l.privileges) {
-                            const privilegeList = l.privileges.split(',').map(p => p.trim()).filter(Boolean);
-                            if (privilegeList.length > 0) {
-                                details.push(`Privileges earned include ${joinWithAnd(privilegeList.map(p => escapeMarkdown(p)))}.`);
-                            }
-                        }
-                    }
-
-                    return desc + (details.length ? ' ' + details.join(' ') : ' No specific details available.');
-                }).join('\n\n');
-                structureParts.push(levelDescriptions);
+            // Add level system details from textarea
+            if (vals.levelSystemDesc && vals.levelSystemDesc.trim()) {
+                structureParts.push(vals.levelSystemDesc.trim());
             }
 
             // Build education section from dropdowns
@@ -1275,7 +1230,6 @@ ${relatedMediaSection}
 
         // Clear existing data
         staffMembers = [];
-        programLevels = [];
         punishments = [];
         lawsuits = [];
         newsArticles = [];
@@ -1328,7 +1282,8 @@ ${relatedMediaSection}
         setValue('addressLink', parsedData.addressLink);
         setValue('accreditingBody', parsedData.accreditingBody);
         setValue('accreditingBodyLink', parsedData.accreditingBodyLink);
-        setValue('historyMisc', parsedData.historyMisc);
+        // Store full history section in historyNotes (the field that actually exists and gets output)
+        setValue('historyNotes', parsedData.historyMisc);
         setValue('levelSystemDesc', parsedData.levelSystemDesc);
         setValue('structureMisc', parsedData.structureMisc);
         setValue('punishmentsMisc', parsedData.punishmentsMisc);
@@ -1337,6 +1292,8 @@ ${relatedMediaSection}
         setValue('mainComplaints', parsedData.mainComplaints);
         setValue('otherAllegationsList', parsedData.otherAllegationsList);
         setValue('mediaInfo', parsedData.mediaInfo);
+        setValue('testimoniesMisc', parsedData.testimoniesMisc);
+        setValue('relatedMediaMisc', parsedData.relatedMediaMisc);
 
         // Store unparsed content to append at the end of generated output
         if (parsedData.unparsedContent && parsedData.unparsedContent.trim()) {
@@ -1349,7 +1306,6 @@ ${relatedMediaSection}
 
         // Populate structured data arrays
         staffMembers = parsedData.staffMembers || [];
-        programLevels = parsedData.programLevels || [];
         punishments = parsedData.punishments || [];
         lawsuits = parsedData.lawsuits || [];
         newsArticles = parsedData.newsArticles || [];
@@ -1363,11 +1319,6 @@ ${relatedMediaSection}
 
         // Render lists
         renderStaffList();
-
-        if (programLevels.length > 0) {
-            renderList(programLevels, 'levelListOutput', item => `<strong>"${escapeHtml(item.name)}"</strong>`);
-            console.log(`✓ Loaded ${programLevels.length} program levels`);
-        }
 
         if (punishments.length > 0) {
             renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
@@ -1506,7 +1457,6 @@ ${relatedMediaSection}
                 mediaInfo: document.getElementById('mediaInfo')?.value || '',
                 // Arrays
                 staffMembers: staffMembers,
-                programLevels: programLevels,
                 punishments: punishments,
                 lawsuits: lawsuits,
                 newsArticles: newsArticles,
