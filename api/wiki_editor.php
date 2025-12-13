@@ -148,6 +148,10 @@ get_header();
                     <button type="button" class="add-btn" id="addOwnerChangeBtn">Add Ownership Change</button>
                 </div>
                 <div class="list-preview" id="ownerChangeListOutput"></div>
+                <hr>
+                <h4>Full History Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete history section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="historyNotes" name="historyNotes" rows="8" placeholder="Full history section content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -254,6 +258,10 @@ get_header();
                     <button type="button" class="add-btn" id="addTherapyBtn">Add Therapy Type</button>
                 </div>
                 <div class="list-preview" id="therapyListOutput"></div>
+                <hr>
+                <h4>Full Program Structure Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete program structure section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="structureMisc" name="structureMisc" rows="8" placeholder="Full program structure content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -292,6 +300,10 @@ get_header();
                     <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
                 </div>
                 <div class="list-preview" id="punishmentListOutput"></div>
+                <hr>
+                <h4>Full Rules & Punishments Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete rules and punishments section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="punishmentsMisc" name="punishmentsMisc" rows="8" placeholder="Full rules and punishments content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -374,6 +386,10 @@ get_header();
                     <button type="button" class="add-btn" id="addLawsuitBtn">Add Lawsuit</button>
                 </div>
                 <div class="list-preview" id="lawsuitListOutput"></div>
+                <hr>
+                <h4>Full Abuse/Allegations Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete abuse and allegations section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="lawsuitsMisc" name="lawsuitsMisc" rows="8" placeholder="Full abuse/allegations content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -435,6 +451,10 @@ get_header();
                     <button type="button" class="add-btn" id="addTestimonyBtn">Add Testimony</button>
                 </div>
                 <div class="list-preview" id="testimonyListOutput"></div>
+                <hr>
+                <h4>Full Testimonies Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete testimonies section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="testimoniesMisc" name="testimoniesMisc" rows="8" placeholder="Full testimonies content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
@@ -447,6 +467,10 @@ get_header();
                     <button type="button" class="add-btn" id="addMediaBtn">Add Media Link</button>
                 </div>
                 <div class="list-preview" id="mediaListOutput"></div>
+                <hr>
+                <h4>Full Related Media Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete related media section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="relatedMediaMisc" name="relatedMediaMisc" rows="8" placeholder="Full related media content in markdown format..."></textarea>
             </fieldset>
 
             <button type="button" id="generateBtn">Generate Wiki Code</button>

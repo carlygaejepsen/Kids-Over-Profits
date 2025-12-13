@@ -415,82 +415,28 @@ function parseWikiMarkdown(markdown) {
     ]);
 
     if (structureSection && !structureSection.includes('No information is known')) {
-        // Extract level system description
-        const levelDescMatch = structureSection.match(/(?:uses|used|utilizes|utilized|implements|implemented)\s+([^\.]*level[^\.]+)/i);
+        // Extract level system description (first sentence mentioning level/phase system)
+        const levelDescMatch = structureSection.match(/(?:uses|used|utilizes|utilized|implements|implemented)\s+([^\.]*(?:level|phase|tier|point)[^\.]+)/i);
         if (levelDescMatch) {
             parsedData.levelSystemDesc = levelDescMatch[1].trim();
         }
 
-        // Extract individual levels
-        const lines = structureSection.split('\n');
-        lines.forEach(line => {
-            const trimmed = line.trim();
+        // Parse levels as complete blocks (preserving ALL details)
+        // Split by level headers (lines starting with **LevelName** or similar)
+        const levelBlockRegex = /(?:^|\n)(\*\*[^\n*]+\*\*[^\n]*(?:\n(?!\*\*)[^\n]*)*)/g;
+        let match;
+        while ((match = levelBlockRegex.exec(structureSection)) !== null) {
+            const fullBlock = match[1].trim();
 
-            // Format: - **Name:** Description (bullet + bold + colon)
-            let match = trimmed.match(/^[*-]\s+\*\*([^*]+?):\s*\*\*\s*(.*)$/);
-            if (match) {
+            // Extract the level name from the header
+            const nameMatch = fullBlock.match(/^\*\*([^*:]+?)(?::|\*\*)/);
+            if (nameMatch) {
                 parsedData.programLevels.push({
-                    name: match[1].trim(),
-                    desc: match[2].trim()
+                    name: nameMatch[1].trim(),
+                    desc: fullBlock  // Store the ENTIRE block including all details
                 });
-                return;
             }
-
-            // Format: **Name:** Description (no bullet)
-            match = trimmed.match(/^\*\*([^:*]+):\*\*\s*(.*)$/);
-            if (match) {
-                parsedData.programLevels.push({
-                    name: match[1].trim(),
-                    desc: match[2].trim()
-                });
-                return;
-            }
-
-            // Format: **Name** (just bold name)
-            match = trimmed.match(/^\*\*([^*]+)\*\*$/);
-            if (match) {
-                const name = match[1].trim();
-                if (name.length < 50 && /^[A-Z0-9]/.test(name)) {
-                    parsedData.programLevels.push({
-                        name: name,
-                        desc: ''
-                    });
-                }
-                return;
-            }
-
-            // Format: * **"Name"** - Description
-            match = trimmed.match(/^[*-]\s+\*\*"([^"]+)"\*\*\s*[—\-]\s*(.+)$/);
-            if (match) {
-                parsedData.programLevels.push({
-                    name: match[1].trim(),
-                    desc: match[2].trim()
-                });
-                return;
-            }
-
-            // Format: - Name — Description
-            match = trimmed.match(/^[*-]\s+([^—\-]+?)\s*[—\-]\s*(.+)$/);
-            if (match && !match[1].includes('*')) {
-                parsedData.programLevels.push({
-                    name: match[1].trim(),
-                    desc: match[2].trim()
-                });
-                return;
-            }
-
-            // Format: - Name (simple)
-            match = trimmed.match(/^[*-]\s+([^—\-\n]+)$/);
-            if (match && !match[1].includes('*') && match[1].trim().length > 0) {
-                const name = match[1].trim();
-                if (name.length < 50 && /^[A-Z]/.test(name)) {
-                    parsedData.programLevels.push({
-                        name: name,
-                        desc: ''
-                    });
-                }
-            }
-        });
+        }
 
         // Store the ENTIRE structure section in structureMisc to preserve all content
         parsedData.structureMisc = structureSection;
