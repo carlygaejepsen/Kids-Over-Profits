@@ -2961,3 +2961,286 @@ function kop_initialize_anonymous_doc_portal() {
     new AnonymousDocPortal();
 }
 add_action('after_setup_theme', 'kop_initialize_anonymous_doc_portal');
+
+/**
+ * ========================================
+ * FILEBIRD DOCUMENT LIBRARY SYSTEM
+ * ========================================
+ */
+
+/**
+ * Enqueue document library styles and scripts
+ */
+function kop_enqueue_document_library_assets() {
+    // Only enqueue if shortcode is present or on specific pages
+    global $post;
+    if (!is_a($post, 'WP_Post')) {
+        return;
+    }
+
+    if (has_shortcode($post->post_content, 'filebird_library') ||
+        has_shortcode($post->post_content, 'filebird_folder')) {
+
+        wp_enqueue_style(
+            'kop-document-library',
+            get_stylesheet_directory_uri() . '/css/document-library.css',
+            array(),
+            '1.0.0'
+        );
+
+        wp_enqueue_script(
+            'kop-document-library',
+            get_stylesheet_directory_uri() . '/js/document-library.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_document_library_assets');
+
+/**
+ * Get FileBird folders
+ */
+function kop_get_filebird_folders() {
+    global $wpdb;
+
+    // FileBird stores folders in a custom table
+    $table_name = $wpdb->prefix . 'fbv';
+
+    // Check if FileBird table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        return array();
+    }
+
+    $folders = $wpdb->get_results(
+        "SELECT id, name, parent FROM $table_name WHERE type = 0 ORDER BY name ASC"
+    );
+
+    return $folders;
+}
+
+/**
+ * Get attachments from a FileBird folder
+ */
+function kop_get_folder_attachments($folder_id) {
+    global $wpdb;
+
+    $attachment_table = $wpdb->prefix . 'fbv_attachment_folder';
+
+    // Check if FileBird attachment table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '$attachment_table'") != $attachment_table) {
+        return array();
+    }
+
+    // Get attachment IDs from the folder
+    $attachment_ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT attachment_id FROM $attachment_table WHERE folder_id = %d",
+            $folder_id
+        )
+    );
+
+    if (empty($attachment_ids)) {
+        return array();
+    }
+
+    // Get attachment details
+    $args = array(
+        'post_type' => 'attachment',
+        'post_status' => 'inherit',
+        'posts_per_page' => -1,
+        'post__in' => $attachment_ids,
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    return get_posts($args);
+}
+
+/**
+ * Shortcode: Display full document library with all folders
+ * Usage: [filebird_library]
+ */
+function kop_filebird_library_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'show_search' => 'yes',
+        'show_count' => 'yes',
+        'layout' => 'grid', // Default to grid layout
+    ), $atts);
+
+    $folders = kop_get_filebird_folders();
+
+    if (empty($folders)) {
+        return '<p>No document folders found. Make sure FileBird Pro is installed and you have created folders.</p>';
+    }
+
+    ob_start();
+    ?>
+    <div class="kop-document-library">
+        <?php if ($atts['show_search'] === 'yes'): ?>
+        <div class="doc-library-search">
+            <input type="text"
+                   id="docSearch"
+                   class="doc-search-input"
+                   placeholder="Search folders and documents...">
+        </div>
+        <?php endif; ?>
+
+        <div class="doc-library-folders">
+            <?php foreach ($folders as $folder): ?>
+                <?php
+                $attachments = kop_get_folder_attachments($folder->id);
+                $file_count = count($attachments);
+                ?>
+                <div class="doc-folder" data-folder-id="<?php echo esc_attr($folder->id); ?>" data-folder-name="<?php echo esc_attr($folder->name); ?>">
+                    <div class="doc-folder-header">
+                        <h3 class="doc-folder-title">
+                            <span class="folder-icon">📁</span>
+                            <?php echo esc_html($folder->name); ?>
+                            <?php if ($atts['show_count'] === 'yes'): ?>
+                            <span class="doc-count">(<?php echo $file_count; ?>)</span>
+                            <?php endif; ?>
+                        </h3>
+                        <button class="doc-folder-toggle" aria-expanded="false">
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                    </div>
+
+                    <div class="doc-folder-content" style="display: none;">
+                        <?php if (!empty($attachments)): ?>
+                        <ul class="doc-list doc-layout-<?php echo esc_attr($atts['layout']); ?>">
+                            <?php foreach ($attachments as $attachment): ?>
+                                <?php
+                                $file_url = wp_get_attachment_url($attachment->ID);
+                                $file_type = wp_check_filetype($file_url);
+                                $file_ext = strtoupper($file_type['ext']);
+                                $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+                                $mime_type = get_post_mime_type($attachment->ID);
+                                $is_image = strpos($mime_type, 'image') !== false;
+                                $is_pdf = $file_type['ext'] === 'pdf';
+                                ?>
+                                <li class="doc-item" data-title="<?php echo esc_attr($attachment->post_title); ?>">
+                                    <a href="<?php echo esc_url($file_url); ?>"
+                                       class="doc-link"
+                                       target="_blank"
+                                       rel="noopener">
+                                        <div class="doc-thumbnail">
+                                            <?php if ($is_image): ?>
+                                                <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
+                                                     alt="<?php echo esc_attr($attachment->post_title); ?>">
+                                            <?php else: ?>
+                                                <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
+                                                    <?php echo esc_html($file_ext); ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="doc-info">
+                                            <span class="doc-title"><?php echo esc_html($attachment->post_title); ?></span>
+                                            <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
+                                        </div>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <?php else: ?>
+                        <p class="no-documents">No documents in this folder.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="doc-no-results" style="display: none;">
+            <p>No folders or documents found matching your search.</p>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('filebird_library', 'kop_filebird_library_shortcode');
+
+/**
+ * Shortcode: Display specific FileBird folder
+ * Usage: [filebird_folder folder_id="5" title="Resources"]
+ */
+function kop_filebird_folder_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'folder_id' => '',
+        'title' => '',
+        'show_count' => 'yes',
+        'layout' => 'grid', // Default to grid layout
+    ), $atts);
+
+    if (empty($atts['folder_id'])) {
+        return '<p>Please specify a folder_id. Example: [filebird_folder folder_id="5"]</p>';
+    }
+
+    global $wpdb;
+    $folder_table = $wpdb->prefix . 'fbv';
+
+    // Get folder name if title not provided
+    if (empty($atts['title'])) {
+        $folder = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT name FROM $folder_table WHERE id = %d",
+                $atts['folder_id']
+            )
+        );
+        $atts['title'] = $folder ? $folder->name : 'Documents';
+    }
+
+    $attachments = kop_get_folder_attachments($atts['folder_id']);
+
+    ob_start();
+    ?>
+    <div class="kop-document-folder">
+        <h3 class="doc-folder-title-single">
+            <?php echo esc_html($atts['title']); ?>
+            <?php if ($atts['show_count'] === 'yes'): ?>
+            <span class="doc-count">(<?php echo count($attachments); ?>)</span>
+            <?php endif; ?>
+        </h3>
+
+        <?php if (!empty($attachments)): ?>
+        <ul class="doc-list doc-layout-<?php echo esc_attr($atts['layout']); ?>">
+            <?php foreach ($attachments as $attachment): ?>
+                <?php
+                $file_url = wp_get_attachment_url($attachment->ID);
+                $file_type = wp_check_filetype($file_url);
+                $file_ext = strtoupper($file_type['ext']);
+                $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+                $mime_type = get_post_mime_type($attachment->ID);
+                $is_image = strpos($mime_type, 'image') !== false;
+                ?>
+                <li class="doc-item">
+                    <a href="<?php echo esc_url($file_url); ?>"
+                       class="doc-link"
+                       target="_blank"
+                       rel="noopener">
+                        <div class="doc-thumbnail">
+                            <?php if ($is_image): ?>
+                                <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
+                                     alt="<?php echo esc_attr($attachment->post_title); ?>">
+                            <?php else: ?>
+                                <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
+                                    <?php echo esc_html($file_ext); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="doc-info">
+                            <span class="doc-title"><?php echo esc_html($attachment->post_title); ?></span>
+                            <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
+                        </div>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php else: ?>
+        <p class="no-documents">No documents found in this folder.</p>
+        <?php endif; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('filebird_folder', 'kop_filebird_folder_shortcode');

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rules = [];
     let allegations = [];
     let therapies = [];
+    let programLevels = [];
     let importedMarkdown = ''; // Store original imported markdown
 
     const staffNameInput = document.getElementById('staffName');
@@ -516,6 +517,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Add Button: Levels ---
+    const addLevelBtn = document.getElementById('addLevelBtn');
+    if (addLevelBtn) {
+        addLevelBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('levelName')?.value.trim() || '';
+            const duration = document.getElementById('levelDuration')?.value.trim() || '';
+            const privileges = document.getElementById('levelPrivileges')?.value.trim() || '';
+            const restrictions = document.getElementById('levelRestrictions')?.value.trim() || '';
+
+            if (name) {
+                programLevels.push({ name, duration, privileges, restrictions });
+                renderList(programLevels, 'levelListOutput', item => {
+                    const parts = [`<strong>${escapeHtml(item.name)}</strong>`];
+                    if (item.duration) parts.push(`Duration: ${escapeHtml(item.duration)}`);
+                    return parts.join(' - ');
+                });
+                clearInputs(['levelName', 'levelDuration', 'levelPrivileges', 'levelRestrictions']);
+            } else {
+                alert('Please enter at least a level name.');
+            }
+        });
+    }
+
     // --- Add Button: Articles ---
     const addArticleBtn = document.getElementById('addArticleBtn');
     if (addArticleBtn) {
@@ -799,13 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- Build Structure Section ---
             let structureSection = '';
-
-            // If we have the full imported structure section, use it (preserves all content)
-            // Otherwise, generate from structured data
-            if (vals.structureMisc && vals.structureMisc.trim()) {
-                structureSection = vals.structureMisc.trim();
-            } else {
-                const structureParts = [];
+            const structureParts = [];
 
                 // Build level system description from dropdown selections and textarea
                 const levelSystemTypes = { level: 'level system', phase: 'phase system', point: 'point system', tier: 'tier system' };
@@ -818,6 +837,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add level system details from textarea
                 if (vals.levelSystemDesc && vals.levelSystemDesc.trim()) {
                     structureParts.push(vals.levelSystemDesc.trim());
+                }
+
+                // Build level/phase descriptions from programLevels array
+                if (programLevels.length > 0) {
+                    const levelDescriptions = programLevels.map(level => {
+                        // If we have the full description stored, use it
+                        if (level.fullDesc) {
+                            return `- **${escapeMarkdown(level.name)}:** ${level.fullDesc}`;
+                        }
+
+                        // Otherwise build from structured fields
+                        const parts = [];
+                        if (level.duration) parts.push(`Duration: ${escapeMarkdown(level.duration)}`);
+                        if (level.privileges) parts.push(`Privileges: ${escapeMarkdown(level.privileges)}`);
+                        if (level.restrictions) parts.push(`Restrictions: ${escapeMarkdown(level.restrictions)}`);
+
+                        return `- **${escapeMarkdown(level.name)}**${parts.length > 0 ? ': ' + parts.join('. ') : ''}`;
+                    }).join('\n\n');
+
+                    if (levelDescriptions) {
+                        structureParts.push(levelDescriptions);
+                    }
                 }
 
                 // Build education section from dropdowns
@@ -845,8 +886,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     structureParts.push(`The program offers ${joinWithAnd(therapyDescriptions)}.`);
                 }
 
+                // Append any additional structure notes (e.g., points system details)
+                if (vals.structureMisc && vals.structureMisc.trim()) {
+                    structureParts.push(vals.structureMisc.trim());
+                }
+
                 structureSection = structureParts.length > 0 ? structureParts.join('\n\n') : getPlaceholder('Program Structure', programName);
-            }
 
             // --- Build Rules & Punishments Section ---
             let rulesSection = '';
@@ -1354,6 +1399,7 @@ ${relatedMediaSection}
         rules = parsedData.rules || [];
         allegations = parsedData.allegations || [];
         therapies = parsedData.therapies || [];
+        programLevels = parsedData.programLevels || [];
 
         // Render lists
         renderStaffList();
@@ -1400,6 +1446,19 @@ ${relatedMediaSection}
 
         if (relatedMedia.length > 0) {
             renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
+        }
+
+        if (therapies.length > 0) {
+            renderList(therapies, 'therapyListOutput', item => `<strong>${escapeHtml(item.label || item.type)}</strong>${item.frequency ? ` (${escapeHtml(item.frequency)})` : ''}`);
+        }
+
+        if (programLevels.length > 0) {
+            renderList(programLevels, 'levelListOutput', item => {
+                const parts = [`<strong>${escapeHtml(item.name)}</strong>`];
+                if (item.duration) parts.push(`Duration: ${escapeHtml(item.duration)}`);
+                if (item.privileges) parts.push(`Privileges: ${escapeHtml(item.privileges.substring(0, 50))}...`);
+                return parts.join(' | ');
+            });
         }
 
         console.log('✓ Import complete!');

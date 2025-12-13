@@ -344,8 +344,10 @@ function parseWikiMarkdown(markdown) {
             parsedData.accreditingBodyLink = sanitizeUrl(accreditMatch[2]);
         }
 
-        // Store the ENTIRE history section in historyMisc to preserve all content
-        parsedData.historyMisc = historySection;
+        // DON'T store everything in historyMisc - let the user edit form fields
+        // historyMisc should only contain content that truly couldn't be parsed
+        // For now, leave it empty and rely on structured fields
+        // parsedData.historyMisc = historySection;
     }
 
     // Parse Staff section
@@ -421,25 +423,70 @@ function parseWikiMarkdown(markdown) {
             parsedData.levelSystemDesc = levelDescMatch[1].trim();
         }
 
-        // Parse levels as complete blocks (preserving ALL details)
-        // Split by level headers (lines starting with **LevelName** or similar)
-        const levelBlockRegex = /(?:^|\n)(\*\*[^\n*]+\*\*[^\n]*(?:\n(?!\*\*)[^\n]*)*)/g;
+        // Parse levels as complete blocks with structured data extraction
+        // Match bullet points starting with **Name** or **Name:**
+        const levelBlockRegex = /-\s+\*\*([^*]+?)\*\*\s*:?\s*([^]*?)(?=\n-\s+\*\*|\n\n(?![\s-])|$)/g;
         let match;
-        while ((match = levelBlockRegex.exec(structureSection)) !== null) {
-            const fullBlock = match[1].trim();
+        let lastMatchEnd = 0;
 
-            // Extract the level name from the header
-            const nameMatch = fullBlock.match(/^\*\*([^*:]+?)(?::|\*\*)/);
-            if (nameMatch) {
-                parsedData.programLevels.push({
-                    name: nameMatch[1].trim(),
-                    desc: fullBlock  // Store the ENTIRE block including all details
-                });
+        while ((match = levelBlockRegex.exec(structureSection)) !== null) {
+            const levelName = match[1].trim();
+            const fullBlock = match[2].trim();
+            lastMatchEnd = levelBlockRegex.lastIndex;
+
+            // Extract duration (look for "remain on", "minimum of X days", etc.)
+            let duration = '';
+            const durationPatterns = [
+                /remain on [^\.]+for (\d+\s+(?:days?|weeks?|months?)(?:\s+\([^)]+\))?)/i,
+                /minimum of (\d+\s+days?)/i,
+                /(\d+\s+(?:days?|weeks?|months?)[^,\.]*(consecutively|not consecutive)?)/i
+            ];
+            for (const pattern of durationPatterns) {
+                const durMatch = fullBlock.match(pattern);
+                if (durMatch) {
+                    duration = durMatch[1].trim();
+                    break;
+                }
             }
+
+            // Extract privileges (look for lists of what they CAN do)
+            let privileges = [];
+            const privText = fullBlock;
+            const privMatches = privText.matchAll(/(?:allowed to|able to|can|eligible for|permitted to)\s+([^\.]+?)(?=\.|,\s+(?:and\s+)?(?:allowed|able|eligible|permitted)|$)/gi);
+            for (const pm of privMatches) {
+                const priv = pm[1].trim();
+                if (priv && priv.length < 200) {
+                    privileges.push(priv);
+                }
+            }
+
+            // Extract restrictions (look for what they CANNOT do or MUST do)
+            let restrictions = [];
+            const restrMatches = fullBlock.matchAll(/(?:must|need to|required to|not able to|cannot|not allowed|restricted from)\s+([^\.]+?)(?=\.|,\s+(?:and\s+)?(?:must|need|required|not|cannot)|$)/gi);
+            for (const rm of restrMatches) {
+                const restr = rm[1].trim();
+                if (restr && restr.length < 200) {
+                    restrictions.push(restr);
+                }
+            }
+
+            parsedData.programLevels.push({
+                name: levelName,
+                duration: duration,
+                privileges: privileges.join(', '),
+                restrictions: restrictions.join(', '),
+                fullDesc: fullBlock  // Keep the complete block for reference
+            });
         }
 
-        // Store the ENTIRE structure section in structureMisc to preserve all content
-        parsedData.structureMisc = structureSection;
+        // Capture any content AFTER the last level (e.g., points system explanation, education details)
+        // This is the "additional notes" that don't fit into structured fields
+        if (lastMatchEnd > 0 && lastMatchEnd < structureSection.length) {
+            const remainingContent = structureSection.substring(lastMatchEnd).trim();
+            if (remainingContent) {
+                parsedData.structureMisc = remainingContent;
+            }
+        }
     }
 
     // Parse Abuse section
@@ -518,8 +565,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Store the ENTIRE abuse section in lawsuitsMisc to preserve all content
-        parsedData.lawsuitsMisc = abuseSection;
+        // DON'T store everything in lawsuitsMisc - let the user edit form fields
+        // parsedData.lawsuitsMisc = abuseSection;
     }
 
     // Parse Rules and Punishments section
@@ -555,8 +602,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Store the ENTIRE rules/punishments section in punishmentsMisc to preserve all content
-        parsedData.punishmentsMisc = rulesSection;
+        // DON'T store everything in punishmentsMisc - let the user edit form fields
+        // parsedData.punishmentsMisc = rulesSection;
     }
 
     // Parse In the Media & News section
@@ -578,8 +625,8 @@ function parseWikiMarkdown(markdown) {
             });
         }
 
-        // Store the ENTIRE media section in mediaInfo to preserve all content
-        parsedData.mediaInfo = mediaSection;
+        // DON'T store everything in mediaInfo - let the user edit form fields
+        // parsedData.mediaInfo = mediaSection;
     }
 
     // Parse Survivor Testimonies section
@@ -608,8 +655,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Store the ENTIRE testimonies section in testimoniesMisc to preserve all content
-        parsedData.testimoniesMisc = testimoniesSection;
+        // DON'T store everything in testimoniesMisc - let the user edit form fields
+        // parsedData.testimoniesMisc = testimoniesSection;
     }
 
     // Parse Related Media section
@@ -630,8 +677,8 @@ function parseWikiMarkdown(markdown) {
             });
         }
 
-        // Store the ENTIRE related media section in relatedMediaMisc to preserve all content
-        parsedData.relatedMediaMisc = relatedMediaSection;
+        // DON'T store everything in relatedMediaMisc - let the user edit form fields
+        // parsedData.relatedMediaMisc = relatedMediaSection;
     }
 
     // Collect unparsed sections

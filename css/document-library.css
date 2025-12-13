@@ -1,0 +1,424 @@
+/**
+ * Document Library Styles
+ * Styling for FileBird folder display with KOP color palette
+ */
+
+/* Main container */
+.kop-document-library {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Search bar */
+.doc-library-search {
+    margin-bottom: 30px;
+}
+
+.doc-search-input {
+    width: 100%;
+    max-width: 600px;
+    padding: 15px 20px;
+    font-size: 16px;
+    border: 2px solid var(--kop-border-secondary);
+    border-radius: 8px;
+    background: var(--kop-white);
+    color: var(--kop-text-primary);
+    transition: all 0.3s ease;
+}
+
+.doc-search-input:focus {
+    outline: none;
+    border-color: var(--kop-focus-color);
+    box-shadow: 0 0 0 3px var(--kop-focus-shadow);
+}
+
+/* Folders container */
+.doc-library-folders {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Individual folder */
+.doc-folder {
+    background: var(--kop-white);
+    border: 2px solid var(--kop-border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.doc-folder:hover {
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.15);
+    border-color: var(--kop-teal);
+}
+
+/* Folder header */
+.doc-folder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, var(--kop-sand) 0%, var(--kop-soft-pastel-yellow) 100%);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.doc-folder-header:hover {
+    background: linear-gradient(135deg, var(--kop-mint-green) 0%, var(--kop-powder-blue) 100%);
+}
+
+.doc-folder-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--kop-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.folder-icon {
+    font-size: 24px;
+}
+
+.doc-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--kop-text-secondary);
+    margin-left: 8px;
+}
+
+.doc-folder-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.doc-folder-toggle .toggle-icon {
+    font-size: 14px;
+    color: var(--kop-text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.doc-folder-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Folder content */
+.doc-folder-content {
+    padding: 20px 25px;
+    background: var(--kop-white);
+}
+
+/* Document list - List layout (vertical) */
+.doc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* List layout - vertical stacking */
+.doc-layout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.doc-layout-list .doc-item {
+    transition: transform 0.2s ease;
+}
+
+.doc-layout-list .doc-item:hover {
+    transform: translateX(5px);
+}
+
+.doc-layout-list .doc-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--kop-sand);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.doc-layout-list .doc-link:hover {
+    background: var(--kop-mint-green);
+    box-shadow: 0 2px 8px rgba(51, 167, 181, 0.1);
+}
+
+.doc-layout-list .doc-thumbnail {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.doc-layout-list .doc-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.doc-layout-list .doc-download {
+    font-size: 20px;
+    color: var(--kop-teal);
+    flex-shrink: 0;
+}
+
+/* Grid layout - card-based display */
+.doc-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.doc-layout-grid .doc-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doc-layout-grid .doc-item:hover {
+    transform: translateY(-5px);
+}
+
+.doc-layout-grid .doc-link {
+    display: flex;
+    flex-direction: column;
+    background: var(--kop-white);
+    border: 2px solid var(--kop-border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.doc-layout-grid .doc-link:hover {
+    box-shadow: 0 8px 20px rgba(51, 167, 181, 0.2);
+    border-color: var(--kop-teal);
+}
+
+.doc-layout-grid .doc-thumbnail {
+    width: 100%;
+    height: 180px;
+    background: var(--kop-sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.doc-layout-grid .doc-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.doc-layout-grid .doc-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+/* Thumbnail styling */
+.doc-thumbnail {
+    position: relative;
+}
+
+.doc-thumbnail img {
+    display: block;
+}
+
+/* Icon styling for non-image files */
+.doc-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--kop-teal);
+    color: var(--kop-white);
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+/* File type colors using KOP palette */
+.doc-icon-pdf { background: var(--kop-coral-pink); }
+.doc-icon-doc,
+.doc-icon-docx { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
+.doc-icon-xls,
+.doc-icon-xlsx { background: var(--kop-mint-green); color: var(--kop-midnight-blue); }
+.doc-icon-ppt,
+.doc-icon-pptx { background: var(--kop-orange); }
+.doc-icon-zip,
+.doc-icon-rar { background: var(--kop-navy-blue); }
+.doc-icon-jpg,
+.doc-icon-jpeg,
+.doc-icon-png,
+.doc-icon-gif { background: var(--kop-bubblegum-pink); }
+.doc-icon-txt { background: var(--kop-midnight-blue); }
+.doc-icon-mp4,
+.doc-icon-mov,
+.doc-icon-avi { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+
+/* Text styling */
+.doc-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--kop-text-primary);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.doc-meta {
+    font-size: 13px;
+    color: var(--kop-text-secondary);
+    font-weight: 500;
+}
+
+/* Download indicator - only show on list layout */
+.doc-download {
+    display: none;
+}
+
+.doc-layout-list .doc-download {
+    display: block;
+    font-size: 20px;
+    color: var(--kop-teal);
+}
+
+/* No documents message */
+.no-documents {
+    color: var(--kop-text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+/* No results */
+.doc-no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--kop-text-secondary);
+}
+
+.doc-no-results p {
+    font-size: 18px;
+}
+
+/* Single folder display */
+.kop-document-folder {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.doc-folder-title-single {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--kop-text-primary);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--kop-teal);
+}
+
+/* Grid layout option */
+.doc-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.doc-layout-grid .doc-link {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.doc-layout-grid .doc-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .kop-document-library,
+    .kop-document-folder {
+        padding: 15px;
+    }
+
+    .doc-folder-header {
+        padding: 15px;
+    }
+
+    .doc-folder-title {
+        font-size: 18px;
+    }
+
+    .folder-icon {
+        font-size: 20px;
+    }
+
+    .doc-folder-content {
+        padding: 15px;
+    }
+
+    .doc-link {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .doc-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 10px;
+    }
+
+    .doc-title {
+        font-size: 14px;
+    }
+
+    .doc-meta {
+        font-size: 12px;
+    }
+
+    .doc-layout-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation for showing/hiding */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 2000px;
+    }
+}
+
+.doc-folder-content.open {
+    animation: slideDown 0.3s ease-out;
+}
