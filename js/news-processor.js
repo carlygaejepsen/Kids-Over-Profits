@@ -130,7 +130,9 @@
         setupAlnewstle();
         setupClearButton();
         setupTemplates();
+        setupDynamicFields();
         setupAIToggle();
+        setupDatabaseSubmission();
         restoreFormState();
         restoreSavedValues();
     }
@@ -711,6 +713,125 @@
 
         // Scroll to basic details
         document.getElementById('section-basic').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // --- DYNAMIC FIELDS (facilities, staff, survivors) ---
+    function setupDynamicFields() {
+        const fields = {
+            facilities: { container: 'facilities-container', category: 'facility', placeholder: 'Facility name' },
+            staff: { container: 'staff-container', category: 'human', placeholder: 'Staff member name' },
+            survivors: { container: 'survivors-container', category: 'human', placeholder: 'Survivor name' }
+        };
+
+        Object.keys(fields).forEach(fieldName => {
+            const config = fields[fieldName];
+            const container = document.getElementById(config.container);
+            const addBtn = document.querySelector(`[data-add-field="${fieldName}"]`);
+
+            if (!container || !addBtn) return;
+
+            // Add click handler for add button
+            addBtn.addEventListener('click', () => addDynamicField(fieldName, config));
+
+            // Initialize with existing data
+            const existingData = formData[fieldName];
+            if (existingData) {
+                const values = typeof existingData === 'string'
+                    ? existingData.split('\n').filter(v => v.trim())
+                    : (Array.isArray(existingData) ? existingData : []);
+
+                values.forEach(value => {
+                    if (value.trim()) {
+                        addDynamicField(fieldName, config, value.trim());
+                    }
+                });
+            }
+
+            // If no fields exist, add one empty field
+            if (container.children.length === 0) {
+                addDynamicField(fieldName, config);
+            }
+        });
+    }
+
+    function addDynamicField(fieldName, config, initialValue = '') {
+        const container = document.getElementById(config.container);
+        if (!container) return;
+
+        const fieldGroup = document.createElement('div');
+        fieldGroup.className = 'news-dynamic-field-group';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'news-input';
+        input.dataset.dynamicField = fieldName;
+        input.dataset.autocompleteCategory = config.category;
+        input.placeholder = config.placeholder;
+        input.value = initialValue;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'news-btn news-btn-remove';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.title = 'Remove';
+
+        removeBtn.addEventListener('click', () => {
+            fieldGroup.remove();
+            updateDynamicFieldData(fieldName);
+            saveToLocalStorage();
+        });
+
+        input.addEventListener('input', () => {
+            updateDynamicFieldData(fieldName);
+            saveToLocalStorage();
+        });
+
+        // Save value to database when user finishes typing
+        input.addEventListener('blur', () => {
+            const value = input.value.trim();
+            if (value) {
+                saveValueToDatabase(fieldName, value);
+            }
+        });
+
+        fieldGroup.appendChild(input);
+        fieldGroup.appendChild(removeBtn);
+        container.appendChild(fieldGroup);
+
+        // Initialize autocomplete if available
+        if (typeof initializeAutocompleteFields === 'function') {
+            initializeAutocompleteFields();
+        }
+
+        updateDynamicFieldData(fieldName);
+        return input;
+    }
+
+    function updateDynamicFieldData(fieldName) {
+        const inputs = document.querySelectorAll(`[data-dynamic-field="${fieldName}"]`);
+        const values = Array.from(inputs)
+            .map(input => input.value.trim())
+            .filter(v => v);
+
+        formData[fieldName] = values.join('\n');
+    }
+
+    async function saveValueToDatabase(fieldName, value) {
+        try {
+            await fetch('/wp-content/themes/child/api/saved-values.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    form: 'news',
+                    category: fieldName,
+                    value: value
+                })
+            });
+        } catch (error) {
+            console.warn('Failed to save autocomplete value:', error);
+        }
     }
 
     // --- AI PROCESSING ---

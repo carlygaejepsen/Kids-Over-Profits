@@ -120,26 +120,21 @@ get_header();
                     </div>
 
                     <div class="news-form-group">
-                        <label>news Facilities/Companies</label>
-                        <div class="news-input-with-save">
-                            <textarea name="facilities" class="news-textarea" rows="3" placeholder="One per line"></textarea>
-                            <button class="news-save-btn" data-save="facilities" data-field="facilities">💾</button>
-                        </div>
-                        <div class="news-saved-tags" data-category="facilities"></div>
+                        <label>Facilities/Companies Mentioned</label>
+                        <div id="facilities-container" class="news-dynamic-fields"></div>
+                        <button type="button" class="news-btn news-btn-add" data-add-field="facilities">+ Add Facility</button>
                     </div>
 
                     <div class="news-grid-2">
                         <div class="news-form-group">
-                            <label>Staff/Owners</label>
-                            <div class="news-input-with-save">
-                                <textarea name="staff" class="news-textarea" rows="3" placeholder="One per line"></textarea>
-                                <button class="news-save-btn" data-save="staff" data-field="staff">💾</button>
-                            </div>
-                            <div class="news-saved-tags" data-category="staff"></div>
+                            <label>Staff/Owners Mentioned</label>
+                            <div id="staff-container" class="news-dynamic-fields"></div>
+                            <button type="button" class="news-btn news-btn-add" data-add-field="staff">+ Add Staff</button>
                         </div>
                         <div class="news-form-group">
                             <label>Survivors Mentioned</label>
-                            <textarea name="survivors" class="news-textarea" rows="3" placeholder="One per line"></textarea>
+                            <div id="survivors-container" class="news-dynamic-fields"></div>
+                            <button type="button" class="news-btn news-btn-add" data-add-field="survivors">+ Add Survivor</button>
                         </div>
                     </div>
                 </div>
@@ -244,6 +239,14 @@ get_header();
         <div id="newsSubmitStatus" class="news-submit-status"></div>
     </div>
 </div>
+
+<script>
+// Configure autocomplete API endpoint for news processor
+window.KOP_FormLoader = window.KOP_FormLoader || {};
+window.KOP_FormLoader.API_ENDPOINTS = window.KOP_FormLoader.API_ENDPOINTS || {};
+window.KOP_FormLoader.API_ENDPOINTS.AUTOCOMPLETE = '<?php echo get_stylesheet_directory_uri(); ?>/api/get-autocomplete.php';
+</script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/autocomplete.js"></script>
 
 <?php
 get_footer();

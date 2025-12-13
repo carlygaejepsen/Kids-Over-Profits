@@ -654,6 +654,97 @@
     border: 2px solid #EF9034;
 }
 
+/* Dynamic Fields (facilities, staff, survivors) */
+.news-dynamic-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.news-dynamic-field-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.news-dynamic-field-group .news-input {
+    flex: 1;
+}
+
+.news-btn-add {
+    background: linear-gradient(to bottom, #B2E102, #ECF385); /* Chartreuse to Pale Yellow */
+    border: 2px solid #B2E102;
+    color: #000080; /* Navy Blue */
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.news-btn-add:hover {
+    background: #B2E102;
+    transform: translateY(-1px);
+}
+
+.news-btn-remove {
+    background: #FE8088; /* Salmon Pink */
+    border: 2px solid #FC8ED6; /* Hot Pink */
+    color: #FFFFFF;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.news-btn-remove:hover {
+    background: #FC8ED6;
+    transform: scale(1.1);
+}
+
+/* Autocomplete Dropdown Styles */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #FFFFFF;
+    border: 2px solid #33A7B5; /* Teal */
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 68, 53, 0.1);
+    z-index: 1000;
+    display: none;
+}
+
+.autocomplete-dropdown.active {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background: #B6E3D4; /* Mint Green */
+}
+
+.autocomplete-item strong {
+    font-weight: 700;
+    color: #000080; /* Navy Blue */
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .news-templates-grid {
@@ -662,6 +753,16 @@
 
     .news-toggle-text {
         font-size: 1rem;
+    }
+
+    .news-dynamic-field-group {
+        flex-direction: column;
+    }
+
+    .news-btn-remove {
+        width: 100%;
+        height: auto;
+        padding: 0.5rem;
     }
 }
 

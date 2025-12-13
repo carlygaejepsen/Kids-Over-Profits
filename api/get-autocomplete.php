@@ -675,6 +675,29 @@ function collect_values_for_category($category, array $data, array &$set)
 try {
     $valueSet = [];
 
+    // First, check saved_form_values table for news processor submissions
+    $newsCategories = ['facility', 'human']; // 'facility' maps to facilities, 'human' maps to staff/survivors
+    if (in_array($category, $newsCategories)) {
+        try {
+            $savedValuesQuery = "SELECT DISTINCT value FROM saved_form_values
+                                WHERE form_type = 'news'
+                                AND category IN ('facilities', 'staff', 'survivors', 'authors', 'publications')
+                                ORDER BY use_count DESC, value ASC
+                                LIMIT 200";
+            $savedStmt = $pdo->query($savedValuesQuery);
+            if ($savedStmt) {
+                while ($row = $savedStmt->fetch(PDO::FETCH_ASSOC)) {
+                    if (!empty($row['value'])) {
+                        add_value($valueSet, $row['value']);
+                    }
+                }
+            }
+        } catch (PDOException $e) {
+            // Table might not exist yet, continue without error
+        }
+    }
+
+    // Then query from data-form tables
     $sources = [
         "SELECT json_data AS payload FROM facilities_master",
         "SELECT json_data AS payload FROM referrers_master",
