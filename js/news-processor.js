@@ -74,6 +74,50 @@
         }
     }
 
+    // Templates for quick start
+    const articleTemplates = {
+        lawsuit: {
+            name: 'Lawsuit Article',
+            icon: '⚖️',
+            fields: {
+                articleType: 'lawsuit',
+                contentWarnings: ['Physical Restraint', 'Seclusion']
+            }
+        },
+        arrest: {
+            name: 'Staff Arrest',
+            icon: '👮',
+            fields: {
+                articleType: 'arrest',
+                contentWarnings: ['Child Sexual Abuse', 'Law Enforcement Abuse']
+            }
+        },
+        closure: {
+            name: 'Facility Closure',
+            icon: '🏢',
+            fields: {
+                articleType: 'closure',
+                contentWarnings: []
+            }
+        },
+        expose: {
+            name: 'Survivor Account',
+            icon: '📰',
+            fields: {
+                articleType: 'expose',
+                contentWarnings: ['Graphic Descriptions of Assaults or Injuries', 'Physical Restraint']
+            }
+        },
+        corporate: {
+            name: 'Corporate Change',
+            icon: '🏛️',
+            fields: {
+                articleType: 'corporate',
+                contentWarnings: []
+            }
+        }
+    };
+
     // Initialize
     function init() {
         loadFromLocalStorage();
@@ -85,6 +129,8 @@
         setupExportButtons();
         setupAlnewstle();
         setupClearButton();
+        setupTemplates();
+        setupAIToggle();
         restoreFormState();
         restoreSavedValues();
     }
@@ -615,6 +661,170 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    // --- TEMPLATES ---
+    function setupTemplates() {
+        const container = document.getElementById('template-buttons');
+        if (!container) return;
+
+        Object.keys(articleTemplates).forEach(key => {
+            const template = articleTemplates[key];
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'news-template-btn';
+            btn.innerHTML = `${template.icon} ${template.name}`;
+            btn.addEventListener('click', () => applyTemplate(key));
+            container.appendChild(btn);
+        });
+    }
+
+    function applyTemplate(templateKey) {
+        const template = articleTemplates[templateKey];
+        if (!template) return;
+
+        // Set article type
+        formData.articleType = template.fields.articleType;
+
+        // Set content warnings
+        formData.contentWarnings = [...template.fields.contentWarnings];
+
+        // Update UI
+        document.querySelectorAll('.news-type-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.value === template.fields.articleType) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Update content warnings UI
+        document.querySelectorAll('.news-warning-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (template.fields.contentWarnings.includes(btn.textContent)) {
+                btn.classList.add('active');
+            }
+        });
+
+        updateWarningsCount();
+        showTypeSpecificForm(template.fields.articleType);
+        saveToLocalStorage();
+
+        // Scroll to basic details
+        document.getElementById('section-basic').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // --- AI PROCESSING ---
+    function setupAIToggle() {
+        const toggle = document.getElementById('ai-enabled');
+        const aiControls = document.getElementById('ai-controls');
+        const processBtn = document.getElementById('process-with-ai');
+        const providerSelect = document.getElementById('ai-provider');
+        const providerInfo = document.getElementById('provider-info');
+
+        if (!toggle || !aiControls || !processBtn) return;
+
+        const providerDescriptions = {
+            'ollama': 'Ollama runs on your computer - completely free and unlimited! Install from ollama.com',
+            'groq': 'Groq offers 14,400 free requests/day. Get API key from console.groq.com',
+            'gemini': 'Google Gemini offers 60 requests/minute free. Get API key from ai.google.dev',
+            'huggingface': 'Hugging Face has free inference API. Get API key from huggingface.co',
+            'claude': 'Claude API costs ~$0.01-0.03 per article. Get API key from console.anthropic.com'
+        };
+
+        toggle.addEventListener('change', function() {
+            aiControls.style.display = this.checked ? 'block' : 'none';
+            localStorage.setItem('news_ai_enabled', this.checked);
+        });
+
+        // Restore AI toggle state
+        const aiEnabled = localStorage.getItem('news_ai_enabled') === 'true';
+        toggle.checked = aiEnabled;
+        aiControls.style.display = aiEnabled ? 'block' : 'none';
+
+        // Provider selection
+        if (providerSelect && providerInfo) {
+            // Restore saved provider
+            const savedProvider = localStorage.getItem('news_ai_provider') || 'ollama';
+            providerSelect.value = savedProvider;
+            providerInfo.textContent = providerDescriptions[savedProvider];
+
+            providerSelect.addEventListener('change', function() {
+                const provider = this.value;
+                localStorage.setItem('news_ai_provider', provider);
+                providerInfo.textContent = providerDescriptions[provider];
+            });
+        }
+
+        processBtn.addEventListener('click', processWithAI);
+    }
+
+    async function processWithAI() {
+        const url = formData.url;
+        const pastedText = document.getElementById('ai-article-text')?.value || '';
+        const statusEl = document.getElementById('ai-status');
+        const processBtn = document.getElementById('process-with-ai');
+        const provider = document.getElementById('ai-provider')?.value || 'ollama';
+
+        if (!url && !pastedText) {
+            statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';
+            return;
+        }
+
+        statusEl.innerHTML = '<span class="loading">🤖 Processing with AI...</span>';
+        processBtn.disabled = true;
+
+        try {
+            const response = await fetch('/wp-content/themes/child/api/process-news-ai.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: url,
+                    articleText: pastedText,
+                    provider: provider
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Populate form with AI results
+                const data = result.data;
+
+                if (data.title) formData.title = data.title;
+                if (data.author) formData.author = data.author;
+                if (data.publicationDate) formData.publicationDate = data.publicationDate;
+                if (data.publicationName) formData.publicationName = data.publicationName;
+                if (data.facilities) formData.facilities = data.facilities.join('\n');
+                if (data.staff) formData.staff = data.staff.join('\n');
+                if (data.survivors) formData.survivors = data.survivors.join('\n');
+                if (data.summary) formData.summary = data.summary;
+                if (data.alternateTitle) {
+                    formData.alternateTitle = data.alternateTitle;
+                    formData.needsAlternateTitle = true;
+                }
+                if (data.contentWarnings) formData.contentWarnings = data.contentWarnings;
+                if (data.articleType) formData.articleType = data.articleType;
+
+                // Update type-specific fields
+                if (data.typeSpecificData) {
+                    Object.assign(formData, data.typeSpecificData);
+                }
+
+                saveToLocalStorage();
+                location.reload(); // Reload to show all populated fields
+
+                statusEl.innerHTML = '<span class="success">✅ Article processed successfully!</span>';
+            } else {
+                statusEl.innerHTML = `<span class="error">❌ ${result.error || 'Processing failed'}</span>`;
+            }
+        } catch (error) {
+            console.error('AI processing error:', error);
+            statusEl.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+        } finally {
+            processBtn.disabled = false;
+        }
     }
 
     // --- DATABASE SUBMISSION ---

@@ -18,6 +18,60 @@ get_header();
                 <p>Process Troubled Teen Industry news articles with trauma-sensitive protocols</p>
             </div>
 
+            <!-- Quick Start Templates -->
+            <div class="news-section">
+                <div class="news-templates-header">
+                    <h3>🚀 Quick Start Templates</h3>
+                    <p>Choose a template to pre-configure the form for common article types</p>
+                </div>
+                <div class="news-templates-grid" id="template-buttons"></div>
+            </div>
+
+            <!-- AI Assistant -->
+            <div class="news-section news-ai-section">
+                <div class="news-ai-header">
+                    <div class="news-ai-toggle-wrapper">
+                        <label class="news-toggle-label">
+                            <input type="checkbox" id="ai-enabled" class="news-toggle-input">
+                            <span class="news-toggle-slider"></span>
+                            <span class="news-toggle-text">🤖 AI Assistant</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="ai-controls" class="news-ai-controls" style="display: none;">
+                    <div class="news-info-box">
+                        <strong>AI can help you:</strong>
+                        <ul>
+                            <li>Extract metadata from article URLs</li>
+                            <li>Generate trauma-sensitive summaries</li>
+                            <li>Identify content warnings automatically</li>
+                            <li>Detect article type and extract relevant details</li>
+                        </ul>
+                    </div>
+
+                    <div class="news-form-group">
+                        <label>Choose AI Provider</label>
+                        <select id="ai-provider" class="news-input">
+                            <option value="ollama">Ollama (Free, Local, Unlimited) - Recommended</option>
+                            <option value="groq">Groq (Free Tier - Very Fast)</option>
+                            <option value="gemini">Google Gemini (Free Tier)</option>
+                            <option value="huggingface">Hugging Face (Free Tier)</option>
+                            <option value="claude">Claude (Paid API)</option>
+                        </select>
+                        <small style="display: block; margin-top: 0.25rem; color: #004435;">
+                            <span id="provider-info">Ollama runs on your computer - completely free and unlimited!</span>
+                        </small>
+                    </div>
+
+                    <div class="news-form-group">
+                        <label>Paste Article Text (optional - if URL doesn't work)</label>
+                        <textarea id="ai-article-text" class="news-textarea" rows="4" placeholder="Paste full article text here..."></textarea>
+                    </div>
+                    <button id="process-with-ai" class="news-btn news-btn-ai">🤖 Process with AI</button>
+                    <div id="ai-status" class="news-ai-status"></div>
+                </div>
+            </div>
+
             <!-- Basic Details Section -->
             <div class="news-section">
                 <button class="news-section-header" data-section="basic">

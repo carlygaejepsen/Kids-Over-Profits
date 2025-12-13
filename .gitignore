@@ -15,3 +15,4 @@ wp-config-local.php
 # KOP API configuration
 api/config.php
 api/config.local.php
+api/ai-config.php
