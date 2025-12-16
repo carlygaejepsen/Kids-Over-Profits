@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `wiki_submissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `program_name` varchar(255) NOT NULL COMMENT 'Name of the TTI program',
   `city_state` varchar(255) DEFAULT NULL COMMENT 'Location (City, ST)',
+  `organization` varchar(255) DEFAULT NULL COMMENT 'Parent organization or operator',
   `program_type` varchar(255) DEFAULT NULL COMMENT 'Type of program (RTC, Wilderness, etc.)',
   `years_active` varchar(100) DEFAULT NULL COMMENT 'Years the program operated',
   `json_data` longtext NOT NULL COMMENT 'Full form data as JSON',
@@ -57,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `wiki_submissions` (
   KEY `program_name` (`program_name`),
   KEY `status` (`status`),
   KEY `city_state` (`city_state`),
+  KEY `organization` (`organization`),
   KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Wiki editor form submissions for TTI programs'
 SQL;

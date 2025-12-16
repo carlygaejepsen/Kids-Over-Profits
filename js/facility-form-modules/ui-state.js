@@ -70,7 +70,12 @@ window.KOP_UI_State = {
                 if (icon) {
                     el.innerHTML = `${icon.outerHTML} ${text}`;
                 } else {
-                    el.textContent = text;
+                    // Use innerHTML if text contains HTML tags, otherwise use textContent
+                    if (text.includes('<')) {
+                        el.innerHTML = text;
+                    } else {
+                        el.textContent = text;
+                    }
                 }
             }
         };

@@ -681,3 +681,716 @@
     margin: 5px 0 0 28px;
     font-style: italic;
 }
+
+/* ========================================
+   Entry Browser Section
+   ======================================== */
+
+.wiki-editor-page .entry-browser-section {
+    margin-bottom: 25px;
+}
+
+.wiki-editor-page .toggle-browser-btn {
+    background-color: #33A7B5; /* Teal */
+    color: #FFFFFF;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .toggle-browser-btn:hover {
+    background-color: #2A8A97;
+}
+
+.wiki-editor-page .browser-panel {
+    background-color: #E8F5F7;
+    border: 2px solid #33A7B5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.wiki-editor-page .browser-panel h3 {
+    color: #000080;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .browser-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .entry-search {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
+    font-size: 0.95rem;
+}
+
+.wiki-editor-page .refresh-btn {
+    background-color: #B6E3D4;
+    color: #004435;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .refresh-btn:hover {
+    background-color: #9ED4C4;
+}
+
+.wiki-editor-page .entries-list {
+    background-color: #FFFFFF;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.wiki-editor-page .entries-list .loading,
+.wiki-editor-page .entries-list .no-entries,
+.wiki-editor-page .entries-list .error {
+    text-align: center;
+    padding: 20px;
+    color: #004435;
+}
+
+.wiki-editor-page .entries-list .error {
+    color: #FE8088;
+}
+
+.wiki-editor-page .entries-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wiki-editor-page .entries-table thead {
+    background-color: #33A7B5;
+    color: #FFFFFF;
+}
+
+.wiki-editor-page .entries-table th {
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #2A8A97;
+}
+
+.wiki-editor-page .entries-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #E8F5F7;
+}
+
+.wiki-editor-page .entries-table tr:hover {
+    background-color: #F0F9FA;
+}
+
+.wiki-editor-page .entry-name {
+    font-weight: 600;
+    color: #000080;
+}
+
+.wiki-editor-page .load-entry-btn,
+.wiki-editor-page .delete-entry-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .load-entry-btn {
+    background-color: #B6E3D4;
+    color: #004435;
+}
+
+.wiki-editor-page .load-entry-btn:hover {
+    background-color: #9ED4C4;
+}
+
+.wiki-editor-page .delete-entry-btn {
+    background-color: #FE8088;
+    color: #FFFFFF;
+}
+
+.wiki-editor-page .delete-entry-btn:hover {
+    background-color: #E66D75;
+}
+
+.wiki-editor-page .browser-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #FFFFFF;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
+}
+
+.wiki-editor-page .browser-pagination button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #33A7B5;
+    color: #FFFFFF;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .browser-pagination button:hover:not(:disabled) {
+    background-color: #2A8A97;
+}
+
+.wiki-editor-page .browser-pagination button:disabled {
+    background-color: #AEE0ED;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.wiki-editor-page .browser-pagination span {
+    font-weight: 600;
+    color: #004435;
+}
+
+/* ========================================
+   Bulk Upload Section
+   ======================================== */
+
+.wiki-editor-page .bulk-upload-section {
+    margin-bottom: 25px;
+}
+
+.wiki-editor-page .toggle-bulk-upload-btn {
+    background-color: #FFB3FF; /* Mauve */
+    color: #000435;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .toggle-bulk-upload-btn:hover {
+    background-color: #E699E6;
+}
+
+.wiki-editor-page .bulk-upload-panel {
+    background-color: #FFF0FF;
+    border: 2px solid #FFB3FF;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.wiki-editor-page .bulk-upload-panel h3 {
+    color: #000080;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .bulk-upload-panel p {
+    margin-bottom: 15px;
+    color: #004435;
+}
+
+.wiki-editor-page .upload-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.wiki-editor-page .upload-controls input[type="file"] {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #FFB3FF;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+
+.wiki-editor-page .upload-btn {
+    background-color: #B6E3D4;
+    color: #004435;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wiki-editor-page .upload-btn:hover {
+    background-color: #9ED4C4;
+}
+
+.wiki-editor-page .upload-btn:disabled {
+    background-color: #AEE0ED;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.wiki-editor-page .upload-progress {
+    background-color: #FFFFFF;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .progress-bar {
+    width: 100%;
+    height: 24px;
+    background-color: #E8F5F7;
+    border: 2px solid #33A7B5;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.wiki-editor-page .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #33A7B5, #B6E3D4);
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.wiki-editor-page .upload-status {
+    text-align: center;
+    font-weight: 600;
+    color: #004435;
+}
+
+.wiki-editor-page .upload-results {
+    background-color: #FFFFFF;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.wiki-editor-page .upload-results h4 {
+    color: #000080;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.wiki-editor-page .upload-results h5 {
+    margin: 10px 0;
+    font-size: 1rem;
+}
+
+.wiki-editor-page .upload-results ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.wiki-editor-page .upload-results li {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.wiki-editor-page .upload-success li {
+    background-color: #E8F9F3;
+    border-left: 4px solid #B6E3D4;
+}
+
+.wiki-editor-page .upload-failed li {
+    background-color: #FFE8EA;
+    border-left: 4px solid #FE8088;
+}
+/* Reddit index browser */
+.wiki-editor-page .index-browser {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #a2c0cc;
+}
+.wiki-editor-page .index-browser h4 {
+    margin: 0 0 12px;
+    color: #0f4c5c;
+    font-size: 1rem;
+}
+.wiki-editor-page .index-browser-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.wiki-editor-page .index-select,
+.wiki-editor-page .index-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #c0d4dc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+.wiki-editor-page .index-entries-list {
+    margin-top: 15px;
+    max-height: 260px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #cfdde5;
+    border-radius: 6px;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.03);
+}
+.wiki-editor-page .index-entries-list .loading {
+    padding: 12px;
+    margin: 0;
+    color: #547591;
+}
+.wiki-editor-page .index-entry-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e4ecf2;
+}
+.wiki-editor-page .index-entry-row:last-child {
+    border-bottom: none;
+}
+.wiki-editor-page .index-entry-name {
+    font-weight: 600;
+    color: #0f3f4b;
+}
+.wiki-editor-page .entry-not-found-flag {
+    display: inline-block;
+    background-color: #FFF5CB;
+    color: #d32f2f;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ffb74d;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.wiki-editor-page .index-entry-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.wiki-editor-page .index-entry-actions button,
+.wiki-editor-page .index-entry-actions a {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: #33a7b5;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+.wiki-editor-page .index-entry-actions button:hover,
+.wiki-editor-page .index-entry-actions a:hover {
+    background: #248392;
+}
+.wiki-editor-page .index-entry-actions a {
+    background: #fff;
+    color: #188aa5;
+    border-color: #c0d4dc;
+}
+.wiki-editor-page .index-entry-actions a:hover {
+    background: #eef6fb;
+}
+
+/* ========================================
+   Mobile & Tablet Responsive Styles
+   ======================================== */
+
+/* Tablet styles (768px and below) */
+@media (max-width: 768px) {
+    .wiki-editor-page {
+        padding: 10px;
+        overflow-x: hidden;
+    }
+
+    .wiki-editor-page .wiki-editor-container {
+        padding: 15px;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Prevent any element from causing horizontal scroll */
+    .wiki-editor-page * {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Ensure browser panel doesn't overflow */
+    .wiki-editor-page .browser-panel {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Ensure entries list doesn't overflow */
+    .wiki-editor-page .entries-list {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Ensure index browser doesn't overflow */
+    .wiki-editor-page .index-browser {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    .wiki-editor-page h1 {
+        font-size: 1.5rem;
+    }
+
+    .wiki-editor-page h2 {
+        font-size: 1.3rem;
+    }
+
+    /* Browser controls stack on tablet */
+    .wiki-editor-page .browser-controls {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .entry-search,
+    .wiki-editor-page .refresh-btn {
+        width: 100%;
+    }
+
+    /* Index browser controls stack */
+    .wiki-editor-page .index-browser-controls {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .index-select,
+    .wiki-editor-page .index-search {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .wiki-editor-page .view-mode-select {
+        width: 100%;
+    }
+
+    /* Make table responsive with card layout */
+    .wiki-editor-page .entries-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .wiki-editor-page .entries-table table {
+        min-width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .wiki-editor-page .entries-table th,
+    .wiki-editor-page .entries-table td {
+        padding: 8px 4px;
+        font-size: 0.85rem;
+    }
+
+    /* Stack index entry actions on smaller screens */
+    .wiki-editor-page .index-entry-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .wiki-editor-page .index-entry-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* Output actions stack */
+    .wiki-editor-page .output-actions {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .output-actions button {
+        width: 100%;
+    }
+
+    /* Upload controls stack */
+    .wiki-editor-page .upload-controls {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .upload-controls input[type="file"],
+    .wiki-editor-page .upload-btn,
+    .wiki-editor-page .cancel-btn {
+        width: 100%;
+    }
+}
+
+/* Mobile styles (480px and below) */
+@media (max-width: 480px) {
+    .wiki-editor-page {
+        padding: 5px;
+    }
+
+    .wiki-editor-page .wiki-editor-container {
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .wiki-editor-page h1 {
+        font-size: 1.3rem;
+    }
+
+    .wiki-editor-page h2 {
+        font-size: 1.1rem;
+    }
+
+    .wiki-editor-page fieldset {
+        padding: 10px;
+    }
+
+    .wiki-editor-page legend {
+        font-size: 1rem;
+    }
+
+    /* Compact buttons */
+    .wiki-editor-page button {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+    }
+
+    .wiki-editor-page .toggle-browser-btn,
+    .wiki-editor-page .toggle-import-btn,
+    .wiki-editor-page .toggle-bulk-upload-btn {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+    }
+
+    /* Smaller inputs */
+    .wiki-editor-page input[type="text"],
+    .wiki-editor-page textarea,
+    .wiki-editor-page select {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    /* Make table completely card-based on mobile */
+    .wiki-editor-page .entries-table thead {
+        display: none;
+    }
+
+    .wiki-editor-page .entries-table table,
+    .wiki-editor-page .entries-table tbody,
+    .wiki-editor-page .entries-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .wiki-editor-page .entries-table tr {
+        margin-bottom: 15px;
+        border: 2px solid #AEE0ED;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #FFFFFF;
+    }
+
+    .wiki-editor-page .entries-table td {
+        display: block;
+        text-align: left;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .wiki-editor-page .entries-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        font-weight: 600;
+        color: #000080;
+    }
+
+    /* Compact action buttons */
+    .wiki-editor-page .load-entry-btn,
+    .wiki-editor-page .delete-entry-btn {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+        margin-right: 0;
+    }
+
+    /* Compact pagination */
+    .wiki-editor-page .browser-pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .wiki-editor-page .browser-pagination button {
+        width: 100%;
+    }
+
+    /* Index entry for mobile */
+    .wiki-editor-page .index-entry-row {
+        padding: 12px 8px;
+    }
+
+    .wiki-editor-page .index-entry-name {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .wiki-editor-page .index-entry-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .wiki-editor-page .index-entry-actions button,
+    .wiki-editor-page .index-entry-actions a {
+        width: 100%;
+        text-align: center;
+        padding: 8px 12px;
+    }
+
+    /* Import controls stack */
+    .wiki-editor-page .import-controls {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .import-controls button {
+        width: 100%;
+    }
+
+    /* Modal adjustments */
+    .wiki-editor-page .submit-modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .wiki-editor-page .submit-modal-actions {
+        flex-direction: column;
+    }
+
+    .wiki-editor-page .submit-modal-actions button {
+        width: 100%;
+    }
+}

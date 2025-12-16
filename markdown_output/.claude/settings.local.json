@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(uniq:*)",
+      "Bash(python:*)",
+      "Bash(bash remove_duplicates.sh:*)"
+    ]
+  }
+}

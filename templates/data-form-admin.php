@@ -338,15 +338,14 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕</button>
-                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊</button>
+                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕<span class="toolbar-label">New Project</span></button>
+                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊<span class="toolbar-label">Report</span></button>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕</button>
-                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">📄<span class="toolbar-label">Add Entry</span></button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️<span class="toolbar-label">Scroll Top</span></button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
-                        <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
                             <button type="button" class="btn-toolbar btn-secondary toolbar-nav-btn" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
@@ -354,8 +353,8 @@ get_header();
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋</button>
-                        <button type="button" class="btn-toolbar btn-danger" id="remove-facility-btn-toolbar" title="Delete current facility">🗑️</button>
+                        <button type="button" class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋<span class="toolbar-label">Clone</span></button>
+                        <button type="button" class="btn-toolbar btn-danger" id="remove-facility-btn-toolbar" title="Delete current facility">🗑️<span class="toolbar-label">Delete</span></button>
                     </div>
                 </div>
             </div>

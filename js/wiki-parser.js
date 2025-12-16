@@ -135,7 +135,13 @@ function parseWikiMarkdown(markdown) {
     };
 
     // Normalize newlines so regex parsing works with Windows CRLF input
-    const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    let normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // Remove specific boilerplate text as requested by user
+    normalizedMarkdown = normalizedMarkdown.replace(/\nthis text should always be removed\s*/g, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/SaveCancel/g, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/\nLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page title/g, '');
+
 
     // Common acronym expansions for TTI industry companies
     const companyAcronyms = {
@@ -238,7 +244,6 @@ function parseWikiMarkdown(markdown) {
         'inadequate supervision', 'lack of supervision', 'improper supervision', 'improper supervision of students',
         'untrained staff', 'unqualified staff', 'inadequate staff training', 'undertrained/unqualified staff',
         'fraudulent marketing', 'deceptive advertising', 'false claims', 'deceptive/fraudulent marketing practices',
-        'unlawful detention', 'false imprisonment',
         'human rights violations', 'civil rights violations',
         'illegal practices', 'non-compliant practices',
         'unsanitary conditions', 'unsafe facilities',
@@ -248,6 +253,344 @@ function parseWikiMarkdown(markdown) {
         'high staff turnover', 'lack of continuity of care',
         'punitive punishments'
     ];
+
+    // Normalization map: alternate terms → CHECKBOX VALUE
+    // Only maps variations to their canonical checkbox form
+    const allegationNormalizationMap = {
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "physical abuse"
+        // ═══════════════════════════════════════════════════════════
+        'corporal punishment': 'physical abuse',
+        'excessive punishment': 'physical abuse',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "emotional abuse"
+        // ═══════════════════════════════════════════════════════════
+        'emotional/verbal abuse': 'emotional abuse',
+
+        // Note: "psychological abuse" and "verbal abuse" are their OWN checkboxes
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "sexual abuse"
+        // ═══════════════════════════════════════════════════════════
+        'sexual exploitation': 'sexual abuse',
+        'sexual misconduct': 'sexual abuse',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "medical neglect"
+        // ═══════════════════════════════════════════════════════════
+        'failure to treat illness': 'medical neglect',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "withholding medical care"
+        // ═══════════════════════════════════════════════════════════
+        'refusing treatment': 'withholding medical care',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "overmedication"
+        // ═══════════════════════════════════════════════════════════
+        'inappropriate medication': 'overmedication',
+        'medication abuse': 'overmedication',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "restraint abuse"
+        // ═══════════════════════════════════════════════════════════
+        'violent restraints': 'restraint abuse',
+        'violent and excessive restraints': 'restraint abuse',
+
+        // Note: "excessive restraints" is its OWN checkbox
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "solitary confinement"
+        // ═══════════════════════════════════════════════════════════
+        'lock-down': 'solitary confinement',
+
+        // Note: "isolation" is its OWN checkbox
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "sleep deprivation"
+        // ═══════════════════════════════════════════════════════════
+        'forced sleep deprivation': 'sleep deprivation',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "food deprivation"
+        // ═══════════════════════════════════════════════════════════
+        'withholding food': 'food deprivation',
+        'starvation': 'food deprivation',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "humiliation"
+        // ═══════════════════════════════════════════════════════════
+        'degradation': 'humiliation',
+        'public shaming': 'humiliation',
+        'humiliation tactics': 'humiliation',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "intimidation"
+        // ═══════════════════════════════════════════════════════════
+        'threats': 'intimidation',
+        'coercion': 'intimidation',
+        'fear-based practices': 'intimidation',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "inadequate supervision"
+        // ═══════════════════════════════════════════════════════════
+        'lack of supervision': 'inadequate supervision',
+        'improper supervision': 'inadequate supervision',
+        'improper supervision of students': 'inadequate supervision',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "untrained staff"
+        // ═══════════════════════════════════════════════════════════
+        'unqualified staff': 'untrained staff',
+        'inadequate staff training': 'untrained staff',
+        'undertrained/unqualified staff': 'untrained staff',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "fraudulent marketing"
+        // ═══════════════════════════════════════════════════════════
+        'deceptive advertising': 'fraudulent marketing',
+        'false claims': 'fraudulent marketing',
+        'deceptive/fraudulent marketing practices': 'fraudulent marketing',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "unsanitary conditions"
+        // ═══════════════════════════════════════════════════════════
+        'unsafe facilities': 'unsanitary conditions',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "educational neglect"
+        // ═══════════════════════════════════════════════════════════
+        'lack of education': 'educational neglect'
+    };
+
+    // Normalization function
+    function normalizeAllegation(allegation) {
+        const lower = allegation.toLowerCase().trim();
+        return allegationNormalizationMap[lower] || allegation;
+    }
+
+    // Standard checkbox values from the form (canonical terms)
+    const standardAllegations = [
+        'physical abuse',
+        'emotional abuse',
+        'psychological abuse',
+        'sexual abuse',
+        'verbal abuse',
+        'medical neglect',
+        'educational neglect',
+        'food deprivation',
+        'sleep deprivation',
+        'withholding medical care',
+        'restraint abuse',
+        'excessive restraints',
+        'solitary confinement',
+        'isolation',
+        'humiliation',
+        'intimidation',
+        'overmedication',
+        'inadequate supervision',
+        'untrained staff',
+        'fraudulent marketing',
+        'unsanitary conditions'
+    ];
+
+    // Standard diagnosis checkbox values from the form
+    const standardDiagnoses = [
+        'ADHD',
+        'Autism Spectrum Disorder',
+        'Bipolar Disorder',
+        'Depression',
+        'Anxiety',
+        'OCD',
+        'PTSD',
+        'Oppositional Defiant Disorder',
+        'Conduct Disorder',
+        'Eating Disorder',
+        'Substance Abuse',
+        'Borderline Personality Disorder',
+        'Psychiatric Disorders',
+        'Behavioral Disorders',
+        'Emotional Disorders',
+        'Co-occurring Disorders',
+        'defiance',
+        'aggression',
+        'self-harm',
+        'running away',
+        'academic struggles',
+        'social problems',
+        'family conflict',
+        'lying',
+        'stealing',
+        'emotional dysregulation',
+        'impulsive behavior'
+    ];
+
+    // Diagnosis normalization map: alternate terms → CHECKBOX VALUE
+    // Only maps variations to their canonical checkbox form
+    const diagnosisNormalizationMap = {
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "ADHD"
+        // ═══════════════════════════════════════════════════════════
+        'add': 'ADHD',
+        'attention deficit disorder': 'ADHD',
+        'attention deficit hyperactivity disorder': 'ADHD',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Autism Spectrum Disorder"
+        // ═══════════════════════════════════════════════════════════
+        'autism': 'Autism Spectrum Disorder',
+        'asd': 'Autism Spectrum Disorder',
+        'asperger\'s': 'Autism Spectrum Disorder',
+        'aspergers': 'Autism Spectrum Disorder',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Bipolar Disorder"
+        // ═══════════════════════════════════════════════════════════
+        'bipolar': 'Bipolar Disorder',
+        'manic depression': 'Bipolar Disorder',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Depression"
+        // ═══════════════════════════════════════════════════════════
+        'major depression': 'Depression',
+        'major depressive disorder': 'Depression',
+        'mdd': 'Depression',
+        'depressive disorder': 'Depression',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Anxiety"
+        // ═══════════════════════════════════════════════════════════
+        'anxiety disorder': 'Anxiety',
+        'generalized anxiety disorder': 'Anxiety',
+        'gad': 'Anxiety',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "OCD"
+        // ═══════════════════════════════════════════════════════════
+        'obsessive compulsive disorder': 'OCD',
+        'obsessive-compulsive disorder': 'OCD',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "PTSD"
+        // ═══════════════════════════════════════════════════════════
+        'post traumatic stress disorder': 'PTSD',
+        'post-traumatic stress disorder': 'PTSD',
+        'trauma': 'PTSD',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Oppositional Defiant Disorder"
+        // ═══════════════════════════════════════════════════════════
+        'odd': 'Oppositional Defiant Disorder',
+        'oppositional defiance': 'Oppositional Defiant Disorder',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Conduct Disorder"
+        // ═══════════════════════════════════════════════════════════
+        // (no alternate terms yet)
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Eating Disorder"
+        // ═══════════════════════════════════════════════════════════
+        'anorexia': 'Eating Disorder',
+        'bulimia': 'Eating Disorder',
+        'eating disorders': 'Eating Disorder',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Substance Abuse"
+        // ═══════════════════════════════════════════════════════════
+        'drug abuse': 'Substance Abuse',
+        'addiction': 'Substance Abuse',
+        'substance use disorder': 'Substance Abuse',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "Borderline Personality Disorder"
+        // ═══════════════════════════════════════════════════════════
+        'bpd': 'Borderline Personality Disorder',
+        'borderline': 'Borderline Personality Disorder',
+
+        // General disorder categories
+        'psychiatric': 'Psychiatric Disorders',
+        'psychiatric disorders': 'Psychiatric Disorders',
+        'behavioral': 'Behavioral Disorders',
+        'behavioral disorders': 'Behavioral Disorders',
+        'emotional': 'Emotional Disorders',
+        'emotional disorders': 'Emotional Disorders',
+        'co-occurring disorders': 'Co-occurring Disorders',
+        'cooccurring disorders': 'Co-occurring Disorders',
+        'co occurring disorders': 'Co-occurring Disorders',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "defiance" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'oppositional behavior': 'defiance',
+        'defiant behavior': 'defiance',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "aggression" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'aggressive behavior': 'aggression',
+        'violence': 'aggression',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "self-harm" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'cutting': 'self-harm',
+        'self harm': 'self-harm',
+        'self injury': 'self-harm',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "running away" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'elopement': 'running away',
+        'runaway': 'running away',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "academic struggles" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'school struggles': 'academic struggles',
+        'academic problems': 'academic struggles',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "social problems" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'peer problems': 'social problems',
+        'social issues': 'social problems',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "family conflict" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'family problems': 'family conflict',
+        'parent-child conflict': 'family conflict',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "lying" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'dishonesty': 'lying',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "stealing" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'theft': 'stealing',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "emotional dysregulation" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'mood swings': 'emotional dysregulation',
+        'emotional instability': 'emotional dysregulation',
+
+        // ═══════════════════════════════════════════════════════════
+        // → CHECKBOX: "impulsive behavior" (behavioral)
+        // ═══════════════════════════════════════════════════════════
+        'impulsivity': 'impulsive behavior',
+        'poor impulse control': 'impulsive behavior'
+    };
+
+    // Normalization function for diagnoses
+    function normalizeDiagnosis(diagnosis) {
+        const lower = diagnosis.toLowerCase().trim();
+        return diagnosisNormalizationMap[lower] || diagnosis;
+    }
 
     // Common diagnoses and behavioral issues to look for
     const commonDiagnoses = clinicalDiagnoses.concat(behavioralIssues);
@@ -283,9 +626,9 @@ function parseWikiMarkdown(markdown) {
 
     const getSection = (source, sectionTitle) => {
         const escapedTitle = escapeRegex(sectionTitle);
-        const headerPattern = `##\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
+        const headerPattern = `#{1,6}\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
         const regex = new RegExp(
-            headerPattern + '\\n([\\s\\S]*?)(?=\\n##|\\n\\*\\*\\*|$)',
+            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,6}\\s|\\n\\*\\*\\*|$)',
             'i'
         );
 
@@ -306,13 +649,40 @@ function parseWikiMarkdown(markdown) {
     };
 
     // Parse header
+    // 1. Try standard TTI format: ## **Name** (Years) Location
     let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
-    console.log('Header match:', headerMatch);
+    
     if (headerMatch) {
         parsedData.programName = headerMatch[1].trim();
         parsedData.yearsActive = headerMatch[2].trim();
         parsedData.cityState = headerMatch[3].trim();
+    } else {
+        // 2. Try simpler format: ## **Name** (Years)
+        headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)/m);
+        if (headerMatch) {
+            parsedData.programName = headerMatch[1].trim();
+            parsedData.yearsActive = headerMatch[2].trim();
+        } else {
+            // 3. Try simplest format: ## Name
+            // We search for the first header that isn't a known section header
+            const allHeaders = normalizedMarkdown.matchAll(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*$/gm);
+            for (const match of allHeaders) {
+                const candidate = match[1].trim();
+                const invalidTitles = [
+                    'History', 'Background', 'Staff', 'Founders', 'Program Structure', 
+                    'Structure', 'Rules', 'Punishments', 'Media', 'News', 'Testimonies', 
+                    'Related Media', 'Links', 'Page title'
+                ];
+                
+                // If it doesn't contain invalid titles and is reasonably short (program name)
+                if (!invalidTitles.some(t => candidate.toLowerCase().includes(t.toLowerCase())) && candidate.length < 100) {
+                     parsedData.programName = candidate;
+                     break; // Found the first valid-looking program name
+                }
+            }
+        }
     }
+    console.log('Header match result:', parsedData.programName);
 
     // Parse program type
     const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
@@ -321,7 +691,13 @@ function parseWikiMarkdown(markdown) {
     }
 
     // Parse History section
-    const historySection = getSection(normalizedMarkdown, 'History and Background Information');
+    const historySection = getSectionAny(normalizedMarkdown, [
+        'History and Background Information',
+        'History/Background Information',
+        'Hisory and Background Information',
+        'History and Bakcground Information',
+        'Background Information'
+    ]);
     if (historySection && !historySection.includes('No information is known')) {
         const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
 
@@ -430,6 +806,14 @@ function parseWikiMarkdown(markdown) {
 
         // Diagnoses - comprehensive extraction with lookup matching
         const diagnosisSnippets = [];
+        const combinedDisordersPattern = /psychiatric[\s,\/&-]+behavioral[\s,\/&-]+emotional[\s,\/&-]+(?:and\s+)?co[-\s]?occurring\s+disorders/i;
+        if (combinedDisordersPattern.test(normalizedHistory)) {
+            ['Psychiatric Disorders', 'Behavioral Disorders', 'Emotional Disorders', 'Co-occurring Disorders'].forEach(category => {
+                if (!parsedData.selectedDiagnoses.includes(category)) {
+                    parsedData.selectedDiagnoses.push(category);
+                }
+            });
+        }
         const diagnosisPatterns = [
             /diagnoses\/behaviors:\s*([^\n]+)/i,
             /any of the following:\s*([^\.]+)\./i,
@@ -438,7 +822,7 @@ function parseWikiMarkdown(markdown) {
             /specializes? in treating\s+([^\.]+?)(?:\.|, but)/i,
             /specialized in treating\s+([^\.]+?)(?:\.|, but)/i,
             /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i,
-            /struggling with\s+(?:a variety of )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average)/i,
+            /struggling with\s+(?:a variety of |various )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average)/i,
             /who (?:struggle|are struggling|deal|are dealing)\s+with\s+(?:a variety of )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average)/i,
             /marketed (?:as|to)[^\.]*?for[^\.]*?who struggle with\s+([^\.]+?)(?:\.|The program)/i
         ];
@@ -467,25 +851,27 @@ function parseWikiMarkdown(markdown) {
                 });
             });
             
-            // Match extracted diagnoses against lookup tables
+            // Match extracted diagnoses against standard checkbox values with normalization
             const customList = [];
-            
+
             extractedDiagnoses.forEach(diagnosis => {
-                const lowerDiagnosis = diagnosis.toLowerCase();
-                
-                // Check against both clinical diagnoses and behavioral issues
-                const matchedDiagnosis = commonDiagnoses.find(common => 
-                    common.toLowerCase() === lowerDiagnosis
+                // Normalize the diagnosis to standard terminology
+                const normalized = normalizeDiagnosis(diagnosis);
+                const lowerNormalized = normalized.toLowerCase();
+
+                // Check if the normalized diagnosis matches a standard checkbox value
+                const matchedStandard = standardDiagnoses.find(standard =>
+                    standard.toLowerCase() === lowerNormalized
                 );
-                
-                if (matchedDiagnosis) {
-                    // Add to selected diagnoses if not already present
-                    if (!parsedData.selectedDiagnoses.includes(matchedDiagnosis)) {
-                        parsedData.selectedDiagnoses.push(matchedDiagnosis);
+
+                if (matchedStandard) {
+                    // Add the standard form if not already present
+                    if (!parsedData.selectedDiagnoses.includes(matchedStandard)) {
+                        parsedData.selectedDiagnoses.push(matchedStandard);
                     }
                 } else {
-                    // Add to custom diagnoses
-                    customList.push(diagnosis);
+                    // Add to custom diagnoses (use normalized form)
+                    customList.push(normalized);
                 }
             });
             
@@ -589,7 +975,18 @@ function parseWikiMarkdown(markdown) {
         'Founders and Notable Staff',
         'Staff',
         'Notable Staff',
-        'Founders'
+        'Founders',
+        'Founders and Leadership',
+        'Founders and Notable Employees',
+        'Founders & Notable Employees',
+        'Founder & Notable Staff',
+        'Founders & Notable Staff',
+        'Notable Employees',
+        'WWASP Owners and Staff',
+        'Founders and Important People',
+        'Founders and Notable Figures',
+        'Founders & Notable Members',
+        'Founders and Employees'
     ]);
 
     if (staffSection && !staffSection.includes('No information is known')) {
@@ -647,7 +1044,9 @@ function parseWikiMarkdown(markdown) {
         'Level Systems',
         'Phase System',
         'Phases',
-        'Program Phases'
+        'Program Phases',
+        'Program Structure & Rules',
+        'Seminar Structure'
     ]);
 
     if (structureSection && !structureSection.includes('No information is known')) {
@@ -697,7 +1096,24 @@ function parseWikiMarkdown(markdown) {
         'Abuse Allegations',
         'Abuse/Neglect Allegations',
         'Allegations and Lawsuits',
-        'Abuse Allegations and Lawsuits'
+        'Abuse Allegations and Lawsuits',
+        'Abuse Allegations and Death',
+        'Abuse Allegations, Lawsuits, and Death',
+        'Abuse Allegations, Deaths, and Lawsuits',
+        'Abuse Allegations and Investigations',
+        'Abuse Allegations and Rebranding',
+        'Abuse and Closure',
+        'Abuse, Deaths, and Investigations',
+        'Abuse and Investigations',
+        'Abuse and Death',
+        'Abuse and Lawsuits',
+        'Abuse, Rebrands, and the Fire',
+        'Abuse Allegations and Red Flags',
+        'Abuse',
+        'Abuse and Violence',
+        'Controversy, Abuse, and Deaths',
+        'Abuse/Neglect Allegations',
+        'Abuse and Neglect Allegations'
     ]);
 
     if (abuseSection && !abuseSection.includes('No information is known')) {
@@ -742,26 +1158,28 @@ function parseWikiMarkdown(markdown) {
             }
         }
         
-        // Match extracted allegations against common complaints lookup table
+        // Match extracted allegations against standard checkbox values with normalization
         if (extractedAllegations.length > 0) {
             const customList = [];
-            
+
             extractedAllegations.forEach(allegation => {
-                const lowerAllegation = allegation.toLowerCase();
-                
-                // Check if this matches any common complaint (case-insensitive)
-                const matchedCommon = commonComplaints.find(common => 
-                    common.toLowerCase() === lowerAllegation
+                // Normalize the allegation to standard terminology
+                const normalized = normalizeAllegation(allegation);
+                const lowerNormalized = normalized.toLowerCase();
+
+                // Check if the normalized allegation matches a standard checkbox value
+                const matchedStandard = standardAllegations.find(standard =>
+                    standard.toLowerCase() === lowerNormalized
                 );
-                
-                if (matchedCommon) {
-                    // Add to selected allegations if not already present
-                    if (!parsedData.selectedAllegations.includes(matchedCommon)) {
-                        parsedData.selectedAllegations.push(matchedCommon);
+
+                if (matchedStandard) {
+                    // Add the standard form if not already present
+                    if (!parsedData.selectedAllegations.includes(matchedStandard)) {
+                        parsedData.selectedAllegations.push(matchedStandard);
                     }
                 } else {
-                    // Add to custom allegations
-                    customList.push(allegation);
+                    // Add to custom allegations (use normalized form)
+                    customList.push(normalized);
                 }
             });
             
@@ -850,7 +1268,8 @@ function parseWikiMarkdown(markdown) {
         'Rules and Punishments',
         'Rules & Punishments',
         'Rules',
-        'Punishments'
+        'Punishments',
+        'Rules and Consequences'
     ]);
 
     if (rulesSection && !rulesSection.includes('No information is known')) {
@@ -888,7 +1307,8 @@ function parseWikiMarkdown(markdown) {
         'In the Media',
         'Media & News',
         'Media and News',
-        'News'
+        'News',
+        'In the Media'
     ]);
 
     if (mediaSection && !mediaSection.includes('No information is known')) {
@@ -912,7 +1332,9 @@ function parseWikiMarkdown(markdown) {
         'Survivor Testimonies',
         'Testimonies',
         'Survivor Accounts',
-        'Survivor Stories'
+        'Survivor Stories',
+        'Survivor/Parent/Ex-Staff Testimonies',
+        'Survivor/Parent Testimonies'
     ]);
 
     if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
@@ -956,7 +1378,8 @@ function parseWikiMarkdown(markdown) {
         'Related Media',
         'Related Media (Links)',
         'Related Links',
-        'External Links'
+        'External Links',
+        'Related External Resources'
     ]);
 
     if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
@@ -997,10 +1420,25 @@ function parseWikiMarkdown(markdown) {
     // Collect unparsed sections
     const parsedSectionTitles = [
         'History and Background Information',
+        'History/Background Information',
+        'Hisory and Background Information',
+        'History and Bakcground Information',
+        'Background Information',
         'Founders and Notable Staff',
         'Staff',
         'Notable Staff',
         'Founders',
+        'Founders and Leadership',
+        'Founders and Notable Employees',
+        'Founders & Notable Employees',
+        'Founder & Notable Staff',
+        'Founders & Notable Staff',
+        'Notable Employees',
+        'WWASP Owners and Staff',
+        'Founders and Important People',
+        'Founders and Notable Figures',
+        'Founders & Notable Members',
+        'Founders and Employees',
         'Program Structure',
         'Structure',
         'Program Model',
@@ -1009,30 +1447,54 @@ function parseWikiMarkdown(markdown) {
         'Phase System',
         'Phases',
         'Program Phases',
+        'Program Structure & Rules',
+        'Seminar Structure',
         'Abuse/Neglect Allegations and Lawsuits',
         'Abuse Allegations',
         'Abuse/Neglect Allegations',
         'Allegations and Lawsuits',
         'Abuse Allegations and Lawsuits',
+        'Abuse Allegations and Death',
+        'Abuse Allegations, Lawsuits, and Death',
+        'Abuse Allegations, Deaths, and Lawsuits',
+        'Abuse Allegations and Investigations',
+        'Abuse Allegations and Rebranding',
+        'Abuse and Closure',
+        'Abuse, Deaths, and Investigations',
+        'Abuse and Investigations',
+        'Abuse and Death',
+        'Abuse and Lawsuits',
+        'Abuse, Rebrands, and the Fire',
+        'Abuse Allegations and Red Flags',
+        'Abuse',
+        'Abuse and Violence',
+        'Controversy, Abuse, and Deaths',
+        'Abuse/Neglect Allegations',
+        'Abuse and Neglect Allegations',
         'Rules and Punishments',
         'Rules & Punishments',
         'Rules',
         'Punishments',
+        'Rules and Consequences',
         'In the Media & News',
         'In the Media',
         'Media & News',
         'Media and News',
         'News',
+        'In the Media',
         'Survivor/Parent Testimonials',
         'Survivor Testimonials',
         'Survivor Testimonies',
         'Testimonies',
         'Survivor Accounts',
         'Survivor Stories',
+        'Survivor/Parent/Ex-Staff Testimonies',
+        'Survivor/Parent Testimonies',
         'Related Media',
         'Related Media (Links)',
         'Related Links',
-        'External Links'
+        'External Links',
+        'Related External Resources'
     ];
 
     // Split markdown into sections

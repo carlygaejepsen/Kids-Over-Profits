@@ -323,15 +323,14 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕</button>
-                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊</button>
+                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕<span class="toolbar-label">New Project</span></button>
+                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊<span class="toolbar-label">Report</span></button>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">➕</button>
-                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️</button>
+                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">📄<span class="toolbar-label">Add Entry</span></button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️<span class="toolbar-label">Scroll Top</span></button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
-                        <label class="toolbar-label" id="toolbar-current-item-label">Current Facility:</label>
                         <div class="facility-selector">
                             <button type="button" class="btn-toolbar btn-secondary toolbar-nav-btn" id="prev-facility-btn-toolbar" title="Previous facility">◀</button>
                             <select id="facility-dropdown" class="facility-dropdown"></select>
@@ -339,8 +338,8 @@ get_header();
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍</button>
-                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion">✅</button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍<span class="toolbar-label">Search</span></button>
+                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion">✅<span class="toolbar-label">Submit</span></button>
                     </div>
                 </div>
             </div>
@@ -376,6 +375,7 @@ get_header();
                         <label for="organize-by">Organize by:</label>
                         <select id="organize-by" class="input-secondary">
                             <option value="">Select data point...</option>
+                            <option value="keyword">General Keyword Search</option>
                             <option value="staff">Staff Member</option>
                             <option value="operator">Operator/Company</option>
                             <option value="location">Location</option>
@@ -1226,6 +1226,7 @@ get_header();
                         <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
                             <option value="">Select data point...</option>
+                            <option value="keyword">General Keyword Search</option>
                             <option value="staff">Staff Member</option>
                             <option value="operator">Operator/Company</option>
                             <option value="location">Location</option>

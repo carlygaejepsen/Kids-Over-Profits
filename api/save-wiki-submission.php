@@ -52,15 +52,23 @@ try {
         $where = [];
         $params = [];
 
-        if ($status) {
+        // Always exclude deleted entries unless specifically requested
+        if ($status && $status === 'deleted') {
             $where[] = "status = :status";
             $params[':status'] = $status;
+        } else if ($status) {
+            $where[] = "status = :status";
+            $params[':status'] = $status;
+        } else {
+            // Default: exclude deleted entries
+            $where[] = "status != 'deleted'";
         }
 
         if ($search) {
-            $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2)";
+            $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2 OR organization LIKE :search3)";
             $params[':search1'] = "%$search%";
             $params[':search2'] = "%$search%";
+            $params[':search3'] = "%$search%";
         }
 
         $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -70,15 +78,12 @@ try {
         $countStmt->execute($params);
         $total = $countStmt->fetchColumn();
 
-        // Get submissions - add limit/offset to params
-        $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
-                       submitted_by, created_at, updated_at, original_markdown
+        // Get submissions - use direct integer values for LIMIT/OFFSET (PDO can't bind these as named params)
+        $sql = "SELECT id, program_name, city_state, organization, program_type, years_active, status,
+                       submitted_by, created_at, updated_at, original_markdown, json_data
                 FROM wiki_submissions $whereClause
                 ORDER BY created_at DESC
-                LIMIT :limit OFFSET :offset";
-
-        $params[':limit'] = $limit;
-        $params[':offset'] = $offset;
+                LIMIT $limit OFFSET $offset";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
@@ -122,6 +127,16 @@ try {
     $submissionNotes = $data['submissionNotes'] ?? $data['submission_notes'] ?? '';
     $originalMarkdown = $data['originalMarkdown'] ?? $data['original_markdown'] ?? '';
     $submissionId = $data['id'] ?? null;
+    $organization = $data['organization'] ?? $data['organizationName'] ?? $data['org'] ?? null;
+
+    if ($status === 'deleted' && !current_user_can('manage_options')) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => 'You do not have permission to delete entries'
+        ]);
+        exit;
+    }
 
     // DEBUG: Log if originalMarkdown is being received
     error_log("Save Wiki Submission - originalMarkdown length: " . strlen($originalMarkdown));
@@ -139,6 +154,7 @@ try {
     unset($jsonData['originalMarkdown'], $jsonData['original_markdown']);
     unset($jsonData['status'], $jsonData['submittedBy'], $jsonData['submitted_by']);
     unset($jsonData['submissionNotes'], $jsonData['submission_notes']);
+    unset($jsonData['organization'], $jsonData['organizationName'], $jsonData['org']);
     unset($jsonData['id']);
     
     if ($submissionId) {
@@ -146,6 +162,7 @@ try {
         $sql = "UPDATE wiki_submissions SET 
                     program_name = ?,
                     city_state = ?,
+                    organization = ?,
                     program_type = ?,
                     years_active = ?,
                     json_data = ?,
@@ -161,6 +178,7 @@ try {
         $stmt->execute([
             $programName,
             $cityState,
+            $organization,
             $programType,
             $yearsActive,
             json_encode($jsonData, JSON_UNESCAPED_UNICODE),
@@ -186,7 +204,7 @@ try {
     } else {
         // Create new submission
         $sql = "INSERT INTO wiki_submissions 
-                    (program_name, city_state, program_type, years_active, json_data, 
+                    (program_name, city_state, organization, program_type, years_active, json_data, 
                      generated_markdown, original_markdown, status, submitted_by, submission_notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -194,6 +212,7 @@ try {
         $stmt->execute([
             $programName,
             $cityState,
+            $organization,
             $programType,
             $yearsActive,
             json_encode($jsonData, JSON_UNESCAPED_UNICODE),

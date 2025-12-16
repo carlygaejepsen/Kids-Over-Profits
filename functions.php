@@ -2394,14 +2394,32 @@ function kop_enqueue_wiki_editor_assets() {
         true
     );
 
+    // Enqueue wiki-generation (wiki-editor depends on it)
+    $generation_relative = '/js/wiki-generation.js';
+    $generation_path = get_stylesheet_directory() . $generation_relative;
+    wp_enqueue_script(
+        'kop-wiki-generation-script',
+        get_stylesheet_directory_uri() . $generation_relative,
+        array('kop-wiki-parser-script'),
+        file_exists($generation_path) ? filemtime($generation_path) : time(),
+        true
+    );
+
     $script_relative = '/js/wiki-editor.js';
     $script_path = get_stylesheet_directory() . $script_relative;
     wp_enqueue_script(
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
-        array('kop-auto-linker-script', 'kop-wiki-parser-script', 'autocomplete-module-script'),
+        array('kop-auto-linker-script', 'kop-wiki-parser-script', 'kop-wiki-generation-script', 'autocomplete-module-script'),
         file_exists($script_path) ? filemtime($script_path) : time(),
         true
+    );
+    wp_localize_script(
+        'kop-wiki-editor-script',
+        'wikiEditorSettings',
+        array(
+            'isAdmin' => current_user_can('manage_options'),
+        )
     );
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');

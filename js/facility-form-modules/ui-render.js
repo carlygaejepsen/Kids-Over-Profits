@@ -566,18 +566,17 @@ window.KOP_UI_Render = {
                 const facilityCount = project.data?.facilities?.length || 0;
                 const facilityLabel = determineProjectCategory(name) === 'referrers' ? (facilityCount === 1 ? 'individual' : 'individuals') : (facilityCount === 1 ? 'facility' : 'facilities');
                 
-                // Admin-only buttons
+                const encodedProjectName = escapeHtmlForAttr(name);
                 const adminButtons = isSuggestionMode() ? '' : `
-                            <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject('${escapeHtmlForAttr(name)}')">Reclassify</button>
-                            <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject('${escapeHtmlForAttr(name)}')">Rename</button>
-                            <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject('${escapeHtmlForAttr(name)}')">Delete</button>
+                            <button class="project-item-btn project-item-reclassify" onclick="event.stopPropagation(); recategorizeProject(this.closest('.project-item').dataset.projectName)">Reclassify</button>
+                            <button class="project-item-btn project-item-rename" onclick="event.stopPropagation(); renameProject(this.closest('.project-item').dataset.projectName)">Rename</button>
+                            <button class="project-item-btn project-item-delete" onclick="event.stopPropagation(); deleteProject(this.closest('.project-item').dataset.projectName)">Delete</button>
                         `;
-
-                return `<div class="project-item" onclick="loadProject('${escapeHtmlForAttr(name)}')">
+                return `<div class="project-item" data-project-name="${encodedProjectName}" onclick="loadProject(this.dataset.projectName)">
                         <div class="project-item-name" title="${escapeHtmlForAttr(name)}">${escapeHtmlForAttr(name)}</div>
                         <div class="project-item-date">${escapeHtmlForAttr(dateStr)}<br><small>${facilityCount} ${facilityLabel}</small></div>
                         <div class="project-item-actions">
-                            <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject('${escapeHtmlForAttr(name)}')">Load</button>
+                            <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProject(this.closest('.project-item').dataset.projectName)">Load</button>
                             ${adminButtons}
                         </div>
                     </div>`;

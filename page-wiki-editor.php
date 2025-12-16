@@ -13,6 +13,79 @@ get_header();
         <h1>TTI Wiki Entry Generator</h1>
         <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
 
+        <!-- Entry Browser Section -->
+        <div class="entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
+            <button type="button" id="toggleBrowserBtn" class="toggle-browser-btn">📂 Browse Saved Entries</button>
+            <div id="browserPanel" class="browser-panel" style="display: none;">
+                <div class="browser-header">
+                    <button type="button" id="backBtn" class="back-btn" style="display: none;">← Back</button>
+                    <h3 id="browserTitle">Browse Entries</h3>
+                    <button type="button" id="refreshEntriesBtn" class="refresh-btn">🔄 Refresh</button>
+                </div>
+                <div class="browser-controls">
+                    <select id="viewModeSelect" class="view-mode-select">
+                        <option value="all">Location View</option>
+                        <option value="operators" selected>Organization View</option>
+                    </select>
+                </div>
+
+                <!-- Reddit Wiki Index Browser - TOP -->
+                <div id="indexBrowser" class="index-browser">
+                    <div class="index-browser-controls">
+                        <select id="indexSelect" class="index-select">
+                            <option value="">Select an index page</option>
+                        </select>
+                        <input type="text" id="indexSearch" class="index-search" placeholder="Filter entries..." disabled>
+                    </div>
+                    <div id="indexEntriesList" class="index-entries-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Database Entries - BOTTOM -->
+                <div id="breadcrumb" class="breadcrumb" style="display: none;">
+                    <span class="breadcrumb-home">Home</span>
+                    <span class="breadcrumb-separator">›</span>
+                    <span id="breadcrumbCurrent"></span>
+                </div>
+                <div class="database-entries-section">
+                    <div class="browser-controls">
+                        <input type="text" id="entrySearch" class="entry-search" placeholder="Search...">
+                        <button type="button" id="refreshEntriesBtn" class="refresh-btn">🔄 Refresh</button>
+                    </div>
+                    <div id="entriesList" class="entries-list">
+                        <p class="loading">Loading entries...</p>
+                    </div>
+                    <div class="browser-pagination">
+                        <button type="button" id="prevPageBtn" disabled>← Previous</button>
+                        <span id="pageInfo">Page 1</span>
+                        <button type="button" id="nextPageBtn">Next →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Upload Section -->
+        <div class="bulk-upload-section">
+            <button type="button" id="toggleBulkUploadBtn" class="toggle-bulk-upload-btn">📤 Bulk Upload Markdown Files</button>
+            <div id="bulkUploadPanel" class="bulk-upload-panel" style="display: none;">
+                <h3>Upload Multiple Markdown Files</h3>
+                <p>Select multiple .md files or a folder containing wiki entry markdown files. Each file will be parsed and saved to the database.</p>
+                <div class="upload-controls">
+                    <input type="file" id="bulkFileInput" accept=".md,.txt" multiple>
+                    <button type="button" id="uploadFilesBtn" class="upload-btn">Upload Files</button>
+                    <button type="button" id="cancelBulkUploadBtn" class="cancel-btn">Cancel</button>
+                </div>
+                <div id="uploadProgress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div id="progressBarFill" class="progress-bar-fill"></div>
+                    </div>
+                    <p id="uploadStatus" class="upload-status"></p>
+                </div>
+                <div id="uploadResults" class="upload-results"></div>
+            </div>
+        </div>
+
         <!-- Import Section -->
         <div class="import-section">
             <button type="button" id="toggleImportBtn" class="toggle-import-btn">📥 Import from Reddit Markdown</button>
@@ -54,6 +127,10 @@ get_header();
                         <label for="ageRange">Age Range:</label>
                         <input type="text" id="ageRange" name="ageRange" placeholder="e.g., 13-17">
                     </div>
+                    <div class="field-group">
+                        <label for="capacity">Maximum Enrollment/Capacity:</label>
+                        <input type="text" id="capacity" name="capacity" placeholder="e.g., 40 students">
+                    </div>
                 </div>
                 <div class="field-row">
                     <div class="field-group">
@@ -90,8 +167,44 @@ get_header();
                         <input type="text" id="natsapYear" name="natsapYear" placeholder="e.g., 1999">
                     </div>
                 </div>
-                <label for="diagnosesList">Target Diagnoses/Behaviors (comma-separated):</label>
-                <input type="text" id="diagnosesList" name="diagnosesList" placeholder="e.g., Anxiety, Depression, ADHD, ODD">
+                <label>Target Diagnoses/Behaviors (select all that apply):</label>
+                <div class="diagnoses-checklist">
+                    <div class="checklist-column">
+                        <h4>Clinical Diagnoses</h4>
+                        <label><input type="checkbox" name="diagnoses" value="ADHD"> ADHD</label>
+                        <label><input type="checkbox" name="diagnoses" value="Autism Spectrum Disorder"> Autism Spectrum Disorder</label>
+                        <label><input type="checkbox" name="diagnoses" value="Bipolar Disorder"> Bipolar Disorder</label>
+                        <label><input type="checkbox" name="diagnoses" value="Depression"> Depression</label>
+                        <label><input type="checkbox" name="diagnoses" value="Anxiety"> Anxiety</label>
+                        <label><input type="checkbox" name="diagnoses" value="OCD"> OCD</label>
+                        <label><input type="checkbox" name="diagnoses" value="PTSD"> PTSD</label>
+                        <label><input type="checkbox" name="diagnoses" value="Oppositional Defiant Disorder"> Oppositional Defiant Disorder (ODD)</label>
+                        <label><input type="checkbox" name="diagnoses" value="Conduct Disorder"> Conduct Disorder</label>
+                        <label><input type="checkbox" name="diagnoses" value="Eating Disorder"> Eating Disorder</label>
+                        <label><input type="checkbox" name="diagnoses" value="Substance Abuse"> Substance Abuse</label>
+                        <label><input type="checkbox" name="diagnoses" value="Borderline Personality Disorder"> Borderline Personality Disorder (BPD)</label>
+                        <label><input type="checkbox" name="diagnoses" value="Psychiatric Disorders"> Psychiatric Disorders</label>
+                        <label><input type="checkbox" name="diagnoses" value="Behavioral Disorders"> Behavioral Disorders</label>
+                        <label><input type="checkbox" name="diagnoses" value="Emotional Disorders"> Emotional Disorders</label>
+                        <label><input type="checkbox" name="diagnoses" value="Co-occurring Disorders"> Co-occurring Disorders</label>
+                    </div>
+                    <div class="checklist-column">
+                        <h4>Behavioral Issues</h4>
+                        <label><input type="checkbox" name="diagnoses" value="defiance"> Defiance</label>
+                        <label><input type="checkbox" name="diagnoses" value="aggression"> Aggression</label>
+                        <label><input type="checkbox" name="diagnoses" value="self-harm"> Self-harm</label>
+                        <label><input type="checkbox" name="diagnoses" value="running away"> Running away</label>
+                        <label><input type="checkbox" name="diagnoses" value="academic struggles"> Academic struggles</label>
+                        <label><input type="checkbox" name="diagnoses" value="social problems"> Social problems</label>
+                        <label><input type="checkbox" name="diagnoses" value="family conflict"> Family conflict</label>
+                        <label><input type="checkbox" name="diagnoses" value="lying"> Lying</label>
+                        <label><input type="checkbox" name="diagnoses" value="stealing"> Stealing</label>
+                        <label><input type="checkbox" name="diagnoses" value="emotional dysregulation"> Emotional dysregulation</label>
+                        <label><input type="checkbox" name="diagnoses" value="impulsive behavior"> Impulsive behavior</label>
+                    </div>
+                </div>
+                <label for="customDiagnoses">Additional Diagnoses/Behaviors (comma-separated):</label>
+                <input type="text" id="customDiagnoses" name="customDiagnoses" placeholder="Add any diagnoses not listed above">
                 <div class="field-row">
                     <div class="field-group flex-2">
                         <label for="mainAddress">Main Address:</label>
@@ -283,68 +396,59 @@ get_header();
                 <hr>
                 <h4>Punishments</h4>
                 <div class="form-adder">
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="punishmentName">Name:</label>
-                            <input type="text" id="punishmentName" placeholder="e.g., Stone Circle">
-                        </div>
-                        <div class="field-group">
-                            <label for="punishmentType">Type:</label>
-                            <select id="punishmentType">
-                                <option value="physical">Physical</option>
-                                <option value="isolation">Isolation</option>
-                                <option value="restriction">Restriction</option>
-                                <option value="humiliation">Humiliation</option>
-                                <option value="labor">Labor/Work</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <label for="punishmentAction">What happens:</label>
-                    <input type="text" id="punishmentAction" placeholder="e.g., student sits motionless for hours">
-                    <label for="punishmentTrigger">Triggered by:</label>
-                    <input type="text" id="punishmentTrigger" placeholder="e.g., talking without permission, rule violations">
+                    <label for="punishmentName">Punishment Name:</label>
+                    <input type="text" id="punishmentName" placeholder="e.g., Back to Basics, Stone Circle">
+                    <label for="punishmentDescription">Complete Description:</label>
+                    <textarea id="punishmentDescription" rows="4" placeholder="e.g., (also called 'Frozen') which is used as punishment for severe rule infractions including bullying, incidents of hazing, physical assault, property destruction, possession of contraband, running away, stealing, community disruption, or unacceptable sexual behavior. During this punishment, the teens must complete a repair plan with his/her advocate and clinician..."></textarea>
                     <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
                 </div>
                 <div class="list-preview" id="punishmentListOutput"></div>
                 <hr>
-                <label for="punishmentsMisc">Additional Rules/Punishments Notes (will be included as-is):</label>
-                <textarea id="punishmentsMisc" name="punishmentsMisc" rows="4" placeholder="Any additional rules or punishment information that doesn't fit the fields above..."></textarea>
+                <h4>Full Rules & Punishments Section (Advanced)</h4>
+                <p style="font-size: 0.9em; color: #666;">Edit the complete rules and punishments section markdown here. This will override the individual fields above when generating output.</p>
+                <textarea id="punishmentsMisc" name="punishmentsMisc" rows="8" placeholder="Full rules and punishments content in markdown format..."></textarea>
             </fieldset>
 
             <fieldset>
                 <legend>Abuse/Neglect Allegations and Lawsuits</legend>
-                <label for="mainComplaints">Main Complaint Types (comma-separated):</label>
-                <input type="text" id="mainComplaints" name="mainComplaints" placeholder="e.g., emotional abuse, medical neglect, LGBTQ+ harassment">
-                <hr>
-                <h4>Specific Allegations</h4>
-                <div class="form-adder">
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="allegationType">Type:</label>
-                            <select id="allegationType">
-                                <option value="physical">Physical Abuse</option>
-                                <option value="emotional">Emotional Abuse</option>
-                                <option value="sexual">Sexual Abuse</option>
-                                <option value="medical">Medical Neglect</option>
-                                <option value="educational">Educational Neglect</option>
-                                <option value="isolation">Improper Isolation</option>
-                                <option value="restraint">Improper Restraints</option>
-                                <option value="food">Food Deprivation</option>
-                                <option value="sleep">Sleep Deprivation</option>
-                                <option value="lgbtq">LGBTQ+ Discrimination</option>
-                                <option value="religious">Religious Coercion</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="field-group flex-2">
-                            <label for="allegationDetail">Specific Detail:</label>
-                            <input type="text" id="allegationDetail" placeholder="e.g., students forced to exercise until vomiting">
-                        </div>
+                <label>Allegations Reported by Survivors (select all that apply):</label>
+                <div class="allegations-checklist">
+                    <div class="checklist-column">
+                        <h4>Abuse Types</h4>
+                        <label><input type="checkbox" name="allegations" value="physical abuse"> Physical abuse</label>
+                        <label><input type="checkbox" name="allegations" value="emotional abuse"> Emotional abuse</label>
+                        <label><input type="checkbox" name="allegations" value="psychological abuse"> Psychological abuse</label>
+                        <label><input type="checkbox" name="allegations" value="sexual abuse"> Sexual abuse</label>
+                        <label><input type="checkbox" name="allegations" value="verbal abuse"> Verbal abuse</label>
                     </div>
-                    <button type="button" class="add-btn" id="addAllegationBtn">Add Allegation</button>
+                    <div class="checklist-column">
+                        <h4>Neglect & Deprivation</h4>
+                        <label><input type="checkbox" name="allegations" value="medical neglect"> Medical neglect</label>
+                        <label><input type="checkbox" name="allegations" value="educational neglect"> Educational neglect</label>
+                        <label><input type="checkbox" name="allegations" value="food deprivation"> Food deprivation</label>
+                        <label><input type="checkbox" name="allegations" value="sleep deprivation"> Sleep deprivation</label>
+                        <label><input type="checkbox" name="allegations" value="withholding medical care"> Withholding medical care</label>
+                    </div>
+                    <div class="checklist-column">
+                        <h4>Confinement & Restraints</h4>
+                        <label><input type="checkbox" name="allegations" value="restraint abuse"> Restraint abuse</label>
+                        <label><input type="checkbox" name="allegations" value="excessive restraints"> Excessive restraints</label>
+                        <label><input type="checkbox" name="allegations" value="solitary confinement"> Solitary confinement</label>
+                        <label><input type="checkbox" name="allegations" value="isolation"> Isolation</label>
+                    </div>
+                    <div class="checklist-column">
+                        <h4>Mistreatment & Practices</h4>
+                        <label><input type="checkbox" name="allegations" value="humiliation"> Humiliation</label>
+                        <label><input type="checkbox" name="allegations" value="intimidation"> Intimidation</label>
+                        <label><input type="checkbox" name="allegations" value="overmedication"> Overmedication</label>
+                        <label><input type="checkbox" name="allegations" value="inadequate supervision"> Inadequate supervision</label>
+                        <label><input type="checkbox" name="allegations" value="untrained staff"> Untrained/unqualified staff</label>
+                        <label><input type="checkbox" name="allegations" value="fraudulent marketing"> Fraudulent marketing</label>
+                        <label><input type="checkbox" name="allegations" value="unsanitary conditions"> Unsanitary conditions</label>
+                    </div>
                 </div>
-                <div class="list-preview" id="allegationListOutput"></div>
+                <label for="customAllegations">Additional Allegations (comma-separated):</label>
+                <input type="text" id="customAllegations" name="customAllegations" placeholder="Add any allegations not listed above">
                 <hr>
                 <h4>Lawsuits</h4>
                 <div class="form-adder">

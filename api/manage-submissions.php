@@ -72,9 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     if ($search) {
-        $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2)";
+        $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2 OR organization LIKE :search3)";
         $params[':search1'] = "%$search%";
         $params[':search2'] = "%$search%";
+        $params[':search3'] = "%$search%";
     }
 
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -83,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
-    $sql = "SELECT id, program_name, city_state, program_type, years_active, status,
+    $sql = "SELECT id, program_name, city_state, organization, program_type, years_active, status,
                    submitted_by, created_at, updated_at, json_data
             FROM $table $whereClause
             ORDER BY created_at DESC

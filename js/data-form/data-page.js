@@ -1682,8 +1682,122 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
             function extractDataPointsForSearch(facility, type, searchValue, projectOperator = null) {
                 const matches = [];
                 const searchLower = searchValue.toLowerCase();
-                
+
                 switch (type) {
+                    case 'keyword':
+                        // General keyword search across all major fields
+                        // Facility name
+                        if (facility.identification?.name && facility.identification.name.toLowerCase().includes(searchLower)) {
+                            matches.push(`Facility Name: ${facility.identification.name}`);
+                        }
+                        if (facility.identification?.currentName && facility.identification.currentName.toLowerCase().includes(searchLower)) {
+                            matches.push(`Current Name: ${facility.identification.currentName}`);
+                        }
+                        if (facility.identification?.otherNames && Array.isArray(facility.identification.otherNames)) {
+                            facility.identification.otherNames.forEach(name => {
+                                if (name.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Other Name: ${name}`);
+                                }
+                            });
+                        }
+
+                        // Operator
+                        if (facility.identification?.currentOperator && facility.identification.currentOperator.toLowerCase().includes(searchLower)) {
+                            matches.push(`Operator: ${facility.identification.currentOperator}`);
+                        }
+                        if (facility.otherOperators && Array.isArray(facility.otherOperators)) {
+                            facility.otherOperators.forEach(op => {
+                                const opStr = typeof op === 'string' ? op : (op?.name || '');
+                                if (opStr && opStr.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Other Operator: ${opStr}`);
+                                }
+                            });
+                        }
+
+                        // Location
+                        if (facility.location && facility.location.toLowerCase().includes(searchLower)) {
+                            matches.push(`Location: ${facility.location}`);
+                        }
+                        if (facility.locationDetails?.city && facility.locationDetails.city.toLowerCase().includes(searchLower)) {
+                            matches.push(`City: ${facility.locationDetails.city}`);
+                        }
+                        if (facility.locationDetails?.state && facility.locationDetails.state.toLowerCase().includes(searchLower)) {
+                            matches.push(`State: ${facility.locationDetails.state}`);
+                        }
+
+                        // Staff
+                        if (facility.staff) {
+                            if (facility.staff.administrator) {
+                                const admins = Array.isArray(facility.staff.administrator) ? facility.staff.administrator : [facility.staff.administrator];
+                                admins.forEach(admin => {
+                                    const adminStr = typeof admin === 'string' ? admin : (admin?.name || '');
+                                    if (adminStr && adminStr.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Administrator: ${adminStr}`);
+                                    }
+                                });
+                            }
+                            if (facility.staff.notableStaff && Array.isArray(facility.staff.notableStaff)) {
+                                facility.staff.notableStaff.forEach(staff => {
+                                    const staffStr = typeof staff === 'string' ? staff : (staff?.name || '');
+                                    if (staffStr && staffStr.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Staff: ${staffStr}`);
+                                    }
+                                });
+                            }
+                        }
+
+                        // Program type
+                        if (facility.facilityDetails?.type && facility.facilityDetails.type.toLowerCase().includes(searchLower)) {
+                            matches.push(`Program Type: ${facility.facilityDetails.type}`);
+                        }
+
+                        // Status
+                        if (facility.operatingPeriod?.status && facility.operatingPeriod.status.toLowerCase().includes(searchLower)) {
+                            matches.push(`Status: ${facility.operatingPeriod.status}`);
+                        }
+
+                        // Notes
+                        if (facility.notes && facility.notes.toLowerCase().includes(searchLower)) {
+                            matches.push('Notes contain keyword');
+                        }
+
+                        // Accreditations
+                        if (facility.accreditations) {
+                            if (facility.accreditations.current && Array.isArray(facility.accreditations.current)) {
+                                facility.accreditations.current.forEach(acc => {
+                                    if (acc.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Accreditation: ${acc}`);
+                                    }
+                                });
+                            }
+                            if (facility.accreditations.past && Array.isArray(facility.accreditations.past)) {
+                                facility.accreditations.past.forEach(acc => {
+                                    if (acc.toLowerCase().includes(searchLower)) {
+                                        matches.push(`Past Accreditation: ${acc}`);
+                                    }
+                                });
+                            }
+                        }
+
+                        // Certifications
+                        if (facility.certifications && Array.isArray(facility.certifications)) {
+                            facility.certifications.forEach(cert => {
+                                if (cert.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Certification: ${cert}`);
+                                }
+                            });
+                        }
+
+                        // Known referrers
+                        if (facility.identification?.knownReferrers && Array.isArray(facility.identification.knownReferrers)) {
+                            facility.identification.knownReferrers.forEach(ref => {
+                                if (ref.toLowerCase().includes(searchLower)) {
+                                    matches.push(`Referrer: ${ref}`);
+                                }
+                            });
+                        }
+                        break;
+
                     case 'staff':
                         if (facility.staff) {
                             if (facility.staff.administrator) {
@@ -2107,6 +2221,7 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 }
                 
                 const searchTypeLabels = {
+                    'keyword': 'Keyword',
                     'staff': 'Staff Member',
                     'operator': 'Operator',
                     'location': 'Location',

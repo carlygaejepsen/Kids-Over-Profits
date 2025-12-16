@@ -1,6 +1,65 @@
 // NOTE: This script requires wiki-parser.js to be loaded first
 // Add <script src="js/wiki-parser.js"></script> before this file in your HTML
 
+const STATE_DISPLAY_NAMES = {
+    AL: 'Alabama',
+    AK: 'Alaska',
+    AZ: 'Arizona',
+    AR: 'Arkansas',
+    CA: 'California',
+    CO: 'Colorado',
+    CT: 'Connecticut',
+    DE: 'Delaware',
+    FL: 'Florida',
+    GA: 'Georgia',
+    HI: 'Hawaii',
+    ID: 'Idaho',
+    IL: 'Illinois',
+    IN: 'Indiana',
+    IA: 'Iowa',
+    KS: 'Kansas',
+    KY: 'Kentucky',
+    LA: 'Louisiana',
+    ME: 'Maine',
+    MD: 'Maryland',
+    MA: 'Massachusetts',
+    MI: 'Michigan',
+    MN: 'Minnesota',
+    MS: 'Mississippi',
+    MO: 'Missouri',
+    MT: 'Montana',
+    NE: 'Nebraska',
+    NV: 'Nevada',
+    NH: 'New Hampshire',
+    NJ: 'New Jersey',
+    NM: 'New Mexico',
+    NY: 'New York',
+    NC: 'North Carolina',
+    ND: 'North Dakota',
+    OH: 'Ohio',
+    OK: 'Oklahoma',
+    OR: 'Oregon',
+    PA: 'Pennsylvania',
+    RI: 'Rhode Island',
+    SC: 'South Carolina',
+    SD: 'South Dakota',
+    TN: 'Tennessee',
+    TX: 'Texas',
+    UT: 'Utah',
+    VT: 'Vermont',
+    VA: 'Virginia',
+    WA: 'Washington',
+    WI: 'Wisconsin',
+    WV: 'West Virginia',
+    WY: 'Wyoming',
+    DC: 'District of Columbia',
+    CORPORATE: 'Corporate Index',
+    NONUSA: 'International / Non-USA'
+};
+
+const wikiEditorSettings = window.wikiEditorSettings || {};
+const isAdminMode = !!wikiEditorSettings.isAdmin;
+
 document.addEventListener('DOMContentLoaded', () => {
     const wikiForm = document.getElementById('wikiForm');
 
@@ -23,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let therapies = [];
     let programLevels = [];
     let importedMarkdown = ''; // Store original imported markdown
+
 
     const staffNameInput = document.getElementById('staffName');
     const staffRoleInput = document.getElementById('staffRole');
@@ -240,6 +300,176 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderStaffList();
 
+    const setFieldValue = (id, value = '') => {
+        const el = document.getElementById(id);
+        if (el) el.value = value || '';
+    };
+
+    const setCheckboxGroup = (name, selectedValues = []) => {
+        const normalized = (selectedValues || []).map(value => (value || '').toString());
+        document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+            cb.checked = normalized.includes(cb.value);
+        });
+    };
+
+    function populateFormFromParsedData(parsedData = {}, overrides = {}) {
+        const data = { ...parsedData, ...overrides };
+        setFieldValue('programName', data.programName);
+        setFieldValue('yearsActive', data.yearsActive);
+        setFieldValue('cityState', data.cityState);
+        setFieldValue('programType', data.programType);
+        setFieldValue('yearFounded', data.yearFounded);
+        setFieldValue('ageRange', data.ageRange);
+        setFieldValue('capacity', data.capacity);
+        setFieldValue('ownerName', data.ownerName);
+        setFieldValue('ownerLink', data.ownerLink);
+        setFieldValue('avgStay', data.avgStay);
+        setFieldValue('tuition', data.tuition);
+        setFieldValue('natsapMember', data.natsapMember);
+        setFieldValue('natsapYear', data.natsapYear);
+        setFieldValue('mainAddress', data.mainAddress);
+        setFieldValue('addressLink', data.addressLink);
+        setFieldValue('accreditingBody', data.accreditingBody);
+        setFieldValue('accreditingBodyLink', data.accreditingBodyLink);
+        setFieldValue('historyNotes', data.historyNotes);
+        setFieldValue('levelSystemDesc', data.levelSystemDesc);
+        setFieldValue('structureMisc', data.structureMisc);
+        setFieldValue('punishmentsMisc', data.punishmentsMisc);
+        setFieldValue('lawsuitsMisc', data.lawsuitsMisc);
+        setFieldValue('mediaInfo', data.mediaInfo);
+        setFieldValue('testimoniesMisc', data.testimoniesMisc);
+        setFieldValue('relatedMediaMisc', data.relatedMediaMisc);
+        setFieldValue('customDiagnoses', data.customDiagnoses);
+        setFieldValue('customAllegations', data.customAllegations);
+
+        staffMembers = Array.isArray(data.staffMembers) ? data.staffMembers : [];
+        punishments = Array.isArray(data.punishments) ? data.punishments : [];
+        lawsuits = Array.isArray(data.lawsuits) ? data.lawsuits : [];
+        newsArticles = Array.isArray(data.newsArticles) ? data.newsArticles : [];
+        testimonies = Array.isArray(data.testimonies) ? data.testimonies : [];
+        relatedMedia = Array.isArray(data.relatedMedia) ? data.relatedMedia : [];
+        campuses = Array.isArray(data.campuses) ? data.campuses : [];
+        ownershipChanges = Array.isArray(data.ownershipChanges) ? data.ownershipChanges : [];
+        rules = Array.isArray(data.rules) ? data.rules : [];
+        allegations = Array.isArray(data.allegations) ? data.allegations : [];
+        therapies = Array.isArray(data.therapies) ? data.therapies : [];
+
+        renderStaffList();
+        renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.description || '').substring(0, 60)}...`);
+        renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
+        renderList(newsArticles, 'articleListOutput', item => `<strong>${escapeHtml(item.title)}</strong> (${escapeHtml(item.source || 'No Source')})`);
+        renderList(testimonies, 'testimonyListOutput', item => {
+            const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
+            return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source || 'Unknown')}]`;
+        });
+        renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
+        renderList(campuses, 'campusListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.location)}`);
+        renderList(ownershipChanges, 'ownerChangeListOutput', item => {
+            const prevDisplay = item.previousLink
+                ? `<a href="${escapeHtml(item.previousLink)}" target="_blank">${escapeHtml(item.previous || '?')}</a>`
+                : escapeHtml(item.previous || '?');
+            const newDisplay = item.newOwnerLink
+                ? `<a href="${escapeHtml(item.newOwnerLink)}" target="_blank">${escapeHtml(item.newOwner || '?')}</a>`
+                : escapeHtml(item.newOwner || '?');
+            return `<strong>${escapeHtml(item.year)}</strong>: ${prevDisplay} → ${newDisplay}`;
+        });
+        renderList(rules, 'ruleListOutput', item => escapeHtml(item.name || item));
+        renderList(therapies, 'therapyListOutput', item => `<strong>${escapeHtml(item.label || item.type || '')}</strong>${item.frequency ? ` (${escapeHtml(item.frequency)})` : ''}`);
+
+        setCheckboxGroup('diagnoses', data.selectedDiagnoses);
+        setCheckboxGroup('allegations', data.selectedAllegations);
+    }
+
+    const fetchSubmissionByName = async (programName) => {
+        if (!programName) return null;
+        try {
+            const response = await fetch(`/wp-content/themes/child/api/save-wiki-submission.php?search=${encodeURIComponent(programName)}`);
+            if (!response.ok) return null;
+            const result = await response.json();
+            if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+                return result.data[0];
+            }
+        } catch (error) {
+            console.error(`Wiki Editor: failed to lookup "${programName}":`, error);
+        }
+        return null;
+    };
+
+    const loadLocalIndexMarkdown = async (slug) => {
+        if (!slug) return '';
+        const candidates = [
+            `/wp-content/themes/child/markdown_output/index_${slug}.md`,
+            `/wp-content/themes/child/markdown_output/index_${slug}_.md`
+        ];
+        for (const path of candidates) {
+            try {
+                const response = await fetch(path, { cache: 'no-cache' });
+                if (response.ok) {
+                    return response.text();
+                }
+            } catch (error) {
+                console.warn(`Wiki Editor: failed to fetch ${path}:`, error);
+            }
+        }
+        return '';
+    };
+
+    async function loadOrganizationIndexEntry(entry, button) {
+        if (!entry) return;
+        const originalLabel = button?.textContent || 'Edit';
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Loading...';
+        }
+
+        try {
+            const programName = entry.name || entry.normalizedName;
+            const dbEntry = await fetchSubmissionByName(programName);
+            if (dbEntry) {
+                await loadEntryIntoForm(dbEntry.id);
+                return;
+            }
+
+            const slug = getSlugFromEntryUrl(entry.url);
+            if (!slug) {
+                throw new Error('Unable to determine index slug');
+            }
+
+            const markdown = await loadLocalIndexMarkdown(slug);
+            if (!markdown) {
+                throw new Error('Local index markdown not found');
+            }
+
+            parseAndPopulate(markdown);
+            const outputEl = document.getElementById('outputCode');
+            if (outputEl) {
+                outputEl.value = markdown.trim();
+            }
+            importedMarkdown = markdown;
+            if (programName) {
+                setFieldValue('programName', programName);
+            }
+            finalizeEntryLoad(programName || entry.url);
+        } catch (error) {
+            console.error('Wiki Editor: failed to load organization entry:', error);
+            alert(`Failed to load ${entry.name || 'organization'} index page: ${error.message || 'Entry not found'}`);
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        }
+    }
+
+    function finalizeEntryLoad(name) {
+        if (browserPanel) browserPanel.style.display = 'none';
+        if (toggleBrowserBtn) toggleBrowserBtn.textContent = '📂 Browse Saved Entries';
+        wikiForm.scrollIntoView({ behavior: 'smooth' });
+        if (name) {
+            alert(`Loaded entry: ${name}`);
+        }
+    }
+
     // --- Helper: Get Placeholder Text ---
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
@@ -278,6 +508,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         outputDiv.innerHTML = '';
+        if (!array || array.length === 0) {
+            outputDiv.innerHTML = '<p style="color:#999;">No items added yet</p>';
+            return;
+        }
         array.forEach((item, index) => {
             const el = document.createElement('div');
             el.className = 'list-preview-item';
@@ -377,15 +611,13 @@ document.addEventListener('DOMContentLoaded', () => {
         addPunishmentBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const name = document.getElementById('punishmentName')?.value.trim() || '';
-            const type = document.getElementById('punishmentType')?.value || 'other';
-            const action = document.getElementById('punishmentAction')?.value.trim() || '';
-            const trigger = document.getElementById('punishmentTrigger')?.value.trim() || '';
-            if (name && action) {
-                punishments.push({ name, type, action, trigger });
-                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.action).substring(0, 40)}...`);
-                clearInputs(['punishmentName', 'punishmentAction', 'punishmentTrigger']);
+            const description = document.getElementById('punishmentDescription')?.value.trim() || '';
+            if (name && description) {
+                punishments.push({ name, description });
+                renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.description).substring(0, 60)}...`);
+                clearInputs(['punishmentName', 'punishmentDescription']);
             } else {
-                alert('Please enter at least a punishment name and what happens.');
+                alert('Please enter both a punishment name and description.');
             }
         });
     }
@@ -614,7 +846,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (generateBtn) {
         generateBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // --- Get All Single-Field Values ---
+
+            // Check if generation module is loaded
+            if (typeof generateWikiMarkdown !== 'function') {
+                console.error('generateWikiMarkdown is not defined. Make sure wiki-generation.js is loaded.');
+                alert('Wiki generation module not loaded. Please check the console for errors.');
+                return;
+            }
+
+            // Collect all form field values
             const vals = {};
             const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
             inputs.forEach(input => {
@@ -623,509 +863,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Collect selected diagnoses from checkboxes
+            const selectedDiagnoses = [];
+            document.querySelectorAll('input[name="diagnoses"]:checked').forEach(cb => {
+                selectedDiagnoses.push(cb.value);
+            });
+
+            // Collect selected allegations from checkboxes
+            const selectedAllegations = [];
+            document.querySelectorAll('input[name="allegations"]:checked').forEach(cb => {
+                selectedAllegations.push(cb.value);
+            });
+
             const programName = vals.programName || '[Program Name]';
 
-            // --- Helper: Create Link ---
-            const createLink = (text, url) => {
-                if (!text) return '';
-                const safeUrl = sanitizeUrl(url);
-                if (!safeUrl) return escapeMarkdown(text);
-                return `[${escapeMarkdown(text)}](${safeUrl})`;
+            // Build form data object to pass to generation function
+            const formData = {
+                // Basic information
+                ...vals,
+
+                // Arrays from list managers
+                staffMembers: staffMembers,
+                punishments: punishments,
+                lawsuits: lawsuits,
+                newsArticles: newsArticles,
+                testimonies: testimonies,
+                relatedMedia: relatedMedia,
+                campuses: campuses,
+                ownershipChanges: ownershipChanges,
+                rules: rules,
+                allegations: allegations,
+                therapies: therapies,
+                programLevels: programLevels,
+
+                // Checkbox selections
+                selectedDiagnoses: selectedDiagnoses,
+                selectedAllegations: selectedAllegations
             };
 
-            // --- Helper: Process Simple List from Textarea ---
-            const processSimpleList = (text) => {
-                if (!text.trim()) return '';
-                return text.split('\n')
-                    .filter(line => line.trim() !== '')
-                    .map(line => `* ${escapeMarkdown(line.trim())}`)
-                    .join('\n');
-            };
+            // Generate the wiki markdown using the generation module
+            let output = generateWikiMarkdown(formData);
 
-            // --- Helper: Join With "and" for natural sentences ---
-            const joinWithAnd = (items) => {
-                if (items.length === 1) return items[0];
-                if (items.length === 2) return `${items[0]} and ${items[1]}`;
-                return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
-            };
-
-            // --- Helper: Ensure trailing period for fragments ---
-            const ensureSentence = (text) => {
-                const trimmed = (text || '').trim();
-                if (!trimmed) return '';
-                return /[.!?]"?$/.test(trimmed) ? trimmed : `${trimmed}.`;
-            };
-
-    const roleVerb = (staffMember) => {
-        if (!staffMember) return 'is';
-        if (staffMember.isFormer) return 'was';
-        const value = (staffMember.role || '').toLowerCase();
-        return /\b(former|previous|ex[\s-])/.test(value) ? 'was' : 'is';
-    };
-
-            // --- Build History Section ---
-            let historySection = '';
-
-            // If we have the full imported history section, use it (preserves all content)
-            // Otherwise, generate from structured data
-            if (vals.historyNotes && vals.historyNotes.trim()) {
-                historySection = vals.historyNotes.trim();
-            } else {
-                const historySentences = [];
-
-                const descriptorParts = [];
-                if (vals.programType) descriptorParts.push(`a ${escapeMarkdown(vals.programType)}`);
-                if (vals.yearFounded) descriptorParts.push(`founded in ${escapeMarkdown(vals.yearFounded)}`);
-                if (vals.cityState) descriptorParts.push(`based in ${escapeMarkdown(vals.cityState)}`);
-                if (descriptorParts.length > 0) {
-                    historySentences.push(`${escapeMarkdown(programName)} is ${joinWithAnd(descriptorParts)}.`);
-                }
-
-                if (vals.ownerName) {
-                    historySentences.push(`The program is owned and operated by ${createLink(vals.ownerName, vals.ownerLink)}.`);
-                }
-
-                const audienceParts = [];
-                if (vals.ageRange) audienceParts.push(`serves young people aged ${escapeMarkdown(vals.ageRange)}`);
-                if (vals.diagnosesList) {
-                    const diagnoses = vals.diagnosesList.split(',')
-                        .map(item => item.trim())
-                        .filter(Boolean)
-                        .map(item => `"${escapeMarkdown(item)}"`).join(', ');
-                    if (diagnoses) {
-                        audienceParts.push(`lists ${diagnoses} as target diagnoses or behaviors`);
-                    }
-                }
-                if (audienceParts.length > 0) {
-                    historySentences.push(`The program ${joinWithAnd(audienceParts)}.`);
-                }
-
-                const operationsParts = [];
-                if (vals.avgStay) operationsParts.push(`reports an average length of stay of around ${escapeMarkdown(vals.avgStay)}`);
-                if (vals.tuition) operationsParts.push(`reports tuition of ${escapeMarkdown(vals.tuition)}`);
-                // Build NATSAP status sentence from dropdown + year
-                if (vals.natsapMember === 'yes' && vals.natsapYear) {
-                    operationsParts.push(`has been a NATSAP member since ${escapeMarkdown(vals.natsapYear)}`);
-                } else if (vals.natsapMember === 'yes') {
-                    operationsParts.push(`is a NATSAP member`);
-                } else if (vals.natsapMember === 'former') {
-                    operationsParts.push(`is a former NATSAP member`);
-                } else if (vals.natsapMember === 'no') {
-                    operationsParts.push(`is not a NATSAP member`);
-                }
-                if (operationsParts.length > 0) {
-                    historySentences.push(`It ${joinWithAnd(operationsParts)}.`);
-                }
-
-                if (vals.mainAddress) {
-                    historySentences.push(`The main office is located at ${createLink(vals.mainAddress, vals.addressLink)}.`);
-                }
-
-                if (vals.accreditingBody) {
-                    historySentences.push(`The program is accredited by the ${createLink(vals.accreditingBody, vals.accreditingBodyLink)}.`);
-                }
-
-                // Generate sentences for additional campuses
-                if (campuses.length > 0) {
-                    const campusList = campuses.map(c => `${escapeMarkdown(c.name)} in ${escapeMarkdown(c.location)}`);
-                    historySentences.push(`The program also operates additional locations including ${joinWithAnd(campusList)}.`);
-                }
-
-                // Generate sentences for ownership changes
-                if (ownershipChanges.length > 0) {
-                    ownershipChanges.forEach(change => {
-                        // Create markdown links if URLs are available
-                        const prevText = change.previousLink
-                            ? `[${escapeMarkdown(change.previous)}](${change.previousLink})`
-                            : escapeMarkdown(change.previous);
-                        const newText = change.newOwnerLink
-                            ? `[${escapeMarkdown(change.newOwner)}](${change.newOwnerLink})`
-                            : escapeMarkdown(change.newOwner);
-
-                        if (change.previous && change.newOwner) {
-                            historySentences.push(`In ${escapeMarkdown(change.year)}, the program changed ownership from ${prevText} to ${newText}.`);
-                        } else if (change.newOwner) {
-                            historySentences.push(`In ${escapeMarkdown(change.year)}, the program was acquired by ${newText}.`);
-                        } else if (change.previous) {
-                            historySentences.push(`In ${escapeMarkdown(change.year)}, ${prevText} divested from the program.`);
-                        }
-                    });
-                }
-
-                historySection = historySentences.length > 0 ? historySentences.join('\n\n') : getPlaceholder('History and Background Information', programName);
-            }
-
-            // --- Build Staff Section ---
-            let staffSection;
-            if (staffMembers.length > 0) {
-                // Sort staff: current staff first, then former staff
-                const sortedStaff = [...staffMembers].sort((a, b) => {
-                    const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
-                    const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
-                    if (aIsFormer && !bIsFormer) return 1;  // a is former, b is current -> b first
-                    if (!aIsFormer && bIsFormer) return -1; // a is current, b is former -> a first
-                    return 0; // preserve original order within group
+            // Apply auto-linking if enabled and available
+            const autoLinkCheckbox = document.getElementById('autoLinkPrograms');
+            if (autoLinkCheckbox && autoLinkCheckbox.checked &&
+                window.ttiAutoLinker && window.ttiAutoLinker.loaded) {
+                console.log('Applying auto-linking to generated wiki entry...');
+                output = window.ttiAutoLinker.autoLink(output, {
+                    currentProgramName: programName,
+                    linkCurrentProgram: false  // Don't link the program to itself
                 });
-                
-                staffSection = sortedStaff.map(s => {
-                    let roleText = escapeMarkdown(s.role);
-                    
-                    // Determine if this is a former staff member
-                    const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
-                    const isFormerStaff = s.isFormer || roleHasFormer;
-                    
-                    // If marked as former, remove "current" from role
-                    if (isFormerStaff) {
-                        roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
-                    }
-                    
-                    const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
-                    
-                    let verb, descriptor;
-                    if (s.isFormer && !roleHasFormer) {
-                        // Checkbox marked as former, but role doesn't say "former"
-                        // Use: "is the former [Role]"
-                        verb = 'is';
-                        descriptor = articleRole.replace(/^the\s+/i, 'the former ');
-                    } else if (roleHasFormer) {
-                        // Role already contains "former/previous/ex-"
-                        // Use: "was the [Role]" (role already has former in it)
-                        verb = 'was';
-                        descriptor = articleRole;
-                    } else {
-                        // Current staff member
-                        // Use: "is the [Role]"
-                        verb = 'is';
-                        descriptor = articleRole;
-                    }
-                    
-                    const roleSentence = ensureSentence(`**${escapeMarkdown(s.name)}** ${verb} ${descriptor}`);
-                    
-                    // Format previous roles - handle both old string format and new {role, employer} format
-                    let previousSentence = '';
-                    if (s.previousRoles && s.previousRoles.length) {
-                        const formattedRoles = s.previousRoles.map(pr => {
-                            if (typeof pr === 'string') return escapeMarkdown(pr);
-                            if (pr.role && pr.employer) return `${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
-                            return escapeMarkdown(pr.role || pr.employer || '');
-                        }).filter(Boolean);
-                        if (formattedRoles.length > 0) {
-                            previousSentence = ensureSentence(`Previously worked as ${joinWithAnd(formattedRoles)}`);
-                        }
-                    }
-                    
-                    // Bio can contain markdown links - don't escape it, just ensure sentence ending
-                    const bioSentence = ensureSentence(s.bio || '');
-                    return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
-                }).join('\n\n');
-            } else {
-                staffSection = getPlaceholder('Founders and Notable Staff', programName);
             }
 
-            // --- Build Structure Section ---
-            let structureSection = '';
-            const structureParts = [];
-
-                // Build level system description from dropdown selections and textarea
-                const levelSystemTypes = { level: 'level system', phase: 'phase system', point: 'point system', tier: 'tier system' };
-                if (vals.levelSystemType && vals.levelCount) {
-                    structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType} consisting of ${escapeMarkdown(vals.levelCount)} ${vals.levelSystemType === 'phase' ? 'phases' : 'levels'}.`);
-                } else if (vals.levelSystemType) {
-                    structureParts.push(`Like other behavior-modification programs, ${escapeMarkdown(programName)} uses a ${levelSystemTypes[vals.levelSystemType] || vals.levelSystemType}.`);
-                }
-
-                // Add level system details from textarea
-                if (vals.levelSystemDesc && vals.levelSystemDesc.trim()) {
-                    structureParts.push(vals.levelSystemDesc.trim());
-                }
-
-                // Build level/phase descriptions from programLevels array
-                if (programLevels.length > 0) {
-                    const levelDescriptions = programLevels.map(level => {
-                        // If we have the full description stored, use it
-                        if (level.fullDesc) {
-                            return `- **${escapeMarkdown(level.name)}:** ${level.fullDesc}`;
-                        }
-
-                        // Otherwise build from structured fields
-                        const parts = [];
-                        if (level.duration) parts.push(`Duration: ${escapeMarkdown(level.duration)}`);
-                        if (level.privileges) parts.push(`Privileges: ${escapeMarkdown(level.privileges)}`);
-                        if (level.restrictions) parts.push(`Restrictions: ${escapeMarkdown(level.restrictions)}`);
-
-                        return `- **${escapeMarkdown(level.name)}**${parts.length > 0 ? ': ' + parts.join('. ') : ''}`;
-                    }).join('\n\n');
-
-                    if (levelDescriptions) {
-                        structureParts.push(levelDescriptions);
-                    }
-                }
-
-                // Build education section from dropdowns
-                const educationTypes = {
-                    accredited: 'an accredited on-site school',
-                    online: 'online or computer-based education',
-                    packet: 'packet-based or worksheet education',
-                    limited: 'limited or sporadic educational instruction',
-                    none: 'no formal educational instruction'
-                };
-                if (vals.educationType) {
-                    let eduSentence = `The program provides ${educationTypes[vals.educationType] || vals.educationType}`;
-                    if (vals.educationAccreditor) {
-                        eduSentence += `, accredited by ${escapeMarkdown(vals.educationAccreditor)}`;
-                    }
-                    eduSentence += '.';
-                    structureParts.push(eduSentence);
-                }
-
-                // Build therapy section from structured data
-                if (therapies.length > 0) {
-                    const therapyDescriptions = therapies.map(t => {
-                        return t.frequency ? `${t.label} (${escapeMarkdown(t.frequency)})` : t.label;
-                    });
-                    structureParts.push(`The program offers ${joinWithAnd(therapyDescriptions)}.`);
-                }
-
-                // Append any additional structure notes (e.g., points system details)
-                if (vals.structureMisc && vals.structureMisc.trim()) {
-                    structureParts.push(vals.structureMisc.trim());
-                }
-
-                structureSection = structureParts.length > 0 ? structureParts.join('\n\n') : getPlaceholder('Program Structure', programName);
-
-            // --- Build Rules & Punishments Section ---
-            let rulesSection = '';
-
-            // If we have the full imported rules/punishments section, use it (preserves all content)
-            // Otherwise, generate from structured data
-            if (vals.punishmentsMisc && vals.punishmentsMisc.trim()) {
-                rulesSection = vals.punishmentsMisc.trim();
-            } else {
-                const rulesParts = [];
-
-                // Build rules list from structured data
-                if (rules.length > 0) {
-                    const rulesList = rules.map(r => `- ${escapeMarkdown(r.name)}`).join('\n');
-                    rulesParts.push(`${escapeMarkdown(programName)} is a very strict program with many rules. Some of these rules include:\n\n${rulesList}`);
-                }
-
-                // Build punishment descriptions from structured data
-                if (punishments.length > 0) {
-                    const punishmentTypes = {
-                        physical: 'physical', isolation: 'isolation-based', restriction: 'restriction-based',
-                        humiliation: 'humiliation-based', labor: 'labor-based', other: ''
-                    };
-                    const punishmentDescriptions = punishments.map(p => {
-                        let sentence = `**${escapeMarkdown(p.name)}**`;
-                        const typeDesc = punishmentTypes[p.type];
-                        if (typeDesc) sentence += ` is a ${typeDesc} punishment where`;
-                        else sentence += ` is a punishment where`;
-                        sentence += ` ${escapeMarkdown(p.action)}`;
-                        if (p.trigger) {
-                            sentence += `. This punishment is typically used for ${escapeMarkdown(p.trigger)}`;
-                        }
-                        return ensureSentence(sentence);
-                    }).join('\n\n');
-                    rulesParts.push(`The program uses various punishments to enforce compliance:\n\n${punishmentDescriptions}`);
-                }
-
-                rulesSection = rulesParts.length > 0 ? rulesParts.join('\n\n') : getPlaceholder('Rules and Punishments', programName);
+            // Append any unparsed content from import at the end
+            if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
+                output += '\n\n***\n\n' + window.unparsedContentFromImport;
+                console.log('✓ Appended unparsed content to end of output');
             }
-
-            // --- Build Abuse Section ---
-            let abuseSection = '';
-
-            // If we have the full imported lawsuits/abuse section, use it (preserves all content)
-            // Otherwise, generate from structured data
-            if (vals.lawsuitsMisc && vals.lawsuitsMisc.trim()) {
-                abuseSection = vals.lawsuitsMisc.trim();
-            } else {
-                const abuseParts = [];
-                if (vals.mainComplaints) {
-                    abuseParts.push(`Many survivors have reported that abuse and neglect have occurred at ${escapeMarkdown(programName)}. The main complaints are of ${escapeMarkdown(vals.mainComplaints)}.`);
-                }
-
-                // Build allegations from structured data
-                if (allegations.length > 0) {
-                    const allegationTypeLabels = {
-                        physical: 'physical abuse', emotional: 'emotional abuse', sexual: 'sexual abuse',
-                        medical: 'medical neglect', educational: 'educational neglect', isolation: 'improper isolation',
-                        restraint: 'improper restraints', food: 'food deprivation', sleep: 'sleep deprivation',
-                        lgbtq: 'LGBTQ+ discrimination', religious: 'religious coercion', other: 'other abuse'
-                    };
-                    // Group allegations by type
-                    const groupedAllegations = {};
-                    allegations.forEach(a => {
-                        const typeLabel = allegationTypeLabels[a.type] || a.type;
-                        if (!groupedAllegations[typeLabel]) groupedAllegations[typeLabel] = [];
-                        groupedAllegations[typeLabel].push(a.detail);
-                    });
-                    const allegationsList = Object.entries(groupedAllegations).map(([type, details]) => {
-                        return `- **${type}**: ${details.map(d => escapeMarkdown(d)).join('; ')}`;
-                    }).join('\n');
-                    abuseParts.push(`Specific allegations of abuse and neglect reported by survivors include:\n\n${allegationsList}`);
-                }
-
-                // Build lawsuit descriptions from structured data
-                if (lawsuits.length > 0) {
-                    const outcomeLabels = {
-                        settled: 'was settled', dismissed: 'was dismissed', plaintiff: 'was decided in favor of the plaintiff',
-                        defendant: 'was decided in favor of the defendant', ongoing: 'is still ongoing'
-                    };
-                    const lawsuitDescriptions = lawsuits.map(lawsuit => {
-                        const defendant = lawsuit.defendant || programName;
-                        let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
-                        if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
-                        sentence += ` alleging ${escapeMarkdown(lawsuit.claims)}.`;
-
-                        if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
-                            sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
-                            if (lawsuit.amount) {
-                                sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
-                            }
-                            sentence += '.';
-                        } else if (lawsuit.amount) {
-                            sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
-                        }
-
-                        return sentence;
-                    }).join('\n\n');
-                    abuseParts.push(lawsuitDescriptions);
-                }
-
-                abuseSection = abuseParts.length > 0 ? abuseParts.join('\n\n') : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
-            }
-
-            // --- Build Media Section (Combined) ---
-            let mediaSection;
-            if (vals.mediaInfo && vals.mediaInfo.trim()) {
-                // Use the full imported media section if available
-                mediaSection = vals.mediaInfo.trim();
-            } else {
-                // Otherwise, generate from structured data
-                const mediaList = processSimpleList(vals.mediaInfo).replace(/^\*/gm, '-');
-                const newsList = newsArticles.map(a => {
-                    let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
-                    if (sourceDate) sourceDate = ` (${sourceDate})`;
-                    const safeUrl = sanitizeUrl(a.url);
-                    const linkText = safeUrl ? `[${escapeMarkdown(a.title)}](${safeUrl})` : escapeMarkdown(a.title);
-                    return `- ${linkText}${sourceDate}`;
-                }).join('\n');
-                const combinedMedia = [mediaList, newsList].filter(Boolean).join('\n\n');
-                mediaSection = combinedMedia || getPlaceholder('Media Coverage', programName);
-            }
-
-            // --- Build Testimonies Section ---
-            let testimoniesSection;
-            if (vals.testimoniesMisc && vals.testimoniesMisc.trim()) {
-                // Use the full imported testimonies section if available
-                testimoniesSection = vals.testimoniesMisc.trim();
-            } else if (testimonies.length > 0) {
-                // Otherwise, generate from structured data
-                testimoniesSection = testimonies.map(t => {
-                    const datePart = t.date ? `${t.date}: ` : '';
-                    const safeUrl = sanitizeUrl(t.url);
-                    const sourceLink = safeUrl ? `[${escapeMarkdown(t.source)}](${safeUrl})` : escapeMarkdown(t.source);
-                    return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - ${sourceLink}`;
-                }).join('\n\n');
-            } else {
-                testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
-            }
-
-            // --- Build Related Media Section ---
-            let relatedMediaSection;
-            if (vals.relatedMediaMisc && vals.relatedMediaMisc.trim()) {
-                // Use the full imported related media section if available
-                relatedMediaSection = vals.relatedMediaMisc.trim();
-            } else if (relatedMedia.length > 0) {
-                // Otherwise, generate from structured data
-                relatedMediaSection = relatedMedia.map(m => {
-                    const safeUrl = sanitizeUrl(m.url);
-                    const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
-                    return `- ${linkText}`;
-                }).join('\n\n');
-            } else {
-                relatedMediaSection = getPlaceholder('Related Media', programName);
-            }
-
-            const headerLine = `#**${escapeMarkdown(programName)}** (${vals.yearsActive || '[Years Active]'}) ${vals.cityState || '[City, ST]'}`;
-            const sectionBreak = '\n***\n\n';
-
-            // --- Assemble Final Output ---
-            const output = `
-${headerLine}
-*${vals.programType || '[Program Type]'}*
-
-***
-
-##**History and Background Information**
-
-${historySection}
-
-***
-
-##**Founders and Notable Staff**
-
-${staffSection}
-
-***
-
-##**Program Structure**
-
-${structureSection}
-
-***
-
-##**Rules and Punishments**
-
-${rulesSection}
-
-***
-
-##**Abuse/Neglect Allegations and Lawsuits**
-
-${abuseSection}
-
-***
-
-##**In the Media**
-
-${mediaSection}
-
-***
-
-##**Survivor Testimonies**
-
-${testimoniesSection}
-
-***
-
-##**Related Media**
-
-${relatedMediaSection}
-            `;
 
             if (outputCode) {
-                let finalOutput = output.trim();
-
-                // Apply auto-linking if enabled and available
-                const autoLinkCheckbox = document.getElementById('autoLinkPrograms');
-                if (autoLinkCheckbox && autoLinkCheckbox.checked &&
-                    window.ttiAutoLinker && window.ttiAutoLinker.loaded) {
-                    console.log('Applying auto-linking to generated wiki entry...');
-                    finalOutput = window.ttiAutoLinker.autoLink(finalOutput, {
-                        currentProgramName: programName,
-                        linkCurrentProgram: false  // Don't link the program to itself
-                    });
-                }
-
-                // Append any unparsed content from import at the end
-                if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
-                    finalOutput += '\n\n***\n\n' + window.unparsedContentFromImport;
-                    console.log('✓ Appended unparsed content to end of output');
-                }
-
-                outputCode.value = finalOutput;
+                outputCode.value = output.trim();
                 outputCode.focus();
                 outputCode.select();
             }
@@ -1356,6 +1153,7 @@ ${relatedMediaSection}
         setValue('ownerName', parsedData.ownerName);
         setValue('ownerLink', parsedData.ownerLink);
         setValue('ageRange', parsedData.ageRange);
+        setValue('capacity', parsedData.capacity);
         setValue('diagnosesList', parsedData.diagnosesList);
         setValue('avgStay', parsedData.avgStay);
         setValue('tuition', parsedData.tuition);
@@ -1405,7 +1203,7 @@ ${relatedMediaSection}
         renderStaffList();
 
         if (punishments.length > 0) {
-            renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong>`);
+            renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.description || '').substring(0, 60)}...`);
         }
 
         if (rules.length > 0) {
@@ -1459,6 +1257,52 @@ ${relatedMediaSection}
                 if (item.privileges) parts.push(`Privileges: ${escapeHtml(item.privileges.substring(0, 50))}...`);
                 return parts.join(' | ');
             });
+        }
+
+        // Set diagnosis checkboxes from parsed data
+        if (parsedData.selectedDiagnoses && parsedData.selectedDiagnoses.length > 0) {
+            // First uncheck all diagnosis checkboxes
+            document.querySelectorAll('input[name="diagnoses"]').forEach(cb => cb.checked = false);
+
+            // Then check the ones that were parsed
+            parsedData.selectedDiagnoses.forEach(diagnosis => {
+                const checkbox = document.querySelector(`input[name="diagnoses"][value="${diagnosis}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                } else {
+                    console.log(`Diagnosis checkbox not found for: "${diagnosis}"`);
+                }
+            });
+            console.log(`✓ Checked ${parsedData.selectedDiagnoses.length} diagnosis checkboxes`);
+        }
+
+        // Set custom diagnoses field
+        if (parsedData.customDiagnoses) {
+            setValue('customDiagnoses', parsedData.customDiagnoses);
+            console.log(`✓ Set custom diagnoses: ${parsedData.customDiagnoses}`);
+        }
+
+        // Set allegation checkboxes from parsed data
+        if (parsedData.selectedAllegations && parsedData.selectedAllegations.length > 0) {
+            // First uncheck all allegation checkboxes
+            document.querySelectorAll('input[name="allegations"]').forEach(cb => cb.checked = false);
+
+            // Then check the ones that were parsed
+            parsedData.selectedAllegations.forEach(allegation => {
+                const checkbox = document.querySelector(`input[name="allegations"][value="${allegation}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                } else {
+                    console.log(`Allegation checkbox not found for: "${allegation}"`);
+                }
+            });
+            console.log(`✓ Checked ${parsedData.selectedAllegations.length} allegation checkboxes`);
+        }
+
+        // Set custom allegations field
+        if (parsedData.customAllegations) {
+            setValue('customAllegations', parsedData.customAllegations);
+            console.log(`✓ Set custom allegations: ${parsedData.customAllegations}`);
         }
 
         console.log('✓ Import complete!');
@@ -1539,6 +1383,7 @@ ${relatedMediaSection}
                 programType: document.getElementById('programType')?.value || '',
                 yearFounded: document.getElementById('yearFounded')?.value || '',
                 ageRange: document.getElementById('ageRange')?.value || '',
+                capacity: document.getElementById('capacity')?.value || '',
                 ownerName: document.getElementById('ownerName')?.value || '',
                 ownerLink: document.getElementById('ownerLink')?.value || '',
                 avgStay: document.getElementById('avgStay')?.value || '',
@@ -1600,5 +1445,855 @@ ${relatedMediaSection}
                 confirmSubmitBtn.disabled = false;
             }
         });
+    }
+
+    // --- BULK UPLOAD FUNCTIONALITY ---
+    const toggleBulkUploadBtn = document.getElementById('toggleBulkUploadBtn');
+    const bulkUploadPanel = document.getElementById('bulkUploadPanel');
+    const bulkFileInput = document.getElementById('bulkFileInput');
+    const uploadFilesBtn = document.getElementById('uploadFilesBtn');
+    const cancelBulkUploadBtn = document.getElementById('cancelBulkUploadBtn');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadResults = document.getElementById('uploadResults');
+
+    // Toggle bulk upload panel
+    if (toggleBulkUploadBtn && bulkUploadPanel) {
+        toggleBulkUploadBtn.addEventListener('click', () => {
+            const isHidden = bulkUploadPanel.style.display === 'none';
+            bulkUploadPanel.style.display = isHidden ? 'block' : 'none';
+            toggleBulkUploadBtn.textContent = isHidden ? '✖️ Close Bulk Upload' : '📤 Bulk Upload Markdown Files';
+        });
+    }
+
+    // Cancel bulk upload
+    if (cancelBulkUploadBtn && bulkUploadPanel) {
+        cancelBulkUploadBtn.addEventListener('click', () => {
+            bulkUploadPanel.style.display = 'none';
+            if (toggleBulkUploadBtn) toggleBulkUploadBtn.textContent = '📤 Bulk Upload Markdown Files';
+            if (bulkFileInput) bulkFileInput.value = '';
+            if (uploadProgress) uploadProgress.style.display = 'none';
+            if (uploadResults) uploadResults.innerHTML = '';
+        });
+    }
+
+    // Upload files
+    if (uploadFilesBtn && bulkFileInput) {
+        uploadFilesBtn.addEventListener('click', async () => {
+            const files = bulkFileInput.files;
+            if (!files || files.length === 0) {
+                alert('Please select at least one markdown file.');
+                return;
+            }
+
+            // Show progress
+            if (uploadProgress) uploadProgress.style.display = 'block';
+            if (uploadResults) uploadResults.innerHTML = '';
+
+            const results = {
+                success: [],
+                failed: []
+            };
+
+            uploadFilesBtn.disabled = true;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const progress = Math.round(((i + 1) / files.length) * 100);
+
+                if (progressBarFill) progressBarFill.style.width = `${progress}%`;
+                if (uploadStatus) uploadStatus.textContent = `Processing ${i + 1} of ${files.length}: ${file.name}`;
+
+                try {
+                    // Read file content
+                    const content = await readFileAsText(file);
+
+                    // Parse the markdown
+                    if (typeof parseWikiMarkdown !== 'function') {
+                        throw new Error('Parser not loaded');
+                    }
+                    const parsedData = parseWikiMarkdown(content);
+
+                    // Check if we got a program name
+                    if (!parsedData.programName || !parsedData.programName.trim()) {
+                        throw new Error('Could not extract program name from markdown');
+                    }
+
+                    // Prepare submission data
+                    const submissionData = {
+                        programName: parsedData.programName,
+                        yearsActive: parsedData.yearsActive || '',
+                        cityState: parsedData.cityState || '',
+                        programType: parsedData.programType || '',
+                        yearFounded: parsedData.yearFounded || '',
+                        ageRange: parsedData.ageRange || '',
+                        capacity: parsedData.capacity || '',
+                        ownerName: parsedData.ownerName || '',
+                        ownerLink: parsedData.ownerLink || '',
+                        avgStay: parsedData.avgStay || '',
+                        tuition: parsedData.tuition || '',
+                        natsapMember: parsedData.natsapMember || '',
+                        natsapYear: parsedData.natsapYear || '',
+                        mainAddress: parsedData.mainAddress || '',
+                        addressLink: parsedData.addressLink || '',
+                        accreditingBody: parsedData.accreditingBody || '',
+                        accreditingBodyLink: parsedData.accreditingBodyLink || '',
+                        staffMembers: parsedData.staffMembers || [],
+                        punishments: parsedData.punishments || [],
+                        lawsuits: parsedData.lawsuits || [],
+                        newsArticles: parsedData.newsArticles || [],
+                        testimonies: parsedData.testimonies || [],
+                        relatedMedia: parsedData.relatedMedia || [],
+                        campuses: parsedData.campuses || [],
+                        ownershipChanges: parsedData.ownershipChanges || [],
+                        rules: parsedData.rules || [],
+                        allegations: parsedData.allegations || [],
+                        therapies: parsedData.therapies || [],
+                        selectedDiagnoses: parsedData.selectedDiagnoses || [],
+                        customDiagnoses: parsedData.customDiagnoses || '',
+                        selectedAllegations: parsedData.selectedAllegations || [],
+                        customAllegations: parsedData.customAllegations || '',
+                        originalMarkdown: content,
+                        generatedMarkdown: content, // Store original as generated for now
+                        submittedBy: 'bulk-upload',
+                        submissionNotes: `Bulk uploaded from file: ${file.name}`
+                    };
+
+                    // Submit to database
+                    const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(submissionData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        results.success.push({
+                            file: file.name,
+                            program: parsedData.programName,
+                            id: result.id
+                        });
+                    } else {
+                        throw new Error(result.error || 'Submission failed');
+                    }
+
+                } catch (error) {
+                    console.error(`Error processing ${file.name}:`, error);
+                    results.failed.push({
+                        file: file.name,
+                        error: error.message
+                    });
+                }
+            }
+
+            // Show results
+            if (uploadStatus) uploadStatus.textContent = 'Upload complete!';
+            if (uploadResults) {
+                let resultsHtml = '<h4>Upload Results</h4>';
+
+                if (results.success.length > 0) {
+                    resultsHtml += `<div class="upload-success"><h5>✅ Successfully uploaded (${results.success.length}):</h5><ul>`;
+                    results.success.forEach(item => {
+                        resultsHtml += `<li><strong>${item.program}</strong> (${item.file}) - ID: ${item.id}</li>`;
+                    });
+                    resultsHtml += '</ul></div>';
+                }
+
+                if (results.failed.length > 0) {
+                    resultsHtml += `<div class="upload-failed"><h5>❌ Failed (${results.failed.length}):</h5><ul>`;
+                    results.failed.forEach(item => {
+                        resultsHtml += `<li><strong>${item.file}</strong>: ${item.error}</li>`;
+                    });
+                    resultsHtml += '</ul></div>';
+                }
+
+                uploadResults.innerHTML = resultsHtml;
+            }
+
+            uploadFilesBtn.disabled = false;
+            if (bulkFileInput) bulkFileInput.value = '';
+        });
+    }
+
+    // Helper function to read file as text
+    function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(new Error('Failed to read file'));
+            reader.readAsText(file);
+        });
+    }
+
+    // --- ENTRY BROWSER FUNCTIONALITY ---
+    const toggleBrowserBtn = document.getElementById('toggleBrowserBtn');
+    const browserPanel = document.getElementById('browserPanel');
+    const entriesList = document.getElementById('entriesList');
+    const entrySearch = document.getElementById('entrySearch');
+    const refreshEntriesBtn = document.getElementById('refreshEntriesBtn');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const pageInfo = document.getElementById('pageInfo');
+
+    let currentPage = 1;
+    let totalEntries = 0;
+    const entriesPerPage = 20;
+
+    // Function to update view based on mode
+    function updateBrowserView(viewMode) {
+        const dbSection = document.querySelector('.database-entries-section');
+
+        if (viewMode === 'operators') {
+            // Hide database entries section
+            if (dbSection) dbSection.style.display = 'none';
+            if (document.getElementById('indexBrowser')) {
+                document.getElementById('indexBrowser').style.display = 'block';
+            }
+            // Hide the dropdown selector since we're auto-loading CORPORATE
+            if (indexSelect) indexSelect.style.display = 'none';
+
+            // Automatically load CORPORATE organizations
+            loadProgramsForState('CORPORATE');
+        } else {
+            // Show database entries section and dropdown for location selection
+            if (dbSection) dbSection.style.display = 'block';
+            if (document.getElementById('indexBrowser')) {
+                document.getElementById('indexBrowser').style.display = 'block';
+            }
+            // Show the dropdown selector for state selection
+            if (indexSelect) indexSelect.style.display = 'block';
+
+            // Load the state options in dropdown
+            loadIndexList(viewMode);
+        }
+    }
+
+    // Toggle browser panel
+    if (toggleBrowserBtn && browserPanel) {
+        toggleBrowserBtn.addEventListener('click', () => {
+            const isHidden = browserPanel.style.display === 'none';
+            browserPanel.style.display = isHidden ? 'block' : 'none';
+            toggleBrowserBtn.textContent = isHidden ? '✖️ Close Browser' : '📂 Browse Saved Entries';
+
+            // Load entries when opening
+            if (isHidden) {
+                const currentViewMode = viewModeSelect ? viewModeSelect.value : 'operators';
+                if (currentViewMode === 'all') {
+                    loadEntries();
+                }
+                updateBrowserView(currentViewMode);
+            }
+        });
+    }
+
+    // Refresh entries
+    if (refreshEntriesBtn) {
+        refreshEntriesBtn.addEventListener('click', () => {
+            currentPage = 1;
+            loadEntries();
+        });
+    }
+
+    // Search entries
+    if (entrySearch) {
+        let searchTimeout;
+        entrySearch.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                loadEntries();
+            }, 500);
+        });
+    }
+
+    // Pagination
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadEntries();
+            }
+        });
+    }
+
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(totalEntries / entriesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadEntries();
+            }
+        });
+    }
+
+    const entryBrowserSection = document.querySelector('.entry-browser-section');
+    const wikiIndexJsonUrl = entryBrowserSection?.dataset?.wikiIndexJson;
+    const wikiProgramsBase = entryBrowserSection?.dataset?.wikiProgramsBase;
+    const indexSelect = document.getElementById('indexSelect');
+    const indexSearch = document.getElementById('indexSearch');
+    const indexEntriesList = document.getElementById('indexEntriesList');
+    const viewModeSelect = document.getElementById('viewModeSelect');
+
+    let selectedIndexState = '';
+    let currentIndexPrograms = [];
+    const stateProgramsCache = {};
+    let allIndexData = null; // Store full index data
+
+    const setIndexSearchEnabled = (enabled) => {
+        if (!indexSearch) return;
+        indexSearch.disabled = !enabled;
+    };
+
+    const updateIndexEntriesMessage = (message, className = 'loading') => {
+        if (!indexEntriesList || !message) return;
+        indexEntriesList.innerHTML = `<p class="${className}">${escapeHtml(message)}</p>`;
+    };
+
+    // Helper function to determine if a code is an operator/special category
+    const isOperatorCategory = (code) => {
+        return code === 'CORPORATE';
+    };
+
+    // Helper function to get filtered index entries based on view mode
+    const getFilteredIndexEntries = (states, viewMode) => {
+        if (!states) return [];
+        const entries = Object.entries(states);
+
+        if (viewMode === 'operators') {
+            // Show only operator categories (CORPORATE, NONUSA)
+            return entries.filter(([code]) => isOperatorCategory(code));
+        } else if (viewMode === 'all') {
+            // Show only states (exclude operator categories)
+            return entries.filter(([code]) => !isOperatorCategory(code));
+        }
+        // Default: show only states
+        return entries.filter(([code]) => !isOperatorCategory(code));
+    };
+
+    function getSlugFromEntryUrl(url) {
+        if (!url) return '';
+        const cleaned = url.replace(/\/+$/, '');
+        const match = cleaned.match(/wiki\/(?:index\/)?(.+)$/i);
+        return match ? match[1] : '';
+    }
+
+    async function loadIndexList(viewMode = 'operators') {
+        if (!indexSelect || !wikiIndexJsonUrl) {
+            updateIndexEntriesMessage('Index metadata is unavailable.', 'error');
+            return;
+        }
+
+        indexSelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select an index page';
+        indexSelect.appendChild(defaultOption);
+
+        updateIndexEntriesMessage('Loading index data...');
+        try {
+            // Load index data if not already loaded
+            if (!allIndexData) {
+                const response = await fetch(wikiIndexJsonUrl, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                allIndexData = await response.json();
+            }
+
+            // Filter based on view mode
+            const filteredStates = getFilteredIndexEntries(allIndexData.states, viewMode);
+
+            filteredStates.sort((a, b) => {
+                const displayA = STATE_DISPLAY_NAMES[a[0]] || a[0];
+                const displayB = STATE_DISPLAY_NAMES[b[0]] || b[0];
+                return displayA.localeCompare(displayB);
+            });
+
+            filteredStates.forEach(([code, count]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = `${STATE_DISPLAY_NAMES[code] || code} (${count || 0})`;
+                indexSelect.appendChild(option);
+            });
+            updateIndexEntriesMessage('Choose an index page above to see its entries.');
+        } catch (error) {
+            updateIndexEntriesMessage(
+                `Failed to load Reddit index metadata: ${error.message || 'Unknown error'}`,
+                'error'
+            );
+        }
+    }
+
+    async function loadProgramsForState(stateCode) {
+        selectedIndexState = stateCode || '';
+        setIndexSearchEnabled(!!stateCode);
+        if (indexSearch) {
+            indexSearch.value = '';
+        }
+
+        if (!stateCode) {
+            currentIndexPrograms = [];
+            updateIndexEntriesMessage('Choose an index page above to see its entries.');
+            return;
+        }
+
+        const cached = stateProgramsCache[stateCode];
+        if (cached) {
+            currentIndexPrograms = cached;
+            renderIndexEntries();
+            return;
+        }
+
+        updateIndexEntriesMessage(`Loading entries for ${STATE_DISPLAY_NAMES[stateCode] || stateCode}...`);
+        try {
+            if (!wikiProgramsBase) {
+                throw new Error('Programs base path is missing');
+            }
+            const listResponse = await fetch(`${wikiProgramsBase}programs-${stateCode}.json`, { cache: 'no-cache' });
+            if (!listResponse.ok) {
+                throw new Error(`HTTP ${listResponse.status}`);
+            }
+            const payload = await listResponse.json();
+            const programs = Array.isArray(payload.programs) ? [...payload.programs] : [];
+            programs.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            stateProgramsCache[stateCode] = programs;
+            currentIndexPrograms = programs;
+            renderIndexEntries();
+        } catch (error) {
+            currentIndexPrograms = [];
+            updateIndexEntriesMessage(
+                `Unable to load ${STATE_DISPLAY_NAMES[stateCode] || stateCode} entries: ${error.message || 'Unknown error'}`,
+                'error'
+            );
+        }
+    }
+
+    function renderIndexEntries() {
+        if (!indexEntriesList) return;
+        if (!selectedIndexState) {
+            updateIndexEntriesMessage('Choose an index page above to see its entries.');
+            return;
+        }
+
+        if (!currentIndexPrograms.length) {
+            updateIndexEntriesMessage('No entries available for this index.');
+            return;
+        }
+
+        const filter = (indexSearch?.value || '').trim().toLowerCase();
+        const matches = filter
+            ? currentIndexPrograms.filter(item => {
+                  const target = `${item.name || ''} ${item.normalizedName || ''}`.toLowerCase();
+                  return target.includes(filter);
+              })
+            : currentIndexPrograms;
+
+        if (matches.length === 0) {
+            updateIndexEntriesMessage('No entries match that filter.');
+            return;
+        }
+
+        indexEntriesList.innerHTML = '';
+        matches.forEach(entry => {
+            const row = document.createElement('div');
+            row.className = 'index-entry-row';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'index-entry-name';
+
+            const slug = getSlugFromEntryUrl(entry.url);
+            const entryName = entry.name || entry.normalizedName || 'Unnamed program';
+
+            nameSpan.appendChild(document.createTextNode(entryName));
+
+            const actions = document.createElement('div');
+            actions.className = 'index-entry-actions';
+
+            // Organizations show "View Programs" and allow editing the index page
+            if (selectedIndexState === 'CORPORATE') {
+                const viewProgramsBtn = document.createElement('button');
+                viewProgramsBtn.type = 'button';
+                viewProgramsBtn.textContent = 'View Programs';
+                viewProgramsBtn.className = 'view-programs-btn';
+                viewProgramsBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await loadOrgProgramsFromDatabase(entryName, viewProgramsBtn);
+                });
+                actions.appendChild(viewProgramsBtn);
+
+                const editIndexBtn = document.createElement('button');
+                editIndexBtn.type = 'button';
+                editIndexBtn.textContent = 'Edit Index Page';
+                editIndexBtn.className = 'edit-index-btn';
+                editIndexBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadOrganizationIndexEntry(entry, editIndexBtn);
+                });
+                actions.appendChild(editIndexBtn);
+            } else {
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit-entry-btn';
+                editButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadEntryFromReddit(entry, editButton);
+                });
+                actions.appendChild(editButton);
+            }
+
+            if (slug) {
+                const viewLink = document.createElement('a');
+                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;
+                viewLink.target = '_blank';
+                viewLink.rel = 'noopener noreferrer';
+                viewLink.textContent = 'View on Reddit';
+                actions.appendChild(viewLink);
+            }
+
+            row.appendChild(nameSpan);
+            row.appendChild(actions);
+            indexEntriesList.appendChild(row);
+        });
+    }
+
+    async function loadOrgProgramsFromDatabase(orgName, button) {
+        const originalLabel = button?.textContent || 'View Programs';
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Loading...';
+        }
+
+        try {
+            updateIndexEntriesMessage(`Loading programs for ${orgName}...`);
+
+            // Search DB for anything related to this org name
+            const searchUrl = `/wp-content/themes/child/api/save-wiki-submission.php?search=${encodeURIComponent(orgName)}`;
+            const searchResponse = await fetch(searchUrl);
+            const searchResult = await searchResponse.json();
+
+            // Store found programs here
+            const programs = [];
+            const processedNames = new Set();
+
+            if (searchResult.success && searchResult.data) {
+                
+                // 1. DATABASE METHOD: Look for facilities with this organization set in the DB
+                searchResult.data.forEach(submission => {
+                    // Check if organization column matches
+                    if (submission.organization && 
+                        submission.organization.toLowerCase().includes(orgName.toLowerCase())) {
+                        
+                        // Exclude the organization page itself
+                        if (submission.program_name.toLowerCase() !== orgName.toLowerCase()) {
+                            const name = submission.program_name;
+                            if (!processedNames.has(name.toLowerCase())) {
+                                programs.push({
+                                    name: name,
+                                    url: '', // No URL for DB-only entries yet
+                                    normalizedName: name.toLowerCase(),
+                                    source: 'database',
+                                    id: submission.id
+                                });
+                                processedNames.add(name.toLowerCase());
+                            }
+                        }
+                    }
+                });
+
+                // 2. MARKDOWN METHOD: Parse the organization's page for links
+                const orgPage = searchResult.data.find(e =>
+                    e.program_name.toLowerCase() === orgName.toLowerCase()
+                );
+
+                if (orgPage && orgPage.original_markdown) {
+                    const markdown = orgPage.original_markdown || '';
+                    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                    let match;
+
+                    while ((match = linkRegex.exec(markdown)) !== null) {
+                        const name = match[1];
+                        const url = match[2];
+
+                        const isUserLink = url.includes('/u/') || url.includes('/user/');
+                        const isExternal = url.includes('http');
+                        const isWikiLink = url.includes('/wiki/');
+                        const isJustIndexPage = url.endsWith('/index/') || url.endsWith('/index');
+
+                        if (isWikiLink && !isUserLink && !isExternal && !isJustIndexPage && name.length > 2) {
+                            if (!processedNames.has(name.toLowerCase())) {
+                                programs.push({
+                                    name: name,
+                                    url: url,
+                                    normalizedName: name.toLowerCase(),
+                                    source: 'markdown'
+                                });
+                                processedNames.add(name.toLowerCase());
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (programs.length === 0) {
+                 // Fallback: If absolutely nothing found, check if we at least found the org page
+                 // If not even the org page exists, then it's truly not found.
+                 if (!searchResult.data || searchResult.data.length === 0) {
+                     throw new Error('Organization not found in database');
+                 } else {
+                     throw new Error('No facilities found for this organization (checked database and wiki links)');
+                 }
+            }
+
+            console.log(`Found ${programs.length} programs for "${orgName}"`);
+
+            programs.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            // Update the view to show programs instead of organizations
+            selectedIndexState = 'ORG_PROGRAMS';
+            currentIndexPrograms = programs;
+            renderIndexEntries();
+
+        } catch (error) {
+            console.error('Error loading organization programs:', error);
+            // Don't alert, just update the message area to be less intrusive
+            updateIndexEntriesMessage(`Failed to load programs for ${orgName}: ${error.message || 'Unknown error'}`, 'error');
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        }
+    }
+
+    async function loadEntryFromReddit(entry, button) {
+        if (!entry) return;
+
+        const programName = entry.name || entry.normalizedName;
+
+        const originalLabel = button?.textContent || 'Edit';
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Loading...';
+        }
+
+        try {
+            const dbEntry = await fetchSubmissionByName(programName);
+            if (dbEntry) {
+                await loadEntryIntoForm(dbEntry.id);
+            } else {
+                throw new Error('Entry not found in database');
+            }
+        } catch (error) {
+            console.error('Error loading entry:', error);
+            alert(`Failed to load ${programName}: ${error.message || 'Entry not found'}`);
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        }
+    }
+
+    indexSelect?.addEventListener('change', event => loadProgramsForState(event.target.value));
+    indexSearch?.addEventListener('input', () => renderIndexEntries());
+
+    // Add event listener for view mode selector
+    viewModeSelect?.addEventListener('change', (event) => {
+        const viewMode = event.target.value;
+        // Reset selection when changing view mode
+        selectedIndexState = '';
+        currentIndexPrograms = [];
+        if (indexSelect) indexSelect.value = '';
+        // Update view and reload the index list with the new filter
+        updateBrowserView(viewMode);
+        // Load database entries if switching to "all" mode
+        if (viewMode === 'all') {
+            loadEntries();
+        }
+    });
+
+    setIndexSearchEnabled(false);
+    // Index list will be loaded when browser panel is opened
+
+    // Load entries from API
+    async function loadEntries() {
+        if (!entriesList) return;
+
+        entriesList.innerHTML = '<p class="loading">Loading entries...</p>';
+
+        try {
+            const searchQuery = entrySearch ? entrySearch.value.trim() : '';
+            const offset = (currentPage - 1) * entriesPerPage;
+
+            let url = `/wp-content/themes/child/api/save-wiki-submission.php?limit=${entriesPerPage}&offset=${offset}`;
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to load entries');
+            }
+
+            totalEntries = result.total || 0;
+            const entries = result.data || [];
+
+            // Update pagination
+            const totalPages = Math.ceil(totalEntries / entriesPerPage);
+            if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${totalEntries} total)`;
+            if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+            if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
+
+            // Render entries
+            if (entries.length === 0) {
+                entriesList.innerHTML = '<p class="no-entries">No entries found.</p>';
+                return;
+            }
+
+            let html = '<div class="entries-table"><table><thead><tr><th>Program Name</th><th>Location</th><th>Type</th><th>Years Active</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+
+            entries.forEach(entry => {
+                const createdDate = new Date(entry.created_at).toLocaleDateString();
+
+                // Check if entry content indicates it doesn't exist
+                const content = entry.markdown || entry.content || '';
+                const isEmptyPage = content.toLowerCase().includes('does not exist') ||
+                                   content.toLowerCase().includes('not found') ||
+                                   content.trim().length < 50; // Very short content likely means empty page
+
+                const notFoundFlag = isEmptyPage ? '<span class="entry-not-found-flag" title="This page has no content">⚠️ EMPTY</span> ' : '';
+
+                const actionButtons = `
+                    <tr data-entry-id="${entry.id}">
+                        <td class="entry-name" data-label="Program Name">${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
+                        <td data-label="Location">${escapeHtml(entry.city_state || '-')}</td>
+                        <td data-label="Type">${escapeHtml(entry.program_type || '-')}</td>
+                        <td data-label="Years Active">${escapeHtml(entry.years_active || '-')}</td>
+                        <td data-label="Created">${createdDate}</td>
+                        <td data-label="Actions">
+                        <button type="button" class="load-entry-btn" data-entry-id="${entry.id}">Load</button>
+                        ${isAdminMode ? `<button type="button" class="delete-entry-btn" data-entry-id="${entry.id}">Delete</button>` : ''}
+                    </td>
+                </tr>
+                `;
+                html += actionButtons;
+            });
+
+            html += '</tbody></table></div>';
+            entriesList.innerHTML = html;
+
+            // Attach event listeners to load buttons
+            entriesList.querySelectorAll('.load-entry-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const entryId = btn.getAttribute('data-entry-id');
+                    loadEntryIntoForm(entryId);
+                });
+            });
+
+            // Attach event listeners to delete buttons
+            entriesList.querySelectorAll('.delete-entry-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const entryId = btn.getAttribute('data-entry-id');
+                    deleteEntry(entryId);
+                });
+            });
+
+        } catch (error) {
+            console.error('Error loading entries:', error);
+            entriesList.innerHTML = `<p class="error">Error loading entries: ${error.message}</p>`;
+        }
+    }
+
+    // Load entry into form
+    async function loadEntryIntoForm(entryId) {
+        try {
+            const response = await fetch(`/wp-content/themes/child/api/save-wiki-submission.php?id=${encodeURIComponent(entryId)}`);
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to load entry');
+            }
+
+            const entry = result.data;
+            
+            // PRIORITIZE MARKDOWN RE-PARSE
+            // This ensures that updates to the parser logic (wiki-parser.js) are immediately 
+            // applied to existing entries when loaded, fixing issues like "Unparsed Content".
+            if (entry.generated_markdown && entry.generated_markdown.trim()) {
+                console.log('Loading entry via markdown re-parse (applying latest parser rules)...');
+                parseAndPopulate(entry.generated_markdown);
+                
+                // Ensure critical DB fields override the parse if they are empty/different?
+                // Actually, trust the parse, but ensure Program Name matches DB if parse failed to find it.
+                const programNameInput = document.getElementById('programName');
+                if (programNameInput && (!programNameInput.value || entry.program_name)) {
+                    programNameInput.value = entry.program_name;
+                }
+            } else {
+                console.warn('No generated markdown found for this entry. Falling back to stored JSON data.');
+                const data = entry.json_data || {};
+                populateFormFromParsedData(data, {
+                    programName: entry.program_name,
+                    yearsActive: entry.years_active,
+                    cityState: entry.city_state,
+                    programType: entry.program_type
+                });
+            }
+
+            if (entry.generated_markdown && outputCode) {
+                outputCode.value = entry.generated_markdown;
+            }
+
+            importedMarkdown = entry.generated_markdown || '';
+            finalizeEntryLoad(entry.program_name);
+        } catch (error) {
+            console.error('Error loading entry:', error);
+            alert(`Failed to load entry: ${error.message}`);
+        }
+    }
+    // Delete entry
+    async function deleteEntry(entryId) {
+        if (!isAdminMode) {
+            alert('Only admins can delete entries.');
+            return;
+        }
+        if (!confirm('Are you sure you want to delete this entry? This cannot be undone.')) {
+            return;
+        }
+
+        try {
+            // Note: We need to add DELETE endpoint to the API
+            // For now, we can use a workaround by setting status to 'deleted'
+            const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: entryId,
+                    status: 'deleted'
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Entry deleted successfully');
+                loadEntries(); // Refresh the list
+            } else {
+                throw new Error(result.error || 'Delete failed');
+            }
+
+        } catch (error) {
+            console.error('Error deleting entry:', error);
+            alert(`Failed to delete entry: ${error.message}`);
+        }
     }
 });
