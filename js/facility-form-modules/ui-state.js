@@ -51,7 +51,7 @@ window.KOP_UI_State = {
             addFacilityButton: { default: 'Add New Facility', referrer: 'Add New' },
             addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New' },
             currentFacilityLabel: { default: 'Current Facility', referrer: 'Current' },
-            addFacilityToolbar: { default: '➕', referrer: '➕' },
+            addFacilityToolbar: { default: '📄<span class="toolbar-label">Add Entry</span>', referrer: '📄<span class="toolbar-label">Add Entry</span>' },
             cloneFacilityToolbar: { default: '📋', referrer: '📋' },
             removeFacilityToolbar: { default: '🗑️', referrer: '🗑️' },
             facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name' },

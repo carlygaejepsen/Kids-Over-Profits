@@ -1570,50 +1570,9 @@ function attachButtonListeners() {
         fileUpload.dataset.listenerAttached = 'true';
     }
 
-    // Search input event listeners
-    const companySearchInput = document.getElementById('company-search-input');
-    if (companySearchInput && !companySearchInput.dataset.listenerAttached) {
-        companySearchInput.addEventListener('input', function() {
-            const searchQueries = {
-                company: this.value,
-                location: document.getElementById('location-search-input')?.value || '',
-                referrer: document.getElementById('referrer-search-input')?.value || ''
-            };
-            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
-                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
-            }
-        }, { passive: true });
-        companySearchInput.dataset.listenerAttached = 'true';
-    }
-
-    const locationSearchInput = document.getElementById('location-search-input');
-    if (locationSearchInput && !locationSearchInput.dataset.listenerAttached) {
-        locationSearchInput.addEventListener('input', function() {
-            const searchQueries = {
-                company: document.getElementById('company-search-input')?.value || '',
-                location: this.value,
-                referrer: document.getElementById('referrer-search-input')?.value || ''
-            };
-            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
-                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
-            }
-        }, { passive: true });
-        locationSearchInput.dataset.listenerAttached = 'true';
-    }
-
-    const referrerSearchInput = document.getElementById('referrer-search-input');
-    if (referrerSearchInput && !referrerSearchInput.dataset.listenerAttached) {
-        referrerSearchInput.addEventListener('input', function() {
-            const searchQueries = {
-                company: document.getElementById('company-search-input')?.value || '',
-                location: document.getElementById('location-search-input')?.value || '',
-                referrer: this.value
-            };
-            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
-                window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
-            }
-        }, { passive: true });
-        referrerSearchInput.dataset.listenerAttached = 'true';
+    // Search input event listeners - Delegated to data-search.js module
+    if (window.KOP_Search && typeof window.KOP_Search.attachSearchListeners === 'function') {
+        window.KOP_Search.attachSearchListeners();
     }
 }
 
