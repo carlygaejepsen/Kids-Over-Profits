@@ -16,63 +16,63 @@ On November 11^(th) 2011, Ironwood Maine was purchased from the previous owners,
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Marion and Rodney Rodrigue**are the previous Owners of Ironwood Maine. Prior to opening Ironwood Maine, Marion worked as a horse-breeder and Rodney as an engineer. Neither of them are, nor have ever been, licensed mental health professionals in the state of Maine.
+** Marion and Rodney Rodrigue** are the previous Owners of Ironwood Maine. Prior to opening Ironwood Maine, Marion worked as a horse-breeder and Rodney as an engineer. Neither of them are, nor have ever been, licensed mental health professionals in the state of Maine.
 
-**Teresa Shinedling**was the Co-Founder and first Executive and Clinical Director of Ironwood Maine. Prior to joining Ironwood Maine, she worked in an unnamed position at the confirmedly abusive [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) .
+** Teresa Shinedling** was the Co-Founder and first Executive and Clinical Director of Ironwood Maine. Prior to joining Ironwood Maine, she worked in an unnamed position at the confirmedly abusive [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) .
 
-**Wayne Stinson**was the Co-Founder and Intake and Intervention Manager of Ironwood. Like Shindeling, he also worked as a Program Supervisor at [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) prior to joining Ironwood Maine. More information about Wayne's involvement in TAR can be viewed [here](https://www.fornits.com/phpbb/index.php?topic=18283.0) .
+** Wayne Stinson** was the Co-Founder and Intake and Intervention Manager of Ironwood. Like Shindeling, he also worked as a Program Supervisor at [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) prior to joining Ironwood Maine. More information about Wayne's involvement in TAR can be viewed [here](https://www.fornits.com/phpbb/index.php?topic=18283.0) .
 
-**Deanna Valente**(formerly**Deanna Atkinson**) was the first Program & Admissions Director of Ironwood Maine. Prior to this, she worked as the Admissions Director of the notorious and**confirmedly abusive** [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) for 22 years. Proof of Deanna's involvement with both Elan and Ironwood Maine can be seen [here](https://imgur.com/a/04jRGMv) .
+** Deanna Valente**(formerly** Deanna Atkinson**) was the first Program & Admissions Director of Ironwood Maine. Prior to this, she worked as the Admissions Director of the notorious and** confirmedly abusive** [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) for 22 years. Proof of Deanna's involvement with both Elan and Ironwood Maine can be seen [here](https://imgur.com/a/04jRGMv) .
 
-**Wesley "Wes" Horton**was the Co-Owner and President of Ironwood. He is married to Sue Horton. Prior to taking over ownership of Ironwood in 2011, he worked as the President of Horton & Associates, Inc., a management, consulting, design, and development firm beginnning in 1990.
+** Wesley "Wes" Horton** was the Co-Owner and President of Ironwood. He is married to Sue Horton. Prior to taking over ownership of Ironwood in 2011, he worked as the President of Horton & Associates, Inc., a management, consulting, design, and development firm beginnning in 1990.
 
-**Sue Horton**was the Co-Owner and Executive Director of Ironwood. She is married to Wes Horton. She got her Master's degree in Counseling Psychology from Eastern Nazarene College. Her prior employment is presently unknown.
+** Sue Horton** was the Co-Owner and Executive Director of Ironwood. She is married to Wes Horton. She got her Master's degree in Counseling Psychology from Eastern Nazarene College. Her prior employment is presently unknown.
 
-**Megan Ryan**is the Executive Director of The Ridge RTC Maine. She began working at the program in the summer of 2007 when she was in college, and she has been at the program ever since.
+** Megan Ryan** is the Executive Director of The Ridge RTC Maine. She began working at the program in the summer of 2007 when she was in college, and she has been at the program ever since.
 
-**Erica Goss**is the Clinical Program Director for the Lakehouse at The Ridge RTC Maine. According to her staff bio, she completed 5 years of experience as a clinical director at an unnamed residential treatment center.
+** Erica Goss** is the Clinical Program Director for the Lakehouse at The Ridge RTC Maine. According to her staff bio, she completed 5 years of experience as a clinical director at an unnamed residential treatment center.
 
-**Annie Grotton**is the Intake & Discharge Coordinator for the Lakehouse at The Ridge RTC Maine. According to her bio, she previously worked for an unnamed teen residential setting. She has been working in the mental health field since 2021.
+** Annie Grotton** is the Intake & Discharge Coordinator for the Lakehouse at The Ridge RTC Maine. According to her bio, she previously worked for an unnamed teen residential setting. She has been working in the mental health field since 2021.
 
-**Jennifer Poliquin**is a Program Manager for the Farmhouse at The Ridge RTC Maine. According to her staff bio, she has spent many years as a practitioner of Applied Behavioral Analysis, [a controversial treatment methodology for autism, which is considered abusive by many autistic advocates.](https://neuroclastic.com/invisible-abuse-aba-and-the-things-only-autistic-people-can-see/)
+** Jennifer Poliquin** is a Program Manager for the Farmhouse at The Ridge RTC Maine. According to her staff bio, she has spent many years as a practitioner of Applied Behavioral Analysis, [a controversial treatment methodology for autism, which is considered abusive by many autistic advocates.](https://neuroclastic.com/invisible-abuse-aba-and-the-things-only-autistic-people-can-see/)
 
-**Dan Fournier**is a Program Manager for the Farmhouse at The Ridge RTC Maine. According to his staff bio, since 2018, he has been a practitioner of Applied Behavioral Analysis, [a controversial treatment methodology for autism, which is considered abusive by many autistic advocates.](https://neuroclastic.com/invisible-abuse-aba-and-the-things-only-autistic-people-can-see/)
+** Dan Fournier** is a Program Manager for the Farmhouse at The Ridge RTC Maine. According to his staff bio, since 2018, he has been a practitioner of Applied Behavioral Analysis, [a controversial treatment methodology for autism, which is considered abusive by many autistic advocates.](https://neuroclastic.com/invisible-abuse-aba-and-the-things-only-autistic-people-can-see/)
 
-**Kathy Harriman**is the Academic Coordinator for the Farmhouse at The Ridge RTC Maine. She has worked for the program since 2007.
+** Kathy Harriman** is the Academic Coordinator for the Farmhouse at The Ridge RTC Maine. She has worked for the program since 2007.
 
-**Alicia Nartche**is a Therapist at the Farmhouse at The Ridge RTC Maine. According to her staff bio, she moved to Maine in 2007 to pursue a degree in Wilderness Therapy.
+** Alicia Nartche** is a Therapist at the Farmhouse at The Ridge RTC Maine. According to her staff bio, she moved to Maine in 2007 to pursue a degree in Wilderness Therapy.
 
-**Laura Newsom**is a Therapist at The Ridge RTC Maine. According to her staff bio, she has over 20 years of experience practicing, including at another unnamed residential treatment center and the Department of Corrections.
+** Laura Newsom** is a Therapist at The Ridge RTC Maine. According to her staff bio, she has over 20 years of experience practicing, including at another unnamed residential treatment center and the Department of Corrections.
 
-**Matthew Hendry**was the Clinical Director of Ironwood. He began his career as a Therpist/Clinical Director at House of Hope/CUATC from 1999-2003. He then went on to work as the Clinical Director of the**confirmedly abusive** [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) from 2003 until 2013. He began working at Ironwood in 2019.
+** Matthew Hendry** was the Clinical Director of Ironwood. He began his career as a Therpist/Clinical Director at House of Hope/CUATC from 1999-2003. He then went on to work as the Clinical Director of the** confirmedly abusive** [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) from 2003 until 2013. He began working at Ironwood in 2019.
 
-**Alexander Blackstone**is the Director of Operations at The Ridge RTC Maine. He began working at the program in 2013. He graduated from Albright College with a BS in Biology and Psychology. Prior to working at The Ridge, he worked as the Director of the Augusta Community Warming Center. In 2020, he also began volunteering as a Firefighter at the Northport Volunteer Fire Department.
+** Alexander Blackstone** is the Director of Operations at The Ridge RTC Maine. He began working at the program in 2013. He graduated from Albright College with a BS in Biology and Psychology. Prior to working at The Ridge, he worked as the Director of the Augusta Community Warming Center. In 2020, he also began volunteering as a Firefighter at the Northport Volunteer Fire Department.
 
-**Chris Johnson**is the Director of Special Projects at The Ridge RTC Maine. Prior to this, he spent several years as a Program Manager with SOAR, a boarding school and summer camp program for teens with autism, ADHD, and other learning disabilities in North Carolina. He then worked as an Operations Manager with Outward Bound before coming to Ironwood.
+** Chris Johnson** is the Director of Special Projects at The Ridge RTC Maine. Prior to this, he spent several years as a Program Manager with SOAR, a boarding school and summer camp program for teens with autism, ADHD, and other learning disabilities in North Carolina. He then worked as an Operations Manager with Outward Bound before coming to Ironwood.
 
-**Christa Nadeau**is the Clinical Program Director for the Farmhouse at The Ridge RTC Maine. She has worked at The Ridge since 2010. According to her staff bio, she has worked in residential treatment for most of her professional career, but her prior places of employment are presently unknown.
+** Christa Nadeau** is the Clinical Program Director for the Farmhouse at The Ridge RTC Maine. She has worked at The Ridge since 2010. According to her staff bio, she has worked in residential treatment for most of her professional career, but her prior places of employment are presently unknown.
 
-**Karen Hansen**worked as a Therapist at Ironwood. Prior to joining Ironwood, she worked as a Therapist for the confirmedly abusive [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) from 2017 until 2019.
+** Karen Hansen** worked as a Therapist at Ironwood. Prior to joining Ironwood, she worked as a Therapist for the confirmedly abusive [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) from 2017 until 2019.
 
-**Katharine Davis**worked as a Therapist at Ironwood. She is certified in Quantum Neurological Reset Therapy (QNRT), which is a widely debunked form of straight-chiropractic vitalism. A Yale Medical School neurologist, Stephen Novella, MD, published an [article](https://sciencebasedmedicine.org/quantum-neurology/) thoroughly debunking this form of "therapy". Ironwood even boasted that Davis is "the only Board certified QNRT therapist in the state of Maine".
+** Katharine Davis** worked as a Therapist at Ironwood. She is certified in Quantum Neurological Reset Therapy (QNRT), which is a widely debunked form of straight-chiropractic vitalism. A Yale Medical School neurologist, Stephen Novella, MD, published an [article](https://sciencebasedmedicine.org/quantum-neurology/) thoroughly debunking this form of "therapy". Ironwood even boasted that Davis is "the only Board certified QNRT therapist in the state of Maine".
 
-**Nan Simpson**worked as a Therapist at Ironwood. Prior to this, she worked as the Deputy Director of a shelter for women who escaped domestic violence, called New Hope for Women.
+** Nan Simpson** worked as a Therapist at Ironwood. Prior to this, she worked as the Deputy Director of a shelter for women who escaped domestic violence, called New Hope for Women.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The Ridge RTC Maine is reported to use a level-system, as is typical of many behavior-modification programs. The level system was reportedly modeled after the program strcuture used by the confirmedly abusive [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) in Utah.
 
-While teenagers arriving at [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) are forced to sit in a stone circle exposed to the heat in Utah, the students arriving at The Ridge are forced to sit in a stone circle called "**Frye**". They must keep their fire going in order to keep themselves warm in the Maine cold until they have made the confessions that the parents expect them to provide under the stress and pressure. Once they have begun to submit to the program, they move up to Level 2.
+While teenagers arriving at [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) are forced to sit in a stone circle exposed to the heat in Utah, the students arriving at The Ridge are forced to sit in a stone circle called "** Frye**". They must keep their fire going in order to keep themselves warm in the Maine cold until they have made the confessions that the parents expect them to provide under the stress and pressure. Once they have begun to submit to the program, they move up to Level 2.
 
-On**Level 2**, the resident is given very few privileges, and may only communicate with their parents through letters, which are read and censored by staff members.
+On** Level 2**, the resident is given very few privileges, and may only communicate with their parents through letters, which are read and censored by staff members.
 
-On**Level 3**, the resident is allowed to have one phone call each week with their parents, although these conversations are closely monitored by staff members who many end the call at any time.
+On** Level 3**, the resident is allowed to have one phone call each week with their parents, although these conversations are closely monitored by staff members who many end the call at any time.
 
-**Level 4**is the final level at The Ridge, but no other information is presently known.
+** Level 4** is the final level at The Ridge, but no other information is presently known.
 
 *No other information is currently known about the structure of the program used by The Ridge. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
@@ -80,7 +80,7 @@ On**Level 3**, the resident is allowed to have one phone call each week with the
 
 ## **Abuse Allegations**
 
-The Ridge RTC Maine has been reported by many survivors to be an abusive program. According to the human rights organization [HEAL](http://www.heal-online.org/thelist.htm) , Ironwood was classified as a**Confirmedly Abusive**behavior-modification program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+The Ridge RTC Maine has been reported by many survivors to be an abusive program. According to the human rights organization [HEAL](http://www.heal-online.org/thelist.htm) , Ironwood was classified as a** Confirmedly Abusive** behavior-modification program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 Allegations of abuse and neglect that have been reported by survivors of The Ridge RTC Maine include excessive and violent restraints, prolonged solitary confinement used as punishment, emotional/verbal abuse, and gross abuse/neglect of animals. One survivor of Ironwood [writes](https://www.yelp.com/not_recommended_reviews/Ironwood-maine-morrill) , "I have personally seen children physically restrained for not wanting to spend days outside in solitary confinement circles, and in addition to this, I have witnessed many separate accounts of emotional/verbal abuse from staff, revocation of inalienable human rights by staff, children harming themselves and others, and the abuse of animals by children at this program. Kittens thrown across rooms, horses punched, and chickens killed with snow shovels, to name a few instances."
 
@@ -90,7 +90,7 @@ In 2018, a former resident of Ironwood, Jack Sawyer, was arrested after threaten
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **7/13/2023: (SURVIVOR)**"I believe the staff is not capable to handle everything that they advertise. The treatments are not personalized and are religion focused. Their "behavioral specialists" have no experience other than leading youth groups at their church. They are not equipped to handle eating disorders, trauma, anger management and so forth like they claim." - [Michael (Yelp)](https://www.yelp.com/biz/Ironwood-maine-morrill)
 
@@ -114,7 +114,7 @@ In 2018, a former resident of Ironwood, Jack Sawyer, was arrested after threaten
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [The Ridge RTC Maine Website Homepage](https://web.archive.org/web/20251008205156/https://theridgertc.com/maine/)
 
@@ -145,4 +145,5 @@ In 2018, a former resident of Ironwood, Jack Sawyer, was arrested after threaten
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

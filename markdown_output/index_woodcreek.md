@@ -14,15 +14,15 @@ This program was noted by [P.U.R.E](https://www.helpyourteens.com/a-parents-true
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Sean Thorne**was the Founder, Owner, and Director of Wood Creek Academy. He is married to Danice Thorne.
+** Sean Thorne** was the Founder, Owner, and Director of Wood Creek Academy. He is married to Danice Thorne.
 
-**Danice Thorne**was the Founder and Owner of Wood Creek Academy. She is married to Dean Thorne.
+** Danice Thorne** was the Founder and Owner of Wood Creek Academy. She is married to Dean Thorne.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program structure at Wood Creek Academy.
 
@@ -30,7 +30,7 @@ According to their [archived website](https://web.archive.org/web/20050726234308
 
 It has also been reported that Wood Creek Academy uses Alcoholics Anonymous' 12-step program.
 
-*If you attended Wood Creek Academy and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Wood Creek Academy and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -48,7 +48,7 @@ On August 19th 2020, a 17-year-old boy at the facility ran away. He was missing 
 
 ---
 
-## **Closure**
+## ** Closure**
 
 In September of 2021, it was announced that Wood Creek Academy would be closing. The decision to close came after Wood Creek Academy had been the subject of two complaints filed with the state within the past year, and inspections uncovered other infractions.
 
@@ -60,7 +60,7 @@ Wood Creek Academy officially closed its doors on September 25^(th) 2021.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **11/8/2019: (SURVIVOR)**"hell. on. earth. denise and sean are awful and the place is a money pit for insurance money. if you want your kids to come back with permanent psychosis this would be a great place to send them. sean is a former meth trafficker.. would you sign your kids over to a meth trafficker? please do a background check on sean thorne and denise ware." - [Kriss (Yelp)](https://www.yelp.com/not_recommended_reviews/turning-d-ranch-thomspon-falls)
 
@@ -68,7 +68,7 @@ Wood Creek Academy officially closed its doors on September 25^(th) 2021.
 
 **4/25/2017: (PARENT)**"This is the worse place to EVER send a child who is already struggling to get straight. I sent my son to this place and he came back to me a year later with more problems then when he left me. I am happy to give my number and discuss this with anyone who requests it. I feel so strongly about how awful this place is I am seriously considering suing them for mental harm to my child. I did not only get my child back mentally broke but also to find out the "accredited school" they provided was NOT accredited so my son had to start all over again in his freshmen year of high school while his friends all continued on without him. This was in itself defeating enough for my son to want to commit harm to himself. I also kept my account up to date and paid my bill on time only to get a 23,000 dollar charge to my credit report that I have been struggling to get off as a fraudulent charge to no avail. PLEASE PLEASE PLEASE do NOT send your children to this ranch. feel free to email me at [smezack@gmail.com](mailto:smezack@gmail.com) if I can help with explaining any of this in more detail." - [Staci (Yelp)](https://www.yelp.com/biz/turning-d-ranch-thomspon-falls)
 
-*If you or your child attended Wood Creek Academy and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you or your child attended Wood Creek Academy and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -96,7 +96,8 @@ Wood Creek Academy officially closed its doors on September 25^(th) 2021.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -16,21 +16,21 @@ The program's license was suspended on September 28, 2007 by the Nevada State De
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Orval Hagerman**was the Director of Sky View Christian Academy. It has been reported that he was also an employee of the [Northwest Association of Accredited Schools (NAAS)](https://www.reddit.com/r/troubledteens/wiki/index/naas) , the agency that accredited SVCA's academic program. He is reported to have also worked in an unknown position at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) in Montana. Only a few months after SVCA opened, Hagerman created an LLC called '[High Sierra Sage, LLC](http://en.nevadacorporates.com/936283/) ', which appears to have been affiliated with SVCA. He is [listed](https://www.bizapedia.com/nv/high-sierra-sage-llc.html) as a Managing Member of the company, along with Jared Copeland, SVCA's Assistant Director. This company was dissolved on 2/8/2008, shortly after SVCA was shut down. Hagerman's current employment is presently unknown.
+** Orval Hagerman** was the Director of Sky View Christian Academy. It has been reported that he was also an employee of the [Northwest Association of Accredited Schools (NAAS)](https://www.reddit.com/r/troubledteens/wiki/index/naas) , the agency that accredited SVCA's academic program. He is reported to have also worked in an unknown position at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) in Montana. Only a few months after SVCA opened, Hagerman created an LLC called '[High Sierra Sage, LLC](http://en.nevadacorporates.com/936283/) ', which appears to have been affiliated with SVCA. He is [listed](https://www.bizapedia.com/nv/high-sierra-sage-llc.html) as a Managing Member of the company, along with Jared Copeland, SVCA's Assistant Director. This company was dissolved on 2/8/2008, shortly after SVCA was shut down. Hagerman's current employment is presently unknown.
 
-**Jared Copeland**was the Assistant Director and COO of Sky View Christian Academy. Like Hagerman, Copeland was also a Managing Member of '[High Sierra Sage, LLC](http://en.nevadacorporates.com/936283/) ' a company that appears to have been affiliated with the program. Prior to joining SVCA, Copeland worked as the Director Of Residential Services at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) facility, from 2002 until 2004. After SVCA's closure, he became the Owner of Crossroads Family Restaurant in Utah. He then worked as an Editorial Assistant at Weber State University, and later as a Graduate Instructor at Utah State University. In 2016, he began working as a Financial Advisor at Allegis Financial Partners until 2021. He currently works as a Wealth Manager at Goldman Sachs.
+** Jared Copeland** was the Assistant Director and COO of Sky View Christian Academy. Like Hagerman, Copeland was also a Managing Member of '[High Sierra Sage, LLC](http://en.nevadacorporates.com/936283/) ' a company that appears to have been affiliated with the program. Prior to joining SVCA, Copeland worked as the Director Of Residential Services at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) facility, from 2002 until 2004. After SVCA's closure, he became the Owner of Crossroads Family Restaurant in Utah. He then worked as an Editorial Assistant at Weber State University, and later as a Graduate Instructor at Utah State University. In 2016, he began working as a Financial Advisor at Allegis Financial Partners until 2021. He currently works as a Wealth Manager at Goldman Sachs.
 
-**Brenda Ardon**worked as the Receptionist at Sky View Christian Academy from March through October of 2007, when the program closed. After this, she worked as a Claims Clerk at Syner-Med Health Care, and later as a Medical Biller at Women's First Medical Group. From 2014 until 2017, she worked as a Tax Preparer at One Day Tax Service. She currently works as a Personal Caregiver for IHSS Public Authority.
+** Brenda Ardon** worked as the Receptionist at Sky View Christian Academy from March through October of 2007, when the program closed. After this, she worked as a Claims Clerk at Syner-Med Health Care, and later as a Medical Biller at Women's First Medical Group. From 2014 until 2017, she worked as a Tax Preparer at One Day Tax Service. She currently works as a Personal Caregiver for IHSS Public Authority.
 
-**Marcel C. Chappuis**worked as a Consulting Psychologist for SVCA. At the parent's request, they could be charged an additional fee (about $600) for Chappuis to provide psychological testing and therapeutic services to their child at the facility. Chappuis was known to provide the same services to residents at other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, including [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , and [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also previously worked as the Director of Psychology at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) from 1992 to 1997. In 2015, Chappuis and his wife, Particia, created [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) in the former location of the WWASP-owned [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) . Northwest Academy was shut down in 2019 and Chappuis and his wife were arrested and each charged with 45 counts of child abuse/neglect.
+** Marcel C. Chappuis** worked as a Consulting Psychologist for SVCA. At the parent's request, they could be charged an additional fee (about $600) for Chappuis to provide psychological testing and therapeutic services to their child at the facility. Chappuis was known to provide the same services to residents at other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, including [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , and [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also previously worked as the Director of Psychology at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) from 1992 to 1997. In 2015, Chappuis and his wife, Particia, created [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) in the former location of the WWASP-owned [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) . Northwest Academy was shut down in 2019 and Chappuis and his wife were arrested and each charged with 45 counts of child abuse/neglect.
 
-**Mike Terry**reportedly worked at SVCA in an unknown position.
+** Mike Terry** reportedly worked at SVCA in an unknown position.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, Sky View Christian Academy used a level-system. It was likely similar to the [WWASP level system](https://www.reddit.com/r/troubledteens/wiki/index/wwasp/#wiki_wwasp_level_system) used at the other WWASP facilities, consisting of six phases and a merit/demerit system.
 
@@ -40,7 +40,7 @@ It is reported that all of the teenagers' incoming and outgoing mail was read an
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Sky View Christian Academy is widely recognized as having been an abusive program. Survivors have [reported](https://www.courthousenews.com/teen-claims-abuse-at-christian-academy/) widespread physical, sexual, and mental abuse at this school. Among the allegations of abuse and neglect are:
 
@@ -89,7 +89,7 @@ In 2012, a [lawsuit](https://drive.google.com/file/d/1_dXXtulCfBfN9Vf58ioNld5GrQ
 
 ## **Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -130,7 +130,8 @@ In 2012, a [lawsuit](https://drive.google.com/file/d/1_dXXtulCfBfN9Vf58ioNld5GrQ
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

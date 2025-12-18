@@ -1,4 +1,0 @@
-standards Author   Reason   Date  |
-|  |  |  |
-|  |  |  |
-|  |  |  |

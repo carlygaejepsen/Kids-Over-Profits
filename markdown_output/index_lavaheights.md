@@ -10,31 +10,31 @@ Lava Heights Academy (also called "Lava Heights RTC") is a [Sequel Youth & Famil
 
 The program is located at [730 Spring Dr, Toquerville, UT 84774](https://www.google.com/maps/place/Lava+Heights+Academy/@37.2610454,-113.283222,232m/data=!3m1!1e3!4m5!3m4!1s0x0:0x99436be407441d98!8m2!3d37.260989!4d-113.282722) . It is located right across the street from another behavior-modification program, [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) .
 
-It is also important to note that Lava Heights Academy is owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) , and is by nature affiliated with other Sequel programs.**There have been many documented and confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint. He was restrained for throwing a sandwich.
+It is also important to note that Lava Heights Academy is owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) , and is by nature affiliated with other Sequel programs.** There have been many documented and confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint. He was restrained for throwing a sandwich.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**David Allred**is the Executive Director of Lava Heights. He has also worked as the Executive Director of [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) . He began working in the TTI as a Therapist at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) , a spin-off of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) (which is widely regarded as the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization).
+** David Allred** is the Executive Director of Lava Heights. He has also worked as the Executive Director of [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) . He began working in the TTI as a Therapist at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) , a spin-off of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) (which is widely regarded as the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization).
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program at Lava Heights is heavily centered around the Fine Arts.
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 In June 2018, two boys rean away from Lava Heights. They were unable to be located for nearly 4 days, and one of their mothers was [reportedly](https://www.thespectrum.com/story/news/2018/02/23/mother-angry-over-s-utah-treatment-centers-response-after-son-runs-away/367456002/) very upset about the way the staff members at LHA handled the situation. She told reporters that staffers at the Lava Heights Academy did not file a missing-person report, nor did they ask area law enforcement to publicize the boys’ disappearance or circulate photographs to solicit help from the public in finding them.
 
-It is also important to note that Lava Heights Academy is owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .**There have been many confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint for throwing a sandwich.
+It is also important to note that Lava Heights Academy is owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .** There have been many confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint for throwing a sandwich.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **7/13/2020: (EX-STAFF)**"They abuse the residents and try to blame the staff. Do not apply this place is a joke. They hurt kids and blame staff. This is not a safe environment for anyone staff or resident. Please do yourself a favor and keep scrolling past this job post" - [Direct Support Staff (Indeed)](https://www.indeed.com/cmp/Lava-Heights-Academy/reviews/they-abuse-the-residents-and-try-to-blame-the-staff?id=37b762a3cedd6122)
 
@@ -44,7 +44,7 @@ It is also important to note that Lava Heights Academy is owned by [Sequel Youth
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Lava Heights Academy Website Homepage](https://www.lavaheightsacademy.com/)
 
@@ -62,7 +62,8 @@ It is also important to note that Lava Heights Academy is owned by [Sequel Youth
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 Accreditation for non-public schools is optional, however, those seeking accreditation must submit an application to the Department of Education the year before. Teacher certification is required for all accredited schools and all schools must maintain adequate staffing.
 
@@ -18,13 +18,13 @@ Non-public schools are not allowed to perform non-emergency medical services wit
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
-| [**Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) | 1995 | Woodward, IA | N/A |
-| [**Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
+| [** Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) | 1995 | Woodward, IA | N/A |
+| [** Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) | - | - | - |
 ---
 
-## **Closed Programs in Iowa**
+## ** Closed Programs in Iowa**
 
 ---
 
@@ -32,11 +32,11 @@ Non-public schools are not allowed to perform non-emergency medical services wit
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Beloit Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/beloitrtc) | - | - | - |
-| [**Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) | - | - | - |
-| [**Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
-| [**Midwest Academy**](https://www.reddit.com/r/troubledteens/wiki/edit/index/midwestacademy) | 2003-2016 | Keokuk, IA | [HEAL](http://www.heal-online.org/midwest.htm) |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Beloit Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/beloitrtc) | - | - | - |
+| [** Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) | - | - | - |
+| [** Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
+| [** Midwest Academy**](https://www.reddit.com/r/troubledteens/wiki/edit/index/midwestacademy) | 2003-2016 | Keokuk, IA | [HEAL](http://www.heal-online.org/midwest.htm) |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -45,7 +45,8 @@ Non-public schools are not allowed to perform non-emergency medical services wit
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

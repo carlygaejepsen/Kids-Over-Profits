@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Browning Academy was the name of the WWASP company that provided the "education" services to the teens enrolled in WWASP programs.
 
@@ -12,13 +12,13 @@ The business' registration states that the registered agent is Ralph J. Atkin, a
 
 ---
 
-## **Notable Employees**
+## ** Notable Employees**
 
-**Ralph J. Atkin**is the registered agent of Browning Academy.
+** Ralph J. Atkin** is the registered agent of Browning Academy.
 
 ---
 
-## **Programs Involved**
+## ** Programs Involved**
 
 *Below is a list of programs that utilized Browning Academy's academic program.*
 
@@ -33,7 +33,8 @@ The business' registration states that the registered agent is Ralph J. Atkin, a
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

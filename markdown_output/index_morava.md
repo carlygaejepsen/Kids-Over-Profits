@@ -18,23 +18,23 @@ The book [Come Back - a Mother and Daughter's Journey through Hell and Back](htt
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Steve and Glenda Roach**were the founders of Morava Academy. They were both retired police officers who had previously founded [Sunrise Beach](https://www.reddit.com/r/troubledteens/wiki/index/sunrisebeach) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program located in Mexico.
+** Steve and Glenda Roach** were the founders of Morava Academy. They were both retired police officers who had previously founded [Sunrise Beach](https://www.reddit.com/r/troubledteens/wiki/index/sunrisebeach) , another [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program located in Mexico.
 
-**J. Ralph Atkin**was a partial owner of Morava Academy and former trustee of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He is also the founder and owner of Skywest Airlines.
+** J. Ralph Atkin** was a partial owner of Morava Academy and former trustee of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He is also the founder and owner of Skywest Airlines.
 
-**Hana Simonova**worked as a staff member at Morava Academy but was fired sometime before it closure. She reported her concerns of systematic abuse to the Prague-based child protection agency, White Circle, which lead to the investigation that got Morava Academy shut down.
+** Hana Simonova** worked as a staff member at Morava Academy but was fired sometime before it closure. She reported her concerns of systematic abuse to the Prague-based child protection agency, White Circle, which lead to the investigation that got Morava Academy shut down.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program structure at Morava Academy, but it is likely that they used the same 6-phase level system that was used by other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) facilities. Morava Academy also was reported to frequently punish residents with solitary confinement, confining them to tiny isolation rooms and restricting their food and water intake. In addition, it is [reported](https://www.independent.co.uk/news/czech-school-accused-of-torturing-pupils-1186098.html) that the staff members are Morava used a variety of other punishments, including handcuffing, enforced listening to audio and video tapes, and threatening children with a guard dog.
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 In November, 1998, Morava Academy was investigated by Czech officials after a former staff member at the school, Hana Simonova, made reports to a child-protection agency in Prague claiming children were being systematically abused there. An investigator in the case [told the Associated Press](https://www.deseret.com/1998/11/13/19411975/2-utahns-charged-with-abusing-kids-at-czech-school) that "some of the children said they were isolated in a room where they had to lie on their bellies, sometimes with their hands tied behind their backs, and were given only a limited amount of water." In addition, he stated that the school failed to provide medical care and the staff did not have adequate professional training. Allegedly, the only qualification that staff were required to have was knowledge of the English language.
 
@@ -48,7 +48,7 @@ After the closure, many of the residents at Morava were sent to other WWASP faci
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **11/29/2019: (SURVIVOR)**"I was the 6th kid there. The abuse was very very real. We were put on silence most of the time treated like worthless cattle. The seminars were nothing short of some cult ritual praise your new messiah bull shit. I was tased zip corded and even thrown in a blacked out closet for days made to use the bathroom on myself while tied to floors and struck countless times. I lashed out violently at the worst of the staff and often took the blame for things to save the others. I tased Steve almost to death with own taser on the 5th floor! I also beat a staff for being a molester and would be rapist within an inch of his life. Let me clear the abuse was real the brain washing was beyond creepy the staff are guilty of emotional and physical abuse as well as sexual. Honestly it would have been worse if I hadn’t put some of the nastiest staff in the hospital. Fuck em!" - [Nathaniel (WWASP Survivors)](https://wwaspsurvivors.com/wwasp-programs/morava-academy/)
 
@@ -58,7 +58,7 @@ After the closure, many of the residents at Morava were sent to other WWASP faci
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [*Possible*Morava Academy Website Homepage](https://web.archive.org/web/20180808164937/http://moravaacademy.com/) (archived, 2018)
 
@@ -84,7 +84,7 @@ After the closure, many of the residents at Morava were sent to other WWASP faci
 
 [MORAVA ACADEMY DIRECTOR GLENN ROACH ARRESTED FOR CHILD ABUSE IN THE CZECH REPUBLIC ALONG WITH THREE STAFF MEMBERS](https://web.archive.org/web/20060512204306/http://www.intrepidnetreporters.com/TeenHelp/morava.html) (Intrepid Reporter, 1999)
 
-## **Photos**
+## ** Photos**
 
 * [Teens at Morava Academy](http://www.helpsavetroubledteens.com/uploads/6/3/7/3/6373322/3364028.jpg) (*1998*)
 * [Residents at Morava Academy](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTiju8xNP7RELANW75xCvIk62VGIPSbj1EIA&usqp=CAU) (*1998*)
@@ -98,7 +98,8 @@ After the closure, many of the residents at Morava were sent to other WWASP faci
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

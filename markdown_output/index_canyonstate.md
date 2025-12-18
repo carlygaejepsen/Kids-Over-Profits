@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Canyon State Academy (formerly known as the Arizona Boys Ranch) is a [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/index/riteofpassage) behavior-modification program that was founded in 1948. It was originally opened as the first of a chain of programs known as the Arizona Boys Ranches. ABR eventually went on to open 6 more facilities throughout Arizona, including ranches in [Oracle](https://www.google.com/maps/place/36895+S+Mt+Lemmon+Rd,+Oracle,+AZ+85623/@32.5397113,-110.7126963,310m/data=!3m1!1e3!4m5!3m4!1s0x86d617d9f11d2f7b:0x38e01e52af2c29ce!8m2!3d32.53829!4d-110.7175917?hl=en) , Payson, and Williams. However, the program's name was changed to Canyon State Academy in 2000, shortly after a 16-year-old resident at the program died in 1998. The other locations were subsequently closed. Today, CSA is marketed as a Residential Treatment Center for troubled teenage boys (11-17) who are struggling with delinquent behaviors, dependent/neglectful backgrounds, mild mental and emotional health issues, and special education needs.
 
@@ -12,33 +12,33 @@ Arizona Boys Ranch was originally opened as an orphanage. One of the founders, H
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Al Waters**was one of the Founders of the Arizona Boys Ranch. He also worked as the program's Executive Secretary and Executive Director.
+** Al Waters** was one of the Founders of the Arizona Boys Ranch. He also worked as the program's Executive Secretary and Executive Director.
 
-**John Howard Pyle**is one of the Founders of the Arizona Boys Ranch. He later went on to become the Governor of Arizona from 1951-1955. He also served as an official in the Eisenhower administration. Pyle died in 1987.
+** John Howard Pyle** is one of the Founders of the Arizona Boys Ranch. He later went on to become the Governor of Arizona from 1951-1955. He also served as an official in the Eisenhower administration. Pyle died in 1987.
 
-**George Miller**is one of the Founders of the Arizona Boys Ranch.
+** George Miller** is one of the Founders of the Arizona Boys Ranch.
 
-**Robert Thomas**was the President of the Arizona Boys Ranch. He was the program's President during the time that Nichoulas Contreraz was killed.
+** Robert Thomas** was the President of the Arizona Boys Ranch. He was the program's President during the time that Nichoulas Contreraz was killed.
 
-**James Bednark**works as the President of Canyon State Academy and Rite of Passage.
+** James Bednark** works as the President of Canyon State Academy and Rite of Passage.
 
-**Linda Babb, Geoffrey Sean Lewis, Montgomery Clayton Hoover, Michael Martin Morena and Troy Michael Jones**were the five staff indicted in the death of 16-year-old Nichoulas Contreraz.
+** Linda Babb, Geoffrey Sean Lewis, Montgomery Clayton Hoover, Michael Martin Morena and Troy Michael Jones** were the five staff indicted in the death of 16-year-old Nichoulas Contreraz.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 No information is known about the program structure at the Arizona Boys Ranch/Canyon State Academy.
 
-*If you attended the Arizona Boys Ranch/Canyon State Academy and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended the Arizona Boys Ranch/Canyon State Academy and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
 ## **Abuse and Deaths**
 
-The Arizona Boys Ranch/Canon State Academy is widely considered to be a**confirmedly abusive**program. There have been multiple substantiated instances of abuse and neglect that have occurred in this program, as well as the**deaths of three teenagers**. For a complete list of police complaints filed against Canyon State Academy from January 2000 through December 2013, click [here](http://www.heal-online.org/abrcsaroppolicecalls.pdf) .
+The Arizona Boys Ranch/Canon State Academy is widely considered to be a** confirmedly abusive** program. There have been multiple substantiated instances of abuse and neglect that have occurred in this program, as well as the** deaths of three teenagers**. For a complete list of police complaints filed against Canyon State Academy from January 2000 through December 2013, click [here](http://www.heal-online.org/abrcsaroppolicecalls.pdf) .
 
 In 1971, as societal moods softened, the Boys Ranch got hit hard with criticism that its policy on corporal punishment was harsh and outdated. The Arizona Department of Child Protective Services (CPS) took notice of the ranch and continued to keep an eye on them for the decades that followed.
 
@@ -70,7 +70,7 @@ In July of 2020, Canyon State Academy confirmed that 23 students and 8 staff mem
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **6/19/2019: (UNCLEAR)**"By far the biggest joke of an organization. Covering up rapes poorly managing meds to wrong students. Prestige is a joke So unprofessional." - [Michelle (Yelp)](https://www.yelp.com/biz/canyon-state-academy-queen-creek)
 
@@ -84,7 +84,7 @@ In July of 2020, Canyon State Academy confirmed that 23 students and 8 staff mem
 
 **4/5/2015: (PARENT)**"this is the worst place for cps to send a special needs child they abuse them , yell at them and use holds that can hurt them make them run when is over 100 temp the food they give them is nasty, please for your childs will being DONT SEND THEM TO THIS PLACE if your having problems with your child look else where" - [Diane (Yelp)](https://www.yelp.com/not_recommended_reviews/canyon-state-academy-queen-creek)
 
-*If you attended the Arizona Boys Ranch/Canyon State Academy and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended the Arizona Boys Ranch/Canyon State Academy and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -144,7 +144,8 @@ In July of 2020, Canyon State Academy confirmed that 23 students and 8 staff mem
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -16,28 +16,28 @@ In August 2013 Jerry Schneider told DFS staff he moved all operations related to
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Gerald "Jerry" Schneider**is the Founder and Owner of Triangle Cross Ranch. After two years working as an engineer, Jerry started ranching in Wyoming in 1967. In 1973, he purchased the land that would one day be Triangle Cross Ranch. After an accident in 1991 where Jerry’s horse somersaulted over the top of him, he awoke in the hospital to find that he had lost movement on one side of his body. He wondered how he would be able to continue running his ranch with a disbility such as his. To help, he enlisted the help of a few troubled boys in order to continue the upkeep of his ranch. This was the origin of [Mount Carmel Youth Ranch](https://www.reddit.com/r/troubledteens/wiki/index/mountcarmel) , which he created in 1992 and officially incorporated in 1996. Gerald's son, David Joseph Schneider, is one of the high-up monks at the Monastery of the Most Blessed Virgin Mary, a controversial monestary that has been [accused](https://youtu.be/AI3bcMXhWEc) of sexual abuse, among other things.
+** Gerald "Jerry" Schneider** is the Founder and Owner of Triangle Cross Ranch. After two years working as an engineer, Jerry started ranching in Wyoming in 1967. In 1973, he purchased the land that would one day be Triangle Cross Ranch. After an accident in 1991 where Jerry’s horse somersaulted over the top of him, he awoke in the hospital to find that he had lost movement on one side of his body. He wondered how he would be able to continue running his ranch with a disbility such as his. To help, he enlisted the help of a few troubled boys in order to continue the upkeep of his ranch. This was the origin of [Mount Carmel Youth Ranch](https://www.reddit.com/r/troubledteens/wiki/index/mountcarmel) , which he created in 1992 and officially incorporated in 1996. Gerald's son, David Joseph Schneider, is one of the high-up monks at the Monastery of the Most Blessed Virgin Mary, a controversial monestary that has been [accused](https://youtu.be/AI3bcMXhWEc) of sexual abuse, among other things.
 
-**Michaeleen "Mickey" Schneider**is the Co-Founder of TCR and the wife of Jerry Schneider. They have been married since 1963. Michaeleen's sonl, David Joseph Schneider, is one of the high-up monks at the Monastery of the Most Blessed Virgin Mary, a controversial monestary that has been [accused](https://youtu.be/AI3bcMXhWEc) of sexual abuse, among other things.
+** Michaeleen "Mickey" Schneider** is the Co-Founder of TCR and the wife of Jerry Schneider. They have been married since 1963. Michaeleen's sonl, David Joseph Schneider, is one of the high-up monks at the Monastery of the Most Blessed Virgin Mary, a controversial monestary that has been [accused](https://youtu.be/AI3bcMXhWEc) of sexual abuse, among other things.
 
-**Mark Schneider**is the Ranch Manager of Triangle Cross Ranch. He is reportedly a professional mechanic and heavy equipment operator. He is believed to be the son of the founders, Jerry and Mickey Schneider.
+** Mark Schneider** is the Ranch Manager of Triangle Cross Ranch. He is reportedly a professional mechanic and heavy equipment operator. He is believed to be the son of the founders, Jerry and Mickey Schneider.
 
-**Julie Ley**is the General Manager and Admissions Director of Triangle Cross Ranch.
+** Julie Ley** is the General Manager and Admissions Director of Triangle Cross Ranch.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Triangle Cross Ranch is believed to use a level system consisting of two levels. The levels are reported to be:
 
-***Warehouse Level:**This is the lower level at TCR, and all residents start on this level. During this time, the residents sleep in uninsulated sheds with no heat sources, equipped with solar-powered alarms to prevent them from leaving. They have no access to latrines and are forced to urinate in jugs. Because defecating in jugs is difficult, they defecate wherever they can. In order to progress to the next level, the residents must perform extensive manual labor and comply with the rules of the program.
-***Bunkhouse Level:**On this level, the teens are rewarded with better clothing, better food, heat, running water, and air conditioning. If bunkhouse level residents don't meet the labor demands, they are downgraded to the warehouse level.
+***Warehouse Level:** This is the lower level at TCR, and all residents start on this level. During this time, the residents sleep in uninsulated sheds with no heat sources, equipped with solar-powered alarms to prevent them from leaving. They have no access to latrines and are forced to urinate in jugs. Because defecating in jugs is difficult, they defecate wherever they can. In order to progress to the next level, the residents must perform extensive manual labor and comply with the rules of the program.
+***Bunkhouse Level:** On this level, the teens are rewarded with better clothing, better food, heat, running water, and air conditioning. If bunkhouse level residents don't meet the labor demands, they are downgraded to the warehouse level.
 
 The boys at the ranch are assigned chores based on their capabilities in the current season. Chores, depending on season, include: horse care, feeding baby calves, participating in cattle drives, building fences, and repairing and maintaining ranch vehicles and farm equipment.
 
-*Very little additional information is currently known regarding the specifics of the program used by Triangle Cross Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little additional information is currently known regarding the specifics of the program used by Triangle Cross Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -72,7 +72,7 @@ As of October 2021, the lawsuit appears to be ongoing. This page will be updated
 
 ## **Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -114,7 +114,8 @@ As of October 2021, the lawsuit appears to be ongoing. This page will be updated
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

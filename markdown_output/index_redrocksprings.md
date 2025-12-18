@@ -8,33 +8,34 @@
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Narvin Lichfield**
+** Narvin Lichfield**
 
-**Tim Waddoups**was the registered agent of Red Rock Springs. He was also the registered agent of [Adolescent Services Inc.](https://www.reddit.com/r/troubledteens/wiki/index/adolescentservices) , a marketing arm of WWASP. He previously worked as a Marketing Representative at [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , WWASP's original marketing arm.
-
----
-
-## **Program Structure**
+** Tim Waddoups** was the registered agent of Red Rock Springs. He was also the registered agent of [Adolescent Services Inc.](https://www.reddit.com/r/troubledteens/wiki/index/adolescentservices) , a marketing arm of WWASP. He previously worked as a Marketing Representative at [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , WWASP's original marketing arm.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
+
+---
+
+## ** Related Media**
 
 [Red Rock Springs Website Homepage](https://web.archive.org/web/19990428020108/http://www.redrocksprings.com/) (archived, 1999)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

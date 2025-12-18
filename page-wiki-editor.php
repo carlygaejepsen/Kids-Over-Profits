@@ -13,6 +13,12 @@ get_header();
         <h1>TTI Wiki Entry Generator</h1>
         <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
 
+        <!-- Editor Mode Toggle -->
+        <div class="editor-mode-toggle">
+            <button type="button" id="modeFormBtn" class="mode-btn active">📝 Form Editor</button>
+            <button type="button" id="modeMarkdownBtn" class="mode-btn">💻 Markdown Editor</button>
+        </div>
+
         <!-- Entry Browser Section -->
         <div class="entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
             <button type="button" id="toggleBrowserBtn" class="toggle-browser-btn">📂 Browse Saved Entries</button>

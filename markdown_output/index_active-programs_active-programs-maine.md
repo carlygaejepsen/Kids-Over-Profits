@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 While official accreditation is not required, approval or recognition by the Maine Department of Education is mandatory. A private school must meet the attendance and health and safety standards as set out in state regulations. Periodic review of non-public schools by the commissioner is necessary to maintain approval status.
 
@@ -20,17 +20,17 @@ Students in non-public schools are entitled to the same health benefits as those
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Beacon House**](https://www.reddit.com/r/troubledteens/wiki/index/beaconhouse) | - | Buxton, ME | - |
-| [**Day One**](https://www.reddit.com/r/troubledteens/wiki/index/dayone) | - | - | - |
-| [**Hyde School**](https://www.reddit.com/r/troubledteens/wiki/index/hydeme) | 1966 | Bath, ME | [HEAL](http://www.heal-online.org/hyde.htm) |
-| [**Ironwood Maine**](https://www.reddit.com/r/troubledteens/wiki/index/ironwoodme) | 2006 | Morrill, ME | [HEAL](http://www.heal-online.org/iron.htm) |
-| [**Long Creek Youth Development Center**](https://www.reddit.com/r/troubledteens/wiki/index/longcreek) | - | - | - |
-| [**Ridge RTC - Lakehouse**](https://www.reddit.com/r/troubledteens/wiki/index/ridgeme) | - | - | - |
-| [**Summit Achievement**](https://www.reddit.com/r/troubledteens/wiki/index/summitme) | 1996 | Stow, ME | N/A |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Beacon House**](https://www.reddit.com/r/troubledteens/wiki/index/beaconhouse) | - | Buxton, ME | - |
+| [** Day One**](https://www.reddit.com/r/troubledteens/wiki/index/dayone) | - | - | - |
+| [** Hyde School**](https://www.reddit.com/r/troubledteens/wiki/index/hydeme) | 1966 | Bath, ME | [HEAL](http://www.heal-online.org/hyde.htm) |
+| [** Ironwood Maine**](https://www.reddit.com/r/troubledteens/wiki/index/ironwoodme) | 2006 | Morrill, ME | [HEAL](http://www.heal-online.org/iron.htm) |
+| [** Long Creek Youth Development Center**](https://www.reddit.com/r/troubledteens/wiki/index/longcreek) | - | - | - |
+| [** Ridge RTC - Lakehouse**](https://www.reddit.com/r/troubledteens/wiki/index/ridgeme) | - | - | - |
+| [** Summit Achievement**](https://www.reddit.com/r/troubledteens/wiki/index/summitme) | 1996 | Stow, ME | N/A |
 ---
 
-## **Closed Programs in Maine**
+## ** Closed Programs in Maine**
 
 ---
 
@@ -38,9 +38,9 @@ Students in non-public schools are entitled to the same health benefits as those
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | [**Élan School**](https://www.reddit.com/r/troubledteens/wiki/index/elan) | 1970-2011 | Poland, ME | [HEAL](http://www.heal-online.org/elan2.htm) |
-| [**New Horizons for Young Women**](https://www.reddit.com/r/troubledteens/wiki/index/newhorizonsme) | 2001-2008 | Springfield/Orrington, ME | N/A |
+| [** New Horizons for Young Women**](https://www.reddit.com/r/troubledteens/wiki/index/newhorizonsme) | 2001-2008 | Springfield/Orrington, ME | N/A |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -49,7 +49,8 @@ Students in non-public schools are entitled to the same health benefits as those
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

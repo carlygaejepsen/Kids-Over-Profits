@@ -16,25 +16,25 @@ Catherine Freer Wilderness Program also operated a long-term reisdential program
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Robert Cooley**was the Founder and Executive Director of Catherine Freer Wilderness Program. He founded the program in 1988, naming it after his late friend Catherine Freer, a mountaineer who disappeared while attempting to scale Mount Logan in 1987. He continued to work at CFWP until its closure in 2012. Cooley [died](https://obits.oregonlive.com/us/obituaries/oregon/name/robert-cooley-obituary?id=15904163) in 2018 at the age of 75.
+** Robert Cooley** was the Founder and Executive Director of Catherine Freer Wilderness Program. He founded the program in 1988, naming it after his late friend Catherine Freer, a mountaineer who disappeared while attempting to scale Mount Logan in 1987. He continued to work at CFWP until its closure in 2012. Cooley [died](https://obits.oregonlive.com/us/obituaries/oregon/name/robert-cooley-obituary?id=15904163) in 2018 at the age of 75.
 
-**Rob Koning**worked as the Executive Director of Catherine Freer Wilderness Program until its closure. Prior to working at Catherine Freer, Koning worked for three other unnamed "outdoor adolescent programs". After Catherine Freer's closure in 2012, Rob went on to become the Executive Director of [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) in Wisconsin. However, he no longer works at this program and his current employment is presently unknown.
+** Rob Koning** worked as the Executive Director of Catherine Freer Wilderness Program until its closure. Prior to working at Catherine Freer, Koning worked for three other unnamed "outdoor adolescent programs". After Catherine Freer's closure in 2012, Rob went on to become the Executive Director of [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) in Wisconsin. However, he no longer works at this program and his current employment is presently unknown.
 
-**Amy Cirincione**worked as the Clinical Director of Catherine Freer Wilderness Program from 2009 until 2010. Prior to working at CFWP, Amy worked as a Clinician Intern at the Children's Crisis Treatment Center in Philadelphia from 2004 until 2005. She began working at Catherine Freer in 2005 as a Field Therapist and later as a Coordinating Therapist. From 2010 until 2014, she worked as the Director Of Social Services at Hospice of Humboldt. She then began working as a University Lecturer of Social Work at Humboldt State University in 2012, where she continues to work. In addition, she works as the Head Of Human Resources at Humboldt Social. In 2008, Amy published an [article](https://www.upenn.edu/gazette/0308/elsewhere.html) detailing her experience working in wilderness therapy.
+** Amy Cirincione** worked as the Clinical Director of Catherine Freer Wilderness Program from 2009 until 2010. Prior to working at CFWP, Amy worked as a Clinician Intern at the Children's Crisis Treatment Center in Philadelphia from 2004 until 2005. She began working at Catherine Freer in 2005 as a Field Therapist and later as a Coordinating Therapist. From 2010 until 2014, she worked as the Director Of Social Services at Hospice of Humboldt. She then began working as a University Lecturer of Social Work at Humboldt State University in 2012, where she continues to work. In addition, she works as the Head Of Human Resources at Humboldt Social. In 2008, Amy published an [article](https://www.upenn.edu/gazette/0308/elsewhere.html) detailing her experience working in wilderness therapy.
 
-**Paul Smith**worked as the Program Director of Catherine Freer Wilderness Program from 1988 until 2010. According to his [LinkedIn profile](https://www.linkedin.com/in/paul-smith-68599856/details/experience/) , he no longer works in the Troubled Teen Industry.
+** Paul Smith** worked as the Program Director of Catherine Freer Wilderness Program from 1988 until 2010. According to his [LinkedIn profile](https://www.linkedin.com/in/paul-smith-68599856/details/experience/) , he no longer works in the Troubled Teen Industry.
 
-**Kevin Riley**worked as a Supervising Therapist and later the Clinical Director of Catherine Freer Wilderness Program from 2000 until 2009. He currnetly works in private practice, at Cedar Tree Wellness.
+** Kevin Riley** worked as a Supervising Therapist and later the Clinical Director of Catherine Freer Wilderness Program from 2000 until 2009. He currnetly works in private practice, at Cedar Tree Wellness.
 
-**Kirk Shimeall**worked as the Wilderness Program Manager of Catherine Freer Wilderness Program beginning in 1996. He began working at CFWP in 1992. In 2010, he was promoted to Program Director. His prior/current employment is presently unknown.
+** Kirk Shimeall** worked as the Wilderness Program Manager of Catherine Freer Wilderness Program beginning in 1996. He began working at CFWP in 1992. In 2010, he was promoted to Program Director. His prior/current employment is presently unknown.
 
-**Brian J. Bulemore**worked as a Supervising Therapist at Catherine Freer Wilderness Program from 2001 until 2006. After this, he went on to become the Clinical Director of the reportedly abusive [NorthStar Center](https://www.reddit.com/r/troubledteens/wiki/index/northstar) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2006 until its closure 2011. He currently works in private practice.
+** Brian J. Bulemore** worked as a Supervising Therapist at Catherine Freer Wilderness Program from 2001 until 2006. After this, he went on to become the Clinical Director of the reportedly abusive [NorthStar Center](https://www.reddit.com/r/troubledteens/wiki/index/northstar) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2006 until its closure 2011. He currently works in private practice.
 
-**Gene Vey**worked as a Supervising Therapist at Catherine Freer Wilderness Program from 2001 until 2004. She currently works as the Family Services Coordinator at the Greater Albany Public Schools.
+** Gene Vey** worked as a Supervising Therapist at Catherine Freer Wilderness Program from 2001 until 2004. She currently works as the Family Services Coordinator at the Greater Albany Public Schools.
 
-**Becky Austin**worked as a Supervising Therapist at Catherine Freer Wilderness Program from 1996 until 2004. During this time, she also published several [visit reports](https://www.strugglingteens.com/archives/1998/4/visit01.html) for the notorious pro-TTI and [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) -affiliated*Struggling Teens*website. She currently works as the Therapy Director at Kids' FIRST, an outpatient program for children who have witnessed crimes.
+** Becky Austin** worked as a Supervising Therapist at Catherine Freer Wilderness Program from 1996 until 2004. During this time, she also published several [visit reports](https://www.strugglingteens.com/archives/1998/4/visit01.html) for the notorious pro-TTI and [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) -affiliated*Struggling Teens*website. She currently works as the Therapy Director at Kids' FIRST, an outpatient program for children who have witnessed crimes.
 
 ---
 
@@ -42,12 +42,12 @@ Catherine Freer Wilderness Program also operated a long-term reisdential program
 
 Like other behavior modification programs, Catherine Freer used a level system consisting of two phases.
 
-***Phase I:**For the first 21 days of the program, the teens were placed on Phase I. During this time, the teenagers slept in his or her own isolated shelter with some distance from the rest of the group they are part of, so they can not conspire. They then would eat breakfast, cook, and work on their personal journals and talk with a therapist periodically until they began their daily hike. After the hike, with breaks for lunch and setting up a new camp, some teens were given extra hikes as "rewards" before the day ended with dinner and 2-3 hours of group therapy. This phase lasted 21 days. When the teens completed the first phase, a second family meeting was held.
-***Phase II:**Phase II focused less on the individual and instead was more group-oriented. The teenagers were still kept isolated during the night, but they were given more responbilities and opportunities to communicate during the day. During Phase II, the group moved away from daily backpacking and instead spendt each week mastering a different "adventure" activity. Phase II ended with a third family meeting.
+***Phase I:** For the first 21 days of the program, the teens were placed on Phase I. During this time, the teenagers slept in his or her own isolated shelter with some distance from the rest of the group they are part of, so they can not conspire. They then would eat breakfast, cook, and work on their personal journals and talk with a therapist periodically until they began their daily hike. After the hike, with breaks for lunch and setting up a new camp, some teens were given extra hikes as "rewards" before the day ended with dinner and 2-3 hours of group therapy. This phase lasted 21 days. When the teens completed the first phase, a second family meeting was held.
+***Phase II:** Phase II focused less on the individual and instead was more group-oriented. The teenagers were still kept isolated during the night, but they were given more responbilities and opportunities to communicate during the day. During Phase II, the group moved away from daily backpacking and instead spendt each week mastering a different "adventure" activity. Phase II ended with a third family meeting.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Catherine Freer Wilderness Program was an abusive/neglectful program. Allegations of abuse and neglect that have been reported by survivors include severe medical neglect, untrained/unqualified staff members, food deprivation, and emotional/verbal abuse. Many survivors report developing PTSD as a result of their time at Catherine Freer.
 
@@ -57,11 +57,11 @@ In 2005, 18-year-old Chase W. Bickell was seriously injured while attending Cath
 
 ---
 
-## **Deaths**
+## ** Deaths**
 
 Between 2002 and 2003, three teenagers died while attending Catherine Freer Wilderness Program:
 
-**Erica Harvey**(May 27, 2002)
+** Erica Harvey**(May 27, 2002)
 
 > On May 27^(th) 2002, 15-year-old Erica Harvey died during her first full day at Catherine Freer Wilderness Program in Nevada. Her group had hiked approxmiately 3 miles through the [Arc Dome Wilderness Area](https://www.google.com/maps/place/Arc+Dome+Wilderness/@38.8228757,-117.3543962,21914m/data=!3m1!1e3!4m5!3m4!1s0x0:0x3f7c5f60912ffaf7!8m2!3d38.8032635!4d-117.3228693) near [Tonopah, Nevada](https://www.google.com/maps/place/Tonopah,+NV+89049/@38.0948633,-117.3448822,27188m/data=!3m1!1e3!4m5!3m4!1s0x80bc066f466f630b:0x91556ea4cc7eef96!8m2!3d38.069211!4d-117.2305861) when Erica began feeling dizzy and collapsed several times. On her last fall, she collapsed face-first off the trail into rocks and scrub brush. She laid there for almost an hour as staff stood by and did nothing. By the time the staff members called for medical assistance, it was too late. After being evacuated by a helicopter, Erica was pronounced dead by medical personnel upon her arrival at the hospital. Her cause of death was ultimately determined to be a combination of heat stroke and dehydration.
 
@@ -69,19 +69,19 @@ Between 2002 and 2003, three teenagers died while attending Catherine Freer Wild
 
 > On October 20^(th) 1992, less than six months after Erica's death, another 15-year-old girl at Catherine Freer died while attending the program. Very little information about the girl's death is presently available, but it has been reported that she died due to a previously undetected heart condition.
 
-**Corey Baines**(March 26, 2003)
+** Corey Baines**(March 26, 2003)
 
 > On March 26^(th) 2003, 16-year-old Corey Baines was killed in his sleep while attending Catherine Freer Wilderness Program. On the night of his death, a tree branch fell directly on top of Corey as he was sleeping, crushing his skull and killing him instantly.
 
 ---
 
-## **Closure**
+## ** Closure**
 
 In June of 2012, Catherine Freer's Founder and Executive Director, Robert Cooley, announced that both Catherine Freer and their longer-term wilderness "school", [Santiam Crossing](https://www.reddit.com/r/troubledteens/wiki/index/santiamxing) , would be closing. Cooley stated that ongoing recession forced the closure of the programs. He said a financial plan was being "worked on", but said he couldn't say how, or if, payments would be made to families with unfulfilled treatment obligations. In a June 12 press release, Cooley said fewer insurance companies were paying for the program, and the struggling economy made it hard to find families who could afford it without their help.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **7/24/2019: (SURVIVOR)**"I went to shorter wilderness program in the middle of the winter in Oregon. When I got there, they strip searched me and took my stuff. I was given clothes and put in the back of a pick up truck with those removal plastic tops. After that I was driven up into the mountains at dusk. By the time we stopped, it was dark out. I was given snowshoes and was told to strap on a sled to drag some of our supplies (this duty rotated). We were hiking to some place in the dark in the Oregon mountains in January. I stopped and told them this was bullshit. They said I was free to walk away assuming I would be scared to. I unhooked the sled and started to walk away. They tackled me and made me put the sled back on and keep marching.
 
@@ -99,7 +99,7 @@ Despite doing well in that program and being considered a leader, they recommend
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Catherine Freer Wilderness Program Website Homepage](https://web.archive.org/web/20030329040830/http://www.cfreer.com/) (archived, 2003)
 
@@ -125,7 +125,8 @@ Despite doing well in that program and being considered a leader, they recommend
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

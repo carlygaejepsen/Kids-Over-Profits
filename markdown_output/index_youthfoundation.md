@@ -2,33 +2,34 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Youth Foundation Success Academy/ Youth Foundation Inc. -*WWASP Survivors*](http://wwaspsurvivors.com/youth-foundation-success-academy-youth-foundation-inc/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

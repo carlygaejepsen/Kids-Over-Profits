@@ -1,0 +1,37 @@
+/* Toggle Button Styles for Profit Status */
+.toggle-btn-label {
+    cursor: pointer;
+    flex: 1;
+}
+
+.toggle-btn-label input[type="radio"] {
+    display: none;
+}
+
+.toggle-btn-span {
+    display: block;
+    padding: 8px 12px;
+    text-align: center;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn-label input[type="radio"]:checked + .toggle-btn-span {
+    background-color: #33A7B5;
+    border-color: #33A7B5;
+    color: white;
+    box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);
+}
+
+.toggle-btn-label:hover .toggle-btn-span {
+    background-color: #e5e7eb;
+}
+
+.toggle-btn-label input[type="radio"]:checked:hover + .toggle-btn-span {
+    background-color: #2a8c96;
+}

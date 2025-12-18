@@ -10,15 +10,15 @@ VisionQuest is a for-profit organization that operates a variety of residential 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Bob Burton**is one of the Founders of VisionQuest.
+** Bob Burton** is one of the Founders of VisionQuest.
 
-**Steve Rogers**is one of the Founders of VisionQuest.
+** Steve Rogers** is one of the Founders of VisionQuest.
 
 ---
 
-## **Active VisionQuest Programs**
+## ** Active VisionQuest Programs**
 
 ---
 
@@ -26,8 +26,8 @@ VisionQuest is a for-profit organization that operates a variety of residential 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Blue Ridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/blueridgeVQ) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Blue Ridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/blueridgeVQ) | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -41,7 +41,7 @@ Silver Springs, New Mexico
 
 ---
 
-## **Closed VisionQuest Programs**
+## ** Closed VisionQuest Programs**
 
 ---
 
@@ -49,7 +49,7 @@ Silver Springs, New Mexico
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -62,15 +62,15 @@ Silver Springs, New Mexico
 | - | - | - | - |
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Deaths**
+## ** Deaths**
 
 *To date, 15 teenagers and young adults have died while attending VisionQuest programs. Their tragic stories are detailed below:*
 
@@ -78,41 +78,41 @@ Silver Springs, New Mexico
 
 > On November 24^(th) 1980, eight VQ teenagers and two staff members disappeared while sailing in the [Gulf of California](https://www.google.com/maps/place/Gulf+of+California/@27.2543598,-115.3444432,1516061m/data=!3m2!1e3!4b1!4m5!3m4!1s0x86cbcc2e363e4c59:0xd366a88891d18a70!8m2!3d26.7312935!4d-110.7122465) off the coast of Baja California when a large storm hit their boat. Two nights later, on November 26, their 25-foot sailboat was discovered near [Punto Chivato](https://www.google.com/maps/place/Punta+Chivato,+BCS,+Mexico/@27.0567916,-111.9819433,98872m/data=!3m1!1e3!4m5!3m4!1s0x86ca85f793e3fe31:0x5f062f635eaf77b2!8m2!3d27.0687284!4d-111.9590414) with the lifeless body of one of the teens, Bernard Refer (19), found onboard. A widespread search for the missing VQ teens and staff member ensued, including serveral Naval and Coast Guard units. On November 30, the body of one of the VQ staff members, Navy submarine veteran Terry Mullaney (31), was located [12 miles south of Punta Chivato](https://www.google.com/maps/place/Punta+Chivato,+BCS,+Mexico/@26.982905,-111.9442695,37061m/data=!3m1!1e3!4m5!3m4!1s0x86ca85f793e3fe31:0x5f062f635eaf77b2!8m2!3d27.0687284!4d-111.9590414) on what would have been Mullaney's 32^(nd) birthday. The bodies of the other staff member, along with the seven other teenagers, were never found. The teenagers were: Robert Doyle Erwin (15), Robert Zimmerman (17), Charles Lucas (16), Lyle Foodroy (age unknown), James Lamb (14), Eric David Schibley (17), and James Moran (17). A Coast Guard [investigation](https://news.google.com/newspapers?nid=1129&dat=19810627&id=Hs9RAAAAIBAJ&sjid=-20DAAAAIBAJ&pg=2656,5718672) into the tragedy uncovered five safety violations, two of which were described as serious, which led to the wreck.
 
-**Tammy Edminston**
+** Tammy Edminston**
 
 > On September 11^(th) 1982, 16-year-old Tammy Edminston died of a broken neck and head injuries after she had fallen from a VQ wagon train the previous day. Her group had been travelling near [Lihonier, PA](https://www.google.com/maps/place/Ligonier,+PA+15658/@40.2446442,-79.2467661,2542m/data=!3m1!1e3!4m5!3m4!1s0x89cb2580ff9104c5:0xeaf753adbf14dd2b!8m2!3d40.2431278!4d-79.2375325) when she reportedly began "clowning around" as the wagon train was crossing a bridge. Tammy then lost her balance and fell from the train, landing on her back in the [Loyalhanna Creek](https://www.google.com/maps/place/Loyalhanna+Creek/@40.2992706,-79.3849412,13.23z/data=!4m5!3m4!1s0x89cb3244f6061a61:0xf0ded727adbe3bbb!8m2!3d40.2953327!4d-79.3574334) . Witnesses described the fall as similar to falling from a four-story building. She was transported to the Latrobe Area Hospital, but died of her injuries the following day.
 
-**Mario Cano**
+** Mario Cano**
 
 > On April 27^(th) 1984, 16-year-old Mario Cano died at the VisionQuest program near Silver Springs, NM after he was repeatedly refused medical attention by staff. The boy had only been at the program for four days, during which he had consistently complained of dizziness and feeling unwell. The staff members, thinking he was faking his symptoms, forced Mario to perform strenuous exercises instead of seeking medical attention for the teen. On April 24, Mario was instructed to dig a latrine hole, despite his statements and the staff’s observations that Mario was in no condition to dig the hole. The nest day, the staff forced Mario remain in a standing position after they watched him fall on his face while trying to do a push-up. On the morning of April 26, after watching Mario fall while trying to perform an exercise, staff members made him hold out his arms for an extended period of time. On the day of his death, staff members took Mario to a separate room for a “managed exercise” session. It was alleged that during this session, Mario was “pulled about the room and verbally harassed by staff members until he collapsed on the floor.” The nurses examined him and announced that his vital signs were stable. But Mario just lay there, still, his eyes open and dry to the touch. He was already in rigor mortis when he was finally taken to the hospital. His cause of death was determined to be a pulmonary embolism- when a blood clot formed in one of his blood vessels and traveled to his lungs. His parents subsequently filed a [lawsuit](https://www.latimes.com/archives/la-xpm-1985-03-01-me-23709-story.html) seeking damages in an undetermined amount for wrongful death and personal injuries. The result of the lawsuit is presently unknown.
 
-**Leon Anger**
+** Leon Anger**
 
 > On September 16^(th) 1984, less than 6 months after the death of Mario Cano, 17-year-old Leon Anger died while attempting to escape from VisionQuest. The details surrounding his death are largely unknown, but it has been reported that he drowned during an escape attempt. There is widespread speculation as to whether this account of the events is an attempted coverup due to the proximity of Mario and Leon's deaths and the subsequent negative media attention VQ was receiving at that time.
 
-**Danny Lewis**
+** Danny Lewis**
 
 > On June 12^(th) 1989, 16-year-old Danny Lewis died during a camping trip at the [Red Fleet Reservoir](https://www.google.com/maps/place/Red+Fleet+Reservoir/@40.577364,-109.4514816,5060m/data=!3m2!1e3!4b1!4m5!3m4!1s0x87455d84ef3df023:0xa916f11f0820c38a!8m2!3d40.5788912!4d-109.4273987) in Northeastern Utah. According to [reports](https://www.deseret.com/1989/6/14/18811284/californian-utahn-drown) , Danny was in the water that staff had designated as a bathing area when he became entangled in moss. Members of his group made several attempts to save Danny before calling authorities, but it was too late. His body was recovered by rescue divers later that evening. His cause of death was drowning.
 
-**John Vincent Garrison**
+** John Vincent Garrison**
 
 > On May 31^(st) 1990, 18-year-old John Vincent Garrision died while attempting to escape from VisionQuest. At the time of his death, VQ was leading a wagon train expedition through the Western United States. The group had camped near [Tracy, CA](https://www.google.com/maps/place/Tracy,+CA/@37.7204375,-121.4931366,21125m/data=!3m1!1e3!4m5!3m4!1s0x809014590a55994d:0xe8466f79e0af1499!8m2!3d37.7395818!4d-121.4260018) along [Corral Hollow Road](https://www.google.com/maps/place/Corral+Hollow+Rd,+California/@37.7408817,-121.4569686,12.1z/data=!4m5!3m4!1s0x8090224e6f6e9165:0xc0fdea5854868735!8m2!3d37.7088632!4d-121.4528874) . After escaping from the campsite, John was allegedly chased by staff members in a pickup truck. While trying to get away from the staff, John attempted to cross the nearby [Grant Line Canal](https://www.google.com/maps/place/Grant+Line+Canal/@37.8193838,-121.4625982,14.62z/data=!4m5!3m4!1s0x809019e5c47b776f:0x4aaecb62a71de189!8m2!3d37.820205!4d-121.4552249) , at which point he drowned. His parents subsequently filed a wrongful death lawsuit accusing VisionQuest of scaring, beating, and terrorizing John Vincent Garrison which led to his escape attempt.
 
-**Carlos Ruiz**
+** Carlos Ruiz**
 
 > On December 16^(th) 1994, 13-year-old Carlos Ruiz died while attending a VisionQuest program. There is very little information available regarding the circumstances surrounding Carlos' death, but he reportedly died of unspecified injuries incurred during an outdoor activity. No additional information is presently known.
 
-**Dawnne Takeuchi**
+** Dawnne Takeuchi**
 
 > On June 28^(th) 1995, 18-year-old Dawnne Takeuchi died of injuries incurred when she was thrown from a supply semi-truck driven by a VQ staff member. The group was camping near [Pagosa Springs, CO](https://www.google.com/maps/place/Pagosa+Springs,+CO+81147/@37.2638616,-107.0806376,13275m/data=!3m1!1e3!4m5!3m4!1s0x873ddb6e9b07b449:0x7b8616cc41f8157f!8m2!3d37.26945!4d-107.0097617) when her death occurred. The staff member who was driving the vehicle was later convicted of careless driving and ordered to pay $270.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [VisionQuest Website Homepage](https://www.vq.com/)
 
@@ -160,7 +160,8 @@ Silver Springs, New Mexico
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

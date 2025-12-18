@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Adolescent Services International (also called Adolescent Services Inc.) is a company that was created by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) officials in order to funnel search-engine results towards WWASP programs. Like other companies such as [Teen Revitalization](https://www.reddit.com/r/troubledteens/wiki/index/teenrevitalization) , and [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , it was created as a marketing arm of WWASP in order to refer unknowing parents to WWASP programs.
 
@@ -14,17 +14,17 @@ From searching the website's domain name on sites such as [who.is](https://who.i
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Narvin Lichfield**is the creator and CEO of ASI. According to the organization's current [business license](https://businessfilings.sc.gov/BusinessFiling/Entity/Profile/aa864a5d-82df-431b-b844-03c9ac27c6d8) , Narvin Lichfield is the registered agent, and the address on file is the former location of Lichfield's [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) .
+** Narvin Lichfield** is the creator and CEO of ASI. According to the organization's current [business license](https://businessfilings.sc.gov/BusinessFiling/Entity/Profile/aa864a5d-82df-431b-b844-03c9ac27c6d8) , Narvin Lichfield is the registered agent, and the address on file is the former location of Lichfield's [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) .
 
-**Tim Waddoups**was the registered agent listed on ASI's first business license. He previously worked as a Marketing Representative at [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) . He was also the registered agent of [Red Rock Springs](https://www.reddit.com/r/troubledteens/wiki/index/redrocksprings) , a WWASP program that served as the precursor to [Cross Creek Center](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) .
+** Tim Waddoups** was the registered agent listed on ASI's first business license. He previously worked as a Marketing Representative at [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) . He was also the registered agent of [Red Rock Springs](https://www.reddit.com/r/troubledteens/wiki/index/redrocksprings) , a WWASP program that served as the precursor to [Cross Creek Center](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) .
 
-**Kevin Richey**was the registrant for the ASI website. Kevin Richey previously worked for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which was one of the major marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He also previously worked for WWASP as an Admissions Coordinator. In 2005, he opened [Tipton Academy](https://www.reddit.com/r/troubledteens/wiki/index/tipton) and [Meadowlark Academy](https://www.reddit.com/r/troubledteens/wiki/index/meadowlark) in rural Kansas. Tipton Academy and Meadowlark Academy were both closed in 2011. It has been reported by survivors that the staff at Tipton Academy used to threaten to send the difficult residents to [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a confirmedly and notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program.
+** Kevin Richey** was the registrant for the ASI website. Kevin Richey previously worked for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which was one of the major marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He also previously worked for WWASP as an Admissions Coordinator. In 2005, he opened [Tipton Academy](https://www.reddit.com/r/troubledteens/wiki/index/tipton) and [Meadowlark Academy](https://www.reddit.com/r/troubledteens/wiki/index/meadowlark) in rural Kansas. Tipton Academy and Meadowlark Academy were both closed in 2011. It has been reported by survivors that the staff at Tipton Academy used to threaten to send the difficult residents to [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a confirmedly and notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program.
 
 ---
 
-## **Programs Recommended by ASI**
+## ** Programs Recommended by ASI**
 
 *The following is a list of programs that were marketed on ASI's [website](https://web.archive.org/web/19990218125253/http://troubledteen.com/) (archived, 1999).*
 
@@ -54,7 +54,8 @@ All of these programs were owned by [WWASP](https://www.reddit.com/r/troubledtee
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -16,26 +16,26 @@ Clarinda Academy initially opened as a Residential Foster Care Facility for at-r
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John "Jay" Ripley**was one of the Founders of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) . Prior to founding sequel, Ripley worked as an accountant and auto repair industry executive. In the early 1990s, he co-founded [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) , a juvenile corrections chain, with his boss and mentor James Hindman, the founder Jiffy Lube. YSI served in many ways as a precursor to Sequel. In 2015, Ripley roughly $104,167 per month as Chairman of Sequel. Following Sequel's implosion in 2021, he went on to create [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/vivantbh) which quickly purchased many of the closed Sequel programs. Vivant Behavioral Health is widely believed to be an attempted rebrand of Sequel Youth & Family Services.
+** John "Jay" Ripley** was one of the Founders of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) . Prior to founding sequel, Ripley worked as an accountant and auto repair industry executive. In the early 1990s, he co-founded [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) , a juvenile corrections chain, with his boss and mentor James Hindman, the founder Jiffy Lube. YSI served in many ways as a precursor to Sequel. In 2015, Ripley roughly $104,167 per month as Chairman of Sequel. Following Sequel's implosion in 2021, he went on to create [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/vivantbh) which quickly purchased many of the closed Sequel programs. Vivant Behavioral Health is widely believed to be an attempted rebrand of Sequel Youth & Family Services.
 
-**Adam Shapiro**was one of the Founders of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) and the first Executive Director of Clarinda Academy. Prior to this, he worked as a lawyer and was a founding stockholder of [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) , which served in many ways as a precursor to Sequel. He later served as YSI's General Counsel and Senior Vice President before helping to found Sequel with Jay Ripley. He also reportedly worked as the Assistant Director of the [Glen Mills School](https://www.reddit.com/r/troubledteens/wiki/index/glenmills) . It has been [reported](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) that the founders of Clarinda Academy/Sequel based the program around the program structure of the Glen Mills School.
+** Adam Shapiro** was one of the Founders of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) and the first Executive Director of Clarinda Academy. Prior to this, he worked as a lawyer and was a founding stockholder of [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) , which served in many ways as a precursor to Sequel. He later served as YSI's General Counsel and Senior Vice President before helping to found Sequel with Jay Ripley. He also reportedly worked as the Assistant Director of the [Glen Mills School](https://www.reddit.com/r/troubledteens/wiki/index/glenmills) . It has been [reported](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) that the founders of Clarinda Academy/Sequel based the program around the program structure of the Glen Mills School.
 
-**Cindy Cox**was one of the Owners of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) and the first Assistant Director of Clarinda Academy.
+** Cindy Cox** was one of the Owners of [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) and the first Assistant Director of Clarinda Academy.
 
-**Jeff Nichols**worked as Clarinda Academy's Executive Director until 1999. There is presently no other information known about his previous or current employment.
+** Jeff Nichols** worked as Clarinda Academy's Executive Director until 1999. There is presently no other information known about his previous or current employment.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Clarinda Academy used a level system consisting of 4 levels, called "phases". It has been [reported](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) that the program structure of Clarinda Academy was modeled off of the program used by the [Glen Mills School](https://www.reddit.com/r/troubledteens/wiki/index/glenmills) , an archaic treatment center for troubled youth established in 1826 in Pennsylvania. The levels are reported to have been:
 
-***Phase 1:**When a resident arrived at Clarinda Academy, they were put on Phase During this phase, the resident was expected to recognize and identify personal patterns of behavior/delinquent patterns of thinking, learn to give and receive help, and demonstrate new skills in managing behavior. On this phase, the residents were only permitted to have one 10-minute phone call with their families each week. This phase typically lasted between 4 and 6 weeks.
-***Phase 2 (Eagle Pledge):**On this phase, the resident was expected to learn the impact of hurtful and exploitative behavior on others, develop empathy, begin to express feelings in healthy ways, and continue to demonstrate new skills in managing behavior. On this phase, the residents were only permitted to have one 15-minute phone call with their families each week. This phase typically lasted between 6 and 8 weeks.
-***Phase 3:**On this phase, the resident was expected to learn alternatives to old patterns of thinking & behavior, learn effective problem solving & decision making skills, learn effective communications skills, learn aspects of healthy relationships, begin to express feelings in healthy ways, continue to demonstrate new skills in managing behavior and teach/mentor others. On this phase, the residents were only permitted to have one 20-minute phone call with their families each week. This phase typically lasted between 6 and 8 weeks.
-***Phase 4: (Eagle)**This was the final phase at Clarinda Academy. Residents on Phase 4 were expected to learn to identify and handle high risk people and situations, minimize risk of relapse/recidivism, prepare for successful transition into the community, and increase & develop a commitment to productive citizenship. On this phase, the residents were only permitted to have one 20-minute phone call with their families each week. This phase typically lasted 8 weeks, after which point the resident would graduate from the program.
+***Phase 1:** When a resident arrived at Clarinda Academy, they were put on Phase During this phase, the resident was expected to recognize and identify personal patterns of behavior/delinquent patterns of thinking, learn to give and receive help, and demonstrate new skills in managing behavior. On this phase, the residents were only permitted to have one 10-minute phone call with their families each week. This phase typically lasted between 4 and 6 weeks.
+***Phase 2 (Eagle Pledge):** On this phase, the resident was expected to learn the impact of hurtful and exploitative behavior on others, develop empathy, begin to express feelings in healthy ways, and continue to demonstrate new skills in managing behavior. On this phase, the residents were only permitted to have one 15-minute phone call with their families each week. This phase typically lasted between 6 and 8 weeks.
+***Phase 3:** On this phase, the resident was expected to learn alternatives to old patterns of thinking & behavior, learn effective problem solving & decision making skills, learn effective communications skills, learn aspects of healthy relationships, begin to express feelings in healthy ways, continue to demonstrate new skills in managing behavior and teach/mentor others. On this phase, the residents were only permitted to have one 20-minute phone call with their families each week. This phase typically lasted between 6 and 8 weeks.
+***Phase 4: (Eagle)** This was the final phase at Clarinda Academy. Residents on Phase 4 were expected to learn to identify and handle high risk people and situations, minimize risk of relapse/recidivism, prepare for successful transition into the community, and increase & develop a commitment to productive citizenship. On this phase, the residents were only permitted to have one 20-minute phone call with their families each week. This phase typically lasted 8 weeks, after which point the resident would graduate from the program.
 
 Clarinda Academy's behavioral expectations were established through four "core norms" that residents are required to follow. The four core norms were:
 
@@ -46,17 +46,17 @@ Clarinda Academy's behavioral expectations were established through four "core n
 
 In addition to the four core norms, Clarinda Academy had hundreds, if not thousands, of other "norms" that included walking in single-file lines, tucking in shirts, and never speaking to residents of the opposite gender. In order to enforce the norms, Clarinda Academy used what were called the "Seven Levels of Intervention". Everyone on campus, even other residents, were encouraged to participate in these interventions when they perceive that norms were not being followed. The Seven Levels of Intervention were:
 
-1.**Helpful Nonverbal:**This included nonverbal gestures such as shaking ones head to indicate that the behavior is not acceptable.
-2.**Concerned Nonverbal:**This included more assertive and obvious nonverbal gestures of disapproval indicating that the behavior needs to change.
-3.**Helpful Verbal:**This involved the problem behavior being addressed in a verbal manner, along with an expectation of what positive change is being requested.
-4.**Concerned Verbal:**This involved the behavior being addressed verbally in a more firm and concerned tone, always beginning with "around here, we..."
-5.**Group Support:**If the resident still did not change their negative behavior, every other resident was required to stand around the individual while the intervening resident repeated "around here, we..."
-6.**Staff Intervention:**If Group Support failed to change the behavior, staff would then become involved in the situation in order to find a solution. According to the program's [brochure](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/B.-Clarinda-Academy-Brochure.pdf) , "this marks the last opportunity for the student to take initiative." The Disability Law Center found in their [report](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) that this intervention often involved the staff member yelling at, cursing at, threatening, and sometimes spitting on the resident.
-7.**Physical Restraint:**This was the final stage of intervention at Clarinda Academy. In the [DLC report](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) , students reported that "staff 'will drop you if you move' during a 'staff intervention.' They explained this means that staff 'put their hands on you and force you to the ground.' They separately and independently demonstrated how staff pull their elbows behind their backs and then force them to the ground by putting pressure on the backs of their knees. Every student reported that restraints they experienced were physically painful and frequently resulted in back, shoulder, and neck pain for several days or weeks. When asked if they receive medical attention, they stated that no one complains because they are told 'you shouldn’t have gotten put in a restraint.'"
+1.** Helpful Nonverbal:** This included nonverbal gestures such as shaking ones head to indicate that the behavior is not acceptable.
+2.** Concerned Nonverbal:** This included more assertive and obvious nonverbal gestures of disapproval indicating that the behavior needs to change.
+3.** Helpful Verbal:** This involved the problem behavior being addressed in a verbal manner, along with an expectation of what positive change is being requested.
+4.** Concerned Verbal:** This involved the behavior being addressed verbally in a more firm and concerned tone, always beginning with "around here, we..."
+5.** Group Support:** If the resident still did not change their negative behavior, every other resident was required to stand around the individual while the intervening resident repeated "around here, we..."
+6.** Staff Intervention:** If Group Support failed to change the behavior, staff would then become involved in the situation in order to find a solution. According to the program's [brochure](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/B.-Clarinda-Academy-Brochure.pdf) , "this marks the last opportunity for the student to take initiative." The Disability Law Center found in their [report](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) that this intervention often involved the staff member yelling at, cursing at, threatening, and sometimes spitting on the resident.
+7.** Physical Restraint:** This was the final stage of intervention at Clarinda Academy. In the [DLC report](https://www.disabilityrightswa.org/wp-content/uploads/2018/10/Let-Us-Come-Home-PDF.pdf) , students reported that "staff 'will drop you if you move' during a 'staff intervention.' They explained this means that staff 'put their hands on you and force you to the ground.' They separately and independently demonstrated how staff pull their elbows behind their backs and then force them to the ground by putting pressure on the backs of their knees. Every student reported that restraints they experienced were physically painful and frequently resulted in back, shoulder, and neck pain for several days or weeks. When asked if they receive medical attention, they stated that no one complains because they are told 'you shouldn’t have gotten put in a restraint.'"
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Clarinda Academy was an abusive program. Allegations of abuse and neglect that have been reported by survivors of Clarinda Academy include violent and excessive physical restraints, sexual abuse, physical abuse, and solitary confinement/seclusion techniques.
 
@@ -72,7 +72,7 @@ In October 2018, the Disability Law Center of Washington published a [detailed r
 
 ---
 
-## **Closure**
+## ** Closure**
 
 In February 2021, it was [announced](https://www.desmoinesregister.com/story/news/2021/02/05/clarinda-academy-iowa-closing-after-years-alleged-abuse-sexual-assault-teens/4414216001/) that Clarinda Academy would be closing its doors. Although the reason for the closure was not immediately given, the Iowa DHS received a notice that the decision was made due to a sharp decrease in student enrollment.
 
@@ -82,7 +82,7 @@ Since Clarinda Academy's closure, [Sequel Youth and Family Services](https://www
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **2022: (PARENT)**"My son was here in 2015. I can't tell you how happy my heart is to hear this place is closed down. Hopefully it is shut down and not ever re-opened again. Our county juvenile hall sent my son there. I visited him twice. He was the youngest one there. His clothes were stolen actually all of his stuff was stolen. The staff was horrible. There might of been one or two there that actually cared about those kids. They weren't taught a lesson they were given even more trauma than they went in with. If I could give this place negative stars I would." - [Simone (Google Reviews)](https://maps.app.goo.gl/ttgjfWz898W7hxA48)
 
@@ -94,7 +94,7 @@ Since Clarinda Academy's closure, [Sequel Youth and Family Services](https://www
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Clarinda Academy Website Homepage](https://web.archive.org/web/20050404152849/http://www.clarindaacademy.org/) (archived, 2005)
 
@@ -124,7 +124,8 @@ Since Clarinda Academy's closure, [Sequel Youth and Family Services](https://www
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

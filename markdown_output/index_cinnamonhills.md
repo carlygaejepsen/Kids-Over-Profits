@@ -14,21 +14,21 @@ Cinnamon Hills is “accredited” by the [Northwest Association of Accredited S
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 *Note: Cinnamon Hills does not list their current staff/faculty on their website. Therefore, it is unknown whether the individuals listed below still work at the program.*
 
-**Jack L. Williams**was the Founder and former Program Director of Cinnamon Hills. Prior to opening Cinnamon Hills, Williams was one of the Founders and original Owners the notorious and**confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He even had a lawsuit filed against him in the 1970's by former residents of PCS, challenging the school’s education, treatment and confinement methods. Jurors returned a verdict favoring Provo Canyon School after a lengthy trial in 1980. He died on December 18, 2009 at the age of 76, following a brief battle with a terminal illness.
+**Jack L. Williams** was the Founder and former Program Director of Cinnamon Hills. Prior to opening Cinnamon Hills, Williams was one of the Founders and original Owners the notorious and** confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He even had a lawsuit filed against him in the 1970's by former residents of PCS, challenging the school’s education, treatment and confinement methods. Jurors returned a verdict favoring Provo Canyon School after a lengthy trial in 1980. He died on December 18, 2009 at the age of 76, following a brief battle with a terminal illness.
 
-**Buck "Buff" Williams**is the son of Jack Williams and took over as Executive Director of Cinnamon Hills after his father.
+** Buck "Buff" Williams** is the son of Jack Williams and took over as Executive Director of Cinnamon Hills after his father.
 
-**Joy Lynette Andrews**worked as a Staff Member at Cinnamon Hills. In October 2008, she was arrested and charged with forcible sodomy and forcible sexual abuse after it was revealed that she had been having a sexual relationship with a 16-year-old girl at Cinnamon Hills. She pleaded guilty and was sentenced to 1-15 years in prison.
+** Joy Lynette Andrews** worked as a Staff Member at Cinnamon Hills. In October 2008, she was arrested and charged with forcible sodomy and forcible sexual abuse after it was revealed that she had been having a sexual relationship with a 16-year-old girl at Cinnamon Hills. She pleaded guilty and was sentenced to 1-15 years in prison.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*Very little information is currently known about the specifics of the program used by Cinnamon Hills. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is currently known about the specifics of the program used by Cinnamon Hills. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 When a teen arrives at Cinnamon Hills, they are placed on the "Youth Development" Unit. This unit is secure and they are given very minimal privileges.
 
@@ -40,7 +40,7 @@ Once the teen has complied to a satisfactory degree, they are taken to the Life 
 
 Many survivors have reported that Cinnamon Hills is an abusive program. Allegations of abuse and neglect that have been reported by survivors include extreme physical abuse, violent and excessive restraints, emotional abuse, humiliation tactics, medical neglect, and sexual abuse. Many survivors report that they developed PTSD as a result of their time at Cinnamon Hills.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Cinnamon Hills is a**Confirmedly Abusive**program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Cinnamon Hills is a** Confirmedly Abusive** program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 In January of 2008, a 25-year-old unnamed staff member at Cinnamon Hills was arrested after a 17-year-old girl reported he had sexually abused her. Police said the girl was allowed to leave the Cinnamon Hills youth crisis center to visit her family earlier this month and ran away from them. She contacted a 25-year-old staff member of the center, officers said. "They were friends and she called him and they went and had a sexual encounter that afternoon," said St. George Police Sgt. Craig Harding. The girl was returned to her parents several hours later. During their investigation, police said the girl disclosed the sexual encounter. Harding said the man then corroborated it. The man was booked into the Purgatory Jail on investigation of unlawful sexual conduct by a person in a position of trust.
 
@@ -48,7 +48,7 @@ In October of 2008, a staff member at Cinnamon Hills, 33-year-old Joy Lynette An
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (EX-STAFF)**"As a former employee I can tell you that every room, every office in that facility is wired for video and or sound. All staff live in fear of their dictator and if anyone speaks out of turn they are immediately fired or "let go". Man in question has stated directly to me 'I have a lot of money and lawyers. People can sue all they want, they will run out of money before I do.'" - [The Emerald Robot (Google Reviews)](https://www.google.com/maps/place/Cinnamon+Hills/@37.1095867,-113.5670894,149m/data=!3m1!1e3!4m7!3m6!1s0x0:0x63770005cb88d847!8m2!3d37.1095867!4d-113.5670894!9m1!1b1)
 
@@ -66,7 +66,7 @@ In October of 2008, a staff member at Cinnamon Hills, 33-year-old Joy Lynette An
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Cinnamon Hills Website Homepage](https://www.cinnamonhills.org/)
 
@@ -82,7 +82,8 @@ In October of 2008, a staff member at Cinnamon Hills, 33-year-old Joy Lynette An
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

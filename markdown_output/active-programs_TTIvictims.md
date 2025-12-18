@@ -4,19 +4,19 @@
 
 ***Below is a list of confirmed victims of the Troubled Teen Industry and information about their deaths.***
 
-*Note: At present, this list only contains victims who passed away while enrolled at a program. In the future, names will also be added to commemorate those who were lost after leaving the program. If you are aware of additional victims of the Troubled Teen Industry who do not appear on this list, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Note: At present, this list only contains victims who passed away while enrolled at a program. In the future, names will also be added to commemorate those who were lost after leaving the program. If you are aware of additional victims of the Troubled Teen Industry who do not appear on this list, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
 ## **1950's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Eduardo Facha García | 9 or 10 | 1954 | Linton Hall Military School | Unknown, [additional information](http://lintonhallmilitaryschool.blogspot.com/2013/06/the-boy-who-died-at-linton-hall.html) . |
 ---
 
 ## **1970's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Lorene Larhette | 17 | September 3, 1971 | Northwest Outward Bound School | Froze to death along with Joyce Howden, [additional information](https://news.google.com/newspapers?nid=348&dat=19710908&id=locHAAAAIBAJ&sjid=TTMDAAAAIBAJ&pg=5649,880759) |
 | Joyce Howden | ? | September 3, 1971 | Northwest Outward Bound School | Froze to death along with Lorene Larhette, [additional information](https://news.google.com/newspapers?nid=348&dat=19710908&id=locHAAAAIBAJ&sjid=TTMDAAAAIBAJ&pg=5649,880759) |
 | Joy Evans | 17 | 1976 | [Forest Haven Asylum](https://www.reddit.com/r/troubledteens/wiki/index/foresthaven) | Choked to death after being force-fed while lying down, [additional information](https://www.washingtonpost.com/wp-dyn/content/article/2006/03/22/AR2006032200790.html) |
@@ -26,7 +26,7 @@
 
 ## **1980's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Connie Munson | 14 | August 1, 1980 | [Bethesda Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/bethesdagirls) | Hit by a vehicle during escape attempt, [additional information](https://www.fornits.com/phpbb/index.php?topic=29683.0) |
 | Robert Doyle Erwin | 15 | November 24, 1980 | [VisionQuest](https://www.reddit.com/r/troubledteens/wiki/index/visionquest) | Drowned while Sailing in the Gulf of California, [additional information](https://news.google.com/newspapers?id=F6IKAAAAIBAJ&sjid=3UwDAAAAIBAJ&pg=6154,2876323&dq=gulf+of+california+teenagers+downed) |
 | Lyle Foodroy | ? | November 24, 1980 | [VisionQuest](https://www.reddit.com/r/troubledteens/wiki/index/visionquest) | Drowned while Sailing in the Gulf of California, [additional information](https://news.google.com/newspapers?id=F6IKAAAAIBAJ&sjid=3UwDAAAAIBAJ&pg=6154,2876323&dq=gulf+of+california+teenagers+downed) |
@@ -52,7 +52,7 @@
 
 ## **1990's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | David Sellers | 15 | February 19, 1990 | [Camp O'Neal](https://www.reddit.com/r/troubledteens/wiki/index/camponeal) | Drowned in an icy lake during an outing on President's day; [additional information](https://www.latimes.com/archives/la-xpm-1990-02-23-mn-1152-story.html) |
 | Shawn Diaz | 15 | February 19, 1990 | [Camp O'Neal](https://www.reddit.com/r/troubledteens/wiki/index/camponeal) | Drowned in an icy lake during an outing on President's day; [additional information](https://www.latimes.com/archives/la-xpm-1990-02-23-mn-1152-story.html) |
 | Ryan McCandless | 13 | February 19, 1990 | [Camp O'Neal](https://www.reddit.com/r/troubledteens/wiki/index/camponeal) | Drowned in an icy lake during an outing on President's day; [additional information](https://www.latimes.com/archives/la-xpm-1990-02-23-mn-1152-story.html) |
@@ -109,7 +109,7 @@
 
 ## **2000-2004**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Adora Grae Scout | 17 | January 9, 2000 | Buffalo Mountain Camp | Died of cardiac arrest during a camping trip; [additional information](https://www.greenevillesun.com/news/former-county-teens-death-still-is-under-investigation-cause-of-death-undetermined/article_e0efa38d-996b-5243-b77f-6e5aebfdd3cd.html) |
 | Willie Wright | 14 | February 4, 2000 | Southwest Mental Health | Died during a violent restraint |
 | Michael Ibarra-Wiltsie | 12 | February 5, 2000 | [Camp E-Kel-Etu](https://www.reddit.com/r/troubledteens/wiki/index/campekeletu) | Died after being restrained by a 300 lb man - he was only 65 lb; [additional information](https://www.ocala.com/article/LK/20051201/News/604257795/OS) |
@@ -161,7 +161,7 @@
 
 ## **2005-2009**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Travis Parker | 13 | April 21, 2005 | [Appalachian Wilderness Camp](https://www.reddit.com/r/troubledteens/wiki/index/appalachianwild) | Died a day after he was restrained face-down for over an hour; [additional information](https://www.foxnews.com/story/camp-counselors-charged-with-murder-in-boys-death) |
 | Alex Harris | 12 | September 13, 2005 | [Hope Youth Ranch](https://www.reddit.com/r/troubledteens/wiki/index/hopeyouthranch) | Negligent Homicide; [additional information](https://www.ktbs.com/news/blistering-critique-of-conditions-that-led-to-boys-death/article_d1609b09-1980-5cd3-a8fd-1bc0b1f36d79.html) |
 | Linda Harris | 14 | September 18, 2005 | [Chad Youth Enhancement Center](https://www.reddit.com/r/troubledteens/wiki/index/chadyouth) | Died of heart failure during a violent restraint; [additional information](https://www.nashvillescene.com/news/article/13028525/more-details-on-chad-youth-death) |
@@ -196,7 +196,7 @@
 
 ## **2010's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Taylor Mangham | 15 | January 19, 2010 | [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) | Died of a brain aneurysm after staff refused to call 911 or seek medical help; [additional information](http://www.mydeathspace.com/article/2012/05/23/Taylor_Mangham_%2815%29_died_from_complications_of_a_brain_aneurysm) |
 | Aaron Leafe | 15 | June 12, 2010 | Ivy Cottage Children's Home | Suicide following months of sexual abuse from staff; [additional information](https://www.buzzfeed.com/richholmes/keys-group-aaron-leafe) |
 | Levi Snyder | 15 | June 12, 2010 | [New Hope Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/newhopesc) | Unclear, he was reportedly sick with chest congestion and was on antibiotics prior to his death; [additional information](https://www.fornits.com/phpbb/index.php?topic=30959.0) |
@@ -244,7 +244,7 @@
 
 ## **2020's**
 
-|**Name**|**Age**|**Date**|**Program Name**|**Cause of Death (if known)**|
+|** Name**|** Age**|** Date**|** Program Name**|** Cause of Death (if known)**|
 | Amari Boone | 3 | April 12, 2020 | ACH Child and Family Services | Homicide- he was severely beaten and sustained blunt force trauma to the head; [additional information](https://www.dallasobserver.com/news/amari-boone-should-still-be-alive-today-but-he-died-in-foster-care-last-year-12046587) |
 | Cornelius Frederick | 16 | May 1, 2020 | [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | Died following a violent 11-minute restraint for throwing a sandwich; [additional information](https://www.nbcnews.com/news/us-news/video-shows-fatal-restraint-cornelius-fredericks-16-michigan-foster-facility-n1233122) |
 | Naomi Wood | 17 | May 19, 2020 | [Lakeland Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakeland) | Died of a seizure following weeks of medical neglect; [additional information](https://www.theledger.com/story/news/local/2021/07/04/former-residents-lakeland-girls-academy-say-like-prison/7847867002/) |
@@ -288,4 +288,5 @@
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

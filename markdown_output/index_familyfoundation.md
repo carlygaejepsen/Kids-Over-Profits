@@ -18,17 +18,17 @@ The Bridge was a program added to FFS around 2012–2013 for participants ages 1
 
 ## **Founders and Notable Staff**
 
-**Tony and Betty Argiros**were the Founders of the Family Foundation School. Prior to founding FFS, they were members of [East Ridge](https://www.recordonline.com/article/20091007/Health/910070318) , a therapeutic community of addicts based on the teachings of Alcoholics Anonymous that has been accused of being a cult. They also operated a Montgomery Wards Catalog Store on Front St. for a few years before founding FFS. Many FFS staff members also had previously been a part of East Ridge. They retired in 1999, and Tony died in 2014.
+** Tony and Betty Argiros** were the Founders of the Family Foundation School. Prior to founding FFS, they were members of [East Ridge](https://www.recordonline.com/article/20091007/Health/910070318) , a therapeutic community of addicts based on the teachings of Alcoholics Anonymous that has been accused of being a cult. They also operated a Montgomery Wards Catalog Store on Front St. for a few years before founding FFS. Many FFS staff members also had previously been a part of East Ridge. They retired in 1999, and Tony died in 2014.
 
-**Emmanuel "Mike" Argiros**worked as the President/CEO of the Family Foundation School. He is the son of the founders, Tony and Betty Argiros. He currently appears to be the CEO of two companies, Education Plus Corp and Kasos, Inc, where he works as a tax preparer.
+** Emmanuel "Mike" Argiros** worked as the President/CEO of the Family Foundation School. He is the son of the founders, Tony and Betty Argiros. He currently appears to be the CEO of two companies, Education Plus Corp and Kasos, Inc, where he works as a tax preparer.
 
-**Rita Argiros**worked as the Executive Program Director of the Family Foundation School beginning in 2000. She was the daughter of the founders, Tony and Betty Argiros. She died on September 20, 2015 following a brief battle with an unnamed illness.
+** Rita Argiros** worked as the Executive Program Director of the Family Foundation School beginning in 2000. She was the daughter of the founders, Tony and Betty Argiros. She died on September 20, 2015 following a brief battle with an unnamed illness.
 
-**Ann Janauer**worked as the Dean of Students/Director of Human Resources of the Family Foundation School from 2011 until 2014. She currently works as the Director of G & A Janauer Inc., which is a Vermont Corporation that is about to purchase an RV park and campground.
+** Ann Janauer** worked as the Dean of Students/Director of Human Resources of the Family Foundation School from 2011 until 2014. She currently works as the Director of G & A Janauer Inc., which is a Vermont Corporation that is about to purchase an RV park and campground.
 
-**Ted Towsley**reportedly worked in Admissions at the Family Foundation School. He reportedly graduated from FFS in 1991. His current employment is unknown.
+** Ted Towsley** reportedly worked in Admissions at the Family Foundation School. He reportedly graduated from FFS in 1991. His current employment is unknown.
 
-**Iris Maclean**worked as the Assistant Dean of Admissions at the Family Foundation School from 2007 until 2014. After this, she worked as the Regional Outreach Manager East Coast Division for Sovereign Health Group from 2014 until 2016. She currently works as Clinical Outreach Director at [Newport Healthcare, which owns [Newport Academy](https://www.reddit.com/r/troubledteens/wiki/index/newport) . She also currently works as a Family Ambassador at Family First Adolescent Services.
+** Iris Maclean** worked as the Assistant Dean of Admissions at the Family Foundation School from 2007 until 2014. After this, she worked as the Regional Outreach Manager East Coast Division for Sovereign Health Group from 2014 until 2016. She currently works as Clinical Outreach Director at [Newport Healthcare, which owns [Newport Academy](https://www.reddit.com/r/troubledteens/wiki/index/newport) . She also currently works as a Family Ambassador at Family First Adolescent Services.
 
 *According to [reports](http://www.familylight.com/link3/3.03/3.032/DEF/familyfoundation.htm) , about half of the school's faculty and staff members had been through a twelve-step recovery process.*
 
@@ -42,13 +42,13 @@ The program sturcture at the Family Foundation School was heavily inspired by th
 
 According to the website '[The Family School Truth](https://web.archive.org/web/20111018164812/http://www.thefamilyschooltruth.com/Issues_with_FFS.html) ', "Upon arrival to the family school, children are stripped of their diginity, life, and identity. The FFS staff confiscate any piercings, drawings, or any other thing that identifies the child as an individual. The student is stripped naked, forced to squat and cough in front of numerous staff and students to uncover 'contraband that the child may have inside them'. The student is followed everywhere they go by a 'senior student' to make sure they are not 'dishonest'...This means that all students must be escorted by another student into the bathroom and the students are not given any privacy to use the restroom. The FFS justifies this rule by saying they need to maintain a "pure" environment and this is a way to prevent masturbation. When a resident of the school is found out to have masturbated, they are forced to tell their entire family group (usually consisting of 30 or so students and various staff) at the meal table during a 'table topic'. This means they must admit to masturbating in front of their 'family'. Many students are looked down upon, teased, and tormented about this masturbating and in some instances are punished for doing it. This is taking away any sense of privacy and personal issue the student is dealing with."
 
-One tactic used by FFS was what was called "Table Topics". These were highly confrontational attack therapy sessions that frequently took place. During these groups, the teens were encouraged to single out and berate a member of their "family" who was accused of wrongdoing. According to a former staff member Lillian Becker, an example of these "table topics" was as follows: “Susie would get up and say, ‘I want to bring up John,’” Ms. Becker said. “John had to stand up. Now it’s time to basically break this kid down. ‘I saw him flirting,’ something like that.” What regularly followed was a tirade of mocking and scolding from other students and adults, she said. “The staff would chop this kid up.” This type of attack therapy group is very similar to the groups used by many other**confirmedly abusive**facilities and programs, including the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) and [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) , which all have their origins in "The Game" used by the [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult.
+One tactic used by FFS was what was called "Table Topics". These were highly confrontational attack therapy sessions that frequently took place. During these groups, the teens were encouraged to single out and berate a member of their "family" who was accused of wrongdoing. According to a former staff member Lillian Becker, an example of these "table topics" was as follows: “Susie would get up and say, ‘I want to bring up John,’” Ms. Becker said. “John had to stand up. Now it’s time to basically break this kid down. ‘I saw him flirting,’ something like that.” What regularly followed was a tirade of mocking and scolding from other students and adults, she said. “The staff would chop this kid up.” This type of attack therapy group is very similar to the groups used by many other** confirmedly abusive** facilities and programs, including the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) and [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) , which all have their origins in "The Game" used by the [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult.
 
 Some of the punishments used by the Family Foundation School included being put on a diet of tuna fish on a dry English muffin or being forced to bury rocks in the dirt one day, only to be ordered to dig them up the next. Other punishments were social in nature, called “blackouts.” On a "house blackout", the teens were forbidden from speaking to anybody outside of their "family". The most extreme blackout was called exile, where they were forbidden from speaking to anybody, leaving the student to sit in a corner, alone, at meals. One of the most extreme punishments at FFS was a form of solitary confinent in which the teen would be wrapped up in a rug and duct tape and placed in a small janitor's closet for an indefinite period of time.
 
 ---
 
-## **Abuse Allegations, Deaths, and Lawsuits**
+## ** Abuse Allegations, Deaths, and Lawsuits**
 
 The Family Foundation School has a lengthy and well-supported history of abuse. Allegations of abuse and neglect that have been reported by survivors include psychological abuse/torture, frequent use of attack therapy, extreme forms solitary confinement, communication restrictions/isolation from others, physical abuse, sexual abuse, punitive and cruel punishments, and extreme humiliation tactics.
 
@@ -66,7 +66,7 @@ Among the dead was Jon Martin-Crawford, who famously [testified](https://youtu.b
 
 ---
 
-## **Rebranding and Closure**
+## ** Rebranding and Closure**
 
 In October of 2013, the Family Foundation School announced that it would be changing its name to Allynwood Academy. In a [statement](https://strugglingteens.com/artman/publish/FamilyFoundationSchoolBN_131004.shtml) , they reported that "the new program design and enhancements are so significant, we believed it deserved a new name." They went on to state that "Allynwood Academy provides families a more affordable boarding school option and a greater continuum of intensive, structured and independent boarding school options (i.e. platforms)."
 
@@ -78,7 +78,7 @@ A front-page [New York Times article](https://www.nytimes.com/2018/09/02/nyregio
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2/3/2021: (SURVIVOR)** [Link to 'Family Foundation School (Hancock, New York) Survivors - LEN POLISTINA'](https://youtu.be/oHlz100MyaI) (The Hammer Podcast)
 
@@ -102,7 +102,7 @@ A front-page [New York Times article](https://www.nytimes.com/2018/09/02/nyregio
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [The Family Foundation School Website Homepage](https://web.archive.org/web/20020923161554/http://thefamilyschool.com/) (archived, 2002)
 
@@ -124,7 +124,8 @@ A front-page [New York Times article](https://www.nytimes.com/2018/09/02/nyregio
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

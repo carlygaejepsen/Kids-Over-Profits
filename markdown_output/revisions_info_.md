@@ -1,4 +1,0 @@
-info Author   Reason   Date  |
-|  |  |  |
-|  |  |  |
-|  |  |  |

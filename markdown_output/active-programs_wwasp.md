@@ -2,11 +2,11 @@
 
 ---
 
-## **History/Background Information**
+## ** History/Background Information**
 
 The World Wide Association of Specialty Programs and Schools (also called "WWASP" or "WWASPS") was a company that was incorporated in 1998 by Robert Lichfield. It functioned as an umbrella organization of "independent" programs for the "education and treatment of troubled teens", all operating in accordance with the WWASP "guidelines." It was based in St. George, Utah, but WWASP operated facilities across the USA and the world.
 
-Robert Lichfield's first program, [Cross Creek Manor](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , was opened in 1987 in La Verkin, UT. Lichfield had previously worked at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in numerous roles beginning in 1977. Although Lichfield did not not formally incorporate WWASP until 1998, the organization is widely recognized as having began in the early 1990's. In 1991, Lichfield created [Teen Help Inc.](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which would eventually become the primary marketing arm of WWASP. Between 1987 and 1997, Teen Help would open/take over nearly 10 programs across the globe. In 1998, the WWASP organization was offically incorporated. Teen Help continued to operate as the main WWASP's main marketing arm.**For more information on Teen Help/WWASP's history, this [timeline](https://imgur.com/a/srOwOR7) has been created to highlight key events.**
+Robert Lichfield's first program, [Cross Creek Manor](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , was opened in 1987 in La Verkin, UT. Lichfield had previously worked at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in numerous roles beginning in 1977. Although Lichfield did not not formally incorporate WWASP until 1998, the organization is widely recognized as having began in the early 1990's. In 1991, Lichfield created [Teen Help Inc.](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which would eventually become the primary marketing arm of WWASP. Between 1987 and 1997, Teen Help would open/take over nearly 10 programs across the globe. In 1998, the WWASP organization was offically incorporated. Teen Help continued to operate as the main WWASP's main marketing arm.** For more information on Teen Help/WWASP's history, this [timeline](https://imgur.com/a/srOwOR7) has been created to highlight key events.**
 
 Eventually, WWASP would create several other marketing companies in an attempt to funnel online search results towards WWASP programs. Unwitting parents would google phrases such as "help my troubled teen", "teens in crisis", and "teen boot camps" in an attempt to help their children, and would be met with WWASP's [Help My Teen](https://www.reddit.com/r/troubledteens/wiki/index/helpmyteen) , [Teens in Crisis](https://www.reddit.com/r/troubledteens/wiki/index/teensincrisis) , or [Boot Camps for Teens](https://www.reddit.com/r/troubledteens/wiki/index/bootcampsforteens) . These companies were marketed as independent referral services which were not affiliated with WWASP. However, this could not be further from the truth. In actuality, these organizations were all owned by Lichfield or his close friends/family members. They exclusively made referrals to WWASP programs or to programs that WWASP officials had affiliations with. For more information on WWASP's marketing arms and other companies, see the [Affiliated Companies](https://www.reddit.com/r/troubledteens/wiki/index/wwasp#wiki_affiliated_companies) section below.
 
@@ -22,141 +22,141 @@ The podcast, [*Inside the Program*](https://podcasts.apple.com/us/podcast/inside
 
 ## **WWASP Owners and Staff**
 
-[**WWASP Owners and Staff**](https://www.reddit.com/r/troubledteens/wiki/index/wwaspowners)
+[** WWASP Owners and Staff**](https://www.reddit.com/r/troubledteens/wiki/index/wwaspowners)
 
 ---
 
-## **WWASP Programs**
+## ** WWASP Programs**
 
-|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened?**|
-| [**Academy at Dundee Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/dundee) | 2000-2003 | Orotina, Costa Rica | N/A | N |
-| [**Academy at Ivy Ridge**](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) | 2001-2009 | Ogdensburg, NY | N/A | N |
-| [**Bell Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bell) | 2003-2003 | Terra Bella, CA | N/A | Y |
-| [**Bethel Boys Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) | 1978-2008 | Lucedale, MS | [HEAL](http://www.heal-online.org/noeagles.htm) | Y |
-| [**Bethel Girls Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelgirls) | 1997-2005 | Petal, MS | N/A | N |
-| [**Brightway Adolescent Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/brightway) | 1993-1998 | St. George, UT | N/A | N |
-| [**Camas Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) | 2007-2009 | Plains, MT | [HEAL](http://www.heal-online.org/camas.htm) | N |
-| [**Carolina Springs Academy**](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) | 1998-2009 | Donalds, SC | [HEAL](http://www.heal-online.org/carolina.htm) | Y |
-| [**Casa by the Sea**](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) | 1998-2004 | Ensanada, B.C., MX | N/A | N |
-| [**Cross Creek Programs**](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) | 1987-2011 | La Verkin, UT | [HEAL](http://www.heal-online.org/crosscreek.htm) | Y |
-| [**Darrington Academy**](https://www.reddit.com/r/troubledteens/wiki/index/darrington) | 2004-2009 | Blue Ridge, GA | N/A | N |
-| [**Gulf Coast Academy**](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) | 2007-unknown | Lucedale, MS | [HEAL](http://www.heal-online.org/noeagles.htm) | Y |
-| [**High Impact**](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) | unknown-2002 | Tecate, B.C., MX | N/A | N |
-| [**Horizon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) | 2004-2011 | Amargosa Valley, NV/La Verkin, UT | [HEAL](http://www.heal-online.org/horizon.htm) | Y |
-| [**Linden House**](https://www.reddit.com/r/troubledteens/wiki/index/lindenhouse) | 1998-2000 | St. George, UT | N/A | N |
-| [**Magnolia Hills Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/magnoliahills) | - | - | - | - |
-| [**Majestic Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/majesticranch) | 1986-2007 | Randolph, UT | [HEAL](http://www.heal-online.org/majestic.htm) | Y |
-| [**Midwest Academy**](https://www.reddit.com/r/troubledteens/wiki/index/midwestacademy) | 2003-2016 | Keokuk, IA | [HEAL](http://www.heal-online.org/midwest.htm) | N |
-| [**Morava Academy**](https://www.reddit.com/r/troubledteens/wiki/index/morava) | 1998-1998 | Brno, Czech Republic | N/A | N |
-| [**Pacific View Reatreat**](https://www.reddit.com/r/troubledteens/wiki/index/pacificviewretreat) | - | - | [HEAL](http://www.heal-online.org/pacific.htm) | N |
-| [**Palmetto Therapeutic Boarding School**](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) | 2017-2020 | Donalds, SC | N/A | Y |
-| [**Paradise Cove**](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) | 1994-2000 | Aufaga, Samoa | N/A | N |
-| [**Pillars of Hope**](https://www.reddit.com/r/troubledteens/wiki/index/pillarsofhope) | 2004-2012 | Costa Rica | N/A | Y |
-| [**Pine View Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/pineviewchrist) | - | Richton, MS | - | - |
-| [**Red River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redriver) | 2006-2015 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) | Y |
-| [**Red Rock Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redrockacademy) | - | - | N/A | - |
-| [**Red Rock Springs**](https://www.reddit.com/r/troubledteens/wiki/index/redrocksprings) | - | - | N/A | - |
-| [**Royal Gorge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) | 2006-2008 | Cañon City, CO | N/A | N |
-| [**Sky View Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/skyview) | 2005-2007 | Hawthorne, NV | [HEAL](http://www.heal-online.org/skyview.htm) | N |
-| [**Spring Creek Lodge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) | 1997-2009 | Thompson Falls, MT | [HEAL](http://www.heal-online.org/springcreek.htm) | N |
-| [**Sun Rise Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sunriseaz) | - | - | - | - |
-| [**Sunrise Beach**](https://www.reddit.com/r/troubledteens/wiki/index/sunrisebeach) | 1995-1996 | Cancun, MX | N/A | N |
-| [**Tranquility Bay**](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) | 1997-2009 | Calabash Bay, Jamaica | N/A | N |
-| [**Teen Mentor School**](https://www.reddit.com/r/troubledteens/wiki/index/teenmentor) | 2010-2011 | Tarcoles, Costa Rica | N/A | N |
-| [**Woodland Hills Maternity Home**](https://www.reddit.com/r/troubledteens/wiki/index/woodlandhills) | 2002-2009 | Salem, UT | N/A | N |
+|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|
+| [** Academy at Dundee Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/dundee) | 2000-2003 | Orotina, Costa Rica | N/A | N |
+| [** Academy at Ivy Ridge**](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) | 2001-2009 | Ogdensburg, NY | N/A | N |
+| [** Bell Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bell) | 2003-2003 | Terra Bella, CA | N/A | Y |
+| [** Bethel Boys Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) | 1978-2008 | Lucedale, MS | [HEAL](http://www.heal-online.org/noeagles.htm) | Y |
+| [** Bethel Girls Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelgirls) | 1997-2005 | Petal, MS | N/A | N |
+| [** Brightway Adolescent Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/brightway) | 1993-1998 | St. George, UT | N/A | N |
+| [** Camas Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) | 2007-2009 | Plains, MT | [HEAL](http://www.heal-online.org/camas.htm) | N |
+| [** Carolina Springs Academy**](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) | 1998-2009 | Donalds, SC | [HEAL](http://www.heal-online.org/carolina.htm) | Y |
+| [** Casa by the Sea**](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) | 1998-2004 | Ensanada, B.C., MX | N/A | N |
+| [** Cross Creek Programs**](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) | 1987-2011 | La Verkin, UT | [HEAL](http://www.heal-online.org/crosscreek.htm) | Y |
+| [** Darrington Academy**](https://www.reddit.com/r/troubledteens/wiki/index/darrington) | 2004-2009 | Blue Ridge, GA | N/A | N |
+| [** Gulf Coast Academy**](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) | 2007-unknown | Lucedale, MS | [HEAL](http://www.heal-online.org/noeagles.htm) | Y |
+| [** High Impact**](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) | unknown-2002 | Tecate, B.C., MX | N/A | N |
+| [** Horizon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) | 2004-2011 | Amargosa Valley, NV/La Verkin, UT | [HEAL](http://www.heal-online.org/horizon.htm) | Y |
+| [** Linden House**](https://www.reddit.com/r/troubledteens/wiki/index/lindenhouse) | 1998-2000 | St. George, UT | N/A | N |
+| [** Magnolia Hills Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/magnoliahills) | - | - | - | - |
+| [** Majestic Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/majesticranch) | 1986-2007 | Randolph, UT | [HEAL](http://www.heal-online.org/majestic.htm) | Y |
+| [** Midwest Academy**](https://www.reddit.com/r/troubledteens/wiki/index/midwestacademy) | 2003-2016 | Keokuk, IA | [HEAL](http://www.heal-online.org/midwest.htm) | N |
+| [** Morava Academy**](https://www.reddit.com/r/troubledteens/wiki/index/morava) | 1998-1998 | Brno, Czech Republic | N/A | N |
+| [** Pacific View Reatreat**](https://www.reddit.com/r/troubledteens/wiki/index/pacificviewretreat) | - | - | [HEAL](http://www.heal-online.org/pacific.htm) | N |
+| [** Palmetto Therapeutic Boarding School**](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) | 2017-2020 | Donalds, SC | N/A | Y |
+| [** Paradise Cove**](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) | 1994-2000 | Aufaga, Samoa | N/A | N |
+| [** Pillars of Hope**](https://www.reddit.com/r/troubledteens/wiki/index/pillarsofhope) | 2004-2012 | Costa Rica | N/A | Y |
+| [** Pine View Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/pineviewchrist) | - | Richton, MS | - | - |
+| [** Red River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redriver) | 2006-2015 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) | Y |
+| [** Red Rock Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redrockacademy) | - | - | N/A | - |
+| [** Red Rock Springs**](https://www.reddit.com/r/troubledteens/wiki/index/redrocksprings) | - | - | N/A | - |
+| [** Royal Gorge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) | 2006-2008 | Cañon City, CO | N/A | N |
+| [** Sky View Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/skyview) | 2005-2007 | Hawthorne, NV | [HEAL](http://www.heal-online.org/skyview.htm) | N |
+| [** Spring Creek Lodge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) | 1997-2009 | Thompson Falls, MT | [HEAL](http://www.heal-online.org/springcreek.htm) | N |
+| [** Sun Rise Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sunriseaz) | - | - | - | - |
+| [** Sunrise Beach**](https://www.reddit.com/r/troubledteens/wiki/index/sunrisebeach) | 1995-1996 | Cancun, MX | N/A | N |
+| [** Tranquility Bay**](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) | 1997-2009 | Calabash Bay, Jamaica | N/A | N |
+| [** Teen Mentor School**](https://www.reddit.com/r/troubledteens/wiki/index/teenmentor) | 2010-2011 | Tarcoles, Costa Rica | N/A | N |
+| [** Woodland Hills Maternity Home**](https://www.reddit.com/r/troubledteens/wiki/index/woodlandhills) | 2002-2009 | Salem, UT | N/A | N |
 ---
 
-## **WWASP-Affiliated/WWASP Spin-Off Programs:**
+## ** WWASP-Affiliated/WWASP Spin-Off Programs:**
 
-|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened?**|
-| [**Ashcreek Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) | 2012-2021 | Toquerville, UT | N/A | - |
-| [**Atlantis Leadership Academy**](https://www.reddit.com/r/troubledteens/wiki/index/atlantisleadership) | 2014-present | Treasure Beach, Jamaica | N/A | - |
-| [**Clearview Horizon**](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) | 1996-present | Heron, MT | [HEAL](http://www.heal-online.org/clearview.htm) | - |
-| [**Copper Canyon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) | 1998-2014 | Lake Montezuma, AZ | [HEAL](http://www.heal-online.org/copperml.pdf) | - |
-| [**Diamond Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) | 1999-2023 | Hurricane, UT | [HEAL](http://www.heal-online.org/dra.htm) | - |
-| [**Liahona Academy**](https://www.reddit.com/r/troubledteens/wiki/index/liahona) | 2001 | Pleasant Grove, UT | [HEAL](http://www.heal-online.org/liahona.htm) | - |
-| [**Never Give Up Youth Healing Center**](https://www.reddit.com/r/troubledteens/wiki/index/nevergiveup) | 2019 | Amargosa Valley, NV | N/A | - |
-| [**Northwest Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) | 2015-2019 | Amargosa Valley, NV | N/A | N |
-| [**Old West Academy**](https://www.reddit.com/r/troubledteens/wiki/index/oldwest) | 2007-2019 | Randolph, UT | [HEAL](http://www.heal-online.org/majestic.htm) | N |
-| [**Olympus Academy**](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) | 2013-2017 | Hurricane, UT | N/A | Y |
-| [**Reflections Academy**](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) | 2016-2021 | Thompson Falls, MT | N/A |  |
-| [**Second Chances in Southern Utah**](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) | 2014-2022 | La Verkin, UT | N/A |  |
-| [**Sedona Sky Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) | 2014 | Rimrock, AZ | [HEAL](http://www.heal-online.org/copperml.pdf) | - |
-| [**Seneca Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) | 2011-2017 | Donalds, SC | [HEAL](http://www.heal-online.org/carolina.htm) | Y |
-| [**Spring Ridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/springridge) | 1997-2023 | Mayer, AZ | [HEAL](http://www.heal-online.org/springridge.htm) | - |
-| [**Sunset Bay Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sunsetbay) | 2008 | Tijuana, Mexico | [HEAL](http://www.heal-online.org/sunset.htm) | - |
-| [**Three Points Center**](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) | 2014 | Hurricane, UT | [HEAL](http://www.heal-online.org/horizon.htm) | - |
-| [**US Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/usyouth) | 2015-2018 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) | N |
-| [**Wake Up Call for Teens**](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) | 2017-? | Donalds, SC | N/A | N |
-| [**White River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/whiteriver) | 2005 | Delta, UT | [HEAL](http://www.heal-online.org/whiteriver.htm) | - |
-| [**Youth Foundation Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) | 2011-2013 | La Verkin, UT | [HEAL](http://www.heal-online.org/horizon.htm) | Y |
+|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|
+| [** Ashcreek Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) | 2012-2021 | Toquerville, UT | N/A | - |
+| [** Atlantis Leadership Academy**](https://www.reddit.com/r/troubledteens/wiki/index/atlantisleadership) | 2014-present | Treasure Beach, Jamaica | N/A | - |
+| [** Clearview Horizon**](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) | 1996-present | Heron, MT | [HEAL](http://www.heal-online.org/clearview.htm) | - |
+| [** Copper Canyon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) | 1998-2014 | Lake Montezuma, AZ | [HEAL](http://www.heal-online.org/copperml.pdf) | - |
+| [** Diamond Ranch Academy**](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) | 1999-2023 | Hurricane, UT | [HEAL](http://www.heal-online.org/dra.htm) | - |
+| [** Liahona Academy**](https://www.reddit.com/r/troubledteens/wiki/index/liahona) | 2001 | Pleasant Grove, UT | [HEAL](http://www.heal-online.org/liahona.htm) | - |
+| [** Never Give Up Youth Healing Center**](https://www.reddit.com/r/troubledteens/wiki/index/nevergiveup) | 2019 | Amargosa Valley, NV | N/A | - |
+| [** Northwest Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) | 2015-2019 | Amargosa Valley, NV | N/A | N |
+| [** Old West Academy**](https://www.reddit.com/r/troubledteens/wiki/index/oldwest) | 2007-2019 | Randolph, UT | [HEAL](http://www.heal-online.org/majestic.htm) | N |
+| [** Olympus Academy**](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) | 2013-2017 | Hurricane, UT | N/A | Y |
+| [** Reflections Academy**](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) | 2016-2021 | Thompson Falls, MT | N/A |  |
+| [** Second Chances in Southern Utah**](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) | 2014-2022 | La Verkin, UT | N/A |  |
+| [** Sedona Sky Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) | 2014 | Rimrock, AZ | [HEAL](http://www.heal-online.org/copperml.pdf) | - |
+| [** Seneca Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) | 2011-2017 | Donalds, SC | [HEAL](http://www.heal-online.org/carolina.htm) | Y |
+| [** Spring Ridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/springridge) | 1997-2023 | Mayer, AZ | [HEAL](http://www.heal-online.org/springridge.htm) | - |
+| [** Sunset Bay Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sunsetbay) | 2008 | Tijuana, Mexico | [HEAL](http://www.heal-online.org/sunset.htm) | - |
+| [** Three Points Center**](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) | 2014 | Hurricane, UT | [HEAL](http://www.heal-online.org/horizon.htm) | - |
+| [** US Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/usyouth) | 2015-2018 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) | N |
+| [** Wake Up Call for Teens**](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) | 2017-? | Donalds, SC | N/A | N |
+| [** White River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/whiteriver) | 2005 | Delta, UT | [HEAL](http://www.heal-online.org/whiteriver.htm) | - |
+| [** Youth Foundation Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) | 2011-2013 | La Verkin, UT | [HEAL](http://www.heal-online.org/horizon.htm) | Y |
 ** [Map](https://www.google.com/maps/d/edit?mid=1Dg20XgKErXWl9tpfgEWy2lCDcroyXzbg&usp=sharing) of WWASP program locations.**
 
 ---
 
-## **WWASP Level System**
+## ** WWASP Level System**
 
 The vast majority of WWASP programs used a level system consisting of 6 phases. The specifics of each level sometimes varied slightly between programs, but they were almost entirely identical. In order to progress through the level system by earning "points" for good behavior while avoiding "demerits" for bad behaviors and rule violations. At the end of each day, the student would rate themselves on how they behaved, their attitude, hygeine, and how they treated fellow staff and peers. On average, it was possible to earn approximately 12 points per day. Staff would then approve or deny the self-reported points, which would sometimes leave students with negative points. As the resident earned points, they were allowed to progress through the levels and earn "privileges" (also known as*rights*). Each level also required various behavioral changes such as accountability, leadership in the facility, calling out and referring demerits to their peers, and completion of the "Seminars" by Premier Educational Services. The levels were as follows:
 
 *
-**Level 1:**When a student arrived at a WWASP program, they were put on Level 1 and had**0 points**. Upon arrival, students were stripped completely naked and forced to squat and cough. For the first part of their stay, the residents were forced to sleep in the hallways on a thin mattress, with their hands above the covers. The minimum length of time a student was on this level was just over 2 weeks (if they received 12 points every day), but it was typically substantially longer. In order to achieve level 2, the teens had to accumulate 200 points and complete the Orientation seminar.
+**Level 1:** When a student arrived at a WWASP program, they were put on Level 1 and had**0 points**. Upon arrival, students were stripped completely naked and forced to squat and cough. For the first part of their stay, the residents were forced to sleep in the hallways on a thin mattress, with their hands above the covers. The minimum length of time a student was on this level was just over 2 weeks (if they received 12 points every day), but it was typically substantially longer. In order to achieve level 2, the teens had to accumulate 200 points and complete the Orientation seminar.
 
 *
-**Level 2:**Once a student earned**200 points**, they were automatically bumped up to Level 2. The "privileges" of Level 2 were essentially the same as Level 1, except the student got to eat a candy bar on Sundays. The minimum length of time a student would be on Level 2 was a little over 2 months (if they received 12 points every day), but was usually much longer.
+**Level 2:** Once a student earned**200 points**, they were automatically bumped up to Level 2. The "privileges" of Level 2 were essentially the same as Level 1, except the student got to eat a candy bar on Sundays. The minimum length of time a student would be on Level 2 was a little over 2 months (if they received 12 points every day), but was usually much longer.
 
 *
-**Level 3:**In order to progress to Level 3, a teenager needed to accumulate**1,000 points**and receive approval from their peers, teachers, student council, their family representative, and upper administration.
+**Level 3:** In order to progress to Level 3, a teenager needed to accumulate**1,000 points** and receive approval from their peers, teachers, student council, their family representative, and upper administration.
 
 *
-**Level 4:**Once a student was "voted up" to Level 4, they were no longer required to walk in line with their family. They were expected to assist the Dorm Parent and basically act as a Junior Staff. Students were reported to have been able to reach this level in a minimum of 8 months. This was the first "Upper Level" in the program. Teens on upper levels were not allowed to receive any Category 3 or higher demerit, or else they would be put on "probation" and you would have to go back to walking in line with their family.
+**Level 4:** Once a student was "voted up" to Level 4, they were no longer required to walk in line with their family. They were expected to assist the Dorm Parent and basically act as a Junior Staff. Students were reported to have been able to reach this level in a minimum of 8 months. This was the first "Upper Level" in the program. Teens on upper levels were not allowed to receive any Category 3 or higher demerit, or else they would be put on "probation" and you would have to go back to walking in line with their family.
 
 *
-**Level 5:**On this level, the teens were able to participate in student council and given additional (yet still minimal) privileges. They were also allowed to act as staff at some of the lower-level seminars.*No additional information is presently known.*
+**Level 5:** On this level, the teens were able to participate in student council and given additional (yet still minimal) privileges. They were also allowed to act as staff at some of the lower-level seminars.*No additional information is presently known.*
 
 *
-**Level 6:**This was the final level at most WWASP programs. On this level, the teens prepared to graduate.
+**Level 6:** This was the final level at most WWASP programs. On this level, the teens prepared to graduate.
 
 Until the teenagers had reached a certain level in the program, they were only allowed to communicate with their parents through letters which were read an censored by staff. Once they reached level 3, they could have monitored phone calls to their parents only (In case of a divorce, they could communicate with both parents if the parent, who paid for the stay agrees to communication with the other parent). If they and their parents passed certain seminars, they could have parent visits at the facility, and once they reached level 5 they could go on home visits.
 
 ---
 
-## **WWASP Program Red Flags**
+## ** WWASP Program Red Flags**
 
 *The following is copied from the [WWASP Survivors](https://wwaspsurvivors.com/red-flags/) website:*
 
-**(1)**Admittance without consent or due process/ Involuntary and forceful escorting to program.
+**(1)** Admittance without consent or due process/ Involuntary and forceful escorting to program.
 
-**(2)**Aversive Behavior Modification/ Fear and intimidation based control.
+**(2)** Aversive Behavior Modification/ Fear and intimidation based control.
 
-**(3)**Physical/ Mechanical Restraint/ Pressure Points and Use of chemical control methods (such as pepper spray) as punitive punishment.
+**(3)** Physical/ Mechanical Restraint/ Pressure Points and Use of chemical control methods (such as pepper spray) as punitive punishment.
 
-**(4)**Isolation/ Social Ostracism used as punitive punishment.
+**(4)** Isolation/ Social Ostracism used as punitive punishment.
 
-**(5)**Stress Positions/ Infliction of painful punishments.
+**(5)** Stress Positions/ Infliction of painful punishments.
 
-**(6)**Food/ Water/ Bathroom/ Sleep deprivation.
+**(6)** Food/ Water/ Bathroom/ Sleep deprivation.
 
-**(7)**Denial of adequate medical care.
+**(7)** Denial of adequate medical care.
 
-**(8)**Denial of communication with Parents/ Access to law enforcement, lawyers and advocates.
+**(8)** Denial of communication with Parents/ Access to law enforcement, lawyers and advocates.
 
-**(9)**Mail censorship.
+**(9)** Mail censorship.
 
-**(10)**Placing higher level students in a position to police and punish lower level students.
+**(10)** Placing higher level students in a position to police and punish lower level students.
 
-**(11)**Inadequate or “Fast Track” education/ Lack of qualified teachers, tutors and proper class oriented participation.
+**(11)** Inadequate or “Fast Track” education/ Lack of qualified teachers, tutors and proper class oriented participation.
 
-**(12)**Forced Labor/ Denied access to school as punishment. (ie: 8 Hour Detention/ “Homeless”/ “Worksheets” or all day work projects)
+**(12)** Forced Labor/ Denied access to school as punishment. (ie: 8 Hour Detention/ “Homeless”/ “Worksheets” or all day work projects)
 
-**(13)**Lack of proper social interaction/ Levels of Silence/ "Code Silence" punishments.
+**(13)** Lack of proper social interaction/ Levels of Silence/ "Code Silence" punishments.
 
 **(14)**“Attack Therapy” Using mental, emotional and verbal abuse as “Treatment”.
 
-**(15)**Sexual abuse/ Forced sexualized behavior/ Sexual shaming.
+**(15)** Sexual abuse/ Forced sexualized behavior/ Sexual shaming.
 
-**(16)**Operating as a private/ unlicensed/ unregulated “Treatment Center” without being subject to regulation of clinical standards in patient care.
+**(16)** Operating as a private/ unlicensed/ unregulated “Treatment Center” without being subject to regulation of clinical standards in patient care.
 
-**(17)**Accredited by Program Trade Organizations that DO NOT properly monitor or set specific standards of care to ensure the safety and wellbeing of all students. Often spearheaded by the program owners themselves and only perpetrated as a third party agency. Membership status does not depend on proof of standards being met, only requirement is payment of dues. These PTO's include:
+**(17)** Accredited by Program Trade Organizations that DO NOT properly monitor or set specific standards of care to ensure the safety and wellbeing of all students. Often spearheaded by the program owners themselves and only perpetrated as a third party agency. Membership status does not depend on proof of standards being met, only requirement is payment of dues. These PTO's include:
 
 *
 [**National Association Of Therapeutic Schools and Programs (NATSAP)**](https://www.reddit.com/r/troubledteens/wiki/index/NATSAP)
@@ -175,7 +175,7 @@ Until the teenagers had reached a certain level in the program, they were only a
 
 ---
 
-## **WWASP Seminars**
+## ** WWASP Seminars**
 
 *The following is copied from the [WWASP Survivors](http://wwaspsurvivors.com/about-wwasp/seminars/) website:*
 
@@ -232,11 +232,11 @@ A lawsuit filed in 2007 against WWASP and its founder, Robert Lichfield, on beha
 
 Several times, WWASP and Lichfield have responded to these lawsuits by suing individuals for charges including defamation, invasion of privacy, causing "intentional interference with 'prospective economic advantage.'"
 
-On August 31, 2007, Randall Hinton, who was the manager and cofounder of**Royal Gorge Academy**was convicted of one count each of third degree assault and false imprisonment for mistreating students at Royal Gorge Academy. According to Maia Szalavitz of [WWASP Survivors](http://wwaspsurvivors.com/randall-hinton-convicted/) , this conviction was in connection to claims that he "made a teenage girl lie on the floor for six hours, injured her wrists and denied her medical attention. According to a local television station, a Royal Gorge employee told police that Hinton also slammed a boy’s face into the floor until he bled." However, the jury also found him not guilty on four other counts of third-degree assault and one other count of false imprisonment, and he only was sentenced to 25 days in jail and one year of probation.
+On August 31, 2007, Randall Hinton, who was the manager and cofounder of** Royal Gorge Academy** was convicted of one count each of third degree assault and false imprisonment for mistreating students at Royal Gorge Academy. According to Maia Szalavitz of [WWASP Survivors](http://wwaspsurvivors.com/randall-hinton-convicted/) , this conviction was in connection to claims that he "made a teenage girl lie on the floor for six hours, injured her wrists and denied her medical attention. According to a local television station, a Royal Gorge employee told police that Hinton also slammed a boy’s face into the floor until he bled." However, the jury also found him not guilty on four other counts of third-degree assault and one other count of false imprisonment, and he only was sentenced to 25 days in jail and one year of probation.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [WWASP Website Homepage](https://web.archive.org/web/19990429193718/http://www.wwasp.com/) (archived, 1999)
 
@@ -266,7 +266,7 @@ On August 31, 2007, Randall Hinton, who was the manager and cofounder of**Royal 
 
 [Making a Difference - The Referral Program](https://drive.google.com/file/d/1Z_J1CVW70OBSAY4WHCoxf3Qmk-298gj8/view?usp=sharing)
 
-### **The Source**
+### ** The Source**
 
 ["The Source" - Vol. 1, No. 1](https://web.archive.org/web/20010626104044/http://www.wwasp.com/sourceP1.htm) (April 2000)
 
@@ -348,7 +348,7 @@ On August 31, 2007, Randall Hinton, who was the manager and cofounder of**Royal 
 
 ["The Source" - Vol. 7, No. 7](https://web.archive.org/web/20051103211832/http://www.wwasp.com/source03/July-04L.pdf) (July 2004)
 
-### **News Articles**
+### ** News Articles**
 
 [What is the WWASP?](https://web.archive.org/web/20060512204231/http://www.intrepidnetreporters.com/TeenHelp/what_is_the_wwasp.htm) (IntrepidNet Reporter, 1999)
 
@@ -372,7 +372,8 @@ On August 31, 2007, Randall Hinton, who was the manager and cofounder of**Royal 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

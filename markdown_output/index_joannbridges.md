@@ -2,33 +2,34 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Joann Bridges Academy is a state-owned [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/index/riteofpassage) behavior-modification program. It is marketed as a Residential Treatment Center for teenage girls (12-18)
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

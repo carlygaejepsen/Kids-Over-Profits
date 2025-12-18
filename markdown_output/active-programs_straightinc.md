@@ -2,7 +2,7 @@
 
 ---
 
-## **History/Background Information**
+## ** History/Background Information**
 
 Straight, Inc. was founded in 1976 by Mel Sembler and his wife Betty Sembler in St. Peterburg, Florida. Straight, Inc. was created as a drug treatment program for children aged 12-21. In total, Straight had 12 locations in California, Florida, Georgia, Kentucky, Massachusetts, Maryland, Michigan, New Hampshire, New York, Ohio, Pennsylvania, Rhode Island, South Carolina, Texas, Virginia, and Washington. Straight's treatment practices were designed as a "gentler" successor to [The Seed](https://www.reddit.com/r/troubledteens/wiki/index/theseed) .
 
@@ -10,21 +10,21 @@ Mel and Betty Sembler had a son who was enrolled in the notoriously abusive Syna
 
 ---
 
-## **Founders and Important People**
+## ** Founders and Important People**
 
-**Mel Sembler**was the founder of Straight Inc. He is reported to have had a son who was a enrolled in the notoiously abusive Synanon-spinoff organization [The Seed](https://www.reddit.com/r/troubledteens/wiki/index/theseed) , and he allegedly based Straight Inc. around The Seed's program. Sembler was also a supporter of Mitt Romney (owner of Bain Capital and subsequently [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) ) and served as a national finance co-chairman for Romney in 2012. Interestingly, the founder of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , Robert Lichfield, also was a supporter of Mitt Romney and alo served as co-chairman of Romney’s Utah finance committee in 2012.
+** Mel Sembler** was the founder of Straight Inc. He is reported to have had a son who was a enrolled in the notoiously abusive Synanon-spinoff organization [The Seed](https://www.reddit.com/r/troubledteens/wiki/index/theseed) , and he allegedly based Straight Inc. around The Seed's program. Sembler was also a supporter of Mitt Romney (owner of Bain Capital and subsequently [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) ) and served as a national finance co-chairman for Romney in 2012. Interestingly, the founder of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , Robert Lichfield, also was a supporter of Mitt Romney and alo served as co-chairman of Romney’s Utah finance committee in 2012.
 
-**Dr. Virgil Miller Newton**worked as the National Clinical Director of Straight Inc. He hurriedly left Florida in 1982 amidst a flurry of criminal and civil allegations for abusing teenagers. He moved to New Jersey and setup his own Straight-like program he called Kids of Bergen County. From there he setup his own chain of juvenile rehabilitation programs he called Kids Centers of America. In 1989 state health authorities closed down his Kids of Southern California for abusing kids. So Straight moved in and took over his clients. The next year, California health authorities closed down Straight of Southern California for abusing kids. Similarly state authorities closed Kids of El Paso and Kids of Salt Lake City. Interestingly, one of the founders of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , W. Kimball DeLaMare, worked as the Director of the KIDS Center in Salt Lake City. Additional Information: [The Miller Newton Collection](http://survivingstraightinc.com/MillerNewton/xxx-NewtonCollection_redacted.pdf)
+** Dr. Virgil Miller Newton** worked as the National Clinical Director of Straight Inc. He hurriedly left Florida in 1982 amidst a flurry of criminal and civil allegations for abusing teenagers. He moved to New Jersey and setup his own Straight-like program he called Kids of Bergen County. From there he setup his own chain of juvenile rehabilitation programs he called Kids Centers of America. In 1989 state health authorities closed down his Kids of Southern California for abusing kids. So Straight moved in and took over his clients. The next year, California health authorities closed down Straight of Southern California for abusing kids. Similarly state authorities closed Kids of El Paso and Kids of Salt Lake City. Interestingly, one of the founders of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , W. Kimball DeLaMare, worked as the Director of the KIDS Center in Salt Lake City. Additional Information: [The Miller Newton Collection](http://survivingstraightinc.com/MillerNewton/xxx-NewtonCollection_redacted.pdf)
 
-**Bill Oliver**worked as the Executive Director of Straight Inc.
+** Bill Oliver** worked as the Executive Director of Straight Inc.
 
-**Helen Gowanny**worked as an Administrator at Straight's Michigan facility. In 1993, shortly after the company's downfall, Gowanny reopened the Straight program under the name [Pathway Family Center](https://www.reddit.com/r/troubledteens/wiki/index/pathway) only 15 miles from Straight's former facility.
+** Helen Gowanny** worked as an Administrator at Straight's Michigan facility. In 1993, shortly after the company's downfall, Gowanny reopened the Straight program under the name [Pathway Family Center](https://www.reddit.com/r/troubledteens/wiki/index/pathway) only 15 miles from Straight's former facility.
 
 ---
 
-## **Locations**
+## ** Locations**
 
-**California**
+** California**
 
 *Yorba Linda, CA (*1989-1990*)
 *This location opened in June of 1989 and was Straight's first and only program in the Western United States. The facility was located at [3780 Prospect Ave, Yorba Linda, CA 92886](https://www.google.com/maps/place/3780+Prospect+Ave,+Yorba+Linda,+CA+92886/@33.9053279,-117.8372844,141m/data=!3m1!1e3!4m5!3m4!1s0x80dcd4740bb25b37:0xac18a3b5a254f4fc!8m2!3d33.9054712!4d-117.8368209) . The facility used by the program was previously used by the Straight spin-off [KIDS of Southern California](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) from 1988 until 1989. Initially, Straight had planned to open several more centers throughout California. However, less than year after opening, the program began [drawing fire](http://survivingstraightinc.com/YorbaLindaCANewspaperArticles/YORBA.LINDA.CA-WorcesterTelegramGazette-Article1.pdf) from survivors, parents, and licensing officials who claimed that Straight's tactics were abusive. In addition, some of Straight's practices were illegal in California, such as holding minor clients in the program against their will and prohibiting contact with the teens' parents. In June of 1990, the California Department of Social Services denied Straight's Yorba Linda program a license based on allegations that participants were subjected to various abuses. A month later, the state found that the program broke the law by continuing to operate without a license. The following month, Straight unsuccessfully attempted to appeal the judge's ruling that the program must remain closed until it had obtained a foster-family agency license. At that time, nearly all of the program's 68 clients were transferred to Straight's facilities in Dallas, Tampa Bay, or the Washington D.C. area (Columbia, VA).
@@ -75,7 +75,7 @@ Mel and Betty Sembler had a son who was enrolled in the notoriously abusive Syna
 *Springfield, VA (*1983-1991*)
 *This Straight location was known as Straight - Greater Washington. The facility was located at [5515 Backlick Rd, Springfield, VA 22151](https://www.google.com/maps/place/5515+Backlick+Rd,+Springfield,+VA+22151/@38.8005161,-77.1845476,248m/data=!3m1!1e3!4m5!3m4!1s0x89b7b2c80c51670f:0x1c60a68396b9e038!8m2!3d38.8004729!4d-77.183539) . In 1991, Straight Inc. decided to move this location to Columbia, Maryland due to what they claimed was harassment from state regulators. The Columbia Straight location continued to operate until 1992.
 
-**NOTE:**It has also been reported that Straight operated facilities in:
+**NOTE:** It has also been reported that Straight operated facilities in:
 
 *Seattle, WA
 *Greenville, SC (*1990-1991*)
@@ -98,15 +98,15 @@ However, these reports could not be confirmed as no information regarding Straig
 
 ## **Level System**
 
-Straight, Inc. utilized a level system. When a child arrived, they were placed on the**First Phase**which typically lasted at least two weeks. During this time, the Newcomer (as they were called) typically had all of their rights taken away. They could not read, watch TV, write or send mail, use the phone, and they must hold on to the belt loop of and be led by an Oldcomer (someone who has been in Straight, Inc. longer). They were also prohibited from returning home during this time, and had to stay at Oldcomer's homes to experience a "family environment" without drugs or alcohol. While the minimum time spent on First Phase was 14 days, most children spent considerably longer than that on it. The first phase is focused on resolving issues of*SELF*and learning how to discuss one's past behavior.
+Straight, Inc. utilized a level system. When a child arrived, they were placed on the** First Phase** which typically lasted at least two weeks. During this time, the Newcomer (as they were called) typically had all of their rights taken away. They could not read, watch TV, write or send mail, use the phone, and they must hold on to the belt loop of and be led by an Oldcomer (someone who has been in Straight, Inc. longer). They were also prohibited from returning home during this time, and had to stay at Oldcomer's homes to experience a "family environment" without drugs or alcohol. While the minimum time spent on First Phase was 14 days, most children spent considerably longer than that on it. The first phase is focused on resolving issues of*SELF*and learning how to discuss one's past behavior.
 
-Children achieved**Second Phase**once they had submitted to the program and followed the rules. They were allowed to go home at the beginning of this phase, as the Second Phase was primarily focused on healing*family relationships*. Children on this phase were given a certain level of authority over Newcomers and must host a Newcomer in their home before they are allowed to proceed to the next phase. There was no minimum time a resident had to spend on this phase.
+Children achieved**Second Phase** once they had submitted to the program and followed the rules. They were allowed to go home at the beginning of this phase, as the Second Phase was primarily focused on healing*family relationships*. Children on this phase were given a certain level of authority over Newcomers and must host a Newcomer in their home before they are allowed to proceed to the next phase. There was no minimum time a resident had to spend on this phase.
 
-The**Third Phase**of Straight, Inc. was focused on*achievement*, and it was on this phase that a resident was finally allowed to return to school or work. They "earned" some of their other privileges back as well, including being allowed to wear a watch, listen to the radio, and watch TV. There was no minimum time a resident needed to spend on this phase.
+The**Third Phase** of Straight, Inc. was focused on*achievement*, and it was on this phase that a resident was finally allowed to return to school or work. They "earned" some of their other privileges back as well, including being allowed to wear a watch, listen to the radio, and watch TV. There was no minimum time a resident needed to spend on this phase.
 
 During the**Fourth Phase**, a Straight, Inc. member had to begin a "staged withdrawal" from the program, and they were only required to come to Straight, Inc. four days a week, after they finished school or work. This phase was focused on productive use of*leisure*time and forming healthy*friendships*. Fourth Phasers sat in specially designated areas and were allowed to send and receive mail and phone calls. The minimum amount of time a resident spent on Fourth Phase was 90 days.
 
-The**Fifth Phase**was the final phase of active treatment, and the resident is only required to come to Straight, Inc. three days per week. This phase is focused on*service*and giving back.
+The**Fifth Phase** was the final phase of active treatment, and the resident is only required to come to Straight, Inc. three days per week. This phase is focused on*service*and giving back.
 
 ---
 
@@ -128,23 +128,23 @@ In total, over $15 million in lawsuits were settled against Straight, Incorporat
 
 ---
 
-## **Spin-Off Programs**
+## ** Spin-Off Programs**
 
-**KIDS Centers of America**
+** KIDS Centers of America**
 
 > The [KIDS Centers of America](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) was founded by Dr. Miller Newton, who was the former National Clinical Director for Straight Inc. He hurriedly left Florida in 1982 amidst a flurry of criminal and civil allegations for abusing teenagers. He moved to New Jersey and setup his own Straight-like program he called Kids of Bergen County. From there he setup his own chain of juvenile rehabilitation programs he called Kids Centers of America. In 1989 state health authorities closed down his Kids of Southern California for abusing kids. So Straight moved in and took over his clients. The next year California health authorities closed down Straight of Southern California for abusing kids. Similarly state authorities closed Kids of El Paso and Kids of Salt Lake City. Interestingly, one of the founders of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , W. Kimball DeLaMare, worked as the Director of the KIDS Center in Utah, KIDS SLC. Additional Information: [The Miller Newton Collection](http://survivingstraightinc.com/MillerNewton/xxx-NewtonCollection_redacted.pdf)
 
-**Pathway Family Center**
+** Pathway Family Center**
 
 [Pathway Family Center](https://www.reddit.com/r/troubledteens/wiki/index/pathway) was founded in 1993 by former Straight Inc program director, Helen Gowanny, only 15 miles from the old Straight Inc facility near Detroit. Pathway Family Center, Indianapolis was founded in 1993 by former Straight Inc. Parent, Terri Nissley.
 
-**Kids Helping Kids**
+** Kids Helping Kids**
 
 [Kids Helping Kids](https://www.reddit.com/r/troubledteens/wiki/index/khk)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Straight, Inc.](https://www.youtube.com/watch?v=OKZfTwhZLAw&ab_channel=survivingstraightinc) (1984) (60 Minutes)
 
@@ -164,7 +164,7 @@ In total, over $15 million in lawsuits were settled against Straight, Incorporat
 
 [Operation PAR tackles faith-based by W. Fager](http://drugfreeamericafoundation.blogspot.com/2005/02/operation-par-tackles-faith-based-by-w.html) (2/25/2005)
 
-### **Newspaper Articles**
+### ** Newspaper Articles**
 
 [Straight Inc. - New Drug Program set for Sept. 1](https://news.google.com/newspapers?id=OEdQAAAAIBAJ&sjid=nlgDAAAAIBAJ&pg=1924,2181239&dq=straight+inc&hl=en) (The Evening Independent, 7/27/1976)
 
@@ -180,7 +180,7 @@ In total, over $15 million in lawsuits were settled against Straight, Incorporat
 
 [I Spent 16 Months Of My Childhood Locked In A Warehouse](https://www.huffpost.com/entry/straight-inc_n_5c76a914e4b062b30eba021e) (Huffington Post, 3/1/2019)
 
-### **Videos**
+### ** Videos**
 
 [60 Minutes - Straight, Inc.](https://www.paramountplus.com/shows/60_minutes/video/altPWBnAaHskodXAj1T9k67lr4rB9VUS/straight-inc-/) (CBS, 1/29/1984)
 
@@ -188,7 +188,8 @@ In total, over $15 million in lawsuits were settled against Straight, Incorporat
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

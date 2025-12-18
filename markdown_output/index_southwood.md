@@ -12,24 +12,24 @@ The hospital operates out of four locations. Two of the programs are located at 
 
 Southwood Psychiatric Hospital currently offers four separate programs. These programs are:
 
-***Inpatient Treatment:**This program accepts children and adolescents aged 4-18. It consists of a short hospital stay which is aimed at helping the patient be able to move on to a lower level of care, such as a residential program, partial hospitalization program (PHP), intensive outpatient program (IOP), or outpatient therapy.
-***IDD/ASD Residential Program:**This program is targeted towards males between the ages of 6 and 21 who are diagnosed with Intellectual Developmental Disability (IDD) or Autism Spectrum Disorder (ASD). This program has a maximum enrollment of 44 males.
-***CHOICES Residential Program:**This program is aimed at males (10-21) who are dealing with multiple diagnoses, including intellectual disabilities and sexually maladaptive behaviors. This program has a maximum enrollment of 32 males. It is located at [311 Station St, Pittsburgh, PA 15241](https://www.google.com/maps/place/Southwood+Psychiatric+Hospital/@40.3591316,-80.1138064,69m/data=!3m1!1e3!4m5!3m4!1s0x0:0x89817bb74b33ada6!8m2!3d40.3591545!4d-80.1136527) .
-***Family-Based Mental Health Program:**This program is for children and adolescents of all genders ages 3-18 and provides mental health treatment, casework services, and crisis-stabilization services in the home environment.
+***Inpatient Treatment:** This program accepts children and adolescents aged 4-18. It consists of a short hospital stay which is aimed at helping the patient be able to move on to a lower level of care, such as a residential program, partial hospitalization program (PHP), intensive outpatient program (IOP), or outpatient therapy.
+***IDD/ASD Residential Program:** This program is targeted towards males between the ages of 6 and 21 who are diagnosed with Intellectual Developmental Disability (IDD) or Autism Spectrum Disorder (ASD). This program has a maximum enrollment of 44 males.
+***CHOICES Residential Program:** This program is aimed at males (10-21) who are dealing with multiple diagnoses, including intellectual disabilities and sexually maladaptive behaviors. This program has a maximum enrollment of 32 males. It is located at [311 Station St, Pittsburgh, PA 15241](https://www.google.com/maps/place/Southwood+Psychiatric+Hospital/@40.3591316,-80.1138064,69m/data=!3m1!1e3!4m5!3m4!1s0x0:0x89817bb74b33ada6!8m2!3d40.3591545!4d-80.1136527) .
+***Family-Based Mental Health Program:** This program is for children and adolescents of all genders ages 3-18 and provides mental health treatment, casework services, and crisis-stabilization services in the home environment.
 
 Around 2017, Southwood attempted to open another facility at [342 Linden Creek Rd, Canonsburg, PA 15317](https://www.google.com/maps/place/342+Linden+Creek+Rd,+Canonsburg,+PA+15317/@40.2432154,-80.1404813,188m/data=!3m1!1e3!4m5!3m4!1s0x8834550399580efb:0xdb22fe5cab083ab7!8m2!3d40.2437063!4d-80.1394005) , which is the former location of the reportedly abusive [Bradley Center](https://www.reddit.com/r/troubledteens/wiki/index/bradleycenter) . However, local homeowners took this to court to stop the relocation.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Kim Lira**is the current CEO of Southwood Psychiatric Hospital. She began her career as the Assistant Clinical Director of [The Bradley Center](https://www.reddit.com/r/troubledteens/wiki/index/bradleycenter) from 2006 until 2007. She then came to Southwood Psychiatric Hospital as the Executive Director of the Residential Program from 2007 until 2009. She then left to work as the Director of Residential Services at the [Mars Home for Youth](https://www.reddit.com/r/troubledteens/wiki/index/marshome) from 2009 until 2011. She returned to Southwood in 2011 as the Director of Performance Improvement, then the Chief Operating Officer in 2016, until she was promoted to CEO in 2019.
+** Kim Lira** is the current CEO of Southwood Psychiatric Hospital. She began her career as the Assistant Clinical Director of [The Bradley Center](https://www.reddit.com/r/troubledteens/wiki/index/bradleycenter) from 2006 until 2007. She then came to Southwood Psychiatric Hospital as the Executive Director of the Residential Program from 2007 until 2009. She then left to work as the Director of Residential Services at the [Mars Home for Youth](https://www.reddit.com/r/troubledteens/wiki/index/marshome) from 2009 until 2011. She returned to Southwood in 2011 as the Director of Performance Improvement, then the Chief Operating Officer in 2016, until she was promoted to CEO in 2019.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-Very little information is currently known about the specifics of the program used by Southwood Psychiatric Hospital.*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+Very little information is currently known about the specifics of the program used by Southwood Psychiatric Hospital.*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -45,17 +45,17 @@ In September 2020, Robert Peirce & Associates, P.C. released a [statement](https
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**May 2021: (SURVIVOR)**"do not go here i went three times and all i did was get worse things do not always work overnight out of those three times i seen people that been through a lot and are still going through a lot like yeah you try to fix your kid but when you send them to a mental place it dose not make them any better they get more trauma from that all you have to do is talk to your kid but not in a hostile tone thats what parents need to understand we are all people not everyone is perfect at all we all make mistakes and if people cant see that FORGET THEM trust me it will get better" - [Imari (Google Reviews)](https://www.google.com/maps/contrib/109151023177046946409/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s109151023177046946409!3m1!1e1?hl=en-US)
+** May 2021: (SURVIVOR)**"do not go here i went three times and all i did was get worse things do not always work overnight out of those three times i seen people that been through a lot and are still going through a lot like yeah you try to fix your kid but when you send them to a mental place it dose not make them any better they get more trauma from that all you have to do is talk to your kid but not in a hostile tone thats what parents need to understand we are all people not everyone is perfect at all we all make mistakes and if people cant see that FORGET THEM trust me it will get better" - [Imari (Google Reviews)](https://www.google.com/maps/contrib/109151023177046946409/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s109151023177046946409!3m1!1e1?hl=en-US)
 
-**March 2021: (PARENT)**"My son was in this facility for one (1) day, before I drove to pick him up, the next morning. His first hours there, 2 male staff let him know that 'they do hit kids here'. He was refused a shower and water upon arrival after a 5 hour ambulance ride. He was however placed in front of a television for a few hours. Before he witnessed a child get out into a headlock. I know that is not an appropriate way to restrain a child. Their idea of group therapy is gathering the kids in one room and going around on a circle asking who they think is the nicest. Staff always tells the children that some of them are their because their parents do not want them. This is not a place for any child! Had I kept him there any longer, he would have come home in worse shape then when he went in. He has zero behavioral issues, just mental health and they told him all they will do is get him set on medications. This place should be shut down!!! 0 stars!" - [Erika (Google Reviews)](https://www.google.com/maps/contrib/116672960677699757300/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3196472,-80.2603087,10.88z/data=!4m6!1m5!8m4!1e1!2s116672960677699757300!3m1!1e1?hl=en-US)
+** March 2021: (PARENT)**"My son was in this facility for one (1) day, before I drove to pick him up, the next morning. His first hours there, 2 male staff let him know that 'they do hit kids here'. He was refused a shower and water upon arrival after a 5 hour ambulance ride. He was however placed in front of a television for a few hours. Before he witnessed a child get out into a headlock. I know that is not an appropriate way to restrain a child. Their idea of group therapy is gathering the kids in one room and going around on a circle asking who they think is the nicest. Staff always tells the children that some of them are their because their parents do not want them. This is not a place for any child! Had I kept him there any longer, he would have come home in worse shape then when he went in. He has zero behavioral issues, just mental health and they told him all they will do is get him set on medications. This place should be shut down!!! 0 stars!" - [Erika (Google Reviews)](https://www.google.com/maps/contrib/116672960677699757300/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3196472,-80.2603087,10.88z/data=!4m6!1m5!8m4!1e1!2s116672960677699757300!3m1!1e1?hl=en-US)
 
-**March 2021: (SURVIVOR)**"i was admitted here 3 times. each time they didnt listen to how i was feeling. they would give you meds and ship you out. they said i was mentally unstable because i was crying because i was home sick. some staff understand you others dont even care. dont send you kid there if you want them to come back even more messed up then before" - [Olivia (Google Reviews)](https://www.google.com/maps/contrib/114901487133510443999/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s114901487133510443999!3m1!1e1?hl=en-US)
+** March 2021: (SURVIVOR)**"i was admitted here 3 times. each time they didnt listen to how i was feeling. they would give you meds and ship you out. they said i was mentally unstable because i was crying because i was home sick. some staff understand you others dont even care. dont send you kid there if you want them to come back even more messed up then before" - [Olivia (Google Reviews)](https://www.google.com/maps/contrib/114901487133510443999/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s114901487133510443999!3m1!1e1?hl=en-US)
 
-**November 2020: (SURVIVOR)**"a staff gave everyone corona which made me give it to other people. most of them didn’t even wear their masks. also more than half of the staff are mean. i really like mrs.nicole though." - [Em (Google Reviews)](https://www.google.com/maps/contrib/104832476708440298187/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s104832476708440298187!3m1!1e1?hl=en-US)
+** November 2020: (SURVIVOR)**"a staff gave everyone corona which made me give it to other people. most of them didn’t even wear their masks. also more than half of the staff are mean. i really like mrs.nicole though." - [Em (Google Reviews)](https://www.google.com/maps/contrib/104832476708440298187/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s104832476708440298187!3m1!1e1?hl=en-US)
 
-**July 2020: (SURVIVOR)**"I was admitted here twice when I was in eighth grade... all they do is push pills down everyone's throat.... they dont really care how anybody feels... I also broke a piece of my knee off and they let me walk on it for a day or two without getting me help... please for the love of God, DON'T SEND YOUR CHILDREN HERE! THIS PLACE MAKES PATIENTS WORSE ONLY TO GET THEM SENT BACK TO THEM..." - [Erridahja (Google Reviews)](https://www.google.com/maps/contrib/117828906276288567584/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3165596,-80.1550708,12.62z/data=!4m6!1m5!8m4!1e1!2s117828906276288567584!3m1!1e1?hl=en-US)
+** July 2020: (SURVIVOR)**"I was admitted here twice when I was in eighth grade... all they do is push pills down everyone's throat.... they dont really care how anybody feels... I also broke a piece of my knee off and they let me walk on it for a day or two without getting me help... please for the love of God, DON'T SEND YOUR CHILDREN HERE! THIS PLACE MAKES PATIENTS WORSE ONLY TO GET THEM SENT BACK TO THEM..." - [Erridahja (Google Reviews)](https://www.google.com/maps/contrib/117828906276288567584/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3165596,-80.1550708,12.62z/data=!4m6!1m5!8m4!1e1!2s117828906276288567584!3m1!1e1?hl=en-US)
 
 **2020: (SURVIVOR)**"i was admitted in may of 2019, and it was by far the worst experience of my life. i was more miserable and depressed there than i had ever been in my life. my first day, i was shoved across the classroom in a chair by a girl trying to hurt herself, which obviously caused a flashback. the reason i was there was for attempts due to ptsd. they put me in a unit for kids with mania, which only triggered me more. when i told the staff how miserable i was, they told me that it was a sign of depression and threatened to keep me there longer. the staff on the units were so rude, and didn’t care about the patients at all. i feel bad for kids who’s parents send them there, because the place is prison. we all have to wear the same black sweatpants and orange cotton tee. i had to work through this experience in more therapy, and i now get flashbacks to things that happened there. honestly, the only benefit i got out of that place was a reason not to attempt suicide again so i wouldn’t end up back in that hell hole." - [Ari (Google Reviews)](https://www.google.com/maps/contrib/100485576113002471809/place/ChIJxUadXDpWNIgR9MEu4MLaqUw/@40.3212114,-80.1126158,17z/data=!4m6!1m5!8m4!1e1!2s100485576113002471809!3m1!1e1?hl=en-US)
 
@@ -91,7 +91,7 @@ In September 2020, Robert Peirce & Associates, P.C. released a [statement](https
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Southwood Psychiatric Hospital Website Homepage](https://www.southwoodhospital.com/)
 
@@ -113,7 +113,8 @@ In September 2020, Robert Peirce & Associates, P.C. released a [statement](https
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -12,23 +12,23 @@ The program was located at [171 Harlow Rd, Thompson Falls, MT 59873](https://www
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Michele "Mickey" Manning**is the Founder and former Executive Director of Reflections Academy. Manning previously worked as the President of the Board of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program [Youth Foundations Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) . She also worked at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) for many years as the Principal, until she left to become the Director of [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . She left Clearview Horizon in 2016 to open Reflections Academy.
+** Michele "Mickey" Manning** is the Founder and former Executive Director of Reflections Academy. Manning previously worked as the President of the Board of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program [Youth Foundations Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) . She also worked at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) for many years as the Principal, until she left to become the Director of [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . She left Clearview Horizon in 2016 to open Reflections Academy.
 
-**Kimberley Sparks**worked as a Therapist at Reflections Academy. She previously worked as a Family Representative at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. She is also reported by survivors to have worked briefly at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) .
+** Kimberley Sparks** worked as a Therapist at Reflections Academy. She previously worked as a Family Representative at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. She is also reported by survivors to have worked briefly at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) .
 
-**Chaffin Pullan**worked as a Supervisor at Reflections Academy. Chaffin Pullan began working in the TTI at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, in 1991. In 1996, he and his brother Cameron opened [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , along with their friend Dan Peart. They owned/worked as administrators of Spring Creek Lodge until it closed in 2009. They were also involved in creating [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an apparent attempt to remake a portion of the facility into an 18+ program, which also failed. Pullan is also reported to have worked at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) , often taking girls who had graudated the program into his home as a "transitional" living situation. In 2018,three lawsuits were filed against Pullan and Reflections Academy claiming that he had sexually abused at least one resident at Reflections Academy, and had groomed others.
+** Chaffin Pullan** worked as a Supervisor at Reflections Academy. Chaffin Pullan began working in the TTI at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, in 1991. In 1996, he and his brother Cameron opened [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , along with their friend Dan Peart. They owned/worked as administrators of Spring Creek Lodge until it closed in 2009. They were also involved in creating [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an apparent attempt to remake a portion of the facility into an 18+ program, which also failed. Pullan is also reported to have worked at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) , often taking girls who had graudated the program into his home as a "transitional" living situation. In 2018,three lawsuits were filed against Pullan and Reflections Academy claiming that he had sexually abused at least one resident at Reflections Academy, and had groomed others.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program structure at Reflections Academy. It was likely very similar to the structure used by name WWASP programs, with a level-system based on a merit/demerit system.
 
 It is reported that the residents at Reflections Academy were sometimes allowed to participate in activities with residents at a nearby treatment center, [Wood Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/woodcreek) .
 
-*If you attended Reflections Academy and would like to contribute information to this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Reflections Academy and would like to contribute information to this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -44,15 +44,15 @@ The review also found Reflections Academy was using behavioral management proced
 
 ---
 
-## **Closure**
+## ** Closure**
 
 In late October 2021, following the investigation into Reflections' mishandling of a suicide in June of that same year, Reflections Academy announced that it would be closing on October 30^(th) 2021.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet to be found for Reflections Academy. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet to be found for Reflections Academy. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -74,7 +74,8 @@ In late October 2021, following the investigation into Reflections' mishandling 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

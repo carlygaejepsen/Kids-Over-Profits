@@ -14,23 +14,23 @@ In 1948, 19-year-old Samuel B. Ross Jr. and his parents, Dr. Barney Ross and Ade
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Samuel B. Ross Jr.**is the Founder, former Headmaster, and former Managing Director of Green Chimneys. He opened the program when he was just 19 years old. He worked at Green Chimneys for 7 decades holding several positions including Headmaster and Managing Director. He passed away on February 28, 2018 at the age of 89.
+** Samuel B. Ross Jr.** is the Founder, former Headmaster, and former Managing Director of Green Chimneys. He opened the program when he was just 19 years old. He worked at Green Chimneys for 7 decades holding several positions including Headmaster and Managing Director. He passed away on February 28, 2018 at the age of 89.
 
-**Joseph Whalen**formerly worked as the Executive Director of Green Chimneys until 2017. He began working at the program as a teacher in 1972. Within five years, Joe assumed the role of school principal and eventually earned the position of executive director in 1996.
+** Joseph Whalen** formerly worked as the Executive Director of Green Chimneys until 2017. He began working at the program as a teacher in 1972. Within five years, Joe assumed the role of school principal and eventually earned the position of executive director in 1996.
 
-**Dr. Edward Placke**is the current Executive Director of Green Chimneys. He assumed this position in 2017. His prior employment is presently unknown.
+** Dr. Edward Placke** is the current Executive Director of Green Chimneys. He assumed this position in 2017. His prior employment is presently unknown.
 
-**Lauren Bennett**is the current Deputy Executive Director of Green Chimneys. She began working at Green Chimneys in 1999 as a Department Director. Her prior employment is presently unknown.
+** Lauren Bennett** is the current Deputy Executive Director of Green Chimneys. She began working at Green Chimneys in 1999 as a Department Director. Her prior employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Some details of the program structure can be found by viewing the [School's Handbook](https://www.greenchimneys.org/wp-content/uploads/2020/12/School-Handbook-rev.-Dec2020.pdf) . However, the handbook does not contain specific information regarding the rules, punishments, or if they use a level system.
 
-*Very little information is currently known regarding the specifics of the program used by Green Chimneys. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is currently known regarding the specifics of the program used by Green Chimneys. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -61,15 +61,15 @@ In 2020, two survivors of Green Chimneys who attended the program in the 60s and
 
 ## **Notable Alumni**
 
-**Eric Napoletano**is reported to have attended Green Chimneys in the 1970s. In 1993, he was [convicted](https://murderpedia.org/male.N/n/napoletano-eric.htm) of killing his wife, whose body was found in rural Delaware three weeks after her disappearance in June 1990. He was also a suspect in two other crimes, the 1984 slaying of his ex-girlfriend, 15-year-old Marilyn Coludro, and the 1985 shooting death of a former mother-in-law, Gladys Matos. He is also the subject of the book "[Mama's Boy](https://www.amazon.com/Mamas-Boy-Serial-Killer-Mother/dp/0525938516) ", which details his life and crimes.
+** Eric Napoletano** is reported to have attended Green Chimneys in the 1970s. In 1993, he was [convicted](https://murderpedia.org/male.N/n/napoletano-eric.htm) of killing his wife, whose body was found in rural Delaware three weeks after her disappearance in June 1990. He was also a suspect in two other crimes, the 1984 slaying of his ex-girlfriend, 15-year-old Marilyn Coludro, and the 1985 shooting death of a former mother-in-law, Gladys Matos. He is also the subject of the book "[Mama's Boy](https://www.amazon.com/Mamas-Boy-Serial-Killer-Mother/dp/0525938516) ", which details his life and crimes.
 
-**Philip Zagarella**reportedly was a resident at Green Chimneys at some point during the 1970s. On May 28, 2007, he was involved in a 14-hour standoff with police in a home in Long Island. During the standoff, Zagarella killed a 59-year-old acquaintance by cutting her throat and sexually assaulted one of her grandchildren. The standoff finally ended when the police finally entered the house after hearing a muffled shot at about 3 p.m. Inside, they found the body of the Philip Zagarella, 50, dead from a self-inflicted gunshot wound.
+** Philip Zagarella** reportedly was a resident at Green Chimneys at some point during the 1970s. On May 28, 2007, he was involved in a 14-hour standoff with police in a home in Long Island. During the standoff, Zagarella killed a 59-year-old acquaintance by cutting her throat and sexually assaulted one of her grandchildren. The standoff finally ended when the police finally entered the house after hearing a muffled shot at about 3 p.m. Inside, they found the body of the Philip Zagarella, 50, dead from a self-inflicted gunshot wound.
 
-**Eric Lau**is reported to have attended Green Chimneys for an unknown period of time. On November 29, 2009, he brutally murdered his 32-year-old neighbor after sneaking into her home when she was out. When Erlich returned home, she was attacked by Lau, who hit her across the head with a blunt object and slashed ther throat.On June 22, 2012, he was sentenced to 22 years to life in state prison.
+** Eric Lau** is reported to have attended Green Chimneys for an unknown period of time. On November 29, 2009, he brutally murdered his 32-year-old neighbor after sneaking into her home when she was out. When Erlich returned home, she was attacked by Lau, who hit her across the head with a blunt object and slashed ther throat.On June 22, 2012, he was sentenced to 22 years to life in state prison.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"Worst school ever staff beat you sometimes don’t feed you and we’re only allowed out of are room to clean They have bedbugs and bugs in the wall I found a bug in my food one time" - [Abandoned (Google Reviews)](https://goo.gl/maps/3haXSkZgb3CHoHsp8)
 
@@ -96,7 +96,7 @@ Please help the survivors and those still there. Dr. Samuel B. Ross has been lyi
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Green Chimneys Website Homepage](https://www.greenchimneys.org/)
 
@@ -112,7 +112,8 @@ Please help the survivors and those still there. Dr. Samuel B. Ross has been lyi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -16,39 +16,39 @@ Hill Crest was operated by Psychiatric Solutions, Inc. until 2010, when [Univers
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**James Becton**was the Founder of Hill Crest Behavioral Hospital. He purchased the E. L. Higdon residence upon his arrival in Birmingham from Nashville and established Hill Crest there.
+** James Becton** was the Founder of Hill Crest Behavioral Hospital. He purchased the E. L. Higdon residence upon his arrival in Birmingham from Nashville and established Hill Crest there.
 
-**Jennifer Snyder**is the current CEO of Hill Crest Behavioral Hospital. She previously worked as the COO of [Turning Point Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/turningpointmi) from 1997 until 2008. She then worked as the CEO of [Alabama Clinical Schools](https://www.reddit.com/r/troubledteens/wiki/index/alabamaclinical) from 2008 until 2019. She has been the CEO of Hill Crest since 2019.
+** Jennifer Snyder** is the current CEO of Hill Crest Behavioral Hospital. She previously worked as the COO of [Turning Point Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/turningpointmi) from 1997 until 2008. She then worked as the CEO of [Alabama Clinical Schools](https://www.reddit.com/r/troubledteens/wiki/index/alabamaclinical) from 2008 until 2019. She has been the CEO of Hill Crest since 2019.
 
-**Sharon Broady**is the current Director of Admissions at Hill Crest Behavioral Hospital. She has worked at Hill Crest since 1995. her prior employment is unknown.
+** Sharon Broady** is the current Director of Admissions at Hill Crest Behavioral Hospital. She has worked at Hill Crest since 1995. her prior employment is unknown.
 
-**Daphne Kendrick**is the current Director of Clinical Services at Hill Crest Behavioral Hospital.
-
----
-
-## **Program Structure**
+** Daphne Kendrick** is the current Director of Clinical Services at Hill Crest Behavioral Hospital.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
 
-**July 2021: (SURVIVOR)**"I went to this hospital as an adolescent and when I tell you this place is a place in nightmares, I truly mean that. The staff was so incredibly rude and as were the doctors, they didn’t care about us, just the money. It was so disgusting, roaches, rats, mice, etc. The second and last time I was sent to Hillcrest they threatened to keep me until I was 18 and I was 14 at the time, I was dealing with depression, eating disorders, and suicidal thoughts and tendencies. Anytime I got the chance to talk to my parents I begged and pleaded and cried to them to please get me out of there. That place was so traumatizing and not somewhere someone dealing with mental illness should be sent. I’m 23 now and the experience I had there still haunts me. I can’t believe this place is still open with all the negative reviews." - [Katt (Google Reviews)](https://www.google.com/maps/contrib/103845935578641951254/reviews?hl=en-US)
+---
 
-**April 2021: (SURVIVOR)**"This is the worst place you can go if you need help. Please trust me. The staff are extremely rude and do not care about you. All they want is money. If anything it will just make you worse. The place is absolutely disgusting also. Never send anyone here and if they're already there and they're saying they need to leave please believe them. They will be really nice to the parent that calls and then make you feel bad at yell at you for calling saying you need to leave. I can say that because I have personally experienced that. If I could I would give this place a zero star rating." - [Sara (Google Reviews)](https://www.google.com/maps/contrib/108486079562631590463/reviews?hl=en-US)
+## ** Survivor/Parent Testimonials**
 
-**April 2021: (SURVIVOR)**"this place is genuinely awful. it’s dirty, the staff is terribly disrespectful to the patients, and the facility is just overall extremely poor quality. please do NOT send your child here. it is very clear that 90% of the staff do not have an ounce of care in them for the patients & they only care about the money. i would not recommend this place to a single person. i was genuinely in shock at the amount of disrespect i witnessed during my stay. the fact that the staff is actively treating patients (who ALREADY struggle with mental illness) so poorly is disgusting. a child needs love and care to heal properly, and this place provides neither." - [El (Google Reviews)](https://www.google.com/maps/contrib/110382265550467912425/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5485637,-86.730433,17z/data=!4m6!1m5!8m4!1e1!2s110382265550467912425!3m1!1e1?hl=en-US)
+** July 2021: (SURVIVOR)**"I went to this hospital as an adolescent and when I tell you this place is a place in nightmares, I truly mean that. The staff was so incredibly rude and as were the doctors, they didn’t care about us, just the money. It was so disgusting, roaches, rats, mice, etc. The second and last time I was sent to Hillcrest they threatened to keep me until I was 18 and I was 14 at the time, I was dealing with depression, eating disorders, and suicidal thoughts and tendencies. Anytime I got the chance to talk to my parents I begged and pleaded and cried to them to please get me out of there. That place was so traumatizing and not somewhere someone dealing with mental illness should be sent. I’m 23 now and the experience I had there still haunts me. I can’t believe this place is still open with all the negative reviews." - [Katt (Google Reviews)](https://www.google.com/maps/contrib/103845935578641951254/reviews?hl=en-US)
 
-**April 2021: (PARENT)**"Worst place ever...Staff assaults children especially Mr Greg. Staff is very rude.threatened me with dhr.Even told my 14 year old if I discharged him ama insurance would not pay his medical bill. Not only is this misinformation it is not information you burden a 14 year old with i discharged him without concern of any of these threats.Never send your child to this place..." - [Brittany (Google Reviews)](https://www.google.com/maps/contrib/118276600244917320708/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5315552,-86.7494402,12.76z/data=!4m6!1m5!8m4!1e1!2s118276600244917320708!3m1!1e1?hl=en-US)
+** April 2021: (SURVIVOR)**"This is the worst place you can go if you need help. Please trust me. The staff are extremely rude and do not care about you. All they want is money. If anything it will just make you worse. The place is absolutely disgusting also. Never send anyone here and if they're already there and they're saying they need to leave please believe them. They will be really nice to the parent that calls and then make you feel bad at yell at you for calling saying you need to leave. I can say that because I have personally experienced that. If I could I would give this place a zero star rating." - [Sara (Google Reviews)](https://www.google.com/maps/contrib/108486079562631590463/reviews?hl=en-US)
 
-**February 2021: (PARENT)**"DO NOT SEND ANYONE HERE!!!!!!The place should have 0 stars the people there are ugly, rude, and do not care one bit about anyone in there. I finally was able to talk to my loved one and she said that she was scared to death crying to me how they were mean and didn't care what so ever about anyone! This place should be shut down because no one I mean no one should have to go through that when they are there for help not for getting mental and emotional abused! Help us shut this place down!" - [Christian (Google Reviews)](https://www.google.com/maps/contrib/101018870731937754459/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5569705,-86.7564829,12.4z/data=!4m6!1m5!8m4!1e1!2s101018870731937754459!3m1!1e1?hl=en-US)
+** April 2021: (SURVIVOR)**"this place is genuinely awful. it’s dirty, the staff is terribly disrespectful to the patients, and the facility is just overall extremely poor quality. please do NOT send your child here. it is very clear that 90% of the staff do not have an ounce of care in them for the patients & they only care about the money. i would not recommend this place to a single person. i was genuinely in shock at the amount of disrespect i witnessed during my stay. the fact that the staff is actively treating patients (who ALREADY struggle with mental illness) so poorly is disgusting. a child needs love and care to heal properly, and this place provides neither." - [El (Google Reviews)](https://www.google.com/maps/contrib/110382265550467912425/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5485637,-86.730433,17z/data=!4m6!1m5!8m4!1e1!2s110382265550467912425!3m1!1e1?hl=en-US)
 
-**October 2020: (PARENT)**"Horrible! We sent a family member here who was suffering with several psychological issues. The staff told us they would come up with a treatment plan, and assured us our family member was in good hands. We were wrong. We had trouble getting ANYONE to call us back or answer our questions/concerns. We basically had to do so many things that the staff should be taking care of. The staff is VERY unprofessional. I normally don’t write reviews but this place was so awful I felt compelled to write one! Please do not send your child/family member here, it made things so much worse. This is more of a detention center than a place for someone struggling with their mental health. This place needs to be reported to the state and shut down!" - [Mary (Google Reviews)](https://www.google.com/maps/contrib/103010175857110082731/reviews?hl=en-US)
+** April 2021: (PARENT)**"Worst place ever...Staff assaults children especially Mr Greg. Staff is very rude.threatened me with dhr.Even told my 14 year old if I discharged him ama insurance would not pay his medical bill. Not only is this misinformation it is not information you burden a 14 year old with i discharged him without concern of any of these threats.Never send your child to this place..." - [Brittany (Google Reviews)](https://www.google.com/maps/contrib/118276600244917320708/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5315552,-86.7494402,12.76z/data=!4m6!1m5!8m4!1e1!2s118276600244917320708!3m1!1e1?hl=en-US)
+
+** February 2021: (PARENT)**"DO NOT SEND ANYONE HERE!!!!!!The place should have 0 stars the people there are ugly, rude, and do not care one bit about anyone in there. I finally was able to talk to my loved one and she said that she was scared to death crying to me how they were mean and didn't care what so ever about anyone! This place should be shut down because no one I mean no one should have to go through that when they are there for help not for getting mental and emotional abused! Help us shut this place down!" - [Christian (Google Reviews)](https://www.google.com/maps/contrib/101018870731937754459/place/ChIJKQ87o20QiYgR4bCf21RkEb4/@33.5569705,-86.7564829,12.4z/data=!4m6!1m5!8m4!1e1!2s101018870731937754459!3m1!1e1?hl=en-US)
+
+** October 2020: (PARENT)**"Horrible! We sent a family member here who was suffering with several psychological issues. The staff told us they would come up with a treatment plan, and assured us our family member was in good hands. We were wrong. We had trouble getting ANYONE to call us back or answer our questions/concerns. We basically had to do so many things that the staff should be taking care of. The staff is VERY unprofessional. I normally don’t write reviews but this place was so awful I felt compelled to write one! Please do not send your child/family member here, it made things so much worse. This is more of a detention center than a place for someone struggling with their mental health. This place needs to be reported to the state and shut down!" - [Mary (Google Reviews)](https://www.google.com/maps/contrib/103010175857110082731/reviews?hl=en-US)
 
 **2020: (SURVIVOR)**"Took me years to even find this place, yet here we are. My memory is fuzzy but I can confirm most of the other stories here. Overuse of what is essentially tranquilizers on young children for any reason they feel like, withholding food, really poor quality food as well, screaming and yelling abuse from nurses. Being locked in rooms all night with no way out until morning. Little to no enrichment of any kind. We were allowed outside once a week if that and under such tight supervision we could barely walk two feet without being screamed at. I recall that the dozen or more kids in my unit were all forced to share one pack of playing cards and were not provided anything else. We had to plead for paper and crayons and even then those were often confiscated. Clothes, valuables, personal items were stolen. Contact with parents, even over the phone, was extremely minimal. I could go on, but my point is: DO NOT EVER, FOR ANY REASON, SEND YOUR CHILD HERE. It is a nightmare on earth." - [gtfo (Google Reviews)](https://www.google.com/maps/contrib/117301485358339256932/reviews?hl=en-US)
 
@@ -72,7 +72,8 @@ Hill Crest was operated by Psychiatric Solutions, Inc. until 2010, when [Univers
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

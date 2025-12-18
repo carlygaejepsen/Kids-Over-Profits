@@ -12,23 +12,23 @@ The program was located at [200 Hubbart Dam Rd, Marion, MT 59925](https://www.go
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John Brekke**was the Founder and CEO of Wilderness Treatment Center. He began his career in 1976 working at Swan River Youth Camp, a correctional institution for convicted teenaged and young adult men, before creating Wilderness Treatment Center in 1983. John [died](https://www.legacy.com/obituaries/greatfallstribune/obituary.aspx?n=john-brekke&pid=167886776) suddenly on October 31, 2013 at the age of 63. He was married to Nancy Brekke.
+** John Brekke** was the Founder and CEO of Wilderness Treatment Center. He began his career in 1976 working at Swan River Youth Camp, a correctional institution for convicted teenaged and young adult men, before creating Wilderness Treatment Center in 1983. John [died](https://www.legacy.com/obituaries/greatfallstribune/obituary.aspx?n=john-brekke&pid=167886776) suddenly on October 31, 2013 at the age of 63. He was married to Nancy Brekke.
 
-**Nancy Brekke**is the Co-Founder & Chief Administrator of Wilderness Treatment Center. She is the widow of John Brekke.
+** Nancy Brekke** is the Co-Founder & Chief Administrator of Wilderness Treatment Center. She is the widow of John Brekke.
 
-**Mary Tollefson**was the Admissions Director of Wilderness Treatment Center.
+** Mary Tollefson** was the Admissions Director of Wilderness Treatment Center.
 
-**Chase Sewell**began working as the Manager of Business Development at WTC in 2013. He previously attended the program as a resident in 2005.
+** Chase Sewell** began working as the Manager of Business Development at WTC in 2013. He previously attended the program as a resident in 2005.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program at WTC. The first 16-21 days of the boy's stay is spent in the wilderness with a program similar to Outward Bound. The program also stated that it used the Alcoholics Anonymous' 12 Steps as a model for their program.
 
-*If you attended Wilderness Treatment Center and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Wilderness Treatment Center and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,9 +40,9 @@ Wilderness Treatment Center was confirmed to be closed in early 2021. The owner 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**September 2020: (SURVIVOR)**"This place is garbage. The staff is unintelligent and very unprofessional, bunch of hillbillys and flat earthers that grew up in the woods of Montana... A number of instructors and patients were using drugs at the facility!! I'd give it 0 stars if I could! DO NOT SEND YOUR LOVED ONE HERE" - [James (Google Reviews)](https://www.google.com/maps/contrib/111193310496995311935/place/ChIJcZ6Fy-7jZlMRCq7-GR9Ixls/@48.1208344,-114.9681972,9.04z/data=!4m6!1m5!8m4!1e1!2s111193310496995311935!3m1!1e1?hl=en-US)
+** September 2020: (SURVIVOR)**"This place is garbage. The staff is unintelligent and very unprofessional, bunch of hillbillys and flat earthers that grew up in the woods of Montana... A number of instructors and patients were using drugs at the facility!! I'd give it 0 stars if I could! DO NOT SEND YOUR LOVED ONE HERE" - [James (Google Reviews)](https://www.google.com/maps/contrib/111193310496995311935/place/ChIJcZ6Fy-7jZlMRCq7-GR9Ixls/@48.1208344,-114.9681972,9.04z/data=!4m6!1m5!8m4!1e1!2s111193310496995311935!3m1!1e1?hl=en-US)
 
 **2018: (SURVIVOR)**"One of the worst experiences of my life. I went here in 2010 This place uses “escorts” to legally kidnap children, very roughly, in the middle of the night with the threat of physical force. I was transported in the back seat of small car detoxing with no medical supervision from dangerous drugs that could have killed me. I was not told where I was going and we did not stop to sleep or take any breaks other than to use the restroom for 3 days driving non-stop When I arrived I still continued to lack medical care from detoxification. The counselors used abusive, shameful, methods of therapy and broke my confidentiality to other clients. They refused to report clients with suicidal ideations or intent, multiple clients risked their lives trying to run away in the middle of nothing because this facility is located in a very remote area. We were used for slave labor on the WTC compound against our will. They would manipulate parents and convince them we were not able to go home afterwords so they could get a kickback from referring to a boarding school or another strict abusive program. There was a lot of abuse amongst clients and I saw clients subjected to horrible inhumane things by the hands of staff and other clients. Multiple staff members were on drugs themselves. Then came the wilderness part of the program I was subjected to -30 degree temperatures in Yellowstone hiking 8-10 miles a day, severely out of shape. With no fire and limited supplies. Multiple clients got severe frostbite and nothing was done about it. We were also given a single tarp and a sleeping bag, told to make a shelter with no experience and survive for 3 days with no human contact except for when the instructor would bring food. I have never been put into words what I went through at this hellacious cruel place but please don’t send anyone you love or anyone at all here." - [Ian (Google Reviews)](https://www.google.com/maps/place/Wilderness+Treatment+Center/@48.0311881,-114.708105,621m/data=!3m1!1e3!4m7!3m6!1s0x0:0x5bc6481f19feae0a!8m2!3d48.0225239!4d-114.7050947!9m1!1b1)
 
@@ -50,11 +50,11 @@ Wilderness Treatment Center was confirmed to be closed in early 2021. The owner 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
-[Wilderness Treatment Center**Old**Website Homepage](https://web.archive.org/web/20040522100135/http://www.wildernesstreatmentcenter.com/) (archived, 2004)
+[Wilderness Treatment Center** Old** Website Homepage](https://web.archive.org/web/20040522100135/http://www.wildernesstreatmentcenter.com/) (archived, 2004)
 
-[Another Wilderness Treatment Center**Old**Website Homepage](https://web.archive.org/web/20070310024652/http://www.wilderness-therapy-program.com/) (archived, 2007)
+[Another Wilderness Treatment Center** Old** Website Homepage](https://web.archive.org/web/20070310024652/http://www.wilderness-therapy-program.com/) (archived, 2007)
 
 [*Secret Prisons for Teens*- Wilderness Treatment Center](http://secretprisonsforteens.dk/wiki/index.php?title=Wilderness_Treatment_Center)
 
@@ -66,7 +66,8 @@ Wilderness Treatment Center was confirmed to be closed in early 2021. The owner 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

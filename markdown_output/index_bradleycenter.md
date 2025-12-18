@@ -14,19 +14,19 @@ In addition to the Bradley Center's Residential facility, the program also opera
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"I went here for several years and this place literally is terrible. Staff are Physically/ verbally and mentally abusive. I’ve literally had broken bones and a busted lip from 2 different male staff member’s. Doctors love to over Medicate and zombify the residence." - [Blu (Google Reviews)](https://www.google.com/maps/contrib/118010427125649314909/place/ChIJJWankzxZNIgRdDJj_PIDqiU/@40.4045335,-80.2613381,11.18z/data=!4m6!1m5!8m4!1e1!2s118010427125649314909!3m1!1e1?hl=en-US)
 
@@ -40,11 +40,12 @@ In addition to the Bradley Center's Residential facility, the program also opera
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

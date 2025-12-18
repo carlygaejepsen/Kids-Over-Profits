@@ -12,23 +12,23 @@ The program is located at [6692 Valwood Rd, Conover, NC 28613](https://www.googl
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John Steigerwalk**is the Executive Director of North Carolina Boys Academy.
+** John Steigerwalk** is the Executive Director of North Carolina Boys Academy.
 
-**Deralyn Steigerwald**is the Campus Life Director of North Carolina Boys Academy.
-
----
-
-## **Program Structure**
+** Deralyn Steigerwald** is the Campus Life Director of North Carolina Boys Academy.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
+
+---
+
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"I would say it’s a great place but I graduated a while ago and now I am being told by the campus director Deralyn Steigerwald that I have “no idea how to live life” they taught us to always show love and be an encouragement. Her saying that hurt my feelings a bit. But I guess it reveals the heart. I’ll still love ncba and everything they have done for me, but man that hurts to hear that from someone who was like a mother to me for almost 2 years.😕" - [Hunter (Google Reviews)](https://www.google.com/maps/contrib/102307268554878989616/place/ChIJC96QbFGZJhURwJIa7LTfhJc/@35.8198965,-81.2094361,15.36z/data=!4m6!1m5!8m4!1e1!2s102307268554878989616!3m1!1e1?hl=en-US)
 
@@ -36,13 +36,14 @@ The program is located at [6692 Valwood Rd, Conover, NC 28613](https://www.googl
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [North Carolina Boys Academy Website Homepage](https://www.ncboysacademy.org/our-staff)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

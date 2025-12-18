@@ -12,27 +12,27 @@ Like BBA, Bethel Girls Academy was also marketed by [Teen Help](https://www.redd
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Herman Fountain Jr.**was the founder and co-owner of Bethel Girls Academy.
+** Herman Fountain Jr.** was the founder and co-owner of Bethel Girls Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like many other WWASP programs, BGA used a level-system. The levels were:
 
-**Level 1**- Level 1 girls had to ask for permission to speak, permission to talk, permission to go to the bathroom, permission to even write. If they failed to ask permission they would have be forced to endure endless hours of military style exercising, bends and thrusts, male push-ups, pull ups, duck walks, bear crawls, and squats while keeping their hands straight out and staying in this position for many minutes. To the point you were going to fall over.
+** Level 1**- Level 1 girls had to ask for permission to speak, permission to talk, permission to go to the bathroom, permission to even write. If they failed to ask permission they would have be forced to endure endless hours of military style exercising, bends and thrusts, male push-ups, pull ups, duck walks, bear crawls, and squats while keeping their hands straight out and staying in this position for many minutes. To the point you were going to fall over.
 
-**Level 2**- no additional information is known.
+** Level 2**- no additional information is known.
 
-**Level 3**- no additional information is known.
+** Level 3**- no additional information is known.
 
-**Level 4**- no additional information is known.
+** Level 4**- no additional information is known.
 
-**Level 5**- no additional information is known.
+** Level 5**- no additional information is known.
 
-**Level 6**- no additional information is known.
+** Level 6**- no additional information is known.
 
 Like Bethel Boys Academy, much of the program revolved around religion and extreme exercise drills. The girls were forced to attend Church twice every Sunday, once every Wednesday, and Chapel and Prayer every night. They put no focus on therapy or even academics.
 
@@ -42,7 +42,7 @@ BGA also used a demerit system which included forcing students to hold stress po
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 On May 19, 2004, 38 girls were removed by the Mississippi Department of Health after BGA failed several points of inspection by state officials. Following this, the state Health Department, the Attorney General's office and the Department of Human Services began investigating the facility more closely.
 
@@ -50,13 +50,13 @@ On February 16, 2005, 11 girls managed to escape the facility, all claiming they
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **1/27/2013: (SURVIVOR)** [Link to Renee's Story at Bethel Girls Academy](http://tales-from-the-black-school.blogspot.com/2013/01/renee-at-bethel-girls-academy-fromreddit.html)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Bethel Girls Academy Website (archived)](https://web.archive.org/web/20080820184240/http://th.bethelacademy.org/girls)
 
@@ -74,7 +74,8 @@ On February 16, 2005, 11 girls managed to escape the facility, all claiming they
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

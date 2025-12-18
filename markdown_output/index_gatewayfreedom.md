@@ -14,23 +14,23 @@ Gateway Freedom Ranch was located at [111 Glen Lake Dr, Eureka, MT 59917](https:
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Lisa Marek**was the Executive Director of Gateway Freedom Ranch. Prior to this, she worked at the reportedly abusive [New Horizons Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/newhorizons) in Rexford, MT.
+** Lisa Marek** was the Executive Director of Gateway Freedom Ranch. Prior to this, she worked at the reportedly abusive [New Horizons Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/newhorizons) in Rexford, MT.
 
-**Heidi Pluid**was the Co-Director and House Manager of Gateway Freedom Ranch. She had been at Gateway since August 2016 doing direct care. Her prior employment is presently unknown.
+** Heidi Pluid** was the Co-Director and House Manager of Gateway Freedom Ranch. She had been at Gateway since August 2016 doing direct care. Her prior employment is presently unknown.
 
-**Todd Call**worked as a Clinical Consultant/Clinical Therapist at Gateway Freedom Ranch. He had reportedly worked in a variety of settings including schools, residential treatment programs, hospitals, outpatient community services and private practice. However, his prior places of employment are presently unknown.
+** Todd Call** worked as a Clinical Consultant/Clinical Therapist at Gateway Freedom Ranch. He had reportedly worked in a variety of settings including schools, residential treatment programs, hospitals, outpatient community services and private practice. However, his prior places of employment are presently unknown.
 
-**Larry & Debbie Nicholas**worked as Counselors at Gateway Freedom Ranch. According to [HEAL](http://www.heal-online.org/gfranch.htm) , neither Larry nor Debbie are licensed mental health, social work, or medical professionals in MT. Their prior employment is presently unknown.
+** Larry & Debbie Nicholas** worked as Counselors at Gateway Freedom Ranch. According to [HEAL](http://www.heal-online.org/gfranch.htm) , neither Larry nor Debbie are licensed mental health, social work, or medical professionals in MT. Their prior employment is presently unknown.
 
-**Sheetal Evjene**worked as an Administrative Assistant at Gateway Freedom Ranch. Prior to this, she worked as an Executive Administrator at the**confirmedly abusive** [Ranch for Kids](https://www.reddit.com/r/troubledteens/wiki/index/ranchforkids) , which lost its license in December of 2020 due to "egregious, chronic and persistent child abuse and neglect" of the kids at the program. She worked at Ranch for Kids from 2009 until 2019, when she began working at Gateway Freedom Ranch.
+** Sheetal Evjene** worked as an Administrative Assistant at Gateway Freedom Ranch. Prior to this, she worked as an Executive Administrator at the** confirmedly abusive** [Ranch for Kids](https://www.reddit.com/r/troubledteens/wiki/index/ranchforkids) , which lost its license in December of 2020 due to "egregious, chronic and persistent child abuse and neglect" of the kids at the program. She worked at Ranch for Kids from 2009 until 2019, when she began working at Gateway Freedom Ranch.
 
-**Mindy Henderson**worked as a Direct Care Staff at Gateway Freedom Ranch. Her prior employment is unknown. According to [HEAL](http://www.heal-online.org/gfranch.htm) , Mindy is**not**a licensed mental health, social work, or medical professional in MT.
+** Mindy Henderson** worked as a Direct Care Staff at Gateway Freedom Ranch. Her prior employment is unknown. According to [HEAL](http://www.heal-online.org/gfranch.htm) , Mindy is** not** a licensed mental health, social work, or medical professional in MT.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Gateway Freedom Ranch used a level system. The specifics of the level system are presently unknown, but there are at least 3 levels.
 
@@ -48,26 +48,26 @@ The program also facilitated parents weekends three times per year. During these
 
 Some of the punishments used by Gateway Freedom Ranch included:
 
-***Communication Block Out (CBO):**During CBO, the residents were forbidden from speaking to anybody at the program and were typically isolated from the rest of the community. If a resident speaks while on CBO, the punishment was extended and they were also given additional punishments including forced exercise.
-***Hula Hoops:**If two residents were not getting along, they could be placed inside of a hula hoop together and be required to stay in the hula hoop together at all times. They had to remain in the hula hoop until they had figured out why they were given the punishment and resolved their issues.
-***Food Restrictions:**For many reasons (including not completing chores on time or taking too long in the shower), a resident could have their food restricted as punishment. This punishment entailed residents being given only cold rice and beans for each meal. According to survivors, the ingredients were allegedly sometimes expired but the residents are forced to eat it regardless, even if they threw it up.
-***Manual Labor:**This punishment entailed the residents being forced to perform manual labor such as stacking wood outside and doing extra (and often excessive) chores.
-***Forced Exercise:**For many reasons, the teens could be made to perform excessive exercises, including planks and running for long distances.
-***Lock Down:**If one resident made a mistake and nobody confessed to it, the entire house could be placed on lock down. The specifics of this punishment are presently unknown, but it likely entailed a loss of privileges and other punitive rules.
-***Loss of Mattress:**For unknown reasons, the girls could have their mattress taken away and be forced to sleep on the bars of their bunk bed. Sometimes the girls were given a wooden board to sleep on, but not always.
-***Haircuts:**Survivors have reported that at least two girls had been forced to get drastic haricuts (above their shoulders) because one was "too prideful of their hair" and the other played with their hair too much.
+***Communication Block Out (CBO):** During CBO, the residents were forbidden from speaking to anybody at the program and were typically isolated from the rest of the community. If a resident speaks while on CBO, the punishment was extended and they were also given additional punishments including forced exercise.
+***Hula Hoops:** If two residents were not getting along, they could be placed inside of a hula hoop together and be required to stay in the hula hoop together at all times. They had to remain in the hula hoop until they had figured out why they were given the punishment and resolved their issues.
+***Food Restrictions:** For many reasons (including not completing chores on time or taking too long in the shower), a resident could have their food restricted as punishment. This punishment entailed residents being given only cold rice and beans for each meal. According to survivors, the ingredients were allegedly sometimes expired but the residents are forced to eat it regardless, even if they threw it up.
+***Manual Labor:** This punishment entailed the residents being forced to perform manual labor such as stacking wood outside and doing extra (and often excessive) chores.
+***Forced Exercise:** For many reasons, the teens could be made to perform excessive exercises, including planks and running for long distances.
+***Lock Down:** If one resident made a mistake and nobody confessed to it, the entire house could be placed on lock down. The specifics of this punishment are presently unknown, but it likely entailed a loss of privileges and other punitive rules.
+***Loss of Mattress:** For unknown reasons, the girls could have their mattress taken away and be forced to sleep on the bars of their bunk bed. Sometimes the girls were given a wooden board to sleep on, but not always.
+***Haircuts:** Survivors have reported that at least two girls had been forced to get drastic haricuts (above their shoulders) because one was "too prideful of their hair" and the other played with their hair too much.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Gateway Freedom Ranch was an abusive program. Allegations of abuse and neglect that have been reported by survivors include punitive punishments, physical abuse, food deprivation, verbal/mental abuse, medical neglect, isolation tactics, communication restrictions, excessive exercise, forced manual labor, unqualified staff, and forced religion. Many survivors report developing PTSD as a result of their time at Gateway Freedom Ranch.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Gateway Freedom Ranch is a**Suspected Abusive**program. As per HEAL's definition, “if a program is categorized as "Suspect" it means it meets one or more criteria (i.e. sister program of confirmedly abusive facility, shares staff with an abusive facility, or one or more complaints regarding the facility are on file with HEAL and/or proper regulatory and enforcement agencies, etc.)."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Gateway Freedom Ranch is a** Suspected Abusive** program. As per HEAL's definition, “if a program is categorized as "Suspect" it means it meets one or more criteria (i.e. sister program of confirmedly abusive facility, shares staff with an abusive facility, or one or more complaints regarding the facility are on file with HEAL and/or proper regulatory and enforcement agencies, etc.)."
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **10/27/2020**(SURVIVOR)**"Lisa (the director of Gateway Freedom Ranch) stole 6 figures from the partnering boys ranch. She completely traumatized me, convinced me that I was always lying and manipulating to get my way the entire way through the school. They never believed me. It was 18 months of pure trauma for me. I stood for 3 months all day as a punishment for not doing the dishes fast enough. The only time I could get off my feet was when I was sleeping. I even stood during school. They made me wash the dishes every day because I couldn't do them in time and when I was late they gave me rice and beans cold or rice and canned chicken. I had fallen off of a horse and dislocated my tailbone which caused extreme pain. They offered to take me to the hospital but because I was wholeheartedly convinced I was an evil child just trying to manipulate I didn't go. Since I was standing it made the dislocation worse. I just found out recently that I wasn't bluffing about my back pain. I was on CBO (communication block out) for as long as I can remember so I was not allowed to talk to anyone unless it was an emergency and isolation so I couldn't bed near anyone. They had a list of questions we could ask. We ran 1.2 miles every day even through the extreme fire smoke from California. If we got a certain amount of write ups they made us do 10 burpees for each one. If we threw up they didn't care. They would make us clear out the pinecones in the yard. One gallon paint bucket full of cones for each write up. Before that, it was one bucket of rocks. The school forced religion down my throat. I do not identify as a Christian because of these people. None of them had the licensing to be counselors for "troubled girls." Every time I get depressed I have Lisa's voice in the back of my head saying I'm just doing it for attention. I of course was better at home because of all the gaslighting and assurance that I would be punished if I didn't do well on my home visits. 6 months after I got home for good I started rapidly declining and my parents sent me to Oak Ridge Military School right outside Greensboro, NC. That is where I really got help. I'm now 18 just beginning to understand the damage they did to me and my family. The reviews before mine are completely true. If your kid needs help DO NOT send them to Gateway Freedom Ranch." - [Caroline (Yelp)](https://www.yelp.com/biz/gateway-freedom-ranch-eureka)
 
@@ -89,7 +89,7 @@ According to the human-rights organization [HEAL](http://www.heal-online.org/the
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Gateway Freedom Ranch Website Homepage](https://gatewayfreedomranch.org/)
 
@@ -103,7 +103,8 @@ According to the human-rights organization [HEAL](http://www.heal-online.org/the
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

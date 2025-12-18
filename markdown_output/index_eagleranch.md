@@ -16,13 +16,13 @@ ERA claimed at one time to be accredited by the [SAIS](https://www.sais.org/) an
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Paul Arslanian**is the Co-Founder and Executive Director of Eagle Ranch Academy. He is the brother of David Arslanian. Before founding ERA, Paul worked as a football coach with his brother.
+** Paul Arslanian** is the Co-Founder and Executive Director of Eagle Ranch Academy. He is the brother of David Arslanian. Before founding ERA, Paul worked as a football coach with his brother.
 
-**David ("Dave") Arslanian**is the Co-Founder and Admissions Director of Eagle Ranch Academy. He is the brother of Paul Arslanian. Before founding ERA, Dave worked as a football coach with his brother at Utah State. In 2000, Dave sued the university after he fired for hiring his brother, Paul Arslanian, as offensive coordinator against the president of the school's wishes. Additional Information: [COLLEGE FOOTBALL; Lawsuit Challenges Hiring and Firing](http://www.heal-online.org/yourefired.pdf)
+** David ("Dave") Arslanian** is the Co-Founder and Admissions Director of Eagle Ranch Academy. He is the brother of Paul Arslanian. Before founding ERA, Dave worked as a football coach with his brother at Utah State. In 2000, Dave sued the university after he fired for hiring his brother, Paul Arslanian, as offensive coordinator against the president of the school's wishes. Additional Information: [COLLEGE FOOTBALL; Lawsuit Challenges Hiring and Firing](http://www.heal-online.org/yourefired.pdf)
 
-**Fotu Soliai**is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
+** Fotu Soliai** is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
 
 Survivors from multiple programs have reported cruel treatment, manipulative behavior, and verbal abuse from Fotu. Additional Information:
 
@@ -32,15 +32,15 @@ Survivors from multiple programs have reported cruel treatment, manipulative beh
 *
 [Business License: Soliai and Associates, LLC](https://www.bizapedia.com/ut/soliai-and-associates-llc.html)
 
-**Kelly Jo Miller**was the Program Director of ERA. She previously worked at [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) and Spring Mountain Treatment Center. She is also the Vice President/Owner of [Journeys Adolescent Services](https://www.reddit.com/r/troubledteens/wiki/index/journeystransport) , which is a teen ["transport" company](https://www.reddit.com/r/troubledteens/wiki/index/transport) which is hired to kidnap children and take them to these types of programs. She also reportedly has a daughter (Sierra/Cierra) who works at ERA and has been reported to be physically abusive towards the children there.
+**Kelly Jo Miller** was the Program Director of ERA. She previously worked at [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) and Spring Mountain Treatment Center. She is also the Vice President/Owner of [Journeys Adolescent Services](https://www.reddit.com/r/troubledteens/wiki/index/journeystransport) , which is a teen ["transport" company](https://www.reddit.com/r/troubledteens/wiki/index/transport) which is hired to kidnap children and take them to these types of programs. She also reportedly has a daughter (Sierra/Cierra) who works at ERA and has been reported to be physically abusive towards the children there.
 
-**Katherine Benson**worked as the Assisstant Program Director of ERA. SHe previously worked in the same position at [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) .
+** Katherine Benson** worked as the Assisstant Program Director of ERA. SHe previously worked in the same position at [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) .
 
 Various other staff members have come to ERA after working at [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) , which is a reportedly abusive (and now-closed) behavior-modification program located nearby in St. George.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Eagle Ranch Academy uses a level-system. Student progress through the program by completing "packets" which are the equivalent to levels. Each packet has a set of assignments the teen must complete to be eligible for the next packet. The packets are based on values and are reported to be:
 
@@ -66,7 +66,7 @@ Eagle Ranch Academy is reported by many survivors to be an abusive program. Alle
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **10/29/2020: (SURVIVOR)**"Eagle Ranch is abusive! I’m 22 years old now and I’ve blocked out two years of my life from my mind. I was sent to ERA when I was 14-15 and I don’t ever recall anything from that time until recently. Staff, especially their beloved “academic coordinator” (Meghan P), were degrading and dehumanizing. Also Katherine B. was a tyrant. In no setting is it ethical or right for CHILDREN to earn basic human rights and label it as PRIVILEGES. This place strips you of your identity. Let’s not even get into the “seminars” we were forced to participate in. This place is not therapeutic despite the sub-par “therapists” they provide. Most of the children there were on medication, and I was one of the few that were not on any. I have severe trauma, trust issues and memory loss from ERA. Do not send your children here. Anyone who says this place ‘saved’ them is a prime example of the program doing exactly what they intended." - [Jully (WWASP Survivors)](https://wwaspsurvivors.com/wwasp-programs/eagle-ranch-academy/)
 
@@ -96,7 +96,7 @@ Eagle Ranch Academy is reported by many survivors to be an abusive program. Alle
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Eagle Ranch Academy Website Homepage](https://eagleranchacademy.com/)
 
@@ -111,4 +111,5 @@ Eagle Ranch Academy is reported by many survivors to be an abusive program. Alle
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

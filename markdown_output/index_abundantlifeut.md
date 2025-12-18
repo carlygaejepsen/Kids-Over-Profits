@@ -14,25 +14,25 @@ Abundant Life Academy did not describe or market itself as a therapeutic program
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Craig Rogers**was the Co-Founder and Executive Director of Abundant Life Academy. Himself a troubled teenager, he eventually steered himself straight through his faith. He went on to earn a BA in Psychology and a minor in Chemical Dependency Studies from California State University, Sacramento. He then worked as the Program Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico. He also worked as a Social Worker Supervisor at [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/index/riteofpassage) of Nevada from 1998 until 2000. He co-founded ALA in December of 2000 along with his wife, Wendy, and served as the program's Executive Director, CEO, and Director of Marketing until September of 2011. He is also rumored to have been involved with the notorious and confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization, but this is unconfirmed. He currently works as the Executive Director of Digital Marketing at [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) , where he began working in November of 2011.
+** Craig Rogers** was the Co-Founder and Executive Director of Abundant Life Academy. Himself a troubled teenager, he eventually steered himself straight through his faith. He went on to earn a BA in Psychology and a minor in Chemical Dependency Studies from California State University, Sacramento. He then worked as the Program Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico. He also worked as a Social Worker Supervisor at [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/index/riteofpassage) of Nevada from 1998 until 2000. He co-founded ALA in December of 2000 along with his wife, Wendy, and served as the program's Executive Director, CEO, and Director of Marketing until September of 2011. He is also rumored to have been involved with the notorious and confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization, but this is unconfirmed. He currently works as the Executive Director of Digital Marketing at [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) , where he began working in November of 2011.
 
-**Wendy Rogers**was the Co-Founder of Abundant Life Academy. She became involved with the TTI through her husband, Craig. She earned a BS in Physical Education/Dance from California State University, Sacramento. She then worked alongside her husband as the Assistant Program Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico.
+** Wendy Rogers** was the Co-Founder of Abundant Life Academy. She became involved with the TTI through her husband, Craig. She earned a BS in Physical Education/Dance from California State University, Sacramento. She then worked alongside her husband as the Assistant Program Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico.
 
-**Paul Branning**purchased Abundant Life Academy in 2012 and took over operations of the program until its closure in 2014.
+** Paul Branning** purchased Abundant Life Academy in 2012 and took over operations of the program until its closure in 2014.
 
-**Penny Frank**worked as the Executive Director of Abundant Life Academy. Prior to this, she worked as a Therapist at the reportedly abusive [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) from 2000 until 2002. She also previously worked at a variety of unknown TTI programs.
+** Penny Frank** worked as the Executive Director of Abundant Life Academy. Prior to this, she worked as a Therapist at the reportedly abusive [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) from 2000 until 2002. She also previously worked at a variety of unknown TTI programs.
 
-**Greg Hitchcock**was a Board Member/Corporate Officer at Abundant Life Academy. He also worked for ALA's referral/marketing arm, Zion Educational Systems.
+** Greg Hitchcock** was a Board Member/Corporate Officer at Abundant Life Academy. He also worked for ALA's referral/marketing arm, Zion Educational Systems.
 
-**David Aguilar**worked at Abundant Life Academy in an unknown position. Prior to this, he worked alongside Craig Rogers at the reportedly absive [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico.
+** David Aguilar** worked at Abundant Life Academy in an unknown position. Prior to this, he worked alongside Craig Rogers at the reportedly absive [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) in Bahia de Kino, Mexico.
 
 ---
 
-## **Locations**
+## ** Locations**
 
-**Mexico**(*2000-2004*)
+** Mexico**(*2000-2004*)
 
 > Abundnat Life Academy was originally opened in [Chapala, Jalisco, Mexico](https://www.google.com/maps/place/Chapala,+Jalisco,+Mexico/@20.3294145,-103.3024739,42500m/data=!3m1!1e3!4m5!3m4!1s0x842f4649cace3245:0xb9d3387438ef9c7f!8m2!3d20.2971255!4d-103.1889464) under the name "Xtreme Faith Academy". In 2003, ALA opened a second campus near [Guadalajara](https://www.google.com/maps/place/Guadalajara,+Jalisco,+Mexico/@20.6737777,-103.4054536,24609m/data=!3m1!1e3!4m5!3m4!1s0x8428b18cb52fd39b:0xd63d9302bf865750!8m2!3d20.6596988!4d-103.3496092) , Mexico. Both of these programs were closed following a [raid](https://www.foxnews.com/story/students-at-mexican-schools-for-behavior-problems-sent-back-to-u-s) by Mexican authorities, where 17 American youths were removed from their care after they were found to be in Mexico without proper travel or residency documents.
 
@@ -62,16 +62,16 @@ Abundant Life Academy did not describe or market itself as a therapeutic program
 
 Like other behavior modification programs, Abundant Life Academy used a level system consisting of four phases. In order to advance to the next phase, students had to admit to a minimum number of transgressions in front of their peers. They also had to complete essay assignments stating how they were to blame for being put in the program. Additionally, they had to participate in assignments with their parents on phone calls. The assignments were "Family Reconciliation" where the child apologized and admitted they were to blame for being sent away. They would not advance unless they said these things. The phases are reported to have been:
 
-***New-O:**When a teen arrived at ALA, they were placed on New-O for a minimum of 7 days. While on this phase, they were given no privileges and were essentially in isolation from the rest of the program. The teen was not allowed to talk to anyone except one designated student who would explain the rules. They had to be the first in single-file line at all events, and they would get served cafeteria food by themselves. They were not allowed to eat at the same table, as they were not allowed to be near the other students. This phase was also used as a punishment to teens who broke rules or were deemed non-compliant.
-***1st Phase:**This phase lasted for a minimum of 4 months. There were no privileges on this phase. The student had to wear the uniform at all times, and they were only permitted to have one pair of shoes. They were not allowed any personal cosmetics or any personal belongings except a journal. They had no privileges in day-to-day events.
-***2nd Phase:**This phase usually lasted around 3-4 months. The teens had some, but not all, privileges. They were allowed to have additional pairs of shoes, as well as books/gifts that their parents sent them. They were allowed to wear the school uniform sweatpants in the cafeteria, which was not allowed on 1st phase. They were expected to be a "Leader in Training" (LIT) on this phase. LITs had some authority over the other students. Mostly they would sit in on nightly "Leader" meetings with Leader students & staff.
-***3rd Phase:**This was the most privileged phase, and it usually lasted around 3-4 months. During this phase, the teens were allowed to wear their own clothing on weekends and have their own cosmetics. They were expected to be a "Leader" status. Leaders would consult with the staff on what special privileges the students "deserved" for the week. How the weekends would be scheduled. How lower phase students should be punished. Leaders were also expected to keep the student community following the rules.
+***New-O:** When a teen arrived at ALA, they were placed on New-O for a minimum of 7 days. While on this phase, they were given no privileges and were essentially in isolation from the rest of the program. The teen was not allowed to talk to anyone except one designated student who would explain the rules. They had to be the first in single-file line at all events, and they would get served cafeteria food by themselves. They were not allowed to eat at the same table, as they were not allowed to be near the other students. This phase was also used as a punishment to teens who broke rules or were deemed non-compliant.
+***1st Phase:** This phase lasted for a minimum of 4 months. There were no privileges on this phase. The student had to wear the uniform at all times, and they were only permitted to have one pair of shoes. They were not allowed any personal cosmetics or any personal belongings except a journal. They had no privileges in day-to-day events.
+***2nd Phase:** This phase usually lasted around 3-4 months. The teens had some, but not all, privileges. They were allowed to have additional pairs of shoes, as well as books/gifts that their parents sent them. They were allowed to wear the school uniform sweatpants in the cafeteria, which was not allowed on 1st phase. They were expected to be a "Leader in Training" (LIT) on this phase. LITs had some authority over the other students. Mostly they would sit in on nightly "Leader" meetings with Leader students & staff.
+***3rd Phase:** This was the most privileged phase, and it usually lasted around 3-4 months. During this phase, the teens were allowed to wear their own clothing on weekends and have their own cosmetics. They were expected to be a "Leader" status. Leaders would consult with the staff on what special privileges the students "deserved" for the week. How the weekends would be scheduled. How lower phase students should be punished. Leaders were also expected to keep the student community following the rules.
 
 The teens were also forced to participate in group sessions called AFMs. If a student broke the rules, an Emergency AFM was made. These AFMs consisted of the condemned student having to admit that they did something wrong in order to move to the next phase.The AFM would take place in a horseshoe set up, where all the students would sit in a semi-circle and one student would be chosen to be in the "hot seat." The hot seat student would have to share something they were struggling with and the students would give feedback on what they should do. At the end of the meeting, consequences would be given. Especially if the meeting was for breaking rules. Consequences usually involved being on "New-O" status for a week.
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 The rules of the program revolved heavily around conservative Christian values. Any swearing, backtalking, "victimizing or blameshifting to staff" was prohibited. Sexual misconduct was punished severely. The program was reportedly extremely homophobic and extreme consequences were given for any hint of LGBTQ+ identity. The teen also were prohibited from communicating with the outside world, and children were not allowed to speak openly to their parents when they were on monitored phone calls once a week. If the teens said anything negative about the program, the call would end immediately, followed by consequences for the student for "lying, being rebellious."
 
@@ -83,7 +83,7 @@ The teens were also reportedly threatened with being sent away to other, "worse"
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Abundant Life Academy was an abusive program.
 
@@ -91,11 +91,11 @@ In October 2014, four ALA staff members were arrested after they were [caught on
 
 ---
 
-## **Closures**
+## ** Closures**
 
 Abundanty Life Academy faced a series of closures throughout its existence.
 
-The first ALA closure occured in 2004 after local authorities raided the ALA program in [Chapala, Jalisco, Mexico](https://www.google.com/maps/place/Chapala,+Jalisco,+Mexico/@20.3294145,-103.3024739,42500m/data=!3m1!1e3!4m5!3m4!1s0x842f4649cace3245:0xb9d3387438ef9c7f!8m2!3d20.2971255!4d-103.1889464) (also called Xtreme Faith Academy). The program was raided because they "did not comply with sanitary regulations." The raid came less than a year after the raid on the notorious and**confirmedly abusive** [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) facility, [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) . Following the raid, 17 students at ALA were extradited to the U.S. after they found to be in Mexico without proper travel or residency documents. It appears that both of ALA's programs in Mexico closed shortly after the raid.
+The first ALA closure occured in 2004 after local authorities raided the ALA program in [Chapala, Jalisco, Mexico](https://www.google.com/maps/place/Chapala,+Jalisco,+Mexico/@20.3294145,-103.3024739,42500m/data=!3m1!1e3!4m5!3m4!1s0x842f4649cace3245:0xb9d3387438ef9c7f!8m2!3d20.2971255!4d-103.1889464) (also called Xtreme Faith Academy). The program was raided because they "did not comply with sanitary regulations." The raid came less than a year after the raid on the notorious and** confirmedly abusive** [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) facility, [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) . Following the raid, 17 students at ALA were extradited to the U.S. after they found to be in Mexico without proper travel or residency documents. It appears that both of ALA's programs in Mexico closed shortly after the raid.
 
 In May of 2005, CPS [removed](https://www.reviewjournal.com/news/state-defends-action-at-academy/) 33 teenagers from ALA's campus in Nevada after receiving reports of child abuse and neglect from parents and survivors. Because of this, ALA took the state to court and the jury found the state did not have reasonable grounds to remove the children from the academy. A judge also denied immunity from personal liability for Robin Landry, the rural head of the division’s Child Protective Services, who had led the move to remove the children from ALA. In 2009, the state requested a new trial and tried to secure immunity for Landry. Ultimately, the judge [ruled](http://cdn.ca9.uscourts.gov/datastore/memoranda/2010/01/08/08-16790.pdf) that Landry was immune from civil liability after "Landry could reasonably have believed that DCFS was justified in removing the students from the [Abundant Life Academy] for their own safety."
 
@@ -103,7 +103,7 @@ The final ALA program (Virginia) closed in December of 2014. The closure came af
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **12/12/2020: (SURVIVOR)**"Abundant Life Academy, and other schools like it, created unlimited amounts of damage. The trauma and brainwashing sticks with every student into their adult years. It's an incredibly unethical thing to do to any child, no matter what they may be going through with their parents. It weighs on my mind that no one in my "normal" daily life knows what the Troubled Teen Industry is and how big a crisis this is for children. I'm grateful I found the TTI Subreddit to see there are other people who care about spreading the word about these programs." -*Anonymous, (submitted directly to wiki)*
 
@@ -123,7 +123,7 @@ The final ALA program (Virginia) closed in December of 2014. The closure came af
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Abundant Life Academy Website Homepage](https://web.archive.org/web/20050114020258/http://abundantlifeacademy.com/) (archived, 2005)
 
@@ -159,7 +159,8 @@ The final ALA program (Virginia) closed in December of 2014. The closure came af
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

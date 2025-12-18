@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Embark at Hobble Creek is an [Embark Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/embark) behavior modification program that opened in 2020. It is marketed as a Short-Term Residential Treatment Center for teenage girls (12-17) who are struggling with issues such ADHD, anger/mood regulation, anxiety, bipolar disorder, borderline personality disorder, bullying, depression, family conflict, self-harm, social isolation, and other mental health or behavioral challenges. The program has a maximum capacity of 16 residents, and the average length of stay is reported to be roughly 90 days. The cost of the program's tuition is presently unknown.
 
@@ -10,29 +10,30 @@ The program is located at [266 Left Fork Hobble Creek Canyon Rd, Springville, UT
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 **
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

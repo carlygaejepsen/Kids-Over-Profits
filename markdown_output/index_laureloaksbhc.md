@@ -12,23 +12,23 @@ Laurel Oaks Behavioral Health Center is located at [700 E Cottonwood Rd, Dothan,
 
 Laurel Oaks Behavioral Health Center offers three types of programs:
 
-***Acute Crisis Stabilization:**This program enrolls children and teens (4-18) who are struggling with acute mental illness or psychiatric disorders. This program is short-term, with an average length of stay of 3-14 days. The program is divided into two units; one for children aged 4-12 and the other for adolescents aged 13-18. The total capacity of these units is 38 residents.
-***Residential Treatment Center:**This program enrolls boys (10-18) and girls (12-18) who live in four separate units divided by age and gender. These RTCs have a total capacity of 80 adolescents. The average length of stay in this program is reportedly around 175 days (~6 months).
-***Department of Youth Services Unit:**This program enrolls boys (12-18) who have a delinquency charge along with psychiatric diagnosis, mentall illness, or intellectual disabilities/learning disorders. This unit has a total capacity of 16 residents. It is unclear if this unit is still in operation.
+***Acute Crisis Stabilization:** This program enrolls children and teens (4-18) who are struggling with acute mental illness or psychiatric disorders. This program is short-term, with an average length of stay of 3-14 days. The program is divided into two units; one for children aged 4-12 and the other for adolescents aged 13-18. The total capacity of these units is 38 residents.
+***Residential Treatment Center:** This program enrolls boys (10-18) and girls (12-18) who live in four separate units divided by age and gender. These RTCs have a total capacity of 80 adolescents. The average length of stay in this program is reportedly around 175 days (~6 months).
+***Department of Youth Services Unit:** This program enrolls boys (12-18) who have a delinquency charge along with psychiatric diagnosis, mentall illness, or intellectual disabilities/learning disorders. This unit has a total capacity of 16 residents. It is unclear if this unit is still in operation.
 
 When Laurel Oaks Laurel Oaks Behavioral Health Center initially opened, it was owned by Ramsay Youth Services, which operated programs in nine states and Puerto Rico. In 2003, Ramsay Youth Services was sold to [Psychiatric Solutions, Inc. (PSI)](https://www.reddit.com/r/troubledteens/wiki/index/psi) , which changed the program's name to Laurel Oaks. Laurel Oaks Behavioral Health Center was owned and operated by Psychiatric Solutions until 2010, when PSI was purchased by [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) and ownership of the program was transferred to UHS.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jeanette Jackson**is the current CEO of Laurel Oaks Behavioral Health Center. She has held this position since July 2020. Prior to this, she worked as the CEO of [Gulf Coast Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoasttc) from 2013 until 2020, when she joined Laurel Oaks.
+** Jeanette Jackson** is the current CEO of Laurel Oaks Behavioral Health Center. She has held this position since July 2020. Prior to this, she worked as the CEO of [Gulf Coast Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoasttc) from 2013 until 2020, when she joined Laurel Oaks.
 
-**Kelly Hollis**currently works as a Referral/Assessment Specialist at Laurel Oaks Behavioral Health Center. She has worked at this program since 2021. Prior to this, she worked as the Executive Director of the [Southeast Alabama Youth Leadership Academy (SAYLA)](https://www.reddit.com/r/troubledteens/wiki/index/sayla) from 2006 until 2021.
+** Kelly Hollis** currently works as a Referral/Assessment Specialist at Laurel Oaks Behavioral Health Center. She has worked at this program since 2021. Prior to this, she worked as the Executive Director of the [Southeast Alabama Youth Leadership Academy (SAYLA)](https://www.reddit.com/r/troubledteens/wiki/index/sayla) from 2006 until 2021.
 
-**Jimmie Guyton**currently works as the Acute Clinical Director of Laurel Oaks Behavioral Health Center. She has held this position since 2010. She has previously worked at the University of Alabama Birmingham, Bryce Hospital and the Alabama Department of Public Health. She appears to currently also work as a Therapist at the [Wiregrass Behavioral Group](https://www.wirebg.com/jimmie-guyton/) .
+** Jimmie Guyton** currently works as the Acute Clinical Director of Laurel Oaks Behavioral Health Center. She has held this position since 2010. She has previously worked at the University of Alabama Birmingham, Bryce Hospital and the Alabama Department of Public Health. She appears to currently also work as a Therapist at the [Wiregrass Behavioral Group](https://www.wirebg.com/jimmie-guyton/) .
 
-**Terry Fiquett**works as the Director of Human Resources at Laurel Oaks Behavioral Health Center. His prior employment is presently unknown.
+** Terry Fiquett** works as the Director of Human Resources at Laurel Oaks Behavioral Health Center. His prior employment is presently unknown.
 
 *Laurel Oaks Behavioral Health Center does not list its current employees on its website, which is a questionable practice that has the potential to shield staff members from liability and scrutiny.*
 
@@ -36,7 +36,7 @@ When Laurel Oaks Laurel Oaks Behavioral Health Center initially opened, it was o
 
 ## **Program Structure**
 
-Very little information is presently known about the specifics of the program structure at Laurel Oaks Behavioral Health Center.*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+Very little information is presently known about the specifics of the program structure at Laurel Oaks Behavioral Health Center.*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -50,25 +50,25 @@ On October 16, 2012, a former employee of Laurel Oaks Behavioral Health Center, 
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
-**September 2023: (SURVIVOR)**"I was a residence of this place when I was 12 it wasnt called Laurel oaks it had the name Ramsey. And I was definitely thinking about send my son here because he desperately needs some help with his behavior and attitude but after reading all the reviews it's a no for me" - [Natalya (Google Reviews)](https://maps.app.goo.gl/sYNXXXp6TkJUM6BeA)
+** September 2023: (SURVIVOR)**"I was a residence of this place when I was 12 it wasnt called Laurel oaks it had the name Ramsey. And I was definitely thinking about send my son here because he desperately needs some help with his behavior and attitude but after reading all the reviews it's a no for me" - [Natalya (Google Reviews)](https://maps.app.goo.gl/sYNXXXp6TkJUM6BeA)
 
-**August 2023: (AUNT)**"please find a different place than here cause my nephew had to watch people do sexal things and he said they messed with him pleased don't send your kids here praying for the ones in there now" - [Alisha (Google Reviews)](https://maps.app.goo.gl/1vyeZKPiLE5GmmkE7)
+** August 2023: (AUNT)**"please find a different place than here cause my nephew had to watch people do sexal things and he said they messed with him pleased don't send your kids here praying for the ones in there now" - [Alisha (Google Reviews)](https://maps.app.goo.gl/1vyeZKPiLE5GmmkE7)
 
-**August 2023: (SURVIVOR)**"I was sent here as a teen after a suicide attempt. Came out worse than ever, and just learned to hide my issues afterwards. They never even bothered to ask whaty breaking point was, and then sent me back into the same situation. I'm sure that mandated DCF reporting was a thing back then, they knew about my abuse, and did nothing. Don't send your child here. They won't get the help they need." - [DD (Google Reviews)](https://maps.app.goo.gl/oASDwTEj6mVMTJhT6)
+** August 2023: (SURVIVOR)**"I was sent here as a teen after a suicide attempt. Came out worse than ever, and just learned to hide my issues afterwards. They never even bothered to ask whaty breaking point was, and then sent me back into the same situation. I'm sure that mandated DCF reporting was a thing back then, they knew about my abuse, and did nothing. Don't send your child here. They won't get the help they need." - [DD (Google Reviews)](https://maps.app.goo.gl/oASDwTEj6mVMTJhT6)
 
-**August 2023: (AUNT)**"Absolutely horrible place. My Niece was sent here as a teen for supposed "anger issues ". She came out much worse than when she went in. It has taken YEARS worth of extra therapy BECAUSE of this place. They take zero accountability for the harm they cause to the children in their care. And now, that my niece is attempting to go into the military, this place suddenly can't find her records in a timely manner. 3 months we've been waiting. Last time they said they would just call her when they found them. So I guess Auntie is about to hire an attorney for her, to at least see what her rights are. If she has legal ground to stand on, I will be footing the bill. If you've ever been to this place, I suggest a lawyer and a lawsuit" - [Darcy (Google Reviews)](https://maps.app.goo.gl/deiSsDQ8CWB5Ze3d6)
+** August 2023: (AUNT)**"Absolutely horrible place. My Niece was sent here as a teen for supposed "anger issues ". She came out much worse than when she went in. It has taken YEARS worth of extra therapy BECAUSE of this place. They take zero accountability for the harm they cause to the children in their care. And now, that my niece is attempting to go into the military, this place suddenly can't find her records in a timely manner. 3 months we've been waiting. Last time they said they would just call her when they found them. So I guess Auntie is about to hire an attorney for her, to at least see what her rights are. If she has legal ground to stand on, I will be footing the bill. If you've ever been to this place, I suggest a lawyer and a lawsuit" - [Darcy (Google Reviews)](https://maps.app.goo.gl/deiSsDQ8CWB5Ze3d6)
 
-**July 2023: (SURVIVOR)**"DO NOT SEND YOURSELF OR ANYONE HERE. Grace was the only person remotely educated in the entire building. (Mable too but I only had one interaction with her.) Mrs. Shavon needed to have a B25 cocktail injected in her or she just needed to be fired because she treated everyone like they were criminals. Every stuff member (Especially the doctor) was idiotic and mistreated everyone. The nurses barely glanced at your file. If you said you didn't want to be touched, they would touch you. I got flicked in the head by a nurse when I was utterly terrified of getting my blood drawn, along with being laughed at. No child had any proper supervision because on multiple times there would be affectionate moments with two people. I would not be surprised if someone had intercourse in the bathrooms while the over glorified watch guards would gossip with eachother. The only time someone was lectured about being too friendly was when Mrs. Shavon yelled at everyone saying that we were risking HER job being "like this" when she was ten feet away from everyone and she could have prevented those moments if she turned her massive head around two inches and looked at them. Therapists were brainless and emotionally not there. Multiple people I had spoken to mentioned how easy it was to harm oneself and that deeply bothered me. The icing on the cake was the time I was being taken to the doctor and this little girl asked: "Are you a girl?" and the woman that was taking me to the doctor scowled at her and said: "OF COURSE SHE IS!" I'm a man, the woman had my file, she had seen me in the male section of the ward on multipletimes, I felt like I was just slapped in the face. If I wanted to, if anyone wanted to, you could just pull the fire alarm and run for it. Being on the run from the police would be better than being locked at this place." - [Vance (Google Reviews)](https://maps.app.goo.gl/SpJ4TGXkrfL6TM7b7)
+** July 2023: (SURVIVOR)**"DO NOT SEND YOURSELF OR ANYONE HERE. Grace was the only person remotely educated in the entire building. (Mable too but I only had one interaction with her.) Mrs. Shavon needed to have a B25 cocktail injected in her or she just needed to be fired because she treated everyone like they were criminals. Every stuff member (Especially the doctor) was idiotic and mistreated everyone. The nurses barely glanced at your file. If you said you didn't want to be touched, they would touch you. I got flicked in the head by a nurse when I was utterly terrified of getting my blood drawn, along with being laughed at. No child had any proper supervision because on multiple times there would be affectionate moments with two people. I would not be surprised if someone had intercourse in the bathrooms while the over glorified watch guards would gossip with eachother. The only time someone was lectured about being too friendly was when Mrs. Shavon yelled at everyone saying that we were risking HER job being "like this" when she was ten feet away from everyone and she could have prevented those moments if she turned her massive head around two inches and looked at them. Therapists were brainless and emotionally not there. Multiple people I had spoken to mentioned how easy it was to harm oneself and that deeply bothered me. The icing on the cake was the time I was being taken to the doctor and this little girl asked: "Are you a girl?" and the woman that was taking me to the doctor scowled at her and said: "OF COURSE SHE IS!" I'm a man, the woman had my file, she had seen me in the male section of the ward on multipletimes, I felt like I was just slapped in the face. If I wanted to, if anyone wanted to, you could just pull the fire alarm and run for it. Being on the run from the police would be better than being locked at this place." - [Vance (Google Reviews)](https://maps.app.goo.gl/SpJ4TGXkrfL6TM7b7)
 
-**June 2023: (SURVIVOR)**"I went here it was things was good for 2weeks until a month passed by and I was like hold on now. I saw the staff members take 1 kid down to the floor and bust his lip.And the pressure they put on your wrist when they restraining you when I was there was uncalled for." - [Correy (Google Reviews)](https://maps.app.goo.gl/dX25N7xKFEQu9QNR8)
+** June 2023: (SURVIVOR)**"I went here it was things was good for 2weeks until a month passed by and I was like hold on now. I saw the staff members take 1 kid down to the floor and bust his lip.And the pressure they put on your wrist when they restraining you when I was there was uncalled for." - [Correy (Google Reviews)](https://maps.app.goo.gl/dX25N7xKFEQu9QNR8)
 
-**May 2023: (SURVIVOR)**"I was there for a year and they did not really help they only made things worse some staff was awesome but some were not but I was doing a lot better in jail then there and there was so many bugs the food was nasty well only when Mrs.ashley or Mr.G or mrs.dorty them were the only ones who knows how to cook" - [Ariel (Google Reviews)](https://maps.app.goo.gl/kq3Mp2JrVhUaFuQn8)
+** May 2023: (SURVIVOR)**"I was there for a year and they did not really help they only made things worse some staff was awesome but some were not but I was doing a lot better in jail then there and there was so many bugs the food was nasty well only when Mrs.ashley or Mr.G or mrs.dorty them were the only ones who knows how to cook" - [Ariel (Google Reviews)](https://maps.app.goo.gl/kq3Mp2JrVhUaFuQn8)
 
-**March 2023: (SURVIVOR)**"Don't send your children here. I was sent here as a teen, against my will, back in 2006. The place is effectively a prison for children. There will be fights every single day. Bad ones. Your kid will almost certainly be attacked if they are there long enough. The staff are not equipped to deal with how violent some of the kids there are. Unless you believe your child belongs in a prison, you shouldn't even be thinking about it." - [Justinian (Google Reviews)](https://maps.app.goo.gl/ic3cW8XEcMvEQ6gf7)
+** March 2023: (SURVIVOR)**"Don't send your children here. I was sent here as a teen, against my will, back in 2006. The place is effectively a prison for children. There will be fights every single day. Bad ones. Your kid will almost certainly be attacked if they are there long enough. The staff are not equipped to deal with how violent some of the kids there are. Unless you believe your child belongs in a prison, you shouldn't even be thinking about it." - [Justinian (Google Reviews)](https://maps.app.goo.gl/ic3cW8XEcMvEQ6gf7)
 
-**December 2022: (SURVIVOR)**"I checked in here years ago when I was younger in 2016. I can attest the reviews are correct. Dr. Strunk is terrible, and the bedding situation was just pitiful. We slept on daycare mats and the pillows were all types of shades of yellow and brown. Terrible facility, and the trauma I received from here a young child made it hard to receive help by the time I got older. DO NOT SEND YOU CHILD HERE!!!! For the love of god find another facility." - [Will (Google Reviews)](https://maps.app.goo.gl/Z7spLbfyafC3gS1q9)
+** December 2022: (SURVIVOR)**"I checked in here years ago when I was younger in 2016. I can attest the reviews are correct. Dr. Strunk is terrible, and the bedding situation was just pitiful. We slept on daycare mats and the pillows were all types of shades of yellow and brown. Terrible facility, and the trauma I received from here a young child made it hard to receive help by the time I got older. DO NOT SEND YOU CHILD HERE!!!! For the love of god find another facility." - [Will (Google Reviews)](https://maps.app.goo.gl/Z7spLbfyafC3gS1q9)
 
 **2022: (SURVIVOR)**"This place traumatized me so much that I had to leave a bad review!!!!!! I would rather DIE than go ther ever again! I was bullied and yelled at because I have autism. The staff was disgusting and I was treated like an animal that lives in a zoo! I hope this place SHUTS DOWN AND NEVER COMES BACK!!!! THEY BASICALLY RUINED MY LIFE! Plus I didn't do anything to go there" - [Emily (Google Reviews)](https://maps.app.goo.gl/KgWRojxG2AueWuCp6)
 
@@ -110,7 +110,7 @@ On October 16, 2012, a former employee of Laurel Oaks Behavioral Health Center, 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Laurel Oaks Behavioral Health Center Website Homepage](https://laureloaksbhc.com/)
 
@@ -146,7 +146,8 @@ On October 16, 2012, a former employee of Laurel Oaks Behavioral Health Center, 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

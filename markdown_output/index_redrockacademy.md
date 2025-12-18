@@ -14,33 +14,34 @@ The exact timespan during whih Red Rock Academy operated is not fully known. Acc
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Narvin Lichfield**was the owner of Red Rock Academy.
+** Narvin Lichfield** was the owner of Red Rock Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Red Rock Academy is believed to have used the same level and merit systems that wer characteristic of the other WWASP programs.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Red Rock Academy Website Homepage](https://web.archive.org/web/19991011015108/http://redrockacademy.com/) (archived, 1999)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

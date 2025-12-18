@@ -14,23 +14,23 @@ Mission Mountain School closed on August 16, 2008.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John K. Mercer**was the Co-Founder and School Head of Mission Mountain School. He is married to Colleen Harrington.
+** John K. Mercer** was the Co-Founder and School Head of Mission Mountain School. He is married to Colleen Harrington.
 
-**Colleen Harrington**was the Co-Founder and Assistant School Head of Mission Mountain School. She is married to John Mercer. In a [letter to Congressman Miller](https://strugglingteens.com/artman/publish/MissionMountainSchoolBN_080520.shtml) during the Congressional hearings on child abuse and deceptive marketing practices within the Troubled Teen Industry in 2008, Harrington described herself as, "a gifted musician with administrative experience, a love of children and a passion for teaching".
+** Colleen Harrington** was the Co-Founder and Assistant School Head of Mission Mountain School. She is married to John Mercer. In a [letter to Congressman Miller](https://strugglingteens.com/artman/publish/MissionMountainSchoolBN_080520.shtml) during the Congressional hearings on child abuse and deceptive marketing practices within the Troubled Teen Industry in 2008, Harrington described herself as, "a gifted musician with administrative experience, a love of children and a passion for teaching".
 
-**Timothy Wilcox**was the Clinical Director of Mission Mountain School.
+** Timothy Wilcox** was the Clinical Director of Mission Mountain School.
 
-**Jennifer Bosley**worked as a Counselor at Mission Mountain School.
+** Jennifer Bosley** worked as a Counselor at Mission Mountain School.
 
-**Dr. Victor Houser**worked as the Consulting Psychiatrist for Mission Mountain School.
+** Dr. Victor Houser** worked as the Consulting Psychiatrist for Mission Mountain School.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-Like other behavior modification programs, Mission Mountain School used a level system consisting of four levels. However, the specifics of the levels are presently unknown.*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+Like other behavior modification programs, Mission Mountain School used a level system consisting of four levels. However, the specifics of the levels are presently unknown.*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -38,23 +38,24 @@ Like other behavior modification programs, Mission Mountain School used a level 
 
 ---
 
-## **Closure**
+## ** Closure**
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **4/24/2008: (SURVIVOR)** [Link to Kathryn Whitehead's Testimony](https://web.archive.org/web/20090430042214/http://edlabor.house.gov/testimony/2008-04-24-KathrynWhitehead.pdf) d
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Mission Mountain School Website Homepage](https://www.missionmountain.com/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

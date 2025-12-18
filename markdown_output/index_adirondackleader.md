@@ -16,30 +16,30 @@ The book [58 Days: A Wilderness Story](https://www.amazon.com/58-Days-Wilderness
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Susan Hardy**worked as the Executive Director of ALE from 2003 until 2007. She later worked as the Executive Director of the reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) from 2009 until 2013. She later worked as the Executive Director of the reportedly abusive [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) . She has apparently worked in the TTI since 1990, but her other prior places of employment are unknown.
+** Susan Hardy** worked as the Executive Director of ALE from 2003 until 2007. She later worked as the Executive Director of the reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) from 2009 until 2013. She later worked as the Executive Director of the reportedly abusive [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) . She has apparently worked in the TTI since 1990, but her other prior places of employment are unknown.
 
-**Robert Theisen**worked as the Clinical Director and later the Executive Director of ALE from 2006 until at least 2009. He previously worked at the Summit Institute in Israel. His current employment is unknown.
+** Robert Theisen** worked as the Clinical Director and later the Executive Director of ALE from 2006 until at least 2009. He previously worked at the Summit Institute in Israel. His current employment is unknown.
 
-**Virginia Sauro**worked as the Clinical Director of ALE until 2006.
+** Virginia Sauro** worked as the Clinical Director of ALE until 2006.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Adirondack Leadership Expeditions used a level-system consisting of four levels. These levels were:
 
-***A - Assessment:**When a teenagers arrived at ALE, they were put onto Assessment phase. On this level, the teenager must demonstrate that they accept their placement at ALE in order to progress to the next level.
-***B - Accountability:**During this level, the focus for the teenager was on taking personal responsibility for their placement at ALE and the cicumstances that preceded it.
-***C - Awareness:**On this level, the teenager supposedly worked on their relationship skills.
-***D - Action:**When a teenager reaches this final level, they were expected to act as a "leader" and demonstrate their leadership abilities.
+***A - Assessment:** When a teenagers arrived at ALE, they were put onto Assessment phase. On this level, the teenager must demonstrate that they accept their placement at ALE in order to progress to the next level.
+***B - Accountability:** During this level, the focus for the teenager was on taking personal responsibility for their placement at ALE and the cicumstances that preceded it.
+***C - Awareness:** On this level, the teenager supposedly worked on their relationship skills.
+***D - Action:** When a teenager reaches this final level, they were expected to act as a "leader" and demonstrate their leadership abilities.
 
 Once a teenager completed the program, it was very common for the program to convince their parents that the teen should be sent to a longer-term program. The programs ALE recommended were almost always other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs.
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Adirondack Leadership Expeditions has been reported by survivors to have been an abusive programs. Survivors report that there was extreme medical neglect, food deprivation, cruel and humilating punishments, and lack of proper gear for the teens.
 
@@ -49,7 +49,7 @@ Adirondack Leadership Expeditions closed in the summer of 2013, reportedly due t
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **8/1/2020: (SURVIVOR)**"I thought this place was shut down years ago due to the number of permanent injuries and deaths, if anyone reading this is considering this program for their kid, save your money and don't be pressured into it by the "therapeutic school" system as the owners are all buddies and just looking to make a buck." - [Gene (Yelp)](https://www.yelp.com/biz/adirondack-leadership-expedition-saranac-lake)
 
@@ -59,7 +59,7 @@ Adirondack Leadership Expeditions closed in the summer of 2013, reportedly due t
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Adirondack Leadership Expeditions Website Homepage](https://web.archive.org/web/20050204132349/http://adirondackleadership.com/index.html) (archived, 2005)
 
@@ -69,7 +69,8 @@ Adirondack Leadership Expeditions closed in the summer of 2013, reportedly due t
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

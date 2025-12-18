@@ -10,17 +10,17 @@ Pinehaven Christian Children's Ranch is a behavior-modification program that ope
 
 The program is located on a 1,120-acre ranch at [64657 S Pine Haven Ln, St Ignatius, MT 59865](https://www.google.com/maps/place/Pinehaven+Christian+Ranch/@47.2729106,-114.129158,876m/data=!3m1!1e3!4m5!3m4!1s0x0:0xfc3283cce32f327f!8m2!3d47.2732386!4d-114.1211735?hl=en) .
 
-Pinehaven continues to operate with**no state oversight**. This is due to an exemption for religious programs. The religious exemption was created at the request of Robert Larsson, the former director of Pinehaven. In 2015, Daniel Larsson, the new director and Robert Larsson’s grandson, said the program doesn’t use licensed counselors, but uses a “counseling model” they created. The program is not accredited, so the teachers are also not required to be certified.
+Pinehaven continues to operate with** no state oversight**. This is due to an exemption for religious programs. The religious exemption was created at the request of Robert Larsson, the former director of Pinehaven. In 2015, Daniel Larsson, the new director and Robert Larsson’s grandson, said the program doesn’t use licensed counselors, but uses a “counseling model” they created. The program is not accredited, so the teachers are also not required to be certified.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Bob Larsson**was the Founder and Director of Pinehaven.
+** Bob Larsson** was the Founder and Director of Pinehaven.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Pinehaven is a faith-based program, and operates as an adjunct ministry of the First Christian Church of Saint Ignatius, Montana. The website mentions that discipline is a central part of structure.
 
@@ -35,7 +35,7 @@ Pinehaven also used to operate a seperate house for pregnant teenage girls calle
 *"To provide a continuing living situation for both mother and baby when parenting is their choice, and they still need a place to live so the mother can finish her high school or GED requirements."
 *"To lead those in our care to a closer walk with God."
 
-*If you attended Pinehaven and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Pinehaven and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -87,7 +87,7 @@ In the last 10 years, law enforcement reports have noted 11 runaways, 7 reports 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2019: (SURVIVOR)**"This is literally the worst place you can send your kids. I work with children as a volunteer and I get what love is. Love isn't Pinehaven. After being sent to Pinehaven as a young man I learned that violence against children was ok because they are "troubled teens". I learned that it's ok to choke children because they have different values than us. That they "deserve" it. Thanks Ned Kent. Never send your kids to Pinehaven." - [David (Google Reviews)](https://www.google.com/maps/contrib/102841117288137472178/place/ChIJp0AQ722NXVMRo80RI9GYbgA/@47.2749296,-114.1220203,16z/data=!4m6!1m5!8m4!1e1!2s102841117288137472178!3m1!1e1?hl=en-US)
 
@@ -107,7 +107,7 @@ In the last 10 years, law enforcement reports have noted 11 runaways, 7 reports 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Pinehaven Christian Children's Ranch Website Homepage](https://pinehaven.net/)
 
@@ -127,7 +127,8 @@ In the last 10 years, law enforcement reports have noted 11 runaways, 7 reports 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -12,15 +12,15 @@ The program is located at [736 US-19, Meansville, GA 30256](https://www.google.c
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Bryan and Amanda Rule**are the Directors of Prayer Mountain Boys Academy.
+** Bryan and Amanda Rule** are the Directors of Prayer Mountain Boys Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*Very little information is currently known regarding the specifics of the program used by Prayer Mountain Boys Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is currently known regarding the specifics of the program used by Prayer Mountain Boys Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -28,9 +28,9 @@ The program is located at [736 US-19, Meansville, GA 30256](https://www.google.c
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**August 2021: (PARENT)**"Anyone who has anything positive to say about this place never went or is lying to make their parents happy save ur money and don’t waste ur time on a place like this unless u want ur kid to be nothing like u expect. If they aren’t honest with the kids what makes u think they would be to the parents. SAVE YOUR MONEY and your child the abuse. I’m wondering when TC can actually prove the success rate by their standards and what they tell u is going to happen." - [Harlie (Google Reviews)](https://www.google.com/maps/contrib/105367670073549511479/reviews/@33.0011586,-84.3246026,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
+** August 2021: (PARENT)**"Anyone who has anything positive to say about this place never went or is lying to make their parents happy save ur money and don’t waste ur time on a place like this unless u want ur kid to be nothing like u expect. If they aren’t honest with the kids what makes u think they would be to the parents. SAVE YOUR MONEY and your child the abuse. I’m wondering when TC can actually prove the success rate by their standards and what they tell u is going to happen." - [Harlie (Google Reviews)](https://www.google.com/maps/contrib/105367670073549511479/reviews/@33.0011586,-84.3246026,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
 **2020: (UNCLEAR)**"This place is very unreliable. There are two accounts of child services having to take children out of there due to them being subject to rampant abuse there. They heard about it from a parent on one of their family weekends and quickly went to investigate, finding that as a form of discipline they were watering down students with hoses and making them roll around in the sandpit, during the winter. There was also a report of a disciplinary level in the program called ghost green, where you stand in the corner of the building all day long in a extremely small taped rectangle on the floor, facing the wall. You get fed minimum required by the state of Georgia and twice a day. You have to sleep in the hallway at night. Sleeping in the hallway is actually a frequent type of discipline that they issue there. Now you may be told that they break down the students so they can build them back up but where do you cross the line? How far is really needed with a teenager? Why did child services have to intervene on two separate occasions to take a child out of this program?" - [Chris (Google Reviews)](https://www.google.com/maps/contrib/102836684197004184311/reviews/@33.0011586,-84.3246026,595m/data=!3m2!1e3!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
@@ -40,13 +40,14 @@ The program is located at [736 US-19, Meansville, GA 30256](https://www.google.c
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Prayer Mountain Boys Academy Website Homepage](https://prayermountainacademy.com/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

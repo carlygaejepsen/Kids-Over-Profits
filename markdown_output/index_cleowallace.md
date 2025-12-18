@@ -16,19 +16,19 @@ In May 2023, it was announced that the Westminster location would close. Officia
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Cleo Spurlock Wallace**was the Founder of Cleo Wallace Center. She retired in 1974, but remained actively involved with the program until her death in 1985.
+** Cleo Spurlock Wallace** was the Founder of Cleo Wallace Center. She retired in 1974, but remained actively involved with the program until her death in 1985.
 
-**Carl E. Clark II**was the President and Chief Executive Officer of Devereux.
+** Carl E. Clark II** was the President and Chief Executive Officer of Devereux.
 
-**Rhea Fernandes**was the Senior Vice President and Chief Operating Officer of Devereux.
+** Rhea Fernandes** was the Senior Vice President and Chief Operating Officer of Devereux.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Cleo Wallace Center. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Cleo Wallace Center. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -58,11 +58,11 @@ On August 31, 2018, 15-year old Andrew Potter and two other teenage boys left Cl
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**July 2021: (EX-STAFF)**"This is a horrible place to work! There are no systems in place to protect employees! As if there was not enough on an employees plate with the duties here alone. Employees are exposed to any potential threat or allegations from clients! Human resources refuses to answer calls or call back regarding appeals! In short you put your name on the line in attempts to make a difference, however if something negative happens you are thrown to the wolves!!" - [Ruix (Google Reviews)](https://www.google.com/maps/contrib/116206605633984171109/place/ChIJgeFuq2SJa4cRlLoo7VJUt28/@39.8788104,-105.0998083,15.09z/data=!4m6!1m5!8m4!1e1!2s116206605633984171109!3m1!1e1?hl=en-US)
+** July 2021: (EX-STAFF)**"This is a horrible place to work! There are no systems in place to protect employees! As if there was not enough on an employees plate with the duties here alone. Employees are exposed to any potential threat or allegations from clients! Human resources refuses to answer calls or call back regarding appeals! In short you put your name on the line in attempts to make a difference, however if something negative happens you are thrown to the wolves!!" - [Ruix (Google Reviews)](https://www.google.com/maps/contrib/116206605633984171109/place/ChIJgeFuq2SJa4cRlLoo7VJUt28/@39.8788104,-105.0998083,15.09z/data=!4m6!1m5!8m4!1e1!2s116206605633984171109!3m1!1e1?hl=en-US)
 
-**October 2020: (SURVIVOR)**"I hated it here. A kid got killed a few days before my admission. We didn’t do anything other than sit there. The rooms were disgusting. Kids were being bullied and staff did nothing about it. I was pulled two days of being there." - [Cassidy (Google Reviews)](https://www.google.com/maps/contrib/111373474255492626568/place/ChIJgeFuq2SJa4cRlLoo7VJUt28/@39.8947763,-105.1449467,12.87z/data=!4m6!1m5!8m4!1e1!2s111373474255492626568!3m1!1e1?hl=en-US)
+** October 2020: (SURVIVOR)**"I hated it here. A kid got killed a few days before my admission. We didn’t do anything other than sit there. The rooms were disgusting. Kids were being bullied and staff did nothing about it. I was pulled two days of being there." - [Cassidy (Google Reviews)](https://www.google.com/maps/contrib/111373474255492626568/place/ChIJgeFuq2SJa4cRlLoo7VJUt28/@39.8947763,-105.1449467,12.87z/data=!4m6!1m5!8m4!1e1!2s111373474255492626568!3m1!1e1?hl=en-US)
 
 **2020: (SURVIVOR)**"I was here for a short time in 2001. It’s just as bad as everyone says. Still haunts me to today, it’s the stuff of horror stories. I’d rather not say what I saw on here but the reviews on here are just a small part of it. Looking back on it, It was a very dangerous environment to be in." - [Patrick (Google Reviews)](https://www.google.com/maps/contrib/107486760830052081708/place/ChIJgeFuq2SJa4cRlLoo7VJUt28/@39.8983424,-105.1870049,10.96z/data=!4m6!1m5!8m4!1e1!2s107486760830052081708!3m1!1e1?hl=en-US)
 
@@ -94,7 +94,7 @@ On August 31, 2018, 15-year old Andrew Potter and two other teenage boys left Cl
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Devereux Cleo Wallace Wesbite Homepage](https://www.devereux.org/site/SPageServer/?pagename=co_programs_education)
 
@@ -121,4 +121,5 @@ On August 31, 2018, 15-year old Andrew Potter and two other teenage boys left Cl
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

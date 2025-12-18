@@ -18,31 +18,31 @@ In 2011, six other Aspen Education Group programs ([Aspen Achievement Academy](h
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**McKay Deveraux**is the current Executive Director of Outback Therapeutic Expeditions. He has worked at the program since 2002 in several positions, including Primary Therapist, Program Director, Field Director, and Field Staff. He reports that he was a "troubled youth" which is partially what drew him to begin working in wilderness programs. Prior to joining OTE, he worked at an unnamed wilderness program for roughly 3 years.
+** McKay Deveraux** is the current Executive Director of Outback Therapeutic Expeditions. He has worked at the program since 2002 in several positions, including Primary Therapist, Program Director, Field Director, and Field Staff. He reports that he was a "troubled youth" which is partially what drew him to begin working in wilderness programs. Prior to joining OTE, he worked at an unnamed wilderness program for roughly 3 years.
 
-**Greg Burnham**is the current Clinical Director and a Primary Therapist at Outback Therapeutic Expeditions. He began his career in the TTI as a Therapist at the**confirmedly abusive** [Cedar Ridge RTC](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) , where he worked from 1999 until 2002. He then worked at an outpatient counseling center from 2002 until 2005. After this, he worked as a Therapist and later as the Assistant Clinical Director of the**confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2005 until 2013. He then went on to work as a Therapist and Clinical Director of the reportedly abusive [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2014 until 2017, when he joined OTE.
+** Greg Burnham** is the current Clinical Director and a Primary Therapist at Outback Therapeutic Expeditions. He began his career in the TTI as a Therapist at the** confirmedly abusive** [Cedar Ridge RTC](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) , where he worked from 1999 until 2002. He then worked at an outpatient counseling center from 2002 until 2005. After this, he worked as a Therapist and later as the Assistant Clinical Director of the** confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2005 until 2013. He then went on to work as a Therapist and Clinical Director of the reportedly abusive [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2014 until 2017, when he joined OTE.
 
-**Richard Meeves**is the current Co-Owner and CEO of Outback Therapeutic Expeditions. He formerly worked as the Executive Director of the program. He had previously worked as as Primary Therapist at [Second Nature Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) in Duchesne, UT and [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) in Loa, UT. He also worked as the Clinical Director at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in Loa, UT. He is now the Director of Clinical Services for CRC Health Group, [Aspen Education Group’s](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) parent company, as well as the CEO of [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) .
+** Richard Meeves** is the current Co-Owner and CEO of Outback Therapeutic Expeditions. He formerly worked as the Executive Director of the program. He had previously worked as as Primary Therapist at [Second Nature Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) in Duchesne, UT and [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) in Loa, UT. He also worked as the Clinical Director at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in Loa, UT. He is now the Director of Clinical Services for CRC Health Group, [Aspen Education Group’s](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) parent company, as well as the CEO of [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) .
 
-**Theresa Wardle**is the current Admissions Director of Outback Therapeutic Expeditions. She began her career in the TTI working at several notorious and**confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. She worked as a Therapist at CEDU's [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , and later worked as the Admissions Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) . Around 2003, Theresa and her husband, Patrick, opened a "therapeutic foster care" program for teenage girls called [The Wardle Home](https://www.reddit.com/r/troubledteens/wiki/index/wardle) in Naples, Idaho. She has worked at OTE since April of 2018.
+** Theresa Wardle** is the current Admissions Director of Outback Therapeutic Expeditions. She began her career in the TTI working at several notorious and** confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. She worked as a Therapist at CEDU's [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , and later worked as the Admissions Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) . Around 2003, Theresa and her husband, Patrick, opened a "therapeutic foster care" program for teenage girls called [The Wardle Home](https://www.reddit.com/r/troubledteens/wiki/index/wardle) in Naples, Idaho. She has worked at OTE since April of 2018.
 
-**Daniel Hazen**is the current Program Director of Outback Therapeutic Expeditions. His prior employment is presently unknown.
+** Daniel Hazen** is the current Program Director of Outback Therapeutic Expeditions. His prior employment is presently unknown.
 
-**Jason Scott Calder**worked as the Director of Outback Therapeutic Expeditions in 2015. In 2017, he was arrested on counts of rape, forcible sodomy, and forcible sexual abuse in connection to a several incidents that occured at another residential treatment program, [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , where he had been working as a therapist. Calder had also previously worked at [La Europa](https://www.reddit.com/r/troubledteens/wiki/index/laeuropa) .
+** Jason Scott Calder** worked as the Director of Outback Therapeutic Expeditions in 2015. In 2017, he was arrested on counts of rape, forcible sodomy, and forcible sexual abuse in connection to a several incidents that occured at another residential treatment program, [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , where he had been working as a therapist. Calder had also previously worked at [La Europa](https://www.reddit.com/r/troubledteens/wiki/index/laeuropa) .
 
 [Link](https://web.archive.org/web/20050316004651/http://www.outbacktreatment.com/staff.asp) to archived staff list for Outback Therapeutic Expeditions (2005)
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program structure at Outback Therapeutic Expeditions. It likely uses a level-system which is common in many behavior-modification programs.
 
 ---
 
-## **Daily Life**
+## ** Daily Life**
 
 As described by a [survivor](https://www.reddit.com/r/IAmA/comments/16fbax/i_spent_almost_a_year_347_days_in_a_wilderness/) who spent 347 days at Outback, the typical daily schedule is as follows:
 
@@ -84,9 +84,9 @@ In 2017 it was revealed that Jason Scott Calder, who later was charged with rape
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
-**July 2022: (SURVIVOR)**"As a survivor or Outback “therapeutic” expeditions I feel like it is my duty to put an honest review here. This is abuse. Dropped in the middle of the desert, family manipulated by educational consultants, shoes taken away, forced to isolate, I am still recovering from the trauma of my time in tti and advocate for the TRUTH. This is not a resource and anyone who supports it should reconsider their views of child abuse and seek real treatment. Bullying is encouraged, isolation mandated, therapy in the form of writing down every thing you have ever done to the point children are encouraged to make up lies because if their stories aren’t “bad enough” they must be lying. As an adult my abandonment trauma, fear of honesty and lack of trust has followed me. Through years of therapy and treatment I lead a fulfilling life in spite of my time here, not because of it. Do not send your child here." - [Ashley (Google Reviews)](https://g.co/kgs/Mn6gSu)
+** July 2022: (SURVIVOR)**"As a survivor or Outback “therapeutic” expeditions I feel like it is my duty to put an honest review here. This is abuse. Dropped in the middle of the desert, family manipulated by educational consultants, shoes taken away, forced to isolate, I am still recovering from the trauma of my time in tti and advocate for the TRUTH. This is not a resource and anyone who supports it should reconsider their views of child abuse and seek real treatment. Bullying is encouraged, isolation mandated, therapy in the form of writing down every thing you have ever done to the point children are encouraged to make up lies because if their stories aren’t “bad enough” they must be lying. As an adult my abandonment trauma, fear of honesty and lack of trust has followed me. Through years of therapy and treatment I lead a fulfilling life in spite of my time here, not because of it. Do not send your child here." - [Ashley (Google Reviews)](https://g.co/kgs/Mn6gSu)
 
 **2/5/2022: (SURVIVOR)**"I went to Outback Therapeutic Expeditions in 2017-2018. When I first arrived I was subjected to a strip search. I've been angry for a long time. I didn't have access to a clean shower for 97 days or clean water. They give you a bucket and a bandana to clean up. I was there during the winter months and didn't have access to hot food if I was unable to make a fire. We had to hike for miles with 50 pound survival packs on our backs. It was exhausting. You live in your own filth in this "program." They don't even give you enough underwear to last a week. We had to make 4 pairs of underwear last 7 days. We would have to turn them inside out and wear them like that. I recently made a comment on their Instagram and they deleted it and blocked me. Makes me angry. They are trying to cover up abuse. Notice how basically all the positive reviews are from parents. And how all the negative reviews are from the teens who actually went here. We were the ones who actually experienced the neglect here." - [Amanda (Yelp)](https://www.yelp.com/biz/outback-therapeutic-expeditions-lehi)
 
@@ -114,7 +114,7 @@ In 2017 it was revealed that Jason Scott Calder, who later was charged with rape
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Outback Therapeutic Expeditions Website Homepage](https://www.outbacktreatment.com/)
 
@@ -136,7 +136,8 @@ In 2017 it was revealed that Jason Scott Calder, who later was charged with rape
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

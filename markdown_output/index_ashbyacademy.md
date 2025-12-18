@@ -2,37 +2,38 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Michael and Lynn Beavers**were the Founders and Owners of Ashby Academy.
+** Michael and Lynn Beavers** were the Founders and Owners of Ashby Academy.
 
-**Alfred Allen**was the Head of School at Ashby Academy.
+** Alfred Allen** was the Head of School at Ashby Academy.
 
-**Chris Carlin**was the Dean of Students at Ashby Academy.
-
----
-
-## **Program Structure**
+** Chris Carlin** was the Dean of Students at Ashby Academy.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+## ** Related Media**
+
+---
+
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

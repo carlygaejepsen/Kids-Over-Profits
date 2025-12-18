@@ -14,19 +14,19 @@ The program is located on a 120-acre campus at [15801 E Don Carlos Dr, Prescott 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Fred Schaffner**is the Arizona divisional controller for [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .
+** Fred Schaffner** is the Arizona divisional controller for [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .
 
-**Jessica Hines**is the current Executive Director of Mingus Mountain Academy.
+** Jessica Hines** is the current Executive Director of Mingus Mountain Academy.
 
-**Dr. Franki Reddick-Gibson**is the current Clinical Director of Mingus Mountain Academy.
+** Dr. Franki Reddick-Gibson** is the current Clinical Director of Mingus Mountain Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is known about the program structure at Mingus Mountain. If you attended MMA and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is known about the program structure at Mingus Mountain. If you attended MMA and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,7 +42,7 @@ Only a day later, on July 21^(st) 2020, five girls were [arrested](https://www.a
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"Honestly, staff are very abusive here. I was here for a year and a half a couple years ago. Staff were having sexual relationship's with girls, Mr.Vince is a very evil man, he abuses his authority. The food here is amazing and a select few staff are there to really help. Don't send your kids here it will only damage your daughters more. Also the staff lie to parents and social workers and probation officers. If you're a social worker and you want to make or need to make a welfare visit my advice do not let any staff know or they'll make everyone be on there best behavior. The State Of California made all the youth from California that were placed there come home because of the condition Mingus is. They are abusive and the education is terrible. There are restraints constantly so we cannot talk during an issue meaning we cannot be taught in school. We watched movies 24/7 in class. The therapist some of them are amazing and the therapy groups helped me so much." - [Sydni (Google Reviews)](https://www.google.com/maps/contrib/118026058481441833577/place/ChIJMx9-S-MjLYcRYZOIM1pii8M/@34.6216013,-112.8808151,8.14z/data=!4m6!1m5!8m4!1e1!2s118026058481441833577!3m1!1e1?hl=en-US)
 
@@ -56,7 +56,7 @@ Only a day later, on July 21^(st) 2020, five girls were [arrested](https://www.a
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Mingus Mountain Academy Website Homepage](http://www.mmaaz.com/)
 
@@ -72,7 +72,8 @@ Only a day later, on July 21^(st) 2020, five girls were [arrested](https://www.a
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

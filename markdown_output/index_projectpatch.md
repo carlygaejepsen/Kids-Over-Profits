@@ -6,7 +6,7 @@
 
 ## **History and Background Information**
 
-Project Patch (**P**lanned**A**ssistance for**T**roubled**Ch**ildren) is a behavior-modification program that was opened in January of 1984 by Tom and Bonnie Sanford. It was initially opened as a referral and foster placement program that made nearly 1,800 foster care referrals and placed just under 400 young people in foster homes between 1984 and 1993. In 1989, the company was gifted 116 acres in southern Idaho, which it used to open up a residential program for troubled teenagers. Today, Project Patch is marketed as a Christian Residential Treatment Center for boys and girls aged 12-17 who are struggling with depression, anxiety, addictions, ODD, school failure, trauma, or self-harming behaviors. Although the program accepts male and female residents, they are kept completely separate on different parts of the campus. Project Patch is reportedly affiliated with the [Seventh Day Adventist Church](https://en.wikipedia.org/wiki/Seventh-day_Adventist_Church) . The program has a maximum enrollment of 18 females and 18 males. The average length of stay is reported to be 6 months for males and 12 months for females. Project Patch has been a [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) member since 2015.
+Project Patch (** P** lanned** A** ssistance for** T** roubled** Ch** ildren) is a behavior-modification program that was opened in January of 1984 by Tom and Bonnie Sanford. It was initially opened as a referral and foster placement program that made nearly 1,800 foster care referrals and placed just under 400 young people in foster homes between 1984 and 1993. In 1989, the company was gifted 116 acres in southern Idaho, which it used to open up a residential program for troubled teenagers. Today, Project Patch is marketed as a Christian Residential Treatment Center for boys and girls aged 12-17 who are struggling with depression, anxiety, addictions, ODD, school failure, trauma, or self-harming behaviors. Although the program accepts male and female residents, they are kept completely separate on different parts of the campus. Project Patch is reportedly affiliated with the [Seventh Day Adventist Church](https://en.wikipedia.org/wiki/Seventh-day_Adventist_Church) . The program has a maximum enrollment of 18 females and 18 males. The average length of stay is reported to be 6 months for males and 12 months for females. Project Patch has been a [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) member since 2015.
 
 The program is located at [25 Miracle Ln, Garden Valley, ID 83622](https://www.google.com/maps/place/25+Miracle+Ln,+Garden+Valley,+ID+83622/@44.0909452,-115.9815611,391m/data=!3m1!1e3!4m5!3m4!1s0x54af4800ba9a3da9:0x7ffb10e333aa40b5!8m2!3d44.0903358!4d-115.9814834) . The campus is divided into a Boys side and a Girls side, in which the residents are ket entirely separate from one another.
 
@@ -14,32 +14,32 @@ Project Patch has been [endorsed](https://vimeo.com/96756661) by Dr. Phil, who i
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tom and Bonnie Sanford**are the founders of Project Patch. They previously had worked with young people since they began their ministry in 1968.
+** Tom and Bonnie Sanford** are the founders of Project Patch. They previously had worked with young people since they began their ministry in 1968.
 
-**Chuck Hagele**is the current CEO of Project Patch. He has not previuosly worked as any troubled teen programs. His most recent job before coming to Project Patch was as a rafting guide on the Payette River in Idaho. He has worked at Project Patch since 2005.
+** Chuck Hagele** is the current CEO of Project Patch. He has not previuosly worked as any troubled teen programs. His most recent job before coming to Project Patch was as a rafting guide on the Payette River in Idaho. He has worked at Project Patch since 2005.
 
-**Winfred Scott**is the current Clinical Director of Project Patch. Win started his career at the Department of Health and Welfare in Boise, Idaho. He worked in the Child Protection Department for four years. He then worked at an Adult Mental Health clinic for four years.
+** Winfred Scott** is the current Clinical Director of Project Patch. Win started his career at the Department of Health and Welfare in Boise, Idaho. He worked in the Child Protection Department for four years. He then worked at an Adult Mental Health clinic for four years.
 
-**Stephanie Ross**is the current Executive Director of the Youth Program at Project Patch. She has worked as a Therapist at Project Patch since 2000, became the Clinical Director in 2012, and has been the Executive Director since 2020.
+** Stephanie Ross** is the current Executive Director of the Youth Program at Project Patch. She has worked as a Therapist at Project Patch since 2000, became the Clinical Director in 2012, and has been the Executive Director since 2020.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Project Patch uses a level-system consisting of five levels, each with different rules and expectations. The levels are reported to be:
 
-***Work Crew:**This level is typically used as punishment.
-***Orientation:**This is the first level at Project Patch.
-***Level 1:**On this level, residents are forbidden from speaking to other residents.
-***Level 2:**On this level, residents can speak to other level 2's as long as they were roomates, and all level 3's.
-***Level 3:**On this level, the residents may speak to anyone except work crews and level 1's.
+***Work Crew:** This level is typically used as punishment.
+***Orientation:** This is the first level at Project Patch.
+***Level 1:** On this level, residents are forbidden from speaking to other residents.
+***Level 2:** On this level, residents can speak to other level 2's as long as they were roomates, and all level 3's.
+***Level 3:** On this level, the residents may speak to anyone except work crews and level 1's.
 
 Residents at Project PATCH are required to adhere to a strict set of rules, such as not being allowed to look at residents of the opposite sex. In addition, all books must be Seventh Day Adventist texts. If a resident breaks one of the rules, they are subject to punishment. Some of the punishments that have been reported by survivors include:
 
-***Work Crew:**This level is used as punishment by Project PATCH. On this level, residents lose all of their privileges and are required to spend all day performing manual labor, such as digging ditches and filling them back up. This punishment lasts a minimum of 7 days, but may be extended if the resident is deemed resistant.
-***Safety/Quiet Room:**If a resident is deemed resistant while on Work Crew, they may be placed in the Safety Room (also called the Quiet Room). The resident is forced to remain in this tiny room with a only a wooden cot, a wooden chair, a pillow, and a blanket, all of which may be taken away by staff as further punishment. Survivors have reported that the light is often left on 24/7.
+***Work Crew:** This level is used as punishment by Project PATCH. On this level, residents lose all of their privileges and are required to spend all day performing manual labor, such as digging ditches and filling them back up. This punishment lasts a minimum of 7 days, but may be extended if the resident is deemed resistant.
+***Safety/Quiet Room:** If a resident is deemed resistant while on Work Crew, they may be placed in the Safety Room (also called the Quiet Room). The resident is forced to remain in this tiny room with a only a wooden cot, a wooden chair, a pillow, and a blanket, all of which may be taken away by staff as further punishment. Survivors have reported that the light is often left on 24/7.
 
 One survivor recalls of their time on Work Crew, "I lived solely in a small room for somewhere around 3 months that I was on "work crew". In hindsight, it was clearly a repurposed closet. It had a glass door facing into the main lobby/ common area. I believe it was called the "safety room". At the beginning of it I had a wooden cot, a wooden chair, a pillow, and a blanket. Slowly over time as I did not cooperate, each was taken away until I was in a plain tile room with just a tshirt and a pair of sweats. Then they started leaving the light on 24/7. It wasn't locked, but the door had a loud ass alarm. Every day they would carry me outside since I refused to go voluntarily to shovel snow. I refused to change clothes to to work, so they would set me down in the snow until it started getting dark and they would carry me back inside. I think there might have been a staff member who would feel bad and put some cardboard underneath me and throw his jacket over me. But I'm not sure. I wasn't sleeping or eating at the time. I don't remember much from then especially."
 
@@ -47,7 +47,7 @@ An extreme punishment used by Project Patch was called "Phase". During this puni
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Project Patch is an abusive program. Allegations of abuse and neglect that have been reported by survivors include excessive use of solitary confinement, forced manual labor, excessive and violent physical restraints, communication restrictions, punitive punishments, food deprivation, sexual abuse, deceptive/fraudulent marketing practices, and emotional/psychological abuse.
 
@@ -57,11 +57,11 @@ One survivor has reported, "As common among youth treatment centers, as punishme
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**March 2021: (SURVIVOR)**"Do NOT send your kids here! It's a very traumatic experience and severely abusive. Throwing kids in isolation booths, weeks at a time, etc. Ya, some of the staff are cool but the majority of them get off on the power they have over you and abuse that power constantly. Yes, I made some lifelong friends but it was not worth all the trouble. As kid when I got dropped off by my parents, it severely messed up our relationship. So if you don't want your kid to possibly hate you and possibly leave with more problems than going in, then don't send your kids here." - [LL (Google Reviews)](https://www.google.com/maps/contrib/100865322267148714699/reviews/@44.0903358,-115.9814834,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
+** March 2021: (SURVIVOR)**"Do NOT send your kids here! It's a very traumatic experience and severely abusive. Throwing kids in isolation booths, weeks at a time, etc. Ya, some of the staff are cool but the majority of them get off on the power they have over you and abuse that power constantly. Yes, I made some lifelong friends but it was not worth all the trouble. As kid when I got dropped off by my parents, it severely messed up our relationship. So if you don't want your kid to possibly hate you and possibly leave with more problems than going in, then don't send your kids here." - [LL (Google Reviews)](https://www.google.com/maps/contrib/100865322267148714699/reviews/@44.0903358,-115.9814834,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
-**October 2020: (SURVIVOR)**"I wish that I could go on forever, but this place was so bizarre and traumatizing that I'm having a hard time finding the words. The marketing of PATCH, what their website makes it look like, is COMPLETELY different that how it actually is. My parents admitted to me that had they known what PATCH was really like, they would have never sent me here and still apologize to me for it. Your child will be denied an education, half the time that I was there we were given books and made to sit on the gym floor for hours, we weren't even allowed to sit in the classroom and we couldn't talk, at all. If we needed to use the restroom they make us write it on a piece of paper to ask them. I was locked in a "quiet room" for days for begging them to talk to my parents. I was forcibly medicated for depression that I didn't have, given pills that made me feel so sleepy and out of it that it was hard to walk. They told me if I didn't take them, I couldn't go home to my family for Christmas. And I was punished for acting tired from the medication and put on a consequence where I had to eat plain lentils and rice and a piece of bread three meals a day, for seven consecutive days. Those days could start over at any time if you were to upset a staff member during that period. I ate lentils and rice for two straight months during a consequence that they called "group closure". That being said, your child will be deprived of proper nutrition during their entire stay here. All while doing forced manual labor for hours a day. There is SO much more. I became close with a staff member while I was there, upon that person quitting PATCH years later, they got ahold of me to apologize for any systematic abuse that they contributed to while I was there. I saw my counselor Donna once a week for ten minutes if I was lucky, and she never once made me feel safe or understood. It was the opposite of a theraputic environment. Yes, there are nice people working here and there are bad people working here, and it is my belief that the nice people are just as brainwashed as they were trying to make us. Your child will never be able to tell you that there's something wrong going on, because they listen to our one ten minute phone call a week. Which can be taken away, by the way. The chick who runs the place, Coleen, is self centered and money hungry and does not actually care about the restoration of teens and their families whatsoever. If a family were to want to take their child out of this school, they have to pay for the whole 12 months, no exceptions. You literally sign your parental rights over for an entire year in the contract. My family and I were both very much deceived when it came to the way this "school" really was. Yes, I am thankful for the lessons that I learned there, but I'm sad I had to learn them the way that I did, in such a hostile, isolating, abusive environment." - [Kayla (Google Reviews)](https://www.google.com/maps/contrib/100625372421626971713/reviews?hl=en-US)
+** October 2020: (SURVIVOR)**"I wish that I could go on forever, but this place was so bizarre and traumatizing that I'm having a hard time finding the words. The marketing of PATCH, what their website makes it look like, is COMPLETELY different that how it actually is. My parents admitted to me that had they known what PATCH was really like, they would have never sent me here and still apologize to me for it. Your child will be denied an education, half the time that I was there we were given books and made to sit on the gym floor for hours, we weren't even allowed to sit in the classroom and we couldn't talk, at all. If we needed to use the restroom they make us write it on a piece of paper to ask them. I was locked in a "quiet room" for days for begging them to talk to my parents. I was forcibly medicated for depression that I didn't have, given pills that made me feel so sleepy and out of it that it was hard to walk. They told me if I didn't take them, I couldn't go home to my family for Christmas. And I was punished for acting tired from the medication and put on a consequence where I had to eat plain lentils and rice and a piece of bread three meals a day, for seven consecutive days. Those days could start over at any time if you were to upset a staff member during that period. I ate lentils and rice for two straight months during a consequence that they called "group closure". That being said, your child will be deprived of proper nutrition during their entire stay here. All while doing forced manual labor for hours a day. There is SO much more. I became close with a staff member while I was there, upon that person quitting PATCH years later, they got ahold of me to apologize for any systematic abuse that they contributed to while I was there. I saw my counselor Donna once a week for ten minutes if I was lucky, and she never once made me feel safe or understood. It was the opposite of a theraputic environment. Yes, there are nice people working here and there are bad people working here, and it is my belief that the nice people are just as brainwashed as they were trying to make us. Your child will never be able to tell you that there's something wrong going on, because they listen to our one ten minute phone call a week. Which can be taken away, by the way. The chick who runs the place, Coleen, is self centered and money hungry and does not actually care about the restoration of teens and their families whatsoever. If a family were to want to take their child out of this school, they have to pay for the whole 12 months, no exceptions. You literally sign your parental rights over for an entire year in the contract. My family and I were both very much deceived when it came to the way this "school" really was. Yes, I am thankful for the lessons that I learned there, but I'm sad I had to learn them the way that I did, in such a hostile, isolating, abusive environment." - [Kayla (Google Reviews)](https://www.google.com/maps/contrib/100625372421626971713/reviews?hl=en-US)
 
 **9/5/2019: (PARENT)**"My daughter was at Project Patch and it was the worst experience ever. They lie to parents and lie to the adolescents to make it seem as though their behavior are worse than they really are. This enables them to justify keeping your child for the "up to" a year they claim. They shove their religion down the kids throats and if they do not participate they are punished. They even force the kids to eat everything on their plates. If they did not, they had to run laps. There is no real therapy and the group therapy is more about the kids peers telling them what they are doing wrong. I would not recommend this so called treatment place to my worst enemy! PLEASE, PLEASE do not send your children there." - [PAG (Yelp)](https://www.yelp.com/biz/project-patch-garden-valley)
 
@@ -85,7 +85,7 @@ One survivor has reported, "As common among youth treatment centers, as punishme
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Project Patch Website Homepage](https://www.projectpatch.org/)
 
@@ -101,7 +101,8 @@ One survivor has reported, "As common among youth treatment centers, as punishme
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

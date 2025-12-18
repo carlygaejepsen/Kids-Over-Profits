@@ -14,21 +14,21 @@ STAR Guides was developed as a part of [Mending the Armor](http://www.mendingthe
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Matt Bulkley**is the Co-Founder and current Executive Director of Star Guides. His career in the TTI began when he worked as a Therapist at the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) from 2001 until 2012. During this time, he also worked as a Therapist at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2002 until 2003.
+** Matt Bulkley** is the Co-Founder and current Executive Director of Star Guides. His career in the TTI began when he worked as a Therapist at the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) from 2001 until 2012. During this time, he also worked as a Therapist at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2002 until 2003.
 
-**Daniel "Doc Dan" Sanderson**is the Co-Founder and current Clinical Director of Star Guides. His career in the TTI began when he worked as the Clinical Director for [Ascent Inc.](https://www.reddit.com/r/troubledteens/wiki/index/ascentco) , which owns [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) , [Discovery Ranch](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch) , [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) , [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) , [Discovery Connections](https://www.reddit.com/r/troubledteens/wiki/index/discoveryconnect) , and [Oxbow Academy](https://www.reddit.com/r/troubledteens/wiki/index/oxbowacademy) , from 1994 until 2012. He then went on to work as a contracted Psychologist at the confirmedly abusive [Abundant Life Academy](https://www.reddit.com/r/troubledteens/wiki/index/abundantlifeut) . In addition to working at STAR Guides, he is also the current Clinical Director of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp/) -affiliated [White River Academy](https://www.reddit.com/r/troubledteens/wiki/index/whiteriver/) in Delta, UT.
+** Daniel "Doc Dan" Sanderson** is the Co-Founder and current Clinical Director of Star Guides. His career in the TTI began when he worked as the Clinical Director for [Ascent Inc.](https://www.reddit.com/r/troubledteens/wiki/index/ascentco) , which owns [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) , [Discovery Ranch](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch) , [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) , [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) , [Discovery Connections](https://www.reddit.com/r/troubledteens/wiki/index/discoveryconnect) , and [Oxbow Academy](https://www.reddit.com/r/troubledteens/wiki/index/oxbowacademy) , from 1994 until 2012. He then went on to work as a contracted Psychologist at the confirmedly abusive [Abundant Life Academy](https://www.reddit.com/r/troubledteens/wiki/index/abundantlifeut) . In addition to working at STAR Guides, he is also the current Clinical Director of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp/) -affiliated [White River Academy](https://www.reddit.com/r/troubledteens/wiki/index/whiteriver/) in Delta, UT.
 
-**Kena Frey**is the Co-Founder of Star Guides. She previously worked as a Field Counselor and Therapist at the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) from 2001-2002 and also from 2004-2012. Her other prior places of employment is presently unknown, however, her bio states that her experience "covers a wide spectrum of therapeutic environments, including prevention/intervention programs, public schools, residential treatment centers, and wilderness."
+** Kena Frey** is the Co-Founder of Star Guides. She previously worked as a Field Counselor and Therapist at the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) from 2001-2002 and also from 2004-2012. Her other prior places of employment is presently unknown, however, her bio states that her experience "covers a wide spectrum of therapeutic environments, including prevention/intervention programs, public schools, residential treatment centers, and wilderness."
 
-**Brian Pace**currently works as a Psychotherapist at Star Guides. Prior to this, he worked as the Executive Director of the**confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) during the time where a [sexual abuse scandal](https://www.propublica.org/article/yet-another-scandal-rocks-utah-home-for-vulnerable-children) occurred in a subsidiary program of RRCS. He reportedly worked at Red Rock Canyon since its inception in 1999 and worked as the Executive Director since 2004. He also helped to create and owned the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) . His other prior places of employment are presently unknown.
+** Brian Pace** currently works as a Psychotherapist at Star Guides. Prior to this, he worked as the Executive Director of the** confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) during the time where a [sexual abuse scandal](https://www.propublica.org/article/yet-another-scandal-rocks-utah-home-for-vulnerable-children) occurred in a subsidiary program of RRCS. He reportedly worked at Red Rock Canyon since its inception in 1999 and worked as the Executive Director since 2004. He also helped to create and owned the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) . His other prior places of employment are presently unknown.
 
-**Mark Noe**currently works as a Psychotherapist at Star Guides. He previously worked as the Staff Services Director of the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) beginning in 2004. His other prior places of employment are presently unknown.
+** Mark Noe** currently works as a Psychotherapist at Star Guides. He previously worked as the Staff Services Director of the reportedly abusive [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) beginning in 2004. His other prior places of employment are presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Star Guides uses a level system consisting of three phases. However, the specifics of these levels are presently unknown.
 
@@ -44,7 +44,7 @@ Survivors have reported that the program uses a precaution/punishment called TnA
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Survivors have reported that Star Guides is an abusive program. Allegations of abuse and neglect that have been reported by survivors include unsafe conditions, lack of hygiene, lack of safety equipment, insufficient meals/food deprivation, psychological abuse, and deceptive/fraudulent marketing practices.
 
@@ -52,7 +52,7 @@ In 2022, activists called Star Guides pretending to be a prospective parent who 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **5/26/2022: (SURVIVOR)**"When I was an intake at the program the alarm they gave me was broken so with every single move I made, even if I breathed too hard, the alarm would sound. So after two nights of this and them ignoring the fact that it was broken, they decided to "burrito" me. This means that youre forced to be inside your sleeping bag, with the body bag like cover over you, zipped completely shut no breathing hole. Then wrapped up tightly in a tarp. It was August. In southern Utah. I couldnt move, my arms were tightly bound to my sides. I couldnt breathe at all. After I cried for maybe an hour because I was struggling to breathe, they angrily opened up the "foot hole" of the body bag. Which was maybe 4 inches in height and about the same in length, mesh covering. It did not help because I was in a thick sleeping bag. I considered trying wiggle enough to try and get my head closer to the hole, I could not even move my fingers. after ten minutes the hole closed and was shut with velcro. It was hot inside, like an oven because I was breathing my own breath for three hours at this point. I was sweating so bad that it was pooling in my ears and I had to try and tip my head to let it leak out (gross I know) I decided to give up. I stayed awake the whole night making a conscious effort to keep breathing. I woke up to the tarp being aggressively ripped out from under me. When I got out the staff and kids were making fun of me, mocking how I was crying during the night. I've never been buried alive but I know without a doubt that this was worse." - [u/adaezeazad (Reddit)](https://www.reddit.com/r/troubledteens/comments/uruwia/comment/ia2yao8/?utm_source=share&utm_medium=web2x&context=3)
 
@@ -64,7 +64,7 @@ In 2022, activists called Star Guides pretending to be a prospective parent who 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Star Guides Website Homepage](https://www.starguideswilderness.com/)
 
@@ -78,7 +78,8 @@ In 2022, activists called Star Guides pretending to be a prospective parent who 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

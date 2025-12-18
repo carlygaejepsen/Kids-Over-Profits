@@ -12,21 +12,21 @@ The program is located at [107 Longhorn St, Bastrop, TX 78602](https://www.googl
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Maynard Sweigard**is the Founder and current Executive Director of New Hope Boys Home. As a teenger, Sweigard was sent to a Teen Challenge program from which he graduated in 1974. He then decided to enroll in the Teen Challenge Ministry Institute, which was started by David Wilkerson, the founder of Teen Challenge. After graduation he was ordained and went on to pastor two churches. He also served as a Jail Chaplain. He then founded a [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) program for boys in Florida called [Anderson Academy](https://www.reddit.com/r/troubledteens/wiki/index/anderson) in 2001.
+** Maynard Sweigard** is the Founder and current Executive Director of New Hope Boys Home. As a teenger, Sweigard was sent to a Teen Challenge program from which he graduated in 1974. He then decided to enroll in the Teen Challenge Ministry Institute, which was started by David Wilkerson, the founder of Teen Challenge. After graduation he was ordained and went on to pastor two churches. He also served as a Jail Chaplain. He then founded a [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) program for boys in Florida called [Anderson Academy](https://www.reddit.com/r/troubledteens/wiki/index/anderson) in 2001.
 
-**Jeff Pirtle**works as a Therapist and Administrator at New Hope Boys Home. Prior to this, he was the Administrator and Clinical Director of an unnamed residential program for at-risk adolescent boys for over 20 years and has maintained a private practice since 1993. He has also previously worked at the [Kansas City Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/kansascitytc) , another [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) located in Missouri and the Hope Pregnancy Center in Killeen, TX. His father-in-law, Eric Gray, also worked at various Teen Challenge programs.
+** Jeff Pirtle** works as a Therapist and Administrator at New Hope Boys Home. Prior to this, he was the Administrator and Clinical Director of an unnamed residential program for at-risk adolescent boys for over 20 years and has maintained a private practice since 1993. He has also previously worked at the [Kansas City Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/kansascitytc) , another [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) located in Missouri and the Hope Pregnancy Center in Killeen, TX. His father-in-law, Eric Gray, also worked at various Teen Challenge programs.
 
-**Ashley Trahan**works as an Admissions Coordinator at New Hope Boys Home. As a teenager, she was sent to a Teen Challenge program, where she reportedly "surrendered and found freedom in Jesus." She graduated Teen Challenge and completed an internship then went on to become a staff with the program. She is likely married to Irby Trahan.
+** Ashley Trahan** works as an Admissions Coordinator at New Hope Boys Home. As a teenager, she was sent to a Teen Challenge program, where she reportedly "surrendered and found freedom in Jesus." She graduated Teen Challenge and completed an internship then went on to become a staff with the program. She is likely married to Irby Trahan.
 
-**John Eason**works as the Student Development Director at New Hope Boys Home. His prior employment is unknown, but he has reportedly been involved in residential therapeutic recovery ministries for the past 10 years, and has been the pastor of Celebration Community Church in Bastrop, TX for the past 30 yrs.
+** John Eason** works as the Student Development Director at New Hope Boys Home. His prior employment is unknown, but he has reportedly been involved in residential therapeutic recovery ministries for the past 10 years, and has been the pastor of Celebration Community Church in Bastrop, TX for the past 30 yrs.
 
-**Irby Trahan**works as the Maintenance Coordinator at New Hope Boys Home. He is also a graduate of Teen Challenge, and then completed an internship with the program and went on to become a staff member. He is likely married to Ashley Trahan.
+** Irby Trahan** works as the Maintenance Coordinator at New Hope Boys Home. He is also a graduate of Teen Challenge, and then completed an internship with the program and went on to become a staff member. He is likely married to Ashley Trahan.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, New Hope Boys Home uses a level system consisting of five levels. The levels and goals of each level are reported to be:
 
@@ -38,13 +38,13 @@ Like other behavior modification programs, New Hope Boys Home uses a level syste
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Many survivors have reported that New Hope Boys Home is an abusive program. Allegations of abuse and neglect that have been reported by survivors include improper supervision, undertrained/unqualified staff, unsanitary conditions, and psychological abuse. Many other [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) programs have also been reported to be abusive, being accused of similar and even more extreme allegations.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2018: (SURVIVOR)**"I lasted in this program for about 3 days before I escaped. I escaped a total of 3 times from there in the course of 3 weeks. Like I thought that they would catch on but I guess they didn't. It's in Texas and j made it to fort Myers FL. And I ate like 7 year old chili one time and didn't start on school ever. Oh yeah all we do is wait for night to come so we can all smoke cigarettes or joints to get a break from that place and the lousy environment. EVERYONE smoked at night. Even the guys ready to graduate and stuff. I don't recommend this place." - [Peter (Google Reviews)](https://www.google.com/maps/place/New+Hope+Boys+Home/@30.2021803,-97.3014721,458a,35y,90h/data=!3m1!1e3!4m7!3m6!1s0x0:0xf311e235e750a89f!8m2!3d30.2020612!4d-97.3014312!9m1!1b1)
 
@@ -54,13 +54,14 @@ Many survivors have reported that New Hope Boys Home is an abusive program. Alle
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [New Hope Boys Home Website Homepage](https://teenchallengeforboys.org/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -16,27 +16,27 @@ While Copper Canyon Academy was not directly owned by [WWASP](https://www.reddit
 
 ---
 
-## **Founder & Notable Staff**
+## ** Founder & Notable Staff**
 
-**Tammy Prince Berhmann**is the Co-Founder of Copper Canyon Academy. She later founded a program for boys called [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) . [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) later bought CCA from [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in association with Tammy Behrmann, and the name was changed to [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) . She got her start in the troubled teen industry working at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program in Arizona. She is also the sister of Darren Prince.
+** Tammy Prince Berhmann** is the Co-Founder of Copper Canyon Academy. She later founded a program for boys called [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) . [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) later bought CCA from [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in association with Tammy Behrmann, and the name was changed to [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) . She got her start in the troubled teen industry working at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program in Arizona. She is also the sister of Darren Prince.
 
-**Darren L. Prince**is the Co-Founder of Copper Canyon Academy and worked as the Admissions Director there. He is the brother of Tammy Berhmann. He was also the co-founder of [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) . He currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Darren L. Prince** is the Co-Founder of Copper Canyon Academy and worked as the Admissions Director there. He is the brother of Tammy Berhmann. He was also the co-founder of [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) . He currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Patti Bowman**worked at CCA in an unknown position. Like Tammy Berhmann, she previously worked at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program in Arizona.
+** Patti Bowman** worked at CCA in an unknown position. Like Tammy Berhmann, she previously worked at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program in Arizona.
 
-**Linda Cathcart**worked as a Therapist and the Director of Counselling at Copper Canyon Academy beginning in 2001. She also previously worked at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program. Around 1999, she and Sonja Fullwood opened their own program, [Blue Hills Academy](https://www.reddit.com/r/troubledteens/wiki/index/bluehills) , which was closed
+** Linda Cathcart** worked as a Therapist and the Director of Counselling at Copper Canyon Academy beginning in 2001. She also previously worked at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program. Around 1999, she and Sonja Fullwood opened their own program, [Blue Hills Academy](https://www.reddit.com/r/troubledteens/wiki/index/bluehills) , which was closed
 
-**Seqouia Smith**worked as a Therapist at Copper Canyon Academy. Like many other staff at CCA, he also previously worked [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program.
+** Seqouia Smith** worked as a Therapist at Copper Canyon Academy. Like many other staff at CCA, he also previously worked [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and reportedly abusive behavior-modification program.
 
-**Sonja Fullwood**worked as a Therapist at Copper Canyon Academy.
+** Sonja Fullwood** worked as a Therapist at Copper Canyon Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program claimed to focus on improving five maine areas of the resident's life: emotional, mental, physical, social, and spiritual. Like WWASP programs, Copper Canyon Academy used a level system. According to their wesbite, the levels and associated "privileges" were as follows:
 
-**Intro: Assessment & Orientation**-
+** Intro: Assessment & Orientation**-
 
 *Letter writing to family only
 *All exercise and sports on grounds only
@@ -105,7 +105,7 @@ In 2014, Copper Canyon Academy was sold to [Family Help & Wellness](https://www.
 
 ---
 
-## **CCA in the Media**
+## ** CCA in the Media**
 
 Dr. Phil has sent multiple girls to Copper Canyon Academy as part of his show. These include 16-year-old [Amanda](https://www.drphil.com/shows/667/) in 2006 and 17-year-old [Tory](https://www.drphil.com/shows/1642/) in 2011.
 
@@ -113,11 +113,11 @@ In 2010, Nickelodeon News aired a show called ["Kids in Rehab"](https://www.teen
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **12/18/2020: (SURVIVOR)**“My name is Brittany. I went to Copper Canyon Academy, in Arizona, from October of 2009 until December of 2010. I was 16 at the time. CCA was not my first program (it was my third), but it is the one I remember the most. Seminars are what I remember vividly though. In the first seminar, we were forced to relive all of our trauma out loud with girls we did not know. I remember sitting in front of a mirror for hours in a dark room. We were told to think of all the bad things that had happened in our lives. We were not allowed to do anything else until we had “cried it out.” Later that day we did an exercise called “Mom and Dad,” where we confronted our parents. We were sitting in a circle, facing outwards. At one point a girl got so upset that she got up, picked up her chair, and threw it. It hit me in the head. I was denied any kind of care because it would disrupt my progress. I had a headache for days after the incident. In seminar three, later on in my stay at CCA, I remember being down at a river, where all the girls who admitted being gay were “baptized.” I watch a girl get hit with metal hangers because that is how she felt her parents would punish her if she did not do well. As for me, they made me burn some of the few pictures I had with my family. Saying I needed to move on from the past and learn to be better. They made me burn journals that had my sincere feelings in them because they had entries of a boy I had known, which they had found during a room raid. The worst part for me was being forced to burn my favorite book. Books were my safe haven, and they knew that. I was told I would be stuck there for much longer if I did not, so I did. I was told I had Borderline Personality Disorder, but not until the end of my program. I had been medicated with antipsychotics for over a year, off of the assumption of a psychiatrist who saw me once a month for five minutes. As an adult, I found out I never had or have that disorder. Ten years later, I have no relationship with my family, and I have an extremely hard time keeping any kind of relationship due to abandonment issues. That is what hurts me the most. After everything and all this time, after doing what I was forced to do, they no longer talk to me because I “faked” a program or I am not the same person they remember.” - [Brittany (Breaking Code Silence)](https://www.breakingcodesilence.net/testimonial/brittanysstory)
 
-**September 2020: (SURVIVOR)**"I went to Copper Canyon Academy in 2007 when I was 17 years old and a senior in high school. I still have nightmares about this place and I'm now 30 years old. My mother died from breast cancer while I was there and although I was in a "therapuetic" boarding school, I never received any help in dealing with my grief and was actually punished for grieving. If my father had not pulled me from the program early to start college, I would have left the day I turned 18 even though I had no money and nowhere to go. Anything would have been better than staying there. Please, do not send your daughters here!" - [Jenny C., Google Reviews](https://www.google.com/maps/contrib/102814893681851902901/place/ChIJ_0Tj82kCIBURSZGe8PU9MAg/@34.625717,-120.7625328,5z/data=!4m6!1m5!8m4!1e1!2s102814893681851902901!3m1!1e1?hl=en-US)
+** September 2020: (SURVIVOR)**"I went to Copper Canyon Academy in 2007 when I was 17 years old and a senior in high school. I still have nightmares about this place and I'm now 30 years old. My mother died from breast cancer while I was there and although I was in a "therapuetic" boarding school, I never received any help in dealing with my grief and was actually punished for grieving. If my father had not pulled me from the program early to start college, I would have left the day I turned 18 even though I had no money and nowhere to go. Anything would have been better than staying there. Please, do not send your daughters here!" - [Jenny C., Google Reviews](https://www.google.com/maps/contrib/102814893681851902901/place/ChIJ_0Tj82kCIBURSZGe8PU9MAg/@34.625717,-120.7625328,5z/data=!4m6!1m5!8m4!1e1!2s102814893681851902901!3m1!1e1?hl=en-US)
 
 **2019: (SURVIVOR)**"I still have nightmares about this place. Every day spent here was mental torture, every moment you’re being watched and criticized by adults who are hired to break you down. You can’t tell your parents the truth because the staff proof reads your letters and emails and will call you manipulative and drop you a level keeping you there longer. Everyone fakes the program and does what they can to survive through the day. Most of the girls there have trauma as is and this place only furthers it. The work hours, the 24 hour silence vests, the hundreds of rules you have to remember and no mercy, the treatment team meetings, the seminars, all of it is despicable and I hurt for every girl going through what I went through. The owners talk this place up and lie to the parents and the daughters are the ones who suffer. We were treated like prisoners. Please don’t send your child here. There are better options. This isn’t the answer." - [Kelsey N., Google Reviews](https://www.google.com/maps/contrib/115681156278444266395/place/ChIJ_0Tj82kCIBURSZGe8PU9MAg/@41.1386632,-117.0739175,5z/data=!4m6!1m5!8m4!1e1!2s115681156278444266395!3m1!1e1?hl=en-US)
 
@@ -127,7 +127,7 @@ In 2010, Nickelodeon News aired a show called ["Kids in Rehab"](https://www.teen
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Copper Canyon Academy Website Homepage](https://web.archive.org/web/20030622151709/http://www.coppercanyonacademy.com/) (archived, 2003)
 
@@ -149,7 +149,8 @@ In 2010, Nickelodeon News aired a show called ["Kids in Rehab"](https://www.teen
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

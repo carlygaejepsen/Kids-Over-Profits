@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 There are no requirements for accreditation for non-public schools, however, registration is mandatory in the form of a Certificate of Approval from the Maryland State Board of Education. Bona fide church organizations are exempt from this requirement, although the school must be registered with the state and present acceptable evidence of the church organization's legal authority status.
 
@@ -18,12 +18,12 @@ Non-public schools must remain in compliance with applicable health, fire safety
 
 ---
 
-|**Program Name**|**Year Opened**|**Location**|**HEAL Information**|
-| [**Allegany Boys Camp**](https://www.reddit.com/r/troubledteens/wiki/index/allegany) | - | - | - |
-| [**Sheppard Pratt Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/sheppardpratt) | 2002 | Elliot City, MD | N/A |
+|** Program Name**|** Year Opened**|** Location**|** HEAL Information**|
+| [** Allegany Boys Camp**](https://www.reddit.com/r/troubledteens/wiki/index/allegany) | - | - | - |
+| [** Sheppard Pratt Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/sheppardpratt) | 2002 | Elliot City, MD | N/A |
 ---
 
-## **Closed Programs in Maryland**
+## ** Closed Programs in Maryland**
 
 ---
 
@@ -31,10 +31,10 @@ Non-public schools must remain in compliance with applicable health, fire safety
 
 ---
 
-|**Program Name**|**Years Active**|**Location**|**HEAL Information**|
-| [**Forest Haven Asylum**](https://www.reddit.com/r/troubledteens/wiki/index/foresthaven) | 1925-1991 | Laurel, MD | - |
-| [**Taylor Manor Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/taylormanor) | 1907-2020 | Ellicott City, MD | - |
-| [**Three Springs New Dominion Maryland**](https://www.reddit.com/r/troubledteens/wiki/index/3springsnewdominion) | - | - | - |
+|** Program Name**|** Years Active**|** Location**|** HEAL Information**|
+| [** Forest Haven Asylum**](https://www.reddit.com/r/troubledteens/wiki/index/foresthaven) | 1925-1991 | Laurel, MD | - |
+| [** Taylor Manor Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/taylormanor) | 1907-2020 | Ellicott City, MD | - |
+| [** Three Springs New Dominion Maryland**](https://www.reddit.com/r/troubledteens/wiki/index/3springsnewdominion) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -43,7 +43,8 @@ Non-public schools must remain in compliance with applicable health, fire safety
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

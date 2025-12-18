@@ -1,5 +1,5 @@
 /**
- * Notes Module for Facility Form
+ * Notes Module for Data Form
  * Handles field notes functionality in a modular way
  */
 

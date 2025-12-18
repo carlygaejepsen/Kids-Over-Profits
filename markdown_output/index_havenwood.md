@@ -10,7 +10,7 @@ Havenwood Academy (also called Havenwood South) is a [HOPE Group](https://www.re
 
 The address given for the program is [246 E Fiddlers Canyon Rd, Cedar City, UT 84721](https://www.google.com/maps/place/Havenwood+Academy/@37.7112345,-113.0581642,118m/data=!3m1!1e3!4m5!3m4!1s0x0:0xe1d0a5ec9bd52e3!8m2!3d37.711212!4d-113.058071) . However, they recently purchased a 160-acre plot of land which was formerly a historic cattle ranch, and are in the process of converting this into their primary location. This ranch is located at [8097 W 2000 S, Cedar City, UT 84720](https://www.google.com/maps/place/8097+W+2000+S,+Cedar+City,+UT+84720/@37.6404151,-113.2243398,188a,35y,92.07h/data=!3m1!1e3!4m5!3m4!1s0x80b57d133fc6c519:0xe68f12de448bfc3e!8m2!3d37.639184!4d-113.223188) .
 
-Interestingly, an address that used to be associated with the reportedly abusive and now-closed [Integrity House RTC](https://www.reddit.com/r/troubledteens/wiki/index/integrity) ([465 W 1600 N Cedar City, UT 84721](https://www.google.com/maps/place/465+W+1600+N,+Cedar+City,+UT+84721/@37.7062168,-113.0699309,146a,35y,175.85h/data=!3m1!1e3!4m5!3m4!1s0x80b561148c9e1603:0x47a16999fe2e6061!8m2!3d37.7060821!4d-113.0700979) ), [appears to be affiliated](https://www.yellowpages.com/cedar-city-ut/mip/havenwood-academy-504491950) with Havenwood Academy. In addition, further research has revealed that Integrity House is actually [listed as an alternate name](https://npino.com/drug-rehab/1528116746-havenwood-academy/) for Havenwood Academy. For this reason,**it is strongly believed that Havenwood Academy is the rebrand of Integrity House RTC, which was closed around 2013/2014 amid accusations of child abuse.**
+Interestingly, an address that used to be associated with the reportedly abusive and now-closed [Integrity House RTC](https://www.reddit.com/r/troubledteens/wiki/index/integrity) ([465 W 1600 N Cedar City, UT 84721](https://www.google.com/maps/place/465+W+1600+N,+Cedar+City,+UT+84721/@37.7062168,-113.0699309,146a,35y,175.85h/data=!3m1!1e3!4m5!3m4!1s0x80b561148c9e1603:0x47a16999fe2e6061!8m2!3d37.7060821!4d-113.0700979) ), [appears to be affiliated](https://www.yellowpages.com/cedar-city-ut/mip/havenwood-academy-504491950) with Havenwood Academy. In addition, further research has revealed that Integrity House is actually [listed as an alternate name](https://npino.com/drug-rehab/1528116746-havenwood-academy/) for Havenwood Academy. For this reason,** it is strongly believed that Havenwood Academy is the rebrand of Integrity House RTC, which was closed around 2013/2014 amid accusations of child abuse.**
 
 Havenwood Academy reports that it is a sister program to [Zion Hills Academy](https://www.reddit.com/r/troubledteens/wiki/index/zionhills) and [Eagles Rest Ranch](https://www.reddit.com/r/troubledteens/wiki/index/eaglesrest) , both of which share the same Cedar City address as Havenwood and are also part of the [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/index/hopegroup) . Until recently, The Hope Group was the overall program and Zion Hills, Eagles Rest, and Havenwood were the names of the three houses they owned. All of the kids at those three facilities were in the same program and would attend school together at a separate, common location. They were all connected and sometimes kids are moved from one house to another if there were ongoing social problems. To clarify, the three names are the same program, just different places the kids lived.
 
@@ -20,31 +20,31 @@ In March 2022, a collaborative podcast between The Salt lake Tribune, KUER, and 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Blaine Hofeling**was the Founder, Owner, and CEO of Havenwood Academy. Blaine has represented numerous treatment facilities over the years and has assisted several programs with legal, regulatory and treatment issues. Blaine is also reportedly "one of the leading attorneys in dealing with issues related to the residential treatment industry". Notably, he was the defense attorney of Daniel Taylor, the former Executive Director of [Integrity House RTC](https://www.reddit.com/r/troubledteens/wiki/index/integrity) who was accused of sexually abusing residents at the program. Hofeling [played an instrumental role](https://archive.sltrib.com/story.php?ref=/sltrib/news/57790355-78/court-taylor-documents-girl.html.csp) in getting the charges against Taylor dismissed. He no longer appears to work at the program.
+** Blaine Hofeling** was the Founder, Owner, and CEO of Havenwood Academy. Blaine has represented numerous treatment facilities over the years and has assisted several programs with legal, regulatory and treatment issues. Blaine is also reportedly "one of the leading attorneys in dealing with issues related to the residential treatment industry". Notably, he was the defense attorney of Daniel Taylor, the former Executive Director of [Integrity House RTC](https://www.reddit.com/r/troubledteens/wiki/index/integrity) who was accused of sexually abusing residents at the program. Hofeling [played an instrumental role](https://archive.sltrib.com/story.php?ref=/sltrib/news/57790355-78/court-taylor-documents-girl.html.csp) in getting the charges against Taylor dismissed. He no longer appears to work at the program.
 
-**Eric Allred**was the Executive Director of the [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/index/hopegroup) and Assistant Clinical Director of Havenwood Academy. He is also a member of the board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Eric Allred** was the Executive Director of the [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/index/hopegroup) and Assistant Clinical Director of Havenwood Academy. He is also a member of the board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Ken Huey**is the current Executive Director/CEO of Havenwood Academy. He began working in the TTI as a Therapist and later as the Director of Business Development at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He then went on to become the Clinical Director of [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) . He is also the Founder and CEO of [CALO](https://www.reddit.com/r/troubledteens/wiki/index/calo) . In 2017, he became the Founder and Owner of [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) . He has been the Executive Director of Havenwood since October 2020. According to reports, he continues to make both kids and staff uncomfortable at Havenwood Academy. He welcomes himself to touching staff/children on their shoulders, heads, upper backs to say hello. He refers to this as “safe touch.” This is something staff are reportedly trained on during orientation.
+** Ken Huey** is the current Executive Director/CEO of Havenwood Academy. He began working in the TTI as a Therapist and later as the Director of Business Development at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He then went on to become the Clinical Director of [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) . He is also the Founder and CEO of [CALO](https://www.reddit.com/r/troubledteens/wiki/index/calo) . In 2017, he became the Founder and Owner of [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) . He has been the Executive Director of Havenwood since October 2020. According to reports, he continues to make both kids and staff uncomfortable at Havenwood Academy. He welcomes himself to touching staff/children on their shoulders, heads, upper backs to say hello. He refers to this as “safe touch.” This is something staff are reportedly trained on during orientation.
 
-**Albert Behling**is the Assistant Executive Director of Havenwood Academy. Prior to this, he reportedly spent "eight years helping to get another program for girls up and running and into a leading spot for the population it serves." He appears to have previously worked as a Residential Supervisor at the reportedly abusive [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) .
+** Albert Behling** is the Assistant Executive Director of Havenwood Academy. Prior to this, he reportedly spent "eight years helping to get another program for girls up and running and into a leading spot for the population it serves." He appears to have previously worked as a Residential Supervisor at the reportedly abusive [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) .
 
-**Kirsten Hofeling**previously worked as the Chief Operating Officer at Havenwood Academy. She is the wife of Blaine Hofeling. She no longer appears to work at Havenwood.
+** Kirsten Hofeling** previously worked as the Chief Operating Officer at Havenwood Academy. She is the wife of Blaine Hofeling. She no longer appears to work at Havenwood.
 
-**Nathan Hofeling**is the current Chief Operating Officer/Admissions Director/Business Development Director of Havenwood Academy. He began working for Havenwood as an Isurance Specialist. Prior to working at Havenwood, he was a Packdown Associate at Home Depot. He is the son of Kirsten and Blaine Hofeling, which is undoubtedly how he got this position.
+** Nathan Hofeling** is the current Chief Operating Officer/Admissions Director/Business Development Director of Havenwood Academy. He began working for Havenwood as an Isurance Specialist. Prior to working at Havenwood, he was a Packdown Associate at Home Depot. He is the son of Kirsten and Blaine Hofeling, which is undoubtedly how he got this position.
 
-**Diana Baldwin**is the Clinical Director of Havenwood. She is trained as a Therapist and claims to specialize in "Betrayal Trauma, Post Mormon Support and Porn Addiction". She is also the owner of "[True To You Counselling](https://www.truetoyoucounseling.com/) ".
+** Diana Baldwin** is the Clinical Director of Havenwood. She is trained as a Therapist and claims to specialize in "Betrayal Trauma, Post Mormon Support and Porn Addiction". She is also the owner of "[True To You Counselling](https://www.truetoyoucounseling.com/) ".
 
-**Kyle Peterson**is a Therapist at Havenwood. Before coming to Havenwood, he previously worked at the reportedly extremely abusive [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) .
+** Kyle Peterson** is a Therapist at Havenwood. Before coming to Havenwood, he previously worked at the reportedly extremely abusive [Discovery Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) .
 
-**Bryan Cook**is the Assistant Program Director at Havenwood and Residential Supervisor at the [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/index/hopegroup) . He also works as a Direct Care Staff at [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) , a reportedly abusive [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) program.
+** Bryan Cook** is the Assistant Program Director at Havenwood and Residential Supervisor at the [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/index/hopegroup) . He also works as a Direct Care Staff at [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) , a reportedly abusive [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) program.
 
-**Oscar Fakahua**previously worked as the Program Director of Havenwood. He is the brother of Salesi Misinale Fakahua (also known as Nale Fakahua), who is the current Director of Campus Culture at [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) and has also previously worked as the Program Director of the reportedly abusive [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) .
+** Oscar Fakahua** previously worked as the Program Director of Havenwood. He is the brother of Salesi Misinale Fakahua (also known as Nale Fakahua), who is the current Director of Campus Culture at [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) and has also previously worked as the Program Director of the reportedly abusive [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Havenwood Academy uses a level-system consisting of six levels, which are called "privileges". The names of the levels/privileges are reported to be:
 
@@ -65,7 +65,7 @@ Havenwood has recently finished building a new property on their campus that the
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 In 2018, a [complaint](https://imgur.com/a/9LXg56u) was filed against Havewood Academy with the Utah Better Businesses Bureau by the parents of a former resident. In this complaint, they alleged that their daughter had "been allowed to fall very behind in school, was subjected to high staff turnover, was subjected to staff that had no formal training with RAD (Reactive Attachment Disorder), was fed inferior quality food and gained 60 pounds, was engaged in physical fights with peers, and spent most of the time she was there dealing with the drama and chaos of the program rather than on healing from her past traumas." They also reported that "The staff there woudl not communicate with us, would not return our calls, and would not tell me what their grievance policy was." The decision the parents sought was reported to be for Havenwood to discontinue falsifying information about their program and their website and in information given to parents. They also allege that parents from California are charged more than other parents.
 
@@ -102,7 +102,7 @@ In February 2022, a 23-year-old staff member at Havenwood Academy, Kylar Frederi
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Havenwood Academy Website Homepage](https://www.havenwoodacademy.org/)
 
@@ -130,7 +130,8 @@ In February 2022, a 23-year-old staff member at Havenwood Academy, Kylar Frederi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

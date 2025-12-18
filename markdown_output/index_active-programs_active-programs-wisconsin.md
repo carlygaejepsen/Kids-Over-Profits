@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 The Wisconsin Department of Children and Families is responsible for licensing residential programs such as residential care centers for youth, group homes and shelters.
 
@@ -16,13 +16,13 @@ Wisconsin private schools are not required to become accredited and approval is 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Info**|
-| [**Northwoods Wilderness Therapy**](https://www.reddit.com/r/troubledteens/wiki/index/northwoodswi) | - | - | - |
-| [**New Vision Wildernes**](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) | - | - | - |
-| [**Lad Lake Inc**](https://www.reddit.com/r/troubledteens/wiki/index/ladlake) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Info**|
+| [** Northwoods Wilderness Therapy**](https://www.reddit.com/r/troubledteens/wiki/index/northwoodswi) | - | - | - |
+| [** New Vision Wildernes**](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) | - | - | - |
+| [** Lad Lake Inc**](https://www.reddit.com/r/troubledteens/wiki/index/ladlake) | - | - | - |
 ---
 
-## **Closed Programs in Wisconsin**
+## ** Closed Programs in Wisconsin**
 
 ---
 
@@ -30,8 +30,8 @@ Wisconsin private schools are not required to become accredited and approval is 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Info**|
-| [**Eau Claire Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eauclaire) | 1967-2023 | Eau Claire, WI | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Info**|
+| [** Eau Claire Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eauclaire) | 1967-2023 | Eau Claire, WI | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -40,7 +40,8 @@ Wisconsin private schools are not required to become accredited and approval is 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

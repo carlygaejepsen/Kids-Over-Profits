@@ -6,34 +6,34 @@
 
 ## **History and Background Information**
 
-The Rebekah Home for Girls was a**confirmedly abusive** [Roloff](https://www.reddit.com/r/troubledteens/wiki/index/roloff) behavior modification program founded by Lester Roloff in 1967. It was the first of Lester Roloff's homes for Girls, and was created as a sister program to Roloff's [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) . Lester Roloff stated that the Rebekah Home took in fallen girls from “jail houses, broken homes, hippie hives, and dope dives” who were “walking through the wilderness of sin.” Girls could be sent to the Rebekah Home for simply being "rebellious", smoking, having premarital sex, drinking, or even just dating somebody that their parents disapprove of. The program had a maximum enrollment of roughly 300 girls, and the minimum length of stay was around 12 months. Many girls stayed at the Rebekah Home for much longer. The program did not charge parents for the "treatment" of their children, instead all of the money was raised by Roloff through his radio broadcasts.
+The Rebekah Home for Girls was a** confirmedly abusive** [Roloff](https://www.reddit.com/r/troubledteens/wiki/index/roloff) behavior modification program founded by Lester Roloff in 1967. It was the first of Lester Roloff's homes for Girls, and was created as a sister program to Roloff's [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) . Lester Roloff stated that the Rebekah Home took in fallen girls from “jail houses, broken homes, hippie hives, and dope dives” who were “walking through the wilderness of sin.” Girls could be sent to the Rebekah Home for simply being "rebellious", smoking, having premarital sex, drinking, or even just dating somebody that their parents disapprove of. The program had a maximum enrollment of roughly 300 girls, and the minimum length of stay was around 12 months. Many girls stayed at the Rebekah Home for much longer. The program did not charge parents for the "treatment" of their children, instead all of the money was raised by Roloff through his radio broadcasts.
 
 The program was located at [1355 FM 665, Corpus Christi, TX 78415](https://www.google.com/maps/place/People's+Baptist+Church/@27.7288026,-97.5220137,315m/data=!3m1!1e3!4m5!3m4!1s0x0:0xa91f1cea0703e0d9!8m2!3d27.728728!4d-97.523057) . The Rebekah Home was part of a 465-acre reservation called "the farm", which was fenced in and guarded, and included an airstrip as well as trailer homes for 100 farm workers, a church, Christian school for the Rebekah girls, a cafeteria, and a bakery. It shared a campus with the [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) , which moved into the same campus in 1979.
 
 The state spent much of the seventies and early eighties fighting Roloff in court, insisting that Lester Roloff obtain a license for his youth homes and submit to state oversight. The preacher countered that he answered to a higher power and that his homes were licensed by God. Not until 1985 did the state prevail, forcing the Rebekah Home to "shut its doors", or so it thought. In reality, the girls at the Rebekah Home were taken to places like Belton, MO and New Bethany in Arcadia, LA. But in 1997 then-governor George W. Bush put forth a legislative package that included precisely what Roloff had long fought for: allowing church-run child-care institutions to opt out of state licensing. The Rebekah Home then returned to Texas.
 
-In 2001, Rebekah Home for Girls relocated to Missouri. Later that year, the program moved to Florida and changed its name to [New Beginnings Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) , where it continued to operate for many years.**Today, the Rebekah Home for Girls continues to operate under the name [Marvelous Grace Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) in Pace, Florida.**
+In 2001, Rebekah Home for Girls relocated to Missouri. Later that year, the program moved to Florida and changed its name to [New Beginnings Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) , where it continued to operate for many years.** Today, the Rebekah Home for Girls continues to operate under the name [Marvelous Grace Girls Academy](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) in Pace, Florida.**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rev. Lester Roloff**was the Founder of the Rebekah Home for Girls. He was a Fundementalist Baptist minister and also a pilot. Throughout his life, Roloff preached stridently against homosexuality, communism, television, alcohol, tobacco, drugs, gluttony, and psychology. On November 2^(nd) 1982, Roloff and four other passengers were killed when their small plane, piloted by Roloff, crashed in a field near Normangee Texas. The plane, en route from Corpus Christi to Kansas City, disappeared off radar at 10:18 a.m. without any indication of trouble. Reportedly, there were very severe storms in that area at the time of the crash.
+** Rev. Lester Roloff** was the Founder of the Rebekah Home for Girls. He was a Fundementalist Baptist minister and also a pilot. Throughout his life, Roloff preached stridently against homosexuality, communism, television, alcohol, tobacco, drugs, gluttony, and psychology. On November 2^(nd) 1982, Roloff and four other passengers were killed when their small plane, piloted by Roloff, crashed in a field near Normangee Texas. The plane, en route from Corpus Christi to Kansas City, disappeared off radar at 10:18 a.m. without any indication of trouble. Reportedly, there were very severe storms in that area at the time of the crash.
 
-**Rev. Wiley Cameron**took over operations of the Rebekah Home for Girls in 1979, shortly before Lester Roloff's death in 1982. After working for Roloff and his homes for 35 years, he was the founder/director of the [New Beginnings Girls Home](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) in 2001. He also later served on George W. Bush's peer-review board for Christian children's agencies in Texas.
+** Rev. Wiley Cameron** took over operations of the Rebekah Home for Girls in 1979, shortly before Lester Roloff's death in 1982. After working for Roloff and his homes for 35 years, he was the founder/director of the [New Beginnings Girls Home](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) in 2001. He also later served on George W. Bush's peer-review board for Christian children's agencies in Texas.
 
-**Faye Cameron**was the wife of Wiley Cameron. She was heavily involved with the Rebekah Home for Girls, and later with the [New Beginnings Girls Home](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) .
+** Faye Cameron** was the wife of Wiley Cameron. She was heavily involved with the Rebekah Home for Girls, and later with the [New Beginnings Girls Home](https://www.reddit.com/r/troubledteens/wiki/index/marvelousgrace) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, the Rebekah Home for Girls used a leve;-system consisting of four levels. As reported by survivors, the levels used by this program were:
 
-***New Girl:**When a girl arrived at the Rebekah Home, they were forbidden from speaking to anyone else and were given no privileges.
-***Regular:**On this level, the residents began to earn small privileges, but they were still highly restricted.
-***Room Captain:**On this level, a New Girl would be assigned to them. They were also given additional (yet still minimal) privileges.
-***Singing Group:**This was the final level at the Rebekah Home. These girls were the most trusted, and went on tour singing at churches and giving testimonies of how the Rebekah Home had saved their lives. These girls were taken on tour by Wiley Cameron & Faye Cameron.
+***New Girl:** When a girl arrived at the Rebekah Home, they were forbidden from speaking to anyone else and were given no privileges.
+***Regular:** On this level, the residents began to earn small privileges, but they were still highly restricted.
+***Room Captain:** On this level, a New Girl would be assigned to them. They were also given additional (yet still minimal) privileges.
+***Singing Group:** This was the final level at the Rebekah Home. These girls were the most trusted, and went on tour singing at churches and giving testimonies of how the Rebekah Home had saved their lives. These girls were taken on tour by Wiley Cameron & Faye Cameron.
 
 The structure of the program used by the Rebekah Home revolved heavily around Independent Fundamentalist Baptist (IFB) beliefs. In addition to listening to hours of sermons, the program emphasized the importance of reading and re-reading the Bible. The girls were required to memorize the Bible, chapter by chapter, in order to advance in the program. They were also required to adhere to very strict rules, based on IFB beliefs.
 
@@ -43,7 +43,7 @@ The main form of punishment used at the Rebekah Home was what is known as "Bible
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 The Rebekah Home for Girls is widely recognized as having been an extremely abusive program with many documented and well-supported allegations against it. Allegations of abuse and neglect that have been reported by survivors of the Rebekah Home include:
 
@@ -80,7 +80,7 @@ Shortly after returning to Missouri, New Beginnings Girls Academy moved to a new
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 [Link to 'Rebekah home for girls survivors'](http://rebekahhomeforgirls.blogspot.com/2005/08/im-writing-about-my-experiences-at.html)
 
@@ -92,7 +92,7 @@ Shortly after returning to Missouri, New Beginnings Girls Academy moved to a new
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Rebekah Home for Girls -*Secret Prisons for Teens*](https://web.archive.org/web/20200805043600/http://secretprisonsforteens.dk/wiki/index.php?title=Rebekah_Home_for_girls) (archived, 2020)
 
@@ -134,7 +134,8 @@ Shortly after returning to Missouri, New Beginnings Girls Academy moved to a new
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

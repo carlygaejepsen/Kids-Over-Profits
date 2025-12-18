@@ -14,42 +14,42 @@ The founders of CALO had previously worked at various confirmedly abusive progra
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Ken Huey**was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) , where he served as
+** Ken Huey** was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) , where he served as
 
-**Landon Kirk**worked as the Clinical Director, COO, CEO, and Co-Founder of CALO from 2007 until 2016. He currently works as the Chief Quality & People Officer at [Embark Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/embark) , CALO's parent company. He previously worked as a Therapist and Campus Administrator at the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2007.
+** Landon Kirk** worked as the Clinical Director, COO, CEO, and Co-Founder of CALO from 2007 until 2016. He currently works as the Chief Quality & People Officer at [Embark Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/embark) , CALO's parent company. He previously worked as a Therapist and Campus Administrator at the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2007.
 
-**Nicole Fuglsang**is the current CEO and a Co-Founder of CALO. She previously worked as the Director of Public Relations & Business Development for CALO. She began her career as an Intern at [Shelterwood RTC](https://www.reddit.com/r/troubledteens/wiki/index/shelterwood) from 1998-1999. She then went on to work as the Director of Admissions, Clinical Supervisor, and a Therapist at [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) , a reported spin-off of the notoriously abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) schools, from 1999 until 2006, when she left to Co-Found CALO.
+** Nicole Fuglsang** is the current CEO and a Co-Founder of CALO. She previously worked as the Director of Public Relations & Business Development for CALO. She began her career as an Intern at [Shelterwood RTC](https://www.reddit.com/r/troubledteens/wiki/index/shelterwood) from 1998-1999. She then went on to work as the Director of Admissions, Clinical Supervisor, and a Therapist at [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) , a reported spin-off of the notoriously abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) schools, from 1999 until 2006, when she left to Co-Found CALO.
 
-**Chris Austin**is the current Clinical Director of the CALO Teen Boys program. She has worked at CALO since 2014. She previously worked in private practice.
+** Chris Austin** is the current Clinical Director of the CALO Teen Boys program. She has worked at CALO since 2014. She previously worked in private practice.
 
-**Heidi Stanfield**is the current Clinical Director of the CALO Teen Girls program. She previously worked as a Therapist at [Piney Ridge Center](https://www.reddit.com/r/troubledteens/wiki/index/pineyridge) from 2013-2014. She joined CALO in 2014.
+** Heidi Stanfield** is the current Clinical Director of the CALO Teen Girls program. She previously worked as a Therapist at [Piney Ridge Center](https://www.reddit.com/r/troubledteens/wiki/index/pineyridge) from 2013-2014. She joined CALO in 2014.
 
-**Kathy Abeln**is the current Clinical Director of the CALO Preteens program. She has worked at CALO since 2016.
+** Kathy Abeln** is the current Clinical Director of the CALO Preteens program. She has worked at CALO since 2016.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, CALO uses a level-system consisting of four levels. The levels have been reported to be:
 
-***Trust of Care (The Sun):**This is the first level at CALO. On this level, residents are given minimal privileges and must "develop a healthy physical dependence on CALO staff". There is no minimum length of time that a student is on Trust of Care.
-***Trust of Control (The Earth):**On this level, the student addresses trauma, attachment issues (if applicable), negative working model (negative belief system and self-image), negative relationship patterns, peer struggles, and parent and sibling issues.
-***Trust of Self (The Water):**On this level, the student moves towards independently practicing and implementing what was modeled and taught during Trust of Care and Trust of Control. They also work on self-regulation, autonomy without power/control struggles, asking for & seeking closeness, self-reflection, practicing a healthier working model, and preparing for home life.
-***Interdependence (The Tree):**This is the final level. The resident is given more freedom in the program and prepares to return home or go to another placement.
+***Trust of Care (The Sun):** This is the first level at CALO. On this level, residents are given minimal privileges and must "develop a healthy physical dependence on CALO staff". There is no minimum length of time that a student is on Trust of Care.
+***Trust of Control (The Earth):** On this level, the student addresses trauma, attachment issues (if applicable), negative working model (negative belief system and self-image), negative relationship patterns, peer struggles, and parent and sibling issues.
+***Trust of Self (The Water):** On this level, the student moves towards independently practicing and implementing what was modeled and taught during Trust of Care and Trust of Control. They also work on self-regulation, autonomy without power/control struggles, asking for & seeking closeness, self-reflection, practicing a healthier working model, and preparing for home life.
+***Interdependence (The Tree):** This is the final level. The resident is given more freedom in the program and prepares to return home or go to another placement.
 
 Other survivors have reported that the program only used three levels, which were reported to be:
 
-***Level One:**On this level, residents wear the regular uniform, are allowed to participate in daily activities, chores, school, gym, etc. They can also leave campus with staff to go on day-trips.
-***Level Two:**On this level, the residents are given the same privileges as Level One, but they are also allowed to go on home-visits.
-***Safety:**This level is reportedly used as punishment. On Safety, the resident is given no privledges and are under constant staff supervision. They are also made to wear neon clothes, no shoes, and have to sleep under a light in front of staff. They also must use bathroom in front of staff, and are strip-searched daily.
+***Level One:** On this level, residents wear the regular uniform, are allowed to participate in daily activities, chores, school, gym, etc. They can also leave campus with staff to go on day-trips.
+***Level Two:** On this level, the residents are given the same privileges as Level One, but they are also allowed to go on home-visits.
+***Safety:** This level is reportedly used as punishment. On Safety, the resident is given no privledges and are under constant staff supervision. They are also made to wear neon clothes, no shoes, and have to sleep under a light in front of staff. They also must use bathroom in front of staff, and are strip-searched daily.
 
 Survivors have reported that the program facilitates seminars every 6-12 weeks. These are likely similar to the seminars used by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) and [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) , and consist of attack therapy, among other methods. Survivors have also reported the use of peer "accountability" groups, which are simply attack therapy groups that have been used by many confirmedly abusive behavior-modification programs.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that CALO is an abusive program. Allegations of abuse and neglect that have been reported by survivors include attack therapy, violent physical restraints resulting in injuries and broken bones, sexual abuse, discrimination against LGBTQ+ residents,
 
@@ -59,13 +59,13 @@ In December of 2017, another employee at CALO, 21-year-old [Bradley Ryan Russell
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **4/24/2022: (SURVIVOR)** [Link to u/Greedy_Guarantee_166's Survivor Testimony](https://www.reddit.com/r/troubledteens/comments/uazlcp/calo_teens_lake_ozark_mo/i611wyw/?context=3)
 
 **2/24/2021: (SURVIVOR)**"I was a "student" at Change Academy Lake of the Ozarks or "CALO" from 2008-2010. During that time I was repeatedly sexually assaulted by a staff member which was ignored even after reporting it multiple times. After reporting it my communication was cut off with my parents and I couldn't tell them what was going on. He was eventually fired months later, then arrested and convicted and served jail time. However, I can't find any evidence or proof of the court case online. I used to be able to look him up while he was in prison which I would do to make sure he was still there. He apparently was released because I can't find him on the Missouri inmate search but I was supposed to be notified when that happened. I never was. Due to the type of abuse that occured I am nervous not knowing where he is and I am incredibly surprised he isn't on the sex offender registry. It makes me wonder if CALO covered this all up. Or am I just crazy?" - [u/wispofthewillowz (Reddit)](https://www.reddit.com/r/troubledteens/comments/lrvu0q/all_proof_of_my_abuse_scrubbed/)
 
-**February 2021: (NEIGHBOR)**"We are neighbors and direct observers of the activity that takes place at CALO. Come stand on my property and observe the activity that takes place on a typical day. You will be less than impressed. I know what it costs and I would NOT send my child to CALO for treatment! The “counselors” are glorified baby sitters who show little concern for the residents. The use of bad language is out of control and we often have to ask them to refrain from using the “f” word. It is very common for someone to “escape.” A couple of the kids recently attempted to break into our house. They are allowed to vandalize the property and grounds. I have witnessed firsthand the mistreatment of the dogs that some of them are in charge of. Before spending tens of thousands of dollars, please contact me through Facebook messenger." - [Michelle (Google Reviews)](https://www.google.com/maps/contrib/115559135625148209718/reviews/@38.203149,-92.738621,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
+** February 2021: (NEIGHBOR)**"We are neighbors and direct observers of the activity that takes place at CALO. Come stand on my property and observe the activity that takes place on a typical day. You will be less than impressed. I know what it costs and I would NOT send my child to CALO for treatment! The “counselors” are glorified baby sitters who show little concern for the residents. The use of bad language is out of control and we often have to ask them to refrain from using the “f” word. It is very common for someone to “escape.” A couple of the kids recently attempted to break into our house. They are allowed to vandalize the property and grounds. I have witnessed firsthand the mistreatment of the dogs that some of them are in charge of. Before spending tens of thousands of dollars, please contact me through Facebook messenger." - [Michelle (Google Reviews)](https://www.google.com/maps/contrib/115559135625148209718/reviews/@38.203149,-92.738621,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
 **12/20/2020: (SURVIVOR)** [Link to "My program is presenting itself as one of the good ones in response to allegations against abusive programs" on Reddit](https://www.reddit.com/r/troubledteens/comments/kgxpaz/my_program_is_presenting_itself_as_one_of_the/)
 
@@ -81,7 +81,7 @@ In December of 2017, another employee at CALO, 21-year-old [Bradley Ryan Russell
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [CALO Website Homepage](https://caloprograms.com/)
 
@@ -97,7 +97,8 @@ In December of 2017, another employee at CALO, 21-year-old [Bradley Ryan Russell
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

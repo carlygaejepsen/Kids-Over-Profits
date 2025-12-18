@@ -12,27 +12,27 @@ The program was located in a 12,000 ft^(2) suburban home at [75 West Oak Drive, 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Eric M. Hogenson**worked as the Medical Director of Woodland Hills. He currently works at Canyon View Family Medicine in Spanish Fork, UT.
+** Eric M. Hogenson** worked as the Medical Director of Woodland Hills. He currently works at Canyon View Family Medicine in Spanish Fork, UT.
 
-**Tammy Liddle**worked as the Clinical Director of Woodland Hills.
+** Tammy Liddle** worked as the Clinical Director of Woodland Hills.
 
-**Spencer Moody**worked as the Academic Director of Woodland Hills. His son, Aaron, also worked at Woodland Hills. He also worked at New Hope Maternity Home around 2007. In 2007, his wife, Jana, was [assaulted and tied up](https://www.postindependent.com/news/police-pregnant-teens-in-utah-tie-up-home-director-flee/) by three residents of New Hope who were attempting to escape. He and Jana closed the home shortly after. He and his wife were [killed in a car accident](https://www.ksl.com/article/50229181/st-george-man-charged-with-killing-couple-in-june-crash) on June 18^(th) 2021.
+** Spencer Moody** worked as the Academic Director of Woodland Hills. His son, Aaron, also worked at Woodland Hills. He also worked at New Hope Maternity Home around 2007. In 2007, his wife, Jana, was [assaulted and tied up](https://www.postindependent.com/news/police-pregnant-teens-in-utah-tie-up-home-director-flee/) by three residents of New Hope who were attempting to escape. He and Jana closed the home shortly after. He and his wife were [killed in a car accident](https://www.ksl.com/article/50229181/st-george-man-charged-with-killing-couple-in-june-crash) on June 18^(th) 2021.
 
-**Aaron Moody**was the Marketing Director of Woodland Hills and the son of Spencer Moody.
+** Aaron Moody** was the Marketing Director of Woodland Hills and the son of Spencer Moody.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Woodland Hills used a level-system consisting of four levels. In order to progress through the program, the girls needed to achieve a certain number of daily "points" for good behavior for a certain length of time. The levels were:
 
-***Orientation:**When a girl arrived at Woodland Hills, they were placed on Orientation. On this level, students were to remain in staff line-of-sight during all waking hours. Their shoes, coats, jackets were kept with staff, except during activities. They were not allowed to make or receive phone calls, and were only permitted one letter to and from parents each week. They were also not allowed to shave. Students were eligible to move to the next level after achieving an average of 500 points per day for two weeks and after receiving a majority vote from the staff.
-***Level I - Discovery:**On this level, student were allowed to spend free time in common areas within staff sight. They were also allowed to participate in recreational therapy. They were permitted one phone call from parents on weekends, and could receive mail from and send mail to anyone on their approved list. They were also eligible for one four-hour "pass" (must propose and be approved by staff). They were still not allowed to shave. Students were eligible to move to the next level after achieving an average of 600 points per day for two weeks and after receiving a majority vote from the staff.
-***Level II - Committed:**On this level, the students were held to the same standards as above, and were also given additional privileges. They were eligible for one eight-hour pass (must propose and be approved by staff), andn could go outside with staff. They were also eligible for field trips, and they were finally allowed to shave. Students were eligible to move to the next level by achieving an average of 660 points per day for four weeks and after receiving a majority vote from staff.
-***Level III - Mastery:**On this level, the students were held to the same standards as above, and were also given additional privileges. They were eligible for outside theater activity on Friday nights, as well as for an overnight pass (must propose and be approved by staff). They were also allowed to spend free time and Study Hall in their room, and they were given one extra 15 minute phone call per week - weekdays from 7-9 PM
-***Observation:**This level was used as punishment. Girls were put on this level if they left the facility without permission, used drugs/alcohol (on or off-campus), or hurt themselves, others, or damaged property. On this level, student had to remain in staff sight during all waking hours, and had to sit with staff during activities. They were also forced to complete "therapeutic writing assignments" during recreational activities. They were given no telephone privileges, and could send or receive mail to and from parents only (one letter per week). They were also not allowed to wear any jewelry or shave.
+***Orientation:** When a girl arrived at Woodland Hills, they were placed on Orientation. On this level, students were to remain in staff line-of-sight during all waking hours. Their shoes, coats, jackets were kept with staff, except during activities. They were not allowed to make or receive phone calls, and were only permitted one letter to and from parents each week. They were also not allowed to shave. Students were eligible to move to the next level after achieving an average of 500 points per day for two weeks and after receiving a majority vote from the staff.
+***Level I - Discovery:** On this level, student were allowed to spend free time in common areas within staff sight. They were also allowed to participate in recreational therapy. They were permitted one phone call from parents on weekends, and could receive mail from and send mail to anyone on their approved list. They were also eligible for one four-hour "pass" (must propose and be approved by staff). They were still not allowed to shave. Students were eligible to move to the next level after achieving an average of 600 points per day for two weeks and after receiving a majority vote from the staff.
+***Level II - Committed:** On this level, the students were held to the same standards as above, and were also given additional privileges. They were eligible for one eight-hour pass (must propose and be approved by staff), andn could go outside with staff. They were also eligible for field trips, and they were finally allowed to shave. Students were eligible to move to the next level by achieving an average of 660 points per day for four weeks and after receiving a majority vote from staff.
+***Level III - Mastery:** On this level, the students were held to the same standards as above, and were also given additional privileges. They were eligible for outside theater activity on Friday nights, as well as for an overnight pass (must propose and be approved by staff). They were also allowed to spend free time and Study Hall in their room, and they were given one extra 15 minute phone call per week - weekdays from 7-9 PM
+***Observation:** This level was used as punishment. Girls were put on this level if they left the facility without permission, used drugs/alcohol (on or off-campus), or hurt themselves, others, or damaged property. On this level, student had to remain in staff sight during all waking hours, and had to sit with staff during activities. They were also forced to complete "therapeutic writing assignments" during recreational activities. They were given no telephone privileges, and could send or receive mail to and from parents only (one letter per week). They were also not allowed to wear any jewelry or shave.
 
 According to the [Resident Handbook](https://web.archive.org/web/20030513101921/http://www.woodlandhillsacademy.com/pdf/handbook.pdf) , "Students will move down one level in the level system for the following reasons:
 
@@ -51,7 +51,7 @@ According to the [Resident Handbook](https://web.archive.org/web/20030513101921/
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 An archived version of the program's [Resident Handbook](https://web.archive.org/web/20030513101921/http://www.woodlandhillsacademy.com/pdf/handbook.pdf) shows that the program had a large number of strict rules. Some of these rules include:
 
@@ -70,13 +70,13 @@ Punishments for breaking rules at the program typically resulted in the girl bei
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No testimonies have been located for Woodland Hills Maternity Home. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No testimonies have been located for Woodland Hills Maternity Home. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -100,7 +100,8 @@ Punishments for breaking rules at the program typically resulted in the girl bei
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

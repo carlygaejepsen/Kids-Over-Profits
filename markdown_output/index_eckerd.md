@@ -2,7 +2,7 @@
 
 ---
 
-## **Open Eckerd Connects Programs**
+## ** Open Eckerd Connects Programs**
 
 ---
 
@@ -10,7 +10,7 @@
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
 | Central LA Juvenile Justice | 2007 | Alexandria, LA | - |
 | Eckerd Connects Boys Residential Academy at Boomer | 2000 | Boomer, NC | - |
 | Eckerd Connects Boys Residential Academy at Candor | 1978 | Candor, NC | - |
@@ -22,7 +22,7 @@
 | - | - | - | - |
 ---
 
-## **Closed Eckerd Youth Alternatives Programs**
+## ** Closed Eckerd Youth Alternatives Programs**
 
 ---
 
@@ -30,7 +30,7 @@
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | Camp E-How-Kee | 1968-2012 | Brooksville, FL | [HEAL](https://web.archive.org/web/20160623044243/http://www.heal-online.org:80/eckerd.htm) |
 | Camp E-Hun-Tee | 1978-2012 | Exeter, RI | [HEAL](https://web.archive.org/web/20160623044243/http://www.heal-online.org:80/eckerd.htm) |
 | Camp E-Kel-Etu | 1976-2010 | Silver Springs, FL | [HEAL](https://web.archive.org/web/20160623044243/http://www.heal-online.org:80/eckerd.htm) |
@@ -58,4 +58,5 @@
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

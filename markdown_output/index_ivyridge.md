@@ -14,43 +14,43 @@ In January 2006, Ivy Ridge announced that it had withdrawn from WWASP in Novembe
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jason G. Finlinson**was the Director of the Academy at Ivy Ridge from July 2001 until March 2008. He was the son-in-law of [Robert B. Lichfield](https://www.reddit.com/r/troubledteens/wiki/index/wwaspowners#wiki_robert_b._lichfield) . He was also previously the Director of [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) until he left to work at Ivy Ridge. He attended college at Utah Valley University, but possessed no formal qualifications to work in the treatment industry. He later worked for [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) in Amargosa Valley, NV/La Verkin, UT.
+** Jason G. Finlinson** was the Director of the Academy at Ivy Ridge from July 2001 until March 2008. He was the son-in-law of [Robert B. Lichfield](https://www.reddit.com/r/troubledteens/wiki/index/wwaspowners#wiki_robert_b._lichfield) . He was also previously the Director of [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) until he left to work at Ivy Ridge. He attended college at Utah Valley University, but possessed no formal qualifications to work in the treatment industry. He later worked for [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) in Amargosa Valley, NV/La Verkin, UT.
 
-**George Tulip**worked as the Director of Boys Residential Life at AIR. He has been reported by many survivors to have been particularly cruel and abusive. One survivor [reports](https://www.fornits.com/phpbb/index.php?topic=3004.90) , "jason finlinson is an evil man, but not nearly as wicked or cruel as his assistant director george tulip.. never in my entire life have i met a human being capable of doing what he can do to others." Another [reports](https://lizditz.typepad.com/i_speak_of_dreams/2005/06/riot_at_ivy_rid.html) , "Ive never been abused myself, but have witnessed alot of abuse by George Tulip, one of the administrators there. I would always see him go to study hall or intervention where the "bad kids" were and just laugh and restrain them for no reason or some shlt." None of these claims have been independently verified.
+** George Tulip** worked as the Director of Boys Residential Life at AIR. He has been reported by many survivors to have been particularly cruel and abusive. One survivor [reports](https://www.fornits.com/phpbb/index.php?topic=3004.90) , "jason finlinson is an evil man, but not nearly as wicked or cruel as his assistant director george tulip.. never in my entire life have i met a human being capable of doing what he can do to others." Another [reports](https://lizditz.typepad.com/i_speak_of_dreams/2005/06/riot_at_ivy_rid.html) , "Ive never been abused myself, but have witnessed alot of abuse by George Tulip, one of the administrators there. I would always see him go to study hall or intervention where the "bad kids" were and just laugh and restrain them for no reason or some shlt." None of these claims have been independently verified.
 
-**Amy H. Ritchie**(née Amy Hammond) worked as the Assistant Director of Girls Residential Life at AIR from November 2001 until February 2008. She then went on to Co-Found [Sunset Bay Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunsetbay) , a reportedly abuisve WWASP spin-off program in Mexico, where she continued to work until 2011. According to an SBA [survivor's report](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , "Amy Ritchie sexually groomed an upper level who kept returning to staff seminars and sleep in her bed. They lived together after SBA, along with another corrupt and physically abusive student turned staff named Jacob Keegan." A former staff-member [reported](https://www.youtube.com/watch?v=PflYkqWn4lk&fbclid=IwAR0zzMBMSfm-BDuRmaBytilGUcZKIVhs109oPUqtbUxqgRiJtJPZdaWM5Xs&ab_channel=ChannelAurelius) that Amy Ritchie had a sexual relationship with at least one upper-level resident, but it is unclear if this was a different victim than the other survivor's report. Her current employment is presently unknown.
+** Amy H. Ritchie**(née Amy Hammond) worked as the Assistant Director of Girls Residential Life at AIR from November 2001 until February 2008. She then went on to Co-Found [Sunset Bay Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunsetbay) , a reportedly abuisve WWASP spin-off program in Mexico, where she continued to work until 2011. According to an SBA [survivor's report](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , "Amy Ritchie sexually groomed an upper level who kept returning to staff seminars and sleep in her bed. They lived together after SBA, along with another corrupt and physically abusive student turned staff named Jacob Keegan." A former staff-member [reported](https://www.youtube.com/watch?v=PflYkqWn4lk&fbclid=IwAR0zzMBMSfm-BDuRmaBytilGUcZKIVhs109oPUqtbUxqgRiJtJPZdaWM5Xs&ab_channel=ChannelAurelius) that Amy Ritchie had a sexual relationship with at least one upper-level resident, but it is unclear if this was a different victim than the other survivor's report. Her current employment is presently unknown.
 
-**Erik Brossoit**worked as the Assistant Director of Boys Residential Life at AIR. After AIR, he likely worked at the St. Lawsrence Psychiatric Center, also located in Ogedensburg. His current employment is unknown, but he appears to presently live in Heuvelton, NY with his wife, Angela.
+** Erik Brossoit** worked as the Assistant Director of Boys Residential Life at AIR. After AIR, he likely worked at the St. Lawsrence Psychiatric Center, also located in Ogedensburg. His current employment is unknown, but he appears to presently live in Heuvelton, NY with his wife, Angela.
 
-**Joseph Mitchell**worked as the Director of Girls Residential Life at AIR from 2001 until 2005. Prior to this, he worked as a Recruiter for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , one of the marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , from 1998 until 2001. He currently works as a Job Connection Specialist at the Department of Workforce Services.
+** Joseph Mitchell** worked as the Director of Girls Residential Life at AIR from 2001 until 2005. Prior to this, he worked as a Recruiter for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , one of the marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , from 1998 until 2001. He currently works as a Job Connection Specialist at the Department of Workforce Services.
 
-**Matt Burnham**worked as a Therapist at AIR.
+** Matt Burnham** worked as a Therapist at AIR.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP programs, Ivy Ridge used a level system. They had 6 levels, which were numbered from 1 to 6. In order to progress through the level system by earning "points" for good behavior while avoiding "demerits" for bad behaviors and rule violations. At the end of each day, the student would rate themselves on how they behaved, their attitude, hygeine, and how they treated fellow staff and peers. On average, it was possible to earn approximately 12 points per day. Staff would then approve or deny the self-reported points, which would sometimes leave students with negative points. As the resident earned points, they were allowed to progress through the levels and earn "privileges" (also known as*rights*). Each level also required various behavioral changes such as accountability, leadership in the facility, calling out and referring demerits to their peers, and completion of the "Seminars" by Premier Educational Services. The levels were as follows:
 
 *
-**Level 1:**When a student arrives at Ivy Ridge, they are on Level 1 and have**0 points**. Upon arrival, students were stripped completely naked and forced to squat and cough. For the first part of their stay, the residents were forced to sleep in the hallways on a thin mattress, with their hands aboce the covers. The minimum length of time a student was on this level was just over 2 weeks (if they received 12 points every day), but it was typically substantially longer.
+**Level 1:** When a student arrives at Ivy Ridge, they are on Level 1 and have**0 points**. Upon arrival, students were stripped completely naked and forced to squat and cough. For the first part of their stay, the residents were forced to sleep in the hallways on a thin mattress, with their hands aboce the covers. The minimum length of time a student was on this level was just over 2 weeks (if they received 12 points every day), but it was typically substantially longer.
 
 *
-**Level 2:**Once a student earns**200 points**, they are automatically bumped up to Level 2. The "privileges" of Level 2 were essentially the same as Level 1, except the student got to eat a candy bar on Sundays. The minimum length of time a student would be on Level 2 was a little over 2 months (if they received 12 points every day), but was usually much longer.
+**Level 2:** Once a student earns**200 points**, they are automatically bumped up to Level 2. The "privileges" of Level 2 were essentially the same as Level 1, except the student got to eat a candy bar on Sundays. The minimum length of time a student would be on Level 2 was a little over 2 months (if they received 12 points every day), but was usually much longer.
 
 *
-**Level 3:**In order to progress to Level 3, a teenager must accumulate**1,000 points**and receive approval from their peers, teachers, student council, their family representative, and upper administration.
+**Level 3:** In order to progress to Level 3, a teenager must accumulate**1,000 points** and receive approval from their peers, teachers, student council, their family representative, and upper administration.
 
 *
-**Level 4:**Once a student was "voted up" to Level 4, they were no longer required to walk in line with their family. They were expected to assist the Dorm Parent and basically act like Staff. Students were reported to have been able to reach this level in a minimum of 8 months. This was the first "Upper Level" in the program. Teens on upper levels were not allowed to receive any Category 3 or higher (see below) demerits, or else they would be put on "probation" and you would have to go back to walking in line with your family.
+**Level 4:** Once a student was "voted up" to Level 4, they were no longer required to walk in line with their family. They were expected to assist the Dorm Parent and basically act like Staff. Students were reported to have been able to reach this level in a minimum of 8 months. This was the first "Upper Level" in the program. Teens on upper levels were not allowed to receive any Category 3 or higher (see below) demerits, or else they would be put on "probation" and you would have to go back to walking in line with your family.
 
 *
-**Level 5:**additional information unknown
+**Level 5:** additional information unknown
 
 *
-**Level 6:**additional information unknown
+**Level 6:** additional information unknown
 
 Until the teenagers had reached a certain level in the program, they were only allowed to communicate with their parents through letters which were read an censored by staff. Once they reached level 3, they could have monitored phone calls to their parents only (In case of a divorce, they could communicate with both parents if the parent, who paid for the stay agrees to communication with the other parent). If they and their parents passed certain seminars, they could have parent visits at the facility, and once they reached level 5 they could go on home visits.
 
@@ -76,7 +76,7 @@ The quality of education at the Academy at Ivy Ridge was not at the standard tha
 
 The program had an inconceivable amount of rules. Some of these rules included no talking, no gesturing/facial expressions, no looking out of windows, and no borrowing/sharing anything with anyone. Students were encouraged to give demerits to their peers for even minor rule violations in order to gain trust with staff and progress through the level system.
 
-The**demerits**also had levels. They were categorized as:
+The** demerits** also had levels. They were categorized as:
 
 *
 *Category 1*: these demerits would cost a resident 5 points. They could be given for things such as bad posture, being even one second late to line up, or anything the staff or other residents felt was unsatisfactory.
@@ -88,7 +88,7 @@ The**demerits**also had levels. They were categorized as:
 *Category 3*: these demerits would cost a resident 50 points. They could be given for things such as sharing/borrowing items, having a negative attitude, or any blatant rule violation.
 
 *
-*Category 4*: these demerits would cost a resident 2 of their levels and**all**of their points. This could be given for something as small as*glancing*out the window.
+*Category 4*: these demerits would cost a resident 2 of their levels and**all** of their points. This could be given for something as small as*glancing*out the window.
 
 *
 *Category 5*: these demerits would cause a resident to lose*all*of their levels and*all*of their points, in effect starting the program over. This could be given for things like self-harm/self-infliction, or use drugs or alcohol. However, even minor things like popping pimples or throwing up from overeating were considered "self-infliction" and could result in a Category 5 demerit.
@@ -103,7 +103,7 @@ If a student attempted to run away, other students were instructed to "stop them
 
 ## **Abuse and Closure**
 
-Academy at Ivy Ridge was plagued with allegations of abuse throughout and following its existence. Allegations of abuse include poor living conditions, unauthorized medical procedures, psychological torture, sexual abuse, and physical abuse. Videos obtained from the school demonstrate violent restraint tactics used against students. The YouTube channels "[Academy at Ivy Ridge](https://www.youtube.com/channel/UCts-VN1CqHyciR-5r75E3Kw/videos) " and "[MrYecht](https://www.youtube.com/user/MrYecht/videos) " have actually uploaded some of this security camera footage and it is currently available on their channels.**Content Warning: the footage is graphic and extremely disturbing. It depicts excessive restraints and violence against children. Viewer discretion is*strongly*advised.**
+Academy at Ivy Ridge was plagued with allegations of abuse throughout and following its existence. Allegations of abuse include poor living conditions, unauthorized medical procedures, psychological torture, sexual abuse, and physical abuse. Videos obtained from the school demonstrate violent restraint tactics used against students. The YouTube channels "[Academy at Ivy Ridge](https://www.youtube.com/channel/UCts-VN1CqHyciR-5r75E3Kw/videos) " and "[MrYecht](https://www.youtube.com/user/MrYecht/videos) " have actually uploaded some of this security camera footage and it is currently available on their channels.** Content Warning: the footage is graphic and extremely disturbing. It depicts excessive restraints and violence against children. Viewer discretion is*strongly*advised.**
 
 It is also reported to have used the notorious "Lifeboat" exercise used by many [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs during their [Propheets](https://www.reddit.com/r/troubledteens/wiki/index/ceduraps) .
 
@@ -131,7 +131,7 @@ In April 2009, a judge refused to dismiss a lawsuit related to the diploma issue
 
 **2013: (SURVIVOR)** [Link to Survivor Testimony - WWASP Survivor](http://wwaspsurvivors.com/survivor-testimony/survivor-testimony-academy-at-ivy-ridge/)
 
-**7/19/2007: (SURVIVOR)**I attended Ivy Ridge from July 2003 to April 2005. I am 20 years old now and a junior in college and I still have nightmares about this place. 2 years later, I still am dealing with what I experienced and witnessed.
+**7/19/2007: (SURVIVOR)** I attended Ivy Ridge from July 2003 to April 2005. I am 20 years old now and a junior in college and I still have nightmares about this place. 2 years later, I still am dealing with what I experienced and witnessed.
 
 1.
 many girls did not get their periods for months in the program because of the constant stress we were always under
@@ -161,7 +161,7 @@ There is so much more... I should write a book. But basically... if it sounds to
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Academy at Ivy Ridge Website Homepage](https://web.archive.org/web/20050529235850/http://www.academyivyridge.com/) (archived, 2005)
 
@@ -177,7 +177,7 @@ There is so much more... I should write a book. But basically... if it sounds to
 
 [Copy of Turley Lawsuit](https://www.wturley.com/wp-content/files/StGeorgeUtah.pdf)
 
-### **News Articles**
+### ** News Articles**
 
 [Melee Keeps Spotlight on Hard Life at Academy](https://www.nytimes.com/2005/06/08/nyregion/melee-keeps-spotlight-on-hard-life-at-academy.html) (by Kirk Semple, NYT - 6/8/2005)
 
@@ -187,11 +187,11 @@ There is so much more... I should write a book. But basically... if it sounds to
 
 [Reform school survivors allege abuse of their personal files too](http://america.aljazeera.com/articles/2014/10/31/missing-records-wwaspreformschools.html) (by Justin Higginbottom - Aljazeera America, 10/31/2014)
 
-### **Films/Videos**
+### ** Films/Videos**
 
 [Inside the Program Podcast: Ep. 2 - The Academy at Ivy Ridge](https://www.youtube.com/watch?v=q59Dd6o3sgc&ab_channel=CarolineLorson) (by Caroline Lorson (YouTube, 9/12/2020)
 
-### **Photos**
+### ** Photos**
 
 * ["Early Spring at Ivy Ridge"](https://web.archive.org/web/20020815202321/http://www.wwasp.com/ir05-23-02.htm) (*2002*)
 * [Family Reps at Ivy Ridge](https://web.archive.org/web/20021225113835/http://www.wwasp.com/ir06-07-02.htm) (*2002*)
@@ -203,7 +203,8 @@ There is so much more... I should write a book. But basically... if it sounds to
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Pine View Christian Academy (PVCA) was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) behavior modification program that appears have opened sometime around 2007. It was marketed as a Christian Specialty Boarding School for teenagers who were struggling with a wide variety of emotional or behavioral challenges. Very little additional information is known about the history or statistics of this program.
 
@@ -12,7 +12,7 @@ Very little information about PVCA is currently known. The best source of inform
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 *No information regarding the owners/employees of PVCA is available at this time.*
 
@@ -31,15 +31,15 @@ Very little information about the structure of PVCA's program is presently known
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
-*No allegations of abuse/neglect have yet been located. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No allegations of abuse/neglect have yet been located. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
 ## **Survivor/Parent Testimonies**
 
-*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -49,7 +49,8 @@ Very little information about the structure of PVCA's program is presently known
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

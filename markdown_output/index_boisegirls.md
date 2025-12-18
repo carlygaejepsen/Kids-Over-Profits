@@ -14,17 +14,17 @@ Boise Girls Academy is a part of the Northwest branch of [Teen Challenge](https:
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Matt Shaw**is the Executive Director of BGA. He is married to Heather Shaw. They moved to Boise in November 2015 to become the Directors at Boise Girls Academy. Prior to this, he worked as the Executive Director of other [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) programs.
+** Matt Shaw** is the Executive Director of BGA. He is married to Heather Shaw. They moved to Boise in November 2015 to become the Directors at Boise Girls Academy. Prior to this, he worked as the Executive Director of other [Teen Challenge](https://www.reddit.com/r/troubledteens/wiki/index/teenchallenge) programs.
 
-**Heather Shaw**is the Program Coordinator of BGA. She is married Matt Shaw.
+** Heather Shaw** is the Program Coordinator of BGA. She is married Matt Shaw.
 
-**Angela Agundez (Smith)**is the Education Coordinator at BGA.
+** Angela Agundez (Smith)** is the Education Coordinator at BGA.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little information is presently known about the specifics of the program used by BGA. The program reports that it uses a "positive peer culture" model, which is common in many behavior-modification programs. The program is also heavily centered around the Christian faith. The program also appears to use a level-system, which is typical of behavior-modification programs.
 
@@ -32,7 +32,7 @@ From their [website](http://www.boisegirlsacademy.org/christian-boarding-school-
 
 From a [*StrugglingTeens*article](https://strugglingteens.com/artman/publish/printer_BoiseGirlsAcademyNP_130711.shtml) , "As each new student enrolls into Boise Girls Academy, they are paired with an on-site pastoral counselor, who is then also the contact person for the family. These counselors also provide weekly group sessions for the girls. Daily evening groups are staff facilitated to discuss relationship growth, positive peer influence, accountability, personal responsibility and conflict resolution. Each day begins with prayer and bible study as the girls learn to build their own relationship with God."
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,7 +42,7 @@ Many survivors have reported that Boise Girls Academy is an abusive program. All
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2018: (SURVIVOR)**"Had no choice but to give them atleast one star. Otherwise I would have given them zero. Coming from somebody who has had a great deal of experience through myself, my family and my close friends with mental health facilities, behavioral health facilities, drug and alcohol treatment centers ect... I could not NOT give this place a review warning all parents. This place is uncivil, phony and just wrong. The way they treated the girls here was wicked, disrespectful and demeaning. Staff expected they act as adults but treated them as if they were small children. You bring your I’ll-mannered teen here because they advertise helping teens that are ill-mannered. But that is not what they do at all. They accept and nurture teens that come in that are already well behaved and compliant. They kick out, disregard and demean those who ACTUALLY have problems and need help. And PLEASE do your teen a favor and not send them here, ESPECIALLY if they struggle with a drug addiction. By no means does this place help with addiction. It’s embarrassing to Christians to have this place proclaim Christianity. They do not at all represent Jesus Christ." - [Cait (Google Reviews)](https://www.google.com/maps/contrib/100970579076902585728/reviews?hl=en-US)
 
@@ -52,13 +52,14 @@ Many survivors have reported that Boise Girls Academy is an abusive program. All
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Boise Girls Academy Website Homepage](http://www.boisegirlsacademy.org/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

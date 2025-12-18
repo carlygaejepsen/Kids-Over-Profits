@@ -17,7 +17,7 @@ Denial of medical care is shockingly common within the Troubled Teen Industry. O
 
 ---
 
-## **Isolation**
+## ** Isolation**
 
 ---
 
@@ -25,7 +25,7 @@ Isolation has been used as a method of control in the Troubled Teen Industry sin
 
 ---
 
-## **Vague/Contradictory Rules**
+## ** Vague/Contradictory Rules**
 
 ---
 
@@ -33,7 +33,7 @@ In some cases, rules at TTI programs are intentionally vague and contradictory- 
 
 ---
 
-## **Forced Labor**
+## ** Forced Labor**
 
 ---
 
@@ -41,19 +41,19 @@ Forced labor is exceedingly common within the Troubled Teen Industry. In wildern
 
 ---
 
-## **Restraint**
+## ** Restraint**
 
 ---
 
 ---
 
-## **Undertrained Staff**
+## ** Undertrained Staff**
 
 ---
 
 ---
 
-## **Level Systems**
+## ** Level Systems**
 
 ---
 
@@ -61,7 +61,8 @@ Nearly all programs within the Troubled Teen Industry employ some type of level 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

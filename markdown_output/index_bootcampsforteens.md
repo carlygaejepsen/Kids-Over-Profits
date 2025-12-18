@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Boot Camps for Teens is a website that was created to funnel search-engine results towards many abusive facilities, including the confirmedly and notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs. Like other companies such as [Teen Revitalization](https://www.reddit.com/r/troubledteens/wiki/index/teenrevitalization) , and [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , it is believed to have been created as a marketing arm of WWASP in order to refer unknowing parents to WWASP programs.
 
@@ -10,17 +10,17 @@ The website domain registration records show the domain name was registered on A
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Kevin Richey**was the registrant for the BCFT website. Kevin Richey previously worked for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which was one of the major marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He also previously worked for WWASP as an Admissions Coordinator. In 2005, he opened [Tipton Academy](https://www.reddit.com/r/troubledteens/wiki/index/tipton) and [Meadowlark Academy](https://www.reddit.com/r/troubledteens/wiki/index/meadowlark) in rural Kansas. Tipton Academy was closed in 2011 but Meadowlark Academy continues to operate to this day. It has been reported by survivors that the staff at Tipton Academy used to threaten to send the difficult residents to [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a confirmedly and notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program.
-
----
-
-## **Programs Recommended by Boot Camps for Teens**
+** Kevin Richey** was the registrant for the BCFT website. Kevin Richey previously worked for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , which was one of the major marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He also previously worked for WWASP as an Admissions Coordinator. In 2005, he opened [Tipton Academy](https://www.reddit.com/r/troubledteens/wiki/index/tipton) and [Meadowlark Academy](https://www.reddit.com/r/troubledteens/wiki/index/meadowlark) in rural Kansas. Tipton Academy was closed in 2011 but Meadowlark Academy continues to operate to this day. It has been reported by survivors that the staff at Tipton Academy used to threaten to send the difficult residents to [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a confirmedly and notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program.
 
 ---
 
-## **Additional Information**
+## ** Programs Recommended by Boot Camps for Teens**
+
+---
+
+## ** Additional Information**
 
 [Boot Camps for Teens Website Homepage](https://www.bootcampsforteens.com/)
 
@@ -30,7 +30,8 @@ The website domain registration records show the domain name was registered on A
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -2,19 +2,19 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Teen 5000 (also called Teen 5000 Referral Network) was a company that was created by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) officials in order to funnel search-engine results towards WWASP programs. Like other companies such as [Teen Revitalization](https://www.reddit.com/r/troubledteens/wiki/index/teenrevitalization) , and [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , it was created as a marketing arm of WWASP in order to refer unknowing parents to WWASP programs.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Karr Farnsworth**was the registered agent of Teen 5000.
+** Karr Farnsworth** was the registered agent of Teen 5000.
 
 ---
 
-## **Programs Recommended by Teen 5000**
+## ** Programs Recommended by Teen 5000**
 
 *The following programs were featured as recommended programs on Teen 5000's [website](https://web.archive.org/web/20020608203626/http://www.teen5000.com/programs.html) in 2002, which is the earliest version of the website available. All of these programs were owned by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .*
 
@@ -37,7 +37,8 @@ Teen 5000 (also called Teen 5000 Referral Network) was a company that was create
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

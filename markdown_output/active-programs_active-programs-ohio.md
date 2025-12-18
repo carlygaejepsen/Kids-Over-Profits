@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 Accreditation for private schools is optional in the state of Ohio. If a school chooses to seek a charter, they must prove that the students are receiving a high quality education by becoming accredited and approved by the state board of education, or by completing the chartering process and demonstrating compliance with the operating standards for Ohio‘s Schools.
 
@@ -20,17 +20,17 @@ Chartered private schools are allowed state allocations for 1) speech and hearin
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Fox Run Center for Children and Adolescents**](https://www.reddit.com/r/troubledteens/wiki/index/foxrun) | - | - | - |
-| [**Grand River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/grandriver) | - | - | - |
-| [**New Lifehouse Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newlifehouse/) | - | - | - |
-| [**Ohio Wilderness Boys Camp**](https://www.reddit.com/r/troubledteens/wiki/index/ohioboys) | 2009 | - | - |
-| [**One Way Farm**](https://www.reddit.com/r/troubledteens/wiki/index/onewayfarm) |  |
-| [**Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |
-| [**Windsor Laurelwood Center for Behavioral Medicine**](https://www.reddit.com/r/troubledteens/wiki/index/windsorlaurel) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Fox Run Center for Children and Adolescents**](https://www.reddit.com/r/troubledteens/wiki/index/foxrun) | - | - | - |
+| [** Grand River Academy**](https://www.reddit.com/r/troubledteens/wiki/index/grandriver) | - | - | - |
+| [** New Lifehouse Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newlifehouse/) | - | - | - |
+| [** Ohio Wilderness Boys Camp**](https://www.reddit.com/r/troubledteens/wiki/index/ohioboys) | 2009 | - | - |
+| [** One Way Farm**](https://www.reddit.com/r/troubledteens/wiki/index/onewayfarm) |  |
+| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |
+| [** Windsor Laurelwood Center for Behavioral Medicine**](https://www.reddit.com/r/troubledteens/wiki/index/windsorlaurel) | - | - | - |
 ---
 
-## **Closed Programs in Ohio**
+## ** Closed Programs in Ohio**
 
 ---
 
@@ -38,10 +38,10 @@ Chartered private schools are allowed state allocations for 1) speech and hearin
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Eagle's Nest Ranch & Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eaglesnest) | - | - | - |
-| [**Pathway Family Center**](https://www.reddit.com/r/troubledteens/wiki/index/pathway) | - | - | [HEAL](http://www.heal-online.org/pfc.htm) |
-| [**Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Eagle's Nest Ranch & Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eaglesnest) | - | - | - |
+| [** Pathway Family Center**](https://www.reddit.com/r/troubledteens/wiki/index/pathway) | - | - | [HEAL](http://www.heal-online.org/pfc.htm) |
+| [** Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) | - | - | - |
 | - | - | - | - |
 ---
 
@@ -51,7 +51,8 @@ Chartered private schools are allowed state allocations for 1) speech and hearin
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

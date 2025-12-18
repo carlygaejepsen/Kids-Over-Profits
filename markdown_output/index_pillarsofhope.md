@@ -16,19 +16,19 @@ The program appears to have closed around 2012. It is believed that at this time
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Narvin Lichfield**is the brother of Robert Lichfield. He has also begun going by the aliases**Marvin Lichfield**,**Marvin Browning**, and**Marvin Sheffield**. He leased the campus of Pillars of Hope to the program's owners and also served as a supervisor of the program. His career with WWASP began in 1998, when he opened [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) , functioning as both owner and Administrator. Then in 2001, he opened [The Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) in Costa Rica. Narvin Lichfield was arrested following the closure of Dundee Ranch in 2003 by Costa Rican authorities. He also took over operations of [Bethel Boys Academy](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) in 2007, and renamed it [Gulf Coast Academy](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) . Narvin was arrested again by authorities in South Carolina in 2011 after he was pulled over and determined to have been driving on a suspended license and without insurance. Narvin was also served with 3 summonses regarding bad checks written on Carolina Springs Academy’s closed checking account totaling about $2,000. Lichfield was also named as a defendant in two other lawsuits, namely Lexington Insurance Company vs. Carolina Springs et al., a personal injury suit, and the Turley class action suit. He has also been reported to have been involved with several programs which opened up in the former location of Carolina Springs Academy, including Magnolia Hills Christian Academy, [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) , Southern Oaks Therapeutic Boarding School/Youth Ranch, and most recently [Wake up Call for Teens Boot Camp/Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) , and [Palmetto Therapeutic Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) . He is from Layton, Utah.
+** Narvin Lichfield** is the brother of Robert Lichfield. He has also begun going by the aliases** Marvin Lichfield**,** Marvin Browning**, and** Marvin Sheffield**. He leased the campus of Pillars of Hope to the program's owners and also served as a supervisor of the program. His career with WWASP began in 1998, when he opened [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) , functioning as both owner and Administrator. Then in 2001, he opened [The Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) in Costa Rica. Narvin Lichfield was arrested following the closure of Dundee Ranch in 2003 by Costa Rican authorities. He also took over operations of [Bethel Boys Academy](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) in 2007, and renamed it [Gulf Coast Academy](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) . Narvin was arrested again by authorities in South Carolina in 2011 after he was pulled over and determined to have been driving on a suspended license and without insurance. Narvin was also served with 3 summonses regarding bad checks written on Carolina Springs Academy’s closed checking account totaling about $2,000. Lichfield was also named as a defendant in two other lawsuits, namely Lexington Insurance Company vs. Carolina Springs et al., a personal injury suit, and the Turley class action suit. He has also been reported to have been involved with several programs which opened up in the former location of Carolina Springs Academy, including Magnolia Hills Christian Academy, [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) , Southern Oaks Therapeutic Boarding School/Youth Ranch, and most recently [Wake up Call for Teens Boot Camp/Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) , and [Palmetto Therapeutic Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) . He is from Layton, Utah.
 
-**Harold Dabel**was one of the Owners of Pillars of Hope. Prior to this, he worked as one of the Directors of the**confirmedly abusive** [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) for just a few weeks before the program was raided and shut down. He also was involved in the opening of [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) in 2011, which is widely believed to have been an attempted rebrand of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) and Pillars of Hope.
+** Harold Dabel** was one of the Owners of Pillars of Hope. Prior to this, he worked as one of the Directors of the** confirmedly abusive** [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) for just a few weeks before the program was raided and shut down. He also was involved in the opening of [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) in 2011, which is widely believed to have been an attempted rebrand of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) and Pillars of Hope.
 
-**Fernando Bustos**was one of the Owners of Pillars of Hope. Prior to this, he worked as one of the Directors of the**confirmedly abusive** [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) .
+** Fernando Bustos** was one of the Owners of Pillars of Hope. Prior to this, he worked as one of the Directors of the** confirmedly abusive** [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) .
 
-**Ron Del Aguila**worked as the Operations Administrator at Pillars of Hope. No additional information is presently known about him at this time.
+** Ron Del Aguila** worked as the Operations Administrator at Pillars of Hope. No additional information is presently known about him at this time.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, Pillars of Hope used a level-system consisting of six levels.
 
@@ -62,13 +62,13 @@ The program appears to have closed around 2012. It is believed that at this time
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **9/17/2015: (SURVIVOR)**"Hi my name is Brent Poulston and I was at pillars of hope for a while and I witnessed alot first hand and was made an example out of on more than one occasion. I have been to the hospital with broken bones at Carolina springs academy and at pillars of hope." - [Brent (WWASP Survivors)](http://wwaspsurvivors.com/wwasp-programs/dundee-ranch/)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Pillars of Hope Website Homepage (archived, 2005)](https://web.archive.org/web/20050205003234/http://www.pillarsofhope.com/)
 
@@ -88,7 +88,8 @@ The program appears to have closed around 2012. It is believed that at this time
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

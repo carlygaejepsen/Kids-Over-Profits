@@ -14,31 +14,31 @@ The program was originally founded as part of [CEDU](https://www.reddit.com/r/tr
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rob Spear**was a co-founder of Boulder Creek Academy. Rob Spear was also the President of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) for some time (until at least 1993). It is believed he began working for CEDU at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He passed away from ALS in 2009.
+** Rob Spear** was a co-founder of Boulder Creek Academy. Rob Spear was also the President of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) for some time (until at least 1993). It is believed he began working for CEDU at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He passed away from ALS in 2009.
 
-**John Sarchio**was a co-founder of Boulder Creek Academy. He later worked as the Academic Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) .
+** John Sarchio** was a co-founder of Boulder Creek Academy. He later worked as the Academic Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) .
 
-**Lori Rist**was a co-founder of Boulder Creek Academy. Lori began working at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1984. In 1998, she began working at [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) . She reportedly stopped working for CEDU in 2004. ([Source](https://strugglingteens.com/news/cedurist.html) )
+** Lori Rist** was a co-founder of Boulder Creek Academy. Lori began working at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1984. In 1998, she began working at [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) . She reportedly stopped working for CEDU in 2004. ([Source](https://strugglingteens.com/news/cedurist.html) )
 
-**Mike Naylor**was a co-founder of Boulder Creek Academy. He had previously worked at [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 1981-1986. He also was the Executive Director of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) until at least 1996. He briefly worked as the Executive Director of the CEDU North Idaho Schools. In 1998, he became the President/CEO of CEDU Educational Services, which was his role until he resigned in 2000.
+** Mike Naylor** was a co-founder of Boulder Creek Academy. He had previously worked at [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 1981-1986. He also was the Executive Director of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) until at least 1996. He briefly worked as the Executive Director of the CEDU North Idaho Schools. In 1998, he became the President/CEO of CEDU Educational Services, which was his role until he resigned in 2000.
 
-**Jackson Culotta**worked as the Program Director of Boulder Creek Academy. He allegedly worked with CEDU for over 9 years at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and Boulder Creek Academy. He became the Headmaster of [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) in 2000, shortly before the school closed. After Cascade, he worked as the Headmaster of [Cherokee Creek Boys School](https://www.reddit.com/r/troubledteens/wiki/index/cherokeecreek) in South Carolina.
+** Jackson Culotta** worked as the Program Director of Boulder Creek Academy. He allegedly worked with CEDU for over 9 years at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and Boulder Creek Academy. He became the Headmaster of [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) in 2000, shortly before the school closed. After Cascade, he worked as the Headmaster of [Cherokee Creek Boys School](https://www.reddit.com/r/troubledteens/wiki/index/cherokeecreek) in South Carolina.
 
-**Paul Johnson**worked as the Director of Boulder Creek Academy, beginning in 1994. Prior to working at BCA, he is reported to have worked at Outward Bound and at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , another CEDU program.
+** Paul Johnson** worked as the Director of Boulder Creek Academy, beginning in 1994. Prior to working at BCA, he is reported to have worked at Outward Bound and at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , another CEDU program.
 
-**Shawnale Wilson**worked as the Admissions Director of Boulder Creek Academy, beginning in 1996. She now works at [Mountain Springs Preparatory Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountainsprings) in Cedar City, UT.
+** Shawnale Wilson** worked as the Admissions Director of Boulder Creek Academy, beginning in 1996. She now works at [Mountain Springs Preparatory Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountainsprings) in Cedar City, UT.
 
-**Rachel M. Webster**worked as a Therapist at Boulder Creek Academy. She later went on to work at the CEDU Wilderness program, [Ascent](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) .
+** Rachel M. Webster** worked as a Therapist at Boulder Creek Academy. She later went on to work at the CEDU Wilderness program, [Ascent](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) .
 
-**Dave Hampton**worked as a Team Lead at Boulder Creek Academy from 1994-1998. In 1998, he began working as a Team Lead at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) . In July 2001, he became CEDU's Northwest Region Academic Director.
+** Dave Hampton** worked as a Team Lead at Boulder Creek Academy from 1994-1998. In 1998, he began working as a Team Lead at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) . In July 2001, he became CEDU's Northwest Region Academic Director.
 
-**Kenton Clairmont**worked as the Academic Director of Boulder Creek Academy. It has been reported that he previously worked for [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) .
+** Kenton Clairmont** worked as the Academic Director of Boulder Creek Academy. It has been reported that he previously worked for [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program at Boulder Creek Academy was very similar to the program used by many CEDU Schools during the later period of CEDU's existence. However, it is reported that BCA (under UHS) changed the names of many of their practices in an attempt to distance themselves from their roots in Synanon and CEDU. For example, "[Raps](https://www.reddit.com/r/troubledteens/wiki/index/ceduraps) " and "[Propheets"](https://www.reddit.com/r/troubledteens/wiki/index/cedupropheets) " were still used at BCA but were referred to by different terms: "Raps" were reportedly called "Encounter Groups/Restorative Circles" and "Propheets" were called "Workshops". However, the names of the Workshops were the same as those of CEDU's Propheets.
 
@@ -54,7 +54,7 @@ The main punishment students at BCA receive were receiving community service hou
 
 ---
 
-## **Abuse, Deaths, and Investigations**
+## ** Abuse, Deaths, and Investigations**
 
 The following is a [list of Complaints](http://www.heal-online.org/bcapolicecalls.pdf) filed with Boundary County Sherriff's Department (Courtesy of HEAL).
 
@@ -90,7 +90,7 @@ Boulder Creek Academy closed on June 2, 2022.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Boulder Creek Academy Website Homepage](https://web.archive.org/web/20020926204732/http://www.bouldercreekacademy.com/) (archived, 2002)
 
@@ -108,7 +108,8 @@ Boulder Creek Academy closed on June 2, 2022.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

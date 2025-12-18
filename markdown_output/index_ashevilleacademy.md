@@ -16,36 +16,36 @@ In 2024, the program merged with Magnolia Mill School (formerly Solstice East). 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Catherine "Cat" Jennings**was the Founder and Executive Director of Asheville Academy for Girls. She began her career in 1981 when she founded [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's [Talisman Camps](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) . In 1991, she founded Camp Elliott, which later became [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) . She worked as the Executive Director of Stone Mountain School until 2005, when she founded Aspen's [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . She worked at New Leaf Academy as the Executive Director until 2009. She then founded [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) in 2009 and worked as the Executive Director there until 2011. She founded Asheville Academy for Girls in 2012, and worked as the Executive Director until the closure.
+** Catherine "Cat" Jennings** was the Founder and Executive Director of Asheville Academy for Girls. She began her career in 1981 when she founded [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's [Talisman Camps](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) . In 1991, she founded Camp Elliott, which later became [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) . She worked as the Executive Director of Stone Mountain School until 2005, when she founded Aspen's [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . She worked at New Leaf Academy as the Executive Director until 2009. She then founded [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) in 2009 and worked as the Executive Director there until 2011. She founded Asheville Academy for Girls in 2012, and worked as the Executive Director until the closure.
 
-**Jane Rosseth**was the Clinical Director of Asheville Academy for Girls. She had worked at AAG since 2019. Her prior employment was unknown, although her [staff bio](https://ashevilleacademy.com/jane-rosseth-ma-lmft/) read, in part, "Jane has served as Clinical Director to two other residential child service agencies in NC."
+** Jane Rosseth** was the Clinical Director of Asheville Academy for Girls. She had worked at AAG since 2019. Her prior employment was unknown, although her [staff bio](https://ashevilleacademy.com/jane-rosseth-ma-lmft/) read, in part, "Jane has served as Clinical Director to two other residential child service agencies in NC."
 
-**Rebecca Gebb**was the Program Director of Asheville Academy for Girls. She had worked at AAG since January of 2013. Her prior employment was unknown, but her [staff bio](https://ashevilleacademy.com/rebecca-gebb-team-manager/) stated, in part, "She comes with experience in previous therapeutic boarding school settings, therapeutic summer camps, pediatric outpatient clinics, a children’s advocacy center, and early childhood education."
+** Rebecca Gebb** was the Program Director of Asheville Academy for Girls. She had worked at AAG since January of 2013. Her prior employment was unknown, but her [staff bio](https://ashevilleacademy.com/rebecca-gebb-team-manager/) stated, in part, "She comes with experience in previous therapeutic boarding school settings, therapeutic summer camps, pediatric outpatient clinics, a children’s advocacy center, and early childhood education."
 
-**Kathryn Huffman**was the Director of Admissions and a Founding Partner of Asheville Academy for Girls. According to [LinkedIn](https://www.linkedin.com/in/kathryn-huffman-3b892033/) , she held this role since January, 2012. Prior to that, she was the Outreach Coordinator for Cumberland Heights, an alcohol and drug rehab center in Tennessee.
+** Kathryn Huffman** was the Director of Admissions and a Founding Partner of Asheville Academy for Girls. According to [LinkedIn](https://www.linkedin.com/in/kathryn-huffman-3b892033/) , she held this role since January, 2012. Prior to that, she was the Outreach Coordinator for Cumberland Heights, an alcohol and drug rehab center in Tennessee.
 
-**Tabitha Salyer**was a Primary Therapist & the Transition and Alumni Support Coordinator at Asheville Academy for Girls. She had worked at AAG since December 2016. Prior to this, she worked as a Counseling Intern and Residential Coach at [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) from 2014 until 2016.
+** Tabitha Salyer** was a Primary Therapist & the Transition and Alumni Support Coordinator at Asheville Academy for Girls. She had worked at AAG since December 2016. Prior to this, she worked as a Counseling Intern and Residential Coach at [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) from 2014 until 2016.
 
-**Ben Chamberlain**was the Director of Academics at Asheville Academy for Girls. Prior to this, he worked as a Math Teacher at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) .
+** Ben Chamberlain** was the Director of Academics at Asheville Academy for Girls. Prior to this, he worked as a Math Teacher at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) .
 
-**Katie Salmons**worked as a Clinical Supervisor at Asheville Academy for Girls. According to LinkedIn, she worked as a Primary Clinician and subsequently a Clinical Supervisor at AAC since February 2019. From August 2018 to February, 2019, she worked at [Eliada Homes](https://www.linkedin.com/in/katie-salmons-66bb11167/) , as a clinician/therapist. Elidas Homes, according to an [ABC 13 News report](https://wlos.com/news/local/failing-the-children-former-eliada-employee-speaks-out-after-allegations-come-to-light) , had two of its facilities shuttered by the State. There have been whistle blower complaints about other facilities operated by Eliada Homes.
+** Katie Salmons** worked as a Clinical Supervisor at Asheville Academy for Girls. According to LinkedIn, she worked as a Primary Clinician and subsequently a Clinical Supervisor at AAC since February 2019. From August 2018 to February, 2019, she worked at [Eliada Homes](https://www.linkedin.com/in/katie-salmons-66bb11167/) , as a clinician/therapist. Elidas Homes, according to an [ABC 13 News report](https://wlos.com/news/local/failing-the-children-former-eliada-employee-speaks-out-after-allegations-come-to-light) , had two of its facilities shuttered by the State. There have been whistle blower complaints about other facilities operated by Eliada Homes.
 
-**Natalie Hollenback**worked as a Primary Therapist at Asheville Academy for Girls. Prior to this, she worked at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) at a Direct Care Staff.
+** Natalie Hollenback** worked as a Primary Therapist at Asheville Academy for Girls. Prior to this, she worked at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) at a Direct Care Staff.
 
-**Chandler Ray**worked as the Therapeutic Recreation Services Coordinator and a Primary Therapist at Asheville Academy for Girls. Prior to this, he worked at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) , from May 2018 to December 2019, first as a mentor and for the last four months as an intern.
+** Chandler Ray** worked as the Therapeutic Recreation Services Coordinator and a Primary Therapist at Asheville Academy for Girls. Prior to this, he worked at the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) , from May 2018 to December 2019, first as a mentor and for the last four months as an intern.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Asheville Academy used a level system consisting of 4 levels. The levels, as reported by a survivor of the program, were:
 
-***Earth:**When a resident arrived at AAG, they were placed on Earth phase. While on this phase, they were given no privileges and had to adhere to a strict set of rules.
-***Water:**On this level, the teens were given 30 mins monitored iPod use (limited to weekends), shaving privileges, and were allowed to wear neutral colored nail polish.
-***Fire:**Once they had reached this level, the teens were given additional privileges such as being allowed to wear pink and purple nail polish and light- colored lip gloss or lipstick.
-***Air:**This was the final level at AAG. On this level, the residents were given unlimited iPod access, were allowed to wear any color nail polish besides black, and could wear natural lipstick or lipgloss & mascara. They were also permitted to walk around the building unmonitored by staff, and were allowed to have snacks.
+***Earth:** When a resident arrived at AAG, they were placed on Earth phase. While on this phase, they were given no privileges and had to adhere to a strict set of rules.
+***Water:** On this level, the teens were given 30 mins monitored iPod use (limited to weekends), shaving privileges, and were allowed to wear neutral colored nail polish.
+***Fire:** Once they had reached this level, the teens were given additional privileges such as being allowed to wear pink and purple nail polish and light- colored lip gloss or lipstick.
+***Air:** This was the final level at AAG. On this level, the residents were given unlimited iPod access, were allowed to wear any color nail polish besides black, and could wear natural lipstick or lipgloss & mascara. They were also permitted to walk around the building unmonitored by staff, and were allowed to have snacks.
 
 According to survivor reports, common punishments at AAG included solitary confinement, loss of speaking privileges ("silence"), and being made to sleep in common areas instead of their rooms.
 
@@ -53,23 +53,23 @@ Asheville Academy for Girls offered the controversial practice of [Neurofeedback
 
 ---
 
-## **Abuse Allegations, Lawsuits, and Deaths**
+## ** Abuse Allegations, Lawsuits, and Deaths**
 
 Many survivors have reported that Asheville Academy was an abusive program. Allegations of abuse and neglect that have been reported by survivors include solitary confinement, verbal/emotional abuse, violent and excessive use of physical restraints, medical negligence, frequent use of attack/shame therapy, and even sexual abuse. Many survivors report that they have developed PTSD as a result of their time at Asheville Academy.
 
-**Two students died by suicide at the facility in May 2025.**On May 3, 2025, a 13-year-old girl died by suicide at Asheville Academy. Following this death, the NCDHHS suspended admissions. Less than a month later, on May 29, 2025, a 12-year-old girl died by suicide at the facility. Following these events, the school surrendered its license on June 4, 2025.
+** Two students died by suicide at the facility in May 2025.** On May 3, 2025, a 13-year-old girl died by suicide at Asheville Academy. Following this death, the NCDHHS suspended admissions. Less than a month later, on May 29, 2025, a 12-year-old girl died by suicide at the facility. Following these events, the school surrendered its license on June 4, 2025.
 
-**Federal Lawsuit (August 2025)**In August 2025, two former clients filed a federal complaint against Family Help & Wellness and Asheville Academy alleging abuse, exploitation, and negligence. The complaint detailed severe misconduct by staff members, including allegations that a staff member identified as "Gabe" sexually exploited a student, and a staff member identified as "Jami Taylor" provided alcohol to a minor. The complaint also alleged that the facility violated trafficking laws through the use of forced labor disguised as "Community Roles."
+** Federal Lawsuit (August 2025)** In August 2025, two former clients filed a federal complaint against Family Help & Wellness and Asheville Academy alleging abuse, exploitation, and negligence. The complaint detailed severe misconduct by staff members, including allegations that a staff member identified as "Gabe" sexually exploited a student, and a staff member identified as "Jami Taylor" provided alcohol to a minor. The complaint also alleged that the facility violated trafficking laws through the use of forced labor disguised as "Community Roles."
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**January 2021: (SURVIVOR)**"I am begging you to keep your children out of this facility and other reform “schools” like it. There are much healthier and effective options you can take to help your child. Reform schools like Asheville Academy for Girls scam desperate parents who need to find their children help out of thousands of dollars. Once your children arrive that these facilities they will be abused, mistreated and broken. You will be told by staff that they will try to manipulate you to take them home when they tell you how horrifically they are treated. Please google ‘Braking Code Silence’ for more information about the horrors of the troubled teen industry." - [L Solis (Google Reviews)](https://www.google.com/maps/contrib/112161795656533472314/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.4084638,-83.1065056,7.69z/data=!4m6!1m5!8m4!1e1!2s112161795656533472314!3m1!1e1?hl=en-US)
+** January 2021: (SURVIVOR)**"I am begging you to keep your children out of this facility and other reform “schools” like it. There are much healthier and effective options you can take to help your child. Reform schools like Asheville Academy for Girls scam desperate parents who need to find their children help out of thousands of dollars. Once your children arrive that these facilities they will be abused, mistreated and broken. You will be told by staff that they will try to manipulate you to take them home when they tell you how horrifically they are treated. Please google ‘Braking Code Silence’ for more information about the horrors of the troubled teen industry." - [L Solis (Google Reviews)](https://www.google.com/maps/contrib/112161795656533472314/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.4084638,-83.1065056,7.69z/data=!4m6!1m5!8m4!1e1!2s112161795656533472314!3m1!1e1?hl=en-US)
 
-**October 2020: (SURVIVOR)**"I am begging you with every fiber of my being not to send your child here. I was at AAG from August 12, 2013-August 14, 2014. I have never been more traumatized than I was while I was there. We were treated like garbage and while there was a handful of good staff the majority did not care and would put us into restraints for absolutely no reason. I also was sent to the basement and forced to do nothing and I was not allowed to have conversations. We were barely allowed to be near each other. To this day I have nightmares about this school and everything I went through. There are so many places that can help your child but this is not one of them." - [Hannah (Google Reviews)](https://www.google.com/maps/contrib/101612732717564239289/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.5252539,-82.205098,17z/data=!4m6!1m5!8m4!1e1!2s101612732717564239289!3m1!1e1?hl=en-US)
+** October 2020: (SURVIVOR)**"I am begging you with every fiber of my being not to send your child here. I was at AAG from August 12, 2013-August 14, 2014. I have never been more traumatized than I was while I was there. We were treated like garbage and while there was a handful of good staff the majority did not care and would put us into restraints for absolutely no reason. I also was sent to the basement and forced to do nothing and I was not allowed to have conversations. We were barely allowed to be near each other. To this day I have nightmares about this school and everything I went through. There are so many places that can help your child but this is not one of them." - [Hannah (Google Reviews)](https://www.google.com/maps/contrib/101612732717564239289/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.5252539,-82.205098,17z/data=!4m6!1m5!8m4!1e1!2s101612732717564239289!3m1!1e1?hl=en-US)
 
-**October 2020: (SURVIVOR)**"Like every other program this group of people owns, they use solitary confinement and attack and shame therapy- and I promise you, they’ll respond to this and say they do not. This program will only temporary and superficially improve your child but set them up for failur as an adult. They only care about your income. I was housed on the same campus as AAG and I distinctly remember their screams at night. It was incredibly haunting. My friends from AAG have suffered lifelong trauma and suffering as a direct result of being enrolled here." - [Berna (Google Reviews)](https://www.google.com/maps/contrib/114461163874524002538/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.4748739,-82.5224676,9.51z/data=!4m6!1m5!8m4!1e1!2s114461163874524002538!3m1!1e1?hl=en-US)
+** October 2020: (SURVIVOR)**"Like every other program this group of people owns, they use solitary confinement and attack and shame therapy- and I promise you, they’ll respond to this and say they do not. This program will only temporary and superficially improve your child but set them up for failur as an adult. They only care about your income. I was housed on the same campus as AAG and I distinctly remember their screams at night. It was incredibly haunting. My friends from AAG have suffered lifelong trauma and suffering as a direct result of being enrolled here." - [Berna (Google Reviews)](https://www.google.com/maps/contrib/114461163874524002538/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.4748739,-82.5224676,9.51z/data=!4m6!1m5!8m4!1e1!2s114461163874524002538!3m1!1e1?hl=en-US)
 
 **2019: (SURVIVOR)**"When I was here at aag it was when I was 12 I am now 17 and still think of the terrible expiernces I have been through at that place. I’ve been to over 5 programs and can reccomend good ones for parents looking to send there children here please do not!!!! I was consitnitly retrained and so was everyone else for the most ridiculous reasons, (getting to close to another peer) and I was also put in the basement with no peer interaction for 2 weeks before I begged my parents to send me to a wilderness program which I came from. I remember one time I was cutting myself and they didn’t notice till 3 weeks in the staff is a joke they want money the only reason there their." - [Emily (Google Reviews)](https://www.google.com/maps/contrib/115726690819748969204/place/ChIJDUjIxtFXV4gRzYyXD3sSfl0/@35.4937037,-82.3372182,9.76z/data=!4m6!1m5!8m4!1e1!2s115726690819748969204!3m1!1e1?hl=en-US)
 
@@ -85,7 +85,7 @@ Many survivors have reported that Asheville Academy was an abusive program. Alle
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Asheville Academy for Girls Website Homepage](https://ashevilleacademy.com/)
 
@@ -100,4 +100,5 @@ Many survivors have reported that Asheville Academy was an abusive program. Alle
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

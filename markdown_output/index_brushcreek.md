@@ -14,17 +14,17 @@ Brush Creek Academy appears to be either closely affiliated with [New Lifehouse 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Michael Lokey**is the Executive Director of BCA. He previuosly worked as the school administrator of The Cross Christian Academy, BCA's academic program, for seven years.
+** Michael Lokey** is the Executive Director of BCA. He previuosly worked as the school administrator of The Cross Christian Academy, BCA's academic program, for seven years.
 
-**Rachel Nicholson**is the current Dean of Students at BCA. She has worked at this program since 2009. Before coming to Brush Creek, she worked at an unnamed boys’ facility for teen offenders while also working as a Program Director of a Christian camp.
+** Rachel Nicholson** is the current Dean of Students at BCA. She has worked at this program since 2009. Before coming to Brush Creek, she worked at an unnamed boys’ facility for teen offenders while also working as a Program Director of a Christian camp.
 
-**Zach Williams**is the Life Skills Program Manager and Creative Arts Director at BCA.
+** Zach Williams** is the Life Skills Program Manager and Creative Arts Director at BCA.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little information is known about the specifics of the program used by Brush Creek Academy. Survivors have reported that they utilize a level-system, which is typical of most behavior-modification programs. The program is also heavily centered around the Christian faith.
 
@@ -32,7 +32,7 @@ From their [website](https://www.brushcreekacademy.com/) , "Upon entry into the 
 
 The program reports that for the first 4 weeks, no direct contact between the boy and his family is permitted. All mail and phone-calls are also reportedly monitored by staff. xTheir website states, "After 4 weeks in the program, the boy will be allowed two ten-minute phone calls, and one twenty-minute phone call each week (days for calls are assigned upon admission into the program). Boys will only be allowed to receive from individuals on his phone and mail authorization list, based on his current level privileges. Phone/mail usage is a privilege and will be monitored by our staff. Students are allowed mail upon entry into the program according to level privileges and authorization list."
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,9 +42,9 @@ On July 6, 2021, a [personal injury lawsuit](https://dockets.justia.com/docket/o
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**July 2021: (UNCLEAR)**"Completely understaffed, they will back stab their own staff. They had students doing grown staff homework for their college classes. They will make deals that they can’t keep. They will hold students past completing the program because “ lost paperwork” more than 3 times. They eat the same thing basically every day. They will force staff to work and not pay them at all. Report has been made about that. If your kid has issues with anxiety or anything along those lines look else where. They will shun students because “ it’s part of the program”. When you first enter you can’t talk to anyone for 1 level. They will get on to staff for stuff that happens after hours and yet when students do it. Nothing. They claim to be Christian yet talk in languages which you will never understand. Wake up the Bible talks about tongues as being able to speak to others. Not the devil. I would personally not ever sent my 2 kids there. My best advice do your research on them before you make the choice." - [Noelle (Google Reviews)](https://www.google.com/maps/contrib/112387844621687809396/place/ChIJ58pHj0PJyYcRxuO8oKfyPdw/@35.5143869,-93.9415564,8z/data=!4m6!1m5!8m4!1e1!2s112387844621687809396!3m1!1e1?hl=en-US)
+** July 2021: (UNCLEAR)**"Completely understaffed, they will back stab their own staff. They had students doing grown staff homework for their college classes. They will make deals that they can’t keep. They will hold students past completing the program because “ lost paperwork” more than 3 times. They eat the same thing basically every day. They will force staff to work and not pay them at all. Report has been made about that. If your kid has issues with anxiety or anything along those lines look else where. They will shun students because “ it’s part of the program”. When you first enter you can’t talk to anyone for 1 level. They will get on to staff for stuff that happens after hours and yet when students do it. Nothing. They claim to be Christian yet talk in languages which you will never understand. Wake up the Bible talks about tongues as being able to speak to others. Not the devil. I would personally not ever sent my 2 kids there. My best advice do your research on them before you make the choice." - [Noelle (Google Reviews)](https://www.google.com/maps/contrib/112387844621687809396/place/ChIJ58pHj0PJyYcRxuO8oKfyPdw/@35.5143869,-93.9415564,8z/data=!4m6!1m5!8m4!1e1!2s112387844621687809396!3m1!1e1?hl=en-US)
 
 **2020: (SURVIVOR)**"never send your child here they lie on the website, and have many federal safety and health violations. they claim most problems are the child’s and generally show no concern for what the child has been through. most of the staff has good heart, including coach, and kelvin, and troy, and mason, however they are not under a director that really is helping their students. has so much room for improvement if they’d just realize where they fall short." - [Oliver (Google Reviews)](https://www.google.com/maps/contrib/113987594574704321300/place/ChIJ58pHj0PJyYcRxuO8oKfyPdw/@36.4007295,-95.7688064,8.45z/data=!4m6!1m5!8m4!1e1!2s113987594574704321300!3m1!1e1?hl=en-US)
 
@@ -52,7 +52,7 @@ On July 6, 2021, a [personal injury lawsuit](https://dockets.justia.com/docket/o
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Brush Creek Academy Website Homepage](https://www.brushcreekacademy.com/)
 
@@ -60,7 +60,8 @@ On July 6, 2021, a [personal injury lawsuit](https://dockets.justia.com/docket/o
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

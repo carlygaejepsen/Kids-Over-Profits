@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 2 Boot Camp was a company that was created by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) officials in order to funnel search-engine results towards WWASP programs. Like other companies such as [Teen Revitalization](https://www.reddit.com/r/troubledteens/wiki/index/teenrevitalization) , and [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) , it functioned as a marketing arm of WWASP in order to refer unknowing parents to WWASP programs. The website appears to have been created in late 2002 and it went offline sometime in 2008, which coincides with the formal dissolution of WWASP in 2009.
 
@@ -10,13 +10,13 @@ According to the company's [website](https://web.archive.org/web/20030207085102/
 
 ---
 
-## **Notable Employees**
+## ** Notable Employees**
 
-**Jane Hawley**is listed as the contact for 2 Boot Camp's website. She also worked as a Sales Representative for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) and [Lifelines Family Services](https://www.reddit.com/r/troubledteens/wiki/index/lifelines) , which were other companies created as marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
+** Jane Hawley** is listed as the contact for 2 Boot Camp's website. She also worked as a Sales Representative for [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) and [Lifelines Family Services](https://www.reddit.com/r/troubledteens/wiki/index/lifelines) , which were other companies created as marketing arms of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
 
 ---
 
-## **Programs Recommended**
+## ** Programs Recommended**
 
 *The following is a list of programs that were marketed on 2 Boot Camp's [website](https://web.archive.org/web/20071106025209/http://www.2bootcamp.com/programs/schools.html) :*
 
@@ -46,7 +46,8 @@ According to the company's [website](https://web.archive.org/web/20030207085102/
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

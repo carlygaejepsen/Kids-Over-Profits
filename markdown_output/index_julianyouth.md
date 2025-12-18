@@ -8,29 +8,29 @@
 
 River View Christian Academy (formerly known as Julian Youth Academy until 2010) is a behavior-modification program that opened in 1993. It is marketed as a Christian Therapeutic Boarding School for teenage girls (12-17) who struggle with a variety of emotional challenges including victimization, family tragedy, and various behavioral difficulties. The maximum enrollment of the program is roughly 50 girls, and the average length of stay is reportedly 18-24 months. The program's tuition is currently $3800 per month, with an initial enrollment fee of $5000.
 
-River View Christian Academy is reportedly located about 45 miles east of Austin, TX, likely near Lexington. When it originally opened as Julian Youth Academy, the program was located in Lake Elsinore, CA. After the entire facility was burnt to the ground in the San Diego Cedar Fire in October 2003, the owners initially tried to rebuild the campus but were met with legal troubled from the city of San Diego. Because of this, JYA moved to the remote unincorporated community of Whitmore in Northern California around 2010. In Whitmore, the program moved into the former campus of the**confirmedly abusive** [Cascade Academy](https://www.reddit.com/r/troubledteens/wiki/index/cascade) , a [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, at [12069 Tintagel Ln, Whitmore, CA 96096](https://www.google.com/maps/place/12069+Tintagel+Ln,+Whitmore,+CA+96096/@40.6397934,-121.7992842,499m/data=!3m1!1e3!4m5!3m4!1s0x54cd5e0d5a33db49:0x5fe8201a3b80bf1b!8m2!3d40.6390118!4d-121.799436) . The exact locations of the program's other locations have been kept confidential by the program. Around 2012, Julian Youth Academy was "closed" and rebranded as River View Christian Academy following allegations of abuse from former residents. Around 2020, the program moved from Whitmore, CA to its current 45-acre campus near Austin, Texas.
+River View Christian Academy is reportedly located about 45 miles east of Austin, TX, likely near Lexington. When it originally opened as Julian Youth Academy, the program was located in Lake Elsinore, CA. After the entire facility was burnt to the ground in the San Diego Cedar Fire in October 2003, the owners initially tried to rebuild the campus but were met with legal troubled from the city of San Diego. Because of this, JYA moved to the remote unincorporated community of Whitmore in Northern California around 2010. In Whitmore, the program moved into the former campus of the** confirmedly abusive** [Cascade Academy](https://www.reddit.com/r/troubledteens/wiki/index/cascade) , a [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, at [12069 Tintagel Ln, Whitmore, CA 96096](https://www.google.com/maps/place/12069+Tintagel+Ln,+Whitmore,+CA+96096/@40.6397934,-121.7992842,499m/data=!3m1!1e3!4m5!3m4!1s0x54cd5e0d5a33db49:0x5fe8201a3b80bf1b!8m2!3d40.6390118!4d-121.799436) . The exact locations of the program's other locations have been kept confidential by the program. Around 2012, Julian Youth Academy was "closed" and rebranded as River View Christian Academy following allegations of abuse from former residents. Around 2020, the program moved from Whitmore, CA to its current 45-acre campus near Austin, Texas.
 
 JYA also developed two separate programs for teenage boys, one [short-term](https://web.archive.org/web/20100214134322/http://boys.teenrescue.com/short-term.php) and one [long-term](https://web.archive.org/web/20100214134400/http://boys.teenrescue.com/long-term.php) . The short-term program is called "Focus" and typically lasts between 1 and 3 months. If additional time is needed, the boy will be trasnfered to the long-term program. The long-term program typically lasts between 15 and 18 months.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Phil Ludwig**is the Founder of Julian Youth Academy. Prior to creating JYA, he established a TTI referral company called [Teen Rescue](https://web.archive.org/web/19990125103746/http://www.teenrescue.com/) in 1989, which owns JYA and markets the program heavily. Teen Rescue claimed to be "a nationwide support service that has worked with over 15,000 families since 1989." Prior to founding JYA, Phil was a police officer in San Diego, CA until he was severely injured while on duty. During his recovery time Phil began his ministry with troubled teens and their families, which developed into Teen Rescue, Inc and eventually the opening of Julian Youth Academy.
+** Phil Ludwig** is the Founder of Julian Youth Academy. Prior to creating JYA, he established a TTI referral company called [Teen Rescue](https://web.archive.org/web/19990125103746/http://www.teenrescue.com/) in 1989, which owns JYA and markets the program heavily. Teen Rescue claimed to be "a nationwide support service that has worked with over 15,000 families since 1989." Prior to founding JYA, Phil was a police officer in San Diego, CA until he was severely injured while on duty. During his recovery time Phil began his ministry with troubled teens and their families, which developed into Teen Rescue, Inc and eventually the opening of Julian Youth Academy.
 
-**Tiffany Morgan**worked as the Director of Julian Youth Academy. According to [HEAL](http://www.heal-online.org/julian.htm) , she now works for River View Christian Academy. Her prior employment is unknown.
+** Tiffany Morgan** worked as the Director of Julian Youth Academy. According to [HEAL](http://www.heal-online.org/julian.htm) , she now works for River View Christian Academy. Her prior employment is unknown.
 
 According to a 2019 [Buzzfeed News report](https://www.buzzfeednews.com/article/tylerkingkade/california-river-view-academy-christian-school-shut-down-gay) , "The school said that it doesn’t employ any psychologists, counselors, psychiatrists, nurses, or social workers, and students say there are no teachers on staff."
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, JYA/RVCA uses a level system as well as a "points system". While the specifics of these systems are unknown, one surivors has [stated](https://web.archive.org/web/20170617011232/http://www.xojane.com:80/issues/my-parents-sent-me-to-reform-school) , "I was also told the program worked on a points system—the system is kind of hard to explain, but let’s just say that points can basically be earned by doing what you’re told and can be lost by acting out. Once a certain number of points is earned, you jump a level, and different levels come with different privileges. These “privileges” are what we in the real world would usually just call rights, like talking to the people you live with or the option to call your mother. These "privileges" are a way of feeling a little more in control in nearly untenable circumstances."
 
 The same survivors also went on to state that "If you ever did something wrong (including failure to notify staff about a violation you were aware of, even if you didn't participate), you’d be punished. Punishments always came with docking of points—that was a given. We were also sometimes made to write Bible verses hundreds of times, or to run laps around the dirt track. Even worse, some girls were put on “no-talk” for days at a time, during which they were only allowed to communicate basic needs."
 
-*Very little additional information is currently known regarding the specifics of the program used by JYA/RVCA. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little additional information is currently known regarding the specifics of the program used by JYA/RVCA. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -38,7 +38,7 @@ The same survivors also went on to state that "If you ever did something wrong (
 
 Many survivors have reported that Julian Youth Academy/River View Christian Academy is an abusive program. Allegations of abuse and neglect that have been reported by survivors include extreme physical abuse, food deprivation, solitary confinement/isolation tactics, use of shock collars, sexual abuse, the use of conversion therapy, emotional/psychological torture, medical neglect, communication/movement restrictions, and more. Many survivors report developing PTSD as a result of their time at the program.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Julian Youth Academy/River View Christian Academy is a**Confirmedly Abusive**program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Julian Youth Academy/River View Christian Academy is a** Confirmedly Abusive** program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 During an October 2007 [hearing](https://www.govinfo.gov/content/pkg/BILLS-111hr911rfs/pdf/BILLS-111hr911rfs.pdf) conducted by the United States Government Accountability Office, Julian Youth Academy was mentioned among the statement presented before the hearing panel.
 
@@ -70,7 +70,7 @@ Additionally, several new sources published articles stating that California was
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **7/7/2015: (SURVIVOR)** [Link to '[When I Was Seventeen, My Parents Sent Me Away to a Christian Boarding School for "Troubled Teens"'](https://web.archive.org/web/20170617011232/http://www.xojane.com:80/issues/my-parents-sent-me-to-reform-school)
 
@@ -80,7 +80,7 @@ Additionally, several new sources published articles stating that California was
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [River View Christian Academy Website Homepage](https://riverviewchristianacademy.org/)
 
@@ -118,7 +118,8 @@ Additionally, several new sources published articles stating that California was
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

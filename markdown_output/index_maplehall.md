@@ -14,33 +14,33 @@ Maple Hall Academy seems to be very closely affiliated with [Whetstone Academy](
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John Singleton**is the Founder, CEO, and Owner of Maple Hall Academy. Prior to this, he worked for [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) from 2002 until 2010. During this time, he worked at a number of reportedly/confirmedly abusve programs, including the [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) , [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) , and [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . He then worked as the President/Head of School of the Brandon Hall School from 2010 until 2015. Then, he became the Director of Business Development at [Trails Carolina](https://www.reddit.com/r/troubledteens/wiki/index/trailscarolina) , a reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program that is believed to be a spin-off of Aspen's [SUWS](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) programs, from 2015 until 2016. In 2016, he became the Owner/CEO of the reportedly abusive [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) , where he continues to work in addition to working at Maple Hall Academy.
+** John Singleton** is the Founder, CEO, and Owner of Maple Hall Academy. Prior to this, he worked for [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) from 2002 until 2010. During this time, he worked at a number of reportedly/confirmedly abusve programs, including the [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) , [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) , and [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . He then worked as the President/Head of School of the Brandon Hall School from 2010 until 2015. Then, he became the Director of Business Development at [Trails Carolina](https://www.reddit.com/r/troubledteens/wiki/index/trailscarolina) , a reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program that is believed to be a spin-off of Aspen's [SUWS](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) programs, from 2015 until 2016. In 2016, he became the Owner/CEO of the reportedly abusive [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) , where he continues to work in addition to working at Maple Hall Academy.
 
-**Rick Pollard**is the current Executive Director of Maple Hall Academy. He began his career working at Blockbuster Video from 1988 until 2003. He then went on to work as the Operations Director of [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) , a program owned by the confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 2005 until its closure in 2010. He then became the Regional Director of Admissions for Aspen Education Group in December of 2010. He then worked as the Executive Director of the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) from July of 2015 until 2021, when he left to help create Maple Hall Academy.
+** Rick Pollard** is the current Executive Director of Maple Hall Academy. He began his career working at Blockbuster Video from 1988 until 2003. He then went on to work as the Operations Director of [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) , a program owned by the confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 2005 until its closure in 2010. He then became the Regional Director of Admissions for Aspen Education Group in December of 2010. He then worked as the Executive Director of the reportedly abusive [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) from July of 2015 until 2021, when he left to help create Maple Hall Academy.
 
-**Chass Armstrong**currently works as the Director of Business Development for Maple Hall Academy. He also currently works in the same position at [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) . Prior to this, he worked as a Digital Marketing Manager for the reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) company beginning in 2015. His other prior places of employment are presently unknown.
+** Chass Armstrong** currently works as the Director of Business Development for Maple Hall Academy. He also currently works in the same position at [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) . Prior to this, he worked as a Digital Marketing Manager for the reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) company beginning in 2015. His other prior places of employment are presently unknown.
 
-**Pascale Couturier**is the current Admissions Director of Maple Hall Academy. Prior to this, she worked as a Digital Marketing Manager for the reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) company.
+** Pascale Couturier** is the current Admissions Director of Maple Hall Academy. Prior to this, she worked as a Digital Marketing Manager for the reportedly abusive [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) company.
 
-**Joe D'Urso**is the current Program Director of Maple Hall Academy. Prior to this, he worked as the Program Coordinator at the reportedly abusive [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , which is a [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) in North Carolina. His employment prior to this is presently unknown.
+** Joe D'Urso** is the current Program Director of Maple Hall Academy. Prior to this, he worked as the Program Coordinator at the reportedly abusive [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , which is a [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) in North Carolina. His employment prior to this is presently unknown.
 
-**Tabitha Sayler Pack**is the current Clinical Director of Maple Hall Academy. Her career in the Troubled Teen Industry began when she worked as a Residential Coach/Counseling Intern at the reportedly abusive [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) from 2014 until 2016. She then worked as a Therapist and the Transition and Alumni Coordinator at the reportedly abusive [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) from 2016 until 2021, when she began working at Maple Hall Academy.
+** Tabitha Sayler Pack** is the current Clinical Director of Maple Hall Academy. Her career in the Troubled Teen Industry began when she worked as a Residential Coach/Counseling Intern at the reportedly abusive [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse) from 2014 until 2016. She then worked as a Therapist and the Transition and Alumni Coordinator at the reportedly abusive [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) from 2016 until 2021, when she began working at Maple Hall Academy.
 
-**Josh Prince**currently works as a Therapist at Maple Hall Academy. Prior to this, he worked as a Field Instructor at the reportedly abusive [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , a wilderness program in North Carolina which is owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . He has also worked as a Logistics Coordinator at New Vision Wilderness from 2019 until 2021, when he began working at MHA.
+** Josh Prince** currently works as a Therapist at Maple Hall Academy. Prior to this, he worked as a Field Instructor at the reportedly abusive [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , a wilderness program in North Carolina which is owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . He has also worked as a Logistics Coordinator at New Vision Wilderness from 2019 until 2021, when he began working at MHA.
 
-**Tonia Vinecombe**currently works as a Therapist at the Transitions Director at Maple Hall Academy. Prior to this, she worked at an unnamed residential facility in Pennsylvania with both adults and children. Her prior employment is presently unknown.
+** Tonia Vinecombe** currently works as a Therapist at the Transitions Director at Maple Hall Academy. Prior to this, she worked at an unnamed residential facility in Pennsylvania with both adults and children. Her prior employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Unlike most behavior-modification programs, Maple Hall Academy reports that it does not use a level system. Instead, the program revolves around a "relationship-based" model. The program reports that there are 5 licensed therapists on campus, and that the students participate in at least 6 hours of therapy per week.
 
-In lieu of a traditional level system, Maple Hall Academy uses a "Wheel of Success" system which has four individualized areas: Behavioral, Academic, Social and Emotional (B.A.S.E). The requirements of each area are reportedly individualized to reflect the specific needs of each boy. This system is**identical**to the program structure used by [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) .
+In lieu of a traditional level system, Maple Hall Academy uses a "Wheel of Success" system which has four individualized areas: Behavioral, Academic, Social and Emotional (B.A.S.E). The requirements of each area are reportedly individualized to reflect the specific needs of each boy. This system is** identical** to the program structure used by [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) .
 
-*Very little additional information is currently known regarding the specifics of the program used by Whetstone Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little additional information is currently known regarding the specifics of the program used by Whetstone Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -50,11 +50,11 @@ Because Maple Hall Academy is a relatively new program, no allegations of abuse 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 The reviews left on MHA's Google Reviews page and Yelp page appear to be in reference to the previous occupants of the building, a restaurant with a similar name. For this reason, no survivor/parent testimonies have yet been found.
 
-*If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -64,7 +64,8 @@ The reviews left on MHA's Google Reviews page and Yelp page appear to be in refe
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

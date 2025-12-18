@@ -10,13 +10,13 @@ Discover Seven Stars is a [Family Help & Wellness](https://www.reddit.com/r/trou
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dr. Gordon L. Day**is the Founder and current Executive Clinical Director of Discover Seven Stars. He previously worked as the Clinical Director at [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) . He also previously worked at [Summit Preparatory School](https://www.reddit.com/r/troubledteens/wiki/index/summitprep) and [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
+** Dr. Gordon L. Day** is the Founder and current Executive Clinical Director of Discover Seven Stars. He previously worked as the Clinical Director at [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) . He also previously worked at [Summit Preparatory School](https://www.reddit.com/r/troubledteens/wiki/index/summitprep) and [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 *No information is known about this program's structure.*
 
@@ -26,7 +26,7 @@ Discover Seven Stars is a [Family Help & Wellness](https://www.reddit.com/r/trou
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Discover Seven Stars Website Homepage](https://discoversevenstars.com/)
 
@@ -34,7 +34,8 @@ Discover Seven Stars is a [Family Help & Wellness](https://www.reddit.com/r/trou
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

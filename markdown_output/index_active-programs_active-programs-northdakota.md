@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 The North Dakota Department of Human Services is the regulatory agency for 24-hour child care facilities in the state and sets the standards for child care and group home facilities. The Licensing Review Teams visit each facility annually, plus random onsite visits.
 
@@ -16,14 +16,14 @@ All private schools in North Dakota must be approved by the superintendent of pu
 
 ---
 
-|**Program Name**|**Subreddit Information**|**HEAL Information**|**Survivor Testimonies**|
-| [**Dakota Boys and Girls Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/dakotaranch) | - | - | - |
-| [**Luther Hall**](https://www.reddit.com/r/troubledteens/wiki/index/lutherhall) | - | - | - |
-| [**Prairie St. John's**](https://www.reddit.com/r/troubledteens/wiki/index/prairiesj) | - | - | - |
+|** Program Name**|** Subreddit Information**|** HEAL Information**|** Survivor Testimonies**|
+| [** Dakota Boys and Girls Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/dakotaranch) | - | - | - |
+| [** Luther Hall**](https://www.reddit.com/r/troubledteens/wiki/index/lutherhall) | - | - | - |
+| [** Prairie St. John's**](https://www.reddit.com/r/troubledteens/wiki/index/prairiesj) | - | - | - |
 | - | - | - | - |
 ---
 
-## **Closed Programs in North Dakota**
+## ** Closed Programs in North Dakota**
 
 ---
 
@@ -31,7 +31,7 @@ All private schools in North Dakota must be approved by the superintendent of pu
 
 ---
 
-|**Program Name**|**Subreddit Information**|**HEAL Information**|**Survivor Testimonies**|
+|** Program Name**|** Subreddit Information**|** HEAL Information**|** Survivor Testimonies**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -43,7 +43,8 @@ All private schools in North Dakota must be approved by the superintendent of pu
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 Behavioral health facilities such as alternative and therapeutic boarding schools are licensed by the New Mexico Department of Health. Both state-run and private facilities are regulated and held to state standards of operation.
 
@@ -16,14 +16,14 @@ As is typical in many states, private schools in New Mexico are not required to 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Mesilla Valley Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/mesillavalley) | - | - | - |
-| [**New Sunrise Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/) | - | - | - |
-| [**Sandhill Center**](https://www.reddit.com/r/troubledteens/wiki/index/sandhill) | 2004 | Los Lunas, NM | N/A |
-| [**Serenity Mesa Youth Recovery Center**](https://www.reddit.com/r/troubledteens/wiki/index/serenitymesa) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Mesilla Valley Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/mesillavalley) | - | - | - |
+| [** New Sunrise Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/) | - | - | - |
+| [** Sandhill Center**](https://www.reddit.com/r/troubledteens/wiki/index/sandhill) | 2004 | Los Lunas, NM | N/A |
+| [** Serenity Mesa Youth Recovery Center**](https://www.reddit.com/r/troubledteens/wiki/index/serenitymesa) | - | - | - |
 ---
 
-## **Closed Programs in New Mexico**
+## ** Closed Programs in New Mexico**
 
 ---
 
@@ -31,16 +31,16 @@ As is typical in many states, private schools in New Mexico are not required to 
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) | - | - | - |
-| [**Desert Hills of New Mexico**](https://www.reddit.com/r/troubledteens/wiki/index/deserthills) | - | - | - |
-| [**Mace-Kingsley Ranch School**](https://www.reddit.com/r/troubledteens/wiki/index/macekingsley) | - | - | - |
-| [**Namaste Child & Family Development Center**](https://www.reddit.com/r/troubledteens/wiki/index/namastenm) | - | - | - |
-| [**Pathfinders Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/pathfinders) | - | - | - |
-| [**Rancho Valmora**](https://www.reddit.com/r/troubledteens/wiki/index/ranchovalmora) | - | - | - |
-| [**San Cristobal Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/sancristobal) | - | - | - |
-| [**Tierra Blanca Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/tierrablanca) | - | - | - |
-| [**Villa Santa Maria**](https://www.reddit.com/r/troubledteens/wiki/index/santamaria) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) | - | - | - |
+| [** Desert Hills of New Mexico**](https://www.reddit.com/r/troubledteens/wiki/index/deserthills) | - | - | - |
+| [** Mace-Kingsley Ranch School**](https://www.reddit.com/r/troubledteens/wiki/index/macekingsley) | - | - | - |
+| [** Namaste Child & Family Development Center**](https://www.reddit.com/r/troubledteens/wiki/index/namastenm) | - | - | - |
+| [** Pathfinders Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/pathfinders) | - | - | - |
+| [** Rancho Valmora**](https://www.reddit.com/r/troubledteens/wiki/index/ranchovalmora) | - | - | - |
+| [** San Cristobal Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/sancristobal) | - | - | - |
+| [** Tierra Blanca Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/tierrablanca) | - | - | - |
+| [** Villa Santa Maria**](https://www.reddit.com/r/troubledteens/wiki/index/santamaria) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -49,7 +49,8 @@ As is typical in many states, private schools in New Mexico are not required to 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

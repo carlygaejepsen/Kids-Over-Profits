@@ -2,33 +2,34 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Very little is known about Milstones Transitions. It was opened in 1999 by CEDU/Brown Schools and closed in 2005 when CEDU was dissolved.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -13,14 +13,14 @@ This child theme is built as a lightweight WordPress shell plus a full data-mana
 ## Directory Rundown
 - **`api/`** — Procedural PHP endpoints (master/suggestion CRUD, autocomplete, wiki/news submissions, diagnostics) that consume credentials from `.env`, WordPress constants, environment vars, or `api/config.local.php`.
 - **`templates/` & `page-*`** — Shared partials (`data-form-admin.php`, `data-form-public.php`) plus templates for admin/public forms, wiki/news, submissions, and the TTI program index.
-- **`js/`** — Modular frontend stack covering facility forms (`js/data-form/`, `js/data-form-modules/`), inspections (`js/inspections/`), fallback datasets (`js/data/`), and single-entry utilities (`autocomplete.js`, `anonymous-portal.js`, `wiki-editor.js`, `news-processor.js`, `tti-program-index.js`).
+- **`js/`** — Modular frontend stack covering data forms (`js/data-form/`, `js/data-form-modules/`), inspections (`js/inspections/`), fallback datasets (`js/data/`), and single-entry utilities (`autocomplete.js`, `anonymous-portal.js`, `wiki-editor.js`, `news-processor.js`, `tti-program-index.js`).
 - **`css/`** — Color palette in `colors.css` and page-specific sheets (`data-form.css`, `wiki-editor.css`, `news-processor.css`, `facility-reports.css`, `anonymous-portal.css`, `tti-program-index.css`).
 - **`scripts/`** — Node tools such as `aggregate-all-programs.js`, `rebuild-search-index.js`, `extract-reddit-wiki-links.js`, `batch-extract-helper.js` that regenerate program metadata consumed by the auto-linker.
 - **`tests/`** — Currently holds `tests/db-form/` (add tests here as the form system grows).
 
 ## Key Pages & Workflows
-### Admin Facility Form
-- Template: `page-admin-data.php` includes `templates/data-form-admin.php` and the admin-only JavaScript stack (e.g., `admin-data-page.js`, `facility-form.v4.js`, plus shared modules).
+### Admin Data Form
+- Template: `page-admin-data.php` includes `templates/data-form-admin.php` and the admin-only JavaScript stack (e.g., `admin-data-page.js`, `data-form.v4.js`, plus shared modules).
 - Workflow: Admin edits save directly to `facilities_master` via `api/save-master.php` and `api/get-master-data.php`.
 - Features: Full field notes, referrer/location helpers, autocomplete, report generation, clipboard/JSON exports, and admin tooling.
 
@@ -52,7 +52,7 @@ This child theme is built as a lightweight WordPress shell plus a full data-mana
 - **`templates/`:** Shared HTML fragments that reduce duplication across page templates.
 - **`page-*`:** Templates such as `page-admin-data.php`, `page-data.php`, `page-admin-submissions.php`, `page-wiki-editor.php`, `page-news-processor.php`, and `page-tti-program-index.php` load the precise scripts and styles needed by each workflow.
 - **`js/`:** Modular frontend stack:
-  - `js/data-form/` holds the facility form utilities (`utilities.js`, `location-form.js`, `referrer-form.js`, `notes.js`, `db-form-loader.js`, `facility-report-generator.js`, plus the orchestrator `facility-form.v4.js`).
+  - `js/data-form/` holds the data form utilities (`utilities.js`, `location-form.js`, `referrer-form.js`, `notes.js`, `db-form-loader.js`, `data-report-generator.js`, plus the orchestrator `data-form.v4.js`).
   - `js/data-form-modules/` contains the newer modules (`config.js`, `data-normalizer.js`, `api.js`, `project.js`, `ui.*`, `admin-data-page.js`, `data-page.js`).
   - `js/inspections/` powers the TTI program index and the state-specific inspection reports (`ca-reports.js`, `tx-reports.js`, etc.).
   - `js/data/` stores static JSON exports consumed when live APIs fail and by the auto-linker.

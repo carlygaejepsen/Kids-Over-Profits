@@ -12,25 +12,25 @@ Alpine Academy operates in two separate campuses; one for boys and one for girls
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Lila Bjorklund**was the founder of Alpine Academy. According to [HEAL](http://www.heal-online.org/alpine.htm) , she was never a licensed mental health professional in Utah. She previously founded Utah Girls' Village in 1969, which was the precursor to [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) , which also accepted male residents. She was devout member of the [LDS Church](https://en.wikipedia.org/wiki/The_Church_of_Jesus_Christ_of_Latter-day_Saints) and is affilated with Brigham Young University. She [died](https://www.deseret.com/2002/4/26/19651584/obituary-lila-alta-burton-bjorklund) in 2002 at the age of 87 due to complications resulting from surgery.
+** Lila Bjorklund** was the founder of Alpine Academy. According to [HEAL](http://www.heal-online.org/alpine.htm) , she was never a licensed mental health professional in Utah. She previously founded Utah Girls' Village in 1969, which was the precursor to [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) , which also accepted male residents. She was devout member of the [LDS Church](https://en.wikipedia.org/wiki/The_Church_of_Jesus_Christ_of_Latter-day_Saints) and is affilated with Brigham Young University. She [died](https://www.deseret.com/2002/4/26/19651584/obituary-lila-alta-burton-bjorklund) in 2002 at the age of 87 due to complications resulting from surgery.
 
-**Christian Egan**is the current Executive Director of Alpine Academy. He has been working at this program since 2003 in a variety of positions including a Families First Specialist and as the Admissions Director. Prior to joining Alpine, he worked as an Administrative Assistant at Brigham Young University from 2000 until 2003.
+** Christian Egan** is the current Executive Director of Alpine Academy. He has been working at this program since 2003 in a variety of positions including a Families First Specialist and as the Admissions Director. Prior to joining Alpine, he worked as an Administrative Assistant at Brigham Young University from 2000 until 2003.
 
-**Gabriella Campbell**is the current Clinical Director of Alpine Academy. She has worked at the program as a Therpist since 2014. She began her career in the therpay industry as a Clinical Intern at Valley Mental Health from 2010 until 2011. From 2012 until 2014, she worked as a Therapist at an unnamed [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) program.
+** Gabriella Campbell** is the current Clinical Director of Alpine Academy. She has worked at the program as a Therpist since 2014. She began her career in the therpay industry as a Clinical Intern at Valley Mental Health from 2010 until 2011. From 2012 until 2014, she worked as a Therapist at an unnamed [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) program.
 
-**Royal Robins**is the current Admissions Director of Alpine Academy. He has worked at the program since 2012 in various positions including Group Home Manager, Admissions Assistant, and Residential Supervisor. Prior to this, he worked as a Primary Counselor and the Assistant Program Director of [Turnabout/Stillwater Academy](https://www.reddit.com/r/troubledteens/wiki/index/turnaboutstillwater) from 2007 until 2012.
+** Royal Robins** is the current Admissions Director of Alpine Academy. He has worked at the program since 2012 in various positions including Group Home Manager, Admissions Assistant, and Residential Supervisor. Prior to this, he worked as a Primary Counselor and the Assistant Program Director of [Turnabout/Stillwater Academy](https://www.reddit.com/r/troubledteens/wiki/index/turnaboutstillwater) from 2007 until 2012.
 
-**Janet Mulitalo (Farnsworth)**worked as the Program Director of Alpine Academy beginning from 2003 until 2006. She previously worked at an unnamed "faith-based" program in Mississippi. She also worked as the Director of [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) . From 2014 until 2015, she worked as the Vice President of Business Development at [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) . She then became the Executive Director of the reportedly abusive [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) from 2015 until 2016. She then worked as the Executive Director of the**confirmedly abusive** [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2016 until 2021. She now works at a new program called [Oasis Ascent](https://www.reddit.com/r/troubledteens/wiki/index/oasisascent) .
+** Janet Mulitalo (Farnsworth)** worked as the Program Director of Alpine Academy beginning from 2003 until 2006. She previously worked at an unnamed "faith-based" program in Mississippi. She also worked as the Director of [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) . From 2014 until 2015, she worked as the Vice President of Business Development at [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) . She then became the Executive Director of the reportedly abusive [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) from 2015 until 2016. She then worked as the Executive Director of the** confirmedly abusive** [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2016 until 2021. She now works at a new program called [Oasis Ascent](https://www.reddit.com/r/troubledteens/wiki/index/oasisascent) .
 
-**Jonathan R. Carver**worked as a "house parent" at Alpine Academy. In 2009, he admitted to engaging in a sexual relationship with a 17-year-old student at Alpine Academy. Court documents detailing the original charges (four counts of rape, two counts of forcible sodomy and one count of witness tampering) indicate Carver had sex with the girl at least 20 times between October and December of 2008. Both Carver and his wife were fired when the school was informed of the investigation in mid-March, she said. They had worked there for eight months. He pleaded guilty in 3rd District Court to five counts of second-degree felony forcible sexual abuse.
+** Jonathan R. Carver** worked as a "house parent" at Alpine Academy. In 2009, he admitted to engaging in a sexual relationship with a 17-year-old student at Alpine Academy. Court documents detailing the original charges (four counts of rape, two counts of forcible sodomy and one count of witness tampering) indicate Carver had sex with the girl at least 20 times between October and December of 2008. Both Carver and his wife were fired when the school was informed of the investigation in mid-March, she said. They had worked there for eight months. He pleaded guilty in 3rd District Court to five counts of second-degree felony forcible sexual abuse.
 
-**Kayla Walker**worked as the Fitness/Recreation Coordinator at Alpine Academy. In 2010, she was arrested for sexually abusing one of her athletes when she coached at a Duchesne County High School three decades ago. She was charged in 8th District Court with 10 counts of forcible sodomy, a first-degree felony; two counts of object rape, a first-degree felony; and nine counts of forcible sex abuse, a second-degree felony.
+** Kayla Walker** worked as the Fitness/Recreation Coordinator at Alpine Academy. In 2010, she was arrested for sexually abusing one of her athletes when she coached at a Duchesne County High School three decades ago. She was charged in 8th District Court with 10 counts of forcible sodomy, a first-degree felony; two counts of object rape, a first-degree felony; and nine counts of forcible sex abuse, a second-degree felony.
 
 ---
 
-## **Facilities**
+## ** Facilities**
 
 Alpine Academy's [Mountain View](https://www.google.com/maps/place/Alpine+Academy/@40.6049989,-112.2734503,557a,35y,90h/data=!3m1!1e3!4m5!3m4!1s0x0:0x5d3daede03b1483e!8m2!3d40.6044262!4d-112.273587) campus is seperated into a number of houses. The residents are divided between these houses. They include:
 
@@ -46,10 +46,10 @@ Alpine Academy's [Mountain View](https://www.google.com/maps/place/Alpine+Academ
 
 Like other behavior-modification programs, Alpine Academy uses a level system. The levels are as follows:
 
-***Daily:**This level is reported to last between 1-4 months.
-***Weekly:**This level is reported to last between 4-7 months.
-***Achievement:**This level is reported to last between 0-3 months.
-***Focus:**This level is used a punishment for when a resident has broken a rule.
+***Daily:** This level is reported to last between 1-4 months.
+***Weekly:** This level is reported to last between 4-7 months.
+***Achievement:** This level is reported to last between 0-3 months.
+***Focus:** This level is used a punishment for when a resident has broken a rule.
 
 Survivors have reported that the program requires residents to earn points for good behavior while avoiding demerits for negative behaviors. This system is the same system as was used in [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, and is inherently abusive.
 
@@ -57,7 +57,7 @@ If a resident breaks a rule at Alpine Academy, they are punished based on the se
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Alpine Academy is reported by survivors to be a very abusive program. Allegations of abuse and neglect include physical abuse, blatant conversion therapy, forced manual labor, and social isolation. There are also confirmed reports of sexual abuse against several of the school's employees. Additionally, there are reports of seuxal harrassment and grooming of the residents in the program committed by staff members. Survivors have also reported that the staff at Alpine Academy, as is the case with many programs located in Utah, are heavily Mormon and encourage the residents there to convert to the LDS Religion. In addition, survivors have reported that POC are treated especially poorly at Alpine Academy, and are "whitewashed" meaning the staff force them to change the way they talk, wear their hair, and how thy dress to appear "more white".
 
@@ -73,7 +73,7 @@ In 2011, a 13-year-old resident, Astrid Valdivia, ran away from Alpine Academy. 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **12/5/2020: (SURVIVOR)**"Alpine Academy is abusive and I do not at all recommend sending your child here. They use isolation, humiliation, and shaming as punishment and have left many of us (myself included) with C-PTSD due to the trauma we endured during our stay. They are also incredibly homophobic and transphobic and have used conversion therapy on LGBTQ+ youth who have been sent there. Please do not send your kid here or to any other program in the Troubled Teen Industry. Outpatient therapy with trusted therapists and psychiatrists and support groups in your hometown are your best bet if you have a child who is in need of treatment. (Also like many have already said, a good portion of the positive reviews were written by staff members) Do not trust this place with your child." - [Keagan (Yelp)](https://www.yelp.com/not_recommended_reviews/alpine-academy-erda)
 
@@ -89,7 +89,7 @@ In 2011, a 13-year-old resident, Astrid Valdivia, ran away from Alpine Academy. 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Alpine Academy Website Homepage](https://alpineacademy.org/)
 
@@ -113,7 +113,8 @@ In 2011, a 13-year-old resident, Astrid Valdivia, ran away from Alpine Academy. 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

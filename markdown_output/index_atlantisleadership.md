@@ -12,15 +12,15 @@ Atlantis Leadership Academy was located in [Treasure Beach, Jamaica](https://www
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Randall Cook**is the Founder of Atlantis Leadership Academy. When Cook was a teenager, he was sent to [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, when the program first opened in 1994. He was reportedly only the 24th student to be enrolled at Paradise Cove, and he spent a tota of 19 months there. He is also the son of the Editor of WWASP’s Newsletter “The Source”, Glenda Cook. In addition, Randall founded a company called [Core Solutions](https://corebb.blogspot.com/) , a consulting company which made vast profits by referring families to [Midwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/midwest) (another WWASP facility).
+** Randall Cook** is the Founder of Atlantis Leadership Academy. When Cook was a teenager, he was sent to [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, when the program first opened in 1994. He was reportedly only the 24th student to be enrolled at Paradise Cove, and he spent a tota of 19 months there. He is also the son of the Editor of WWASP’s Newsletter “The Source”, Glenda Cook. In addition, Randall founded a company called [Core Solutions](https://corebb.blogspot.com/) , a consulting company which made vast profits by referring families to [Midwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/midwest) (another WWASP facility).
 
-**Aaron Pruitt**worked as the Associate Program Director of Atlantis Leadership Academy from January through December of 2016. He no longer works in the TTI, but instead currently works as a Freight Associate at Capstone Logistics, LLC.
+** Aaron Pruitt** worked as the Associate Program Director of Atlantis Leadership Academy from January through December of 2016. He no longer works in the TTI, but instead currently works as a Freight Associate at Capstone Logistics, LLC.
 
-**Courtney Wiggan**reportedly worked at Atlantis Leadership Academy in an unknown position. Prior to this, survivors have reported that she worked at the notorious and**confirmedly abusive** [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program that was also located in Treasure Beach, Jamaica.
+** Courtney Wiggan** reportedly worked at Atlantis Leadership Academy in an unknown position. Prior to this, survivors have reported that she worked at the notorious and** confirmedly abusive** [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , a now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program that was also located in Treasure Beach, Jamaica.
 
-*Atlantis Leadership Academy does not publish a list of their employees on their website. If you have information regarding the names of current/former staff members, please contant [u/shroomskillet](/u/shroomskillet) .*
+*Atlantis Leadership Academy does not publish a list of their employees on their website. If you have information regarding the names of current/former staff members, please contant [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -28,13 +28,13 @@ Atlantis Leadership Academy was located in [Treasure Beach, Jamaica](https://www
 
 Like other behavior modification programs, Atlantis Leadership Academy used a level system consisting of 7 levels. The level system appeared to be very similar to the one used by the majority of the notorious and confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs. According to survivors, the specifics of each level were kept intentionally vague so the boys never knew when they would go home. In order to advance through the levels, there were monthly evaluations which were reviewed by the other boys in the program, so if a boy's peers did not like them they would likely not advance. The levels, as reported by survivors, were:
 
-***Level 0:**When a teenager arrived at Atlantis Leadership Academy, they are placed on Level 0. While on this level, the teens had to learn the rules of the program and sign the program's responsibility contract. During the COVID-19 pandemic, the boys were taken to an isolation room which was separate from the rest of the population. They were given a single permission to make a single phone call to their parents/guardians. They were forbidden from speaking to the rest of the population besides one staff member and student. They ate their meals in this room until the quarantine was done. Teens typically spent between 2-4 weeks on Level 0.
-***Level 1:**On this level, the resident had learned the rules of the program and signed the responsibility agreement. According to survivors, "the second that document was signed (and sometimes slightly before if your situation was deemed dire enough), they laid into you. HARD. you were now a full-fledged member of the group who they could and would take advantage of." During this phase, the boys were not permitted to have any contact with their parents for about 1.5 to 2 months. After this time, they could receive a letter from their parents, but were typically not allowed to respond to it. They were also forced to partake in intensive workouts in the hot Jamaican sun, from which they had little protection and were usually badly sunburnt as a result. Survivors have reported that during this phase, the boys were treated the most harshly in an attempt to "break" them.
-***Level 2:**During Level 2, the boys were typically broken down enough that they had begun to buy into the program and would say/do what they were told. According to survivors, "this is where the brainwashing began. they started to tell you that your parents were fully aware of how you were being treated, they convinced you that your parents were actively calling you a piece of shit, and they made you practically idolize randy." They were allowed to respond to letters from their parents, although all incoming and outgoing letters were read and monitored by staff. It was reported that if a boy tried to tell their parents about any complaints or mistreatment in these letters, they were punished severely.
-***Level 3:**On this level, the teens had begun to accept that they were going to be at the program for a while, so they actively tried to "work the program" to make their time more bearable. At this point, the workouts became less intense and they had typically grown accustomed to their surroundings and peers. They were also permitted to have video calls with their parents once a week from this point on. Residents typically spent the longest time on this level.
-***Level 4:**On this level, the teens were expected to start stepping into leadership roles within the program. Their responsibilities included being excellent at chores, workouts, school, "manners" (basically, not speaking unless spoken to and not swearing), and overall time management. They also had to be "buddy-buddy" with both students and staff constantly (unless a specific student wasn't doing well). Teens usually spent 3-4 months on this level.
-***Level 5:**On this level, the teens were expected to behave as the "ideal" student and be almost finished working on their perceived issues. The focus of this level was placed on fixing problems within the teen's family, and there was a heavy emphasis on schooling and their future.
-***Level 6:**This was the final level at ALA. Once teens had shown enough progress, they were permitted to graduate from the program.
+***Level 0:** When a teenager arrived at Atlantis Leadership Academy, they are placed on Level 0. While on this level, the teens had to learn the rules of the program and sign the program's responsibility contract. During the COVID-19 pandemic, the boys were taken to an isolation room which was separate from the rest of the population. They were given a single permission to make a single phone call to their parents/guardians. They were forbidden from speaking to the rest of the population besides one staff member and student. They ate their meals in this room until the quarantine was done. Teens typically spent between 2-4 weeks on Level 0.
+***Level 1:** On this level, the resident had learned the rules of the program and signed the responsibility agreement. According to survivors, "the second that document was signed (and sometimes slightly before if your situation was deemed dire enough), they laid into you. HARD. you were now a full-fledged member of the group who they could and would take advantage of." During this phase, the boys were not permitted to have any contact with their parents for about 1.5 to 2 months. After this time, they could receive a letter from their parents, but were typically not allowed to respond to it. They were also forced to partake in intensive workouts in the hot Jamaican sun, from which they had little protection and were usually badly sunburnt as a result. Survivors have reported that during this phase, the boys were treated the most harshly in an attempt to "break" them.
+***Level 2:** During Level 2, the boys were typically broken down enough that they had begun to buy into the program and would say/do what they were told. According to survivors, "this is where the brainwashing began. they started to tell you that your parents were fully aware of how you were being treated, they convinced you that your parents were actively calling you a piece of shit, and they made you practically idolize randy." They were allowed to respond to letters from their parents, although all incoming and outgoing letters were read and monitored by staff. It was reported that if a boy tried to tell their parents about any complaints or mistreatment in these letters, they were punished severely.
+***Level 3:** On this level, the teens had begun to accept that they were going to be at the program for a while, so they actively tried to "work the program" to make their time more bearable. At this point, the workouts became less intense and they had typically grown accustomed to their surroundings and peers. They were also permitted to have video calls with their parents once a week from this point on. Residents typically spent the longest time on this level.
+***Level 4:** On this level, the teens were expected to start stepping into leadership roles within the program. Their responsibilities included being excellent at chores, workouts, school, "manners" (basically, not speaking unless spoken to and not swearing), and overall time management. They also had to be "buddy-buddy" with both students and staff constantly (unless a specific student wasn't doing well). Teens usually spent 3-4 months on this level.
+***Level 5:** On this level, the teens were expected to behave as the "ideal" student and be almost finished working on their perceived issues. The focus of this level was placed on fixing problems within the teen's family, and there was a heavy emphasis on schooling and their future.
+***Level 6:** This was the final level at ALA. Once teens had shown enough progress, they were permitted to graduate from the program.
 
 While at ALA, the teens were expected to adhere to a strict set of rules. According to one survivor, some of these rules included needing to "have good manners, finish the brutal morning workouts with no problems, keep your room as clean as army barracks, no problems in school, don't do stuff by yourself, do what the staff tell you- no questions asked".
 
@@ -42,13 +42,13 @@ If the teens broke one of the rules, they were punished in a variety of ways. Ac
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Many survivors have reported that Atlantis Leadership Academy was an abusive program. Allegations of abuse and neglect that have been reported by survivors include mental/emotional abuse, food deprivation, attack therapy, forced manual labor, physical abuse, vioelnt and excessive phsyical reatraints, communication restrictions, cruel and unusual punishments, and solitary confinement.
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **9/13/2020: (SURVIVOR)**"I was mentally abused at Atlantis Leadership Academy and been told I was worthless and disgusting as a method to change my behavior. I was underfed as a punishment at at times forced to do long strenuous labor for friends of the programs director. I was kicked, punched, and was told I was going to be killed as a knife was put to my throat for not cooperating. Every time I tried to contact my parents to ask for help my letter to them was edited and deleted. We were also forced to smile in every picture taken by the programs staff member so it looked as if we were enjoying our time in the program." - [Noah (WWASP Survivors)](https://wwaspsurvivors.com/atlantis-leadership-academy-noah-l/)
 
@@ -60,7 +60,7 @@ Many survivors have reported that Atlantis Leadership Academy was an abusive pro
 
 **2/27/2019: (SURVIVOR)**"So I have been here for a little over two months and its not good at all I am bisexual and gender-fluid and when coming here against my will the transporters told me that they dont like gay people here at all when i was here and asked about it they told me that they kill gay people “chop them up and kill them” So since being here i have had to hide who i really am…thats hard because i am not the most masculine guy…I like to where make up and be feminine. so that was bad. I am also fat which they body shame me for. they call me gay, fat, ugly, stinky, dirty, and so much more…They wont let me say what i want to my parents at all they “monitor” everything we say. They make us do physical punishment if we mess up i remember one of them they made us run up a huge hill 90 times do more than 900 push up and carry concrete block up and down. Just because we watched a R movie. It really bad here. I would like my statement to stay unknown for fear of getting punished thank you" - [Anonymous (WWASP Survivors)](http://wwaspsurvivors.com/atlantis-leadership-academy-anonymous-minor/)
 
-*If you attended ALA and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended ALA and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -82,7 +82,8 @@ Many survivors have reported that Atlantis Leadership Academy was an abusive pro
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -12,32 +12,32 @@ The program's exact location is difficult to determine. The official address ass
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Lionel J. Mitchell**is the Founder of Alldredge Academy. He began his career in the TTI by Co-Founding and Directing the [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) program from 1981 until 1994. He then left to create Alldredge Academy in 1999. He worked as the Director of Alldredge until 2006. He then went on to open [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbier) in 2007 and has worked as the Director/Owner ever since.
+** Lionel J. Mitchell** is the Founder of Alldredge Academy. He began his career in the TTI by Co-Founding and Directing the [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) program from 1981 until 1994. He then left to create Alldredge Academy in 1999. He worked as the Director of Alldredge until 2006. He then went on to open [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbier) in 2007 and has worked as the Director/Owner ever since.
 
-**Jim Browning**worked as the Executive Director of Alldredge Academy after Lionel left in 2007.
+** Jim Browning** worked as the Executive Director of Alldredge Academy after Lionel left in 2007.
 
-**John Grago**worked as the Admissions Director of Alldredge Academy.
+** John Grago** worked as the Admissions Director of Alldredge Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Alldredge Academy used a level-system. Alldredge originally had three phases, but in 2007 the program dropped the third phase, which was called the Academic Phase. With this, the program also decided to change their name from Alldredge Academy to Alldredge Wilderness Journey. The phases were reported to be:
 
 *
-**Search & Rescue:**This phase consisted of a 30-day wilderness program, which provided "individual and group therapy, first aid and CPR certification, Search and Rescue training, and outdoor experiential learning opportunities." According to the program, students on this phase "face challenges, both physically and emotionally while establishing trusting relationships and engaging in the therapeutic process."
+**Search & Rescue:** This phase consisted of a 30-day wilderness program, which provided "individual and group therapy, first aid and CPR certification, Search and Rescue training, and outdoor experiential learning opportunities." According to the program, students on this phase "face challenges, both physically and emotionally while establishing trusting relationships and engaging in the therapeutic process."
 
 *
-**The Village:**This phase consisted of a 30-day wilderness experience in a residential living setting. Students participated in individual counseling, therapeutic exercises, and group counseling. Students also engaged in journal writing assignments and a "curriculum that employed the use of metaphor, ceremony, and the identification of life's purpose." They also were given the materials to make their own Congo drum. Constructing and learning to play the drum seemed to be an important theme for their stay there. A version of their [archived website](https://web.archive.org/web/20030712011301/http://alldredgeacademy.org/programs.html) states, "The village was created after studying indigenous cultures for 3 years and discovering universal patterns in mental, emotional, and spiritual health. The village is located along a ½ mile shore line at the confluence of 2 small rivers. The students live an indigenous life style, a community based system of interdependency. The culture of the village contrasts with their home adolescent culture. Community interests supersede individual interests. Each student is “needed” by the community and directly effects the well being of others. They experience constant feedback from other villagers about “everything” that is going on. Secrets, dreams, fears, and hopes are shared in groups and with individuals."
+**The Village:** This phase consisted of a 30-day wilderness experience in a residential living setting. Students participated in individual counseling, therapeutic exercises, and group counseling. Students also engaged in journal writing assignments and a "curriculum that employed the use of metaphor, ceremony, and the identification of life's purpose." They also were given the materials to make their own Congo drum. Constructing and learning to play the drum seemed to be an important theme for their stay there. A version of their [archived website](https://web.archive.org/web/20030712011301/http://alldredgeacademy.org/programs.html) states, "The village was created after studying indigenous cultures for 3 years and discovering universal patterns in mental, emotional, and spiritual health. The village is located along a ½ mile shore line at the confluence of 2 small rivers. The students live an indigenous life style, a community based system of interdependency. The culture of the village contrasts with their home adolescent culture. Community interests supersede individual interests. Each student is “needed” by the community and directly effects the well being of others. They experience constant feedback from other villagers about “everything” that is going on. Secrets, dreams, fears, and hopes are shared in groups and with individuals."
 
 *
-**The Academic Phase:**This phase, which was dropped in 2007, focused on continuing the "emotional growth" work that the students had began, while emphasizing academics to make up for time away from academic activity in the earlier phases. This phase takes place in school and dorm buildings that were situated on the side of a hill. The education in this phase also revolved around what the program called the “Levels of Education”. This perhaps could be described as levels of understanding. Starting with the “Literal”, the depth of a student’s understanding increases as he or she moves into “Symbolic”, then “Mythological”, then, what they call “Energetic”.
+**The Academic Phase:** This phase, which was dropped in 2007, focused on continuing the "emotional growth" work that the students had began, while emphasizing academics to make up for time away from academic activity in the earlier phases. This phase takes place in school and dorm buildings that were situated on the side of a hill. The education in this phase also revolved around what the program called the “Levels of Education”. This perhaps could be described as levels of understanding. Starting with the “Literal”, the depth of a student’s understanding increases as he or she moves into “Symbolic”, then “Mythological”, then, what they call “Energetic”.
 
 ---
 
-## **Abuse Allegations, Lawsuits, and Death**
+## ** Abuse Allegations, Lawsuits, and Death**
 
 On February 12^(th) 2001, 14-year-old Ryan Christopher Lewis committed suicide at Alldredge by hanging himself with a tent rope. He had only been at Alldredge for less than a week. The day before he died, Ryan had showed an Alldredge Academy staff member where he had slashed his forearms with a knife. It is reported that the teen actually turned over the knife to staff and told them; "take my knife before I hurt myself more." Instead, the instructor "exacted a promise" from Ryan that he wouldn't hurt himself again and returned the knife back to the teen. Almost immediately after his death, the director of the Academy, Lionel J. Mitchell took the approach that Ryan had not intentionally tried to kill himself. In fact, he told WV News that in his opinion Ryan wasn’t suicidal, and that the boy was just "seeking attention because he wanted out of the program."
 
@@ -51,9 +51,9 @@ On December 16^(th) 2008, Alldredge announced that the program will be closed on
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet been found. If you attended Alldredge Academy and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you attended Alldredge Academy and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -77,7 +77,8 @@ On December 16^(th) 2008, Alldredge announced that the program will be closed on
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -18,19 +18,19 @@ The program is affiliated with several other [Ascent Company](https://www.reddit
 
 ## **Founders and Notable Staff**
 
-**Andrea Burgess**is the current Executive Director of DRG. She formerly worked as the Executive Director of [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) beginning in 1996.
+** Andrea Burgess** is the current Executive Director of DRG. She formerly worked as the Executive Director of [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) beginning in 1996.
 
-**Jennifer Hedrick**is the current Clinical Director at DRG. She reportedly began her career in the TTI in 2008 at an unnamed facility. She previously worked as the Clinical Director of the reportedly abusive [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge) and [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) .
+** Jennifer Hedrick** is the current Clinical Director at DRG. She reportedly began her career in the TTI in 2008 at an unnamed facility. She previously worked as the Clinical Director of the reportedly abusive [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge) and [Redcliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) .
 
-**Jack Hinman**previously worked as the Clinical Director at DRG. He also worked as the Clinical Director of [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) . He currently works as the Executive Director of [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge) and [Kolob Canyon RTC](https://www.reddit.com/r/troubledteens/wiki/index/kolobcanyon) .
+** Jack Hinman** previously worked as the Clinical Director at DRG. He also worked as the Clinical Director of [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) . He currently works as the Executive Director of [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge) and [Kolob Canyon RTC](https://www.reddit.com/r/troubledteens/wiki/index/kolobcanyon) .
 
-**Tim Lowe**worked as a Therapist at DRG. He previously worked for [Discovery Ranch](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch) and [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) .
+** Tim Lowe** worked as a Therapist at DRG. He previously worked for [Discovery Ranch](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch) and [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) .
 
-**Clint Firth**was the Academic Director at DRG. He also has worked as a Teacher at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) .
+** Clint Firth** was the Academic Director at DRG. He also has worked as a Teacher at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Discovery Ranch for Girls' program structure is identical to the program at [Discovery Ranch](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch) . Like other behavior-modification programs, Discovery Ranch utilizes a level system based around a merit/demerit structure. The level-system consists of five levels, which the boys progress through by earning points for good behavior while avoiding demerits for negative behaviors and rule infractions.
 
@@ -66,7 +66,7 @@ One [survivor](https://www.yelp.com/not_recommended_reviews/discovery-ranch-for-
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Discovery Ranch for Girls Website Homepage](https://discoveryranchforgirls.com/)
 
@@ -74,7 +74,8 @@ One [survivor](https://www.yelp.com/not_recommended_reviews/discovery-ranch-for-
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

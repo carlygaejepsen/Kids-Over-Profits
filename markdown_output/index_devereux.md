@@ -14,43 +14,43 @@ The teenagers live in small dorms on the campus called cottages. Some names were
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Helena T. Devereux**was the Founder of Glenholme. Born in 1885, Helena grew up in Philadelphia and studied to be a teacher. She took a special interest in children with special needs and converted her class into a de-facto special education classroom. She later established the [Devereux Foundation](https://www.reddit.com/r/troubledteens/wiki/index/devereuxfoundation) , which is still active today. She died in 1975 at the age of 90.
+** Helena T. Devereux** was the Founder of Glenholme. Born in 1885, Helena grew up in Philadelphia and studied to be a teacher. She took a special interest in children with special needs and converted her class into a de-facto special education classroom. She later established the [Devereux Foundation](https://www.reddit.com/r/troubledteens/wiki/index/devereuxfoundation) , which is still active today. She died in 1975 at the age of 90.
 
-**Daniel Bailey**is the current Director of Milieu Treatment at Glenholme.
+** Daniel Bailey** is the current Director of Milieu Treatment at Glenholme.
 
-**Laura Kohley**is the current Clinical Director of Glenholme.
+** Laura Kohley** is the current Clinical Director of Glenholme.
 
-**Marc Bonaguide**is the current E3 Clinical Director of Glenholme.
+** Marc Bonaguide** is the current E3 Clinical Director of Glenholme.
 
-**David Dunleavy**is the current Director of Admissions of Glenholme.
+** David Dunleavy** is the current Director of Admissions of Glenholme.
 
-**Brittany Larson**worked as a receptionist at the Glenholme School. In October of 2011, she was arrested for sexually abusing a 16-year-old male resident at the program. She pled guilty under the Alfwas sentenced to
+** Brittany Larson** worked as a receptionist at the Glenholme School. In October of 2011, she was arrested for sexually abusing a 16-year-old male resident at the program. She pled guilty under the Alfwas sentenced to
 
-**Melissa Lee Houck**worked as a transporter at Glenholme. In 2004, she was accused of having a sexual relationship with a 15-year-old male resident at the program who was there in 2001. She was found guilty of one count of risk of injury to a minor involving contact with the "intimate parts" of someone under age 16. Houck was sentenced to five years in prison - execution suspended - and 10 years of probation, in accordance with state statutes.
+** Melissa Lee Houck** worked as a transporter at Glenholme. In 2004, she was accused of having a sexual relationship with a 15-year-old male resident at the program who was there in 2001. She was found guilty of one count of risk of injury to a minor involving contact with the "intimate parts" of someone under age 16. Houck was sentenced to five years in prison - execution suspended - and 10 years of probation, in accordance with state statutes.
 
-**Seth Greenlees**worked as a Supervisor at Glenholme.
+** Seth Greenlees** worked as a Supervisor at Glenholme.
 
-**Deanna Cipriano**worked as a Supervisor at Glenholme.
+** Deanna Cipriano** worked as a Supervisor at Glenholme.
 
-**Lisa Lawson**reprtedly worked as a Part-time Staff at Glenholme.
+** Lisa Lawson** reprtedly worked as a Part-time Staff at Glenholme.
 
-**Judith Cooper**worked as the Assistant Headmaster at Glenholme.
+** Judith Cooper** worked as the Assistant Headmaster at Glenholme.
 
-**Maryann Campbell**worked as the Executive Director of Glenholme.
+** Maryann Campbell** worked as the Executive Director of Glenholme.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, the Glenholme School uses a level-system consisting of five levels. The levels are reported to be:
 
-***Phase Three (P3):**This is the first level a resident at Glenholme is placed on. This phase lasts a minimum of 4-5 weeks. They are given no privliges, besides forced interactions with peers.
-***Phase Two (P2):**This phase lasts a minimum 4 weeks, until the resident applies for Phase One and gets accepted into a 'trial/test'.
-***Phase One (P1):**This phase lasts a minimum 6 weeks, and until the resident applies for the next level. They are given more expectations to follow and must complete more 'goals' than phases 2 and 3.
-***Self Support and Management 2 (SSM2):**This level can last indefinitely, as the staff are the ones who decide if the resident is ready for the next level. On this level, they must send an email to any staff members "affected by their bad behavior" every time they do something considered "wrong".
-***Self Support and Management 1 (SSM1):**This level can last indefinitely.
+***Phase Three (P3):** This is the first level a resident at Glenholme is placed on. This phase lasts a minimum of 4-5 weeks. They are given no privliges, besides forced interactions with peers.
+***Phase Two (P2):** This phase lasts a minimum 4 weeks, until the resident applies for Phase One and gets accepted into a 'trial/test'.
+***Phase One (P1):** This phase lasts a minimum 6 weeks, and until the resident applies for the next level. They are given more expectations to follow and must complete more 'goals' than phases 2 and 3.
+***Self Support and Management 2 (SSM2):** This level can last indefinitely, as the staff are the ones who decide if the resident is ready for the next level. On this level, they must send an email to any staff members "affected by their bad behavior" every time they do something considered "wrong".
+***Self Support and Management 1 (SSM1):** This level can last indefinitely.
 
 If the resident break a rule and gets demoted, they must go back to P3 and start from the beginning.
 
@@ -62,7 +62,7 @@ Survivors have also reported that being LGBTQ+ is not accepted in the program.
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 The residents at Glenholme are expected to adhere to a strict set of rules. Some of these rules, as reported by survivors, include:
 
@@ -87,7 +87,7 @@ Houck was originally convicted of the abuse in 2004 of risk of injury to a minor
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **1/28/2021: (SURVIVOR)**"Looking at their brochures and websites it almost looks like a getaway. Go karts, equestrian, endless activities. But I can say that no fond memories came from that school except the memories of the other students that got me through it. Each day you were given a piece of paper a token sheet. Your whole day and privileges revolved around these tokens. You'd lose tokens for speaking out of turn, your uniform isn't perfect, you don't follow their specific rules the exact way they want you to. And there were levels which were based off of your performance. The highest level you could get offered the privilege of walking short distances by yourself, being alone in your room for short periods of time, choosing your own food to eat. That's what you strived for that would be the highest point in your life. Their whole system was built to keep you quiet, obedient and out of the way. Which can be the exact opposite of what these "troubled teens" need. That was just their program the staff were another story. Sure there were a few good ones, mainly the teachers. But very few gave you the impression they were there to help. For most it was a job and ended at that. Your problems were made public, no privacy staff would openly discuss your issues in the company of other students, make jokes at your expense. The real nasty stuff came from when you were alone with them. I confided in one of my classmates my gender identify and sexuality. The staff overheard or found out somehow. I was called disgusting, unnatural as well as numerous homophobic and transphobic slurs and comments. It was easy to ignore at first but then it really starts to break you down. I was told to stop crying or I'd be removed. (Basically brought else where to sit in silence. Students would be gone for hours.) Told that I was making everyone else sad. I was given no support at any time. Taught my problems were my own and not to bother others looking for help. All communication outside was monitored, emails and phone calls. That one time a week you could get on the phone I'd try to tell my parents what was really going on. I was told the phone call would end if I continued for "lying and trying to scare my parents" Those phone calls were precious, you didn't want to lose them. After a while some people would earn the privilege to go home on the weekends. The staff taught your parents the token system, you had to bring those forms home. Even then you didn't get a break from them. It was a two+ hour drive from the school to my home. Sunday night heading back to the school I was filled with such a dread it's hard to explain. I was suicidal and incredibly depressed over the thought of going back. I've never wanted to escape something so bad before. You could feel all the happiness being sucked from your body. Not to be overdramatic but it was terrifying. Twice a week I was sent to the stable to work in the stalls and with the equine, Despite my huge fear of them and repeated begging for other work I was still forced to go. Much went on at that school that I cannot speak on, even six years later it's too hard. But so many other students suffered too. One student opened up about being sexually assaulted by a staff member. She was called a liar and attention seeker by staff. It didn't seem like there was any investigation into the matter. Later I would find out that wasn't the first time something like that happened. A previous staff member had been arrested for repeatedly abusing a student. The school was sued. To this day I think back to that school and all the students still there suffering. Those two years there were the lowest points of my life. I was later diagnosed with CPTSD from my experiences there. The sad thing is this wasn't an isolated incident. I have spoken to dozens of past students of Glenholme all with similar experiences." - [Ashley (Yelp)](https://www.yelp.com/not_recommended_reviews/devereux-glenholme-school-washington)
 
@@ -103,11 +103,11 @@ Houck was originally convicted of the abuse in 2004 of risk of injury to a minor
 
 **10/19/2009: (SURVIVOR)**"These people are the ones who are the most brutal with the students. They have physically assaulted students, but brain washed the kids to believe it's because they are being non-compliant with the program. This "program" brain washes everyone outside of the compound, mainly parents and Connecticut's Department of children and family services. I also found out that they receive their funding from DCF as well as New England Association of schools and colleges. I'm pretty sure the states that the students come from is who pays the tuition, as well as unsuspected parents." - [Anonymous (HEAL-online)](http://www.heal-online.org/devglen.htm)
 
-**Unknown Date: (SURVIVOR)**"Everything in my statement is true. I give HEAL permission to use my statement. I was sent to Devereux-Glenholme in March of 1993. It is disguised as a boarding school, with children from well to do families residing there and some children from the ward of the state. They section of the children that are ward of the state and place them in a smaller sized setting with about 12 other children with various problems ranging from Obsessive compulsive disorder to seizures. The children whose parents are paying money directly from pocket get this luxurious 12 bedroom house further down the campus with a horse farm included. They eat different foods and receive privledges seperate from the rest of the campus. Thye do not have to do the following, as would the rest of the foundation: Stand behind a chair and wait to eat for up to 20 minutes (this was called proper etiqutte), standing in a corner facing the wall for hours (called a "quiet setting"), if deemed "appropriate", sent to a "time out setting", which consisted of a very dark room that had a camera installed. It constantly smelled of urine because you weren't permited to use the rest room until they allowed. There was no specific criteria for this room, but if you were mouthy you were sent there. I can honestly say I never saw any of the children out of line or abusive towards the adults that such a measure of intervention was needed. No time limit is given, and the staff are fed this propaganda as so to lighten the affects of the screaming and crying of the child inside. You could hear them begging to use the bathroom, and were completely ignored. This can be proven.Until this day I still have bad dreams and I cannot stop them. I left there by attempting suicide and given a psychiatric evaluation. When I got to the hospital, the director of the program, Dr.Fitzgerald, had his circle of close associates escort me. They threatened to have me arrested for the attempt, claiming it was against the law at it was just like murder. I was told that when I got to the hospital, the staff members escorting me would do the talking, and I would be returning to the campus, sent to the "quiet room", and be put in a "training setting", which involved you being humilated and put with the kindergarden children and made to walk throughout the hallways with them.You could not speak for a maximum of 3 days. Through the theraputic language, they are able to entice the parents and states attention. It attracts the rich because they see the lucious hills and beautiful EXTERIOR of the campus. They use rich language and have the prestigious supervisors answering calls and acting as tourists. For the state, they see it as an oppourtunity for the poor children of fostercare to have a better chance at life.All they do with the poorer child is abuse and demise them. The african american children, as I remember, weren't allowed to listen to any form of jazz, rhythm and blues, or rap. Braids or any other afro-centric hairstyle was not allowed. When it was time for clothing allowances to be given for the fostercare children, they were taken to a basement that was filled with donated clothing! I now know the state gives about $260.00 every season for clothing. I believe this money is used elsewhere to possibly "beautify" the campus,. I would truly want to see this foundation exposed for who they really are. I am currently a student and seek to become an investigative social worker. I have high hopes that one day people will come forth and expose them." - [Anonymous (HEAL-Online)](http://www.heal-online.org/devglen.htm)
+** Unknown Date: (SURVIVOR)**"Everything in my statement is true. I give HEAL permission to use my statement. I was sent to Devereux-Glenholme in March of 1993. It is disguised as a boarding school, with children from well to do families residing there and some children from the ward of the state. They section of the children that are ward of the state and place them in a smaller sized setting with about 12 other children with various problems ranging from Obsessive compulsive disorder to seizures. The children whose parents are paying money directly from pocket get this luxurious 12 bedroom house further down the campus with a horse farm included. They eat different foods and receive privledges seperate from the rest of the campus. Thye do not have to do the following, as would the rest of the foundation: Stand behind a chair and wait to eat for up to 20 minutes (this was called proper etiqutte), standing in a corner facing the wall for hours (called a "quiet setting"), if deemed "appropriate", sent to a "time out setting", which consisted of a very dark room that had a camera installed. It constantly smelled of urine because you weren't permited to use the rest room until they allowed. There was no specific criteria for this room, but if you were mouthy you were sent there. I can honestly say I never saw any of the children out of line or abusive towards the adults that such a measure of intervention was needed. No time limit is given, and the staff are fed this propaganda as so to lighten the affects of the screaming and crying of the child inside. You could hear them begging to use the bathroom, and were completely ignored. This can be proven.Until this day I still have bad dreams and I cannot stop them. I left there by attempting suicide and given a psychiatric evaluation. When I got to the hospital, the director of the program, Dr.Fitzgerald, had his circle of close associates escort me. They threatened to have me arrested for the attempt, claiming it was against the law at it was just like murder. I was told that when I got to the hospital, the staff members escorting me would do the talking, and I would be returning to the campus, sent to the "quiet room", and be put in a "training setting", which involved you being humilated and put with the kindergarden children and made to walk throughout the hallways with them.You could not speak for a maximum of 3 days. Through the theraputic language, they are able to entice the parents and states attention. It attracts the rich because they see the lucious hills and beautiful EXTERIOR of the campus. They use rich language and have the prestigious supervisors answering calls and acting as tourists. For the state, they see it as an oppourtunity for the poor children of fostercare to have a better chance at life.All they do with the poorer child is abuse and demise them. The african american children, as I remember, weren't allowed to listen to any form of jazz, rhythm and blues, or rap. Braids or any other afro-centric hairstyle was not allowed. When it was time for clothing allowances to be given for the fostercare children, they were taken to a basement that was filled with donated clothing! I now know the state gives about $260.00 every season for clothing. I believe this money is used elsewhere to possibly "beautify" the campus,. I would truly want to see this foundation exposed for who they really are. I am currently a student and seek to become an investigative social worker. I have high hopes that one day people will come forth and expose them." - [Anonymous (HEAL-Online)](http://www.heal-online.org/devglen.htm)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [The Glenholme School Website Homepage](https://theglenholmeschool.org/)
 
@@ -127,7 +127,8 @@ Houck was originally convicted of the abuse in 2004 of risk of injury to a minor
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,27 +14,27 @@ Elk Mountain Academy appears to be closely affiliated with [Clearview Horizon](h
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Loretta Olding**is one of the Founders of Elk Mountain Academy has worked as the Executive Director there since its opening in 1994. She also currently works as the Nutritionist at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Her prior employment is unknown.
+** Loretta Olding** is one of the Founders of Elk Mountain Academy has worked as the Executive Director there since its opening in 1994. She also currently works as the Nutritionist at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Her prior employment is unknown.
 
-**Paula Riggs**is the current Admissions Counselor and Director at Elk Mountain Academy. She is also the current Admissions Director of [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . She began her career by working as the Admissions Director the notorious and*confirmedly abusive* [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1997 until 2005. [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) was an organization created as a*direct spin-off*of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult. She also worked in Admissions at [WinGate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2013 until 2019, when she left to join Clearview Horizon/Elk Mountain.
+** Paula Riggs** is the current Admissions Counselor and Director at Elk Mountain Academy. She is also the current Admissions Director of [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . She began her career by working as the Admissions Director the notorious and*confirmedly abusive* [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1997 until 2005. [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) was an organization created as a*direct spin-off*of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult. She also worked in Admissions at [WinGate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2013 until 2019, when she left to join Clearview Horizon/Elk Mountain.
 
-**Mike Linderman**is the current Clinical Director and Psychotherapist at Elk Mountain Academy. He also worked in the same role at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) until very recently. He previously worked as the head of Cabinet Mountain Mental Health, which was the counseling services provided to [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notorious and**confirmedly abusive** [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. He reportedly was repsonsible for supervising the treatment of all children at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) during the time that a resident there committed suicide. He also went on to found his own facility called Whispering Pines, although there is very little information about this program.
+**Mike Linderman** is the current Clinical Director and Psychotherapist at Elk Mountain Academy. He also worked in the same role at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) until very recently. He previously worked as the head of Cabinet Mountain Mental Health, which was the counseling services provided to [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notorious and** confirmedly abusive** [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. He reportedly was repsonsible for supervising the treatment of all children at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) during the time that a resident there committed suicide. He also went on to found his own facility called Whispering Pines, although there is very little information about this program.
 
-**Cynthia Neste**is the Head of Operations at Elk Mountain Academy. She works in the same role at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Her prior employment is unknown.
+** Cynthia Neste** is the Head of Operations at Elk Mountain Academy. She works in the same role at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Her prior employment is unknown.
 
-**Cyndi Gerstenberger**is the Head of Medical Management at Elk Mountain Academy. She currently also works as the Head of Nursing at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Prior to this, she worked as the Registered Nurse at the [Monarch School](https://www.reddit.com/r/troubledteens/wiki/index/monarch) , a reportedly abusive and now-closed [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) spin-off program, from 2011 until 2017.
+** Cyndi Gerstenberger** is the Head of Medical Management at Elk Mountain Academy. She currently also works as the Head of Nursing at [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) . Prior to this, she worked as the Registered Nurse at the [Monarch School](https://www.reddit.com/r/troubledteens/wiki/index/monarch) , a reportedly abusive and now-closed [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) spin-off program, from 2011 until 2017.
 
-**Amanda Yoder**works as a House Mom at Elk Mountain Academy. Her prior employment is unknown.
+** Amanda Yoder** works as a House Mom at Elk Mountain Academy. Her prior employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Little information is presently known about the specifics of the program used by Elk Mountain Academy. It likely uses a level-system, which is probably similar to the system used by [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) .
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -44,9 +44,9 @@ Little information is presently known about the specifics of the program used by
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**January 2022: (SURVIVOR)**"The program feeds on emotionally vulnerable families. Your child will NEVER be able to tell you how they truly feel about being there because everything is monitored from letters, phone calls, to going to the bathroom. Equine therapy is set up for 8 hours a day, where only one hour is set aside for the “therapy” part of it, the rest of the time your child is doing the farm owners chores so they don’t have to. Every Tuesday, there is something called “vote ups” which essentially is where teenagers have to attack each other in a group setting. They give their honest negative opinions to each other in a group setting and it is referred to as “tough love.” There is also times where your daughter will be put on “isolation.” It didn’t matter rain or shine, if you were isolated you’d be doing labor. Group punishments were a HUGE thing. We were forced to shovel every bit of snow out of the yard and dump it down the hill because a few girls were sick and threw their tissues on the ground. During my stay, I witnessed about 12 different suicide attempts that left me traumatized. I witnessed a girl breaking down when a therapist broke confidentiality and announced to another girl that she in fact received an STD from her… there’s nothing professional about that. Girls are not allowed to develop close relationships with each other or else they will be labeled as a “lesbian” and restricted from talking/looking and being in the same room as each other. This is called bans. On that note of LGBTQ+, DO NOT send your child here. They will be severely discriminated against and broke down. At one point a girl said she felt as though she was going through conversion therapy. YUCK. I strongly suggest finding other options to “fix” your child rather than sending them somewhere where they’ll only experience more trauma, depression and anxiety!" - [Megan (Google Reviews)](https://goo.gl/maps/PCt7jw6X7MGxCESBA)
+** January 2022: (SURVIVOR)**"The program feeds on emotionally vulnerable families. Your child will NEVER be able to tell you how they truly feel about being there because everything is monitored from letters, phone calls, to going to the bathroom. Equine therapy is set up for 8 hours a day, where only one hour is set aside for the “therapy” part of it, the rest of the time your child is doing the farm owners chores so they don’t have to. Every Tuesday, there is something called “vote ups” which essentially is where teenagers have to attack each other in a group setting. They give their honest negative opinions to each other in a group setting and it is referred to as “tough love.” There is also times where your daughter will be put on “isolation.” It didn’t matter rain or shine, if you were isolated you’d be doing labor. Group punishments were a HUGE thing. We were forced to shovel every bit of snow out of the yard and dump it down the hill because a few girls were sick and threw their tissues on the ground. During my stay, I witnessed about 12 different suicide attempts that left me traumatized. I witnessed a girl breaking down when a therapist broke confidentiality and announced to another girl that she in fact received an STD from her… there’s nothing professional about that. Girls are not allowed to develop close relationships with each other or else they will be labeled as a “lesbian” and restricted from talking/looking and being in the same room as each other. This is called bans. On that note of LGBTQ+, DO NOT send your child here. They will be severely discriminated against and broke down. At one point a girl said she felt as though she was going through conversion therapy. YUCK. I strongly suggest finding other options to “fix” your child rather than sending them somewhere where they’ll only experience more trauma, depression and anxiety!" - [Megan (Google Reviews)](https://goo.gl/maps/PCt7jw6X7MGxCESBA)
 
 **2019: (UNCLEAR)**"I wish i could give this program negative stars but sadly I can not . The youth are isloated from parents and advocates. Unfortunately this facility is a place of harsh and ineffective “therapy” for young people. Your better to let you kids rough it out in juvi for a couple of months rather then sending them to as chamber of emotional torture." - [Cedrick (Google Reviews)](https://www.google.com/maps/contrib/117958126770111911227/place/ChIJUcUaEHNmYVMRbQILMrloq1I/@48.1768507,-116.3038297,9.54z/data=!4m6!1m5!8m4!1e1!2s117958126770111911227!3m1!1e1?hl=en-US)
 
@@ -54,7 +54,7 @@ Little information is presently known about the specifics of the program used by
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Elk Mountain Academy Website Homepage](https://www.elkmountainacademy.com/)
 
@@ -62,7 +62,8 @@ Little information is presently known about the specifics of the program used by
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

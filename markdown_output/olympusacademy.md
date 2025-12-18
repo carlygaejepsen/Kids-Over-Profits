@@ -14,37 +14,37 @@ Olympus Academy closed on May 31st, 2017. The reason for its closure is presentl
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Joe Ahquin**was the Executive Director of Olympus Academy. He is a member of the Ahquin family, and also helped create [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) in 2001 and [Key Point](https://www.reddit.com/r/troubledteens/wiki/index/keypoint) in 2006.
+** Joe Ahquin** was the Executive Director of Olympus Academy. He is a member of the Ahquin family, and also helped create [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) in 2001 and [Key Point](https://www.reddit.com/r/troubledteens/wiki/index/keypoint) in 2006.
 
-**Max Ahquin**is also reported to have worked at Olympus Academy. In a [2015 report](https://drive.google.com/file/d/110nhlWfvWhDAaorRcSi2DZKFZ7M3BaMF/view) published by the Utah DHS, "Max Ahquin has been denied a background screening clearance. In violation of Utah Code 62A-2-120(9) Max Ahquin had direct access to minor clients of Olympus Academy on November 20, 2015 and November 21, 2015 while attending a Parent/Student Seminar conducted by Olympus Academy."
+** Max Ahquin** is also reported to have worked at Olympus Academy. In a [2015 report](https://drive.google.com/file/d/110nhlWfvWhDAaorRcSi2DZKFZ7M3BaMF/view) published by the Utah DHS, "Max Ahquin has been denied a background screening clearance. In violation of Utah Code 62A-2-120(9) Max Ahquin had direct access to minor clients of Olympus Academy on November 20, 2015 and November 21, 2015 while attending a Parent/Student Seminar conducted by Olympus Academy."
 
-**Nicole Hancock**was reported to be the Executive Director of Olympus Academy in 2015.
+** Nicole Hancock** was reported to be the Executive Director of Olympus Academy in 2015.
 
-**Matt Eschler**was the Clinical Director of Olympus Academy.
+** Matt Eschler** was the Clinical Director of Olympus Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP facilities, Olympus Academy used a level system with 4 levels. The levels were:
 
 *
-**Hades Level:**Teenagers entered the program on Achilles Level. According to their [website](https://web.archive.org/web/20150901181129/http://olympusacademyforyouth.com/at-risk-youth-programs) , "this beginning phase helps each student discover, recognize, and acknowledge the help that they need to begin to make improvements before he/she can move forward and advance within the Residential Treatment Center (RTC) portion of the program." It has later been reported that this level was also used as punishment for teenagers who violated rules.
+**Hades Level:** Teenagers entered the program on Achilles Level. According to their [website](https://web.archive.org/web/20150901181129/http://olympusacademyforyouth.com/at-risk-youth-programs) , "this beginning phase helps each student discover, recognize, and acknowledge the help that they need to begin to make improvements before he/she can move forward and advance within the Residential Treatment Center (RTC) portion of the program." It has later been reported that this level was also used as punishment for teenagers who violated rules.
 
 *
-**Achilles Level:**According to their [website](https://web.archive.org/web/20150819094651/http://olympusacademyforyouth.com/programs-for-troubled-teens/) , "in this Level, each student will show a desire to follow rules and expectations academically, therapeutically, and behaviorally in order to retain this level of advancement. Students must continue to consistently and competently demonstrate acquired skills that prove natural repetition in behavior in order to progress. In this level, students learn of the symbolic Arrows, (struggles, issues, and problems), that have afflicted them, just as the crucial Arrow that afflicted Achilles and became his downfall."
+**Achilles Level:** According to their [website](https://web.archive.org/web/20150819094651/http://olympusacademyforyouth.com/programs-for-troubled-teens/) , "in this Level, each student will show a desire to follow rules and expectations academically, therapeutically, and behaviorally in order to retain this level of advancement. Students must continue to consistently and competently demonstrate acquired skills that prove natural repetition in behavior in order to progress. In this level, students learn of the symbolic Arrows, (struggles, issues, and problems), that have afflicted them, just as the crucial Arrow that afflicted Achilles and became his downfall."
 
 *
-**Hercules Level:**According to their [website](https://web.archive.org/web/20150829074828/http://olympusacademyforyouth.com/programs-for-teens/) , "in this Level, students become Junior Staff in the program, giving them the opportunity to mentor other students who come into the program to help them, and so doing… helping themselves. Hercules was known as a “Hero,” and this Level gives every student the opportunity to become a hero through positive good deeds within our mentorship program, apprenticeship program, adopt-a-pet program, community service activities, gardening program, trainer transformation program, ropes course program, and our on-campus fishing program."
+**Hercules Level:** According to their [website](https://web.archive.org/web/20150829074828/http://olympusacademyforyouth.com/programs-for-teens/) , "in this Level, students become Junior Staff in the program, giving them the opportunity to mentor other students who come into the program to help them, and so doing… helping themselves. Hercules was known as a “Hero,” and this Level gives every student the opportunity to become a hero through positive good deeds within our mentorship program, apprenticeship program, adopt-a-pet program, community service activities, gardening program, trainer transformation program, ropes course program, and our on-campus fishing program."
 
 *
-**Zeus Level:**Teenagers graduated the program on Zeus Level. According to their [website](https://web.archive.org/web/20150829075111/http://olympusacademyforyouth.com/troubled-teen-programs/) , "at this Level, the student has earned the right to prepare themselves for the last Step of internalization, and get ready to go home. This is a transitional Level which allows them to show their family, parents, friends, and most importantly… themselves that they are capable of ruling their personal world and to manifest this capability in their ongoing progress of turning weaknesses into strengths. This is the ultimate point in demonstrating self governing skills in all they do at this point in the program."
+**Zeus Level:** Teenagers graduated the program on Zeus Level. According to their [website](https://web.archive.org/web/20150829075111/http://olympusacademyforyouth.com/troubled-teen-programs/) , "at this Level, the student has earned the right to prepare themselves for the last Step of internalization, and get ready to go home. This is a transitional Level which allows them to show their family, parents, friends, and most importantly… themselves that they are capable of ruling their personal world and to manifest this capability in their ongoing progress of turning weaknesses into strengths. This is the ultimate point in demonstrating self governing skills in all they do at this point in the program."
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 In 2015, two fifteen-year old girls, Charleene Cleary and Caroline Taylor, managed to run away the facility by escaping through a window. They were found the next evening in Hurricane, UT not far from the facility.
 
@@ -54,7 +54,7 @@ The facility closed in on May 31st, 2017 for an unnamed reason.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **4/19/2018: (PARENT)**"I had sent my son there and was totally mislead. They claimed to be the best in the United States. It turned out to be a money scam on your insurance. That is all they really wanted!! We weren't allowed to talked to him for the first 4 months and then it was only 1 time a week with the counselor after that. As a parent, there is no real help with your children. I took my son to counseling over and over again. It would cost me 100 dollars every time he went to see one. Then I am told that we would have to get the police involved in order to get real help. I searched the internet hoping to find the best program for my son. That is when Olympus Academy was mentioned. What a joke that was and very disappointing. When we did a surprise visit, the staff became very upset and stated that we had to have prior approval and could only visit him at the so called academy campus on the first visit. We did remove him shortly there after, and did not receive any refund on any of the money. We were very worried about how this was going to affect his school credits and future with returning home.They claimed that he would be further ahead in his credits, but he needed to take summer classes just to catch up.As it is stated in the previous comments, make sure you look deep into a program before you send your child there. Although, it sounds easy to do. Try looking up Olympus Academy and see how much you see for reviews?" - [Don (Yelp)](https://www.yelp.com/biz/olympus-academy-hurricane)
 
@@ -80,7 +80,8 @@ The facility closed in on May 31st, 2017 for an unnamed reason.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

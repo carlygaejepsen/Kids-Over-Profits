@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Help My Teen, LLC was a company which operated as a marketing arm of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization. The registered agent of the business is Lisa Irvin, and the address associated with the company is [2840 Cottonwood Cir, Santa Clara, UT 84765](https://www.google.com/maps/place/2840+Cottonwood+Cir,+Santa+Clara,+UT+84765/@37.1273042,-113.6458515,146m/data=!3m1!1e3!4m5!3m4!1s0x80ca43f5248f1f51:0xd27780d75d86ca02!8m2!3d37.1273518!4d-113.6453394) .
 
@@ -12,13 +12,13 @@ On August 25, 2006, the prominent and prestigious Turley Law Firm of Dallas, Tex
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Lisa Irvin**was the Supervisor of Help My Teen.
+** Lisa Irvin** was the Supervisor of Help My Teen.
 
 ---
 
-## **Programs Recommended by Help My Teen**
+## ** Programs Recommended by Help My Teen**
 
 Some of the WWASP programs recommended by 'Help My Teen' were:
 
@@ -35,7 +35,8 @@ Some of the WWASP programs recommended by 'Help My Teen' were:
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

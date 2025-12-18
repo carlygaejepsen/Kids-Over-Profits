@@ -14,27 +14,27 @@ KW Legacy Ranch encourages the use of teen transport services to escort the teen
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Luke Hatch**is one of the Founders of KW Legacy Ranch. He also works as the program's Executive Director and Clinical Director. He began his career in the TTI at the**confirmedly abusive** [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) from 2004 until 2005. Immediately before creating KW Legacy Ranch, Hatch worked as the Executive Director and Clinical Director of [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) , a**confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2005 until 2012.
+** Luke Hatch** is one of the Founders of KW Legacy Ranch. He also works as the program's Executive Director and Clinical Director. He began his career in the TTI at the** confirmedly abusive** [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) from 2004 until 2005. Immediately before creating KW Legacy Ranch, Hatch worked as the Executive Director and Clinical Director of [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) , a** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2005 until 2012.
 
-**Yancy Whipple**is one of the Founders of KW Legacy Ranch. He also works as the program's Director of Business Development. Prior to co-founding KW Legacy Ranch, Whipple worked as the Admissions Director of [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) , a**confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
+** Yancy Whipple** is one of the Founders of KW Legacy Ranch. He also works as the program's Director of Business Development. Prior to co-founding KW Legacy Ranch, Whipple worked as the Admissions Director of [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout) , a** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
 
-**Adam Crawford**is the current Assistant Clinical Director of KW Legacy Ranch. He is a graduate of BYU. He previously worked as direct care staff at an unnamed residential treatment program in Utah.
+** Adam Crawford** is the current Assistant Clinical Director of KW Legacy Ranch. He is a graduate of BYU. He previously worked as direct care staff at an unnamed residential treatment program in Utah.
 
-**Ryan Hatch**is the current Program Director of KW Legacy Ranch. He began working at the program in 2012 as a line staff. He has reportedly worked for several unnamed adolescent treatment programs.
+** Ryan Hatch** is the current Program Director of KW Legacy Ranch. He began working at the program in 2012 as a line staff. He has reportedly worked for several unnamed adolescent treatment programs.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, KW Legacy Ranch utilizes a level-system consisting of five levels. The levels are reported to be:
 
-***Cub/Intro:**When a resident arrives at KW Legacy Ranch, they are a cub. During this phase, they are brought to a place called The Canyon. While at the canyon, they are forced to sit on a stump for 15 hours in often-extreme temperatures, and ordered to think about why they are here. They must sleep in a tent on the hard ground with only one blanket, and are given only a can of raw spam for food. Prior to this, they also must take part in an "introspection walk", where the students are forced to walk in the wilderness for hours before being taken to the canyon.
-***Badger:**During this phase, residents are allowed to go into the main house on the campus (which is considered a privilege). They are given extremely minimal privileges, and are prohibited from even doing simple things like pouring their own milk. Certain chores are also not permitted, and free time is not allowed. While teens are on this level, they are not allowed to speak to others who are on the same or lower levels.
-***Coyote:**During this phase, the teen still has to ask to do anything, but they are permitted to do most chores. They are also given more responsibilities.
-***Wolf:**During this phase, the teen is allowed one 15-minute phone call to their parents each week. They may also be permitted to go on a home visit. They also begin to prepare to return home or to college. They are no longer required to ask to exit the bathroom, but they still have to ask to do most things.
-***Lion:**This is the final and shortest phase at KW Legacy Ranch. Typically, this phase only lasts a few weeks. They must give a "Statement of Change", and prepare to return home or to another placement.
+***Cub/Intro:** When a resident arrives at KW Legacy Ranch, they are a cub. During this phase, they are brought to a place called The Canyon. While at the canyon, they are forced to sit on a stump for 15 hours in often-extreme temperatures, and ordered to think about why they are here. They must sleep in a tent on the hard ground with only one blanket, and are given only a can of raw spam for food. Prior to this, they also must take part in an "introspection walk", where the students are forced to walk in the wilderness for hours before being taken to the canyon.
+***Badger:** During this phase, residents are allowed to go into the main house on the campus (which is considered a privilege). They are given extremely minimal privileges, and are prohibited from even doing simple things like pouring their own milk. Certain chores are also not permitted, and free time is not allowed. While teens are on this level, they are not allowed to speak to others who are on the same or lower levels.
+***Coyote:** During this phase, the teen still has to ask to do anything, but they are permitted to do most chores. They are also given more responsibilities.
+***Wolf:** During this phase, the teen is allowed one 15-minute phone call to their parents each week. They may also be permitted to go on a home visit. They also begin to prepare to return home or to college. They are no longer required to ask to exit the bathroom, but they still have to ask to do most things.
+***Lion:** This is the final and shortest phase at KW Legacy Ranch. Typically, this phase only lasts a few weeks. They must give a "Statement of Change", and prepare to return home or to another placement.
 
 Communication is heavily restricted between the teens at the ranch and their parents. The program [states](https://www.kwlegacyranch.com/faq.html) that, "phone calls with your child [are permitted] once they have reached a certain phase in the program." Survivors have reported that all communication is closely monitored by staff members, who may take this privilege away if the teen says anothing negative about the program. All incoming and outgoing mail is also read and censored by staff, and is routinely thrown out.
 
@@ -42,16 +42,16 @@ Although the program claims to be non-denominational, many survivors have report
 
 The teens at KW Legacy Ranch are forced to abide by a very strict set of rules. Some of these rules include having to ask permission for pretty much everything, such as talking to other residents and entering/exiting a room. If the residents break one of the rules, they are punished. Punishments reportedly include:
 
-***Cards:**During this punishment, the teens must perform either manual labor, like cleaning the trash cans, having to sing and act out the song "I'm a Little Teapot" three times a day, or writing a two-page paper about the rule they broke.
-***Contemplation:**During this punishment, the teen's boots and belt are taken away and they are forced to sit outside for several days with no shower and poor quality food.
-***Canyon:**This is the most severe punishment used at the ranch. During this punishment, the teen is forced to go back to the canyon (where new teens are brought to) and sit on a stump in a 4x4 square of dirt all day while not speaking.
-***Walking:**During this punishment, the entire group is taken out to the back pasture and have to silently walk in circles for 6-12 hours. This can last anywhere from one to four days.
+***Cards:** During this punishment, the teens must perform either manual labor, like cleaning the trash cans, having to sing and act out the song "I'm a Little Teapot" three times a day, or writing a two-page paper about the rule they broke.
+***Contemplation:** During this punishment, the teen's boots and belt are taken away and they are forced to sit outside for several days with no shower and poor quality food.
+***Canyon:** This is the most severe punishment used at the ranch. During this punishment, the teen is forced to go back to the canyon (where new teens are brought to) and sit on a stump in a 4x4 square of dirt all day while not speaking.
+***Walking:** During this punishment, the entire group is taken out to the back pasture and have to silently walk in circles for 6-12 hours. This can last anywhere from one to four days.
 
 Other punishments that have been reported by survivors include writing papers, doing humiliating songs and dances in front of everyone, and having their boots and belt removed and being forced to sit outside on a metal chair for 15 hours a day while receiving lower quality food and not being allowed to look at anyone.
 
 ---
 
-## **Abuse Allegations and Death**
+## ** Abuse Allegations and Death**
 
 Many survivors have reported that KW Legacy Ranch is an abusive program. Allegations of abuse and neglect that have been reported by survivors include the use of isolation/solitary confinement, forced manual labor, resitriction of food, violent physical restraints, bathroom denial, medical neglect, brainwashing, gaslighting, punitive punishments, and verbal/emotional abuse. Many survivors report that they developed PTSD as a result of their time at the ranch.
 
@@ -59,7 +59,7 @@ In several online testimonies, survivors of KW Legacy Ranch mention a teen, Matt
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2021: (SURVIVOR)**"I was at KW from 16-18 for drug abuse, and borderline personality disorder. My experience there has led me to irreparable trauma that I am now receiving therapy for as an adult. Everything about my parents was deemed untrue, even things that they had done to harm me such as my mom’s alcoholism, instead pinning it on my parents divorce which I had to ham up because they couldn’t believe the idea of me ever being harmed by “such kind people”. I was emotionally abused and taunted, my epilepsy wasn’t taken seriously. I had to redo the brain scans my neurologist had ordered because KW had messed up the readings. On top of all of this, I was told horrible things about myself and victim blamed for my own sexual assault. The isolation induced by this program left me developmentally stunted. KW has not sent my medical records or records of treatment, and they have been requested twice by a therapist and once by myself. This program has left nothing but damage in my life and harmed me in ways I am still trying to grasp. Cult like tactics were used such as attempting to make us think this was a family, even pinning students against each other. There are huge conflicts of interest here, such as families working with each other and husbands and wives, even children of husbands and wives. I wasn’t even allowed to shave my own body as a woman. Mormon theology is highly imbedded in the program’s practices. At times I wasn’t allowed to shower and stayed outside because,”the house was a privilege”. It seems human rights are a privilege at this program. Today I’m a college student who’s just doing her best to pick up the pieces I lost. " - Anonymous,*submitted directly to Wiki*
 
@@ -81,7 +81,7 @@ In several online testimonies, survivors of KW Legacy Ranch mention a teen, Matt
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [KW Legacy Ranch Website Homepage](https://www.kwlegacyranch.com/)
 
@@ -89,7 +89,8 @@ In several online testimonies, survivors of KW Legacy Ranch mention a teen, Matt
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -7,19 +7,19 @@ redflags
 
 **We recommend that you are aware of residential programs that:**
 
-**1.**Are not state-licensed and accredited with regard to all 3 aspects of the program: the (1) educational, (2) mental/behavioral health and (3) residential components.
+**1.** Are not state-licensed and accredited with regard to all 3 aspects of the program: the (1) educational, (2) mental/behavioral health and (3) residential components.
 
 ---
 
-**2.**Claim to be able to assess your child and make program recommendations by internet or by phone and then urge you to “act now” to prevent serious harm to your child and family.
+**2.** Claim to be able to assess your child and make program recommendations by internet or by phone and then urge you to “act now” to prevent serious harm to your child and family.
 
 ---
 
-**3.**Recommend or support the use of private “escort” or “transport” services to take your child to the program.
+**3.** Recommend or support the use of private “escort” or “transport” services to take your child to the program.
 
 ---
 
-**4.**Do not respect the wisdom and expertise of parents and youth, as they:
+**4.** Do not respect the wisdom and expertise of parents and youth, as they:
 
 • Do not allow your family and child to visit the program, see all the facilities and meet all the staff before deciding to admit your child,
 
@@ -31,7 +31,7 @@ redflags
 
 ---
 
-**5.**Restrict youth & family rights in terms of:
+**5.** Restrict youth & family rights in terms of:
 
 • Contact with family by phone, mail, and in person (for example, no phone contact or visits for the first month; censored mail; monitored visits with no opportunities for parent/child discussion in private),
 
@@ -47,11 +47,11 @@ redflags
 
 ---
 
-**6.**Use harsh and excessive discipline practices that include: seclusion, restraint, corporal punishment, punitive “behavioral modification,” fear tactics, humiliation, peer-on-peer discipline / peer pressure, forced labor, heightened physiological stress (by means of excessive exercise, sleep deprivation, exposure to the elements, forced retention of bodily waste or nutritional deprivation) or sedation by medication.
+**6.** Use harsh and excessive discipline practices that include: seclusion, restraint, corporal punishment, punitive “behavioral modification,” fear tactics, humiliation, peer-on-peer discipline / peer pressure, forced labor, heightened physiological stress (by means of excessive exercise, sleep deprivation, exposure to the elements, forced retention of bodily waste or nutritional deprivation) or sedation by medication.
 
 ---
 
-**7.**Provide sub-standard therapeutic intervention, as they:
+**7.** Provide sub-standard therapeutic intervention, as they:
 
 • Do not provide an individualized program with a detailed explanation of the therapies, interventions & supports that will address your child’s specific needs,
 
@@ -71,7 +71,7 @@ redflags
 
 ---
 
-**8.**Provide sub-standard education that is:
+**8.** Provide sub-standard education that is:
 
 • Limited to some variety of monitored study halls, videotaped lessons or independent study,
 
@@ -85,7 +85,7 @@ redflags
 
 ---
 
-**9.**Admit youth with psychiatric diagnoses but then do not provide appropriate medical treatment, as they:
+**9.** Admit youth with psychiatric diagnoses but then do not provide appropriate medical treatment, as they:
 
 • Do not complete an initial physical exam and psychiatric evaluation or review a physical exam/psychiatric evaluation conducted immediately prior to admission,
 
@@ -101,7 +101,7 @@ redflags
 
 ---
 
-**10.**Require parents to sign contracts with unreasonable terms, as:
+**10.** Require parents to sign contracts with unreasonable terms, as:
 
 • Parents must agree to relinquish their custody rights,
 
@@ -117,7 +117,7 @@ redflags
 
 ---
 
-**11.**Have been reported, investigated or cited by at least one source*for:
+**11.** Have been reported, investigated or cited by at least one source*for:
 
 • Unsanitary or unsafe living conditions,
 
@@ -148,4 +148,5 @@ redflags
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

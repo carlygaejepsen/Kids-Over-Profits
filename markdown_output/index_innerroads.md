@@ -14,13 +14,13 @@ In January of 2018, Youth Homes was forced to close InnerRoads due to budget-cut
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tara Cook**is the current Program Director of InnerRoads. She began her career in the Troubled Teen Industry as a Lead Field Guide at the reportedly abusive [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2014-2015. She then worked at InnerRoads briefly as a Field Guide from April until September of 2016. She then went on to work as a Youth Counsellor at Youth Homes before returning to InnerRoads as a Lead Field Guide from April - September 2017. She then worked in Experiential Development and as a Youth Counsellor at the reportedly abusive [Summit Preparatory School](https://www.reddit.com/r/troubledteens/wiki/index/summitprep) February until October of 2018. She has worked as the Program Director of InnerRoads since January of 2019.
+** Tara Cook** is the current Program Director of InnerRoads. She began her career in the Troubled Teen Industry as a Lead Field Guide at the reportedly abusive [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2014-2015. She then worked at InnerRoads briefly as a Field Guide from April until September of 2016. She then went on to work as a Youth Counsellor at Youth Homes before returning to InnerRoads as a Lead Field Guide from April - September 2017. She then worked in Experiential Development and as a Youth Counsellor at the reportedly abusive [Summit Preparatory School](https://www.reddit.com/r/troubledteens/wiki/index/summitprep) February until October of 2018. She has worked as the Program Director of InnerRoads since January of 2019.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program consist of two components:
 
@@ -37,7 +37,7 @@ The program consist of two components:
 
 ## **Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet been found. If you or your child attended Wood Creek Academy and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you or your child attended Wood Creek Academy and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -51,7 +51,8 @@ The program consist of two components:
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

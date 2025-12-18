@@ -193,11 +193,11 @@ function displayFacilities(facilitiesData, containerId) {
         } else if (actualOperatorName) {
             operatorName = actualOperatorName;
         } else {
-            operatorName = cleanText(operatorGroup && operatorGroup.name) || 'Unknown Operator';
+            operatorName = cleanText(operatorGroup && operatorGroup.name) || 'Unknown Parent Company';
         }
 
         // Do not display operators with an unknown name.
-        if (operatorName === 'Unknown Operator') {
+        if (operatorName === 'Unknown Parent Company') {
             return;
         }
 
@@ -345,7 +345,7 @@ function displayFacilities(facilitiesData, containerId) {
                 { key: 'facilityDetails.capacity', label: 'Capacity', value: cleanText(facilityDetails.capacity) },
                 { key: 'facilityDetails.ageRange', label: 'Age Range', value: (ageRange.min || ageRange.max) ? `${ageRange.min || '?'}-${ageRange.max || '?'}` : null },
                 { key: 'facilityDetails.gender', label: 'Gender', value: cleanText(facilityDetails.gender) },
-                { key: 'identification.currentOperator', label: 'Current Operator', value: cleanText(identification.currentOperator) },
+                { key: 'identification.currentOperator', label: 'Current Parent Company', value: cleanText(identification.currentOperator) },
                 { key: 'identification.pastNames', label: 'Past Names', value: identificationPastNames, isList: true },
                 { key: 'staff.administrator', label: 'Administrator', value: joinList(staff.administrator), isList: true },
                 { key: 'accreditations.current', label: 'Current Accreditations', value: joinList(accreditations.current), isList: true },

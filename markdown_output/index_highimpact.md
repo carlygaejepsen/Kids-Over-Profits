@@ -16,15 +16,15 @@ In 2001, High Impact was raided by Mexican authorities amid allegations of child
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Miguel Rodriguez**, also known as "Papa Miguel" by survivors, was the Co-Owner and Director of High Impact. He originally worked at [Casa by The Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) with his wife, Allie Hernandez. Miguel is reported to be a pedophile and very violent individual. He is also the alleged "mastermind" behind the infamous dog cages, as well as being reported to have sat on top of kids as they were being restrained in painful arm/ leg locks and stress positions. He has been accused of several major crimes against children at High Impact including assault, rape and attempted murder. After High Impact closed in 2001, both Miguel and his wife Ali Hernandez were invited to go back to work for Casa By the Sea, where Miguel was responsible for more assaults on students and Allie assisted in the Admissions Department.
+** Miguel Rodriguez**, also known as "Papa Miguel" by survivors, was the Co-Owner and Director of High Impact. He originally worked at [Casa by The Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) with his wife, Allie Hernandez. Miguel is reported to be a pedophile and very violent individual. He is also the alleged "mastermind" behind the infamous dog cages, as well as being reported to have sat on top of kids as they were being restrained in painful arm/ leg locks and stress positions. He has been accused of several major crimes against children at High Impact including assault, rape and attempted murder. After High Impact closed in 2001, both Miguel and his wife Ali Hernandez were invited to go back to work for Casa By the Sea, where Miguel was responsible for more assaults on students and Allie assisted in the Admissions Department.
 
-**Dace Goulding**was the co-owner of High Impact. He was also the owner of [Casa By The Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) . He first began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Samoa. After Casa by the Sea was closed in 2004 Goulding along with an old High School buddy Rich Darrington, opened another program called [Darrington Academy](https://www.reddit.com/r/troubledteens/wiki/index/darrington) in Blue Ridge Georgia. Darrington Academy was closed and criminal charges were pressed against Rich Darrington, for assault and battery of a minor. At some point, he was working in a public school, but currently Goulding reports to be coaching Little League in St. George, UT.
+** Dace Goulding** was the co-owner of High Impact. He was also the owner of [Casa By The Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) . He first began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Samoa. After Casa by the Sea was closed in 2004 Goulding along with an old High School buddy Rich Darrington, opened another program called [Darrington Academy](https://www.reddit.com/r/troubledteens/wiki/index/darrington) in Blue Ridge Georgia. Darrington Academy was closed and criminal charges were pressed against Rich Darrington, for assault and battery of a minor. At some point, he was working in a public school, but currently Goulding reports to be coaching Little League in St. George, UT.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 High Impact claimed that its program was based around the "3 R's:" Reality, Respect, and Responsibility. In reality, the program was designed to punish teenagers who did not follow the rules in other WWASP facilities. It was intended to "motivate" the teen to be more "positive" regarding the objectives of the behavior modification they were enrolled in the programs for. According to statements, they were transferred (some smuggled) into Mexico, where they were then taken to High Impact.
 
@@ -36,7 +36,7 @@ Once a teenager completed the program, they were often sent to other longer-term
 
 ---
 
-## **Daily Life**
+## ** Daily Life**
 
 After the teens were woken up, they had 10 seconds to fold their blanket, roll up their mat, grab their tooth brush and be in line. If they did not do this in time, they were forced to do one hundred push ups, less than thirty seconds after waking up. If the teen couldn't do the push-ups or refused, they were sent to the dog cages in R.R. position all day. Once they were in line, they had to perform the High Impact family head count, which consisted of screaming that phrase and each girl individually calling out a number. They were allowed just seconds to brush their teeth and a minute each to use the toilet. If they took too long, they were punished with push-ups. They were not allowed to flush the toilet until all the teenagers were done, and the person with bathroom duty that morning would fill a bucket over water and flush it all down. After bathroom time they put their toothbrushes away and lined up again, heads down until all the teens were done.
 
@@ -56,7 +56,7 @@ Anytime the teens were in the tent, they were expected to endure stress position
 
 ---
 
-## **Rules and Consequences**
+## ** Rules and Consequences**
 
 The program at High Impact was extremely rigid and had a very strict set of rules. Some things forbidden by these rules, as reported by survivors, were as follows:
 
@@ -102,9 +102,9 @@ Following the investigation, the teens at High Impact were taken into protective
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**Unknown Date: (SURVIVOR)** [Link to Survivor Testimony: 'High Impact – Hell is a Place in Mexico'](http://wwaspsurvivors.com/survivor-testimony/high-impact-cf/) (WWASP Survivors)
+** Unknown Date: (SURVIVOR)** [Link to Survivor Testimony: 'High Impact – Hell is a Place in Mexico'](http://wwaspsurvivors.com/survivor-testimony/high-impact-cf/) (WWASP Survivors)
 
 **11/01/2020: (SURVIVOR)** [Link to Survivor Testimony](https://www.breakingcodesilence.net/testimonial/bethsstory) (Breaking Code Silence)
 
@@ -122,7 +122,7 @@ Following the investigation, the teens at High Impact were taken into protective
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [High Impact Website Homepage](https://web.archive.org/web/20011031153134/http://www.teenbootcamps.com/highimpact/) (archived, 2001)
 
@@ -140,7 +140,8 @@ Following the investigation, the teens at High Impact were taken into protective
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

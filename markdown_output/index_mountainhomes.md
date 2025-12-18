@@ -14,11 +14,11 @@ Mountain Homes Youth Ranch also operated a wilderness program for young adults (
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ***Beginning Phase:**
 ***Advanced Phase:**
@@ -28,23 +28,24 @@ Mountain Homes Youth Ranch also operated a wilderness program for young adults (
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**SURVIVOR:** [Link to 'That Mountain Girl' - Blog by a Survivor of MHYR](https://thatmountaingirl.wordpress.com/)
-
----
-
-## **Related Media**
+** SURVIVOR:** [Link to 'That Mountain Girl' - Blog by a Survivor of MHYR](https://thatmountaingirl.wordpress.com/)
 
 ---
 
+## ** Related Media**
+
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+---
+
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

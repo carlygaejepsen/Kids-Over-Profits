@@ -14,17 +14,17 @@ The Pines RTC had a reputation for treating some of the "most violent and mental
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Freddie Anderson**is the current CEO of Harbor Point.
+** Freddie Anderson** is the current CEO of Harbor Point.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like many other behavior-modification programs, Harbor Point is reported to use a level-system. The specifics of the level-system are unknown.
 
-*Very little information is currently known regarding the specifics of the program used by Harbor Point. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is currently known regarding the specifics of the program used by Harbor Point. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -38,9 +38,9 @@ Many survivors have reported The Pines/Harbor Point to be an abusive program. Al
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**August 2020: (PARENT)**"This place is worse then a dog shelter. My son was at Harbor point for 5 months and was assaulted 2 times. Then today I noticed on my credit report 50,000 In Bill's from 4 years ago. They will be under investigation for fraud." - [Ashley (Google Reviews)](https://www.google.com/maps/contrib/101578910970908555813/place/ChIJO49L54KiuokRWcAHgKZoN6M/@36.8211767,-76.4456368,10.95z/data=!4m6!1m5!8m4!1e1!2s101578910970908555813!3m1!1e1?hl=en-US)
+** August 2020: (PARENT)**"This place is worse then a dog shelter. My son was at Harbor point for 5 months and was assaulted 2 times. Then today I noticed on my credit report 50,000 In Bill's from 4 years ago. They will be under investigation for fraud." - [Ashley (Google Reviews)](https://www.google.com/maps/contrib/101578910970908555813/place/ChIJO49L54KiuokRWcAHgKZoN6M/@36.8211767,-76.4456368,10.95z/data=!4m6!1m5!8m4!1e1!2s101578910970908555813!3m1!1e1?hl=en-US)
 
 **2019: (SURVIVOR)**"Doesn’t even desurve a star. It’s a horrible place and you don’t even get a hot shower with any water pressure. I was scared cause I didn’t talk to anybody yet they would try to attack me. Staff would pick at the kids and laugh. The school was horrible and not educational in the least. I already had trauma and going here for three months just added to it. For the love of god please DO NOT SEND YOUR KID HERE PLEASE" - [Edwin (Google Reviews)](https://www.google.com/maps/contrib/100613291694130730058/place/ChIJO49L54KiuokRWcAHgKZoN6M/@36.8404739,-76.3077329,17z/data=!4m6!1m5!8m4!1e1!2s100613291694130730058!3m1!1e1?hl=en-US)
 
@@ -68,7 +68,7 @@ Many survivors have reported The Pines/Harbor Point to be an abusive program. Al
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Harbor Point Website Homepage](https://harborpointbhc.com/)
 
@@ -82,7 +82,8 @@ Many survivors have reported The Pines/Harbor Point to be an abusive program. Al
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

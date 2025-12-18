@@ -6,7 +6,7 @@
 
 ## **History and Background Information**
 
-The Cross Creek Programs were two [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs created by Robert B. Lichfield:**Cross Creek Manor (CCM)**for girls, and**Cross Creek Center (CCC)**for boys. Cross Creek Manor was the Lichfield's first WWASP facility to open and is widely considered the "hub" of the WWASP conglomerate. After founding Cross Creek, Lichfield, along with many of his close family and friends, went on to open several more programs, which would later become a part of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
+The Cross Creek Programs were two [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs created by Robert B. Lichfield:** Cross Creek Manor (CCM)** for girls, and** Cross Creek Center (CCC)** for boys. Cross Creek Manor was the Lichfield's first WWASP facility to open and is widely considered the "hub" of the WWASP conglomerate. After founding Cross Creek, Lichfield, along with many of his close family and friends, went on to open several more programs, which would later become a part of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
 
 Cross Creek Manor was founded in 1986 by Robert B. Lichfield and Brent Facer. The program was marketed as a Residential Treatment Center for girls aged 14-18, and was originally located at [591 N State St, La Verkin, UT 84745](https://www.google.com/maps/place/591+N+State+St,+La+Verkin,+UT+84745/@37.2124323,-113.2725515,143a,35y,270h/data=!3m1!1e3!4m5!3m4!1s0x80caf3e570b4a2e7:0x3de5e17fe525fa7b!8m2!3d37.2126648!4d-113.2726166) . The program later moved only a short drive down the same road to [180 N State St, La Verkin, UT 84745](https://www.google.com/maps/place/180+N+State+St,+La+Verkin,+UT+84745/@37.2048999,-113.2715909,250a,35y,90h/data=!3m1!1e3!4m5!3m4!1s0x80caf3e25daa1a93:0x81c220c483e01bc7!8m2!3d37.2046035!4d-113.2719233) . In the late 90's, Cross Creek Center was opened in the original location of Cross Creek Manor as a program for teenaged boys aged 14-18. The program at CCC was identical to the girls' program at CCM. Around 2001, Cross Creek Center moved into the same campus as Cross Creek Manor, but the teens were kept entirely separate. This facility was capable of housing roughly 430 teens; approximately 178 boys and 253 girls. The average length of stay at Cross Creek Center was roughly 16-18 months, while at Cross Creek Manor it was 12-14 months. The program's tuition reportedly cost about $4,495 each month (almost $54,000 annually).
 
@@ -18,38 +18,38 @@ In 2011, another WWASP program, [Horizon Academy](https://www.reddit.com/r/troub
 
 ## **Founders & Notable Staff**
 
-**Robert B. Lichfield**is one of the Founders of Cross Creek. He is also the creator and owner of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . Lichfield has no formal background in Child Psychology. Prior to creating WWASP in 1998, Lichfield worked at [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in Provo, UT. Robert was one of six co-chairs of the Utah state fundraising committee for Romney's presidential campaign. Interestingly, Romney is the co-founder of Bain Capital, one of the largest private equity investment firms in the United States, which owns CRC Health Group, the owner of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducationgroup) . Additional Information: [Key to His Schools’ Success? It’s God, Founder Says](https://www.latimes.com/archives/la-xpm-2003-jul-13-na-toughbar13-story.html) and [Robert Lichfield's Facebook Account](https://www.facebook.com/robert.lichfield.9/)
+** Robert B. Lichfield** is one of the Founders of Cross Creek. He is also the creator and owner of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . Lichfield has no formal background in Child Psychology. Prior to creating WWASP in 1998, Lichfield worked at [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in Provo, UT. Robert was one of six co-chairs of the Utah state fundraising committee for Romney's presidential campaign. Interestingly, Romney is the co-founder of Bain Capital, one of the largest private equity investment firms in the United States, which owns CRC Health Group, the owner of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducationgroup) . Additional Information: [Key to His Schools’ Success? It’s God, Founder Says](https://www.latimes.com/archives/la-xpm-2003-jul-13-na-toughbar13-story.html) and [Robert Lichfield's Facebook Account](https://www.facebook.com/robert.lichfield.9/)
 
-**Brent Facer**is one of the Founders of Cross Creek. Like Lichfield, he too previously has worked at the confirmedly-abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) for many years prior to helping open Cross Creek. He was also involved in the creation of [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an 18+ program founded as a branch of [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) .
+** Brent Facer** is one of the Founders of Cross Creek. Like Lichfield, he too previously has worked at the confirmedly-abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) for many years prior to helping open Cross Creek. He was also involved in the creation of [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an 18+ program founded as a branch of [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) .
 
-**Ron Garrett**worked as an Administrator at Cross Creek. He is reported by*many*survivors to have been particularly cruel and abusive. According to [WWASP Survivors](http://narvinlichfield.com/) , "Ron Garrett was the face of cruelty in Cross Creek Manor/Center. He oversaw and participated in the torture and deliberate emotional distress of all of the students at CCM/CCC. He ordered their restraints, food and sleep deprivation and bragged about keeping students in isolation for more than 6 months at a time. Ron took great pride in creating and administering his own cruel and sadistic punishments such as putting students on “Staff-Buddy” complete social isolation and silence for months at a time, “BFO Tapes” a system of endless mind-numbing hours (approx. 5+ days) sitting in structure and brutal attack therapy sessions that he appropriately named after himself. Ron’s personal perversion of therapy often included inappropriate sexual conversations and telling girls who were rape victims that they need to take responsibility for what happened to them as well as forcing victims of child abuse to admit they deserved the abuse they suffered. He took it upon himself to personally harass each new student in what he called “Ron-Meetings” where he would mock them and scream in their faces until they “broke down” and burst into tears. Ron Garrett was fired from Cross Creek in 2008 and now works in Real Estate."
+** Ron Garrett** worked as an Administrator at Cross Creek. He is reported by*many*survivors to have been particularly cruel and abusive. According to [WWASP Survivors](http://narvinlichfield.com/) , "Ron Garrett was the face of cruelty in Cross Creek Manor/Center. He oversaw and participated in the torture and deliberate emotional distress of all of the students at CCM/CCC. He ordered their restraints, food and sleep deprivation and bragged about keeping students in isolation for more than 6 months at a time. Ron took great pride in creating and administering his own cruel and sadistic punishments such as putting students on “Staff-Buddy” complete social isolation and silence for months at a time, “BFO Tapes” a system of endless mind-numbing hours (approx. 5+ days) sitting in structure and brutal attack therapy sessions that he appropriately named after himself. Ron’s personal perversion of therapy often included inappropriate sexual conversations and telling girls who were rape victims that they need to take responsibility for what happened to them as well as forcing victims of child abuse to admit they deserved the abuse they suffered. He took it upon himself to personally harass each new student in what he called “Ron-Meetings” where he would mock them and scream in their faces until they “broke down” and burst into tears. Ron Garrett was fired from Cross Creek in 2008 and now works in Real Estate."
 
-**Karr Farnsworth:**took an ownership interest in the Cross Creek Programs in 1999, where he served as Administrator and later as Director of the program until it closed. He was also the first President of WWASP.
+**Karr Farnsworth:** took an ownership interest in the Cross Creek Programs in 1999, where he served as Administrator and later as Director of the program until it closed. He was also the first President of WWASP.
 
-**Ken Kay**is reported to have worked as the Program Director of the Cross Creek Programs. He began his career with [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) as night staff at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) , before ultimately becoming the Director of the facility. He served as the Director of Brightway until its closure in 1998. He then became the President and Public Voice of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) beginning later that year. Kay said in his August 2004 testimony in the WWASP vs. PURE case, that in his opinion, sexual activity between staff members and students is “not necessarily” abuse. Kay then served as Superintendent of [Browning Distance Learning Academy](https://web.archive.org/web/20080122003205/http://browningacademy.org/) , a homeschooling curriculum company owned by Robert Lichfield. In 2006, he appears to have created a company called [Pro-ED LLC](https://www.bizapedia.com/ut/pro-ed-media-llc.html) ; this company's principal office is listed as the same address used by many WWASP programs and WWASP-affiliated companies. Pro-ED LLC failed to file a license renewal in 2020, and is now defunct. Ken's current employment is presently unknown.
+** Ken Kay** is reported to have worked as the Program Director of the Cross Creek Programs. He began his career with [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) as night staff at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) , before ultimately becoming the Director of the facility. He served as the Director of Brightway until its closure in 1998. He then became the President and Public Voice of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) beginning later that year. Kay said in his August 2004 testimony in the WWASP vs. PURE case, that in his opinion, sexual activity between staff members and students is “not necessarily” abuse. Kay then served as Superintendent of [Browning Distance Learning Academy](https://web.archive.org/web/20080122003205/http://browningacademy.org/) , a homeschooling curriculum company owned by Robert Lichfield. In 2006, he appears to have created a company called [Pro-ED LLC](https://www.bizapedia.com/ut/pro-ed-media-llc.html) ; this company's principal office is listed as the same address used by many WWASP programs and WWASP-affiliated companies. Pro-ED LLC failed to file a license renewal in 2020, and is now defunct. Ken's current employment is presently unknown.
 
-**Sheila Smith**worked as a Teacher at Cross Creek Manor from 1994 until 1996. She then went on to work as a Teacher at the**confirmedly abusive** [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) from 2010 until 2011. She currently appears to work as a Teacher at the reportedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) spin-off program [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) , where she began working in 2014.
+** Sheila Smith** worked as a Teacher at Cross Creek Manor from 1994 until 1996. She then went on to work as a Teacher at the** confirmedly abusive** [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) from 2010 until 2011. She currently appears to work as a Teacher at the reportedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) spin-off program [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) , where she began working in 2014.
 
-**Garth Lasater**worked as a Therapist at Cross Creek beginning in 1993. He worked at Cross Creek until at least 2007. After Cross Creek, he worked as the Program Director of the WWASP-affiliated program, [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) . He then went on to work at the reportedly abusive [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) , eventually becoming the program's Executive Director in 2018.
+** Garth Lasater** worked as a Therapist at Cross Creek beginning in 1993. He worked at Cross Creek until at least 2007. After Cross Creek, he worked as the Program Director of the WWASP-affiliated program, [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) . He then went on to work at the reportedly abusive [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) , eventually becoming the program's Executive Director in 2018.
 
 Other individuals who have been [reported](http://www.heal-online.org/crosscreek.htm) to have worked at Cross Creek include:
 
 ***Evan Carayas:***no additional information.*
-***Beverly Carayas:**worked in the Admissions office at Cross Creek. She later went on to work at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) as a Case Worker.
-***Constantine "Gus" Carayas:**worked at Cross Creek as a Classroom Proctor. He later went on to work at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) as a Teacher.
-***Jennifer Benson:**worked as a Seminar Volunteer/Peer Mentor at Cross Creek from May 2006 until November 2007.
-***Robert A. Nielson:**reportedly worked at Cross Creek Manor briefly before leaving to open [Cedar Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) in 1996.
-***David Gilcrease:**facilitated many of the workshops at Cross Creek and other WWASP programs. He formerly worked as a [Lifespring](https://en.wikipedia.org/wiki/Lifespring) facilitator prior to creating [Resource Realizations](https://www.reddit.com/r/troubledteens/wiki/index/resourcerealizations) (also known as [Premiere Educational Services](https://www.reddit.com/r/troubledteens/wiki/index/premiereed) ), which was the company responsible for running the seminars at WWASP.
-***Alice Bagley:**worked as the Assistant Principal/Director of Education at Cross Creek Academy beginning in 1999.
-***Yahia Irochen:**is reported to have worked at Cross Creek. He later worked at [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) .
-***Cassie Robinson:**is reported to have worked at Cross Creek in an unknown position. She is the wife of [Jade Robinson](https://opstopinstabuse.wordpress.com/2013/06/16/darwin-jade-robinson/) .
+***Beverly Carayas:** worked in the Admissions office at Cross Creek. She later went on to work at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) as a Case Worker.
+***Constantine "Gus" Carayas:** worked at Cross Creek as a Classroom Proctor. He later went on to work at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) as a Teacher.
+***Jennifer Benson:** worked as a Seminar Volunteer/Peer Mentor at Cross Creek from May 2006 until November 2007.
+***Robert A. Nielson:** reportedly worked at Cross Creek Manor briefly before leaving to open [Cedar Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) in 1996.
+***David Gilcrease:** facilitated many of the workshops at Cross Creek and other WWASP programs. He formerly worked as a [Lifespring](https://en.wikipedia.org/wiki/Lifespring) facilitator prior to creating [Resource Realizations](https://www.reddit.com/r/troubledteens/wiki/index/resourcerealizations) (also known as [Premiere Educational Services](https://www.reddit.com/r/troubledteens/wiki/index/premiereed) ), which was the company responsible for running the seminars at WWASP.
+***Alice Bagley:** worked as the Assistant Principal/Director of Education at Cross Creek Academy beginning in 1999.
+***Yahia Irochen:** is reported to have worked at Cross Creek. He later worked at [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) .
+***Cassie Robinson:** is reported to have worked at Cross Creek in an unknown position. She is the wife of [Jade Robinson](https://opstopinstabuse.wordpress.com/2013/06/16/darwin-jade-robinson/) .
 ***Mike Herrera:***no additional information.*
-***Ron June:**worked as a Therapist at Cross Creek.
-***Cameron & Chaffin Pullan:**they are brothers who began working for WWASP at Cross Creek in 1991. In 1996, they opened [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) with Dan Peart. They owned/worked as administrators of Spring Creek Lodge until it closed in 2009. They were also involved in creating [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an apparent attempt to remake a portion of the facility into an 18+ program, which also failed.
+***Ron June:** worked as a Therapist at Cross Creek.
+***Cameron & Chaffin Pullan:** they are brothers who began working for WWASP at Cross Creek in 1991. In 1996, they opened [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) with Dan Peart. They owned/worked as administrators of Spring Creek Lodge until it closed in 2009. They were also involved in creating [Camas Ranch](https://www.reddit.com/r/troubledteens/wiki/index/camasranch) , an apparent attempt to remake a portion of the facility into an 18+ program, which also failed.
 
 ---
 
-## **Program Structure & Rules**
+## ** Program Structure & Rules**
 
 The Cross Creek programs had a very rigorous program structure and a massive amount of rules. Like other WWASP programs, Cross Creek used a level system consisting of six levels. According to statements, some of the privileges which the resident can "earn" are:
 
@@ -74,7 +74,7 @@ In order to keep the the residents from running from the facility, a number of "
 
 In order to progress through the levels, the students needed to earn points each day while avoiding point deductions (demerits). Students were encouraged to give demerits to their peers for even minor rule violations in order to gain trust with staff and progress through the level system.
 
-The**demerits**also had levels. They were categorized as:
+The**demerits** also had levels. They were categorized as:
 
 *
 *Category 1*: these demerits would cost a resident 5 points. They could be given for things such as bad posture, being even one second late to line up, or anything the staff or other residents felt was unsatisfactory.
@@ -86,7 +86,7 @@ The**demerits**also had levels. They were categorized as:
 *Category 3*: these demerits would cost a resident 50 points. They could be given for things such as sharing/borrowing items, having a negative attitude, or any blatant rule violation.
 
 *
-*Category 4*: these demerits would cost a resident 2 of their levels and**all**of their points. This could be given for something as small as*glancing*out the window.
+*Category 4*: these demerits would cost a resident 2 of their levels and**all** of their points. This could be given for something as small as*glancing*out the window.
 
 *
 *Category 5*: these demerits would cause a resident to lose*all*of their levels and*all*of their points, in effect starting the program over. This could be given for things like self-harm/self-infliction, or use drugs or alcohol. However, even minor things like popping pimples or throwing up from overeating were considered "self-infliction" and could result in a Category 5 demerit.
@@ -95,7 +95,7 @@ Staff would also frequently "stack" demerits. An example given by a survivor is 
 
 It has been reported that teenagers at Cross Creek who were deemed too resistant were sent to other WWASP programs, including [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) .
 
-Also central to the program at Cross Creek were a series of so-called "highly motivational emotional growth seminars" called**TASKS**(an acronym for**T**een**A**ccountability,**S**elf-esteem, and**K**eys to**S**uccess). According to their (archived) [website](https://web.archive.org/web/20010303233900/http://crosscreekprograms.com/tasksC.htm) , the TASKS were:
+Also central to the program at Cross Creek were a series of so-called "highly motivational emotional growth seminars" called**TASKS**(an acronym for** T** een** A** ccountability,** S** elf-esteem, and** K** eys to** S** uccess). According to their (archived) [website](https://web.archive.org/web/20010303233900/http://crosscreekprograms.com/tasksC.htm) , the TASKS were:
 
 *
 **Seminar I, Teen Discovery**: a three-day seminar addressing issues such as accountability, integrity, choice, cooperation, trust, anger, and honesty.
@@ -120,7 +120,7 @@ One survivor has detailed the typical [daily life at Cross Creek](https://archiv
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 The Cross Creek Programs are widely reported to have been extremely abusive programs. Survivors report use of violent restraints and solitary confinement as punishments for even minor rule violations, such as refusing to get out of bed. Many survivors also report being sexually abuse while at Cross Creek. In addition to the physical and sexual abuse, many survivors report mental and emotional trauma from the methods of "therapy" at Cross Creek. Other allegations of abuse and neglect that have been reported by survivors include food deprivation, sleep deprivation, violent and excessive physical restraints, being left outside during extreme temperatures, being forced to sleep on the floor, and extreme forms of manipulation and psychological torture. It has also been reported that conversion therapy techniques were frequently used by the staff at Cross Creek.
 
@@ -174,11 +174,11 @@ In August 2013, a 22-year-old former resident of Cross Creek Manor, Sarah Artim,
 
 **1995: (SURVIVOR)** [Link to Elizabeth's Story](https://web.archive.org/web/20210415100554/https://www.helpsavetroubledteens.com/elizabeth-ccm--bah.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Briana's Survivor Testimony](http://www.safeteenschools.org/images/CCM_interview_Briana_D_2004-2006.txt)
+** Unknown Date: (SURVIVOR)** [Link to Briana's Survivor Testimony](http://www.safeteenschools.org/images/CCM_interview_Briana_D_2004-2006.txt)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Cross Creek Manor Website](https://web.archive.org/web/19991004191545/http://crosscreekmanor.com/) (archived, 1999)
 
@@ -216,7 +216,7 @@ In August 2013, a 22-year-old former resident of Cross Creek Manor, Sarah Artim,
 
 [Various Cross Creek Articles on WWASPSInfo.net](https://web.archive.org/web/20080919155239/http://www.wwaspsinfo.net/crosscreek.html)
 
-### **Videos**
+### ** Videos**
 
 [Mike and Carla's deposition regarding the rescue of their son from Cross Creek - Part 1](https://youtu.be/20nNE2johI4) -- [Part 2](https://youtu.be/KqMXo0ZAhsI) -- and [Part 3](https://youtu.be/dN0rrMMBXAg)
 
@@ -269,7 +269,8 @@ In August 2013, a 22-year-old former resident of Cross Creek Manor, Sarah Artim,
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -655,7 +655,7 @@ const initializeAdminPage = () => {
         if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
         console.log('✅ Initialized referrers view');
     } else {
-        // Companies or locations view - show facility forms
+        // Companies or locations view - show data forms
         if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
         if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
         console.log('✅ Initialized', activeCategory, 'view');

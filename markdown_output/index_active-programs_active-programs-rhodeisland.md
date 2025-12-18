@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 We have been unable to establish key information for programs in Rhode Island at this time.
 
@@ -14,13 +14,13 @@ We have been unable to establish key information for programs in Rhode Island at
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Harmony Hill School**](https://www.reddit.com/r/troubledteens/wiki/index/harmonyhill) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Harmony Hill School**](https://www.reddit.com/r/troubledteens/wiki/index/harmonyhill) | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
 ---
 
-## **Closed Programs in Rhode Island**
+## ** Closed Programs in Rhode Island**
 
 ---
 
@@ -28,8 +28,8 @@ We have been unable to establish key information for programs in Rhode Island at
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Camp E-Hun-tee**](https://www.reddit.com/r/troubledteens/wiki/index/campehuntee) | 1969-2012 | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Camp E-Hun-tee**](https://www.reddit.com/r/troubledteens/wiki/index/campehuntee) | 1969-2012 | - | - |
 | - | - | - | - |
 | - | - | - | - |
 ---
@@ -40,7 +40,8 @@ We have been unable to establish key information for programs in Rhode Island at
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

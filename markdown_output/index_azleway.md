@@ -10,32 +10,32 @@ Azleway Boys Ranch (also called Azleway Valley View) is a behavior-modification 
 
 Azleway currently operates two residential programs:
 
-***Azleway Valley View:**This program enrolls teenage boys (13-17) who are struggling to transition from substitute care into independence.
-***Azleway Substance Abuse Program (ASAP):**This program enrolls teenage boys (13-17) who are in need of primary chemical dependency counseling and dual diagnosis for clients with mental health issues and concurrent co-health issues.
+***Azleway Valley View:** This program enrolls teenage boys (13-17) who are struggling to transition from substitute care into independence.
+***Azleway Substance Abuse Program (ASAP):** This program enrolls teenage boys (13-17) who are in need of primary chemical dependency counseling and dual diagnosis for clients with mental health issues and concurrent co-health issues.
 
 In addition to residential programs, Azleway also offers adoption services and foster care placements.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Gary Duke**
-
----
-
-## **Program Structure**
+** Gary Duke**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
+
+---
+
+## ** Related Media**
 
 [Azleway Boys Ranch Website Homepage](https://www.azleway.org/)
 
@@ -47,7 +47,8 @@ In addition to residential programs, Azleway also offers adoption services and f
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

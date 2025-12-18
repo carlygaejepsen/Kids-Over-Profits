@@ -10,65 +10,65 @@ Copper Hills Youth Center (CHYC) is a [UHS](https://www.reddit.com/r/troubledtee
 
 Copper Hills Youth Center is located at [5899 Rivendell Dr, West Jordan, UT 84081](https://www.google.com/maps/place/Copper+Hills+Youth+Center/@40.5886279,-112.0330247,286m/data=!3m1!1e3!4m5!3m4!1s0x0:0xbcb85ccd71821d01!8m2!3d40.5888767!4d-112.032339) , which is the previous location of [Rivendell of Utah](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) (also known as Rivendell Psychiatric Hospital). Copper Hills splits the residents between a Girls program and a Boys program, as well as a program for teenagers with Autism Spectrum Disorder. It is also reported that the program has/had a "sexual misconduct" unit. The following is an [image](https://imgur.com/a/NbEuXKU) of the campus taken in 1997 when the program was still the [Rivendell Psychiatric Hospital](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) . Additional images can be seen of the [campus in 2002](https://imgur.com/a/3ejFCtH) (once it had become Copper Hills), and the [campus in 2005](https://imgur.com/a/4bGoltM) and [2013](https://imgur.com/a/bqsCgeO) .
 
-**Copper Hills Youth Center is widely believed to be a rebrand of the notoriously abusive [Rivendell of Utah](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) .**In addition to the obvious connection from the location of the programs, many staff at Copper Hills had also previously worked at Rivendell.
+**Copper Hills Youth Center is widely believed to be a rebrand of the notoriously abusive [Rivendell of Utah](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) .** In addition to the obvious connection from the location of the programs, many staff at Copper Hills had also previously worked at Rivendell.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Barry Woodward**was the CEO of Copper Hills Youth Center. He had previously worked as the CEO of the**confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) for many years. He is also reported to have worked at [Olympus View Hospital](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) , prior to working at Provo Canyon School.
+** Barry Woodward** was the CEO of Copper Hills Youth Center. He had previously worked as the CEO of the** confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) for many years. He is also reported to have worked at [Olympus View Hospital](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) , prior to working at Provo Canyon School.
 
-**Ron S. Tuinei**is the current CEO of Copper Hills Youth Center. He began his career in the TTI working as a Program Supervisor at the reportedly abusive [Heritage RTC](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) from 1993 until 2010. He also worked as a Counselor at [Slate Canyon Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/slatecanyon) from 2002 until 2003. He then went on to work as the Program Director and Risk Management Director at [Cottonwood Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/cottonwood) from 2010 until 2013. He then worked as the Program Director of the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) , a reportedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. He then worked at the**confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 2016 until 2020 as the Program Director, and later, the Executive Director. He has been the CEO of Copper Hills since January of 2020.
+** Ron S. Tuinei** is the current CEO of Copper Hills Youth Center. He began his career in the TTI working as a Program Supervisor at the reportedly abusive [Heritage RTC](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) from 1993 until 2010. He also worked as a Counselor at [Slate Canyon Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/slatecanyon) from 2002 until 2003. He then went on to work as the Program Director and Risk Management Director at [Cottonwood Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/cottonwood) from 2010 until 2013. He then worked as the Program Director of the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) , a reportedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. He then worked at the** confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 2016 until 2020 as the Program Director, and later, the Executive Director. He has been the CEO of Copper Hills since January of 2020.
 
-**C. Rhett Cragun**works as the Clinical Director of Copper Hills Youth Center. He has worked at Copper Hills since 2004.
+** C. Rhett Cragun** works as the Clinical Director of Copper Hills Youth Center. He has worked at Copper Hills since 2004.
 
-**Linda Carlson**works as a Therapist at Copper Hills Youth Center. She has worked at Copper Hills since 2001.
+** Linda Carlson** works as a Therapist at Copper Hills Youth Center. She has worked at Copper Hills since 2001.
 
-**Brian Savage**worked as a Therapist at Copper Hills Youth Center. He began his career as a Therapist at Wasatch Mental Health from 1994-1999. He then went on to work as a Therapist at the**confirmedly abusive** [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) from 1999 until 2003. He then worked as a Therapist at Copper Hills from 2003 until 2007, before leaving to work at [San Marcos Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/sanmarcos) in Texas from 2007 until 2009. He returned to Copper Hills in 2009 as a Clinical Program Administrator, and later worked as a Therapist at Copper Hills from 2012 until 2015.
+** Brian Savage** worked as a Therapist at Copper Hills Youth Center. He began his career as a Therapist at Wasatch Mental Health from 1994-1999. He then went on to work as a Therapist at the** confirmedly abusive** [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) from 1999 until 2003. He then worked as a Therapist at Copper Hills from 2003 until 2007, before leaving to work at [San Marcos Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/sanmarcos) in Texas from 2007 until 2009. He returned to Copper Hills in 2009 as a Clinical Program Administrator, and later worked as a Therapist at Copper Hills from 2012 until 2015.
 
-**Manuel Tello Jr.**worked as at Copper Hills Youth Center from 1999 until 2012 in various roles, including Transportation Officer and Residential Center Scheduler, Staff Trainer, and Mental Health Specialist. He previously worked at [Rivendell of Utah](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) from 1987-1992. He then went on to work at [Olympus View Hospital RTC](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) from 1992 until 1999, before working at Copper Hills.
+** Manuel Tello Jr.** worked as at Copper Hills Youth Center from 1999 until 2012 in various roles, including Transportation Officer and Residential Center Scheduler, Staff Trainer, and Mental Health Specialist. He previously worked at [Rivendell of Utah](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) from 1987-1992. He then went on to work at [Olympus View Hospital RTC](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) from 1992 until 1999, before working at Copper Hills.
 
-**Mart “Marty” Clough**worked as a Counselor at Copper Hills. In October of 2017, he was charged with sexual exploitation of a minor after police say he had sexual conversations online with a 17-year-old girl who had been released from the facility. He admitted to the charges and spent 60 days in jail.
+** Mart “Marty” Clough** worked as a Counselor at Copper Hills. In October of 2017, he was charged with sexual exploitation of a minor after police say he had sexual conversations online with a 17-year-old girl who had been released from the facility. He admitted to the charges and spent 60 days in jail.
 
 ---
 
-## **Programs Offered**
+## ** Programs Offered**
 
 Copper Hills Youth Center offers a variety of different "tracks" intended for residents with specific challenges.
 
-### **Birds Program**(Male)
+### ** Birds Program**(Male)
 
 The Birds Program at Copper Hills is designed for teenage boys. CHYC refer to these tracks as Eagles, Ravens, and Falcons. Each unit is designed for boys at a variety of ages, developmental considerations, and symptoms being treated. All tracks use a level-system and implement "positive peer culture".
 
 *
-**Eagles:**This track is designed for adolescent males with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Adolescent males on the Eagles track are typically 16 and 17 years old.
+**Eagles:** This track is designed for adolescent males with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Adolescent males on the Eagles track are typically 16 and 17 years old.
 
 *
-**Ravens:**This track is designed for adolescent males with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Adolescent males on the Ravens track are typically 14 and 15 years old.
+**Ravens:** This track is designed for adolescent males with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Adolescent males on the Ravens track are typically 14 and 15 years old.
 
 *
-**Falcons:**This track is designed for adolescent males with IQ’s ranging from 60-80 or those entering early adolescence (12-13) with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders.
+**Falcons:** This track is designed for adolescent males with IQ’s ranging from 60-80 or those entering early adolescence (12-13) with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders.
 
-### **Gems Program**(Female)
+### ** Gems Program**(Female)
 
 The Gems Program at Copper Hills is designed for teenage girls. Copper Hills refer to these tracks as Diamonds, Rubies, and Emeralds. All tracks use a level-system and implement "positive peer culture".
 
 *
-**Diamonds:**This track is designed for older adolescent females with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Young women on the Diamonds track are typically 16 and 17 years old and without major cognitive deficits.
+**Diamonds:** This track is designed for older adolescent females with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Young women on the Diamonds track are typically 16 and 17 years old and without major cognitive deficits.
 
 *
-**Rubies:**This track is designed for adolescent females with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Young women on the Rubies track are typically 14 and 15 years old and without major cognitive deficits.
+**Rubies:** This track is designed for adolescent females with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders. Young women on the Rubies track are typically 14 and 15 years old and without major cognitive deficits.
 
 *
-**Emeralds:**This track is designed for adolescent females with IQ’s ranging from 60 to 80 or those entering early adolescence (12-13). They often struggle with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders.
+**Emeralds:** This track is designed for adolescent females with IQ’s ranging from 60 to 80 or those entering early adolescence (12-13). They often struggle with behavioral difficulties from sources of trauma, attachment disruptions, and various mood disorders.
 
-### **Arches Program**
+### ** Arches Program**
 
-***Arches**is a program for teenagers with Autism Spectrum Disorder. The goals of this program are reported to be to: increase functional independence, facilitate development and learning, improve socialization, enhance communication, replace maladaptive behaviors, educate and support families, and keep residents safe.
+***Arches** is a program for teenagers with Autism Spectrum Disorder. The goals of this program are reported to be to: increase functional independence, facilitate development and learning, improve socialization, enhance communication, replace maladaptive behaviors, educate and support families, and keep residents safe.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Copper Hills Youth Center uses a level system. Resident progress through the levels by earning points, which are assigned every hour "based upon achieving individualized target behaviors, showing safety, communicating respectfully, maintaining appropriate boundaries, and participating in programming." The levels are reported to be:
 
@@ -83,9 +83,9 @@ The program has also [reported](http://www.qualishealth.org/sites/default/files/
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
-Copper Hills Youth Center has been plagued by allegations of abuse and neglect practically since it first opened. Accoring to the Human Rights organization [HEAL](http://www.heal-online.org/thelist.htm) , Copper Hills Youth Center is a**Confirmedly Abusive**program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+Copper Hills Youth Center has been plagued by allegations of abuse and neglect practically since it first opened. Accoring to the Human Rights organization [HEAL](http://www.heal-online.org/thelist.htm) , Copper Hills Youth Center is a** Confirmedly Abusive** program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 A federal lawsuit was filed in 2001 against Copper Hills that alleged a 31-year-old behavioral technician employed by the facility had an inappropriate relationship with a 16-year-old female resident. The case was ultimately dismissed.
 
@@ -111,7 +111,7 @@ State officials say the facility violated several rules that contributed to the 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **7/13/2020: (SURVIVOR)**"Let me tell you about Copper Hills from the perspective of an ex resident. I'm what they'd call a model resident, always followed directions, went above and beyond in school, and made sure my rear end was out of there at the earliest possible time! Not to say I didn't witness and have unnecessary involvement in a plethora of scandals. Copper Hills is owned by UHS (Universal Health Services), a Fortune 500 hospital chain, riddled with negligence and misconduct cases. In layman's terms, they only care about the revenue accrued from the incarceration of your beloved angel. On a daily, I witnessed at least two violent restraints on adolescents that could have easily been deescalated as a first resort. They hire incompetent staff, most of whom have criminal records, that pay more attention to a romantic relationship with a minor than their job descriptions. They let adolescent criminals run rampant among that slightly depressed teen who sought treatment to better their life. Their education department is a joke, this is not an education people! They put you in the most remedial of the remedial classes (I was a high school senior at the time and this work was that of a fifth grader, no joke!) which others somehow managed to flunk. If you want to stay involved in your adolescent's education, you need to call their principal directly, every day of the week to stay involved enough. Other residents had the ability to gain access to dangerous and often deadly weapons due to negligence of the staff and used them every time! This place has had a number of riots, literally google "Copper Hills Youth Center Salt Lake" and you'll understand completely. Copper Hills will not help your adolescent but will only worsen the situation at a rapid pace. Do you want to send your adolescent to a place that makes them worse? Can you fathom the horrors that happens at Copper Hills? Imagine all that, but YOUR kid! Get your head out of your behind and be a parent!" - [Darian (Yelp)](https://www.yelp.com/not_recommended_reviews/copper-hills-youth-center-west-jordan)
 
@@ -133,7 +133,7 @@ State officials say the facility violated several rules that contributed to the 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Copper Hills Youth Center Website Homepage](https://copperhillsyouthcenter.com/)
 
@@ -171,7 +171,8 @@ State officials say the facility violated several rules that contributed to the 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

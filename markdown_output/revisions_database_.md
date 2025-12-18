@@ -1,4 +1,0 @@
-database Author   Reason   Date  |
-|  |  |  |
-|  |  |  |
-|  |  |  |

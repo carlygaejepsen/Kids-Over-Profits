@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 The oversight and regulation of residential care facilities is performed by the New Hampshire Department of Health and Human Services to ensure the safety and proper care of residents at each program. The Health Facility Licensing Unit inspects and issues licenses for alternative and therapeutic programs in the state.
 
@@ -16,15 +16,15 @@ A private New Hampshire school is not required to be accredited but they are enc
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Granite Hill School**](https://www.reddit.com/r/troubledteens/wiki/index/granitehill) | - | - | - |
-| [**Mount Prospect Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountprospect) | - | - | - |
-| [**Mountain Valley Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/mountvalley) | 2011 | Plainfield, NH | N/A |
-| [**The Oliverian School**](https://www.reddit.com/r/troubledteens/wiki/index/oliverian) | 2002 | Haverhill, NH | N/A |
-| [**The Ridge RTC**](https://www.reddit.com/r/troubledteens/wiki/index/theridge) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Granite Hill School**](https://www.reddit.com/r/troubledteens/wiki/index/granitehill) | - | - | - |
+| [** Mount Prospect Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountprospect) | - | - | - |
+| [** Mountain Valley Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/mountvalley) | 2011 | Plainfield, NH | N/A |
+| [** The Oliverian School**](https://www.reddit.com/r/troubledteens/wiki/index/oliverian) | 2002 | Haverhill, NH | N/A |
+| [** The Ridge RTC**](https://www.reddit.com/r/troubledteens/wiki/index/theridge) | - | - | - |
 ---
 
-## **Closed Programs in New Hampshire**
+## ** Closed Programs in New Hampshire**
 
 ---
 
@@ -32,9 +32,9 @@ A private New Hampshire school is not required to be accredited but they are enc
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Hunter School**](https://www.reddit.com/r/troubledteens/wiki/index/hunterschool) |  |
-| [**Shortridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/shortridge) | 2002 | Milton, NH | [HEAL](http://www.heal-online.org/short.htm) |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Hunter School**](https://www.reddit.com/r/troubledteens/wiki/index/hunterschool) |  |
+| [** Shortridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/shortridge) | 2002 | Milton, NH | [HEAL](http://www.heal-online.org/short.htm) |
 | - | - | - | - |
 ---
 
@@ -47,4 +47,5 @@ A private New Hampshire school is not required to be accredited but they are enc
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

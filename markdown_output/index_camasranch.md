@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Camas Ranch was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) behavior modification program that opened in 2007. It was marketed as a young adult transitional program for young adults (18-24) who were over 18, and could leave another WWASP program but did not want to risk being isolated from their family as an result of an Exit Plan. Camas Ranch operated as a branch of [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , another notoriously abusive WWASP program, and as such the majority (if not all) of the teens at Camas Ranch came from Spring Creek Lodge.
 
@@ -12,15 +12,15 @@ Because the program only enrolled residents who were 18 and older, the residents
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Cameron Pullan**was the Co-Founder of Camas Ranch. He was also the Co-Founder and an Administrator at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He first began working for WWASP at the notorious and**confirmedly abusive** [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992.
+** Cameron Pullan** was the Co-Founder of Camas Ranch. He was also the Co-Founder and an Administrator at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He first began working for WWASP at the notorious and** confirmedly abusive** [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992.
 
-**Chaffin Pullan**was the Co-Founder of Camas Ranch. He was also the Co-Founder and an Administrator at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He is the brother of Cameron Pullan. Like his brother, Chaffin also first began working for WWASP at the notorious [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992. Follow SCLA's closure, he is reported to have worked as a supervisor at [Reflections Academy](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) nearby, which was started by another former SCLA employee, Michelle "Mickey" Manning. In 2018, three lawsuits against Reflections Academy in Thompson Falls were filed following allegations of sexual abuse and grooming by Chaffin Pullan, as well as professional negligence related, in part, to inadequate therapy and education.
+** Chaffin Pullan** was the Co-Founder of Camas Ranch. He was also the Co-Founder and an Administrator at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He is the brother of Cameron Pullan. Like his brother, Chaffin also first began working for WWASP at the notorious [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992. Follow SCLA's closure, he is reported to have worked as a supervisor at [Reflections Academy](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) nearby, which was started by another former SCLA employee, Michelle "Mickey" Manning. In 2018, three lawsuits against Reflections Academy in Thompson Falls were filed following allegations of sexual abuse and grooming by Chaffin Pullan, as well as professional negligence related, in part, to inadequate therapy and education.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Camas Ranch utilized the same kind of points and levels system as other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, but in a less strict environment. In order to be considered for the Ranch, the young adults had to have achieved at least Level 3 while at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . The residents entered this program at Level 3 with 1600 "advancement points" and graduate after completing all requirements of level 6.
 
@@ -30,11 +30,11 @@ A prominent aspect of Camas Ranch was the "life skills" program. This included a
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
-Camas Ranch was a branch of the notorious and**confirmedly abusive** [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , and employed many of the confirmedly abusive tactics that other WWASP programs used.
+Camas Ranch was a branch of the notorious and** confirmedly abusive** [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , and employed many of the confirmedly abusive tactics that other WWASP programs used.
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -44,7 +44,7 @@ Camas Ranch was a branch of the notorious and**confirmedly abusive** [Spring Cre
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Camas Ranch Website Homepage](https://web.archive.org/web/20080723192041/http://www.camasranch.com/) (archived, 2008)
 
@@ -56,7 +56,8 @@ Camas Ranch was a branch of the notorious and**confirmedly abusive** [Spring Cre
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,19 +14,19 @@ In February of 2009, Darrington was raided by authorities as part of an investig
 
 ---
 
-## **Founder & Notable Staff**
+## ** Founder & Notable Staff**
 
-**Dace Goulding**, prior to co-founding Darrington Academy, was the owner of [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) and co-owner of [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) . He first began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Samoa. He is reported to have worked as the Operations Manager at Darrington Academy.
+** Dace Goulding**, prior to co-founding Darrington Academy, was the owner of [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) and co-owner of [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) . He first began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Samoa. He is reported to have worked as the Operations Manager at Darrington Academy.
 
-**Richard Darrington**was the Headmaster and CEO of Darrington Academy. On May 21, 2009, Richard Darrington was arrested on charges of aggravated battery, a felony, and simple battery, a misdemeanor, but was released the same day on a $6,000 bond. Darrington then began working at Whittell High School as their Dean of Students. In December, 2009, a grand jury in Georgia indicted Richard Darrington on felony charges of aggravated battery, invasion of privacy, and four counts of first degree cruelty to children. He lost his job at Whittell when the Nevada Department of Education revoked his substitute teaching license after learning of outstanding battery charges facing him in Georgia
+** Richard Darrington** was the Headmaster and CEO of Darrington Academy. On May 21, 2009, Richard Darrington was arrested on charges of aggravated battery, a felony, and simple battery, a misdemeanor, but was released the same day on a $6,000 bond. Darrington then began working at Whittell High School as their Dean of Students. In December, 2009, a grand jury in Georgia indicted Richard Darrington on felony charges of aggravated battery, invasion of privacy, and four counts of first degree cruelty to children. He lost his job at Whittell when the Nevada Department of Education revoked his substitute teaching license after learning of outstanding battery charges facing him in Georgia
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP programs, Darrington Academy used a level system consisting of six levels. In order to progress through the program, students needed to earn points for "good behavior" while avoiding demerits.
 
-The**demerits**also had levels. They were categorized as:
+The** demerits** also had levels. They were categorized as:
 
 *
 *Category 1*: these demerits would cost a resident 5 points. They could be given for things such as bad posture, being even one second late to line up, or anything the staff or other residents felt was unsatisfactory.
@@ -38,7 +38,7 @@ The**demerits**also had levels. They were categorized as:
 *Category 3*: these demerits would cost a resident 50 points. They could be given for things such as sharing/borrowing items, having a negative attitude, or any blatant rule violation.
 
 *
-*Category 4*: these demerits would cost a resident 2 of their levels and**all**of their points. This could be given for something as small as*glancing*out the window.
+*Category 4*: these demerits would cost a resident 2 of their levels and**all** of their points. This could be given for something as small as*glancing*out the window.
 
 *
 *Category 5*: these demerits would cause a resident to lose*all*of their levels and*all*of their points, in effect starting the program over. This could be given for things like self-harm/self-infliction, or use drugs or alcohol. However, even minor things like popping pimples or throwing up from overeating were considered "self-infliction" and could result in a Category 5 demerit.
@@ -61,7 +61,7 @@ Richard Darrington lost his job at Whittell when the Nevada Department of Educat
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **11/18/2020: (SURVIVOR)**"This program forever impacted my life. I spent about 6 months at Darrington beginning September 2005 and then transferred to Red River to finish my program. Thankfully I rode the line and never faced much trouble. I definitely saw chaperones act out of hand and beyond physical abuse the ongoing mental abuse to me is the biggest issue. John was the only person to physically lay hands on me, this was day one when I asked to use the phone to call home. He said no, and I responded I had the right to call my parents. He then slammed me up against the cafeteria wall and proceeded to say if I don’t get in line I will have a very hard time in this place. So out of fear I rode the line. Not the best practice for reform. I went to bed every night in fear that I would lose points or be dropped and have to start all over. The point system was arbitrary and up to the chaperones discretion. If they didn’t like you, they kid keep you down forever. And unfortunately many kids got caught in that trap. Only to the schools benefit at 32k+ a year in tuition. A shame these places ever existed and what they did to me and all the kids that went through them to be “made better”." - [AB (WWASP Survivors)](http://wwaspsurvivors.com/wwasp-programs/darrington-academy/)
 
@@ -87,7 +87,7 @@ Richard Darrington lost his job at Whittell when the Nevada Department of Educat
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Darrington Academy's Website](https://web.archive.org/web/20080821115237/http://www.darringtonacademy.net/) (archived, 2008)
 
@@ -107,7 +107,8 @@ Richard Darrington lost his job at Whittell when the Nevada Department of Educat
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

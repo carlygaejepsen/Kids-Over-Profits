@@ -16,23 +16,23 @@ Trillium Family Services currently operates two residential treatment centers: C
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Mary Powers Riley**was the Founder of Children's Farm Home. An orphan herself, Mary Powers Riley proposed to the Oregon chapter of the Women's Christian Temperance Union in 1919 that the WCTU assist in building and operating a facility where orphans and other homeless children could live in a homelike environment. Very little addition information is presently known about Riley.
+** Mary Powers Riley** was the Founder of Children's Farm Home. An orphan herself, Mary Powers Riley proposed to the Oregon chapter of the Women's Christian Temperance Union in 1919 that the WCTU assist in building and operating a facility where orphans and other homeless children could live in a homelike environment. Very little addition information is presently known about Riley.
 
-**Kim Scott**is the current President and CEO of Trillium Family Services and former Associate Director of Children's Farm Home. He has served in this position since March 2004. He received his B.A. in Counselor Education/School Counseling and Guidance from Columbia Christian College in 1980. While completing his B.A., he began working at the Waverly Children's Home in 1978, eventually becoming the Residential Services Coordinator in 1983. In 1985, he moved to Alaska, where he served as Detention Unit Leader for the Department of Health and Social Services in Juneau and as youth counselor at Johnson Youth Center, also in Juneau, Alaska. He then received his Master's degree in Public Administration from the University of Alaska Southeast in 1995. His employment between 1995 and 2004 is presently unknown.
+** Kim Scott** is the current President and CEO of Trillium Family Services and former Associate Director of Children's Farm Home. He has served in this position since March 2004. He received his B.A. in Counselor Education/School Counseling and Guidance from Columbia Christian College in 1980. While completing his B.A., he began working at the Waverly Children's Home in 1978, eventually becoming the Residential Services Coordinator in 1983. In 1985, he moved to Alaska, where he served as Detention Unit Leader for the Department of Health and Social Services in Juneau and as youth counselor at Johnson Youth Center, also in Juneau, Alaska. He then received his Master's degree in Public Administration from the University of Alaska Southeast in 1995. His employment between 1995 and 2004 is presently unknown.
 
-**William B. Schnebly**was the superintendent of Children's Farm Home from 1941 until 1954. Very little information exists about Schnebly online, but he is reported to have been a very authoritarian and disciplinarian leader. He passed away in 1978.
+** William B. Schnebly** was the superintendent of Children's Farm Home from 1941 until 1954. Very little information exists about Schnebly online, but he is reported to have been a very authoritarian and disciplinarian leader. He passed away in 1978.
 
-**William “Hank” Dufort**was the former Executive Director of Children's Farm Home until 1989. He began working at the program in 1964. In 1990, he was charged with 41 counts of sexual abuse, including sodomy and contributing to the sexual delinquency of a minor. It was discovered that Dufort even kept coded markings on all his files of the residents to denote the children that he was sexually interested in or involved with. Dufort resigned from the facility’s top position in December 1989, and was sentenced to 48 years in prison the following year. After several unsuccessful parole hearings, he was released on parole in November of 2020, after having served just 30 years of his sentence, at the age of 80.
+** William “Hank” Dufort** was the former Executive Director of Children's Farm Home until 1989. He began working at the program in 1964. In 1990, he was charged with 41 counts of sexual abuse, including sodomy and contributing to the sexual delinquency of a minor. It was discovered that Dufort even kept coded markings on all his files of the residents to denote the children that he was sexually interested in or involved with. Dufort resigned from the facility’s top position in December 1989, and was sentenced to 48 years in prison the following year. After several unsuccessful parole hearings, he was released on parole in November of 2020, after having served just 30 years of his sentence, at the age of 80.
 
-**Robert Roy**became the Executive Director of Children's Farm Home in 1991, following Dufort's resignation in 1989. His prior/current employment is presently unknown.
+** Robert Roy** became the Executive Director of Children's Farm Home in 1991, following Dufort's resignation in 1989. His prior/current employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is presently known regarding the specifics of the program structure at Children's Farm Home. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is presently known regarding the specifics of the program structure at Children's Farm Home. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -58,15 +58,15 @@ The Skills Trainer, later identified publicly as 21-year-old Amanda Jayne Brown,
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **3/21/2022: (PARENT)**"Our child received a diagnosis on day 1 that excited everyone. After a bunch of excuses, and time, and treatment was just started last week... after 3 months of our child being there. The doctor would often suggest meds we've already tried there. Complete poop show. We get our child back next week and all we feel we've gotten from the trip there is a pile of bills. No recommendation for this place from me. When you call, they don't answer. Poor service all around, and the treatment seems diluted and has a lot of holes." - [Michael (Yelp)](https://www.yelp.com/biz/childrens-farm-home-albany-2)
 
-**January 2022: (EX-STAFF)**"Stop deleting the negative comments. Seriously. I was a staff here and the kids and staff are treated horribly. Please do not send your kids here. The staff that genuinely care are so few and far between and they’re so understaffed they can’t provide the care your children deserve and need." - [Xystify (Google Reviews)](https://goo.gl/maps/qBjUm8CrusCeGhoT9)
+** January 2022: (EX-STAFF)**"Stop deleting the negative comments. Seriously. I was a staff here and the kids and staff are treated horribly. Please do not send your kids here. The staff that genuinely care are so few and far between and they’re so understaffed they can’t provide the care your children deserve and need." - [Xystify (Google Reviews)](https://goo.gl/maps/qBjUm8CrusCeGhoT9)
 
-**July 2021: (SURVIVOR)**"I left in worse condition than I entered. I was terrified of the other patients, they abused each other and no one did anything about it; the staff were basically helpless. The building I stayed in was disgusting and terribly kept up. It is the definition of hell, and the therapist and psychiatrist I was assigned were complete jokes and didn't listen to me at all. They are just programmed to shove basic dbt down patient's throats, and I tried to tell them that those methods made my anxiety way worse and made me panic but they just said I wasn't trying hard enough so I faked my way out." - [Lovely (Google Reviews)](https://goo.gl/maps/xNMnqvgM2uPV8yoT8)
+** July 2021: (SURVIVOR)**"I left in worse condition than I entered. I was terrified of the other patients, they abused each other and no one did anything about it; the staff were basically helpless. The building I stayed in was disgusting and terribly kept up. It is the definition of hell, and the therapist and psychiatrist I was assigned were complete jokes and didn't listen to me at all. They are just programmed to shove basic dbt down patient's throats, and I tried to tell them that those methods made my anxiety way worse and made me panic but they just said I wasn't trying hard enough so I faked my way out." - [Lovely (Google Reviews)](https://goo.gl/maps/xNMnqvgM2uPV8yoT8)
 
-**June 2021: (SURVIVOR)**"I just got out recently, dont send your kids here. The grievance system doesnt work, nursing is very neglectful, staff arent well trained and i have experienced so many issues that are still happening even when i and other clients had tried to report things that happen for 8 months. I will be taking these concerns to someone who oversees trillium because this is bs. Good staff are a minority (and thank god for them) but they get burnt out and quit only to be replaced by someone completely incompetent. If you really are going to send your kid here you need to check in constantly and listen to their concerns because there isnt anything they can do on the inside. I havent heard anything good about the farm home in a very long time, ive only heard horror stories from ex- clients/staff and from living there its all true. Also people reporting their experiences from the 80s-90s, while well meaning are completely irrelevant to how the farm home is run today. It is sending mixed messeges and spreading false information. If you are a parent considering sending your kid to the farm home only fully listen to the recent reveiws, easpecially from ex clients because their experiance will be the closest to your child's potential treatment" - [babeyteeth (Google Reviews)](https://goo.gl/maps/Ds8okWH8m7oHQc1h9)
+** June 2021: (SURVIVOR)**"I just got out recently, dont send your kids here. The grievance system doesnt work, nursing is very neglectful, staff arent well trained and i have experienced so many issues that are still happening even when i and other clients had tried to report things that happen for 8 months. I will be taking these concerns to someone who oversees trillium because this is bs. Good staff are a minority (and thank god for them) but they get burnt out and quit only to be replaced by someone completely incompetent. If you really are going to send your kid here you need to check in constantly and listen to their concerns because there isnt anything they can do on the inside. I havent heard anything good about the farm home in a very long time, ive only heard horror stories from ex- clients/staff and from living there its all true. Also people reporting their experiences from the 80s-90s, while well meaning are completely irrelevant to how the farm home is run today. It is sending mixed messeges and spreading false information. If you are a parent considering sending your kid to the farm home only fully listen to the recent reveiws, easpecially from ex clients because their experiance will be the closest to your child's potential treatment" - [babeyteeth (Google Reviews)](https://goo.gl/maps/Ds8okWH8m7oHQc1h9)
 
 **2021: (SURVIVOR)**"I have been to a variety of treatment facilities and can confidently say that this place was the worst of them all. I spent time here when I was 17 and stayed in the DBT cottage, which I would like to add, failed to teach anything DBT related. On Valentine’s day I was told to sit in the corner of a room while I had an anxiety attack while police raided the house with their guns drawn. A patient outside was attempting to fight an officer with a pipe broken off the side of the house while a girl was slitting her wrists upstairs with the cover of an outlet that she ripped off the wall. The police had to intervene because the facility is so understaffed that they were unable to care for the patients. While I was here, I was actively struggling with an eating disorder and ended up relapsing because the staff had no training in how to handle a patient with this diagnosis. This facility says that equestrian therapy is part of their program when in reality patients are encouraged to scoop manure and most patients never get the chance to spend time with the horses. I left this facility with more issues than I had to begin with. It would bring me joy to see this place torn down. I have been diagnosed with PTSD due to the traumatic experiences that occurred at the children’s farm home." - [Ally (Google Reviews)](https://goo.gl/maps/GRhUq2zbc7f7tHe28)
 
@@ -94,7 +94,7 @@ The Skills Trainer, later identified publicly as 21-year-old Amanda Jayne Brown,
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Trillium Family Services Website Homepage](https://www.trilliumfamily.org/)
 
@@ -120,7 +120,8 @@ The Skills Trainer, later identified publicly as 21-year-old Amanda Jayne Brown,
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

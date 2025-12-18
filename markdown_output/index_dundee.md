@@ -16,21 +16,21 @@ In late 2004, the school re-opened on the same campus under the name [Pillars of
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Randall Hinton**was the Director of Dundee Ranch from 2001-2002. Randall Hinton began her career at WWASP working as a technician at the [Brightway Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) in 1992. He then worked at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) for one year in 1995. In 1996, he became Assistant Director of [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . In 1997, he became Assistant Director of [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) . In 1998, he became Assistant Director of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) under Narvin Lichfield. Hinton also spent 3 years working for Teen Help, WWASP’s marketing arm. He briefly left WWASP to work at another school, but in 2006 he came back to WWASP to serve as Director of [Royal Peak/Royal Gorge Academy](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) in Colorado. Hinton was arrested on chrages of child abuse by authorities in 2007 and the school was shut down in 2008. Hinton was convicted in 2007 of one count each of third-degree assault and false imprisonment. He was sentenced to 25 days in jail and one year of probation.
+** Randall Hinton** was the Director of Dundee Ranch from 2001-2002. Randall Hinton began her career at WWASP working as a technician at the [Brightway Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) in 1992. He then worked at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) for one year in 1995. In 1996, he became Assistant Director of [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . In 1997, he became Assistant Director of [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) . In 1998, he became Assistant Director of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) under Narvin Lichfield. Hinton also spent 3 years working for Teen Help, WWASP’s marketing arm. He briefly left WWASP to work at another school, but in 2006 he came back to WWASP to serve as Director of [Royal Peak/Royal Gorge Academy](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) in Colorado. Hinton was arrested on chrages of child abuse by authorities in 2007 and the school was shut down in 2008. Hinton was convicted in 2007 of one count each of third-degree assault and false imprisonment. He was sentenced to 25 days in jail and one year of probation.
 
-**Narvin Lichfield**was the Owner of Dundee Ranch. He is also the brother of WWASP's founder, Robert Lichfield. Narvin has begun going by the aliases**Marvin Lichfield**,**Marvin Browning**, and**Marvin Sheffield**. In 1998, he opened [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) , functioning as both owner and Administrator. Then in 2001, he opened The Academy at Dundee Ranch in Costa Rica. Narvin Lichfield was arrested following the closure of Dundee Ranch in 2003 by Costa Rican authorities. He went on to open [Pillars of Hope](https://www.reddit.com/r/troubledteens/wiki/index/pillarsofhope) following his arrest (which was a program supposed to be for 18-22 year olds, but there were multiple reports of minors being placed there). Narvin was arrested again by authorities in South Carolina in 2011 after he was pulled over and determined to have been driving on a suspended license and without insurance. Narvin was also served with 3 summonses regarding bad checks written on Carolina Springs Academy’s closed checking account totaling about $2,000. Lichfield was also named as a defendant in two other lawsuits, namely Lexington Insurance Company vs. Carolina Springs et al., a personal injury suit, and the Turley class action suit. He has also been reported to have been involved with several programs which opened up in the former location of Carolina Springs Academy, including Magnolia Hills Christian Academy, [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) , Southern Oaks Therapeutic Boarding School/Youth Ranch, and most recently [Wake up Call for Teens Boot Camp/Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) , and [Palmetto Therapeutic Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) . He is from Layton, Utah.
+** Narvin Lichfield** was the Owner of Dundee Ranch. He is also the brother of WWASP's founder, Robert Lichfield. Narvin has begun going by the aliases** Marvin Lichfield**,** Marvin Browning**, and** Marvin Sheffield**. In 1998, he opened [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) , functioning as both owner and Administrator. Then in 2001, he opened The Academy at Dundee Ranch in Costa Rica. Narvin Lichfield was arrested following the closure of Dundee Ranch in 2003 by Costa Rican authorities. He went on to open [Pillars of Hope](https://www.reddit.com/r/troubledteens/wiki/index/pillarsofhope) following his arrest (which was a program supposed to be for 18-22 year olds, but there were multiple reports of minors being placed there). Narvin was arrested again by authorities in South Carolina in 2011 after he was pulled over and determined to have been driving on a suspended license and without insurance. Narvin was also served with 3 summonses regarding bad checks written on Carolina Springs Academy’s closed checking account totaling about $2,000. Lichfield was also named as a defendant in two other lawsuits, namely Lexington Insurance Company vs. Carolina Springs et al., a personal injury suit, and the Turley class action suit. He has also been reported to have been involved with several programs which opened up in the former location of Carolina Springs Academy, including Magnolia Hills Christian Academy, [Seneca Ranch](https://www.reddit.com/r/troubledteens/wiki/index/senecaranch) , Southern Oaks Therapeutic Boarding School/Youth Ranch, and most recently [Wake up Call for Teens Boot Camp/Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/wakeupcall) , and [Palmetto Therapeutic Boarding School](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) . He is from Layton, Utah.
 
-**Amberly Knight**was the Director of Dundee Ranch from March to August of 2002. She resigned, and early in March 2003 she wrote to the Costa Rican minister for child welfare, saying that "Dundee Ranch Academy should not be allowed to operate because it is poorly managed, takes financial advantage of parents in crisis, and puts teens in physical and emotional risk."
+** Amberly Knight** was the Director of Dundee Ranch from March to August of 2002. She resigned, and early in March 2003 she wrote to the Costa Rican minister for child welfare, saying that "Dundee Ranch Academy should not be allowed to operate because it is poorly managed, takes financial advantage of parents in crisis, and puts teens in physical and emotional risk."
 
-**Joe Atkin**was the Director of Dundee Ranch from 2002-2003. He is the son of of J. Ralph Atkin, who was a trustee of WWASP and the owner of [Morava Academy](https://www.reddit.com/r/troubledteens/wiki/index/morava) in the Czech Republic, which was shut down only six months after opening. Joe Atkin was the Director at the time that Dundee Ranch was raided and closed.
+** Joe Atkin** was the Director of Dundee Ranch from 2002-2003. He is the son of of J. Ralph Atkin, who was a trustee of WWASP and the owner of [Morava Academy](https://www.reddit.com/r/troubledteens/wiki/index/morava) in the Czech Republic, which was shut down only six months after opening. Joe Atkin was the Director at the time that Dundee Ranch was raided and closed.
 
-**Hughton Bailey**worked as the Operations Supervisor at Dundee Ranch from 2002 until 2004. He currently works as the Operations Supervisor at the Mergon Corporation, which is part of the Plastic & Rubber Product Manufacturing Industry. [Bailey's LinkedIn Profile](https://www.linkedin.com/in/hughton-bailey-operations/)
+** Hughton Bailey** worked as the Operations Supervisor at Dundee Ranch from 2002 until 2004. He currently works as the Operations Supervisor at the Mergon Corporation, which is part of the Plastic & Rubber Product Manufacturing Industry. [Bailey's LinkedIn Profile](https://www.linkedin.com/in/hughton-bailey-operations/)
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 At Dundee Ranch, incoming "students" were stripped of all basic privileges - including the right to talk - and are punished for minor infractions, such as looking out the window, scratching themselves without permission, or looking at a member of the opposite sex. Students who habitually violated the academy's rules were sentenced to serve time at Dundee's [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) walled compound, where they remained incarcerated until they walked 100 miles around a gravel track to win their freedom.
 
@@ -38,7 +38,7 @@ Like other behavior modification programs, Dundee Ranch used a level system cons
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Academy at Dundee Ranch is a notoriously abusive program. Survivors report being deprived of food and sleep, restrained, beaten, and placed into solitary confinement. One punishment they used was called "Observation Placement" (OP) and it entailed the teenager laying on the ground with their hands behind their back and their chins to the ground. OP was a common punishment used by the vast majority of WWASP programs.
 
@@ -56,9 +56,9 @@ On February 21, 2007 a three-judge panel found Narvin Lichfield innocent of the 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**Unknown Date: (SURVIVOR)** [Link to Survivor Tetsimony](http://wwaspsurvivors.com/survivor-testimony-cody/) (WWASP Survivors)
+** Unknown Date: (SURVIVOR)** [Link to Survivor Tetsimony](http://wwaspsurvivors.com/survivor-testimony-cody/) (WWASP Survivors)
 
 **05/01/2018: (SURVIVOR)**(excerpts) "Dundee Ranch was the shadiest place ever. Despite the fact that you couldn’t look at members of the opposite sex, it happened all the time. None of the staff members spoke english, and most of the Family Reps weren’t qualified for the job. They were endoctorinating the students into the Mormon religion through seminary classes in the morning. When my mother inquired about this, they lied to her and told her that they weren’t teaching any kind of religion in the school. They had observation placement, in which they would make us lay on the ground with our hands behind our back and our chins to the cold hard ground. I might add, the ground was horribly filthy, plus there were bugs crawling all over it. It was absolutely disgusting. Many people didn’t believe me about the entire OP thing, or the physical restraint that broke many student’s arms, including mine. Some still don’t." - [Link to*Full*Survivor Testimony](https://whenfarfromhome.wordpress.com/2018/01/05/a-testimony-from-a-former-student-at-academy-at-dundee-ranch/)
 
@@ -76,7 +76,7 @@ On February 21, 2007 a three-judge panel found Narvin Lichfield innocent of the 
 
 [Academy at Dundee Ranch/Pillars of Hope - WWASP Survivors](http://wwaspsurvivors.com/wwasp-programs/dundee-ranch/)
 
-### **News Articles**
+### ** News Articles**
 
 [A Mandeville woman, with some strong-arm help, frees her sons from a Costa Rican school. Their father who placed them in the boot-camp-like facility may accuse her of kidnapping.](https://web.archive.org/web/20030606205612/http://nola.com/news/t-p/frontpage/index.ssf?/newsstory/rescue20.html) (NOLA, 10/20/2002)
 
@@ -104,11 +104,11 @@ On February 21, 2007 a three-judge panel found Narvin Lichfield innocent of the 
 
 [Dundee Ranch owner rips police after his acquittal](http://www.amcostarica.com/022307.htm) (A.M. Costa Rica, 2/23/2007)
 
-### **Videos**
+### ** Videos**
 
 [Inside Edition Investigation - "Tough Schools"](https://www.youtube.com/watch?v=bp9OTkwryL4&ab_channel=KathyMoya) (2003)
 
-### **Photos**
+### ** Photos**
 
 * ["Painting Project" at Dundee Ranch](https://web.archive.org/web/20021022045317/http://www.wwasp.com/dr06-20-02.htm) (*2002*)
 * ["Quick Tour" of Dundee Ranch](https://web.archive.org/web/20021022045018/http://www.wwasp.com/dr10-11-02.htm) (*2002*)
@@ -131,7 +131,8 @@ On February 21, 2007 a three-judge panel found Narvin Lichfield innocent of the 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

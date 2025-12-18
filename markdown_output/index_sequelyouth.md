@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Sequel Youth and Family Services is a private for-profit company that runs a nationwide system of residential treatment, private pay residential, therapeutic group homes, community-based programs, and alternative education services in the United States. Sequel Youth and Family Services was formed out of Youth Services International (YSI), a for-profit juvenile corrections company. Adam Shapiro and John "Jay" Ripley, who both worked for YSI and currently serve as co-chairmen on company's board, co-founded Sequel Youth and Family Services on April 19, 1992. Sequel was initially founded to operate [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , a residential facility in Clarinda, Iowa. Sequel has expanded over the years by acquiring youth facilities, including some former YSI facilities.
 
@@ -12,15 +12,15 @@ In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://open
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Adam Shapiro**is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he worked as a lawyer and the Executive Director of [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , which was at that point owned by Youth Services International (YSI).
+** Adam Shapiro** is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he worked as a lawyer and the Executive Director of [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , which was at that point owned by Youth Services International (YSI).
 
-**John "Jay" Ripley**is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he was the Co-Founder of Youth Services International (YSI), beginning in 1995. He also was the President/CEO of Precision Auto Care Inc. from 1995 until 1998.
+** John "Jay" Ripley** is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he was the Co-Founder of Youth Services International (YSI), beginning in 1995. He also was the President/CEO of Precision Auto Care Inc. from 1995 until 1998.
 
 ---
 
-## **Open Sequel Programs**
+## ** Open Sequel Programs**
 
 ---
 
@@ -28,35 +28,35 @@ In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://open
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Alachua Academy**](https://www.reddit.com/r/troubledteens/wiki/index/alachua) | - | - | - |
-| [**Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) | - | - | - |
-| [**Capital Academy**](https://www.reddit.com/r/troubledteens/wiki/index/capital) | - | - | - |
-| [**Casa Grande Academy**](https://www.reddit.com/r/troubledteens/wiki/index/casagrande) | - | - | - |
-| [**Charles Britt Academy**](https://www.reddit.com/r/troubledteens/wiki/index/charlesbritt) | - | - | - |
-| [**Columbus Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/columbusyouth) | - | - | - |
-| [**Duval Academy**](https://www.reddit.com/r/troubledteens/wiki/index/duval) | - | - | - |
-| [**Falcon Ridge Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) | 2003 | Virgin, UT | [HEAL](http://www.heal-online.org/falcon.htm) |
-| [**Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
-| [**Lakeside Academy - Kansas**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidekansas) | - | - | - |
-| [**Lava Heights Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) | 2012 | Toquerville, UT | N/A |
-| [**Marion Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/marionyouth) | - | - | - |
-| [**Mingus Mountain Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mingus) | 1985 | Prescott Valley, AZ | N/A |
-| [**Norris Academy**](https://www.reddit.com/r/troubledteens/wiki/index/norris) | - | - | - |
-| [**Palm Beach Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/palmbeach) | - | - | - |
-| [**Pompano Youth Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/pompano) | - | - | - |
-| [**Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |
-| [**Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |
-| [**Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) | - | - | - |
-| [**Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) | - | - | - |
-| [**Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) | - | - | - |
-| [**Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) | - | - | - |
-| [**St. John’s Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/stjohnsyouth) | - | - | - |
-| [**Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) | 1995 | Woodward, IA | N/A |
-| [**Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) | - | - | - |
+|**Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Alachua Academy**](https://www.reddit.com/r/troubledteens/wiki/index/alachua) | - | - | - |
+| [** Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) | - | - | - |
+| [** Capital Academy**](https://www.reddit.com/r/troubledteens/wiki/index/capital) | - | - | - |
+| [** Casa Grande Academy**](https://www.reddit.com/r/troubledteens/wiki/index/casagrande) | - | - | - |
+| [** Charles Britt Academy**](https://www.reddit.com/r/troubledteens/wiki/index/charlesbritt) | - | - | - |
+| [** Columbus Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/columbusyouth) | - | - | - |
+| [** Duval Academy**](https://www.reddit.com/r/troubledteens/wiki/index/duval) | - | - | - |
+| [** Falcon Ridge Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) | 2003 | Virgin, UT | [HEAL](http://www.heal-online.org/falcon.htm) |
+| [** Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |
+| [** Lakeside Academy - Kansas**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidekansas) | - | - | - |
+| [** Lava Heights Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) | 2012 | Toquerville, UT | N/A |
+| [** Marion Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/marionyouth) | - | - | - |
+| [** Mingus Mountain Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mingus) | 1985 | Prescott Valley, AZ | N/A |
+| [** Norris Academy**](https://www.reddit.com/r/troubledteens/wiki/index/norris) | - | - | - |
+| [** Palm Beach Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/palmbeach) | - | - | - |
+| [** Pompano Youth Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/pompano) | - | - | - |
+| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |
+| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |
+| [** Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) | - | - | - |
+| [** Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) | - | - | - |
+| [** Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) | - | - | - |
+| [** Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) | - | - | - |
+| [** St. John’s Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/stjohnsyouth) | - | - | - |
+| [** Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) | 1995 | Woodward, IA | N/A |
+| [** Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) | - | - | - |
 ---
 
-## **Closed Sequel Programs**
+## ** Closed Sequel Programs**
 
 ---
 
@@ -64,25 +64,25 @@ In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://open
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Auldern Academy**](https://www.reddit.com/r/troubledteens/wiki/index/auldern) | - | - | - |
-| [**Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) | - | - | - |
-| [**Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | - | - | - |
-| [**Mount Pleasant Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountpleasant) | - | - | - |
-| [**Mountain Home Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountainhome) | - | - | - |
-| [**Normative Services Academy Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/normative) | - | - | - |
-| [**Northern Illinois Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northernil) | - | - | - |
-| [**Red Rock Canyon School**](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) | - | - | - |
-| [**Sequel TSI of Madison**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmadison) | - | - | - |
-| [**Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) | - | - | - |
-| [**Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) | - | - | - |
+|**Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Auldern Academy**](https://www.reddit.com/r/troubledteens/wiki/index/auldern) | - | - | - |
+| [** Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) | - | - | - |
+| [** Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | - | - | - |
+| [** Mount Pleasant Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountpleasant) | - | - | - |
+| [** Mountain Home Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountainhome) | - | - | - |
+| [** Normative Services Academy Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/normative) | - | - | - |
+| [** Northern Illinois Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northernil) | - | - | - |
+| [** Red Rock Canyon School**](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) | - | - | - |
+| [** Sequel TSI of Madison**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmadison) | - | - | - |
+| [** Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) | - | - | - |
+| [** Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) | - | - | - |
 ---
 
-## **Controversy, Abuse, and Deaths**
+## ** Controversy, Abuse, and Deaths**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Sequel Youth and Family Services Website Homepage](https://www.sequelyouthservices.com/)
 
@@ -94,7 +94,8 @@ In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://open
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

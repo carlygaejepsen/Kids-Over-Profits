@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 In Minnesota there are no requirements for registration, licensing, accreditation or approval of non-public schools.
 
@@ -20,12 +20,12 @@ Proof of current immunization or a legal exemption form is required for all new 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidetc) | - | Buffalo, MN | - |
-| [**Hope Harbor**](https://www.reddit.com/r/troubledteens/wiki/index/hopeharbor) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidetc) | - | Buffalo, MN | - |
+| [** Hope Harbor**](https://www.reddit.com/r/troubledteens/wiki/index/hopeharbor) | - | - | - |
 ---
 
-## **Closed Programs in Minnesota**
+## ** Closed Programs in Minnesota**
 
 ---
 
@@ -33,7 +33,7 @@ Proof of current immunization or a legal exemption form is required for all new 
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 ---
 
@@ -46,4 +46,5 @@ Proof of current immunization or a legal exemption form is required for all new 
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

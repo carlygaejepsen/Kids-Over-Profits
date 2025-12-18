@@ -16,25 +16,25 @@ Academy at Swift River closed in the summer of 2013, reportedly due to a "changi
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tim Brace**was the founder and Executive Director of the Academy at Swift River. He began working in the TTI at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1980, eventually becoming Headmaster. He also worked at another CEDU program, [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , until 1993 when he left to create [Mount Bachelor Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountbachelor) . He worked as the Executive Director of MBA until 1997 when he left to found ASR. In 2002, he began working as the Headmaster of the reportedly abusive [Carlbrook School](https://www.reddit.com/r/troubledteens/wiki/index/carlbrook) , which was a CEDU spin-off program. Brace was also instrumental to the creation of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Tim Brace** was the founder and Executive Director of the Academy at Swift River. He began working in the TTI at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1980, eventually becoming Headmaster. He also worked at another CEDU program, [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , until 1993 when he left to create [Mount Bachelor Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountbachelor) . He worked as the Executive Director of MBA until 1997 when he left to found ASR. In 2002, he began working as the Headmaster of the reportedly abusive [Carlbrook School](https://www.reddit.com/r/troubledteens/wiki/index/carlbrook) , which was a CEDU spin-off program. Brace was also instrumental to the creation of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Glenn Bender**was the Admissions Director of Academy at Swift River. He had previously worked at the [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) . He also previously had worked in similar positions at both [Alldredge Academy](https://www.reddit.com/r/troubledteens/wiki/index/alldredge) and the [Carlbrook School](https://www.reddit.com/r/troubledteens/wiki/index/carlbrook) .
+** Glenn Bender** was the Admissions Director of Academy at Swift River. He had previously worked at the [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) . He also previously had worked in similar positions at both [Alldredge Academy](https://www.reddit.com/r/troubledteens/wiki/index/alldredge) and the [Carlbrook School](https://www.reddit.com/r/troubledteens/wiki/index/carlbrook) .
 
-**Brian Ray**was the Assistant Dean of Admissions at ASR. He had previously worked at the Assistant Dean of Admissions at [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) , a spinoff program of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) located in Georgia.
+** Brian Ray** was the Assistant Dean of Admissions at ASR. He had previously worked at the Assistant Dean of Admissions at [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) , a spinoff program of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) located in Georgia.
 
-**Christopher Carlin**worked at ASR in an unknown position. He previously worked at [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) for many years before coming to ASR. He then went on to work at [Valley View School](https://www.reddit.com/r/troubledteens/wiki/index/valleyview) and later, [Ashby Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) .
+** Christopher Carlin** worked at ASR in an unknown position. He previously worked at [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) for many years before coming to ASR. He then went on to work at [Valley View School](https://www.reddit.com/r/troubledteens/wiki/index/valleyview) and later, [Ashby Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) .
 
-**Rudy Bentz**was the Dean of Student Life at the Academy at Swift River. He is also reported to have worked as the Headmaster at ASR. Bentz had previously worked at both [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) and [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) . His wife, Jill, also worked at ASR. The Bentzes are credited with having created the brainwashing/"behavior-modification" techniques used at ASR.
+** Rudy Bentz** was the Dean of Student Life at the Academy at Swift River. He is also reported to have worked as the Headmaster at ASR. Bentz had previously worked at both [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) and [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) . His wife, Jill, also worked at ASR. The Bentzes are credited with having created the brainwashing/"behavior-modification" techniques used at ASR.
 
-**Jill Bentz**was the Director of Training at the Academy at Swift River and the wife of Rudy Bentz. Like her husband, she also had previously worked at both [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) and [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) . The Bentzes are credited with having created the brainwashing/"behavior-modification" techniques used at ASR.
+** Jill Bentz** was the Director of Training at the Academy at Swift River and the wife of Rudy Bentz. Like her husband, she also had previously worked at both [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) and [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake) . The Bentzes are credited with having created the brainwashing/"behavior-modification" techniques used at ASR.
 
-**Don Vardell Jr.**was the Executive Director of Academy at Swift River from 2004 until 2007. Prior to this, he worked as an Administrator at [Penninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) in Tennessee. After Swift River, Vardell worked as the Executive Director of [Excel Academy](https://www.reddit.com/r/troubledteens/wiki/index/excelacademy) , [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , and the [Aspen Institute for Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) until 2010. He is also [reported by one survivor](https://tales-from-the-black-school.blogspot.com/2012/05/disowned-after-stay-at-shortridge.html#comment-form) to have worked at [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , although this has not been confirmed. From 2010 until 2013, he worked as the Executive Director of [Shortridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/shortridge) in New Hampshire. Most recently, he worked as the Executive Director of [Mountain Valley Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/mountvalley) , also located in New Hampshire. On August 30th 2020, Don went missing while kayaking in Maine near Wood Island at the mouth of the Piscataqua River. On September 2nd, [his body was found](https://www.boston.com/news/local-news/2020/09/02/body-of-missing-n-h-man-recovered-12-miles-from-empty-kayak) by a fisherman near Ogunquit, ME, approximately 12 miles from where his empty kayak was first discovered.
+** Don Vardell Jr.** was the Executive Director of Academy at Swift River from 2004 until 2007. Prior to this, he worked as an Administrator at [Penninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) in Tennessee. After Swift River, Vardell worked as the Executive Director of [Excel Academy](https://www.reddit.com/r/troubledteens/wiki/index/excelacademy) , [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , and the [Aspen Institute for Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) until 2010. He is also [reported by one survivor](https://tales-from-the-black-school.blogspot.com/2012/05/disowned-after-stay-at-shortridge.html#comment-form) to have worked at [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , although this has not been confirmed. From 2010 until 2013, he worked as the Executive Director of [Shortridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/shortridge) in New Hampshire. Most recently, he worked as the Executive Director of [Mountain Valley Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/mountvalley) , also located in New Hampshire. On August 30th 2020, Don went missing while kayaking in Maine near Wood Island at the mouth of the Piscataqua River. On September 2nd, [his body was found](https://www.boston.com/news/local-news/2020/09/02/body-of-missing-n-h-man-recovered-12-miles-from-empty-kayak) by a fisherman near Ogunquit, ME, approximately 12 miles from where his empty kayak was first discovered.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, the Academy at Swift River used a level system. However, not much is known about the specifics of the level system or how many levels there were.
 
@@ -50,7 +50,7 @@ Before 2003 the new residents had to undergo an outdoor transition phase called 
 
 Later, ASR changed their level-system to include four levels. As reported by a 2007 survivor, the levels were:
 
-***Level 1:**On this level, residents could only interact with other level 1 residents. They are also not allowed to participate in school or wear regular clothes. They were given one five-minute phone call home per week, and this call was heavily monitored by staff.
+***Level 1:** On this level, residents could only interact with other level 1 residents. They are also not allowed to participate in school or wear regular clothes. They were given one five-minute phone call home per week, and this call was heavily monitored by staff.
 *Level 2:**On this level, residents were allowed to attend school and were given a wider range of clothing choices. They were also given one 10-minute phone call per week, which was monitored by staff.
 *Level 3:**On Level 3, residents were allowed to be taken on "hotel visits" with their family every few months or so. They were also allowed to participate in off-campus sports, and given one (monitored) 15-minute phone call per week.
 *Level 4:**This was the final level at ASR. On this level, residents were allowed to have an iPod with music from the school computer and were allowed home visits. However, they typically only had one or two home-visits before they graduated. They were also gievn one 20-minute phone call per week.
@@ -61,7 +61,7 @@ Lifesteps were described as groups aiming to teach the residents about truth and
 
 ---
 
-## **Abuse, Lawsuits and Closure**
+## ** Abuse, Lawsuits and Closure**
 
 Academy at Swift River is widely regarded as having been an abusive program. Many survivors of ASR have reported forced labor, tactics of humiliation, isolation, methods of coercion, various physical punishments, emotional abuse, and mental abuse. In addition, The seminars and brainwashing techniques used at ASR have been compared by survivors to those used by the Chinese on Prisoners of War during the Korean War.
 
@@ -71,13 +71,13 @@ Academy at Swift River closed in the summer of 2013, reportedly due to a "changi
 
 ---
 
-## **Notable Alumni**
+## ** Notable Alumni**
 
-**Shane Reardon**was the son of former MLB relief pitcher Jeff Reardon and was reportedly sent to Academy at Swift River as a teenager. He was apparently sent there due to substance abuse. On February 21st, 2004 Shane passed away from a drug overdose at the age of 20.
+** Shane Reardon** was the son of former MLB relief pitcher Jeff Reardon and was reportedly sent to Academy at Swift River as a teenager. He was apparently sent there due to substance abuse. On February 21st, 2004 Shane passed away from a drug overdose at the age of 20.
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **8/13/2019: (PARENT)**"After 2 years of a rough road with our daughter. This place was recommended by my employers eap program. These people have no human decency. My daughter was released and left at the north hampton train station. She had no cell phone or money. Just a train ticket. The train, due to amtrak issues. Did not come that day. It took her over 6 hours to reach us for help. We called swift river to pick her up. And they refused. Because she had been thrown out, for fighting. She has emotional and anxiety issues, in addition to drug issues. We thought we could get help. These people dont care. Why would they leave an addict on the street? No phone no money. She begged people to use their cell phones to call us. We could not reach her to arrange help. She was left for 20 hours until the next train. They were quick to meet us, when picking her up. But would not arrange any reasonable accomadation for us. To get there. This place is looking for admissions from people with good insurance. And could care less about the individual." - [G. C. (Yelp)](https://www.yelp.com/biz/swift-river-cummington)
 
@@ -89,7 +89,7 @@ Academy at Swift River closed in the summer of 2013, reportedly due to a "changi
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Academy at Swift River Website Homepage](https://web.archive.org/web/20050209030336/https://www.swiftriver.com/) (Archived, 2005)
 
@@ -107,7 +107,8 @@ Academy at Swift River closed in the summer of 2013, reportedly due to a "changi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

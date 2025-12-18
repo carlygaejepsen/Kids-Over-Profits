@@ -1,5 +1,5 @@
 // ============================================
-// FACILITY FORM DATA LOADER
+// DATA FORM DATA LOADER
 // Handles loading projects from cloud, fallback datasets, and localStorage
 // ============================================
 
@@ -13,7 +13,7 @@
     // CONFIGURATION & CONSTANTS
     // ============================================
 
-    const FACILITY_FORM_CONFIG = window.KOP_FACILITY_FORM_CONFIG || {};
+    const DATA_FORM_CONFIG = window.KOP_DATA_FORM_CONFIG || {};
 
     function getResolverEndpoint(filename, fallback) {
         if (typeof window !== 'undefined' && window.KOP_API && typeof window.KOP_API.getEndpoint === 'function') {
@@ -50,8 +50,8 @@
         return normalizedPath;
     }
 
-    const explicitBase = FACILITY_FORM_CONFIG.apiBase;
-    const fallbackBases = FACILITY_FORM_CONFIG.apiBaseFallbacks;
+    const explicitBase = DATA_FORM_CONFIG.apiBase;
+    const fallbackBases = DATA_FORM_CONFIG.apiBaseFallbacks;
 
     const apiBaseCandidates = [];
 
@@ -82,17 +82,20 @@
     ));
 
     const defaultApiPaths = {
-        SAVE_PROJECT:
-            FACILITY_FORM_CONFIG.endpoints?.SAVE_PROJECT ||
-            getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
-        LOAD_PROJECTS:
-            FACILITY_FORM_CONFIG.endpoints?.LOAD_PROJECTS ||
-            FACILITY_FORM_CONFIG.projectsApiUrl ||
-            getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
-        AUTOCOMPLETE:
-            FACILITY_FORM_CONFIG.endpoints?.AUTOCOMPLETE ||
-            FACILITY_FORM_CONFIG.endpoints?.SUGGESTIONS ||
-            '/wp-json/kop/v1/autocomplete'  // Use WordPress REST API (more reliable)
+            SAVE_MASTER: DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SAVE_PROJECT ||
+                         getResolverEndpoint('save-master.php', '/wp-content/themes/child/api/save-master.php'),
+            
+            SAVE_SUGGESTION: DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SAVE_SUGGESTION ||
+                             DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SAVE_PROJECT_SUGGESTION ||
+                             getResolverEndpoint('save-suggestion.php', '/wp-content/themes/child/api/save-suggestion.php'),
+            
+            LOAD_PROJECTS: DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.LOAD_PROJECTS ||
+                           DATA_FORM_CONFIG.projectsApiUrl ||
+                           getResolverEndpoint('get-master-data.php', '/wp-content/themes/child/api/get-master-data.php'),
+                           
+            AUTOCOMPLETE: DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.AUTOCOMPLETE ||
+                          DATA_FORM_CONFIG.endpoints && DATA_FORM_CONFIG.endpoints.SUGGESTIONS ||
+                          getResolverEndpoint('get-autocomplete.php', '/wp-content/themes/child/api/get-autocomplete.php'),
     };
 
     const API_ENDPOINTS = Object.keys(defaultApiPaths).reduce((acc, key) => {
@@ -100,12 +103,12 @@
         return acc;
     }, {});
 
-    const fallbackProjectsConfigValues = Array.isArray(FACILITY_FORM_CONFIG.fallbackProjectsUrls)
-        ? FACILITY_FORM_CONFIG.fallbackProjectsUrls.slice()
+    const fallbackProjectsConfigValues = Array.isArray(DATA_FORM_CONFIG.fallbackProjectsUrls)
+        ? DATA_FORM_CONFIG.fallbackProjectsUrls.slice()
         : [];
 
-    if (typeof FACILITY_FORM_CONFIG.fallbackProjectsUrl === 'string' && FACILITY_FORM_CONFIG.fallbackProjectsUrl.trim()) {
-        fallbackProjectsConfigValues.unshift(FACILITY_FORM_CONFIG.fallbackProjectsUrl);
+    if (typeof DATA_FORM_CONFIG.fallbackProjectsUrl === 'string' && DATA_FORM_CONFIG.fallbackProjectsUrl.trim()) {
+        fallbackProjectsConfigValues.unshift(DATA_FORM_CONFIG.fallbackProjectsUrl);
     }
 
     const FALLBACK_PROJECTS_URL_CANDIDATES = Array.from(new Set(
@@ -117,49 +120,34 @@
     ));
 
     function isTruthyFlag(value) {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
+        if (typeof value === 'boolean') return value;
         if (typeof value === 'string') {
             const normalized = value.trim().toLowerCase();
-            if (!normalized) {
-                return false;
-            }
-
             return ['1', 'true', 'yes', 'on', 'enable', 'enabled'].includes(normalized);
         }
-
         return false;
     }
 
     const DEBUG_LOGGING_ENABLED = (() => {
-        if (isTruthyFlag(FACILITY_FORM_CONFIG.debugLogging)) {
+        if (isTruthyFlag(DATA_FORM_CONFIG.debugLogging)) {
             return true;
         }
-
-        if (isTruthyFlag(FACILITY_FORM_CONFIG.debug)) {
+        if (isTruthyFlag(DATA_FORM_CONFIG.debug)) {
             return true;
         }
-
         if (typeof window !== 'undefined') {
-            if (isTruthyFlag(window.KOP_FACILITY_FORM_DEBUG)) {
+            if (isTruthyFlag(window.KOP_DATA_FORM_DEBUG)) {
                 return true;
             }
-
             try {
-                if (window.localStorage && isTruthyFlag(window.localStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                if (window.localStorage && isTruthyFlag(window.localStorage.getItem('KOP_DATA_FORM_DEBUG'))) {
                     return true;
                 }
-
-                if (window.sessionStorage && isTruthyFlag(window.sessionStorage.getItem('KOP_FACILITY_FORM_DEBUG'))) {
+                if (window.sessionStorage && isTruthyFlag(window.sessionStorage.getItem('KOP_DATA_FORM_DEBUG'))) {
                     return true;
                 }
-            } catch (storageFlagError) {
-                // Ignore storage errors caused by privacy settings
-            }
+            } catch (e) { /* ignore storage errors */ }
         }
-
         return false;
     })();
 
@@ -242,13 +230,13 @@
             }
 
             const name = source.name || projectName;
-            normalized[projectName] = {
-                name,
-                data: normalizeProjectData(rawData),
-                timestamp: source.timestamp || rawData?.timestamp || new Date().toISOString(),
-                currentFacilityIndex: source.currentFacilityIndex ?? rawData?.currentFacilityIndex ?? 0,
-                category: source.category || rawData?.category // Do not default to 'companies' so heuristics can work
-            };
+                normalized[projectName] = {
+                    name,
+                    data: normalizeProjectData(rawData),
+                    timestamp: source.timestamp || rawData && rawData.timestamp || new Date().toISOString(),
+                    currentFacilityIndex: source.currentFacilityIndex ?? (rawData && rawData.currentFacilityIndex) ?? 0,
+                    category: source.category || (rawData && rawData.category) // Do not default to 'companies' so heuristics can work
+                };
         };
 
         if (payload.projects && typeof payload.projects === 'object') {
@@ -371,7 +359,7 @@
             const result = await response.json();
             
             // DEBUG: Log RAW Acadia from API
-            debugLog('🔬🔬 RAW ACADIA from API:', result.projects?.Acadia 
+            debugLog('🔬🔬 RAW ACADIA from API:', result.projects && result.projects.Acadia 
                 ? JSON.stringify(result.projects.Acadia).substring(0, 800) 
                 : 'Not found');
             
@@ -391,7 +379,7 @@
                 const firstFive = Object.keys(normalizedProjects).slice(0, 5);
                 firstFive.forEach(name => {
                     const p = normalizedProjects[name];
-                    debugLog(`  ${name}: data=${!!p.data}, data.facilities=${p.data?.facilities?.length || 0}, root.facilities=${p.facilities?.length || 0}`);
+                    debugLog(`  ${name}: data=${!!p.data}, data.facilities=${p.data && p.data.facilities && p.data.facilities.length || 0}, root.facilities=${p.facilities && p.facilities.length || 0}`);
                 });
                 
                 window.projects = normalizedProjects;
@@ -401,8 +389,8 @@
                 if (acadia && DEBUG_LOGGING_ENABLED) {
                     debugLog('🔬 ACADIA RIGHT AFTER LOAD:', {
                         'acadia.data exists': !!acadia.data,
-                        'acadia.data.facilities exists': !!acadia.data?.facilities,
-                        'acadia.data.facilities.length': acadia.data?.facilities?.length ?? 'N/A',
+                        'acadia.data.facilities exists': !!acadia.data && acadia.data.facilities,
+                    'acadia.data.facilities.length': (acadia.data && acadia.data.facilities && acadia.data.facilities.length) ?? 'N/A',
                         'acadia.data.data exists': !!acadia.data?.data,
                         'acadia.data keys': acadia.data ? Object.keys(acadia.data) : 'no data'
                     });

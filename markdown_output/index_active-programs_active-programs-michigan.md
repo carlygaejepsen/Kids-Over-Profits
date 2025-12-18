@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 We have currently been unable to determine this state's requirements for private schools.
 
@@ -14,16 +14,16 @@ We have currently been unable to determine this state's requirements for private
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Forest View Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/forestview) | - | - | - |
-| [**Harbor Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/harboroaks) | - | - | - |
-| [**Havenwyck Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/havenwyck) | - | - | - |
-| [**Pineview Homes**](https://www.reddit.com/r/troubledteens/wiki/index/pineviewhomes) | - | - | - |
-| [**Turning Point Youth Center**](https://www.reddit.com/r/troubledteens/wiki/index/turningpointmi) | - | - | - |
-| [**Whaley Children's Center**](https://www.reddit.com/r/troubledteens/wiki/index/whaleycenter) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Forest View Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/forestview) | - | - | - |
+| [** Harbor Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/harboroaks) | - | - | - |
+| [** Havenwyck Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/havenwyck) | - | - | - |
+| [** Pineview Homes**](https://www.reddit.com/r/troubledteens/wiki/index/pineviewhomes) | - | - | - |
+| [** Turning Point Youth Center**](https://www.reddit.com/r/troubledteens/wiki/index/turningpointmi) | - | - | - |
+| [** Whaley Children's Center**](https://www.reddit.com/r/troubledteens/wiki/index/whaleycenter) | - | - | - |
 ---
 
-## **Closed Programs in Michigan**
+## ** Closed Programs in Michigan**
 
 ---
 
@@ -31,12 +31,12 @@ We have currently been unable to determine this state's requirements for private
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | - | - | - |
-| [**Montcalm School for Boys**](https://www.reddit.com/r/troubledteens/wiki/index/montcalmboys) | - | - | - |
-| [**Montcalm School for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/montcalmgirls) | - | - | - |
-| [**Pathway Family Center**](https://www.reddit.com/r/troubledteens/wiki/index/pathway) | 1993-2009 | Southfield, MI | [HEAL](http://www.heal-online.org/pfc.htm) |
-| [**Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | - | - | - |
+| [** Montcalm School for Boys**](https://www.reddit.com/r/troubledteens/wiki/index/montcalmboys) | - | - | - |
+| [** Montcalm School for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/montcalmgirls) | - | - | - |
+| [** Pathway Family Center**](https://www.reddit.com/r/troubledteens/wiki/index/pathway) | 1993-2009 | Southfield, MI | [HEAL](http://www.heal-online.org/pfc.htm) |
+| [** Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -45,7 +45,8 @@ We have currently been unable to determine this state's requirements for private
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

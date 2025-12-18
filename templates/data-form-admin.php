@@ -22,8 +22,8 @@ get_header();
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
-                <button type="button" class="category-tab active" data-category="companies">🏢 Companies / Operators</button>
-                <button type="button" class="category-tab" data-category="locations">🌍 Locations / States</button>
+                <button type="button" class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
+                <button type="button" class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
                 <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
             </div>
 
@@ -32,7 +32,7 @@ get_header();
                 <!-- Companies Content -->
                 <div id="companies-content" class="category-content" data-section-views="companies">
                     <div class="content-header">
-                        <h3>🏢 Companies / Operators</h3>
+                        <h3>🏢 Parent Companies/Organizations</h3>
                     </div>
                     <div class="project-management" id="project-panel-inner">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
@@ -53,7 +53,7 @@ get_header();
                 <!-- States Content -->
                 <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
-                        <h3>🌍 Locations / States</h3>
+                        <h3>🌍 Locations/States/Countries</h3>
                     </div>
                     <div class="project-management location-project-management">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects</h2>
@@ -382,17 +382,30 @@ get_header();
         <!-- Operator Information Section -->
         <div class="section expanded" id="operator-section" data-section-views="companies,locations">
             <div class="section-header">
-                <h2 class="section-title">Operator Information</h2>
+                <h2 class="section-title">Parent Company Information</h2>
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="operator-name">Operator Name</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="operator-name" class="input-form" data-autocomplete-category="operator" placeholder="Type operator name...">
+                        <label for="operator-name">Parent Company Name</label>
+                        <input type="text" id="operator-name" class="input-form" data-autocomplete-category="operator" placeholder="Type operator name...">
+                    </div>
+
+                    <div class="form-group" style="max-width: 200px;">
+                        <label>Profit Status</label>
+                        <div style="display: flex; gap: 5px; margin-top: 5px;">
+                            <label class="toggle-btn-label">
+                                <input type="radio" name="profitStatus" value="for-profit" checked>
+                                <span class="toggle-btn-span">For-Profit</span>
+                            </label>
+                            <label class="toggle-btn-label">
+                                <input type="radio" name="profitStatus" value="non-profit">
+                                <span class="toggle-btn-span">Non-Profit</span>
+                            </label>
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label for="operator-current-name">Current Name</label>
                         <input type="text" id="operator-current-name" class="input-form" data-autocomplete-category="operator" placeholder="Type current operator name...">
@@ -487,7 +500,7 @@ get_header();
                 </div>
 
                 <div class="form-group">
-                    <label>Operator Notes</label>
+                    <label>Parent Company Notes</label>
                     <textarea id="operator-notes" rows="4" placeholder="Add notes about the operator..." style="width: 100%;"></textarea>
                 </div>
             </div>
@@ -514,7 +527,7 @@ get_header();
                 </div>
                 <!-- Current Operator (shown for corporate ownership) -->
                 <div class="form-group" id="current-operator-group">
-                    <label id="current-operator-label">Current Operator</label>
+                    <label id="current-operator-label">Current Parent Company</label>
                     <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
                 </div>
                 <!-- Current Owner(s) (shown for private ownership) -->
@@ -604,7 +617,7 @@ get_header();
             </div>
             <div class="section-content">
                 <div class="form-group">
-                    <label>Other Operators</label>
+                    <label>Other Parent Companies</label>
                     <div class="array-container" data-path="otherOperators"></div>
                 </div>
                 
@@ -1233,5 +1246,8 @@ get_header();
     </div>
 
         </div>
+
+    <!-- Toggle Buttons -->
+    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/toggle-buttons.css">
 
 <?php get_footer(); ?>

@@ -10,31 +10,31 @@ Brookhaven Youth Ranch is a behavior-modification program that opened in 1986. I
 
 Brookhaven Youth Ranch is located at [5467 Rogers Hill Rd, West, TX 76691](https://www.google.com/maps/place/Brookhaven+Youth+Ranch/@31.747526,-97.2147297,775a,35y,180h/data=!3m1!1e3!4m5!3m4!1s0x0:0xf6c27187b85fd96!8m2!3d31.7472972!4d-97.214653) . The campus is situated on 74 acres in a rural part of central Texas.
 
-**Two teens have died while attending Brookhaven Youth Ranch.**
+** Two teens have died while attending Brookhaven Youth Ranch.**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Robert G. Drake**was the Founder of Brookhaven Youth Ranch. His career began in 1956 as the Dean of Boys at the Tipton Children’s Home in Tipton, Oklahoma. From there, Robert went to the Oklahoma County Detention Center in 1959 and served as a supervisor until 1962. From 1962 until 1973, he served as superintendent of the Girls Training School located in Tecumseh, Oklahoma. Robert left Oklahoma in 1973 and moved he and his family to Texas to begin work with the Texas Youth Commission, where he continued to work for 13 years. He passed away on August 8, 1992.
+** Robert G. Drake** was the Founder of Brookhaven Youth Ranch. His career began in 1956 as the Dean of Boys at the Tipton Children’s Home in Tipton, Oklahoma. From there, Robert went to the Oklahoma County Detention Center in 1959 and served as a supervisor until 1962. From 1962 until 1973, he served as superintendent of the Girls Training School located in Tecumseh, Oklahoma. Robert left Oklahoma in 1973 and moved he and his family to Texas to begin work with the Texas Youth Commission, where he continued to work for 13 years. He passed away on August 8, 1992.
 
-**Linda Harrison Goates**is the current Executive Director of Brookhaven Youth Ranch. She has held this position since April 2021, although she has worked at Brookhaven since 1986 as the Business Office Director. Her prior employment is unknown.
+** Linda Harrison Goates** is the current Executive Director of Brookhaven Youth Ranch. She has held this position since April 2021, although she has worked at Brookhaven since 1986 as the Business Office Director. Her prior employment is unknown.
 
-**Wayne Money**worked as the Executive Director of Brookhaven from November 1992 until November of 1997. His prior employment is unknown. He passed away on July 19, 2017.
+** Wayne Money** worked as the Executive Director of Brookhaven from November 1992 until November of 1997. His prior employment is unknown. He passed away on July 19, 2017.
 
-**Bill Gholson**worked as the Executive Director of Brookhaven from January of 1998 until August of 2007. His prior employment is unknown.
+** Bill Gholson** worked as the Executive Director of Brookhaven from January of 1998 until August of 2007. His prior employment is unknown.
 
-**Dennis Cooke**worked as the Executive Director of Brookhaven from August 2007 until December 2020. He previuosly worked at Brookhaven as the Treatment Director from 1998 until his promotion to Executive DIrector. Prior to this, he worked as a psychotherapist in private practice. His current employment is unknown.
+** Dennis Cooke** worked as the Executive Director of Brookhaven from August 2007 until December 2020. He previuosly worked at Brookhaven as the Treatment Director from 1998 until his promotion to Executive DIrector. Prior to this, he worked as a psychotherapist in private practice. His current employment is unknown.
 
-**Dan Francis**works/worked as the President of Brookhaven Youth Ranch. His prior/current employment is presently unknown.
+** Dan Francis** works/worked as the President of Brookhaven Youth Ranch. His prior/current employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Brookhaven Youth Ranch uses a level system. However, the specifics of the level system are presently unknown. Their [website](https://brookhavenyouthranch.org/program/) states that, "Youth work to achieve levels, which the youth must earn by achieving certain objectives, both behaviorally and socially. A youth must maintain his current level for a minimum length of time before being eligible to move up to the next level. Youth are monitored and their progress is assessed weekly by the Treatment Team, which includes the therapists, direct care staff, teachers, and other professionals working directly with the youth."
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -67,11 +67,11 @@ In response to Cuellar-Gonzalez's death, the boy's mother, Elizabeth Acevedo, fi
 
 ## **Survivor/Parent Testimonials**
 
-**July 2021: (SURVIVOR)**"The staff here is ridiculously rude and off key. Not much more details I prefer to give for privacy reasons. Just know the kids talk." - [Unicorn (Google Reviews)](https://www.google.com/maps/contrib/100708513175257107747/place/ChIJz5zGLh-ZT4YRlv2FexgnbA8/@31.7105204,-97.2663815,11.29z/data=!4m4!1m3!8m2!1e1!2s100708513175257107747?hl=en-US)
+** July 2021: (SURVIVOR)**"The staff here is ridiculously rude and off key. Not much more details I prefer to give for privacy reasons. Just know the kids talk." - [Unicorn (Google Reviews)](https://www.google.com/maps/contrib/100708513175257107747/place/ChIJz5zGLh-ZT4YRlv2FexgnbA8/@31.7105204,-97.2663815,11.29z/data=!4m4!1m3!8m2!1e1!2s100708513175257107747?hl=en-US)
 
 **2017: (SURVIVOR)**"My names is Julian 30 years old now was there as a teen I was 13 years of age when I was there was beaten by staff watch staff members strangle other kids there and when I was able to speak to my so called therapist and tell her what going on she told me I was crazy and making things up they tryed to keep me druged on depression medication I never took them cause I fear for my life there I'm still tourmented by what happened to me there and what I have seen staff putting guns in kids faces is not helping them" - [Julian (Google Reviews)](https://www.google.com/maps/contrib/112565740098583254706/place/ChIJz5zGLh-ZT4YRlv2FexgnbA8/@31.740744,-97.3241108,10.38z/data=!4m6!1m5!8m4!1e1!2s112565740098583254706!3m1!1e1?hl=en-US)
 
-*No other survivor testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No other survivor testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -89,7 +89,8 @@ In response to Cuellar-Gonzalez's death, the boy's mother, Elizabeth Acevedo, fi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

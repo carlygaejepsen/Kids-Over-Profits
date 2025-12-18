@@ -16,27 +16,27 @@ In 2005, New Leaf Academy expanded and opened a program in North Carolina called
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Craig and Christy Christiansen**are the Founders and current Owners of New Leaf Academy. Prior to founding NLA, Craig worked as the Executive Director of [J Bar J Youth Services](https://www.reddit.com/r/troubledteens/wiki/index/jbarjyouth) from 1989 until 1997. Christy's prior employment is presently unknown.
+** Craig and Christy Christiansen** are the Founders and current Owners of New Leaf Academy. Prior to founding NLA, Craig worked as the Executive Director of [J Bar J Youth Services](https://www.reddit.com/r/troubledteens/wiki/index/jbarjyouth) from 1989 until 1997. Christy's prior employment is presently unknown.
 
-**Marci Padgett**worked as the Headmistress and Therapeutic Director of New Leaf Academy. She is reported to have first become involved in the TTI as a teenager, when she was sent to the notorious and confirmedly about [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs/) to help with her drug addiction. She then began working at CEDU High School after graduating. Marci's late husband, John Padgett, was also a CEDU staff member who was instrumental in the creation of the [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) in 1984. In 2010, Marci created 'Padgett Consulting Services' which provided services to families and children who were transitioning out of a TTI program.
+** Marci Padgett** worked as the Headmistress and Therapeutic Director of New Leaf Academy. She is reported to have first become involved in the TTI as a teenager, when she was sent to the notorious and confirmedly about [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs/) to help with her drug addiction. She then began working at CEDU High School after graduating. Marci's late husband, John Padgett, was also a CEDU staff member who was instrumental in the creation of the [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) in 1984. In 2010, Marci created 'Padgett Consulting Services' which provided services to families and children who were transitioning out of a TTI program.
 
-**Deveney Marshall**is the current Executive Director of New Leaf Academy. She has worked at NLA since 2007. She previously worked as a Field Instructor at the reportedly abusive [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) from 2002 until 2007.
+** Deveney Marshall** is the current Executive Director of New Leaf Academy. She has worked at NLA since 2007. She previously worked as a Field Instructor at the reportedly abusive [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) from 2002 until 2007.
 
-**Dyer Snider**is the current Clinical Director of New Leaf Academy. His prior employment is unknown, although he has reportedly worked in "a number of settings including psychiatric inpatient, residential treatment, partial hospitalization, intensive outpatient, assertive community treatment, and outpatient."
+** Dyer Snider** is the current Clinical Director of New Leaf Academy. His prior employment is unknown, although he has reportedly worked in "a number of settings including psychiatric inpatient, residential treatment, partial hospitalization, intensive outpatient, assertive community treatment, and outpatient."
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, New Leaf Academy uses a level system consisting of three levels. The facility claims that the program is based on the work of the criticized German developmental psychologist and psychoanalyst [Erik Homburger Erikson](https://en.wikipedia.org/wiki/Erik_Erikson) . The levels are reported to be:
 
-***Sun Step:**During this phase, the teens are forced to accept their placement at NLA and take accountability for the actions that led up to their detainment. They are given very minimal privileges. This phase reportedly lasts for a*minimum*of 6 months.
-***Moon Step:**On this phase, the teens learn healthy life and relationship skills. They are given some small additional privileges. This phase reportedly lasts for a*minimum*of 6 months.
-***Star Step:**This is the final phase at NLA. During this time, the teens must accept the lessons they've learned and show overall growth and leadership in the program. This phase reportedly lasts for a*minimum*of 6 months.
+***Sun Step:** During this phase, the teens are forced to accept their placement at NLA and take accountability for the actions that led up to their detainment. They are given very minimal privileges. This phase reportedly lasts for a*minimum*of 6 months.
+***Moon Step:** On this phase, the teens learn healthy life and relationship skills. They are given some small additional privileges. This phase reportedly lasts for a*minimum*of 6 months.
+***Star Step:** This is the final phase at NLA. During this time, the teens must accept the lessons they've learned and show overall growth and leadership in the program. This phase reportedly lasts for a*minimum*of 6 months.
 
-It has been reported that since the original owners purchased the program back from [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 2011, the level/step system is no longer used. The specifics of the current program used by NLA is presently unknown.*If you attended this program after 2011 and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+It has been reported that since the original owners purchased the program back from [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 2011, the level/step system is no longer used. The specifics of the current program used by NLA is presently unknown.*If you attended this program after 2011 and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -46,7 +46,7 @@ Many survivors have reported that New Leaf Academy is an abusive program. Allega
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 [I Survived New Leaf Academy](https://web.archive.org/web/20210709190911/https://isurvivednewleaf.tumblr.com/) (*Survivor Blog*)
 
@@ -56,11 +56,11 @@ Many survivors have reported that New Leaf Academy is an abusive program. Allega
 
 **8/28/2016: (SURVIVOR)**"I went to New Leaf sometime in early 2000, with emotional problems and ADHD. I believe I was at the Rock Mesa location, I never did get used to the different location names. I remember they were planning to build a soccer field. I am commenting here because I want parents to know that NLA is NOT right for every child. I will NEVER forget the way I was treated there. I was not a girl with a violent history, drug use or stealing. I was emotional, moody and prone to verbal outbursts and antagonistic, but never violent. I was treated as if I had been. I was accused of stealing, no matter how many times I tried to insist that the baskets were next to each other. I was called a terrorist during an activity that asked for a sad picture, I drew Columbine as it was something that effected me personally. At this point I was not allowed to read anything that they didn’t pick out for me, I was not allowed to write stories. At all. I was isolated from the girls and they became distrusting of me, with no attempts by counselors to clear my name of what had been said or ease the tension. I was pulled out of the program, but the absolute isolation I had gone through severely effected the way I interacted with people. Even now, at 23 I struggle with self worth and trust of authority. The GOOD aspects of NLA: There were positives. We had to do kickboxing and plenty of physical activity, and while it wasn’t strict at NLA I did learn to structure my day better. Making my bed, cooking my own meals and keeping fit were important. Friendship: I was not allowed to talk to the girls once I left, I understand that. But I won’t forget the friends I made either. Annie, Ashley Class and Chloe. Creative: I don’t know if this has changed but one counselor would have art time, teaching us how to draw simple but fun animals. The schooling was a little wobbly because of the grade mix but they did made it fun. Reward System: Necklace with charms. It really did make me proud to earn a new charm. I felt I was growing, it was simple but cute. When I attended they also gave you a rabbit at a certain level, I don’t know if they do that anymore but it was a great empathy builder. You learned to care and be responsible for another living thing, an excellent way to form bonds. I’ll end it with this. NLA has been purchased, and may not be the same as when I attended but if you are a parent with an emotional child or in need a place, think CAREFULLY before you place them here." - (MM (Tales from the Black School)]([https://archive.is/CpLNm#selection-443.1-469.202](https://archive.is/CpLNm#selection-443.1-469.202) )
 
-**Unknown Date: (SURVIVOR)**"I was ten years old when I was taken to New Leaf Academy. The next year and a half I spent there would be some of the worst of my life. I cried every day constantly before the first month. And then I continued to cry myself to sleep every night for three months. I cried every week when I video chatted with my mom and again on the days I talked to my dad. At least for the first three months. I guess my mom had expressed her concerns saying she wanted to bring me home if I kept crying every time we talked. It was then that I was told by my therapist that if I couldn’t stop crying on video chats I wouldn’t be allowed to talk to my parents until I stopped crying because it ‘wasn’t beneficial to my treatment plan’. So I reserved my tears for night. I woke up most mornings with red puffy eyes still stinging from my salty tears. There were several times me and the rest of the girls in the house were forced to run downstairs and hide in the supply closet. This happened whenever a girl went out of program. Sometimes they would bang on the door trying to get in, yelling about how they were going to kill all of us while we slept. Once the screaming stopped the staff would pretend nothing happened. She would be back in the room with all the other girl that night. I feared for my life every day in that place. I was terrified. I went there for anger problems but left with ptsd and suicidal thoughts. Everything was blamed on me, all the problems that had occurred in my life were some how my fault because you see this program wasn’t about helping me with my problems. It was about appeasing my moms guilt about what had happened. They didn’t care about helping you, just making your parents feel better." - [BM (Breaking Code Silence)](https://drive.google.com/file/d/1X1SdYL8Arq5nO8kjJc_GapTtEpFo2QM3/view)
+** Unknown Date: (SURVIVOR)**"I was ten years old when I was taken to New Leaf Academy. The next year and a half I spent there would be some of the worst of my life. I cried every day constantly before the first month. And then I continued to cry myself to sleep every night for three months. I cried every week when I video chatted with my mom and again on the days I talked to my dad. At least for the first three months. I guess my mom had expressed her concerns saying she wanted to bring me home if I kept crying every time we talked. It was then that I was told by my therapist that if I couldn’t stop crying on video chats I wouldn’t be allowed to talk to my parents until I stopped crying because it ‘wasn’t beneficial to my treatment plan’. So I reserved my tears for night. I woke up most mornings with red puffy eyes still stinging from my salty tears. There were several times me and the rest of the girls in the house were forced to run downstairs and hide in the supply closet. This happened whenever a girl went out of program. Sometimes they would bang on the door trying to get in, yelling about how they were going to kill all of us while we slept. Once the screaming stopped the staff would pretend nothing happened. She would be back in the room with all the other girl that night. I feared for my life every day in that place. I was terrified. I went there for anger problems but left with ptsd and suicidal thoughts. Everything was blamed on me, all the problems that had occurred in my life were some how my fault because you see this program wasn’t about helping me with my problems. It was about appeasing my moms guilt about what had happened. They didn’t care about helping you, just making your parents feel better." - [BM (Breaking Code Silence)](https://drive.google.com/file/d/1X1SdYL8Arq5nO8kjJc_GapTtEpFo2QM3/view)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [New Leaf Academy Website Homepage](https://newleafacademy.com/)
 
@@ -70,7 +70,8 @@ Many survivors have reported that New Leaf Academy is an abusive program. Allega
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

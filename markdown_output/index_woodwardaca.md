@@ -14,49 +14,49 @@ Woodward Academy is located at [1251 334th St, Woodward, IA 50276](https://www.g
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Shawn Hollenkamp**is the current Executive Director of Woodward Academy. He graduated from Iowa State University in 2001 with a degree in Child and Family Services, and began working at Woodward Academy in 2002 as a Youth Counsellor. In 2004, he became a Program Director of on of the dorms, and in 2006, he was promoted to Group Living Director. He was promoted to Executive Director in January of 2013.
+** Shawn Hollenkamp** is the current Executive Director of Woodward Academy. He graduated from Iowa State University in 2001 with a degree in Child and Family Services, and began working at Woodward Academy in 2002 as a Youth Counsellor. In 2004, he became a Program Director of on of the dorms, and in 2006, he was promoted to Group Living Director. He was promoted to Executive Director in January of 2013.
 
-**Tonna Lawrenson**is the current Clinical Director of Woodward Academy. She began working at Woodward Academy in 2001. In 1996, she enrolled in Emporia State University in Kansas where she received her Master’s of Science degree in Clinical Art Therapy. During school, she worked in the Kansas hospice program as a therapist who helped prepare adolescents who were going through the dying process. After school and prior to arriving at Woodward Academy, Lawrenson worked in a battered women’s shelter and at the reportedly abusive and now-closed [Beloit Residential Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/beloitrtc) .
+** Tonna Lawrenson** is the current Clinical Director of Woodward Academy. She began working at Woodward Academy in 2001. In 1996, she enrolled in Emporia State University in Kansas where she received her Master’s of Science degree in Clinical Art Therapy. During school, she worked in the Kansas hospice program as a therapist who helped prepare adolescents who were going through the dying process. After school and prior to arriving at Woodward Academy, Lawrenson worked in a battered women’s shelter and at the reportedly abusive and now-closed [Beloit Residential Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/beloitrtc) .
 
-**Guthrey Fritz**is the current Admissions Director of Woodward Academy. He began his career as a Youth Counselor at Woodward Academy in 1997, after graduating from Buena Vista University with a degree in Criminal Justice. During his time at Woodward, he has worked in several positions including Youth Counselor, Training Officer/Admissions Assistant, and Program Director. He became the Director of Admissions in June 2013.
+** Guthrey Fritz** is the current Admissions Director of Woodward Academy. He began his career as a Youth Counselor at Woodward Academy in 1997, after graduating from Buena Vista University with a degree in Criminal Justice. During his time at Woodward, he has worked in several positions including Youth Counselor, Training Officer/Admissions Assistant, and Program Director. He became the Director of Admissions in June 2013.
 
-**Trent Fleshner**is the current Group Living Director of Woodward Academy. He began working at Woodward Academy in February of 2004 after receiving his B.S. in Criminology from the University of Northern Iowa. He has held many positions at Woodward Academy including Youth Counselor, Group Leader, and Program Director before taking over as the Group Living Director in January 2013.
+** Trent Fleshner** is the current Group Living Director of Woodward Academy. He began working at Woodward Academy in February of 2004 after receiving his B.S. in Criminology from the University of Northern Iowa. He has held many positions at Woodward Academy including Youth Counselor, Group Leader, and Program Director before taking over as the Group Living Director in January 2013.
 
-**Mark Moses**is the current Training Manager and Education Director of Woodward Academy. He began his career working as a Youth Counselor at the**confirmedly abusive**and now-closed [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , later being promoted to Senior Counselor and Team Leader. In 1994, he began working at the reportedly abusive and now-closed [Forest Ridge Youth Services](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) as the Training Manager. According to Woodward Academy's website, Moses has "provided training and consulting assistance at a variety of residential treatment facilities during the past 10 years."
+** Mark Moses** is the current Training Manager and Education Director of Woodward Academy. He began his career working as a Youth Counselor at the** confirmedly abusive** and now-closed [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , later being promoted to Senior Counselor and Team Leader. In 1994, he began working at the reportedly abusive and now-closed [Forest Ridge Youth Services](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) as the Training Manager. According to Woodward Academy's website, Moses has "provided training and consulting assistance at a variety of residential treatment facilities during the past 10 years."
 
-**Matt Ruiz**is the current Program Director of Victory Hall. His prior employment is presently unknown.
+** Matt Ruiz** is the current Program Director of Victory Hall. His prior employment is presently unknown.
 
-**Dustin Sperling**is the current Program Director of Mountaineer Hall. He is also the Head Coach of Woodward's Basketball team. His prior employment is presently unknown.
+** Dustin Sperling** is the current Program Director of Mountaineer Hall. He is also the Head Coach of Woodward's Basketball team. His prior employment is presently unknown.
 
-**Jason Anderson**is the current Program Director of Delta Company. He is also the Head Coach of Woodward's Cross Country team. His prior employment is presently unknown.
+** Jason Anderson** is the current Program Director of Delta Company. He is also the Head Coach of Woodward's Cross Country team. His prior employment is presently unknown.
 
-**Carl Fenceroy**is the current Program Director of Expedition Hall. His prior employment is presently unknown.
+** Carl Fenceroy** is the current Program Director of Expedition Hall. His prior employment is presently unknown.
 
-**Ted Rives**is the current Program Director of Pathfinder Hall. According to his [LinkedIn profile](https://www.linkedin.com/in/ted-rives-0004aa122/) , Ted Rives worked at Woodward Academy from October 2017 until January of 2020, and he no longer works at the program. He currently works as the Director Of Development at Best Buddies International. However, he is still listed as a Program Director on Woodward Academy's website.
+** Ted Rives** is the current Program Director of Pathfinder Hall. According to his [LinkedIn profile](https://www.linkedin.com/in/ted-rives-0004aa122/) , Ted Rives worked at Woodward Academy from October 2017 until January of 2020, and he no longer works at the program. He currently works as the Director Of Development at Best Buddies International. However, he is still listed as a Program Director on Woodward Academy's website.
 
-**Bill Badgley**is the current Program Director of Navigator. He began working at Woodward Academy in 2007 as a Youth Counselor. He then became a Group Leader in 2009, before ultimately being promoted to Program Director in November 2012. His prior employment is presently unknown.
+** Bill Badgley** is the current Program Director of Navigator. He began working at Woodward Academy in 2007 as a Youth Counselor. He then became a Group Leader in 2009, before ultimately being promoted to Program Director in November 2012. His prior employment is presently unknown.
 
-**Shane Sinn**is the current Program Director of Legacy Hall. His prior employment is presently unknown.
+** Shane Sinn** is the current Program Director of Legacy Hall. His prior employment is presently unknown.
 
-**Matt Paulsen**is the current Program Director of Triumph Hall. He previously worked in an unknown position at the Cornerstone Church of Ames from 2012 until 2014.
+** Matt Paulsen** is the current Program Director of Triumph Hall. He previously worked in an unknown position at the Cornerstone Church of Ames from 2012 until 2014.
 
-**Lorenzo White**is the current Program Director of Phase 5/Infinity Hall. He is also the Head Coach of Woodward's Football team. He began working at Woodward Academy during his senior year of college. After playing football at Blinn Junior College and Iowa State University, in 2002 he entered the NFL as a free agent and went to mini camp at the Jacksonville Jaguars’ facility, and later spent the remainder of the year with the Minnesota Vikings. At the end of the 2002 season, he was diagnosed with atrial fibrillation (AFib), an irregular heartbeat that can lead to heart failure. This prevented Lorenzo from continuing to pursue his football career and led him back to working at Woodward. He began working as a youth counselor and quickly was promoted to supervisor.
+** Lorenzo White** is the current Program Director of Phase 5/Infinity Hall. He is also the Head Coach of Woodward's Football team. He began working at Woodward Academy during his senior year of college. After playing football at Blinn Junior College and Iowa State University, in 2002 he entered the NFL as a free agent and went to mini camp at the Jacksonville Jaguars’ facility, and later spent the remainder of the year with the Minnesota Vikings. At the end of the 2002 season, he was diagnosed with atrial fibrillation (AFib), an irregular heartbeat that can lead to heart failure. This prevented Lorenzo from continuing to pursue his football career and led him back to working at Woodward. He began working as a youth counselor and quickly was promoted to supervisor.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Presently, Woodward Academy operates three separate programs:
 
-***Community Residential Program:**This program enrolls teenage boys and girls (12-18) who have committed a public offense that is an aggravated misdemeanor or above. The program's average length of stay is between 4 and 6 months, but may be extended to between 9 and 12 months if deemed necessary. The program's structure consists of four phases which focus on victim empathy, taking responsibility for their actions, learning alternatives to their behaviors, and relapse prevention.
-***Sex Offender Program:**This program enrolls teenage boys (12-18) who have demonstrated sexually aggressive or inappropriate behaviors. This program's average length of stay is between 9 and 24 months. The treatment focuses on victim empathy, healthy relationships, identifying and recognizing triggers, and relapse prevention, and students are prepared for victim reunification when appropriate. "Assessment tools" used by Woodward Academy include polygraph testing, the ABEL assessment, the JSSOTR and the JSOAP.
-***Day School:**Woodward Academy also offers a Day School for students experiencing behavioral difficulties within their public school setting. The Day School typically serves students in grades 6 through 12. This program is not residential.
+***Community Residential Program:** This program enrolls teenage boys and girls (12-18) who have committed a public offense that is an aggravated misdemeanor or above. The program's average length of stay is between 4 and 6 months, but may be extended to between 9 and 12 months if deemed necessary. The program's structure consists of four phases which focus on victim empathy, taking responsibility for their actions, learning alternatives to their behaviors, and relapse prevention.
+***Sex Offender Program:** This program enrolls teenage boys (12-18) who have demonstrated sexually aggressive or inappropriate behaviors. This program's average length of stay is between 9 and 24 months. The treatment focuses on victim empathy, healthy relationships, identifying and recognizing triggers, and relapse prevention, and students are prepared for victim reunification when appropriate. "Assessment tools" used by Woodward Academy include polygraph testing, the ABEL assessment, the JSSOTR and the JSOAP.
+***Day School:** Woodward Academy also offers a Day School for students experiencing behavioral difficulties within their public school setting. The Day School typically serves students in grades 6 through 12. This program is not residential.
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Many survivors have reported that Woodward Academy is an abusive program. Allegations of abuse and neglect that have been reported by survivors include violent and excesive physical restraints, sexual harrasment/abuse, mismanagement of medications, and emotional/verbal abuse. Many survivors report developing PTSD and other trauma-related conditions as a result of their time at Woodward Academy.
 
@@ -70,7 +70,7 @@ Another survivor, Valery Roseus, told [InvestigateWest](https://www.invw.org/202
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2021: (EX-STAFF)**"To be completley honest I would not recommend for anyone. I can see the purpose of this place but its carried out in a way where students are treated pretty poor and no one can say anything because its "treatment" . over all i would stay away from working here." - [TT (Google Reviews)](https://goo.gl/maps/vdAQk5FUdW5esJFBA)
 
@@ -88,7 +88,7 @@ Another survivor, Valery Roseus, told [InvestigateWest](https://www.invw.org/202
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Woodward Academy Website Homepage](https://www.wwacademy.com/)
 
@@ -106,7 +106,8 @@ Another survivor, Valery Roseus, told [InvestigateWest](https://www.invw.org/202
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

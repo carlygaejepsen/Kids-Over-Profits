@@ -9,7 +9,7 @@ This watchlist is regularly updated. Please ask [u/rjm2013](/u/rjm2013) for furt
 
 **Please note:***We consider any Family Help & Wellness program to be particularly dangerous, even if they are not included on the watchlist below.*
 
-|**Name of Program**|**Location**|**Program Type**|**Reported Abuse?**|**Reported Deaths?**|**Warning Level**|
+|**Name of Program**|** Location**|** Program Type**|** Reported Abuse?**|** Reported Deaths?**|** Warning Level**|
 | Youth of Vision Academy | Jamaica | Therapeutic Boarding School | Yes | No (?) | RED |
 | Liahona Academy | UT | Therapeutic Boarding School | Yes | Yes (1) | RED |
 | Discovery Ranch | UT | Ranch for Troubled Youth | Yes | Yes (1) | RED |
@@ -41,7 +41,7 @@ This watchlist is regularly updated. Please ask [u/rjm2013](/u/rjm2013) for furt
 | CALO Programs | MO | Therapeutic Boarding School | Yes | No (?) | ORANGE |
 ***Key***
 
-**What is meant by 'reported abuse'?**
+** What is meant by 'reported abuse'?**
 
 Reported abuse means that we have confirmed that there are reported cases of abuse at the program.
 
@@ -49,7 +49,7 @@ Abuse can refer to physical, psychological, emotional, or sexual abuse. This can
 
 This reported information can come through survivor testimony, news reports, official documentation, or lawsuits. It can also refer to the known practices of the program, such as their levels system, or their specific policies as listed in program handbooks, parental guides, etc.
 
-**What is meant by 'reported deaths'?**
+** What is meant by 'reported deaths'?**
 
 Reported deaths mean the number of reported deaths that we have been able to confirm at a facility.
 
@@ -57,7 +57,7 @@ These deaths can have occurred through murder, neglect, abuse, or suicide.
 
 The number of deaths recorded here may not be accurate as many program deaths are not publicly reported, and programs rarely ever disclose this information. Programs also use judge-issued non-disclosure agreements to prevent parents from talking about their child's death at their facility.
 
-**What is meant by 'warning level'?**
+** What is meant by 'warning level'?**
 
 The warning levels indicate the level of danger a specific program presents to the teenagers enrolled there, based upon all the above-listed information.
 
@@ -70,7 +70,7 @@ The warning levels are classified this way:
 
 If the program concerned is listed as RED or ORANGE you should seek to remove the child immediately without delay.
 
-**Please understand that these facilities are likely to impose censored and/or restricted communications****such as:**
+** Please understand that these facilities are likely to impose censored and/or restricted communications****such as:**
 
 *Reading incoming and/or outgoing mail,
 *Censoring incoming and/or outgoing mail,
@@ -87,4 +87,5 @@ If the program concerned is listed as RED or ORANGE you should seek to remove th
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

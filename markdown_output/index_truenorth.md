@@ -14,25 +14,25 @@ Although True North operates a program for young adults (18-25) which is suppose
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tyler "Ty" Maves**is one of the Founders and Owners of True North Wilderness. He is also the Executive Director of True North. He is married to Madhurii Barefoot. Prior to founding True North, Ty and his wife both worked at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's**confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 1999 until 2000. They then helped create [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , which continues to operate today. They worked at SUWS of the Carolinas until 2005, when they created True North.
+** Tyler "Ty" Maves** is one of the Founders and Owners of True North Wilderness. He is also the Executive Director of True North. He is married to Madhurii Barefoot. Prior to founding True North, Ty and his wife both worked at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's** confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 1999 until 2000. They then helped create [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , which continues to operate today. They worked at SUWS of the Carolinas until 2005, when they created True North.
 
-**Madhurii "Mod" Barefoot**is one of the Founders and Owners of True North Wilderness. She is married to Ty Maves. Prior to founding True North, Mod and her husband both worked at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's**confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 1999 until 2000. They then helped create [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , which continues to operate today. They continued to work at SUWS of the Carolinas until 2005, when they created True North. She was also the Clinical Director of True North until 2018.
+** Madhurii "Mod" Barefoot** is one of the Founders and Owners of True North Wilderness. She is married to Ty Maves. Prior to founding True North, Mod and her husband both worked at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's** confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 1999 until 2000. They then helped create [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , which continues to operate today. They continued to work at SUWS of the Carolinas until 2005, when they created True North. She was also the Clinical Director of True North until 2018.
 
-**Andy Chapman**is one of the Founders and Owners of True North Wilderness. Like the other founders, he began his career as a Master Level Guide at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's**confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 2001 until 2005. In 2005, he helped co-found True North and worked at the program's Program Director until 2008. He then left to work as a Case Manager at [New Summit Academy](https://www.reddit.com/r/troubledteens/wiki/index/newsummitcr) in Costa Rica from 2013 until 2016. He then returned to True North as a Counsellor until 2017, when he created [Belay Wellness](https://belaywellness.com/) , which he describes as a "coming of age" rite of passage for American young adults.
+** Andy Chapman** is one of the Founders and Owners of True North Wilderness. Like the other founders, he began his career as a Master Level Guide at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's** confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 2001 until 2005. In 2005, he helped co-found True North and worked at the program's Program Director until 2008. He then left to work as a Case Manager at [New Summit Academy](https://www.reddit.com/r/troubledteens/wiki/index/newsummitcr) in Costa Rica from 2013 until 2016. He then returned to True North as a Counsellor until 2017, when he created [Belay Wellness](https://belaywellness.com/) , which he describes as a "coming of age" rite of passage for American young adults.
 
-**Courtney Merrill**is the Co-Executive Director of True North Wilderness. After graduating from BYU, she began her career as a Primary Therapist/Shadow at the reportedly abusive [Anasazi Foundation](https://www.reddit.com/r/troubledteens/wiki/index/anasazi) from 2002 until 2005. She then worked as a Primary Therapist, and later as the Clinical Director and Executive Director of the reportedly abusive [La Europa Academy](https://www.reddit.com/r/troubledteens/wiki/index/laeuropa) in Utah from 2005 until 2011. She then worked as an Educational Consultant at the School Counseling Group from 2011 until 2015. She joined True North as the Director of Admissions and Outreach in 2015, and has been the Co-Executive Director of the program since February 2021.
+** Courtney Merrill** is the Co-Executive Director of True North Wilderness. After graduating from BYU, she began her career as a Primary Therapist/Shadow at the reportedly abusive [Anasazi Foundation](https://www.reddit.com/r/troubledteens/wiki/index/anasazi) from 2002 until 2005. She then worked as a Primary Therapist, and later as the Clinical Director and Executive Director of the reportedly abusive [La Europa Academy](https://www.reddit.com/r/troubledteens/wiki/index/laeuropa) in Utah from 2005 until 2011. She then worked as an Educational Consultant at the School Counseling Group from 2011 until 2015. She joined True North as the Director of Admissions and Outreach in 2015, and has been the Co-Executive Director of the program since February 2021.
 
-**Mike Sullivan**is the current Director of Business Development at True North Wilderness. He began his career as a Field Instructor at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's**confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 2004 until 2007. He then worked as a Clinician at the reportedly abusive [Pacific Quest](https://www.reddit.com/r/troubledteens/wiki/index/pacificquest) as a Therapist and the Alumni and Family Services Director from 2009 until 2020. He then briefly worked as the Alumni and Transition Director at [Deschutes Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/deschutes) from April through December of 2020, before joining True North in January of 2021.
+** Mike Sullivan** is the current Director of Business Development at True North Wilderness. He began his career as a Field Instructor at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's** confirmedly abusive** [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 2004 until 2007. He then worked as a Clinician at the reportedly abusive [Pacific Quest](https://www.reddit.com/r/troubledteens/wiki/index/pacificquest) as a Therapist and the Alumni and Family Services Director from 2009 until 2020. He then briefly worked as the Alumni and Transition Director at [Deschutes Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/deschutes) from April through December of 2020, before joining True North in January of 2021.
 
-**Kelly Webster**is the current Admissions Director of True North Wilderness. She has worked at True North since February 2021. Prior to this, she worked as the Associate Executive Director of the reportedly abusive [Grove School](https://www.reddit.com/r/troubledteens/wiki/index/grove) from 2001 until 2020. Her employment prior to Grove is unknown. She is also currently on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Kelly Webster** is the current Admissions Director of True North Wilderness. She has worked at True North since February 2021. Prior to this, she worked as the Associate Executive Director of the reportedly abusive [Grove School](https://www.reddit.com/r/troubledteens/wiki/index/grove) from 2001 until 2020. Her employment prior to Grove is unknown. She is also currently on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by True North Wilderness. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by True North Wilderness. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,7 +42,7 @@ Many survivors have reported that True North Wilderness is an abusive program. A
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"My parents sent me to this facility when I was 16. They starved us all for the first 48 hours to “cleanse our bodies from the past”, and wouldn’t let us drink water or eat any food for 48 hours, and after that, we had to catch everything we ate ourselves, or we didn’t get food. They wouldn’t let us call our parents. They wouldn’t let us shower for 10 days minimum, sometimes longer. If someone said they were suicidal, they wouldn’t do anything. Staff is condescending, unkind, and bullying. This place traumatized me and ruined my relationship with my parents. It’s been a bit and I’ve processed a lot of abuse with my counselor, but I still refuse to even speak to my parents after this. All this program taught me was to lie about my mental health or risk getting sent away. Please don’t send your child here." - [Amanda (Google Reviews)](https://www.google.com/maps/contrib/104397484212662294540/place/ChIJL9aqJuBytUwRz15O6Fas8WI/@44.1826828,-72.8401102,17z/data=!4m6!1m5!8m4!1e1!2s104397484212662294540!3m1!1e1?hl=en-US)
 
@@ -60,7 +60,7 @@ Many survivors have reported that True North Wilderness is an abusive program. A
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [True North Wilderness Website Homepage](https://truenorthwilderness.com/)
 
@@ -70,7 +70,8 @@ Many survivors have reported that True North Wilderness is an abusive program. A
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

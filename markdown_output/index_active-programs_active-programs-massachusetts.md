@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 There are no requirements for accreditation, registration or licensing for private schools in Massachusetts. Approval is mandatory and requires proof that non-public schools equal the instruction, curriculum and progress of public schools. Private schools do not require official certification for their teachers.
 
@@ -18,18 +18,18 @@ Non-public schools are required to educate all students on the statewide anti-ha
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Bloom Teen Challenge**](https://www.reddit.com/r/troubledteens/wiki/index/bloomtc) | - | Brockton, MA | - |
-| [**Chamberlain International School**](https://www.reddit.com/r/troubledteens/wiki/index/chamberlain) | 1976 | Middleborough, MA | [HEAL](http://www.heal-online.org/chamberlain.htm) |
-| [**Fuller Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/fullerhos) | - | - | - |
-| [**Judge Rotenberg Center**](https://www.reddit.com/r/troubledteens/wiki/index/jrotenberg) | 1971 | Canton, MA | N/A |
-| [**Meadowridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/meadowridge) | - | - | - |
-| [**Pelham Academy**](https://www.reddit.com/r/troubledteens/wiki/index/pelham) | - | - | - |
-| [**Pembroke Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/pembroke) | - | - | - |
-| [**Valley View School**](https://www.reddit.com/r/troubledteens/wiki/index/valleyview) | 1970 | North Brookfield, MA | [HEAL](http://www.heal-online.org/valleyview.htm) |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Bloom Teen Challenge**](https://www.reddit.com/r/troubledteens/wiki/index/bloomtc) | - | Brockton, MA | - |
+| [** Chamberlain International School**](https://www.reddit.com/r/troubledteens/wiki/index/chamberlain) | 1976 | Middleborough, MA | [HEAL](http://www.heal-online.org/chamberlain.htm) |
+| [** Fuller Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/fullerhos) | - | - | - |
+| [** Judge Rotenberg Center**](https://www.reddit.com/r/troubledteens/wiki/index/jrotenberg) | 1971 | Canton, MA | N/A |
+| [** Meadowridge Academy**](https://www.reddit.com/r/troubledteens/wiki/index/meadowridge) | - | - | - |
+| [** Pelham Academy**](https://www.reddit.com/r/troubledteens/wiki/index/pelham) | - | - | - |
+| [** Pembroke Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/pembroke) | - | - | - |
+| [** Valley View School**](https://www.reddit.com/r/troubledteens/wiki/index/valleyview) | 1970 | North Brookfield, MA | [HEAL](http://www.heal-online.org/valleyview.htm) |
 ---
 
-## **Closed Programs in Massachusetts**
+## ** Closed Programs in Massachusetts**
 
 ---
 
@@ -37,13 +37,13 @@ Non-public schools are required to educate all students on the statewide anti-ha
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Academy at Swift River**](https://www.reddit.com/r/troubledteens/wiki/index/swiftriver) | 1997-2013 | Cummington, MA | [HEAL](http://www.heal-online.org/swift.htm) |
-| [**Ashby Academy**](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) | - | - | - |
-| [**DeSisto at Stockbridge School**](https://www.reddit.com/r/troubledteens/wiki/index/desistostockbrid) | - | - | - |
-| [**John Dewey Academy**](https://www.reddit.com/r/troubledteens/wiki/index/johndewey) | 1985-2023 | Great Barrington, MA | [HEAL](http://www.heal-online.org/johndew.htm) |
-| [**Wayside Union Academy**](https://www.reddit.com/r/troubledteens/wiki/index/waysideunion) | - | - | - |
-| [**Westwood Lodge**](https://www.reddit.com/r/troubledteens/wiki/index/westwoodlodge) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Academy at Swift River**](https://www.reddit.com/r/troubledteens/wiki/index/swiftriver) | 1997-2013 | Cummington, MA | [HEAL](http://www.heal-online.org/swift.htm) |
+| [** Ashby Academy**](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) | - | - | - |
+| [** DeSisto at Stockbridge School**](https://www.reddit.com/r/troubledteens/wiki/index/desistostockbrid) | - | - | - |
+| [** John Dewey Academy**](https://www.reddit.com/r/troubledteens/wiki/index/johndewey) | 1985-2023 | Great Barrington, MA | [HEAL](http://www.heal-online.org/johndew.htm) |
+| [** Wayside Union Academy**](https://www.reddit.com/r/troubledteens/wiki/index/waysideunion) | - | - | - |
+| [** Westwood Lodge**](https://www.reddit.com/r/troubledteens/wiki/index/westwoodlodge) | - | - | - |
 ---
 
 ^(Page Last Updated: 18 February 2025.)
@@ -55,4 +55,5 @@ Non-public schools are required to educate all students on the statewide anti-ha
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

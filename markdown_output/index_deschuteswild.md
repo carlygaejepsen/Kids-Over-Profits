@@ -16,37 +16,37 @@ Prior to the 2018 merger between four companies (CALO Programs, InnerChange Prog
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Andrew Scott**is the current Executive Director of Deschutes Wilderness Therapy. He began working at DWT in October 2012 as a Program and Business Specialist. In 2014, he was promoted to Business Director before ultimately becoming the Executive Director in April 2015. Prior to joining the wilderness field, he worked in several unrelated positions including as an intern in Economic section of the U.S. State Department, Sales and Marketing Manager for a construction company, and a Captain at a fishing charter boat company. He holds two degrees: a Marketing BA in International Business from the University of Wisconsin-Milwaukee, and an MA in International Business from the University of Warsaw in Poland.
+** Andrew Scott** is the current Executive Director of Deschutes Wilderness Therapy. He began working at DWT in October 2012 as a Program and Business Specialist. In 2014, he was promoted to Business Director before ultimately becoming the Executive Director in April 2015. Prior to joining the wilderness field, he worked in several unrelated positions including as an intern in Economic section of the U.S. State Department, Sales and Marketing Manager for a construction company, and a Captain at a fishing charter boat company. He holds two degrees: a Marketing BA in International Business from the University of Wisconsin-Milwaukee, and an MA in International Business from the University of Warsaw in Poland.
 
-**Daniel Kikkert**is the current Associate Executive Director of Deschutes Wilderness Therapy. He began his career in the Troubled Teen Industry as a Senior Field Instructor at the reportedly abusive [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) from July 2012 until March 2015. In March 2015, Second Nature rebranded its program as [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) , and Kikkert continued to work at Evoke until December 2017 as the Assistant Field Director and later the Field Director. He then began working at Deschutes Wilderness Therapy (which was at that point called New Vision West) in in September of 2018 as the Operations Director. He became the Associate Executive Director in August 2021.
+** Daniel Kikkert** is the current Associate Executive Director of Deschutes Wilderness Therapy. He began his career in the Troubled Teen Industry as a Senior Field Instructor at the reportedly abusive [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) from July 2012 until March 2015. In March 2015, Second Nature rebranded its program as [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) , and Kikkert continued to work at Evoke until December 2017 as the Assistant Field Director and later the Field Director. He then began working at Deschutes Wilderness Therapy (which was at that point called New Vision West) in in September of 2018 as the Operations Director. He became the Associate Executive Director in August 2021.
 
-**Lori Vallelunga**is the current Clinical Director of the Adolescent Program at Deschutes Wilderness Therapy. According to her [LinkedIn profile](https://www.linkedin.com/in/lorivallelunga/details/experience/) , she has previously worked in a variety of hospital settings and faith-based community organizations. She has also worked as a psychologist in private practice since 1995. She has been at DWT since November 2021.
+** Lori Vallelunga** is the current Clinical Director of the Adolescent Program at Deschutes Wilderness Therapy. According to her [LinkedIn profile](https://www.linkedin.com/in/lorivallelunga/details/experience/) , she has previously worked in a variety of hospital settings and faith-based community organizations. She has also worked as a psychologist in private practice since 1995. She has been at DWT since November 2021.
 
-**Matt Potanko**currently works as the Operations Director of Deschutes Wilderness Therapy. Prior to this, he worked as a Wilderness Field Instructor at the reportedly abusive [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) in Santa Clara, UT from March 2015 until April 2016. He also reportedly worked as a residential treatment staff at an unnamed program in Utah. Other than his career in the TTI, he has also worked with several music/recording companies.
+** Matt Potanko** currently works as the Operations Director of Deschutes Wilderness Therapy. Prior to this, he worked as a Wilderness Field Instructor at the reportedly abusive [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) in Santa Clara, UT from March 2015 until April 2016. He also reportedly worked as a residential treatment staff at an unnamed program in Utah. Other than his career in the TTI, he has also worked with several music/recording companies.
 
-**Daryn Reiner**is the current Admissions Director of Deschutes Wilderness Therapy. She began her career in the Troubled Teen Industry as a Lead Field Guide at the reportedly abusive [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) from May-September of 2007. She then worked as the Assistant Team Leader for Aspiro's young adult program from 2009 until 2011. During this time, she also worked as an Educational Consultant at [Dean Doering and Associates](https://www.reddit.com/r/troubledteens/wiki/index/dda) from 2005 until 2015. In December of 2015, she began working as the Director of Admissions and Marketing at the reportedly abusive [Discover Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) from 2015 until January 2020 when she began working at DWT.
+** Daryn Reiner** is the current Admissions Director of Deschutes Wilderness Therapy. She began her career in the Troubled Teen Industry as a Lead Field Guide at the reportedly abusive [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) from May-September of 2007. She then worked as the Assistant Team Leader for Aspiro's young adult program from 2009 until 2011. During this time, she also worked as an Educational Consultant at [Dean Doering and Associates](https://www.reddit.com/r/troubledteens/wiki/index/dda) from 2005 until 2015. In December of 2015, she began working as the Director of Admissions and Marketing at the reportedly abusive [Discover Ranch for Girls](https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls) from 2015 until January 2020 when she began working at DWT.
 
-**Xela Goodman**currently works as a Therapist at Deschutes Wilderness Therapy. She has had a lengthy career in the Troubled Teen Industry, beginning in 2005 when she worked as a Behavioral Health Specialist and Therapist at the reportedly abusive [Anasazi Foundation](https://www.reddit.com/r/troubledteens/wiki/index/anasazi) until 2010. She then went on to work as a Therapist at the reportedly abusive [Arivaca Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/arivaca) in Arizona from 2010 until 2011. After this, she worked as a Therapist at the reportedly abusive [Adirondack Leadership Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/adirondackleader) , which was owned by the notorious and**confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 2010 until its closure in 2013. She then went on to work as the Clinical Director and a Therapist at [New Summit Academy Costa Rica](https://www.reddit.com/r/troubledteens/wiki/index/newsummitcr) from 2013 until 2016, when she began working at Deschutes Wilderness Therapy.
+** Xela Goodman** currently works as a Therapist at Deschutes Wilderness Therapy. She has had a lengthy career in the Troubled Teen Industry, beginning in 2005 when she worked as a Behavioral Health Specialist and Therapist at the reportedly abusive [Anasazi Foundation](https://www.reddit.com/r/troubledteens/wiki/index/anasazi) until 2010. She then went on to work as a Therapist at the reportedly abusive [Arivaca Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/arivaca) in Arizona from 2010 until 2011. After this, she worked as a Therapist at the reportedly abusive [Adirondack Leadership Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/adirondackleader) , which was owned by the notorious and** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 2010 until its closure in 2013. She then went on to work as the Clinical Director and a Therapist at [New Summit Academy Costa Rica](https://www.reddit.com/r/troubledteens/wiki/index/newsummitcr) from 2013 until 2016, when she began working at Deschutes Wilderness Therapy.
 
-**James Nippert**currently works as a Therapist at Deschutes Wilderness Program. He reportedly began working in the wilderness therapy field in 2004, and has since worked at several unnamed wilderness therapy programs and therapeutic boarding schools. His prior places of employment are presently unknown.
+** James Nippert** currently works as a Therapist at Deschutes Wilderness Program. He reportedly began working in the wilderness therapy field in 2004, and has since worked at several unnamed wilderness therapy programs and therapeutic boarding schools. His prior places of employment are presently unknown.
 
-**Janae Sporrer**is the current Field Director of the Girls Program at Deschutes Wilderness Program. Prior to this, she worked as a Field Guide at the reportedly abusive [True North Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/truenorth) in Vermont beginning in 2014.
+** Janae Sporrer** is the current Field Director of the Girls Program at Deschutes Wilderness Program. Prior to this, she worked as a Field Guide at the reportedly abusive [True North Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/truenorth) in Vermont beginning in 2014.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Unlike other "troubled teen" programs, Deschutes Wilderness Therapy does not use a level system, as is the norm in the majority of behavior modification programs. Their [website](https://deschuteswildernesstherapy.com/teens/) states, "DWT doesn’t rely on an outdated behavioral level system, favoring instead, a relational focused treatment plan."
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Survivors have reported that Deschutes Wilderness Therapy uses isolation tactics as a punishment in their program. It is widely known that DWT's parent company, [Embark Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/embark) , enlists the services of so-called "reputation management" companies who delete negative reviews of their programs online. Because of this, no further allegations of abuse/neglect have yet been brought to light.
 
-*If you attended Deschutes Wilderness Program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Deschutes Wilderness Program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -58,7 +58,7 @@ Survivors have reported that Deschutes Wilderness Therapy uses isolation tactics
 
 **11/11/2021: (SURVIVOR)**"terrible place to go. i was on isolation for at least 1/3 months of my treatment. not to mention i signed myself into nvw and never heard anything about Deschutes before leaving a review on nvw main Facebook page who took no responsibility and seems to not want to be associated with the bend Oregon branch anymore (smart move) . I'd really like a straight explanation as to what is going on." - [Sofia (Facebook)](https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fpermalink.php%3Fstory_fbid%3D925662715022283%26id%3D100027356892804)
 
-*No other survivor testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No other survivor testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -68,7 +68,8 @@ Survivors have reported that Deschutes Wilderness Therapy uses isolation tactics
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

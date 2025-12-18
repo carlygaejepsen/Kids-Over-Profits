@@ -12,23 +12,23 @@ The program is located at [41 Beauty Spot Cove Rd, Mars Hill, NC 28754](https://
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**James "Jim" and Patricia Jones**are the Founders of Harbor Oaks/Wolf Creek Academy. They also worked as the Executive Directors of the program. Prior to this, they worked in a youth ministry specifically focusing on suicide prevention.
+** James "Jim" and Patricia Jones** are the Founders of Harbor Oaks/Wolf Creek Academy. They also worked as the Executive Directors of the program. Prior to this, they worked in a youth ministry specifically focusing on suicide prevention.
 
-**Jeremy Jones**is the current CEO and Program Director of Wolf Creek Academy. He is the son of the founders, Jim and Patricia. Prior to this, he worked in a "church-based youth ministry".
+** Jeremy Jones** is the current CEO and Program Director of Wolf Creek Academy. He is the son of the founders, Jim and Patricia. Prior to this, he worked in a "church-based youth ministry".
 
-**Angela Jones**is the Vice President of Wolf Creek Academy. She appears to be married to Jeremy Jones. Like her husband, she previously worked in a "church-based youth ministry".
+** Angela Jones** is the Vice President of Wolf Creek Academy. She appears to be married to Jeremy Jones. Like her husband, she previously worked in a "church-based youth ministry".
 
-**Cynthia "Cindy" Burman**is the Clinical Director of Wolf Creek Academy. Prior to this, she founded a "teen counseling" company called Higher Ground Teen Counseling and Coaching. She has worked at WCA since December 2017.
+** Cynthia "Cindy" Burman** is the Clinical Director of Wolf Creek Academy. Prior to this, she founded a "teen counseling" company called Higher Ground Teen Counseling and Coaching. She has worked at WCA since December 2017.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Wolf Creek Academy is reportedly a "dual enrollment partner" with Lighthouse Christian Academy, an organization which provides academic credits and diplomas to teens using the [Accelerated Christian Education (A.C.E.)](https://en.wikipedia.org/wiki/Accelerated_Christian_Education) curriculum in private schools and home-schools. Lighthouse Christian Academy requires that just*one*person in an entire school be “certified” to use the curriculum. However, this certification is NOT from any state agency. It is issued by the organization itself. This enables schools to use the curriculum without having any certified teachers
 
-*No information is currently known regarding the specifics of the program used by Wolf Creek Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Wolf Creek Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,9 +40,9 @@ In 2007, the Madison County Department of Social Services [substantiated](https:
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**April 2021: (SURVIVOR)**"I went to the this school. Many years ago I am now 32 and was 16 when I got sent here. At that time they were being investigated by social services. The house parents kept leaving which cause lots of stress in the kids that were attached to them. Only to find out that there were many things wrong. I left when I was 17. None of the school work I did counted and nor would my HS diploma be excepted at any college I had to get a GED! The only good part of the whole thing was the snowboarding. I found something I loved doing. Other then that my parents wsted alot of my money on a school that was not what they thought. Things could be different now. This is just my experience" - [Lyndly (Google Reviews)](https://www.google.com/maps/place/Wolf+Creek+Academy/@35.9404774,-82.5291274,282m/data=!3m1!1e3!4m7!3m6!1s0x0:0xea126238fe258fd1!8m2!3d35.9411173!4d-82.5284302!9m1!1b1)
+** April 2021: (SURVIVOR)**"I went to the this school. Many years ago I am now 32 and was 16 when I got sent here. At that time they were being investigated by social services. The house parents kept leaving which cause lots of stress in the kids that were attached to them. Only to find out that there were many things wrong. I left when I was 17. None of the school work I did counted and nor would my HS diploma be excepted at any college I had to get a GED! The only good part of the whole thing was the snowboarding. I found something I loved doing. Other then that my parents wsted alot of my money on a school that was not what they thought. Things could be different now. This is just my experience" - [Lyndly (Google Reviews)](https://www.google.com/maps/place/Wolf+Creek+Academy/@35.9404774,-82.5291274,282m/data=!3m1!1e3!4m7!3m6!1s0x0:0xea126238fe258fd1!8m2!3d35.9411173!4d-82.5284302!9m1!1b1)
 
 **2020: (SURVIVOR)**"Wolf creek, formally known as harbor oaks boarding school, Do not send your child here especially if you are Hispanic or Black. The things I was told and heard were outrageous. If I spent more than 5 minutes in the shower I was told I should know how to take a Puerto Rican shower. I learned how to huff axe and snort riddilin here. Never did a drug before. Was choked by a staff member. Monitored phone calls were the worst if you tried to inform your parents of the things happening they'd hang up the call. They only advertise the female side of this program, which had nicer facilites, better activites, and all around better staff than that which was used for the boys. I remember we lived out of a motel in the wolf creek mountains near the ski lift. Ask about Kevin Ramos and lawsuits. The church they take you to is some fake TDJakes wannabe. It's not the experience they try to sell. Be careful and good luck." - [Ron (Google Reviews)](https://www.google.com/maps/contrib/117418597078880543824/place/ChIJ2ZOezHkWWogR0Y8l_jhiEuo/@35.973394,-82.564547,11.17z/data=!4m6!1m5!8m4!1e1!2s117418597078880543824!3m1!1e1?hl=en-US)
 
@@ -64,7 +64,7 @@ In 2007, the Madison County Department of Social Services [substantiated](https:
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Wolf Creek Academy Website Homepage](https://www.wolfcreekacademy.org/)
 
@@ -76,7 +76,8 @@ In 2007, the Madison County Department of Social Services [substantiated](https:
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

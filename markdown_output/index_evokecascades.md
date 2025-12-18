@@ -18,23 +18,23 @@ In November 2021, Evoke Cascades announced that the program would close and be "
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rick Heizer**is the Co-Founder, Co-Owner & Executive Director of Evoke Therapy Programs. He began his career in the Troubled Teen Industry as a Field Instructor at the reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , a now-closed program owned by the notorious [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 1996 until 1997. From 1998 until 1999, he also worked as the Clinical Director of Aspen's**confirmedly abusive** [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) . He then worked as a Field Director at the**confirmedly abusive** [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) from 1999 until 2004. After this, he worked as the Program Director & Partner of the**confirmedly abusive** [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) from 2004 until 2015, when the program rebranded as [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) . Interestingly, his [LinkedIn profile](https://www.linkedin.com/in/rick-heizer-he-him-540675a/) states that he has worked at Evoke Therapy Programs since 2004, which was when he began working at SN Entrada.
+** Rick Heizer** is the Co-Founder, Co-Owner & Executive Director of Evoke Therapy Programs. He began his career in the Troubled Teen Industry as a Field Instructor at the reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , a now-closed program owned by the notorious [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) , from 1996 until 1997. From 1998 until 1999, he also worked as the Clinical Director of Aspen's** confirmedly abusive** [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) . He then worked as a Field Director at the** confirmedly abusive** [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) from 1999 until 2004. After this, he worked as the Program Director & Partner of the** confirmedly abusive** [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) from 2004 until 2015, when the program rebranded as [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) . Interestingly, his [LinkedIn profile](https://www.linkedin.com/in/rick-heizer-he-him-540675a/) states that he has worked at Evoke Therapy Programs since 2004, which was when he began working at SN Entrada.
 
-**Brad Reedy**is the Co-Founder, Co-Owner & Executive Clinical Director of Evoke Therapy Programs. Like Rick Heizer, Brad Reedy began his career in the TTI working as the Clinical Director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) from 1996 until 1999. He then became the Co-Owner and Director of both [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge) and [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) from 1999 until October of 2017, when SN Blue Ridge was rebranded. He has worked as the Co-Founder and Clinical Director of Evoke Therapy Programs since 2015.
+** Brad Reedy** is the Co-Founder, Co-Owner & Executive Clinical Director of Evoke Therapy Programs. Like Rick Heizer, Brad Reedy began his career in the TTI working as the Clinical Director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) from 1996 until 1999. He then became the Co-Owner and Director of both [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge) and [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) from 1999 until October of 2017, when SN Blue Ridge was rebranded. He has worked as the Co-Founder and Clinical Director of Evoke Therapy Programs since 2015.
 
-**J Huffine**was the Founder, Clinical Director & Therapist at Evoke Cascades. Prior to this, he was the Co-Founder/Owner and Clinical Director of [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) from 2005 until its rebranding in 2015. Prior to this, he worked at an unnamed wilderness program in Texas, which is believed to be [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [LoneStar Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/lonestarexp) for "several" years. He then worked as the Clinical Director of the**confirmedly abusive** [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk) , an Aspen Education Group program where a 16-year-old died in 2009.
+** J Huffine** was the Founder, Clinical Director & Therapist at Evoke Cascades. Prior to this, he was the Co-Founder/Owner and Clinical Director of [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) from 2005 until its rebranding in 2015. Prior to this, he worked at an unnamed wilderness program in Texas, which is believed to be [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [LoneStar Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/lonestarexp) for "several" years. He then worked as the Clinical Director of the** confirmedly abusive** [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk) , an Aspen Education Group program where a 16-year-old died in 2009.
 
-**Matt Hoag**is the current Co-Owner and Clinical Director of Evoke Therapy Programs, and also works as a Therapist at [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) . He began his career in the TTI by working at the reportedly abusive [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) . He then worked at the reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) . His LinkedIn profile is incomplete, but he also previously worked at the**confirmedly abusive** [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) .
+** Matt Hoag** is the current Co-Owner and Clinical Director of Evoke Therapy Programs, and also works as a Therapist at [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) . He began his career in the TTI by working at the reportedly abusive [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent) . He then worked at the reportedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) . His LinkedIn profile is incomplete, but he also previously worked at the** confirmedly abusive** [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) .
 
-**Steve Kirk**is the current Director of Admissions & Outreach of Evoke Therapy Programs. He has worked in this position since 2006 at both [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) and [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) . Prior to this, he worked in account relations and many customer service capacities in the software industry.
+** Steve Kirk** is the current Director of Admissions & Outreach of Evoke Therapy Programs. He has worked in this position since 2006 at both [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) and [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) . Prior to this, he worked in account relations and many customer service capacities in the software industry.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-Like other behavior modification programs, Evoke Cascades uses a level system. However, the specifics of the level system are presently unknown.*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+Like other behavior modification programs, Evoke Cascades uses a level system. However, the specifics of the level system are presently unknown.*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 The daily life/living conditions at Evoke Cascades, as described in a January 2020 [article](https://www.hcn.org/articles/wilderness-do-wilderness-therapy-programs-really-work) , include hiking, group and individual therapeutic exercises, kids cooking their own food, and sleeping outside under a tarp. When using the bathroom, they are required to continuously call out their name so staff know they haven’t run away. At night, they collect the children's shoes for the same reason. The only communication they are allowed is through monitored letters which are read by staff/therapists prior to being sent or received.
 
@@ -48,11 +48,11 @@ There are unconfirmed reports that a teen at the program committed suicide in 20
 
 ---
 
-## **Closure**
+## ** Closure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **9/10/2020: (SURVIVOR)**"This is not therapy. Your child will be traumatized and ABUSED, without access to basic hygiene, heat, or nutritious food. A young teen killed himself while at their "therapy" in 2018 because they mentally broke him, and these people swept it under the rug and to this day refuse to talk about it! How are they allowed to stay in business, manipulating and lying to families trying to get help? Truly disgusting and everyone involved should be ashamed." - [Sarah (Yelp)](https://www.yelp.com/biz/evoke-at-cascades-bend-2)
 
@@ -68,7 +68,7 @@ There are unconfirmed reports that a teen at the program committed suicide in 20
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Evoke Cascades Website Homepage](https://evoketherapy.com/)
 
@@ -78,7 +78,8 @@ There are unconfirmed reports that a teen at the program committed suicide in 20
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

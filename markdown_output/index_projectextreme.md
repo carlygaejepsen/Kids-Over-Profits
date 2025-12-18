@@ -2,7 +2,7 @@
 
 ---
 
-## **Open Project Extreme Programs**
+## ** Open Project Extreme Programs**
 
 ---
 
@@ -10,7 +10,7 @@
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -23,7 +23,7 @@
 | - | - | - | - |
 ---
 
-## **Closed Project Extreme Programs**
+## ** Closed Project Extreme Programs**
 
 ---
 
@@ -31,7 +31,7 @@
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -56,7 +56,8 @@
 | - | - | - | - |
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

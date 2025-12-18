@@ -12,33 +12,33 @@ Heartlight Ministries is located at [7345 E, US-80, Hallsville, TX 75650](https:
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Mark and Jan Gregston**are the Founders of Heartlight Ministries. They founded Heartlight in 1988 after spending years working with Young Life, as a youth pastor, and living at Kanakuk Kamp, in Branson, Missouri. They live on the property of Heartlight along with the Heartlight staff and residents. Mark now hosts the national radio program “Parenting Today’s Teens” and has written a number of books.
+** Mark and Jan Gregston** are the Founders of Heartlight Ministries. They founded Heartlight in 1988 after spending years working with Young Life, as a youth pastor, and living at Kanakuk Kamp, in Branson, Missouri. They live on the property of Heartlight along with the Heartlight staff and residents. Mark now hosts the national radio program “Parenting Today’s Teens” and has written a number of books.
 
-**Blake Nelson**is the current Executive Director of Hearlight Ministries. He has worked at Heartlight since 1994, when he was only 19 years old and pursuing his bachelors degree in Behavioral Sciences at East Texas Baptist University. In the 27 years he has worked at Heartlight, he has held "every possible position" at the program. He is also married to Melissa Gregston, the current Director of Admissions.
+** Blake Nelson** is the current Executive Director of Hearlight Ministries. He has worked at Heartlight since 1994, when he was only 19 years old and pursuing his bachelors degree in Behavioral Sciences at East Texas Baptist University. In the 27 years he has worked at Heartlight, he has held "every possible position" at the program. He is also married to Melissa Gregston, the current Director of Admissions.
 
-**Melissa Gregston Nelson**is the current Admissions Director of Heartlight Ministries. She is married to Blake Nelson, the current Executive Director. She has worked at Heartlight since 2000. Her prior employment is unknown.
+** Melissa Gregston Nelson** is the current Admissions Director of Heartlight Ministries. She is married to Blake Nelson, the current Executive Director. She has worked at Heartlight since 2000. Her prior employment is unknown.
 
-**Ben Weinert**is the current Program Director & Recruitment Director of Heartlight Ministries. He has worked at the program since 2003. Prior to this, he worked as a Program Coach at Eagle Lake Camps, a Christian summer camp, from 2001 until 2003.
+** Ben Weinert** is the current Program Director & Recruitment Director of Heartlight Ministries. He has worked at the program since 2003. Prior to this, he worked as a Program Coach at Eagle Lake Camps, a Christian summer camp, from 2001 until 2003.
 
-**Ryan Beike**is a Residential Director at Heartlight Ministries. He has worked at Heartlight since 2018 as a Residential Staff and later as a House Director. Prior to this, he worked at DICK'S Sporting Goods from 2015 until 2018. She has also worked as a volunteer Young Life Leader and Social Media Manager at Young Life. According to his [LinkedIn profile](https://www.linkedin.com/in/ryan-beike-37bb6590/) , he has no prior experience or qualifications to be working with mentally ill children.
+** Ryan Beike** is a Residential Director at Heartlight Ministries. He has worked at Heartlight since 2018 as a Residential Staff and later as a House Director. Prior to this, he worked at DICK'S Sporting Goods from 2015 until 2018. She has also worked as a volunteer Young Life Leader and Social Media Manager at Young Life. According to his [LinkedIn profile](https://www.linkedin.com/in/ryan-beike-37bb6590/) , he has no prior experience or qualifications to be working with mentally ill children.
 
-**Emily Gilreath**is a Residential Director at Heartlight Ministries. She has worked at Heartlight since 2018. Prior to this, she worked as aSales Associate at Urban Outfitters, and at Camp All-American. According to her [LinkedIn profile](https://www.linkedin.com/in/emilygilreath/) , she has no prior experience or qualifications to be working with mentally ill children.
+** Emily Gilreath** is a Residential Director at Heartlight Ministries. She has worked at Heartlight since 2018. Prior to this, she worked as aSales Associate at Urban Outfitters, and at Camp All-American. According to her [LinkedIn profile](https://www.linkedin.com/in/emilygilreath/) , she has no prior experience or qualifications to be working with mentally ill children.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Heartlight Ministries uses a level system consiting of 7 levels. The program has reported that communication/visitation with parents is a "privilege" the teens must earn through the level system. The parent information packet distributed by Heartlight states, in part, "When the level system allows parent visitation or a resident's visitation home; we limit visitation to once a month, per counselor approval. Heartlight reserves the right to limit visits, should they not be in the best interest of the child, the family, and our program." The levels used by Heartlight (as of 2007) as [reported](http://www.heal-online.org/htltlevels.pdf) to be:
 
-***Level I - Orientation:**This is the first level at Heartlight. During this phase, the residents are required to learn and understand the structure, purpose, and expectations of Heartlight. The teens are required to stay on Level I for a minimum of 4 weeks.
-***Level II:**On this phase, the teens must identify personal needs and issues, and begin to take responsibility for behaviors and attitudes.
-***Level III:**At this time, the residents must begin making recognizable progress in goals set for daily living as well as developing cognitive insight for items identified on Level II. They must also be willing to allow others to help identify and suggest attitude and behavior changes, and take otherʹs redirection and input seriously.
-***Level IV:**On this level, the teens must demonstrate genuine personal change in thought and actions, and become more focused on a healthy sense of self and personal goals and desires.
-***Level V:**On this phase, the teens must have attained genuine, consistent thoughts and behaviors appropriate for attained emotional and social level of functioning and maturity. Self‐awareness and responsibility are prompted by personal development of attitudes, behaviors, and desires for their life, beyond what is required for Heartlight.
-***Level VI:**On this phase, the residents have officially completed the level system and are ready to graduate Heartlight at next scheduled graduation and go home or to another placement.
-***Level VII:**This level is for those who accomplished Level VI and could go home, yet for "some reason, it is best to stay at Heartlight."
+***Level I - Orientation:** This is the first level at Heartlight. During this phase, the residents are required to learn and understand the structure, purpose, and expectations of Heartlight. The teens are required to stay on Level I for a minimum of 4 weeks.
+***Level II:** On this phase, the teens must identify personal needs and issues, and begin to take responsibility for behaviors and attitudes.
+***Level III:** At this time, the residents must begin making recognizable progress in goals set for daily living as well as developing cognitive insight for items identified on Level II. They must also be willing to allow others to help identify and suggest attitude and behavior changes, and take otherʹs redirection and input seriously.
+***Level IV:** On this level, the teens must demonstrate genuine personal change in thought and actions, and become more focused on a healthy sense of self and personal goals and desires.
+***Level V:** On this phase, the teens must have attained genuine, consistent thoughts and behaviors appropriate for attained emotional and social level of functioning and maturity. Self‐awareness and responsibility are prompted by personal development of attitudes, behaviors, and desires for their life, beyond what is required for Heartlight.
+***Level VI:** On this phase, the residents have officially completed the level system and are ready to graduate Heartlight at next scheduled graduation and go home or to another placement.
+***Level VII:** This level is for those who accomplished Level VI and could go home, yet for "some reason, it is best to stay at Heartlight."
 
 According to Heartlight's [website](https://www.heartlightministries.org/boarding-school/#counseling) , "Each Heartlight Boarding School resident meets weekly with a designated counselor who utilizes a biblical model of counseling. Each full-time, on-site counselor is responsible for the emotional care of approximately 10–15 students." Counselors lead two group sessions and an individual counseling session with the student each week. The program also facilitates a mandatory weekly Bible study which the teens must participate in.
 
@@ -46,7 +46,7 @@ Heartlight's website also states, "though we do not push or force church attenda
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Heartlight Ministries is an abusive program. Allegations of abuse and neglect that have been reported by survivors include unqualified staff, verbal/psychological/spiritual abuse, fraudulent/deceptive marketing practices, and use of conversion therapy.
 
@@ -58,7 +58,7 @@ In June of 2016, it was announced that Sarah had been released from the program.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **9/1/2020: (SURVIVOR)**"This place is religiously based, multi building compound. Dedicated to imprisonment and re-educated of under age children. It's a pyramid predatory scheme that preys on family's in crisis. It locks in the family to pay for 12months of un tested un proven radical religious beliefs forced on the prisoners. I personally was tortured all the time. Just worst thing you can think of happen here." - [Michael (Yelp)](https://www.yelp.com/biz/heartlight-ministries-hallsville)
 
@@ -68,7 +68,7 @@ In June of 2016, it was announced that Sarah had been released from the program.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Heartlight Ministries Website Homepage](https://www.heartlightministries.org/)
 
@@ -94,7 +94,8 @@ In June of 2016, it was announced that Sarah had been released from the program.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,27 +14,27 @@ Early on in the planning process, the founders of Waypoint Academy stated during
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jared Balmer**is one of the founders of Waypoint Academy. He began his career by co-founding the Rivendell Psychiatric Hospital. He later helped open several other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs, including [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He also currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Jared Balmer** is one of the founders of Waypoint Academy. He began his career by co-founding the Rivendell Psychiatric Hospital. He later helped open several other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs, including [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He also currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Mike Bulloch**is one of the founders of Waypoint Academy, and he currently works as the program's Executive Director. He previously helped Jared Balmer to create the [Aspen Institute for Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , where he also worked as the Clinical Director. He previously worked as the Clinical Director of the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) for six years prior to working at the Aspen Institute.
+** Mike Bulloch** is one of the founders of Waypoint Academy, and he currently works as the program's Executive Director. He previously helped Jared Balmer to create the [Aspen Institute for Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , where he also worked as the Clinical Director. He previously worked as the Clinical Director of the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) for six years prior to working at the Aspen Institute.
 
-**R. Jeffrey Simpson**is one of the founders of Waypoint Academy. He previously helped co-found [Uinta Academy](https://www.reddit.com/r/troubledteens/wiki/index/uintaacademy) . He also served on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) in 2013.
+** R. Jeffrey Simpson** is one of the founders of Waypoint Academy. He previously helped co-found [Uinta Academy](https://www.reddit.com/r/troubledteens/wiki/index/uintaacademy) . He also served on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) in 2013.
 
-**Bryan Wilde**is the current Associate Executive Director and Residential Director of Waypoint Academy. His career in the Troubled Teen Industry began when he worked as a Therapist at the notorious and confirmedly abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) ) from 1998 until 2000. He then went on to work in several different fields, including human resources, outpatient counseling, call center/technology services, a dairy company, and private practice counseling. He began working at Waypoint Academy in 2016.
+** Bryan Wilde** is the current Associate Executive Director and Residential Director of Waypoint Academy. His career in the Troubled Teen Industry began when he worked as a Therapist at the notorious and confirmedly abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) ) from 1998 until 2000. He then went on to work in several different fields, including human resources, outpatient counseling, call center/technology services, a dairy company, and private practice counseling. He began working at Waypoint Academy in 2016.
 
-**Cheyenne Liang**is the current Clinical Director of Waypoint Academy. Her prior places of employment are presently unknown, although she has reportedly worked as a Therapist in multiple residential settings. One of these residential programs was an adult rehabilitation center called Brighton Recovery Center.
+** Cheyenne Liang** is the current Clinical Director of Waypoint Academy. Her prior places of employment are presently unknown, although she has reportedly worked as a Therapist in multiple residential settings. One of these residential programs was an adult rehabilitation center called Brighton Recovery Center.
 
-**Bryan Shores**currently works as a Therapist at Waypoint Academy. He began his career in the TTI working as a Therapist at the reportedly abusive [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) from 2019 until 2020. He then worked at the reportedly abusive [Uinta Academy](https://www.reddit.com/r/troubledteens/wiki/index/uintaacademy) as a Therapist from 2020 until joining Waypoint Academy in 2022.
+** Bryan Shores** currently works as a Therapist at Waypoint Academy. He began his career in the TTI working as a Therapist at the reportedly abusive [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) from 2019 until 2020. He then worked at the reportedly abusive [Uinta Academy](https://www.reddit.com/r/troubledteens/wiki/index/uintaacademy) as a Therapist from 2020 until joining Waypoint Academy in 2022.
 
-**Paige Brooks**currently works as a Therapist at Waypoint Academy. Her career in the TTI began when she worked as a Counselor at the reportedly abusive [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst/) from 2016 until 2020. She then began working as an RN and Medical Coordinator at Catalyst until 2021, when she joined Waypoint.
+** Paige Brooks** currently works as a Therapist at Waypoint Academy. Her career in the TTI began when she worked as a Counselor at the reportedly abusive [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst/) from 2016 until 2020. She then began working as an RN and Medical Coordinator at Catalyst until 2021, when she joined Waypoint.
 
-**Kevin Jeffs**worked as a Counselor at Waypoint Academy. In January of 2019, he was [arrested](https://ksltv.com/406994/police-youth-counselor-tried-meet-teen-sex/?) after attempting to meet who he believed to be an 13-year-old girl for sex. Instead, Jeffs had been texting with a police officer, who promptly arrested Jeffs when the two had scheduled to meet. Jeffs was taken into custody and booked into the Davis County Jail on suspicion of enticing a teen by internet or text. It appears that Jeffs did not have any real victims (luckily).
+** Kevin Jeffs** worked as a Counselor at Waypoint Academy. In January of 2019, he was [arrested](https://ksltv.com/406994/police-youth-counselor-tried-meet-teen-sex/?) after attempting to meet who he believed to be an 13-year-old girl for sex. Instead, Jeffs had been texting with a police officer, who promptly arrested Jeffs when the two had scheduled to meet. Jeffs was taken into custody and booked into the Davis County Jail on suspicion of enticing a teen by internet or text. It appears that Jeffs did not have any real victims (luckily).
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Waypoint Academy uses a level-system. However, the levels are unknown.
 
@@ -42,7 +42,7 @@ Little is known about the program at Waypoint Academy. Survivors report that the
 
 ---
 
-## **Abuse Allegations & Lawsuits**
+## ** Abuse Allegations & Lawsuits**
 
 In late 2013, it was reported that a resident at Waypoint Academy stole one of Waypoint's minivans during an attempted escape from the facility. He was located by police officers shortly after abandoning the minivan and hiding in a nearby field. He was then kicked out of Waypoint Academy and placed in Archway Youth Service Center while his parents looked for another residential program for him.
 
@@ -52,11 +52,11 @@ In January of 2019, a 26-year-old youth counselor at Waypoint Academy, [Kevin Sc
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**May 2022: (SURVIVOR)**"I was at waypoint for 11 months in 2017-18 There’s so many parents here leaving reviews talking about their sons experience when a student’s experience was always very different from the parents that came to visit. When A parent was touring the school the staff were much harsher and made sure we made the place look perfect in order to sell them. I recall the head of admissions asking the staff to move a kid that was having a severe panic attack so that the parent visiting wouldn’t see it. My assigned “therapist” was trying to treat me with magic crystals, giving me and amethyst and some obsidian. That’s not treatment. Mike would have these hour long “meetings” where he’d just grill some kid in front of everyone about all the stuff they’re doing wrong. Staff often started the job being very nice and caring for the kids but would become power hungry and abuse their ability to take any and all privileges away. After I broke my leg on a home visit and when back after surgery they made no effort to get me the physical therapy or doctors visits I needed my parent made the decision to pull me after 11 months and Mike tried to guilt them into making me stay saying they were gonna ruin me. If I gained anything from waypoint it was the ability to push myself to do more than I would let myself do before and that can be attributed solely to the Steven, the dorm head and gym coach at the time. Unfortunately I don’t see him on the staff page of the website anymore." - [Sean (Google Reviews)](https://goo.gl/maps/Q34SXHddFwUupcww6)
+** May 2022: (SURVIVOR)**"I was at waypoint for 11 months in 2017-18 There’s so many parents here leaving reviews talking about their sons experience when a student’s experience was always very different from the parents that came to visit. When A parent was touring the school the staff were much harsher and made sure we made the place look perfect in order to sell them. I recall the head of admissions asking the staff to move a kid that was having a severe panic attack so that the parent visiting wouldn’t see it. My assigned “therapist” was trying to treat me with magic crystals, giving me and amethyst and some obsidian. That’s not treatment. Mike would have these hour long “meetings” where he’d just grill some kid in front of everyone about all the stuff they’re doing wrong. Staff often started the job being very nice and caring for the kids but would become power hungry and abuse their ability to take any and all privileges away. After I broke my leg on a home visit and when back after surgery they made no effort to get me the physical therapy or doctors visits I needed my parent made the decision to pull me after 11 months and Mike tried to guilt them into making me stay saying they were gonna ruin me. If I gained anything from waypoint it was the ability to push myself to do more than I would let myself do before and that can be attributed solely to the Steven, the dorm head and gym coach at the time. Unfortunately I don’t see him on the staff page of the website anymore." - [Sean (Google Reviews)](https://goo.gl/maps/Q34SXHddFwUupcww6)
 
-**October 2020: (SURVIVOR)**"I was a student at waypoint for under a year and I would like to share my experiences here to discourage sending your son here. I came to waypoint because of issues with my family and having an unhealthy life style. From the first time I got to waypoint, there was a sort of cult like atmosphere. The leaders of this culture are the therapists, mainly Mike Bulloch. For example, every Wednesday there are re-enactment groups where students relive traumatic experiences in their life. My therapist pressured me into doing one when I didn’t feel comfortable with it. On top of that, the scene was far from the truth and fit into my therapists reality rather than mine. On a real note though, the therapists will get certain kids to back them up because they can persuade them. I went through this whole place and was ridiculed by staff and students alike and have come out with very bad self esteem issues. Before waypoint I had friends I was very close to and after, I could barely talk to them due to how worried I was about my wrongdoings. Even now, I feel like I make so many mistakes and don’t think I can overcome it. I became institutionalized and would hope your son doesn’t become the same way. Worst experience of my life and please please please don’t send your son here." - [Anonymous (Google Reviews)](https://www.google.com/maps/contrib/106954957764141544351/reviews/@41.2605899,-111.7309302,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
+** October 2020: (SURVIVOR)**"I was a student at waypoint for under a year and I would like to share my experiences here to discourage sending your son here. I came to waypoint because of issues with my family and having an unhealthy life style. From the first time I got to waypoint, there was a sort of cult like atmosphere. The leaders of this culture are the therapists, mainly Mike Bulloch. For example, every Wednesday there are re-enactment groups where students relive traumatic experiences in their life. My therapist pressured me into doing one when I didn’t feel comfortable with it. On top of that, the scene was far from the truth and fit into my therapists reality rather than mine. On a real note though, the therapists will get certain kids to back them up because they can persuade them. I went through this whole place and was ridiculed by staff and students alike and have come out with very bad self esteem issues. Before waypoint I had friends I was very close to and after, I could barely talk to them due to how worried I was about my wrongdoings. Even now, I feel like I make so many mistakes and don’t think I can overcome it. I became institutionalized and would hope your son doesn’t become the same way. Worst experience of my life and please please please don’t send your son here." - [Anonymous (Google Reviews)](https://www.google.com/maps/contrib/106954957764141544351/reviews/@41.2605899,-111.7309302,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
 **8/12/2020: (SURVIVOR)**"From a students perspective. Not a healthy place to be as an young boy suffering with anxiety and depression. The owner Mike Bullock uses shame as a treatment technique- for example, he will hold large groups surrounding one boy while belittling and shaming him in front of others. Many of my friends there have developed deeper suicidal thoughts after experiencing this among other strange treatment practices. Employees are a high turnover, most quit within 3 months of hire leaving the boys without a consistent basis of support." - [Amadeus (Yelp)](https://www.yelp.com/not_recommended_reviews/waypoint-academy-huntsville)
 
@@ -64,7 +64,7 @@ In January of 2019, a 26-year-old youth counselor at Waypoint Academy, [Kevin Sc
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Waypoint Academy Website Homepage](https://www.waypointacademy.com/home/new/)
 
@@ -82,7 +82,8 @@ In January of 2019, a 26-year-old youth counselor at Waypoint Academy, [Kevin Sc
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

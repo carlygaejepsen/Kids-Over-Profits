@@ -14,31 +14,31 @@ In 2009, Bald Eagles Boys Camp purchased a plot of land in Oldtown, Maryland wit
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Laverne Beachy**is the Director of Bald Eagles Boys Camp.
+** Laverne Beachy** is the Director of Bald Eagles Boys Camp.
 
-**Vince Kauffman**is the Program Director of Bald Eagles Boys Camp.
+** Vince Kauffman** is the Program Director of Bald Eagles Boys Camp.
 
-**Matt King**works as a Supervisor at Bald Eagles Boys Camp.
+** Matt King** works as a Supervisor at Bald Eagles Boys Camp.
 
-**Tony & Becca Stoltzfus**work as Supervisors at Bald Eagles Boys Camp.
+** Tony & Becca Stoltzfus** work as Supervisors at Bald Eagles Boys Camp.
 
-**Brandon Weaver**works as a Supervisor at Bald Eagles Boys Camp.
+** Brandon Weaver** works as a Supervisor at Bald Eagles Boys Camp.
 
-**Ben Zimmerman**works as a Supervisor at Bald Eagles Boys Camp.
-
----
-
-## **Program Structure**
+** Ben Zimmerman** works as a Supervisor at Bald Eagles Boys Camp.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
+
+---
+
+## ** Survivor/Parent Testimonials**
 
 **2019: (PARENT)**"The counsleors play favorites, they will use physical force on your kid. Inhumane how they treat some kids! Be careful! I called cys and made a report! I would question their credentials also, i believe i was told that some of the counsleors didnt have college education so how do they even know how to handle kids properly? My kids are traumatized by these ppl!" - [Tina (Google Reviews)](https://www.google.com/maps/contrib/111174111817726366316/place/ChIJ2SvWOKf0zokRxbK-9GJAOdc/@41.1505647,-77.6556322,11.64z/data=!4m4!1m3!8m2!1e1!2s111174111817726366316?hl=en-US)
 
@@ -46,13 +46,14 @@ In 2009, Bald Eagles Boys Camp purchased a plot of land in Oldtown, Maryland wit
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Bald Eagles Boys Camp Website Homepage](https://www.baldeagleboyscamp.org/)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

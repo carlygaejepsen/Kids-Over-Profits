@@ -10,25 +10,25 @@ Shodair Children's Hospital is a psychiatric hospital that operates two resident
 
 Shodair Children's Hospital is located at [2755 Colonial Dr, Helena, MT 59601](https://www.google.com/maps/place/Shodair+Childrens+Hospital/@46.5821067,-111.990054,367m/data=!3m1!1e3!4m5!3m4!1s0x0:0x3a773703a0a5d60b!8m2!3d46.5824464!4d-111.989643) . The campus houses separate units for teens of similar ages/challenges. These units are:
 
-***Yellowstone Unit:**This unit can house up to 20 teens aged 12-14. The average length of stay on this unit it between 2 and 3 months.
-***Glacier Unit:**This unit houses up to 24 teens aged 14-18. The average length of stay on this unit it between 2 and 4 months.
-***Addictions program:**This program is designed for teens (15-17) who have a diagnosis of a moderate to severe substance use disorder as well as a co-occuring mental disorder.
+***Yellowstone Unit:** This unit can house up to 20 teens aged 12-14. The average length of stay on this unit it between 2 and 3 months.
+***Glacier Unit:** This unit houses up to 24 teens aged 14-18. The average length of stay on this unit it between 2 and 4 months.
+***Addictions program:** This program is designed for teens (15-17) who have a diagnosis of a moderate to severe substance use disorder as well as a co-occuring mental disorder.
 
 Since 1987, Shodair has been a part of the [Children’s Miracle Network Hospitals](https://childrensmiraclenetworkhospitals.org/) .
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Craig Aasved**is the current CEO of Shodair. He has previously worked as the COO/CEO of many different hospitals throughout Montana, Colorado, and Wyoming. He has worked at Shodair since 2015.
+** Craig Aasved** is the current CEO of Shodair. He has previously worked as the COO/CEO of many different hospitals throughout Montana, Colorado, and Wyoming. He has worked at Shodair since 2015.
 
-**John Brewer**is the current Chief Clinical Officer of Shodair. He has worked at Shodair since 2013. His prior employment is unknown.
+** John Brewer** is the current Chief Clinical Officer of Shodair. He has worked at Shodair since 2013. His prior employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Shodair Children's Hospital. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Shodair Children's Hospital. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,11 +40,11 @@ In May of 2021, another 15-year-old girl (whose name was not released to the pub
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**July 2021: (SURVIVOR)**"I definitely would never come back to this place. Two years ago I was on a one on one because I was suicidal and I ran away with one of my friends by a fire alarm. She was hit and killed by a vehicle and I was locked in a room for 48hours alone after. Then sent to another hospital. They handled it all super bad(with the exception of two staff members). We were not the first to run away so they should’ve fixed the issue; or we would’ve been safe." - [Mattie (Google Reviews)](https://www.google.com/maps/contrib/114867853089834054427/place/ChIJm0gE2ZlVQ1MRC9aloAM3dzo/@46.5824464,-111.989643,17z/data=!4m6!1m5!8m4!1e1!2s114867853089834054427!3m1!1e1?hl=en-US)
+** July 2021: (SURVIVOR)**"I definitely would never come back to this place. Two years ago I was on a one on one because I was suicidal and I ran away with one of my friends by a fire alarm. She was hit and killed by a vehicle and I was locked in a room for 48hours alone after. Then sent to another hospital. They handled it all super bad(with the exception of two staff members). We were not the first to run away so they should’ve fixed the issue; or we would’ve been safe." - [Mattie (Google Reviews)](https://www.google.com/maps/contrib/114867853089834054427/place/ChIJm0gE2ZlVQ1MRC9aloAM3dzo/@46.5824464,-111.989643,17z/data=!4m6!1m5!8m4!1e1!2s114867853089834054427!3m1!1e1?hl=en-US)
 
-**October 2020: (PARENT)**"This hospital should be shut down. They falsified records of my child; and the worst part of it, is that my child got his foot slammed in the door and his toe got broken. They acted like this was nothing. The social worker was awful and was threatening to call CPS on me because I could not get off of work on her time to talk to her. I had to get lawyer involved. The lawyer and multiple doctors told me this is the worst place to send your child for psychiatric treatment. For the safety of your child, I would recommend to send your child to Missoula for treatment. The staff is kind and is a much safer environment for your child, especially if your child has autism." - [Chris (Google Reviews)](https://www.google.com/maps/contrib/117912257685808116225/place/ChIJm0gE2ZlVQ1MRC9aloAM3dzo/@45.8929475,-112.317914,9z/data=!4m6!1m5!8m4!1e1!2s117912257685808116225!3m1!1e1?hl=en-US)
+** October 2020: (PARENT)**"This hospital should be shut down. They falsified records of my child; and the worst part of it, is that my child got his foot slammed in the door and his toe got broken. They acted like this was nothing. The social worker was awful and was threatening to call CPS on me because I could not get off of work on her time to talk to her. I had to get lawyer involved. The lawyer and multiple doctors told me this is the worst place to send your child for psychiatric treatment. For the safety of your child, I would recommend to send your child to Missoula for treatment. The staff is kind and is a much safer environment for your child, especially if your child has autism." - [Chris (Google Reviews)](https://www.google.com/maps/contrib/117912257685808116225/place/ChIJm0gE2ZlVQ1MRC9aloAM3dzo/@45.8929475,-112.317914,9z/data=!4m6!1m5!8m4!1e1!2s117912257685808116225!3m1!1e1?hl=en-US)
 
 **2020: (OTHER)**"I haven't been here myself, but my girlfriend has and its horrible. It never helped her, she's been there multiple times and none of them did anything, so she had to go somewhere else. They're overprotective with the dumbest things. You have to ask for literally everything, even to go into your room. The pencils there are these plastic flexible things instead of wood. I understand the precaution, but they shouldn't treat everybody the same." - [Zephyr (Google Reviews)](https://www.google.com/maps/contrib/107469107722885615294/reviews?hl=en-US)
 
@@ -58,7 +58,7 @@ In May of 2021, another 15-year-old girl (whose name was not released to the pub
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Shodair Children's Hospital Website Homepage](https://shodair.org/)
 
@@ -74,7 +74,8 @@ In May of 2021, another 15-year-old girl (whose name was not released to the pub
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

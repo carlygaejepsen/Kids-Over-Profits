@@ -1,4 +1,0 @@
-redflags Author   Reason   Date  |
-|  |  |  |
-|  |  |  |
-|  |  |  |

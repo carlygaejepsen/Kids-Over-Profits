@@ -16,29 +16,29 @@ Liahona Academy is not outwardly affiliated with [WWASP](https://www.reddit.com/
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Clayton AhQuin Sr.**was the Founder od Liahona Academy. He is the father of Adam AhQuin, who worked at [Second Chances in Southern Utah](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) , [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) , and [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) (All WWASP facilities). The AhQuin family also started [Maximum Life Skills Academy](https://www.reddit.com/r/troubledteens/wiki/index/maxlife) in Cedar City, UT. Clay AhQuin Sr. has also apparently worked at other WWASP facilities before founding Liahona Academy. He passed away on September 10, 2013.
+** Clayton AhQuin Sr.** was the Founder od Liahona Academy. He is the father of Adam AhQuin, who worked at [Second Chances in Southern Utah](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) , [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) , and [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) (All WWASP facilities). The AhQuin family also started [Maximum Life Skills Academy](https://www.reddit.com/r/troubledteens/wiki/index/maxlife) in Cedar City, UT. Clay AhQuin Sr. has also apparently worked at other WWASP facilities before founding Liahona Academy. He passed away on September 10, 2013.
 
-**Clayton AhQuin Jr.**is the son of Clayton Ahquin Sr., and is the current Executive Director of Liahona Academy. Clay left the human-rights organization [HEAL](http://www.heal-online.org/) a [voicemail](http://www.heal-online.org/clay.mp3) but did not state the purpose of his call. He has also previously worked at the reportedly abusive [Second Chances in Southern Utah](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) .
+** Clayton AhQuin Jr.** is the son of Clayton Ahquin Sr., and is the current Executive Director of Liahona Academy. Clay left the human-rights organization [HEAL](http://www.heal-online.org/) a [voicemail](http://www.heal-online.org/clay.mp3) but did not state the purpose of his call. He has also previously worked at the reportedly abusive [Second Chances in Southern Utah](https://www.reddit.com/r/troubledteens/wiki/index/secondchances) .
 
-**Joe AhQuin**is mentioned as one of the "creators" of Liahona Academy. He also founded [Key Point](https://www.reddit.com/r/troubledteens/wiki/index/keypoint) in 2006 and [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) in 2013.
+** Joe AhQuin** is mentioned as one of the "creators" of Liahona Academy. He also founded [Key Point](https://www.reddit.com/r/troubledteens/wiki/index/keypoint) in 2006 and [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) in 2013.
 
-**Parker Haslam**is the current Program Director of Liahona Academy. His prior employment is presently unknown, although he reports that he has worked in the TTI since 2003.
+** Parker Haslam** is the current Program Director of Liahona Academy. His prior employment is presently unknown, although he reports that he has worked in the TTI since 2003.
 
-**Beverly Carayas**currently works as a Case Manager at Liahona Academy. Prior to this, she worked at the**confirmedly abusive** [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , which were owned by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
+** Beverly Carayas** currently works as a Case Manager at Liahona Academy. Prior to this, she worked at the** confirmedly abusive** [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , which were owned by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
 
-**Gayle Palmer DeGraff**worked in the Admissions office at Liahona Academy. Prior to this, she was the founder of the**confirmedly abusive** [Summit Quest](https://www.reddit.com/r/troubledteens/wiki/index/summitquest) until it was closed in 1991 following the death of a 15-year-old resident, Michelle Sutton, from dehydration. She also is reported to have worked as the Admissions Director at the [Challenger Foundation](https://www.reddit.com/r/troubledteens/wiki/index/challengerfnd) before it, too, closed following the death of a 16-year-old resident, Kristen Chase, from heatstroke in 1990. She has also worked in the Marketing department of [Lifelines Family Services](https://www.reddit.com/r/troubledteens/wiki/index/lifelines) , which was a marketing arm of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) ([source](https://www.linkedin.com/in/gayle-degraff-72977346/) ).
+** Gayle Palmer DeGraff** worked in the Admissions office at Liahona Academy. Prior to this, she was the founder of the** confirmedly abusive** [Summit Quest](https://www.reddit.com/r/troubledteens/wiki/index/summitquest) until it was closed in 1991 following the death of a 15-year-old resident, Michelle Sutton, from dehydration. She also is reported to have worked as the Admissions Director at the [Challenger Foundation](https://www.reddit.com/r/troubledteens/wiki/index/challengerfnd) before it, too, closed following the death of a 16-year-old resident, Kristen Chase, from heatstroke in 1990. She has also worked in the Marketing department of [Lifelines Family Services](https://www.reddit.com/r/troubledteens/wiki/index/lifelines) , which was a marketing arm of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) ([source](https://www.linkedin.com/in/gayle-degraff-72977346/) ).
 
-**Brian Parker**worked as the Director of Clinical Services at Liahona Academy. He previously worked as a therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP program) in La Verkin, UT. Many survivors of Cross Creek have recounted Parker's psychologically damaging methods of "therapy."
+** Brian Parker** worked as the Director of Clinical Services at Liahona Academy. He previously worked as a therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP program) in La Verkin, UT. Many survivors of Cross Creek have recounted Parker's psychologically damaging methods of "therapy."
 
-**Thane Palmer**was a Therapist at Liahona Academy. He previously worked as a Therapist for [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP) in La Verkin, UT. He is the current Program Director of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) .
+** Thane Palmer** was a Therapist at Liahona Academy. He previously worked as a Therapist for [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP) in La Verkin, UT. He is the current Program Director of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) .
 
-**Carolyn Callahan**was a Case Manager at Liahona Academy. She previously worked as a Family Representative at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP program) in La Verkin, UT.
+** Carolyn Callahan** was a Case Manager at Liahona Academy. She previously worked as a Family Representative at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) (WWASP program) in La Verkin, UT.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Liahona Academy utilizes a level system consisting of five levels. These levels are reported to be:
 
@@ -60,11 +60,11 @@ According to reports, the teens must wake up each morning at 6 a.m. and partake 
 
 ---
 
-## **Abuse, Deaths, and Lawsuits**
+## ** Abuse, Deaths, and Lawsuits**
 
 Many survivors have reported that Liahona Academy is an abusive program. Allegations of abuse and neglect that have been reported by survivors include emotional/psychological abuse, physical abuse, brainwashing, punitive punishments, forced manual labor/excessive exercise, medical neglect, attack therapy, and humiliation tactics. The program also uses the highly controversial [Positive Control Systems](https://positivecontrolsystems.com/) (now called Positive Communication Systems) to train staff members in restraint technique. Part of the [controversy](https://positivecontrolsystems.com/) surrounding PCS includes their support of the "gooseneck" restraints, "bent wrist,” restraints, and “ulnar wrists”. Liahona's use of PCS techinques is shown in an [incident report](https://drive.google.com/file/d/1L_l7FcCvlgBtsf5XpnFh5qaAmwerufby/view) from 2019 which states, "two other staff involved safely instituted a positive control systems prone restraint using proper positive control system techniques."
 
-On January 19, 2010,**15-year-old Taylor Mangham died**while attending Liahona Academy due to a brain aneurysm. He had arrived at Liahona only a few months earlier in November, 2009, and according to survivors that knew him, from the moment he arrived, his entire life and identity had be stripped from him: "They shaved his head; he had no access to the outside world, no phone, no internet, no access 911 or a crisis hotline, no one, not even his fellow students could talk to him. Taylor was forced into complete silence and isolation for the rest of his stay." A witness who was there on the night of his death recounts "The night he died, I was the first to witness it. I remember him screaming in pain and scared because he didn't know what was happening. I ran to the staff for help, and the shift supervisor refused to call 911 and had a few of us carry him to a facility van, so they could drive him miles away to have him transported to a local hospital. They didn't call 911 because they didn't want an open investigation; the staff knew better than to have the police come in and have us interviewed and have Taylor's death open for investigation." - [Anonymous (May 30, 2020).](http://today-a-child-died.blogspot.com/2012/01/unknown-2010.html)
+On January 19, 2010,**15-year-old Taylor Mangham died** while attending Liahona Academy due to a brain aneurysm. He had arrived at Liahona only a few months earlier in November, 2009, and according to survivors that knew him, from the moment he arrived, his entire life and identity had be stripped from him: "They shaved his head; he had no access to the outside world, no phone, no internet, no access 911 or a crisis hotline, no one, not even his fellow students could talk to him. Taylor was forced into complete silence and isolation for the rest of his stay." A witness who was there on the night of his death recounts "The night he died, I was the first to witness it. I remember him screaming in pain and scared because he didn't know what was happening. I ran to the staff for help, and the shift supervisor refused to call 911 and had a few of us carry him to a facility van, so they could drive him miles away to have him transported to a local hospital. They didn't call 911 because they didn't want an open investigation; the staff knew better than to have the police come in and have us interviewed and have Taylor's death open for investigation." - [Anonymous (May 30, 2020).](http://today-a-child-died.blogspot.com/2012/01/unknown-2010.html)
 
 However, it is important to note that the exact events surrounding his death remain a great cause for debate, with conflicting statements from witnesses about the medical attention Taylor recieved that night. Another witness recalls, "I remember watching Taylor die that night, a fellow student approached me telling me Taylor was not doing well, as I went his room I saw Taylor screaming while banging his head against a table in pain as he was slowly losing conciseness. Sadly, Taylor was dying of a brain aneurysm. I immediately got the staff members and they REFUSED to call 911 to get medical assistance over there. Instead the supervisor and 2 students carried Taylor to a van and drove him to an instant care." - [Taylor (12/20/2019)](https://whenfarfromhome.wordpress.com/2019/02/20/several-parents-reviews-regarding-liahona-academy/)
 
@@ -74,7 +74,7 @@ In 2019, a 23-year-old staff member at Liahona Academy, Antonio Montav Ross-Jone
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **10/19/2021: (SURVIVOR)**"I thought I was going to a regular school, just in another state where I could continue my education, but that did not turn out to be the case. Seeing soon that the program is very isolative and little communication happens. When I first got there I was sitting at the staff table where staff kept asking me their name and why I was there. I was forbidden to talk to any of the other students. We were all on CBO or the long form Communication Block Out. I had to sleep out in the Commons with a thin brown blanket they gave me and a pillow. Some students I later learned that if they caused problems on the way there or if they were transported there overnight would not get a pillow or blanket and would have to sleep out there right in front of the staff. The staff there are really great at making sure that the rules are enforced. There are some staff that are nicer than others, but don't let your guard down. After that first night you are woken up at 6 am local time by grave shift. You have an hour of just sitting there as you wait for the morning workout. An hour of indoor calisthenics if you are new, and running outside on an 1/8 mile track of you have made some progress in program, and a circuit workout if you are getting close to graduating the program. There is then therapy groups on tuesday, Wednesday and thursday. Your first therapy assignment is to write out by hand 21 pages of what you think you did to end up in the program. It is then sent home to your parents once your therapist is convinced that you are not lying. Some kids have had to redo it 3 or 4 times. Then they are on suspension for lying in the previous ones. Typically for lying you get to sit and stare at a wall for 3-5 dyas, sometimes longer depending on what you do on suspension. After therapy groups you go to big group Monday through Friday from 10 to 12pm. There the program director will evaluate you while you are on suspension you will need to stand up before 50 other students while he tells everybody what you did wrong. Sometimes he asks the students if you are ready to get back into the regular program and then it is a vote, any more than like 5 or so objections is more than likely to keep you on suspension. Suspension you get oatmeal and 2 apples for breakfast 3 days in a row, then the food everybody else gets just without the treat for 3 days, this repeats same with lunch, only you get 4 prices of bread, 4 slices of American cheese, and two more apples. Dinner is the same as everybody just without the snack. When you are with the two kids the director assigns as your "Shadows" then you are allowed to talk to only about the rules of program. A nothing else is CBO. Seeing this the first time wanted to get me to get out he fastest way possible, but you simply don't just run away. The staff there are just waiting to catch you if you try to run away. While on suspension if you stand up to use the bathroom without raising your hand waiting, to be called on, and asking staff beforehand then you will most likely be restrained. If People want to hear more about this place, then let me know. This is just a part of the daily life that happens there and covers the intake and suspension. Thank you for hearing me out." - [u/Grape3645 (Reddit)](https://www.reddit.com/r/troubledteens/comments/qbix6z/more_about_liahona_academy_hurricane_utah/)
 
@@ -102,7 +102,7 @@ I could go on but I think you get the picture. This place needs to be shut down.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Liahona Academy Website Homepage](https://www.liahonaacademy.com/)
 
@@ -136,7 +136,8 @@ I could go on but I think you get the picture. This place needs to be shut down.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

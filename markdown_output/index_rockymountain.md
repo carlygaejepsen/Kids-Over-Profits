@@ -16,23 +16,23 @@ Rocky Mountain Academy is the subject of the memoirs ["Dead, Insane, or in Jail"
 
 ## **Founders and Notable Staff**
 
-**Mel Wasserman**was a member of the notorious cult Synanon and the Founder of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) . After opening [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1967, he bought*Academy of the Rockies*from Kevin Cullinane and Dan Larson in 1982 and reopened it as Rocky Mountain Academy.
+** Mel Wasserman** was a member of the notorious cult Synanon and the Founder of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) . After opening [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) in 1967, he bought*Academy of the Rockies*from Kevin Cullinane and Dan Larson in 1982 and reopened it as Rocky Mountain Academy.
 
-**Rob Spear**was the President of RMA for some time (until at least 1993). He later went on to found [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) in 1993 along with Rob Sarchio, Mike Naylor, and Lori Rist. It is believed he began working for CEDU at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He passed away of ALS in 2009.
+**Rob Spear** was the President of RMA for some time (until at least 1993). He later went on to found [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) in 1993 along with Rob Sarchio, Mike Naylor, and Lori Rist. It is believed he began working for CEDU at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He passed away of ALS in 2009.
 
-**Paul Johnson**is reported to have worked at Rocky Mountain Academy. He previously worked as the Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) .
+** Paul Johnson** is reported to have worked at Rocky Mountain Academy. He previously worked as the Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) .
 
-**John Baisden Sr.**is reported to have worked at RMA in an unknown position. He then went on to work as CEDU's Director of Admissions from November 1994 until July 1995. He then opened a small group-home for boys with ADD called Glacier Mountain, before ultimately opening [Turning Winds Academic Institute](https://www.reddit.com/r/troubledteens/wiki/index/turningwinds) in 2002. He currently continues to work at Turning Winds.
+** John Baisden Sr.** is reported to have worked at RMA in an unknown position. He then went on to work as CEDU's Director of Admissions from November 1994 until July 1995. He then opened a small group-home for boys with ADD called Glacier Mountain, before ultimately opening [Turning Winds Academic Institute](https://www.reddit.com/r/troubledteens/wiki/index/turningwinds) in 2002. He currently continues to work at Turning Winds.
 
-**Bruce Wilson**worked as a Team Lead at Rocky Mountain Academy. He was the Team Lead of Jon Avila's team in 1994 during the time that Jon committed suicide.
+** Bruce Wilson** worked as a Team Lead at Rocky Mountain Academy. He was the Team Lead of Jon Avila's team in 1994 during the time that Jon committed suicide.
 
-**Rick Snyder**is reported to have worked at RMA during the time of Avila's suicide. He apparently was leading the Rap session that day and noticed that Avila seemed despondant, but did not follow up with him. He has been reported by several survivors to have been particularly cruel and abusive.
+** Rick Snyder** is reported to have worked at RMA during the time of Avila's suicide. He apparently was leading the Rap session that day and noticed that Avila seemed despondant, but did not follow up with him. He has been reported by several survivors to have been particularly cruel and abusive.
 
-**Reid Treadaway**worked at RMA as a front-line staff and later as the Admissions Director from 1996 until 2000 when he left to become the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) until 2003. In 2003 he returned to Idaho to work as the Director of Admissions for the [Ascent Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) program. Within a year, he became the Regional Director of Admissions for all four [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs in North Idaho. In 2010, he became an Admissions Specialist with [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) , working with the Internet team for placements for [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) and [Fulshear Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/fulshear) . In 2012, he became the Director of Admissions for the reportedly abusive [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) , another CEDU program. In 2013, he helped found [BlueFire Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/bluefireidaho) , where he continues to work as the Admissions Director.
+** Reid Treadaway** worked at RMA as a front-line staff and later as the Admissions Director from 1996 until 2000 when he left to become the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) until 2003. In 2003 he returned to Idaho to work as the Director of Admissions for the [Ascent Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) program. Within a year, he became the Regional Director of Admissions for all four [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs in North Idaho. In 2010, he became an Admissions Specialist with [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) , working with the Internet team for placements for [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) and [Fulshear Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/fulshear) . In 2012, he became the Director of Admissions for the reportedly abusive [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) , another CEDU program. In 2013, he helped found [BlueFire Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/bluefireidaho) , where he continues to work as the Admissions Director.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program at RMA followed a similar design as [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . Students attended classes and progressed through a series of groups known as ["Raps"](https://www.reddit.com/r/troubledteens/wiki/index/ceduraps) 2-3 times per week. They also were forced to attend ["Propheets"](https://www.reddit.com/r/troubledteens/wiki/index/cedupropheets) every 3-6 months & outdoor experiences in the wilderness, designed to tackle various issues.
 
@@ -73,7 +73,7 @@ Among the rules included limited/restricted visitation and contact by the studen
 
 ---
 
-## **Abuse, Deaths, and Investigations**
+## ** Abuse, Deaths, and Investigations**
 
 In July 1994, a 16-year-old resident named Jon Avila hanged himselfwhile at RMA. It is reported to have taken place in one of the dormitories in lower Camelot, in a room overlooking the pond ([Source](https://news.google.com/newspapers?nid=1314&dat=19940719&id=Wz8xAAAAIBAJ&sjid=cAoEAAAAIBAJ&pg=3412%2C5099278&hl=en&fbclid=IwAR0n0OWySUC5aypeUqkU5IBX183bxlQ4g2MeLHmj-WJ6Drs_9F9LbEgI4qc) ). According to survivors who were there at the time of his death, "John hung himself with his commissary issue size 40 belt off of a water pipe in the Camelot dorm. John wasn't a tough kid by any stretch, just a chubby ugly kid, maybe a little slow. He just didn't know how to take being bullied, and didn't know how to fight back. When I was transferred to another school down the road, he lost more than a friend, he lost a protector. He just couldn't take being bullied any longer." - [Anonymous Survivor who attended both RMA and BCA (Fornits)](https://www.fornits.com/phpbb/index.php?topic=4736.15) . Another survivor on the same thread added, "Avila hanged himself on Friday night. That morning, during raps, Reynolds and Avila and me were all together. Just before the rap ended, Reynolds got up and talked to Avila, asked him why he looked so down. Avila sort of dodged it, didn't really answer, and it was getting to be lunchtime so everyone was hungry and just sort of let it go. RMA had a fucked up system to handle this sort of thing. The staff weren't well trained, and many of them weren't very smart. Rick Snyder was running the rap that day and his fucking cafeteria sloppy joe was more important than figuring out what was wrong with Avila. But John Reynolds did what he could inside that system to help Avila - it just didn't work because the system didn't work."
 
@@ -83,23 +83,23 @@ In 2004, Among the complaints were allegations that a student at RMA was hazed, 
 
 ---
 
-## **Notable Alumni**
+## ** Notable Alumni**
 
-**Zack Bonnie**is an author who attended RMA in 1988 at the age of 14. In 2015, he published a memoir entitled '[Dead, Insane, or In Jail](https://www.amazon.com/Dead-Insane-Jail-CEDU-Memoir/dp/0996337822) ', in which he details his experience at Rocky Mountain Academy. He also published a [sequel](https://www.amazon.com/Dead-Insane-Jail-Overwritten-Book/dp/0996337830/ref=pd_sbs_1?pd_rd_w=YJnRT&pf_rd_p=2419a049-62bf-452e-b0d0-ca5b7e35a7b4&pf_rd_r=DRMQR6TREM2TS0T830CD&pd_rd_r=ebd7747e-d839-4bca-b073-5e4e6724baed&pd_rd_wg=1gkcy&pd_rd_i=0996337830&psc=1) in 2018.
+** Zack Bonnie** is an author who attended RMA in 1988 at the age of 14. In 2015, he published a memoir entitled '[Dead, Insane, or In Jail](https://www.amazon.com/Dead-Insane-Jail-CEDU-Memoir/dp/0996337822) ', in which he details his experience at Rocky Mountain Academy. He also published a [sequel](https://www.amazon.com/Dead-Insane-Jail-Overwritten-Book/dp/0996337830/ref=pd_sbs_1?pd_rd_w=YJnRT&pf_rd_p=2419a049-62bf-452e-b0d0-ca5b7e35a7b4&pf_rd_r=DRMQR6TREM2TS0T830CD&pd_rd_r=ebd7747e-d839-4bca-b073-5e4e6724baed&pd_rd_wg=1gkcy&pd_rd_i=0996337830&psc=1) in 2018.
 
-**Jacqueline Dena Guber/Danforth**is the daughter of Barbara Walters, who was the host of numerous television programs, including Today, The View, 20/20, and the ABC Evening News. Jacqueline allegedly attended RMA when she was a teenager, before going on to start her own program in Maine called [New Horizons for Young Women](https://www.reddit.com/r/troubledteens/wiki/index/newhorizonsme) .
+** Jacqueline Dena Guber/Danforth** is the daughter of Barbara Walters, who was the host of numerous television programs, including Today, The View, 20/20, and the ABC Evening News. Jacqueline allegedly attended RMA when she was a teenager, before going on to start her own program in Maine called [New Horizons for Young Women](https://www.reddit.com/r/troubledteens/wiki/index/newhorizonsme) .
 
-**Joe Francis**is the founder of the entertainment franchise*Girls Gone Wild*. He attended Rocky Mountain Academy in 1990. In January 2011, Francis brought a group of three women to his home, leading to five charges: three misdemeanor counts of false imprisonment, one of assault causing great bodily injury, and one of dissuading a witness. On May 6, 2013, Francis was convicted on all five charges.
+** Joe Francis** is the founder of the entertainment franchise*Girls Gone Wild*. He attended Rocky Mountain Academy in 1990. In January 2011, Francis brought a group of three women to his home, leading to five charges: three misdemeanor counts of false imprisonment, one of assault causing great bodily injury, and one of dissuading a witness. On May 6, 2013, Francis was convicted on all five charges.
 
-**Jessica Pentland**is the daughter of actress Roseanne Barr. She reportedly struggled with alcoholism as a teenager following her parents' divorce, and was sent to RMA in 1989 to get treatment.
+**Jessica Pentland** is the daughter of actress Roseanne Barr. She reportedly struggled with alcoholism as a teenager following her parents' divorce, and was sent to RMA in 1989 to get treatment.
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **10/16/2020: (SURVIVOR)** [Link to Lathrop's Survivor Testimony](https://www.youtube.com/watch?v=gGD6Rq-RoAQ&ab_channel=LathropLybrook)
 
-**SURVIVOR BLOG:** [Link to lathroplybrook.com](https://lathroplybrook.com/)
+** SURVIVOR BLOG:** [Link to lathroplybrook.com](https://lathroplybrook.com/)
 
 **8/25/2020: (SURVIVOR)**"I was sent to a boot camp in Idaho called Ascent. I was 12 years old, taken from my bed at 5am by two bounty hunters. Then when I arrived at Ascent, they strip searched me in a room with about 8 MEN and women. They made me do squats around the room totally naked. I also went to CEDU middle school after that, then Rocky Mountain Academy high school the day after I turned 14. I spent 3 years in that hell hole. And the worst part of it is is that my parents sent me away for prevention so I would get the knowledge of someone who doesn’t want drugs or misbehaves. I was in elementary school. I had people screaming in my face almost every single day saying horrible things to me and much more. I still have nightmares and severe anxiety from being there. I don’t ever want anyone to ever have to experience what I did. I want to help with shutting down these places and helping the kids get out of that nightmare. Please let me know some info on how I can help if anyone knows." - [u/Character_Relative49 (Reddit)](https://www.reddit.com/r/troubledteens/comments/igkl24/short_story/)
 
@@ -135,7 +135,7 @@ Unfortunately, the odds of parent stumbling onto a yelp review is infinitesimal,
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Rocky Mountain Academy Website Homepage](https://web.archive.org/web/20020930010200/http://www.rockymtnacademy.com/) (archived, 2002)
 
@@ -162,7 +162,8 @@ Unfortunately, the odds of parent stumbling onto a yelp review is infinitesimal,
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

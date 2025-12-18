@@ -20,17 +20,17 @@ By the 1950s, OBI described itself as "no longer just a school for isolated moun
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**James Anderson Burns**is the Founder of Oneida Baptist Institute. Burns (1865-1945) grew up in West Virginia. His family had relocated from Kentucky, reportedly to avoid the Baker-Howard feud. As a young man, Burns moved to Clay County, Kentucky, where he became involved in the region's existing feuds. Described as "big, strong and a skilled gunman," he survived a four-year period of conflict. Following an incident where he was injured and left for dead, he retreated and subsequently decided to cease his participation in the violence and become a preacher. Burns returned to Clay County and founded Oneida Baptist Institute with cooperation from both sides of the local opposing clans.
+** James Anderson Burns** is the Founder of Oneida Baptist Institute. Burns (1865-1945) grew up in West Virginia. His family had relocated from Kentucky, reportedly to avoid the Baker-Howard feud. As a young man, Burns moved to Clay County, Kentucky, where he became involved in the region's existing feuds. Described as "big, strong and a skilled gunman," he survived a four-year period of conflict. Following an incident where he was injured and left for dead, he retreated and subsequently decided to cease his participation in the violence and become a preacher. Burns returned to Clay County and founded Oneida Baptist Institute with cooperation from both sides of the local opposing clans.
 
-**Larry Allen Gritton, Jr.**is the current President of Oneida Baptist Institute. He assumed this role in 2013.
+** Larry Allen Gritton, Jr.** is the current President of Oneida Baptist Institute. He assumed this role in 2013.
 
 The compensation model is reportedly a mechanism for financial and institutional control over staff, preventing dissent or whistleblowing. Staff are paid a critically low base salary of $12,500-$15,000 annually (Employment Cover letter). The school provides housing, utilities, and meals, tying survival directly to employment.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Unlike many TTI programs, OBI does not use a level system. While official materials claim that students must attend voluntarily, the strictly controlled environment at OBI challenges that concept. Boarding students in particular are "never permitted to be around commuting students’ vehicles." The handbook dictates total control over identity, behavior, and family communication.
 
@@ -76,7 +76,7 @@ Attorney Ben Wyman of James & Wells PSC stated publicly: "We have a reason to be
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 10/03/2015: (SURVIVOR)"My overall stance, is that if you love your child, absolutely do not send them here, or to any boarding school, whatever you do. It's funny visiting their website now, after having gone to college and understanding how schools market themselves. A young child who is uprooted out of their home is not going to care one bit about sports or programs or clubs. No, a child is going to feel strange, and not really understand what is going on and why they are torn away from their normal home life. I don't remember even once considering student clubs or sports, or ever even having this advertised to me. I was more concerned with just surviving, and trying to understand my new surroundings and new structures that I was forced into. I can honestly and certainly say that my experience at Oneida Baptist Institute absolutely had no positive impact on my life. However, it did have a significantly harmful effect on my life, which includes great psychological and physiological trauma from being abused by other students, being forced into a new environment, and being treated like a slave or a criminal, at an early age. Worse, if your child is not a bad child, they will be surrounded by criminal children since the majority of children here are bad children who are here because they have committed many criminal acts or were just bad and evil children. If you love your child, do not be under any illusions that this place is going to help them grow or mature. This place is likely to cause irreparable psychological and emotional damage and even trauma, that will still effect them decades later. If they struggle socially, they are also likely to be abused by other children which will cause further harm and even be a danger to their physical wellbeing. Please, loving parents, do not send your child here. If your child is difficult, the worst thing you can do is send them away. What they need most right now is your love and security of knowing they will always have a home. I cry right now as I am reminded that I have nowhere to call home, and no one to call parents, since I am now an orphan. Please, don't let happen to your child what happened to me. Do not send your child away to boarding school, especially not here." -Anonymous, [GreatSchools.org](https://www.greatschools.org/kentucky/oneida/1684-Oneida-Baptist-Institute/)
 
@@ -119,4 +119,5 @@ Attorney Ben Wyman of James & Wells PSC stated publicly: "We have a reason to be
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

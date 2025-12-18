@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Linden House was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) behavior-modification program that opened sometime around 1998. It was founded by Willa Bundy, a former [Teen Help](https://www.reddit.com/r/troubledteens/wiki/index/teenhelp) /WWASP employee. The program was marketed as a specialty boarding school for pregnant teens and teenaged mothers.
 
@@ -12,27 +12,28 @@ The exact timespan that Linden House was in operation is not fully known. Accord
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

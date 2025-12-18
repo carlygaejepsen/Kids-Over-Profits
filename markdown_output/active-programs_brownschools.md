@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 The Brown Schools Inc. was an Austin-based compnay that owned a chain of so-called therapeutic boarding schools throughout the United States and Puerto Rico. Founded by Bert Brown in 1940, The Brown Schools was at one time the largest national provider of "treatment" services for young people. The privately held company served approximately 1,500 young people daily at 36 locations in 11 states and Puerto Rico, offering a broad spectrum of programs including residential treatment centers, alternative education programs, therapeutic wilderness programs and emotional growth boarding schools. The Brown Schools is considered the first organization to formally open a chain of “therapeutic” boarding schools and is partially responsible for the creation of the modern Troubled Teen Industry.
 
@@ -28,13 +28,13 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**John Harcourt Jr.**
+** John Harcourt Jr.**
 
 ---
 
-## **Open Brown Schools Programs**
+## ** Open Brown Schools Programs**
 
 ---
 
@@ -42,8 +42,8 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**San Marcos Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSsanmarcos) | 1940 | San Marcos, TX | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** San Marcos Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSsanmarcos) | 1940 | San Marcos, TX | - |
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -57,7 +57,7 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 
 ---
 
-## **Closed Brown Schools Programs**
+## ** Closed Brown Schools Programs**
 
 ---
 
@@ -65,19 +65,19 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Cumberland Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/BScumberland) | - | New Kent, VA | - |
-| [**Cypress Creek**](https://www.reddit.com/r/troubledteens/wiki/index/BScypresscreek) | - | Houston, TX | - |
-| [**Laurel Ridge Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSlaurelridge) | - | San Antonio, TX | - |
-| [**The Brown Schools Community Living Programs**](https://www.reddit.com/r/troubledteens/wiki/index/BScomm) | - | Austin, TX | - |
-| [**The Brown Schools at Cedar Springs**](https://www.reddit.com/r/troubledteens/wiki/index/BScedarsprings) | - | Colorado Springs, CO | - |
-| [**The Brown Schools of Florida**](https://www.reddit.com/r/troubledteens/wiki/index/BSflorida) | - | Pembroke Pines, FL | - |
-| [**The Brown Schools of Montana**](https://www.reddit.com/r/troubledteens/wiki/index/BSmontana) | - | Deer Lodge, MT | - |
-| [**The Brown Schools Rehabilitation Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSrehab) | - | Austin, TX | - |
-| [**The Brown Schools of San Juan**](https://www.reddit.com/r/troubledteens/wiki/index/BSsanjuan) | - | San Juan, Puerto Rico | - |
-| [**The Brown Schools at Shadow Mountain**](https://www.reddit.com/r/troubledteens/wiki/index/BSshadowmountain) | - | Tulsa, OK | - |
-| [**The Brown Schools at The Oaks**](https://www.reddit.com/r/troubledteens/wiki/index/BStheoaks) | - | Austin, TX | - |
-| [**West Oaks**](https://www.reddit.com/r/troubledteens/wiki/index/BSwestoaks) | - | Houston, TX | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Cumberland Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/BScumberland) | - | New Kent, VA | - |
+| [** Cypress Creek**](https://www.reddit.com/r/troubledteens/wiki/index/BScypresscreek) | - | Houston, TX | - |
+| [** Laurel Ridge Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSlaurelridge) | - | San Antonio, TX | - |
+| [** The Brown Schools Community Living Programs**](https://www.reddit.com/r/troubledteens/wiki/index/BScomm) | - | Austin, TX | - |
+| [** The Brown Schools at Cedar Springs**](https://www.reddit.com/r/troubledteens/wiki/index/BScedarsprings) | - | Colorado Springs, CO | - |
+| [** The Brown Schools of Florida**](https://www.reddit.com/r/troubledteens/wiki/index/BSflorida) | - | Pembroke Pines, FL | - |
+| [** The Brown Schools of Montana**](https://www.reddit.com/r/troubledteens/wiki/index/BSmontana) | - | Deer Lodge, MT | - |
+| [** The Brown Schools Rehabilitation Center**](https://www.reddit.com/r/troubledteens/wiki/index/BSrehab) | - | Austin, TX | - |
+| [** The Brown Schools of San Juan**](https://www.reddit.com/r/troubledteens/wiki/index/BSsanjuan) | - | San Juan, Puerto Rico | - |
+| [** The Brown Schools at Shadow Mountain**](https://www.reddit.com/r/troubledteens/wiki/index/BSshadowmountain) | - | Tulsa, OK | - |
+| [** The Brown Schools at The Oaks**](https://www.reddit.com/r/troubledteens/wiki/index/BStheoaks) | - | Austin, TX | - |
+| [** West Oaks**](https://www.reddit.com/r/troubledteens/wiki/index/BSwestoaks) | - | Houston, TX | - |
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -89,7 +89,7 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 | - | - | - | - |
 ---
 
-## **Additional Information**
+## ** Additional Information**
 
 [Brown Schools Website Homepage](https://web.archive.org/web/19981212012949/http://www.brownschools.com/) (archived, 1998)
 
@@ -97,7 +97,8 @@ In 2005, Brown Schools Inc. filed for Chapter 7 liquidation in Bankruptcy Court 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

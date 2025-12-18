@@ -2,37 +2,38 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 affiliated with Galena Ridge and 20 Peaks
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Glenn & Evelyn Schenavar**
-
----
-
-## **Program Structure**
+** Glenn & Evelyn Schenavar**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonies**
+
+---
+
+## ** Related Media**
 
 [Cougar Mountain Ranch Website Homepage](https://web.archive.org/web/20050306213458/http://www.troubled-teen-programs.com/) (archived, 2005)
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

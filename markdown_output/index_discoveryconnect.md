@@ -14,17 +14,17 @@ Discovery Connections is a sister program to several other [Ascent Company](http
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Brent Hall**is the Founder and Executive Director of Discovery Connections. He is also the Executive Director of [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) . He previously worked at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) , which is widely regarded as the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization. He also worked for a time as the Director of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Brent Hall** is the Founder and Executive Director of Discovery Connections. He is also the Executive Director of [Discovery Academy](https://www.reddit.com/r/troubledteens/wiki/index/discoveryaca) . He previously worked at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) , which is widely regarded as the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization. He also worked for a time as the Director of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Brian Kay**is the current Clinical Director of Discovery Connections. It appears that he previously worked as a LMFT at LDS Family Services, a private nonprofit counseling corporation owned and operated by The Church of Jesus Christ of Latter-day Saints. He also previously worked as a Therapist at the reportedly abusive [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) .
+** Brian Kay** is the current Clinical Director of Discovery Connections. It appears that he previously worked as a LMFT at LDS Family Services, a private nonprofit counseling corporation owned and operated by The Church of Jesus Christ of Latter-day Saints. He also previously worked as a Therapist at the reportedly abusive [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) .
 
 Spencer Cook currently works as a Therapist at Discovery Connections. He began his career in the TTI as an Intensive Support Unit Counselor at the reportedly abusive [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) from 2004 until 2007. He then worked in several residential and outpatient rehabilitation centers for adults, as well as in a foster care setting. In 2021, he began working as a Social Worker at the reportedly abusive [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) until February 2022, when he joined Discovery Connections.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Discovery Connections likely operates similarly to other [Ascent Company](https://www.reddit.com/r/troubledteens/wiki/index/ascentco) programs. It likely uses a level-system.*No additional information is known.*
 
@@ -34,7 +34,7 @@ The program began in a home located in Orem, Utah. It includes kitchen and dinin
 
 ## **Survivor/Parent/Ex-Staff Testimonies**
 
-*No testimonies have yet to be found. If you or your child attended Discovery Connections and would like to submit a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No testimonies have yet to be found. If you or your child attended Discovery Connections and would like to submit a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -46,7 +46,8 @@ The program began in a home located in Orem, Utah. It includes kitchen and dinin
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

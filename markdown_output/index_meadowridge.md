@@ -2,19 +2,19 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Between November and December 2016, the Disability Law Center received two separate complaints via the Protection and Advocacy system regarding the treatment of teenagers at Meadowridge Academy. In response, the DLC requested records from multiple licensing and regulatory bodies, including the local police department, which substantiated claims of abuse and neglect. In September 2017, the DLC began an investigation into the facility, which further substantiated many more claims of abuse and neglect. The incidents detailed in the [invetigation report](https://www.dlc-ma.org/wp-content/uploads/2018/04/Meadowridge-Investigation-Report.pdf) include:
 
@@ -31,7 +31,7 @@ Between November and December 2016, the Disability Law Center received two separ
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Disability Law Center Report - Meadowridge Academy](https://www.dlc-ma.org/wp-content/uploads/2018/04/Meadowridge-Investigation-Report.pdf)
 
@@ -39,7 +39,8 @@ Between November and December 2016, the Disability Law Center received two separ
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

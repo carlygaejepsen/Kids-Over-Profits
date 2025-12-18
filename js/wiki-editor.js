@@ -57,8 +57,8 @@ const STATE_DISPLAY_NAMES = {
     NONUSA: 'International / Non-USA'
 };
 
-const wikiEditorSettings = window.wikiEditorSettings || {};
-const isAdminMode = !!wikiEditorSettings.isAdmin;
+const editorSettings = window.wikiEditorSettings || {};
+const isAdminMode = !!editorSettings.isAdmin;
 
 document.addEventListener('DOMContentLoaded', () => {
     const wikiForm = document.getElementById('wikiForm');
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderStaffList();
         renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.description || '').substring(0, 60)}...`);
-        renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
+        renderList(lawsuits, 'lawsuitListOutput', item => formatLawsuitListItem(item));
         renderList(newsArticles, 'articleListOutput', item => `<strong>${escapeHtml(item.title)}</strong> (${escapeHtml(item.source || 'No Source')})`);
         renderList(testimonies, 'testimonyListOutput', item => {
             const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
@@ -441,10 +441,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             parseAndPopulate(markdown);
-            const outputEl = document.getElementById('outputCode');
-            if (outputEl) {
-                outputEl.value = markdown.trim();
-            }
+            // Regenerate clean markdown from the parsed data immediately
+            updateMarkdownFromForm();
+            
             importedMarkdown = markdown;
             if (programName) {
                 setFieldValue('programName', programName);
@@ -499,7 +498,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return url;
     };
 
-    // --- Helper: Render a Preview List ---
+    // --- Helper: Format Lawsuit Entries for List Views ---
+    const formatLawsuitListItem = (item, includeDefendant = false) => {
+        const year = (item?.year || '').trim();
+        const plaintiff = (item?.plaintiff || '').trim();
+        const name = (item?.name || '').trim();
+        const description = (item?.description || '').trim();
+        const baseTitle = year && plaintiff
+            ? `${year}: ${plaintiff}`
+            : plaintiff
+                ? plaintiff
+                : name
+                    ? name
+                    : description
+                        ? description.split('.')[0]
+                        : 'Lawsuit record';
+        const detailParts = [];
+        if (includeDefendant && item?.defendant) detailParts.push(`vs. ${item.defendant.trim()}`);
+        if (description) detailParts.push(description);
+        const suffix = detailParts.length ? ` ${escapeHtml(detailParts.join(' - '))}` : '';
+        return `<strong>${escapeHtml(baseTitle)}</strong>${suffix}`;
+    };
+
     const renderList = (array, outputElement, renderer) => {
         const outputDiv = document.getElementById(outputElement);
         if (!outputDiv) {
@@ -676,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (year && plaintiff && claims) {
                 lawsuits.push({ year, plaintiff, defendant, claims, outcome, amount, court });
-                renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong> vs. ${escapeHtml(item.defendant || 'program')}`);
+                renderList(lawsuits, 'lawsuitListOutput', item => formatLawsuitListItem(item, true));
                 clearInputs(['lawsuitYear', 'lawsuitPlaintiff', 'lawsuitDefendant', 'lawsuitClaims', 'lawsuitAmount', 'lawsuitCourt']);
                 const outcomeSelect = document.getElementById('lawsuitOutcome');
                 if (outcomeSelect) outcomeSelect.value = '';
@@ -840,89 +860,124 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- MODE TOGGLE & GENERATION LOGIC ---
+    const modeFormBtn = document.getElementById('modeFormBtn');
+    const modeMarkdownBtn = document.getElementById('modeMarkdownBtn');
+    const browserSection = document.querySelector('.entry-browser-section');
+    const importSection = document.querySelector('.import-section');
+    const bulkUploadSection = document.querySelector('.bulk-upload-section');
+    
+    function updateMarkdownFromForm() {
+        // Check if generation module is loaded
+        if (typeof generateWikiMarkdown !== 'function') {
+            console.error('generateWikiMarkdown is not defined.');
+            return '';
+        }
+
+        // Collect all form field values
+        const vals = {};
+        const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
+        inputs.forEach(input => {
+            if (input.id && !input.closest('.form-adder')) {
+                vals[input.id] = input.value.trim();
+            }
+        });
+
+        // Collect selected diagnoses from checkboxes
+        const selectedDiagnoses = [];
+        document.querySelectorAll('input[name="diagnoses"]:checked').forEach(cb => {
+            selectedDiagnoses.push(cb.value);
+        });
+
+        // Collect selected allegations from checkboxes
+        const selectedAllegations = [];
+        document.querySelectorAll('input[name="allegations"]:checked').forEach(cb => {
+            selectedAllegations.push(cb.value);
+        });
+
+        const programName = vals.programName || '[Program Name]';
+
+        // Build form data object to pass to generation function
+        const formData = {
+            ...vals,
+            staffMembers, punishments, lawsuits, newsArticles, testimonies,
+            relatedMedia, campuses, ownershipChanges, rules, allegations,
+            therapies, programLevels,
+            selectedDiagnoses, selectedAllegations
+        };
+
+        // Generate the wiki markdown
+        let output = generateWikiMarkdown(formData);
+
+        // Apply auto-linking if enabled
+        const autoLinkCheckbox = document.getElementById('autoLinkPrograms');
+        if (autoLinkCheckbox && autoLinkCheckbox.checked && window.ttiAutoLinker && window.ttiAutoLinker.loaded) {
+            output = window.ttiAutoLinker.autoLink(output, {
+                currentProgramName: programName,
+                linkCurrentProgram: false
+            });
+        }
+
+        // Append unparsed content
+        if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
+            output += '\n\n***\n\n' + window.unparsedContentFromImport;
+        }
+
+        if (outputCode) {
+            outputCode.value = output.trim();
+        }
+        return output;
+    }
+
+    if (modeMarkdownBtn && modeFormBtn) {
+        modeMarkdownBtn.addEventListener('click', () => {
+            // Update markdown from current form state before switching
+            updateMarkdownFromForm();
+            
+            // Toggle UI
+            modeFormBtn.classList.remove('active');
+            modeMarkdownBtn.classList.add('active');
+            
+            wikiForm.classList.add('hidden-section');
+            if(browserSection) browserSection.classList.add('hidden-section');
+            if(importSection) importSection.classList.add('hidden-section');
+            if(bulkUploadSection) bulkUploadSection.classList.add('hidden-section');
+            
+            if(outputCode) outputCode.classList.add('markdown-mode-active');
+            
+            // Hide generate button in markdown mode (it's redundant/confusing)
+            if(generateBtn) generateBtn.style.display = 'none';
+        });
+
+        modeFormBtn.addEventListener('click', () => {
+            // Update form from current markdown state before switching
+            if (outputCode && outputCode.value.trim()) {
+                // Use a silent version or just call it (it logs to console)
+                parseAndPopulate(outputCode.value);
+            }
+
+            // Toggle UI
+            modeMarkdownBtn.classList.remove('active');
+            modeFormBtn.classList.add('active');
+            
+            wikiForm.classList.remove('hidden-section');
+            if(browserSection) browserSection.classList.remove('hidden-section');
+            if(importSection) importSection.classList.remove('hidden-section');
+            if(bulkUploadSection) bulkUploadSection.classList.remove('hidden-section');
+            
+            if(outputCode) outputCode.classList.remove('markdown-mode-active');
+            
+            // Show generate button again
+            if(generateBtn) generateBtn.style.display = 'block';
+        });
+    }
+
     // --- MAIN GENERATE BUTTON ---
-    const generateBtn = document.getElementById('generateBtn');
-    const outputCode = document.getElementById('outputCode');
     if (generateBtn) {
         generateBtn.addEventListener('click', (e) => {
             e.preventDefault();
-
-            // Check if generation module is loaded
-            if (typeof generateWikiMarkdown !== 'function') {
-                console.error('generateWikiMarkdown is not defined. Make sure wiki-generation.js is loaded.');
-                alert('Wiki generation module not loaded. Please check the console for errors.');
-                return;
-            }
-
-            // Collect all form field values
-            const vals = {};
-            const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
-            inputs.forEach(input => {
-                if (input.id && !input.closest('.form-adder')) {
-                    vals[input.id] = input.value.trim();
-                }
-            });
-
-            // Collect selected diagnoses from checkboxes
-            const selectedDiagnoses = [];
-            document.querySelectorAll('input[name="diagnoses"]:checked').forEach(cb => {
-                selectedDiagnoses.push(cb.value);
-            });
-
-            // Collect selected allegations from checkboxes
-            const selectedAllegations = [];
-            document.querySelectorAll('input[name="allegations"]:checked').forEach(cb => {
-                selectedAllegations.push(cb.value);
-            });
-
-            const programName = vals.programName || '[Program Name]';
-
-            // Build form data object to pass to generation function
-            const formData = {
-                // Basic information
-                ...vals,
-
-                // Arrays from list managers
-                staffMembers: staffMembers,
-                punishments: punishments,
-                lawsuits: lawsuits,
-                newsArticles: newsArticles,
-                testimonies: testimonies,
-                relatedMedia: relatedMedia,
-                campuses: campuses,
-                ownershipChanges: ownershipChanges,
-                rules: rules,
-                allegations: allegations,
-                therapies: therapies,
-                programLevels: programLevels,
-
-                // Checkbox selections
-                selectedDiagnoses: selectedDiagnoses,
-                selectedAllegations: selectedAllegations
-            };
-
-            // Generate the wiki markdown using the generation module
-            let output = generateWikiMarkdown(formData);
-
-            // Apply auto-linking if enabled and available
-            const autoLinkCheckbox = document.getElementById('autoLinkPrograms');
-            if (autoLinkCheckbox && autoLinkCheckbox.checked &&
-                window.ttiAutoLinker && window.ttiAutoLinker.loaded) {
-                console.log('Applying auto-linking to generated wiki entry...');
-                output = window.ttiAutoLinker.autoLink(output, {
-                    currentProgramName: programName,
-                    linkCurrentProgram: false  // Don't link the program to itself
-                });
-            }
-
-            // Append any unparsed content from import at the end
-            if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
-                output += '\n\n***\n\n' + window.unparsedContentFromImport;
-                console.log('✓ Appended unparsed content to end of output');
-            }
-
+            updateMarkdownFromForm();
             if (outputCode) {
-                outputCode.value = output.trim();
                 outputCode.focus();
                 outputCode.select();
             }
@@ -1212,7 +1267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (lawsuits.length > 0) {
-            renderList(lawsuits, 'lawsuitListOutput', item => `<strong>${escapeHtml(item.year)}: ${escapeHtml(item.plaintiff)}</strong>`);
+            renderList(lawsuits, 'lawsuitListOutput', item => formatLawsuitListItem(item));
         }
 
         if (ownershipChanges.length > 0) {
@@ -2060,8 +2115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error loading organization programs:', error);
-            // Don't alert, just update the message area to be less intrusive
-            updateIndexEntriesMessage(`Failed to load programs for ${orgName}: ${error.message || 'Unknown error'}`, 'error');
+            updateIndexEntriesMessage(`Error: ${error.message}`, 'error');
         } finally {
             if (button) {
                 button.disabled = false;
@@ -2247,9 +2301,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            if (entry.generated_markdown && outputCode) {
-                outputCode.value = entry.generated_markdown;
-            }
+            // Regenerate clean markdown from the parsed/loaded data
+            updateMarkdownFromForm();
 
             importedMarkdown = entry.generated_markdown || '';
             finalizeEntryLoad(entry.program_name);

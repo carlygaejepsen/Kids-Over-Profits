@@ -12,25 +12,25 @@ The HomeBase program is located at [119 S Hill Rd, Trout Creek, MT 59874](https:
 
 According to a pro-TTI website, [StrugglingTeens](http://web.archive.org/web/20170503215911/http://www.strugglingteens.com/archives/1991/1/np01.html) , Explorations was created by former employees of the Spring Creek Community School. Spring Creek Community School, which was founded in the 1970s by Steve and Nancy Cawdrey, was purchased by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) employees Cameron and Chaffin Pullan in 1996 and rebranded as the notorious [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) .
 
-Explorations Montana [appears](https://web.archive.org/web/20040406115919/http://www.strugglingteens.com/archives/2004/2/feb04seennheard.html) to have, at some point, been owned by the notorious and**confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . It no longer appears to be affiliated with this organization.
+Explorations Montana [appears](https://web.archive.org/web/20040406115919/http://www.strugglingteens.com/archives/2004/2/feb04seennheard.html) to have, at some point, been owned by the notorious and** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . It no longer appears to be affiliated with this organization.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Penny James**is the Co-Founder and Executive Director of Explorations. She began her career in the Troubled Teen Industry as a Family Counselor at Spring Creek Community School, which was later bought by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) and renamed [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . She has also worked as a Member of the Board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) from 2000-2008, and then again from 2015-2017.
+** Penny James** is the Co-Founder and Executive Director of Explorations. She began her career in the Troubled Teen Industry as a Family Counselor at Spring Creek Community School, which was later bought by [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) and renamed [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . She has also worked as a Member of the Board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) from 2000-2008, and then again from 2015-2017.
 
-**Larry Culp**is the Senior Advisor at Explorations.
+** Larry Culp** is the Senior Advisor at Explorations.
 
-**Mark Hewitt**is the Program Director of Explorations.
+** Mark Hewitt** is the Program Director of Explorations.
 
-**Aaron Fernandes**worked as the Wilderness Director of Exploration beginning in 2004. Prior to this, he worked as the Field Director of the confirmedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) .
+** Aaron Fernandes** worked as the Wilderness Director of Exploration beginning in 2004. Prior to this, he worked as the Field Director of the confirmedly abusive [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Explorations. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Explorations. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,7 +40,7 @@ Many survivors have reported that Explorations is an abusive program. Allegation
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **812/15/2019: (SURVIVOR)**"They brain washed me into saying I did drugs. They made me sleep outside until I confessed to doing drugs when I hadn't even tried anything. They made me call my parents and confess too. I would not recommend this place to anyone." - [Chef (Yelp)](https://www.yelp.com/biz/explorations-trout-creek)
 
@@ -54,7 +54,7 @@ Many survivors have reported that Explorations is an abusive program. Allegation
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Explorations Website Homepage](http://explorationsmt.com/)
 
@@ -72,7 +72,8 @@ Many survivors have reported that Explorations is an abusive program. Allegation
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

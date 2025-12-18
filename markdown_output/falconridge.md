@@ -12,19 +12,19 @@ The program is located at [633 UT-9, Virgin, UT 84779](https://www.google.com/ma
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Carolle Bell**is the Executive Director of Falcon Ridge Ranch.
+** Carolle Bell** is the Executive Director of Falcon Ridge Ranch.
 
-**Steve Barrick**worked at FRR as a Therapist. He previously worked for [Kolob Canyon RTC](https://www.reddit.com/r/troubledteens/wiki/index/kolobcanyon) and [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) . He reportedly earned his degree from the fraudulent [University of Phoenix](https://www.nytimes.com/2019/12/10/business/university-phoenix-ftc-ads.html) .
+** Steve Barrick** worked at FRR as a Therapist. He previously worked for [Kolob Canyon RTC](https://www.reddit.com/r/troubledteens/wiki/index/kolobcanyon) and [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) . He reportedly earned his degree from the fraudulent [University of Phoenix](https://www.nytimes.com/2019/12/10/business/university-phoenix-ftc-ads.html) .
 
-**Salesi Misinale Fakahua (aka Nale Fakahua)**worked at FRR as the "Positive Peer Culture Coordinator". According to [HEAL](http://www.heal-online.org/falcon.htm) , this program uses confrontation "therapy" (a.k.a. positive peer culture), which has been found to be psychologically damaging. He previously worked for [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) . He no longer works at Falcon Ridge and now works at [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) .
+** Salesi Misinale Fakahua (aka Nale Fakahua)** worked at FRR as the "Positive Peer Culture Coordinator". According to [HEAL](http://www.heal-online.org/falcon.htm) , this program uses confrontation "therapy" (a.k.a. positive peer culture), which has been found to be psychologically damaging. He previously worked for [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) . He no longer works at Falcon Ridge and now works at [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch) .
 
-**David Allred**is/was the Executive Director of Falcon Ridge Ranch. He previously worked as a Therapist at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) . He currently works as the Executive Director of [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) .
+** David Allred** is/was the Executive Director of Falcon Ridge Ranch. He previously worked as a Therapist at [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) . He currently works as the Executive Director of [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Not much is known about the program structure at Falcon Ridge Ranch. It is known that the program includes a level-system.
 
@@ -32,7 +32,7 @@ Falcon Ridge Ranch is also known to incorporate the concept of "Positive Peer Cu
 
 During the first 21 to 30 days after being detained, there is only communication between parents and staff. The residents are not premitted to speak with their parents at all. After this period, phone calls are typically given allowed once every two weeks. However, these calls are highly monitored by staff. The parents are allowed to visit once their daughter has been at FRR for at least 30 days. However, the parents can attend family weekends six times a year. During the first visit, the child is not allowed off the campus during the family weekend. On the second visit off-campus visits are allowed but no overnight. On the third visit both overnight and off-campus visits are allowed.
 
-*If you attended Falcon Ridge Ranch and have additional information you would like to contribute, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended Falcon Ridge Ranch and have additional information you would like to contribute, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -44,11 +44,11 @@ Falcon Ridge Ranch is among the programs that have been named and suspected of b
 
 In 2020, Utah state regulators were contacted about [reports](https://archive.ph/fDXKK#selection-115.0-115.102) that a female staff member at Falcon Ridge Ranch had slapped the buttocks of multiple residents, and that she had shown them a photo of her husband's genitals. She was fired by the program but FRR did not receive any regulatory actions.
 
-It is also important to note that Falcon Ridge Ranch, along with its sister school [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) , are owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .**There have been many confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint for throwing a sandwich.
+It is also important to note that Falcon Ridge Ranch, along with its sister school [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) , are owned by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .** There have been many confirmed instances of abuse and neglect in Sequel programs**, including the recent [death of Cornelius Fredericks](https://www.cnn.com/2020/07/08/us/michigan-cornelius-fredericks-video-restrain/index.html) , who was killed at [Lakeside Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) during a restraint for throwing a sandwich.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **11/1/2020: (SURVIVOR)**"I entered Falcon Ridge on my 17th birthday. 23 other girls sang me happy birthday and we had cake. After that, I was told to deep clean the entire house. Cleaning was a way to punish and control. Nothing was ever clean enough. Each morning a girl was assigned a cleaning task and it was checked by another girl. If that girl did not like you, you got a mark and possibly missed out on any semblance of fun for that day. Soccer, maybe a Mormon feature film. They forced me to believe that I had been raped, was an alcoholic, and a Mormon. Yes, you read that right. I drank alcohol once before being admitted to this program, as most teenagers do. They forced me to believe that when I lost my virginity, I was actually raped. They made me file a police report which ruined this teenage boy's life. They then attempted to indoctrinate me into Mormonism. They made us watch films, sing hymns, and attend Mormon church. I learned that the only way to beat this and leave was to succumb and pretend. I learned to adapt, and to make them believe they changed me. They did change me, but not in the way they intended. I will always save myself, protect myself, and always have eyes in the back of my head now." - [Emily (Breaking Code Silence)](https://www.breakingcodesilence.net/testimonial/emilysstory)
 
@@ -64,7 +64,7 @@ It is also important to note that Falcon Ridge Ranch, along with its sister scho
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Falcon Ridge Ranch Website Homepage](https://www.falconridgeranch.com/)
 
@@ -80,7 +80,8 @@ It is also important to note that Falcon Ridge Ranch, along with its sister scho
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

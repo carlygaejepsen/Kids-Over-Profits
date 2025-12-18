@@ -465,7 +465,7 @@ function loadReferrerData() {
 }
 
 /**
- * Handle showing/hiding referrer vs facility forms based on active category
+ * Handle showing/hiding referrer vs data forms based on active category
  * Note: facilityLoaderPanel and facilityMainWrapper refer to the facility category, not consultant data
  */
 function handleReferrerToggle() {

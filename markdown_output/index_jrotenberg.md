@@ -34,27 +34,27 @@ The original location of the BRI was at [240 Laban St, Providence, RI 02909](htt
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Matthew Israel**is the Founder of the Judge Rotenberg Center. He is also known for inventing the [Graduated electronic decelerator](https://en.wikipedia.org/wiki/Graduated_electronic_decelerator) , which is an aversive conditioning device that delivers a powerful electric skin shock to punish behaviors considered undesirable. He was inspired to create the JRC after reading B. F. Skinner's novel, [Walden Two](https://en.wikipedia.org/wiki/Walden_Two) , in which the heroes build a utopia by conditioning the residents of a commune through the behaviorist principles of reward and punishment. In 2011, Israel was forced to resign from his position as director of the Judge Rotenberg Center as part of a deferred prosecution agreement after being indicted on criminal charges related to the abuse of residents. In 2015, he was discovered working as a behavior analyst or administrator for two Antioch special education schools (Tobinworld II and Tobinworld III) run by his wife, Judy Weber-Israel, without being listed on the schools’ applications for state certification, as required by the California Education Code.
+** Matthew Israel** is the Founder of the Judge Rotenberg Center. He is also known for inventing the [Graduated electronic decelerator](https://en.wikipedia.org/wiki/Graduated_electronic_decelerator) , which is an aversive conditioning device that delivers a powerful electric skin shock to punish behaviors considered undesirable. He was inspired to create the JRC after reading B. F. Skinner's novel, [Walden Two](https://en.wikipedia.org/wiki/Walden_Two) , in which the heroes build a utopia by conditioning the residents of a commune through the behaviorist principles of reward and punishment. In 2011, Israel was forced to resign from his position as director of the Judge Rotenberg Center as part of a deferred prosecution agreement after being indicted on criminal charges related to the abuse of residents. In 2015, he was discovered working as a behavior analyst or administrator for two Antioch special education schools (Tobinworld II and Tobinworld III) run by his wife, Judy Weber-Israel, without being listed on the schools’ applications for state certification, as required by the California Education Code.
 
-**Judy Weber-Israel**
+** Judy Weber-Israel**
 
-**Glenda P. Crookes**is the current Executive Director of the Judge Rotenberg Center.
+** Glenda P. Crookes** is the current Executive Director of the Judge Rotenberg Center.
 
-**Kevin Bonsu**
+** Kevin Bonsu**
 
-**Nathan Blenkush**works as the Director of Clinical Services and the Director of Research at the Judge Rotenberg Center. He has worked at JRC since 2006.
+** Nathan Blenkush** works as the Director of Clinical Services and the Director of Research at the Judge Rotenberg Center. He has worked at JRC since 2006.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The Judge Rotenberg Center's behavior modification program uses the methods of applied behavior analysis and relies heavily on aversion therapy.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 The Judge Rotenberg Center has been condemned for torture by the United Nations special rapporteur on torture for its use of the [GED](https://en.wikipedia.org/wiki/Graduated_electronic_decelerator) and other inhumane punishments.
 
@@ -66,41 +66,41 @@ In a video that surfaced in 2011, JRC staff tied an autistic boy face-down to a 
 
 ---
 
-## **Deaths**
+## ** Deaths**
 
 ***Six residents of the BRI/JRC have died during their stays there.***
 
-**Robert Cooper Jr.**(1980)
+** Robert Cooper Jr.**(1980)
 
 > In the late afternoon of October 30, 1980, Robert Cooper Jr., a 25-year-old autistic student at BRI, was taken to the emergency room of Rhode Island Hospital. He was throwing up. He had diarrhea. At 11 p.m. Cooper was pronounced dead. The medical examiner announced that Cooper had died of natural causes, a “hemorrhagic bowel infarct,” or blockage resulting from a twisting of the bowel. An investigation by the Massachusetts Department of Mental Health (DMH) found no negligence on the part of the BRI staff. But DMH was mildly critical of BRI for transporting Cooper to the hospital by personal car instead of by ambulance, and also for failing to notify the emergency room that a patient was on the way.
 
-**Danny Aswad**(1981)
+** Danny Aswad**(1981)
 
 > On the morning of July 17, 1981, Danny Aswad, 14, was violently restrained face-down on a bed. Danny died between 9:00 and 10 a.m. on this date while being so restrained. The county coroner ruled that 14-year-old Danny Aswad’s death had been from natural causes: “Mental retardation” and “cerebral malformation.”
 
-**Vincent Milletich**(1985)
+** Vincent Milletich**(1985)
 
 > Vincent Milletich, 22, died on July 23, 1985 after he became unconscious during so-called ″white noise″ therapy, in which he was restrained hand-and-foot with plastic cuffs, masked, helmeted and forced to listen to static through earphones. The ″white noise,″ used by the Behavior Research Institute, is similar to static from an improperly tuned television or radio. His cause of death was ultimately ruled as asphyxiation, which was caused by the helmet he was forced to wear. Matthew Israel was found negligent in his death.
 
-**Abigail Gibson**(1987)
+** Abigail Gibson**(1987)
 
 > 29-year-old Abigail Gibson was found slumped in her bed at a BRI group home in Attleboro on June 21^(st) 1987 after she suffered a heart attack in her sleep. She was taken to the hospital, where she spent two days in the ICU before ultimately passing away on June 23^(rd) 1987.
 
-**Linda Cornelison**(1990)
+** Linda Cornelison**(1990)
 
 > On December 19, 1990, Linda Cornelison who was a 19-year-old non-verbal austistic resident of BRI died of complications related to a gastric perforation. Staff members, including a facility nurse, assumed the non-verbal student's behavior of refusing to eat, wanting to lie down and clutching her stomach on a bus, were an act or non-serious, despite being present for several days. In a 4-hour period prior to her being discovered unconscious at 8:00 pm on December 18, she received 13 spatula spankings, 29 finger pinches, 14 muscle squeezes, and was forcibly exposed to ammonia fumes 5 times. After being discovered, she was taken to a hospital, where she died on an operating table at 1:45 am on the 19^(th) of December.
 
-**Silverio Gonzalez**(1998)
+** Silverio Gonzalez**(1998)
 
 > 16-year-old Silverio Gonzalez died one day after he jumped from a moving bus on May 5, 1998. He had jumped from the bus on Interstate 95 while the bus was travelling around 50 mph. Though a counselor had reportedly tried to stop him, the 6-foot tall, 200-pound teen broke free, state police said. He sustained massive head trauma during the fall, and passed away the following day on May 6.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Judge Rotenberg Center Website Homepage](https://www.judgerc.org/)
 
@@ -150,7 +150,8 @@ In a video that surfaced in 2011, JRC staff tied an autistic boy face-down to a 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

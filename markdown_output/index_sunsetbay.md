@@ -16,37 +16,37 @@ In April 2009, Oceanside Treatment Center apparently ended its partnership with 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dr. Habib B. Kuri**was the Co-Owner and Medical Director of Sunset Bay Academy. In addition, he owns [Pacific Life Teen Program/Genesis by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/pacificlifeteen) , which is also located in Rosarito, Mexico. Genesis by the Sea was [raided in 2004](https://www.latimes.com/archives/la-xpm-2004-sep-18-me-mexschools18-story.html) and 26 students were removed following an investigation by Mexican authorities. Genesis was closed shortly after and Dr. Kuri reopened the program as Pacific Life Teen Program.
+** Dr. Habib B. Kuri** was the Co-Owner and Medical Director of Sunset Bay Academy. In addition, he owns [Pacific Life Teen Program/Genesis by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/pacificlifeteen) , which is also located in Rosarito, Mexico. Genesis by the Sea was [raided in 2004](https://www.latimes.com/archives/la-xpm-2004-sep-18-me-mexschools18-story.html) and 26 students were removed following an investigation by Mexican authorities. Genesis was closed shortly after and Dr. Kuri reopened the program as Pacific Life Teen Program.
 
-**Amy H. Ritchie**(née Amy Hammond) was one of the Founders of Sunset Bay Academy and worked as the Program Director there from 2008-2011. She previously worked as the Assistant Residential Program Director at the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) (WWASP program) from November 2001 until February of 2008. According to one [survivor's report](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , "Amy Ritchie sexually groomed an upper level who kept returning to staff seminars and sleep in her bed. They lived together after SBA, along with another corrupt and physically abusive student turned staff named Jacob Keegan." A former staff-member [reported](https://www.youtube.com/watch?v=PflYkqWn4lk&fbclid=IwAR0zzMBMSfm-BDuRmaBytilGUcZKIVhs109oPUqtbUxqgRiJtJPZdaWM5Xs&ab_channel=ChannelAurelius) that Amy Ritchie had a sexual relationship with at least one upper-level resident, but it is unclear if this was a different victim than the other survivor's report.
+** Amy H. Ritchie**(née Amy Hammond) was one of the Founders of Sunset Bay Academy and worked as the Program Director there from 2008-2011. She previously worked as the Assistant Residential Program Director at the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) (WWASP program) from November 2001 until February of 2008. According to one [survivor's report](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , "Amy Ritchie sexually groomed an upper level who kept returning to staff seminars and sleep in her bed. They lived together after SBA, along with another corrupt and physically abusive student turned staff named Jacob Keegan." A former staff-member [reported](https://www.youtube.com/watch?v=PflYkqWn4lk&fbclid=IwAR0zzMBMSfm-BDuRmaBytilGUcZKIVhs109oPUqtbUxqgRiJtJPZdaWM5Xs&ab_channel=ChannelAurelius) that Amy Ritchie had a sexual relationship with at least one upper-level resident, but it is unclear if this was a different victim than the other survivor's report.
 
-**Christina Heredia**works as the the Academy Director of Sunset Bay Academy and has been since July of 2008. She is the wife of Guillermo Heredia.
+** Christina Heredia** works as the the Academy Director of Sunset Bay Academy and has been since July of 2008. She is the wife of Guillermo Heredia.
 
-**Guillermo Willie Heredia**is reported to have worked at Sunset Bay Academy in an unknown role. He is the husband of Christina Heredia. Survivors have reported that his wife and children pretend that he is deceased, but many believe he is still alive and is pretending to be dead to evade taxes and avoid speculation from parents.
+** Guillermo Willie Heredia** is reported to have worked at Sunset Bay Academy in an unknown role. He is the husband of Christina Heredia. Survivors have reported that his wife and children pretend that he is deceased, but many believe he is still alive and is pretending to be dead to evade taxes and avoid speculation from parents.
 
-**Karina Heredia**is reported to have worked at Sunset Bay Academy in an unknown role. She is the daughter of Christina and Guillermo Heredia. She is reported by survivors to be a pedophile who has engaged in sexual misconduct with several underaged students at SBA. These reports include that she engaged in oral sex with a male resident while she was taking him to the doctor to fix his broken leg, as well as reports that she sent nude photographs of herself to several former SBA residents after they left the program. ([Source 1](https://www.facebook.com/sbalies/photos/a.106611694230886/307647347460652/?type=3) and [Source 2](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) )
+** Karina Heredia** is reported to have worked at Sunset Bay Academy in an unknown role. She is the daughter of Christina and Guillermo Heredia. She is reported by survivors to be a pedophile who has engaged in sexual misconduct with several underaged students at SBA. These reports include that she engaged in oral sex with a male resident while she was taking him to the doctor to fix his broken leg, as well as reports that she sent nude photographs of herself to several former SBA residents after they left the program. ([Source 1](https://www.facebook.com/sbalies/photos/a.106611694230886/307647347460652/?type=3) and [Source 2](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) )
 
-**Dr. Hugo Wright**worked as the Director of SBA. According to many survivors [survivor](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , Hugo Wright raped a 15-year-old female resident at SBA. Allegedly, the Heredia women knew about this but did not care, and they even threatened to murder the girl by contacting her social media years after she left SBA so she would not report the incident. None of these allegations have been confirmed.
+** Dr. Hugo Wright** worked as the Director of SBA. According to many survivors [survivor](http://wwaspsurvivors.com/sunset-bay-academy-survivor-of-sba/) , Hugo Wright raped a 15-year-old female resident at SBA. Allegedly, the Heredia women knew about this but did not care, and they even threatened to murder the girl by contacting her social media years after she left SBA so she would not report the incident. None of these allegations have been confirmed.
 
-**Daniela Salcedo**
+** Daniela Salcedo**
 
-**Roberto Murillo**
+** Roberto Murillo**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, when Sunset Bay Academy first opened it used a level system with six levels (called "Phases"). This system was identical to the one used by the notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs.
 
-***Phase One:**When a resident arrives, they are put on Phase One. They are given no privileges.
-***Phase Two:**Privileges of Phase Two include being able to use condiments and drink juice.
+***Phase One:** When a resident arrives, they are put on Phase One. They are given no privileges.
+***Phase Two:** Privileges of Phase Two include being able to use condiments and drink juice.
 ***Phase Three:**"Neutral Stride", a resident needs to acquire 500 points to achieve Phase Three.
-***Phase Four:**On this phase, residents are permitted to travel off-campus during trips to the beach and to restaurants.
-***Phase Five:**On this phase, residents
+***Phase Four:** On this phase, residents are permitted to travel off-campus during trips to the beach and to restaurants.
+***Phase Five:** On this phase, residents
 ***Phase Six:***no additional information.*
-*There is also a phase called**Probation**which is used as a punishment. During probation, therapy sessions may be restricted, and the resident loses all of their privileges.
+*There is also a phase called**Probation** which is used as a punishment. During probation, therapy sessions may be restricted, and the resident loses all of their privileges.
 
 However, after SBA ended its contract with WWASP in 2009, it is reported that the program was changed slightly. There are now only three phases, which are divided into sub-phases called "strides". Each phase has different “strides” that reflect a student’s progress within each phase. The phases are divided into upper-levels and lower-levels. According to the [Sunset Bay Academy Wesbite](https://sunsetbayacademy.com/strides-and-phases.html) "The student must complete each “stride” in order to graduate from SBA. To advance in each “stride” and “phase”, a student must follow rules, obtain a positive average score, and earn staff and student support." The phases/strides are now reported to be:
 
@@ -63,7 +63,7 @@ Students work their way through the program by earning merit points, which are e
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 Sunset Bay Academy is a very strict program with many rules. Some of these rules include no eye contact, communication, no mirrors, and no talking to each other at all, so even in rooms no one was allowed to talk to each other and if anyone made eye contact they were punished. Kids can go months to years at SBA without even seeing their reflection in a mirror.
 
@@ -73,7 +73,7 @@ Sunset Bay Academy is a very strict program with many rules. Some of these rules
 
 ---
 
-## **Seminars**
+## ** Seminars**
 
 Like other behavior-modification programs, including the notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs, Sunset Bay Academy forces the teens and their parents to attend a series of seminars developed off of [Lifespring](https://en.wikipedia.org/wiki/Lifespring) . The seminars have been reported to be:
 
@@ -100,7 +100,7 @@ An ex-staff member has reported that Amy Ritchie, the Residential Program Direct
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **2021: (SURVIVOR)**"This place has no right to be open, it's a blatantly unethical with a history of abusing it's "students" and overcharging parents for cheap facilities. Sending your child here is a quick and easy way to tell them you don't love them. If you've somehow bought into all the cleaned up white washed advertisments on their page and need evidence just look up "sunset bay academy abuse" or "sunset bay survivors". Sending your kid here will make them worse." - [6Saturna (Google Reviews)](https://goo.gl/maps/iCP2YwiQWWyGGPFW8)
 
@@ -108,7 +108,7 @@ An ex-staff member has reported that Amy Ritchie, the Residential Program Direct
 
 **10/12/2020: (SURVIVOR)** [Link to Anonymous Survivor Testimonial](http://wwaspsurvivors.com/sunset-bay-academy-anonymous/)
 
-**October 2020:**"I was constantly bullied and abused here as well as so many other kids. One instance that I constantly have nightmares about is being put in a chokehold then slammed to the ground for not “following line structure” when I was in literal crutches. Stop abusing kids for profit! SHUT THIS PLACE DOWN!" - [Anonymous (Google Reviews)](https://www.google.com/maps/place/Sunset+Bay+Academy/@32.5248662,-117.1155286,15z/data=!4m7!3m6!1s0x0:0x27de53abbf315e64!8m2!3d32.5248662!4d-117.1155286!9m1!1b1)
+** October 2020:**"I was constantly bullied and abused here as well as so many other kids. One instance that I constantly have nightmares about is being put in a chokehold then slammed to the ground for not “following line structure” when I was in literal crutches. Stop abusing kids for profit! SHUT THIS PLACE DOWN!" - [Anonymous (Google Reviews)](https://www.google.com/maps/place/Sunset+Bay+Academy/@32.5248662,-117.1155286,15z/data=!4m7!3m6!1s0x0:0x27de53abbf315e64!8m2!3d32.5248662!4d-117.1155286!9m1!1b1)
 
 **2020: (SURVIVOR)**"I am a former graduate from sunset bay academy. I am grateful for all the friends I made I am still in contact with but I would be lying if I said my experience was helpful in my life. I entered the program when I was 14 years old. Now I am eighteen and after I graduate I started struggling with depression and anxiety because of post traumatic stress disorder. Then I started abusing substances, drugs and alcohol to be more specific. Now I am part of Alcoholics Anonymous and I have been clean for six months. If you really want to help your kids do not take them somewhere where they will be restrained and psychologically abused. This will only cause them resentment towards everyone around them. What they really need is a real diagnosis, and a treatment. In SBA they promise they will give your kids that help and your family too but that is a lie, and I can say it from my own experience. The punishments like “observation” that consist on a person being held in a really small room of four walls with no communication, no going out, no entertainment whatsoever is inhuman and is not the way to treat a person who is struggling with a mental condition, even if it is only anxiety, depression or anger issues. The only thing SBA gave me is the desire to study psychology so I can actually help people the proper way and not by punishment and force, like Alcoholics Anonymous did for me, clinics do for depression, etc. I have a lot of information on my own experience. Feel free to email me if you have any questions." - [Isabelle C. (Google Reviews)](https://www.google.com/maps/contrib/115766817244870272784/reviews/@32.5248662,-117.1155286,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
@@ -124,15 +124,15 @@ An ex-staff member has reported that Amy Ritchie, the Residential Program Direct
 
 **3/9/2013: (STUDENT)**"when I was fifteen my mother blew 17k on a "therapeutic" boarding school in Mexico for troubled teens. She told me we were going on vacation, and left me there for six months. On my second day (of 174 - I counted. There wasn't much else to do) I refused to change into my uniform, so the fitness teacher (whose other job was, funny enough, cage fighting) put me in a headlock until I stopped resisting. Over the next six months my personality slowly atrophied. We girls had a strict schedule, weren't allowed to speak to each other very much, were never allowed to leave the facility, and were punished for the smallest things: sharing food, glancing at the boys, who lived in a separate part of the facility, or refusing to do a single thing we were ordered to do. To top it all off, every day we had fitness class - an hour and a half of being screamed at to "never give up" in Spanish while we did upwards of sixty push-ups, dozens of laps around the courtyard, and enough sprawls to make your head spin. This was followed by "therapy", which was really just a glorified whining session - but we were allowed to let our hair down (literally. We had to wear our hair in a ponytail or bun because it was "provocative" when it was let down) and that felt nice. The day I got out (and only because my father had won custody and a judge ordered me out of Mexico) I screamed at my mother and, subsequently, had a panic attack when I was left alone outside for the first time in six months. I spent the next year re-learning how to navigate social situations and trying to find a way out of some debilitating depression. I like to believe my mother knows it was a horrible, expensive mistake, but she'll never admit it. (And would anyone really want to admit they blew 17k on a facility that completely screwed their daughter over?) Fun fact: the place is called Sunset Bay Academy (formerly Oceanside, but they were sued and had to change their name) and I never saw a single sunset. The walls were too high." - [u/chocolate_cosmos (Reddit)](https://www.reddit.com/r/AskReddit/comments/19y46v/what_is_the_most_expensive_mistake_youve_ever_made/)
 
-**Unknown Date: (PARENT)** [Link to Places That Changed People - Parent's Testimony](https://placesthatchangedpeople.tumblr.com/post/189068504653/a-parent-review-of-sunset-bay-academy)
+** Unknown Date: (PARENT)** [Link to Places That Changed People - Parent's Testimony](https://placesthatchangedpeople.tumblr.com/post/189068504653/a-parent-review-of-sunset-bay-academy)
 
-**Unknown Date: (SURVIVOR)** [WWASP Survivors - Sunset Bay Academy/Pacific Life Program Testimonies](http://wwaspsurvivors.com/category/survivor-testimony/pacific-life-teen-program/)
+** Unknown Date: (SURVIVOR)** [WWASP Survivors - Sunset Bay Academy/Pacific Life Program Testimonies](http://wwaspsurvivors.com/category/survivor-testimony/pacific-life-teen-program/)
 
-**Unknown Date: (SURVIVOR)** [Survivor Testimonial - SBA Resident in 2010](http://www.safeteenschools.org/images/sunsetbay-2010-anon.txt)
+** Unknown Date: (SURVIVOR)** [Survivor Testimonial - SBA Resident in 2010](http://www.safeteenschools.org/images/sunsetbay-2010-anon.txt)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Sunset Bay Academy Wesbite Homepage](https://sunsetbayacademy.com/)
 
@@ -166,7 +166,8 @@ An ex-staff member has reported that Amy Ritchie, the Residential Program Direct
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

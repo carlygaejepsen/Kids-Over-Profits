@@ -4,17 +4,17 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 There are currently no known programs operating in Alaska. We will update this information when information becomes available.
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**DeBarr Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/debarr) | - | - | - |
-| [**North Star Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/northstarbhs) | - | - | - |
-| [**Palmer Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/palmerrtc) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** DeBarr Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/debarr) | - | - | - |
+| [** North Star Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/northstarbhs) | - | - | - |
+| [** Palmer Residential Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/palmerrtc) | - | - | - |
 ---
 
-## **Closed Programs in Alaska**
+## ** Closed Programs in Alaska**
 
 ---
 
@@ -22,7 +22,7 @@ There are currently no known programs operating in Alaska. We will update this i
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -37,4 +37,5 @@ There are currently no known programs operating in Alaska. We will update this i
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

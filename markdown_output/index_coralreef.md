@@ -16,62 +16,62 @@ The history of Coral Reef Academy is also somewhat unknown. It appears that the 
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rodney Rice**is the Co-Founder of CRA. He attended BYU in the late 1980's and then played in the NFL for two seasons (1989-1990). His prior employment before creating CRA is unknown.
+** Rodney Rice** is the Co-Founder of CRA. He attended BYU in the late 1980's and then played in the NFL for two seasons (1989-1990). His prior employment before creating CRA is unknown.
 
-**David Smyth**is the Co-Founder and previous Chief Operations Officer of CRA. He worked at CRA from 1996 until 2009. Prior to creating CRA, Smyth worked as the Director of Marketing at the notiously abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) . After CRA, he went on to work as the Head Coach of USA Rugby Collegiate All Americans from 2009 until 2011. He also worked as the Head Coach of the BYU Rugby Team from 1990-2018. He currently works as the Head Coach and Director of Rugby at Southern Virginia University.
+** David Smyth** is the Co-Founder and previous Chief Operations Officer of CRA. He worked at CRA from 1996 until 2009. Prior to creating CRA, Smyth worked as the Director of Marketing at the notiously abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) . After CRA, he went on to work as the Head Coach of USA Rugby Collegiate All Americans from 2009 until 2011. He also worked as the Head Coach of the BYU Rugby Team from 1990-2018. He currently works as the Head Coach and Director of Rugby at Southern Virginia University.
 
-**Sterling Devereux**is one of the Co-Founders of CRA. He previously worked as a Therapist at the confirmedly abusive [Heritage School](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) and at the Western Youth Network (later a part of Youth Services International).
+** Sterling Devereux** is one of the Co-Founders of CRA. He previously worked as a Therapist at the confirmedly abusive [Heritage School](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) and at the Western Youth Network (later a part of Youth Services International).
 
-**Donjoe Tina Bryce**is the current Program Director of CRA. She began working at CRA as the Executive Assistant to the Executive Director in 2006. Her prior employment is unknown.
+** Donjoe Tina Bryce** is the current Program Director of CRA. She began working at CRA as the Executive Assistant to the Executive Director in 2006. Her prior employment is unknown.
 
-**Moana Jonas**is the current Assistant Program Director and Director of Education at CRA. Her prior employment is unknown.
+** Moana Jonas** is the current Assistant Program Director and Director of Education at CRA. Her prior employment is unknown.
 
-**Cecelia Bent**works as a Therapist at CRA. Her prior employment is unknown.
+** Cecelia Bent** works as a Therapist at CRA. Her prior employment is unknown.
 
-**Moana Solomona**works as a Therapist at CRA. Her prior employment is unknown.
+** Moana Solomona** works as a Therapist at CRA. Her prior employment is unknown.
 
-**Henrietta Aviga**works as a Nurse at CRA. Her prior employment is unknown.
+** Henrietta Aviga** works as a Nurse at CRA. Her prior employment is unknown.
 
-**Simanua Tiatia**reportedly worked in an unknown position at CRA around 1997. He later worked at the notorious and**confirmedly abusive** [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program which was also located in Samoa. He stopped working at Paradise Cove when it was shut down in 2000.
+** Simanua Tiatia** reportedly worked in an unknown position at CRA around 1997. He later worked at the notorious and** confirmedly abusive** [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program which was also located in Samoa. He stopped working at Paradise Cove when it was shut down in 2000.
 
-**Benjamin Toilolo**worked as a Residential Manager/Student Mentor at CRA beginning in 2009. After leaving CRA, he opened a Mexican restaurant in Apia, Samoa with his wife Tasha. According to survivor [reports](http://wwaspsurvivors.com/survivor-testimony/notes-from-tha-cove/electrocuted/) , he spent 16 years in prison for kidnapping and ransom, although these reports could not be confirmed.
+** Benjamin Toilolo** worked as a Residential Manager/Student Mentor at CRA beginning in 2009. After leaving CRA, he opened a Mexican restaurant in Apia, Samoa with his wife Tasha. According to survivor [reports](http://wwaspsurvivors.com/survivor-testimony/notes-from-tha-cove/electrocuted/) , he spent 16 years in prison for kidnapping and ransom, although these reports could not be confirmed.
 
-**Tasha Toilolo**worked as a Therapist at CRA. She is married to Ben Toilolo. She is reportedly from Utah, but moved to Samoa to work at CRA.
+** Tasha Toilolo** worked as a Therapist at CRA. She is married to Ben Toilolo. She is reportedly from Utah, but moved to Samoa to work at CRA.
 
-**Julia Elliott**worked as a Therapist at CRA. She originally worked at CRA from 2000 until 2006, when she left to work at the reportedly abusive [Lone Star Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/lonestarexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
+** Julia Elliott** worked as a Therapist at CRA. She originally worked at CRA from 2000 until 2006, when she left to work at the reportedly abusive [Lone Star Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/lonestarexp) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.
 
-**Yolanda Williams-Anesi**formerly worked as Parent Liaison at CRA. She previously worked at an unnames residential treatment center for teens for two years. Her current employment is unknown.
+** Yolanda Williams-Anesi** formerly worked as Parent Liaison at CRA. She previously worked at an unnames residential treatment center for teens for two years. Her current employment is unknown.
 
-**Lu Vaughn**worked as the Clinical Director of CRA until April 2009. She previously worked as a Therapist and later the Clinical Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) , a program in Mexico that closed in 2005. She also previously worked as a Therapist at the reportedly abusive [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge) . After leaving Blue Ridge, she worked at the reportedly abusive ​[Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) .
+** Lu Vaughn** worked as the Clinical Director of CRA until April 2009. She previously worked as a Therapist and later the Clinical Director of [Positive Impact](https://www.reddit.com/r/troubledteens/wiki/index/positiveimpact) , a program in Mexico that closed in 2005. She also previously worked as a Therapist at the reportedly abusive [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge) . After leaving Blue Ridge, she worked at the reportedly abusive ​[Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) .
 
-**Karen Nelson**worked as the Clinical Director of CRA beginning in April 2009. She previously worked as the Assistant Director for Outreach at the University of Houston's Counseling and Psychological Services Center. She was also the designated counselor at the University to work with NCAA student athletes who tested positive for drugs or were identified with possible drug and/or alcohol problems. ​
+** Karen Nelson** worked as the Clinical Director of CRA beginning in April 2009. She previously worked as the Assistant Director for Outreach at the University of Houston's Counseling and Psychological Services Center. She was also the designated counselor at the University to work with NCAA student athletes who tested positive for drugs or were identified with possible drug and/or alcohol problems. ​
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Coral Reef Academy uses a level system. Originally, when the program was operating as Robert Louis Stevenson Youth Academy, the levels were:
 
-***Orientation:**This was the first level.
-***Anufe:**On this level, the students were expected to give feedback to peers using "appropriate program norms" and utilize "positive communication skills according to the positive peer culture." They also learn and perform the Academy song, as well as learn and perform a fiafia dance and song.
-***Tu'u Fu'a:**Teens were promoted to this level after they demonstrated appropriate behavior, were compliant with all level one expectations, and learn more fiafia dances and songs.
-***Pepe:**Teens were promoted to this level after they demonstrated the appropriate behaviors and were compliant with all previous level expectations.
-***Pule Nu'u:**One this level, teens had to present a personal reflections paper and must have finished all written requirements. Students on this level were eligible to become “Peer Leaders.”
+***Orientation:** This was the first level.
+***Anufe:** On this level, the students were expected to give feedback to peers using "appropriate program norms" and utilize "positive communication skills according to the positive peer culture." They also learn and perform the Academy song, as well as learn and perform a fiafia dance and song.
+***Tu'u Fu'a:** Teens were promoted to this level after they demonstrated appropriate behavior, were compliant with all level one expectations, and learn more fiafia dances and songs.
+***Pepe:** Teens were promoted to this level after they demonstrated the appropriate behaviors and were compliant with all previous level expectations.
+***Pule Nu'u:** One this level, teens had to present a personal reflections paper and must have finished all written requirements. Students on this level were eligible to become “Peer Leaders.”
 
 When the program rebranded as Coral Reef Academy around 1997, the names of the levels were changed to:
 
 ***Orientation:**
-***Tamaititi:**In the Samoan language, this means "Child".
-***Taule'ale'a:**In the Samoan language, this means "Young Untitled Man".
-***Tulafale:**This means "Orator" in the Samoan language.
-***Pulenu'u:**This means "Village Mayor" in the Samoan language.
+***Tamaititi:** In the Samoan language, this means "Child".
+***Taule'ale'a:** In the Samoan language, this means "Young Untitled Man".
+***Tulafale:** This means "Orator" in the Samoan language.
+***Pulenu'u:** This means "Village Mayor" in the Samoan language.
 
 Sometime before 2002, CRA changed their level system to represent a symbolic journey around the island of Upolo. From their [student handbook](https://web.archive.org/web/20110419174432/https://coralreefacademy.com/Forms/student_guidebook.pdf) , "Progression through the program at CRA is marked by your progression around the island. You can see there are buses located at a number of the 6 highlighted villages. Each bus representing a student’s progress as they move from destination to destination - closer to success and closer to home." It is unclear whether the boys are actually physically moved to different campuses around the island during this time. This system was used at least until 2011. These levels are reported to be:
 
-***Vaitele:**This is reportedly were the teens were taken for their orientation.
-***Maasina:**This is the main campus of CRA, and the first "stop" on their journey.
+***Vaitele:** This is reportedly were the teens were taken for their orientation.
+***Maasina:** This is the main campus of CRA, and the first "stop" on their journey.
 ***Siusega:**
 ***Salani:**
 ***Vaiee:**
@@ -80,15 +80,15 @@ Sometime before 2002, CRA changed their level system to represent a symbolic jou
 
 In recent years, the program has apparently changed their program once again to only include three phases. These are reported to be:
 
-***Orientation:**During this time, the boys live with a host family while getting acquainted to the program and Samoa. This level typically lasts one month.
-***Primary Care:**This level occurs at the main campus of CRA in Vaitele. It typically lasts between 8 and 10 months. The boys spend the majority of the program on this level.
-***Beyond the Reef:**This is the final phase of the program at CRA. It takes place in a staffed off-campus house. This phase functions as a transitional program where the boys prepare to leave Samoa and return home. This phase is reported to last around 3-4 months.
+***Orientation:** During this time, the boys live with a host family while getting acquainted to the program and Samoa. This level typically lasts one month.
+***Primary Care:** This level occurs at the main campus of CRA in Vaitele. It typically lasts between 8 and 10 months. The boys spend the majority of the program on this level.
+***Beyond the Reef:** This is the final phase of the program at CRA. It takes place in a staffed off-campus house. This phase functions as a transitional program where the boys prepare to leave Samoa and return home. This phase is reported to last around 3-4 months.
 
 All phone calls between parents and the teens are closely monitored by staff, with the boys being required to keep the call on speakerphone. It is not until the final phase fo the program that boys are permitted to have unsupervised calls. ​
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 The teens at CRA are forced to adhere to a strict set of rules. Some of these rules include:
 
@@ -112,13 +112,13 @@ One punishment reported by survivors is the "Bus Barn/Reflection". This punishme
 
 Many survivors have reported that CRA is an abusive program. Allegations of abuse and neglect that have been reported by survivors include extreme physical abuse, solitary confinement, emotional abuse, unsanitary conditions, medical neglect, and sexual abuse.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Coral Reef Academy is a**Confirmedly Abusive**program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Coral Reef Academy is a** Confirmedly Abusive** program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 In February of 1998, a male staff member at (what was then known as) A Better Way Youth Academy was arrested after he admitted to being involved in a sexual relationship with an underage female student at the program. After this abuse came to light, several more female students complained of sexual advances by staff members as well. Shortly after, the program decided to become an all-male facility.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2019: (SURVIVOR)**"The most unhealthy environment I have ever been to. I’ve seen kids be abused on a constant basis. The therapist lied to my mom and me and nobody knew what to believe one of the worst places I have ever been to" - [Caleb (Google Reviews)](https://www.google.com/maps/contrib/101331542307535446057/reviews/@-13.8271252,-171.8138016,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
@@ -130,7 +130,7 @@ In February of 1998, a male staff member at (what was then known as) A Better Wa
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Coral Reef Academy Website Homepage](https://coralreefacademy.com/)
 
@@ -150,7 +150,8 @@ In February of 1998, a male staff member at (what was then known as) A Better Wa
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -1,3 +1,0 @@
-|  | updated for closure |  |
-|  |  |  |
-|  |  |  |

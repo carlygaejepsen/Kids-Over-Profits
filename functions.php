@@ -1964,7 +1964,7 @@ function enqueue_facility_form_script() {
     }
 
     // Enqueue the new configuration module
-    $config_module_relative_path = '/js/facility-form-modules/config.js';
+    $config_module_relative_path = '/js/data-form-modules/config.js';
     $config_module_file_path = get_stylesheet_directory() . $config_module_relative_path;
     $config_module_uri = get_stylesheet_directory_uri() . $config_module_relative_path;
 
@@ -1977,7 +1977,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new data normalizer module
-    $normalizer_module_relative_path = '/js/facility-form-modules/data-normalizer.js';
+    $normalizer_module_relative_path = '/js/data-form-modules/data-normalizer.js';
     $normalizer_module_file_path = get_stylesheet_directory() . $normalizer_module_relative_path;
     $normalizer_module_uri = get_stylesheet_directory_uri() . $normalizer_module_relative_path;
 
@@ -1990,7 +1990,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new API module
-    $api_module_relative_path = '/js/facility-form-modules/api.js';
+    $api_module_relative_path = '/js/data-form-modules/api.js';
     $api_module_file_path = get_stylesheet_directory() . $api_module_relative_path;
     $api_module_uri = get_stylesheet_directory_uri() . $api_module_relative_path;
 
@@ -2003,7 +2003,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new project management module
-    $project_module_relative_path = '/js/facility-form-modules/project.js';
+    $project_module_relative_path = '/js/data-form-modules/project.js';
     $project_module_file_path = get_stylesheet_directory() . $project_module_relative_path;
     $project_module_uri = get_stylesheet_directory_uri() . $project_module_relative_path;
 
@@ -2016,7 +2016,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new UI module
-    $ui_module_relative_path = '/js/facility-form-modules/ui.js';
+    $ui_module_relative_path = '/js/data-form-modules/ui.js';
     $ui_module_file_path = get_stylesheet_directory() . $ui_module_relative_path;
     $ui_module_uri = get_stylesheet_directory_uri() . $ui_module_relative_path;
 
@@ -2029,7 +2029,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new UI Events module
-    $ui_events_module_relative_path = '/js/facility-form-modules/ui-events.js';
+    $ui_events_module_relative_path = '/js/data-form-modules/ui-events.js';
     $ui_events_module_file_path = get_stylesheet_directory() . $ui_events_module_relative_path;
     $ui_events_module_uri = get_stylesheet_directory_uri() . $ui_events_module_relative_path;
 
@@ -2042,7 +2042,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new UI Render module
-    $ui_render_module_relative_path = '/js/facility-form-modules/ui-render.js';
+    $ui_render_module_relative_path = '/js/data-form-modules/ui-render.js';
     $ui_render_module_file_path = get_stylesheet_directory() . $ui_render_module_relative_path;
     $ui_render_module_uri = get_stylesheet_directory_uri() . $ui_render_module_relative_path;
 
@@ -2055,7 +2055,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new UI State module
-    $ui_state_module_relative_path = '/js/facility-form-modules/ui-state.js';
+    $ui_state_module_relative_path = '/js/data-form-modules/ui-state.js';
     $ui_state_module_file_path = get_stylesheet_directory() . $ui_state_module_relative_path;
     $ui_state_module_uri = get_stylesheet_directory_uri() . $ui_state_module_relative_path;
 
@@ -2068,7 +2068,7 @@ function enqueue_facility_form_script() {
     );
 
     // Enqueue the new UI Actions module
-    $ui_actions_module_relative_path = '/js/facility-form-modules/ui-actions.js';
+    $ui_actions_module_relative_path = '/js/data-form-modules/ui-actions.js';
     $ui_actions_module_file_path = get_stylesheet_directory() . $ui_actions_module_relative_path;
     $ui_actions_module_uri = get_stylesheet_directory_uri() . $ui_actions_module_relative_path;
 
@@ -2226,6 +2226,12 @@ function enqueue_facility_form_script() {
         $config
     );
 
+    wp_localize_script(
+        'db-form-loader',
+        'KOP_DATA_FORM_CONFIG',
+        $config
+    );
+
     // Enqueue page-specific scripts based on template (slug fallback for legacy pages)
     if ($is_data_template || is_page('data')) {
         // Suggestions page - loads data-page.js
@@ -2255,7 +2261,6 @@ function enqueue_facility_form_script() {
         );
     }
 }
-add_action('wp_enqueue_scripts', 'enqueue_facility_form_script');
 
 /**
  * Enqueue News Article Processor scripts

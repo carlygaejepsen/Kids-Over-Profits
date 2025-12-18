@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 The Oklahoma Department of Human Services licenses and regulates adolescent facilities, group homes, and other 24-hour care programs.
 
@@ -16,17 +16,17 @@ While accreditation is encouraged by the Oklahoma State Board of Education, it i
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Brush Creek Academy**](https://www.reddit.com/r/troubledteens/wiki/index/brushcreek) | 2015 | Jay, OK | N/A |
-| [**Calvalry Boys Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/calvalry) | - | - | - |
-| [**Cedar Ridge Behavioral Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/cedarridgeok) | - | - | - |
-| [**Cookson Hills Christian School**](https://www.reddit.com/r/troubledteens/wiki/index/cooksonhills) | 1957 | Kansas, OK | [HEAL](http://www.heal-online.org/cookson.htm) |
-| [**New Lifehouse Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newlifehouse) | - | Disney, OK | - |
-| [**Red River Youth Academy of Norman/ Varangon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redrivernorman) | - | - | - |
-| [**Tulsa Boys' Home**](https://www.reddit.com/r/troubledteens/wiki/index/tulsaboys) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Brush Creek Academy**](https://www.reddit.com/r/troubledteens/wiki/index/brushcreek) | 2015 | Jay, OK | N/A |
+| [** Calvalry Boys Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/calvalry) | - | - | - |
+| [** Cedar Ridge Behavioral Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/cedarridgeok) | - | - | - |
+| [** Cookson Hills Christian School**](https://www.reddit.com/r/troubledteens/wiki/index/cooksonhills) | 1957 | Kansas, OK | [HEAL](http://www.heal-online.org/cookson.htm) |
+| [** New Lifehouse Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newlifehouse) | - | Disney, OK | - |
+| [** Red River Youth Academy of Norman/ Varangon Academy**](https://www.reddit.com/r/troubledteens/wiki/index/redrivernorman) | - | - | - |
+| [** Tulsa Boys' Home**](https://www.reddit.com/r/troubledteens/wiki/index/tulsaboys) | - | - | - |
 ---
 
-## **Closed Programs in Oklahoma**
+## ** Closed Programs in Oklahoma**
 
 ---
 
@@ -34,12 +34,12 @@ While accreditation is encouraged by the Oklahoma State Board of Education, it i
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Four Winds Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/fourwindsranch) | - | - | - |
-| [**High Pointe Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/highpointe) | - | - | - |
-| [**Morning Star Adolescent Treatment Unit**](https://www.reddit.com/r/troubledteens/wiki/index/morningstar) | - | - | - |
-| [**Rose Rock Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/roserock) | - | - | - |
-| [**Shadow Mountain Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/shadowmtn) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Four Winds Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/fourwindsranch) | - | - | - |
+| [** High Pointe Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/highpointe) | - | - | - |
+| [** Morning Star Adolescent Treatment Unit**](https://www.reddit.com/r/troubledteens/wiki/index/morningstar) | - | - | - |
+| [** Rose Rock Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/roserock) | - | - | - |
+| [** Shadow Mountain Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/shadowmtn) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -48,7 +48,8 @@ While accreditation is encouraged by the Oklahoma State Board of Education, it i
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

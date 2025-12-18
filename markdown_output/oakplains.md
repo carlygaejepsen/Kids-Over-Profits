@@ -2,33 +2,34 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Oak Plains Academy (formerly known as the [Chad Youth Enhancement Center](https://www.reddit.com/r/troubledteens/wiki/index/chadyouth) ) is a [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) behavior modification program that opened in 2008.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 ---
 
-## **Abuse Allegations, Lawsuits, and Deaths**
+## ** Abuse Allegations, Lawsuits, and Deaths**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

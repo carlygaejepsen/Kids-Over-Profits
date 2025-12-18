@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 The Northwest Accreditation Commission (formerly called the Northwest Association of Accredited Schools (NAAS)) is a non-governmental organization that provides accreditation to educational institutions in the Northwestern United States. The organization was founded in 1917, as the Northwest Association of Secondary and Higher Schools. In 1974, the association changed its name to the Northwest Association of Schools and Colleges. In 2000, it became the Northwest Association of Schools and Colleges and Universities, which disbanded and split into two separate organizations in 2004, with the Northwest Association of Accredited Schools handling the accreditation of schools and the Northwest Commission on Colleges and Universities handling the accreditation of institutions of higher education.
 
@@ -12,7 +12,7 @@ In January 2012 the Northwest Accreditation Commission became a division of Adva
 
 ---
 
-## **Open NWAC Programs**
+## ** Open NWAC Programs**
 
 ---
 
@@ -20,7 +20,7 @@ In January 2012 the Northwest Accreditation Commission became a division of Adva
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -33,7 +33,7 @@ In January 2012 the Northwest Accreditation Commission became a division of Adva
 | - | - | - | - |
 ---
 
-## **Closed NWAC Programs**
+## ** Closed NWAC Programs**
 
 ---
 
@@ -41,7 +41,7 @@ In January 2012 the Northwest Accreditation Commission became a division of Adva
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -66,7 +66,8 @@ In January 2012 the Northwest Accreditation Commission became a division of Adva
 | - | - | - | - |
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

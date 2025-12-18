@@ -12,15 +12,15 @@ Mel Wasserman was a member of the notorious cult [Synanon](https://www.reddit.co
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Mel Wasserman**(1930-2002) was the founder of CEDU. He was also a devoted member of the Synanon cult.
+** Mel Wasserman**(1930-2002) was the founder of CEDU. He was also a devoted member of the Synanon cult.
 
-**Brandi Elliot**worked as the Director of CEDU Middle School from 1998-2004. She later worked as the Admissions Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) .
+** Brandi Elliot** worked as the Director of CEDU Middle School from 1998-2004. She later worked as the Admissions Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 CEDU Middle School's program was nearly identical to that of [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . CEDU Middle School utilized a level system consisting of 5 levels. The levels were:
 
@@ -38,17 +38,17 @@ In addition to "Raps", students at CEDU Middle also attended 20 - 24+ hour long 
 
 ---
 
-## **Abuse Allegations and Investigations**
+## ** Abuse Allegations and Investigations**
 
 CEDU Middle School has been widely recognized and confirmed as an abusive program. Instances of abuse and neglect which have been reported by survivors include extreme psychological abuse, sleep deprivation, physical/sexual abuse, solitary confinement, and forced manual labor. There are also reports that the staff were extremely unqualified and often violent individuals. Additionally, it has been reported that hundreds of teens attempted to escape for CEDU, some of which have never been seen again.
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [CEDU Middle School Website Homepage](https://web.archive.org/web/20020926220247/http://www.cedumiddleschool.com/) (archived, 2002)
 
@@ -60,7 +60,8 @@ CEDU Middle School has been widely recognized and confirmed as an abusive progra
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

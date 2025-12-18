@@ -16,7 +16,7 @@ In 2008, Sue Scheff authored [Wit’s End: Advice and Resources for Saving Your 
 
 ---
 
-## **Known Program Recommendations**
+## ** Known Program Recommendations**
 
 *The following is a partial list of TTI/behavior-modification programs that are/were known to have been recommended by P.U.R.E. and Sue Scheff:*
 
@@ -42,7 +42,7 @@ In 2008, Sue Scheff authored [Wit’s End: Advice and Resources for Saving Your 
 
 ---
 
-## **Lawsuits and Controversy**
+## ** Lawsuits and Controversy**
 
 Shortly after she created P.U.R.E., [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) instigated a [lawsuit](https://www.sueschefftruth.com/files/wwaspsvpure.pdf) against Scheff in January of 2002, alleging intentional interference with prospective economic advantage, defamation, civil conspiracy, unfair business practices, and sought injunctive relief and damages. The lawsuit would have forced Scheff to remove [her story](https://www.helpyourteens.com/a-parents-true-story/) from the Internet. CSA's Director, Narvin Lichfield, alleged that Scheff told fabricated stories about his school to parents of troubled teens as part of a scheme to persuade them to send their children to other programs, and was receiving payment from the programs in return. The jury found that while Scheff was being paid by programs for her referrals, she was nevertheless telling the truth about WWASP’s treatment of children. After hearing three days of testimony, and because it was found that the statements she made about these schools were not false, the jury ruled in Scheff's favor in 2004. In June 2006, she defeated WWASP once again in the Appellate Court.
 
@@ -78,7 +78,8 @@ Although P.U.R.E. was likely created with good intentions, the organization now 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

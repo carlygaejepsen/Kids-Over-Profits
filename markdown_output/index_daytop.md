@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Daytop Village (also called Samartian Daytop Village) is a company that owns several behavior-modification programs that was founded in 1963 as an offshoot of the notorious drug-rehabilition program turned cult [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) . Daytop Village was founded by Monsignor William B. O'Brien and Daniel Harold Casriel as a drug and alcohol rehabilitation center for adults. During July of 1962, Casriel had visited the Synanon community in California and was so impressed with what he saw there that he moved into the community for a "closer look" and even wrote a book about the experience. In February of 1963, Casriel gave $2000 to seven members of Synanon to start a community on the East Coast. The result was a house on Greens Farm Road in Westport, Connecticut directed by Jack Hurst, former president of Synanon in Santa Monica. This was the beginning of Daytop Village.
 
@@ -16,21 +16,21 @@ It was during a 1980 visit to Daytop Village that future first lady Nancy Reagan
 
 In late 2015, Daytop Village merged with Samaritan Village, another 50+ year old health and human services nonprofit organization with a specialty in drug and alcohol treatment. The newly merged organization changed its name to Samaritan Daytop Village.
 
-The original four Daytop centers were in Manhattan, Staten Island, Sullivan County and New Haven, NY. There was also a New Jersey location that was located at [80 W Main St, Mendham, NJ 07945](https://www.google.com/maps/place/80+W+Main+St,+Mendham,+NJ+07945/@40.7700539,-74.617477,538m/data=!3m1!1e3!4m5!3m4!1s0x89c3988d57bd9e59:0x1d1dc39188cdde8b!8m2!3d40.7706308!4d-74.6155136) . Today, Samaritan Daytop operates in over 50 locations throughout New York. The majority of these locations are adult programs, although they do operate two "preparatory" schools for adolescents called**Daytop Preparatory School Rockland**and**Daytop Preparatory School Suffolk**. An archived version of their [website](https://web.archive.org/web/20021017094031/http://daytopvillage.com/adolescent.html) shows that they once accepted adolescents (12-21) into various residential care settings.
+The original four Daytop centers were in Manhattan, Staten Island, Sullivan County and New Haven, NY. There was also a New Jersey location that was located at [80 W Main St, Mendham, NJ 07945](https://www.google.com/maps/place/80+W+Main+St,+Mendham,+NJ+07945/@40.7700539,-74.617477,538m/data=!3m1!1e3!4m5!3m4!1s0x89c3988d57bd9e59:0x1d1dc39188cdde8b!8m2!3d40.7706308!4d-74.6155136) . Today, Samaritan Daytop operates in over 50 locations throughout New York. The majority of these locations are adult programs, although they do operate two "preparatory" schools for adolescents called** Daytop Preparatory School Rockland** and** Daytop Preparatory School Suffolk**. An archived version of their [website](https://web.archive.org/web/20021017094031/http://daytopvillage.com/adolescent.html) shows that they once accepted adolescents (12-21) into various residential care settings.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Monsignor William B. O'Brien**is one of the founders of Daytop Village.
+** Monsignor William B. O'Brien** is one of the founders of Daytop Village.
 
-**Daniel Harold Casriel**is one of the founders of Daytop Village.
+** Daniel Harold Casriel** is one of the founders of Daytop Village.
 
-**David A. Deitch**was a devoted member of Synanon from 1961 until October of 1964, when he joined Daytop Village. He had achieved a position of leadership at Synanon, as the head of Synanon's program in Connecticut. According to reports, Deitch was "banished" from Synanon after refusing to follow Charles Dederich's orders to not let members graduate from Synanon. He was largely responsible for turning Daytop into a clone of Synanon.
+** David A. Deitch** was a devoted member of Synanon from 1961 until October of 1964, when he joined Daytop Village. He had achieved a position of leadership at Synanon, as the head of Synanon's program in Connecticut. According to reports, Deitch was "banished" from Synanon after refusing to follow Charles Dederich's orders to not let members graduate from Synanon. He was largely responsible for turning Daytop into a clone of Synanon.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little information is known about the specifics of the program structure at Daytop. It is reported to be heavily drawn from the methods used by the notorious drug-rehabilitation cult [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) .
 
@@ -38,7 +38,7 @@ Deitch began using “humanizing community” rather than “therapeutic communi
 
 ---
 
-## **Connections to Synanon**
+## ** Connections to Synanon**
 
 Daytop Village has various connections to Synanon which Daytop reportedly acknowledges and does not try to hide. First, both David Deitch and Daniel Harold Casriel were devoted Synanon members who drew heavily from their experiences when creating Daytop Village. David Deitch, when asked about his experience at Synanon in an [interview](https://onlinelibrary.wiley.com/doi/pdf/10.1080/09652149933261) stated,
 
@@ -48,17 +48,17 @@ In addition, Daytop Village used many of the same abusive methods employed by Sy
 
 ---
 
-## **Notable Alumni**
+## ** Notable Alumni**
 
-**Joseph Ricci**was a former heroin addict who got clean at Daytop Village in the 1960's. In 1971, he opened his own "treatment" program for teenagers called the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) , located in Maine. It has been reported that Ricci developed Elan to be a "gentler" version of Daytop, however, he failed miserably. Elan is widely acknowledged to have been an extremely emotionally, physically, and sexually abusive program. Ricci died in 2001 and Elan was subsequently closed in 2011.
-
----
-
-## **Survivor/Parent Testimonials**
+** Joseph Ricci** was a former heroin addict who got clean at Daytop Village in the 1960's. In 1971, he opened his own "treatment" program for teenagers called the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) , located in Maine. It has been reported that Ricci developed Elan to be a "gentler" version of Daytop, however, he failed miserably. Elan is widely acknowledged to have been an extremely emotionally, physically, and sexually abusive program. Ricci died in 2001 and Elan was subsequently closed in 2011.
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
+
+---
+
+## ** Related Media**
 
 [Daytop Village Website Homepage](https://samaritanvillage.org/)
 
@@ -90,7 +90,8 @@ In addition, Daytop Village used many of the same abusive methods employed by Sy
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

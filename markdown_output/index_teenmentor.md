@@ -12,25 +12,25 @@ The program was located in the converted [Carara hotel in Tarcoles, Costa Rica](
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Robert W. Lichfield**was the Founder of Teen Mentor School and the son of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's founder Robert B. Lichfield.
-
----
-
-## **Program Structure**
+** Robert W. Lichfield** was the Founder of Teen Mentor School and the son of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's founder Robert B. Lichfield.
 
 ---
 
-## **Abuse and Closure**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse and Closure**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
+
+---
+
+## ** Related Media**
 
 [Teen Mentor School Website Homepage](https://web.archive.org/web/20110818011116/http://horizonbootcamp.com/) (archived, 2011)
 
@@ -46,7 +46,8 @@ The program was located in the converted [Carara hotel in Tarcoles, Costa Rica](
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

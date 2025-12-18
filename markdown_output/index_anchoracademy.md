@@ -16,42 +16,42 @@ Today, Anchor Academy is marketed as a "faith based ministry reaching out to hig
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dennis McElwrath**is one of the founders of Anchor Academy. He previously worked for the [Roloff Ministries](https://www.reddit.com/r/troubledteens/wiki/index/roloff) , and took over ownership of the [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) in 1999. It is reported that Dennis has a select group of boys come to his room each night. Those boys would rub his feet and serve as informants on what was happening outside of his gaze. He also previously worked at the confirmedly abusive and now closed [Mountain Park Boarding Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountainpark) , another Roloff Home. [Photo of Dennis at Anchor Academy](https://therevealer.org/wp-content/uploads/2014/07/Dennis-McElwrath-at-Anchor-Academy-in-Vanduser-Missouri.jpg) .
+** Dennis McElwrath** is one of the founders of Anchor Academy. He previously worked for the [Roloff Ministries](https://www.reddit.com/r/troubledteens/wiki/index/roloff) , and took over ownership of the [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) in 1999. It is reported that Dennis has a select group of boys come to his room each night. Those boys would rub his feet and serve as informants on what was happening outside of his gaze. He also previously worked at the confirmedly abusive and now closed [Mountain Park Boarding Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountainpark) , another Roloff Home. [Photo of Dennis at Anchor Academy](https://therevealer.org/wp-content/uploads/2014/07/Dennis-McElwrath-at-Anchor-Academy-in-Vanduser-Missouri.jpg) .
 
-**Pastor Trevor Spencer**helped Dennis McElwrath open Anchor Academy in Montana. He also previously worked at [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) .
+** Pastor Trevor Spencer** helped Dennis McElwrath open Anchor Academy in Montana. He also previously worked at [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys) .
 
 [Additional Staff Information](http://www.heal-online.org/anchor.htm) courtesy of HEAL-online.org
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Anchor Academy uses two level systems consisting of "leadership" and "communication" levels.
 
-### **Leadership Levels**
+### ** Leadership Levels**
 
-***Student:**When a resident arrives at Anchor Academy, they are placed under someone called a "guide", and they are his "student". As a student, the boy must stay withing 5 feet of their guide at all times. This is a 24/7 policy. If they go outside of the 5-foot radius, they can be given "complaints" (a point system for keeping track of the bad things a boy does; the more complaints you get, the more trouble you are in). If the guide doesn't like what the student are saying, he is allowed to put the boy on "silence" whenever he sees fit. While on silence, the boy is not allowed to talk without raising their hand. If they do, they will be given more complaints. They must follow whatever instructions their guide gives them. It is reported that boys were typically on this level for a*minimum*of 3 months.
-***Single:**As a Single, they boys were put into a "crew" and given free-roam of the area, although there were many limitations. If the boys did well as a Single, you were promoted to a guide.
-***Guide:**These boys are given the responsibility of indoctrinating new residents. They are responsible for their "student" and are given absolute power over punishing them.
-***Crew Leader:**A crew leader has the same basic function as a guide, except he is in charge of 5-8 singles, guides, and students. He has the same authority over every member of his crew, and also every boy in anchor who is a lower rank than him. He is allowed to give out complaints as he sees fit, and these complaints do not need to be justified. These residents are basically Guides for 5-8 students. There are usually 5-8 crew leaders or more at any give time.
-***Dorm Leader:**Dorm leaders are in charge of the entire dorm, usually 50+ students. They have all the power that crew leaders have, only they have it over crew leaders as well.
+***Student:** When a resident arrives at Anchor Academy, they are placed under someone called a "guide", and they are his "student". As a student, the boy must stay withing 5 feet of their guide at all times. This is a 24/7 policy. If they go outside of the 5-foot radius, they can be given "complaints" (a point system for keeping track of the bad things a boy does; the more complaints you get, the more trouble you are in). If the guide doesn't like what the student are saying, he is allowed to put the boy on "silence" whenever he sees fit. While on silence, the boy is not allowed to talk without raising their hand. If they do, they will be given more complaints. They must follow whatever instructions their guide gives them. It is reported that boys were typically on this level for a*minimum*of 3 months.
+***Single:** As a Single, they boys were put into a "crew" and given free-roam of the area, although there were many limitations. If the boys did well as a Single, you were promoted to a guide.
+***Guide:** These boys are given the responsibility of indoctrinating new residents. They are responsible for their "student" and are given absolute power over punishing them.
+***Crew Leader:** A crew leader has the same basic function as a guide, except he is in charge of 5-8 singles, guides, and students. He has the same authority over every member of his crew, and also every boy in anchor who is a lower rank than him. He is allowed to give out complaints as he sees fit, and these complaints do not need to be justified. These residents are basically Guides for 5-8 students. There are usually 5-8 crew leaders or more at any give time.
+***Dorm Leader:** Dorm leaders are in charge of the entire dorm, usually 50+ students. They have all the power that crew leaders have, only they have it over crew leaders as well.
 
-### **Communication Levels**
+### ** Communication Levels**
 
-***Super Seperation:**If a resident breaks a major rule, they are put on Super Seperation. While on super separation, they are not allowed to talk to anyone except their crew leader, the dorm leader, and staff. If they did, they got "complaints". If they so much as*looked*at anyone other than those people, they were given complaints. If someone talks to them, they cannot respond.
-***Separation:**This level is based around the same basic principles as super separation, only the boy is allowed to talk to all crew leaders, instead of just their own.
-***Orientation Student:**Same basic principle as separation, except you could talk to any "number 1's" that you wanted to, and your guide, regardless of his communication level.
-***Single:**This level is basically the same communication levels as a student, but they just don't have to follow their "guide" around all the time.
-***Number 2:**On this level, residents are allowed to talk to everyone who is a level 2 and above. So if you are a level 2, you can talk to all level 2's and all level 1's. If you talked to or looked at anyone not of those ranks, you had the same punishment as the lower ranks.
-***Number 1:**Residents on this level are allowed to talk to everyone, with the exception of separation/super separation, unless they are a crew leader.
+***Super Seperation:** If a resident breaks a major rule, they are put on Super Seperation. While on super separation, they are not allowed to talk to anyone except their crew leader, the dorm leader, and staff. If they did, they got "complaints". If they so much as*looked*at anyone other than those people, they were given complaints. If someone talks to them, they cannot respond.
+***Separation:** This level is based around the same basic principles as super separation, only the boy is allowed to talk to all crew leaders, instead of just their own.
+***Orientation Student:** Same basic principle as separation, except you could talk to any "number 1's" that you wanted to, and your guide, regardless of his communication level.
+***Single:** This level is basically the same communication levels as a student, but they just don't have to follow their "guide" around all the time.
+***Number 2:** On this level, residents are allowed to talk to everyone who is a level 2 and above. So if you are a level 2, you can talk to all level 2's and all level 1's. If you talked to or looked at anyone not of those ranks, you had the same punishment as the lower ranks.
+***Number 1:** Residents on this level are allowed to talk to everyone, with the exception of separation/super separation, unless they are a crew leader.
 
 If the resident talks to someone you aren't allowed to, they ar disciplined with what is referred to as "swats". This punishment consists of the boy being repeatedly spanked with a paddle. They reportedly have two wooden paddles: one smaller one named 'Smiley', and the other was significantly larger and named 'Proverbs'.
 
 ---
 
-## **Punishments**
+## ** Punishments**
 
 Here are some of the common punishments and general policies described by graduates of Anchor Academy during its years in Montana include:
 
@@ -78,9 +78,9 @@ Anchor Academy has been reported by many survivors to be an extremely abusive pr
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**8/12/2010: (SURVIVOR)** [Link to Jordan's Survivor Testimony](https://www.fornits.com/phpbb/index.php?topic=30935.0)**Note: Jordan later elaborated on his experience, emphasizing the trauma and damage it has caused him in his every day life. “I saw things that would make parents cry. Still to this day I feel terribly guilty about not trying to do more.”*
+**8/12/2010: (SURVIVOR)** [Link to Jordan's Survivor Testimony](https://www.fornits.com/phpbb/index.php?topic=30935.0)** Note: Jordan later elaborated on his experience, emphasizing the trauma and damage it has caused him in his every day life. “I saw things that would make parents cry. Still to this day I feel terribly guilty about not trying to do more.”*
 
 ---
 
@@ -104,7 +104,8 @@ Anchor Academy has been reported by many survivors to be an extremely abusive pr
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

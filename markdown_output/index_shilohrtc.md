@@ -14,15 +14,15 @@ Shiloh Treatment Center was founded in 1995 by Clay Dean Hill as a part of his n
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Clay Dean Hill**is the Founder of Shiloh Treatment Center. Prior to creating Shiloh, he had also opened the [Behavior Training Research](https://www.reddit.com/r/troubledteens/wiki/index/behaviortraining) in 1983 and [Daystar Residential Inc.](https://www.reddit.com/r/troubledteens/wiki/index/daystar) in 1991.
+** Clay Dean Hill** is the Founder of Shiloh Treatment Center. Prior to creating Shiloh, he had also opened the [Behavior Training Research](https://www.reddit.com/r/troubledteens/wiki/index/behaviortraining) in 1983 and [Daystar Residential Inc.](https://www.reddit.com/r/troubledteens/wiki/index/daystar) in 1991.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is presently known about the specifics of the program used by Shiloh Treatment Center. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is presently known about the specifics of the program used by Shiloh Treatment Center. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -51,9 +51,9 @@ On November 5^(th) 2010, Michael Owens, a 16-year-old battling depression and be
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**July 2021: (SURVIVOR)**"I am being nice giving one star. I spent 4 years under Clay Hills care and I was a patient when the 1993 murder of Dawn Perry took place. They all know I know who restrained her and she was my friend. They used excessive force every time there was restraints. Those were sad 4 years of my life I will never get back. Clay Hill you deserve to be punished. DO NOT SEND ANY KIDS HERE!!!!! I was 11 when I got there and 15 when I left. I have PTSD to this day at 41 now" - [Erin (Google Reviews)](https://www.google.com/maps/contrib/117769736444935289262/place/ChIJH76RpYqSQIYRkHulvlbwL4U/@29.5154215,-95.3852502,12.64z/data=!4m4!1m3!8m2!1e1!2s117769736444935289262?hl=en-US)
+** July 2021: (SURVIVOR)**"I am being nice giving one star. I spent 4 years under Clay Hills care and I was a patient when the 1993 murder of Dawn Perry took place. They all know I know who restrained her and she was my friend. They used excessive force every time there was restraints. Those were sad 4 years of my life I will never get back. Clay Hill you deserve to be punished. DO NOT SEND ANY KIDS HERE!!!!! I was 11 when I got there and 15 when I left. I have PTSD to this day at 41 now" - [Erin (Google Reviews)](https://www.google.com/maps/contrib/117769736444935289262/place/ChIJH76RpYqSQIYRkHulvlbwL4U/@29.5154215,-95.3852502,12.64z/data=!4m4!1m3!8m2!1e1!2s117769736444935289262?hl=en-US)
 
 **9/19/2020: (SURVIVOR)**"I was allergic to the soap they wanted me to use but they made me use it anyway. My doctor saw that when I got out ,, I have autistic behavior, I like to be alone. But the people there did not seem to care, My granfmother bought me an extra pair of shoes and some six pair of underwear, The stole all but three pair of inderwear. It is not a good place" - [Anonymous (Rehab.com)](https://www.rehab.com/shiloh-treatment-center)
 
@@ -65,7 +65,7 @@ On November 5^(th) 2010, Michael Owens, a 16-year-old battling depression and be
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Shiloh Treatment Center Website Homepage](http://www.shilohtreatmentcenter.com/)
 
@@ -105,7 +105,8 @@ On November 5^(th) 2010, Michael Owens, a 16-year-old battling depression and be
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

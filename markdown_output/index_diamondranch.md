@@ -16,13 +16,13 @@ Three teenangers died while attending Diamond Ranch Academy.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rob Dias**was the Founder/CEO/Owner of Diamond Ranch Academy. He is married to Sherri Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.
+** Rob Dias** was the Founder/CEO/Owner of Diamond Ranch Academy. He is married to Sherri Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.
 
-**Sherri Dias**was an Executive Director at Diamond Ranch Academy. She is married to Rob Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.
+** Sherri Dias** was an Executive Director at Diamond Ranch Academy. She is married to Rob Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.
 
-**Fotu Soliai**was an Executive Director at Diamond Ranch Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
+** Fotu Soliai** was an Executive Director at Diamond Ranch Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
 
 Survivors have reported cruel treatment, manipulative behavior, and verbal abuse from Fotu. Additional Information:
 
@@ -32,45 +32,45 @@ Survivors have reported cruel treatment, manipulative behavior, and verbal abuse
 *
 [Business License: Soliai and Associates, LLC](https://www.bizapedia.com/ut/soliai-and-associates-llc.html)
 
-**Katie Soli**worked as a Therapist at Diamond Ranch Academy. She currently works for [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) .
+**Katie Soli** worked as a Therapist at Diamond Ranch Academy. She currently works for [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) .
 
-**Cody Wardle**worked as the Executive Director of DRA. He worked at DRA from 2003 until its closure in 2023. His prior employment is unknown.
+** Cody Wardle** worked as the Executive Director of DRA. He worked at DRA from 2003 until its closure in 2023. His prior employment is unknown.
 
-**Kade Mathews**worked as the Clinical Director of DRA. He began his career in the TTI as an Intensive Support Unit Staff at the reportedly abusive [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) . He then worked as a Therapist at Wasatch Mental Health and then at Family Support and Treatment Center. He began working at DRA in 2006.
+** Kade Mathews** worked as the Clinical Director of DRA. He began his career in the TTI as an Intensive Support Unit Staff at the reportedly abusive [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) . He then worked as a Therapist at Wasatch Mental Health and then at Family Support and Treatment Center. He began working at DRA in 2006.
 
-**Stephen Beck**worked as a Therapist at DRA. Prior to joining DRA, he worked as a staff at the reportedly abusive [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) .
+** Stephen Beck** worked as a Therapist at DRA. Prior to joining DRA, he worked as a staff at the reportedly abusive [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) .
 
-**Brianna Roselles**works as a Therapist at DRA. Prior to this, she worked as a therapist at the**confirmedly abusive** [Elevations RTC](https://www.reddit.com/r/troubledteens/wiki/index/elevationsrtc) , which is a rebrand of the notorious [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) .
+** Brianna Roselles** works as a Therapist at DRA. Prior to this, she worked as a therapist at the** confirmedly abusive** [Elevations RTC](https://www.reddit.com/r/troubledteens/wiki/index/elevationsrtc) , which is a rebrand of the notorious [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) .
 
-**Chad Graff**worked as a Therapist at DRA. He previously worked Director of Clinical Services and the Program Director of the**confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) from 2011 until 2019, when he joined DRA.
+** Chad Graff** worked as a Therapist at DRA. He previously worked Director of Clinical Services and the Program Director of the** confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) from 2011 until 2019, when he joined DRA.
 
-**Anne Schwab**worked as a Therapist at DRA. She previously worked as a Staff at the reportedly abusive [Abundant Life Academy](https://www.reddit.com/r/troubledteens/wiki/index/abundantlifeut) . She then worked as a Therapist at the**confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) .
+** Anne Schwab** worked as a Therapist at DRA. She previously worked as a Staff at the reportedly abusive [Abundant Life Academy](https://www.reddit.com/r/troubledteens/wiki/index/abundantlifeut) . She then worked as a Therapist at the** confirmedly abusive** [Red Rock Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) .
 
-**Malynda Scott**worked as a Therapist at DRA. She previously worked as a Residential Staff at an unnamed Treatment Center in Syracuse, UT (which is the location of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) /[Elevations RTC](https://www.reddit.com/r/troubledteens/wiki/index/elevationsrtc) ). She also worked as a Substance Abuse Counsellor at an unnamed program in Layton, UT (which is the location of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest) ).
+** Malynda Scott** worked as a Therapist at DRA. She previously worked as a Residential Staff at an unnamed Treatment Center in Syracuse, UT (which is the location of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) /[Elevations RTC](https://www.reddit.com/r/troubledteens/wiki/index/elevationsrtc) ). She also worked as a Substance Abuse Counsellor at an unnamed program in Layton, UT (which is the location of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest) ).
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP programs, Diamond Ranch Academy utilized a level system. The levels were:
 
-***Homeless/Discovery:**When a resident arrived at DRA, they were placed on Homeless/Discovery. When on this level, the resident was required to accept that their family has placed them there and take accountability for the actions that led up to their placement.
-***Student:**After 2 months at DRA, a teen was eligible to move up to Student. They were also allowed to have two 8-hour visits with their parents during this time.
-***Supervisor:**After 4 months at DRA, a teen was eligible to move up to Supervisor. They are also allowed to have one overnight visit with their parents.
-***Manager:**After 6 months at DRA, a teen was eligible to move up to Manager. They were allowed to have three overnight visits with their parents.
-***Director:**After 8 months at DRA, a teen was eligible to move up to Director. They were permitted to go on a week-long home-visit with their family.
-***Graduate:**After 10 months at DRA, a teen was eligible to move up to Graduate. They were also allowed to go on one 10-day home-visit with their family.
-***Post-Graduate:**After 12 months, the teen was eiligible to move up to Post-Graduate. This was the level on which most residents graduate from the program.
+***Homeless/Discovery:** When a resident arrived at DRA, they were placed on Homeless/Discovery. When on this level, the resident was required to accept that their family has placed them there and take accountability for the actions that led up to their placement.
+***Student:** After 2 months at DRA, a teen was eligible to move up to Student. They were also allowed to have two 8-hour visits with their parents during this time.
+***Supervisor:** After 4 months at DRA, a teen was eligible to move up to Supervisor. They are also allowed to have one overnight visit with their parents.
+***Manager:** After 6 months at DRA, a teen was eligible to move up to Manager. They were allowed to have three overnight visits with their parents.
+***Director:** After 8 months at DRA, a teen was eligible to move up to Director. They were permitted to go on a week-long home-visit with their family.
+***Graduate:** After 10 months at DRA, a teen was eligible to move up to Graduate. They were also allowed to go on one 10-day home-visit with their family.
+***Post-Graduate:** After 12 months, the teen was eiligible to move up to Post-Graduate. This was the level on which most residents graduate from the program.
 
-In addition to these standard levels, DRA also had a level called**Unemployment**which was used as punishment. Being "unemployed" meant being forced to drag or pull a cart around the property from 5 a.m. until 10 p.m. Even their meals had to be eaten outside so they did not abandon the cart. Residents could be placed on Unemployment for breaking any number of rules, including the destruction of ranch property, being more than 15 feet from staff, stealing food, talking to the other gender, or swearing.
+In addition to these standard levels, DRA also had a level called** Unemployment** which was used as punishment. Being "unemployed" meant being forced to drag or pull a cart around the property from 5 a.m. until 10 p.m. Even their meals had to be eaten outside so they did not abandon the cart. Residents could be placed on Unemployment for breaking any number of rules, including the destruction of ranch property, being more than 15 feet from staff, stealing food, talking to the other gender, or swearing.
 
 Another punishment used by DRA was "RFI". During that punishment, the teen was forbidden from speaking to anybody - even staff. They were also made to do extreme physical exercises and were only given cold food to eat. Although RFI sometimes lasted for a few days, some teens reported being put on RFI for multiple months.
 
-If the teenagers threatened to run or commit suicide, they were put on**Safety Watch**. While on Safety Watch, residents had their shoelaces taken and were required to be strip-searched three times a day, along with a shower search at the end of the night.
+If the teenagers threatened to run or commit suicide, they were put on** Safety Watch**. While on Safety Watch, residents had their shoelaces taken and were required to be strip-searched three times a day, along with a shower search at the end of the night.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 There have been many claims of physical, emotional, sexual, and mental abuse at Diamond Ranch Academy. There have been reports of staff physically beating students and dragging them out of buildings.
 
@@ -88,7 +88,7 @@ In 2017, a 16-year-old former-resident, Hannah Wilkin, and her parents filed a l
 
 ---
 
-## **The Death of Taylor Goodridge**
+## ** The Death of Taylor Goodridge**
 
 On December 20, 2022, 17-year-old Taylor Goodridge collapsed and died while attending Diamond Ranch Academy. According to reports, Taylor entered the facility in good health but began experiencing abominable pain in November 2022. Reports state that staff members at DRA repeatedly ignored Taylor's requests for medical attention and told her that she was faking her symptoms. Prior to her death, Taylor had allegedly collapsed into her own vomit. As a result of her death, the Utah Department of Health and Human Services placed DRA's license on probationary status pending the results of the open investigation.
 
@@ -98,7 +98,7 @@ In April 2023, the Utah Medical Examiner confirmed that Taylor Goodridge had die
 
 ---
 
-## **Closure and Rebranding**
+## ** Closure and Rebranding**
 
 Following the death of Taylor Goodridge, the Utah Department of Health and Human Services placed DRA's license on probationary status pending the results of the open investigation. On July 14, 2023, the DHHS refused to renew DRA's license, and ordered its to discharge all children in its care and shut down by August 14, 2023.
 
@@ -112,7 +112,7 @@ In early 2024, a program called "RAFA Residential Treatment Center" created its 
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **5/5/2021: (SURVIVOR)**"Hi! I wanted to talk a little about Diamond Ranch Academy and my experience there. I don't know where to start but here are some of the worst things I can think of. We had a punishment called RFI. Part of RFI that left a lasting impact on me was that you weren't allowed to talk to anyone even staff. I spend 2 and a half months straight in RFI. No talking except to raise my hand to ask to go the bathroom and if I had therapy (every other week at most). there were 2 parts of RFI, academics and the "night" RFI. Instead of school I was in academic RFI and for weeks they made me sit in the corner so I could only see the wall during day rfi. I was going absolutely crazy and I one day said I'm sorry I need to sit somewhere else today. They wouldn't let me and I sat anyways on another desk they called in male staff to physically move me and put my in the chair and I was so stubborn I tried to leave so they held me down for about an hour which seemed like hours while I eventually cried and finally gave up. Sorry to get so detailed Ill just do a couple short things now: male staff told me about how he saw older boys raping young boys and thought it was funny and joked about it, other male staff commenting on who had a nice ass out of us girls, watched people screaming and crying (bc they were going crazy) most days, saw people self harm to the point where some used their fingers to scratch the skin off their arms and blood was everywhere, was convinced at times I deserved it because they constantly told us we ALL deserved this and if we don't agree we are entitled. im not going to keep going on. If there is anything I could do to help stop treatment centers or DRA please let me know and if anyone has questions for me I can tell you anything! Thank you for reading <3" - [u/hotbitchxxxx (Reddit)](https://www.reddit.com/r/troubledteens/comments/n5rlrw/diamond_ranch/?utm_source=amp&utm_medium=&utm_content=post_body)
 
@@ -142,7 +142,7 @@ I am a 24 year old college grad and working professional and looking back I woul
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Diamond Ranch Academy Website Homepage](https://web.archive.org/web/20220108200925/https://diamondranchacademy.com/) (archived, 2022)
 
@@ -154,7 +154,7 @@ I am a 24 year old college grad and working professional and looking back I woul
 
 [When Far From Home - DRA Survivor's Testimony](https://whenfarfromhome.wordpress.com/tag/diamond-ranch-academy/)
 
-### **News Articles**
+### ** News Articles**
 
 [Diamond Ranch Academy teen treatment facility opens new Hurricane campus](https://www.stgeorgeutah.com/news/archive/2012/11/28/morgan-diamond-ranch-academy-teen-treatment-facility-opens-new-hurricane-campus/#.X6wZqNNKj6Y) (St George News, 11/28/2012)
 
@@ -213,4 +213,5 @@ I am a 24 year old college grad and working professional and looking back I woul
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

@@ -12,23 +12,23 @@ The program is located at [1542 Francis Bridge Rd, Davisboro, GA 31018](https://
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Gary L. Cobb**is the Founder and current Executive Director of Broken Shackle Ranch. His prior employment is presently unknown. According to Cobb, Broken Shackle ranch was "birthed in 1984 out of a promise from God to the Cobb Family that, if you take care of my children, I will take care of yours."
+** Gary L. Cobb** is the Founder and current Executive Director of Broken Shackle Ranch. His prior employment is presently unknown. According to Cobb, Broken Shackle ranch was "birthed in 1984 out of a promise from God to the Cobb Family that, if you take care of my children, I will take care of yours."
 
-**David R. Cobb**works as an Administrator and the COO of Broken Shackle Ranch. he has worked at the program since 1997. He is believed to be the son of BSR's founder, Gary Cobb.
+** David R. Cobb** works as an Administrator and the COO of Broken Shackle Ranch. he has worked at the program since 1997. He is believed to be the son of BSR's founder, Gary Cobb.
 
-**Mae Cobb**is the Program Manager & Intake Coordinator of Broken Shackle Ranch. Her prior employment is presently unknown. She is believed to be either the daughter or daughter-in-law of BSR's founder, Gary Cobb.
+** Mae Cobb** is the Program Manager & Intake Coordinator of Broken Shackle Ranch. Her prior employment is presently unknown. She is believed to be either the daughter or daughter-in-law of BSR's founder, Gary Cobb.
 
-**Malena Williams**works as a Clinical & Grant Coordinator at Broken Shackle Ranch. Her prior employment is presently unknown.
+** Malena Williams** works as a Clinical & Grant Coordinator at Broken Shackle Ranch. Her prior employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 When admitted to the facility, the teenagers are presented with a list of rules they have to obey. If they break them they will end up on restriction, which the facility compares to being grounded. They also use an informal level system where teenagers who have been at the facility longer must correct the behavior of the newer teens. The teens are also able to earn their GED while in the program.
 
-*Very little additional information is currently known regarding the specifics of the program used by Broken Shackle Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little additional information is currently known regarding the specifics of the program used by Broken Shackle Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -38,11 +38,11 @@ On July 25^(th) 1994, 15-year-old Bryan Jones died at Broken Shackle Ranch after
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2019: (SURVIVOR)**"I was there when i was younger and the people who ran and owned the place other than a few exceptions were not what they portray at all. They were abusive rude and very unchristian. Dont get me wrong. Im a christian but im not a bible thumper. But im more christian than most of them were. This was supposed to be a christian based place to help troubled youths and get them on the right track but it wasnt. There was several that were very into there job and did it right. They really were there mainly to just help us and try to make sure that we got our acts right and stuff but most especially the ones who were in charge didnt give a damn. but i honestly would never send one of my kids there. Ever....." - [Arthur (Google Reviews)](https://www.google.com/maps/contrib/118303205344678011689/place/ChIJZQjR9PpJ94gRTyLJ7cJdIcQ/@33.0072645,-83.4733325,8.61z/data=!4m6!1m5!8m4!1e1!2s118303205344678011689!3m1!1e1?hl=en-US)
 
-*No other survivor testimonies have been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No other survivor testimonies have been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -58,7 +58,8 @@ On July 25^(th) 1994, 15-year-old Bryan Jones died at Broken Shackle Ranch after
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

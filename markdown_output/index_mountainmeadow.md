@@ -12,39 +12,39 @@ The program is located at [391 Big Beaver Creek Rd, Trout Creek, MT 59874](https
 
 The program originally opened in 1997 under the name [20 Peaks Ranch](https://www.reddit.com/r/troubledteens/wiki/index/20peaksranch) , but it changed its name in 2009 after moving to a new facility.
 
-This program has strong connections to the**confirmedly abusive** [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) which closed in 2018.
+This program has strong connections to the** confirmedly abusive** [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) which closed in 2018.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Joe & Marilyn Frields**are the Founders and Owners of Mountain Meadow Youth Ranch. They previously worked as the Program Managers of [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
+** Joe & Marilyn Frields** are the Founders and Owners of Mountain Meadow Youth Ranch. They previously worked as the Program Managers of [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
 
-**Paul Clark**is the Co-Founder of Mountain Meadow Youth Ranch. Prior to this, he worked as the Owner/Director of [20 Peaks Ranch](https://www.reddit.com/r/troubledteens/wiki/index/20peaksranch) , as well as the Founder/Director of [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
+** Paul Clark** is the Co-Founder of Mountain Meadow Youth Ranch. Prior to this, he worked as the Owner/Director of [20 Peaks Ranch](https://www.reddit.com/r/troubledteens/wiki/index/20peaksranch) , as well as the Founder/Director of [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
 
-**Ryan Frields**reportedly works as the Program Director of MMYR. He is the son of the owners, Joe and Marilyn. He has worked at the program since 2004. He previously worked as a Field Staff at [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
+** Ryan Frields** reportedly works as the Program Director of MMYR. He is the son of the owners, Joe and Marilyn. He has worked at the program since 2004. He previously worked as a Field Staff at [Galena Ridge Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/galenaridge) .
 
-**Jennifer Frields**reportedly works as a Staff member at MMYR. She is the daughter of the owners, Joe and Marilyn.
+** Jennifer Frields** reportedly works as a Staff member at MMYR. She is the daughter of the owners, Joe and Marilyn.
 
-**Robin Thompson**reportedly works as a Staff member at MMYR.
+** Robin Thompson** reportedly works as a Staff member at MMYR.
 
-**Raoul Ribeiro**works as a Therapist at MMYR.
+** Raoul Ribeiro** works as a Therapist at MMYR.
 
-**Francois Communetti**works as a the Judo instructor and Summer Course Staff. He previously had two kids enrolled at [20 Peaks Ranch](https://www.reddit.com/r/troubledteens/wiki/index/20peaksranch) .
+** Francois Communetti** works as a the Judo instructor and Summer Course Staff. He previously had two kids enrolled at [20 Peaks Ranch](https://www.reddit.com/r/troubledteens/wiki/index/20peaksranch) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little is known about the program at Mountain Meadow Youth Ranch. The program states that they use Alcoholics Anonymous' 12 Steps as a part of their program.
 
-*If you attended MMYR and would like to contribute information to complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended MMYR and would like to contribute information to complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
 ## **Abuse Allegations**
 
-*This page is under construction. If you attended MMYR and would like to contribute information to complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*This page is under construction. If you attended MMYR and would like to contribute information to complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -52,7 +52,7 @@ Very little is known about the program at Mountain Meadow Youth Ranch. The progr
 
 **2020: (SURVIVOR)**"It's a scam. All Joe Frields does is take money for his own well being. The FBI needs to investigate him. There is a reason he changed the name." - [Lee (Google Reviews)](https://www.google.com/maps/contrib/114215433956933241451/place/ChIJ6wyRQ5PeYFMRRhwVgAYO0gk/@47.7535031,-115.9157389,7.56z/data=!4m6!1m5!8m4!1e1!2s114215433956933241451!3m1!1e1?hl=en-US)
 
-*If you or your child attended MMYR and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you or your child attended MMYR and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -72,7 +72,8 @@ Very little is known about the program at Mountain Meadow Youth Ranch. The progr
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

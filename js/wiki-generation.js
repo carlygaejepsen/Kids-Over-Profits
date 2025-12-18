@@ -33,6 +33,12 @@ function generateWikiMarkdown(formData) {
         return /[.!?]"?$/.test(trimmed) ? trimmed : `${trimmed}.`;
     };
 
+    // Helper: Pad bolded staff names with a space if they run directly into text
+    const ensureBoldNameSpacing = (text) => {
+        if (!text) return text;
+        return text.replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+    };
+
     // Helper: Determine verb tense for staff members
     const roleVerb = (staffMember) => {
         if (!staffMember) return 'is';
@@ -41,10 +47,21 @@ function generateWikiMarkdown(formData) {
         return /\b(former|previous|ex[\s-])/.test(value) ? 'was' : 'is';
     };
 
+    // Helper: Check if content is effectively empty or just boilerplate
+    const isEffectivelyEmpty = (text) => {
+        if (!text) return true;
+        const trimmed = text.trim();
+        if (trimmed.length === 0) return true;
+        const lower = trimmed.toLowerCase();
+        return lower === 'no information is known' || 
+               lower === 'no information available' ||
+               lower.startsWith('no information is known about');
+    };
+
     // --- Build History Section ---
     let historySection = '';
 
-    if (formData.historyNotes && formData.historyNotes.trim()) {
+    if (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes)) {
         // Use full imported/custom history section
         historySection = formData.historyNotes.trim();
     } else {
@@ -171,6 +188,12 @@ function generateWikiMarkdown(formData) {
                 roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
             }
 
+            // If no role is defined, just output "**Name** Bio"
+            if (!s.role) {
+                const bio = ensureSentence(s.bio || '');
+                return `**${safeStaffName}** ${bio}`.trim();
+            }
+
             const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
 
             const safeStaffName = escapeMarkdown((s.name || '').trim());
@@ -187,6 +210,7 @@ function generateWikiMarkdown(formData) {
                 descriptor = articleRole;
             }
 
+            // Ensure proper spacing between name and verb
             const roleSentence = ensureSentence(`**${safeStaffName}** ${verb} ${descriptor}`);
 
             let previousSentence = '';
@@ -204,6 +228,7 @@ function generateWikiMarkdown(formData) {
             const bioSentence = ensureSentence(s.bio || '');
             return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
         }).join('\n\n');
+        staffSection = ensureBoldNameSpacing(staffSection);
     } else {
         staffSection = getPlaceholder('Founders and Notable Staff', programName);
     }
@@ -265,7 +290,7 @@ function generateWikiMarkdown(formData) {
         structureParts.push(`The program offers ${joinWithAnd(therapyDescriptions)}.`);
     }
 
-    if (formData.structureMisc && formData.structureMisc.trim()) {
+    if (formData.structureMisc && !isEffectivelyEmpty(formData.structureMisc)) {
         structureParts.push(formData.structureMisc.trim());
     }
 
@@ -276,7 +301,7 @@ function generateWikiMarkdown(formData) {
     // --- Build Rules & Punishments Section ---
     let rulesSection = '';
 
-    if (formData.punishmentsMisc && formData.punishmentsMisc.trim()) {
+    if (formData.punishmentsMisc && !isEffectivelyEmpty(formData.punishmentsMisc)) {
         rulesSection = formData.punishmentsMisc.trim();
     } else {
         const rulesParts = [];
@@ -301,7 +326,7 @@ function generateWikiMarkdown(formData) {
     // --- Build Abuse Section ---
     let abuseSection = '';
 
-    if (formData.lawsuitsMisc && formData.lawsuitsMisc.trim()) {
+    if (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc)) {
         abuseSection = formData.lawsuitsMisc.trim();
     } else {
         const abuseParts = [];
@@ -359,7 +384,7 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Media Section ---
     let mediaSection;
-    if (formData.mediaInfo && formData.mediaInfo.trim()) {
+    if (formData.mediaInfo && !isEffectivelyEmpty(formData.mediaInfo)) {
         mediaSection = formData.mediaInfo.trim();
     } else if (formData.newsArticles && formData.newsArticles.length > 0) {
         const newsList = formData.newsArticles.map(a => {
@@ -376,7 +401,7 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Testimonies Section ---
     let testimoniesSection;
-    if (formData.testimoniesMisc && formData.testimoniesMisc.trim()) {
+    if (formData.testimoniesMisc && !isEffectivelyEmpty(formData.testimoniesMisc)) {
         testimoniesSection = formData.testimoniesMisc.trim();
     } else if (formData.testimonies && formData.testimonies.length > 0) {
         testimoniesSection = formData.testimonies.map(t => {
@@ -391,7 +416,7 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Related Media Section ---
     let relatedMediaSection;
-    if (formData.relatedMediaMisc && formData.relatedMediaMisc.trim()) {
+    if (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc)) {
         relatedMediaSection = formData.relatedMediaMisc.trim();
     } else if (formData.relatedMedia && formData.relatedMedia.length > 0) {
         relatedMediaSection = formData.relatedMedia.map(m => {
@@ -459,7 +484,7 @@ ${testimoniesSection}
 ${relatedMediaSection}
     `;
 
-    const footerPattern = /Last revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)\s*## Page title\s*[\r\n]+\s*SaveCancel\s*/gi;
+    const footerPattern = /Last revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = output.replace(footerPattern, '');
 
     return sanitizedOutput.trim();

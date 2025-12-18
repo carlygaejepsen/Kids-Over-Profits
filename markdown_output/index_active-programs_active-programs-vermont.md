@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 Licensing regulations for residential care facilities are enforced by the Vermont Department for Children and Families via the Family Services Division. It includes residential treatment programs and wilderness programs for youth.
 
@@ -16,11 +16,11 @@ Vermont private schools have no requirements for accreditation, registration or 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**True North Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/truenorth) | 2005 | Waitsfield, VT | N/A |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** True North Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/truenorth) | 2005 | Waitsfield, VT | N/A |
 ---
 
-## **Closed Programs in Vermont**
+## ** Closed Programs in Vermont**
 
 ---
 
@@ -28,10 +28,10 @@ Vermont private schools have no requirements for accreditation, registration or 
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Bromely Brook School**](https://www.reddit.com/r/troubledteens/wiki/index/bromelybrook) | 2004-2011 | Manchester Center, VT | [HEAL](http://www.heal-online.org/bromley.htm) |
-| [**King George School**](https://www.reddit.com/r/troubledteens/wiki/index/kinggeorge) | 1998-2011 | Sutton, VT | [HEAL](http://www.heal-online.org/kinggeo.htm) |
-| [**Sovereign Journey**](https://www.reddit.com/r/troubledteens/wiki/index/sovjourney) | 2011-2017 | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Bromely Brook School**](https://www.reddit.com/r/troubledteens/wiki/index/bromelybrook) | 2004-2011 | Manchester Center, VT | [HEAL](http://www.heal-online.org/bromley.htm) |
+| [** King George School**](https://www.reddit.com/r/troubledteens/wiki/index/kinggeorge) | 1998-2011 | Sutton, VT | [HEAL](http://www.heal-online.org/kinggeo.htm) |
+| [** Sovereign Journey**](https://www.reddit.com/r/troubledteens/wiki/index/sovjourney) | 2011-2017 | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -40,7 +40,8 @@ Vermont private schools have no requirements for accreditation, registration or 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

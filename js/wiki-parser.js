@@ -88,9 +88,9 @@ function parseWikiMarkdown(markdown) {
         ownerLink: '',
         ageRange: '',
         
-        // Diagnoses/Issues Treated - checklist format
-        selectedDiagnoses: [],  // Array of selected diagnoses/issues from lookup tables
-        customDiagnoses: '',    // Custom/unique diagnoses not in common lists
+        // Advertised Student Profile - checklist format
+        selectedDiagnoses: [],  // Array of all profile items (diagnoses, behaviors, circumstances)
+        customDiagnoses: '',    // Custom/unique profile items not in common lists
         
         capacity: '',
         campusSize: '',
@@ -139,8 +139,11 @@ function parseWikiMarkdown(markdown) {
 
     // Remove specific boilerplate text as requested by user
     normalizedMarkdown = normalizedMarkdown.replace(/\nthis text should always be removed\s*/g, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/SaveCancelLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page titleSaveCancel/g, '');
     normalizedMarkdown = normalizedMarkdown.replace(/SaveCancel/g, '');
     normalizedMarkdown = normalizedMarkdown.replace(/\nLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page title/g, '');
+    // Normalize user signature
+    normalizedMarkdown = normalizedMarkdown.replace(/- \[shroomskillet\]\(\/user\/shroomskillet\/\)/g, '- [Signal-Strain9810](/user/Signal-Strain9810/)');
 
 
     // Common acronym expansions for TTI industry companies
@@ -198,15 +201,17 @@ function parseWikiMarkdown(markdown) {
         'academic struggles', 'failing grades', 'school failure',
         'social problems', 'peer conflict', 'bullying', 'social isolation',
         'family conflict', 'parent-child conflict', 'family dysfunction',
-        'sexual acting out', 'inappropriate sexual behavior',
-        'lying', 'dishonesty', 'manipulation', 'deceit',
+        'sexual acting out', 'inappropriate sexual behavior', 'sexually inappropriate behavior',
+        'lying', 'dishonesty', 'manipulation', 'deceit', 'manipulative behavior',
         'stealing', 'theft', 'stealing behavior',
         'emotional dysregulation', 'emotional instability', 'mood swings',
         'disrespect', 'disrespectful behavior', 'poor attitude',
         'motivation issues', 'lack of motivation', 'apathy',
-        'attachment issues', 'inability to bond', 'trust issues',
+        'attachment issues', 'attachment', 'inability to bond', 'trust issues',
         'blame', 'blaming others', 'lack of accountability',
-        'impulsive behavior', 'impulsivity', 'poor impulse control'
+        'impulsive behavior', 'impulsivity', 'poor impulse control',
+        'adoption issues', 'adoption', 'adopted child issues',
+        'trafficking', 'sex trafficking', 'human trafficking', 'trafficking victim'
     ];
 
     // Common phase/stage/level/tier system structures
@@ -395,7 +400,7 @@ function parseWikiMarkdown(markdown) {
         'unsanitary conditions'
     ];
 
-    // Standard diagnosis checkbox values from the form
+    // Standard diagnosis checkbox values from the form (clinical diagnoses)
     const standardDiagnoses = [
         'ADHD',
         'Autism Spectrum Disorder',
@@ -412,18 +417,28 @@ function parseWikiMarkdown(markdown) {
         'Psychiatric Disorders',
         'Behavioral Disorders',
         'Emotional Disorders',
-        'Co-occurring Disorders',
+        'Co-occurring Disorders'
+    ];
+
+    // Standard behavior checkbox values from the form (behavioral issues)
+    const standardBehaviors = [
         'defiance',
         'aggression',
         'self-harm',
         'running away',
+        'truancy',
         'academic struggles',
         'social problems',
         'family conflict',
+        'sexually inappropriate behavior',
         'lying',
+        'manipulation',
         'stealing',
         'emotional dysregulation',
-        'impulsive behavior'
+        'impulsive behavior',
+        'attachment',
+        'adoption',
+        'trafficking'
     ];
 
     // Diagnosis normalization map: alternate terms → CHECKBOX VALUE
@@ -518,78 +533,65 @@ function parseWikiMarkdown(markdown) {
         'emotional disorders': 'Emotional Disorders',
         'co-occurring disorders': 'Co-occurring Disorders',
         'cooccurring disorders': 'Co-occurring Disorders',
-        'co occurring disorders': 'Co-occurring Disorders',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "defiance" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'oppositional behavior': 'defiance',
-        'defiant behavior': 'defiance',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "aggression" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'aggressive behavior': 'aggression',
-        'violence': 'aggression',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "self-harm" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'cutting': 'self-harm',
-        'self harm': 'self-harm',
-        'self injury': 'self-harm',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "running away" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'elopement': 'running away',
-        'runaway': 'running away',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "academic struggles" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'school struggles': 'academic struggles',
-        'academic problems': 'academic struggles',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "social problems" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'peer problems': 'social problems',
-        'social issues': 'social problems',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "family conflict" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'family problems': 'family conflict',
-        'parent-child conflict': 'family conflict',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "lying" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'dishonesty': 'lying',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "stealing" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'theft': 'stealing',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "emotional dysregulation" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'mood swings': 'emotional dysregulation',
-        'emotional instability': 'emotional dysregulation',
-
-        // ═══════════════════════════════════════════════════════════
-        // → CHECKBOX: "impulsive behavior" (behavioral)
-        // ═══════════════════════════════════════════════════════════
-        'impulsivity': 'impulsive behavior',
-        'poor impulse control': 'impulsive behavior'
+        'co occurring disorders': 'Co-occurring Disorders'
     };
 
     // Normalization function for diagnoses
     function normalizeDiagnosis(diagnosis) {
         const lower = diagnosis.toLowerCase().trim();
         return diagnosisNormalizationMap[lower] || diagnosis;
+    }
+
+    // Behavior normalization map: alternate terms → CHECKBOX VALUE
+    const behaviorNormalizationMap = {
+        'oppositional behavior': 'defiance',
+        'defiant behavior': 'defiance',
+        'aggressive behavior': 'aggression',
+        'violence': 'aggression',
+        'violent behavior': 'aggression',
+        'cutting': 'self-harm',
+        'self harm': 'self-harm',
+        'self injury': 'self-harm',
+        'self-injurious behavior': 'self-harm',
+        'elopement': 'running away',
+        'runaway': 'running away',
+        'school refusal': 'truancy',
+        'skipping school': 'truancy',
+        'school struggles': 'academic struggles',
+        'academic problems': 'academic struggles',
+        'failing grades': 'academic struggles',
+        'peer problems': 'social problems',
+        'social issues': 'social problems',
+        'social isolation': 'social problems',
+        'bullying': 'social problems',
+        'family problems': 'family conflict',
+        'parent-child conflict': 'family conflict',
+        'sexual acting out': 'sexually inappropriate behavior',
+        'inappropriate sexual behavior': 'sexually inappropriate behavior',
+        'dishonesty': 'lying',
+        'deceit': 'lying',
+        'manipulative behavior': 'manipulation',
+        'manipulative': 'manipulation',
+        'theft': 'stealing',
+        'mood swings': 'emotional dysregulation',
+        'emotional instability': 'emotional dysregulation',
+        'impulsivity': 'impulsive behavior',
+        'poor impulse control': 'impulsive behavior',
+        'attachment issues': 'attachment',
+        'inability to bond': 'attachment',
+        'trust issues': 'attachment',
+        'adoption issues': 'adoption',
+        'adopted child issues': 'adoption',
+        'adopted': 'adoption',
+        'sex trafficking': 'trafficking',
+        'human trafficking': 'trafficking',
+        'trafficking victim': 'trafficking'
+    };
+
+    // Normalization function for behaviors
+    function normalizeBehavior(behavior) {
+        const lower = behavior.toLowerCase().trim();
+        return behaviorNormalizationMap[lower] || behavior;
     }
 
     // Common diagnoses and behavioral issues to look for
@@ -817,13 +819,13 @@ function parseWikiMarkdown(markdown) {
         const diagnosisPatterns = [
             /diagnoses\/behaviors:\s*([^\n]+)/i,
             /any of the following:\s*([^\.]+)\./i,
-            /such as\s+([^\.]+?)(?:\.|The program|The cost|The average)/i,
-            /including\s+([^\.]+?)(?:\.|The program|The cost|The average)/i,
+            /such as\s+([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
+            /including\s+([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
             /specializes? in treating\s+([^\.]+?)(?:\.|, but)/i,
             /specialized in treating\s+([^\.]+?)(?:\.|, but)/i,
             /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i,
-            /struggling with\s+(?:a variety of |various )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average)/i,
-            /who (?:struggle|are struggling|deal|are dealing)\s+with\s+(?:a variety of )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average)/i,
+            /struggling with\s+(?:a variety of |various )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
+            /who (?:struggle|are struggling|deal|are dealing)\s+with\s+(?:a variety of )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
             /marketed (?:as|to)[^\.]*?for[^\.]*?who struggle with\s+([^\.]+?)(?:\.|The program)/i
         ];
         diagnosisPatterns.forEach(pattern => {
@@ -845,49 +847,66 @@ function parseWikiMarkdown(markdown) {
                 const items = snippet.split(/,\s*(?:and\s+)?|;\s*/);
                 items.forEach(item => {
                     const trimmed = item.trim();
-                    if (trimmed) {
+                    // Filter out empty strings, markdown links, and URLs
+                    if (trimmed && !trimmed.startsWith('[') && !trimmed.includes('http')) {
                         extractedDiagnoses.push(trimmed);
                     }
                 });
             });
             
-            // Match extracted diagnoses against standard checkbox values with normalization
-            const customList = [];
+            // Match extracted items against standard checkbox values with normalization
+            const customDiagnosisList = [];
+            const customBehaviorList = [];
 
-            extractedDiagnoses.forEach(diagnosis => {
-                // Normalize the diagnosis to standard terminology
-                const normalized = normalizeDiagnosis(diagnosis);
-                const lowerNormalized = normalized.toLowerCase();
+            extractedDiagnoses.forEach(item => {
+                // Try normalizing the item
+                let normalized = normalizeDiagnosis(item);
+                if (normalized === item) {
+                    // If diagnosis normalization didn't change it, try behavior normalization
+                    normalized = normalizeBehavior(item);
+                }
+                const lowerItem = normalized.toLowerCase();
 
-                // Check if the normalized diagnosis matches a standard checkbox value
-                const matchedStandard = standardDiagnoses.find(standard =>
-                    standard.toLowerCase() === lowerNormalized
+                // Check if it matches any standard profile item
+                const allStandardItems = [...standardDiagnoses, ...standardBehaviors];
+                const matchedItem = allStandardItems.find(standard =>
+                    standard.toLowerCase() === lowerItem
                 );
 
-                if (matchedStandard) {
-                    // Add the standard form if not already present
-                    if (!parsedData.selectedDiagnoses.includes(matchedStandard)) {
-                        parsedData.selectedDiagnoses.push(matchedStandard);
+                if (matchedItem) {
+                    // Add to profile list if not already present
+                    if (!parsedData.selectedDiagnoses.includes(matchedItem)) {
+                        parsedData.selectedDiagnoses.push(matchedItem);
                     }
                 } else {
-                    // Add to custom diagnoses (use normalized form)
-                    customList.push(normalized);
+                    // Determine if it's more likely a clinical diagnosis or behavior
+                    const clinicalKeywords = ['disorder', 'syndrome', 'disability', 'condition', 'disease'];
+                    const isClinical = clinicalKeywords.some(keyword =>
+                        normalized.toLowerCase().includes(keyword)
+                    );
+
+                    if (isClinical) {
+                        customDiagnosisList.push(normalized);
+                    } else {
+                        customBehaviorList.push(normalized);
+                    }
                 }
             });
             
-            // Store custom diagnoses
-            if (customList.length > 0) {
-                parsedData.customDiagnoses = customList.join(', ');
+            // Store custom profile items
+            const combinedCustomProfileItems = [...customDiagnosisList, ...customBehaviorList];
+            if (combinedCustomProfileItems.length > 0) {
+                parsedData.customDiagnoses = combinedCustomProfileItems.join(', ');
             }
         }
 
         // Capacity/Enrollment
         const capacityPatterns = [
-            /maximum enrollment of (\d+[^\.]+?)(?:\.|The)/i,
-            /capacity (?:of|for) (\d+[^\.]+?)(?:\.|The)/i,
-            /(?:can accommodate|accommodates) (?:up to )?(\d+[^\.]+?)(?:\.|The)/i,
-            /serves (?:up to )?(\d+[^\.]+?)(?:\.|The)/i,
-            /enrollment (?:is|was) (\d+[^\.]+?)(?:\.|The)/i
+            /maximum enrollment of ([^.,\n]+?)(?:\.|,|$| and)/i,
+            /capacity (?:of|for) ([^.,\n]+?)(?:\.|,|$| and)/i,
+            /(?:can accommodate|accommodates) (?:up to )?([^.,\n]+?)(?:\.|,|$| and)/i,
+            /serves (?:up to )?([^.,\n]+?)(?:\.|,|$| and)/i,
+            /enrollment (?:is|was) ([^.,\n]+?)(?:\.|,|$| and)/i
         ];
         for (const pattern of capacityPatterns) {
             const match = normalizedHistory.match(pattern);
@@ -918,9 +937,17 @@ function parseWikiMarkdown(markdown) {
         }
 
         // Tuition
-        const tuitionMatch = normalizedHistory.match(/tuition[^$]*(\$[^\.\n]+)/i);
-        if (tuitionMatch) {
-            parsedData.tuition = tuitionMatch[1].trim();
+        // 1. Look for explicit "Unknown" / "Undisclosed"
+        const tuitionUnknownMatch = normalizedHistory.match(/(?:tuition|cost)[^.\n]*?(?:is|was|remains)\s+(unknown|undisclosed|not listed|not public)/i);
+        if (tuitionUnknownMatch) {
+            parsedData.tuition = "Unknown"; // Normalize to standard "Unknown"
+        } else {
+            // 2. Look for currency amount (ensure we don't cross sentence boundaries)
+            // Matches $xx,xxx or $xx,xxx.xx
+            const tuitionMatch = normalizedHistory.match(/(?:tuition|cost)[^.$\n]*?(\$[\d,]+(?:\.\d{2})?)/i);
+            if (tuitionMatch) {
+                parsedData.tuition = tuitionMatch[1].trim();
+            }
         }
 
         // NATSAP membership
@@ -990,7 +1017,7 @@ function parseWikiMarkdown(markdown) {
     ]);
 
     if (staffSection && !staffSection.includes('No information is known')) {
-        const staffBlocks = staffSection.split(/\n(?=\*\*[^*]+\*\*(?:\s+is|\s+was|\s+formerly))/);
+        const staffBlocks = staffSection.split(/\n(?=\*\*[^*]+\*\*(?:\s*is|\s*was|\s*formerly))/);
 
         staffBlocks.forEach(block => {
             const trimmed = block.trim();
@@ -1008,7 +1035,8 @@ function parseWikiMarkdown(markdown) {
             const rolePatterns = [
                 /is\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i,
                 /was\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i,
-                /formerly\s+([^.]+?)(?:\s+of|\s+at|\.|$)/i
+                /formerly\s+([^.]+?)(?:\s+of|\s+at|\.|$)/i,
+                /worked\s+as\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i
             ];
 
             for (const pattern of rolePatterns) {
@@ -1190,39 +1218,56 @@ function parseWikiMarkdown(markdown) {
         }
 
         // Parse paragraph-by-paragraph for lawsuits and incidents
-        const paragraphs = abuseSection.split(/\n\n+/);
+        const paragraphs = abuseSection.split(/\n+/);
         
         paragraphs.forEach(para => {
             const trimmed = para.trim();
-            if (!trimmed || trimmed.length < 20) return;
+            if (!trimmed || trimmed.length < 10) return;
 
-            // Lawsuit pattern: paragraph starting with "In YYYY, [person/entity] sued"
-            const lawsuitMatch = trimmed.match(/^In (\d{4}),\s*([\s\S]+)/i);
-            if (lawsuitMatch && trimmed.toLowerCase().includes('sued')) {
-                const year = lawsuitMatch[1];
-                const description = lawsuitMatch[2].trim();
-                
-                parsedData.lawsuits.push({
-                    name: `${year} Lawsuit`,
-                    description: description
-                });
-                return; // Skip to next paragraph
+            // Remove leading bullet points
+            const cleanText = trimmed.replace(/^[*•-]\s*/, '');
+
+            // 1. Year-first patterns: "In 2005, ..." or "2005: ..." or "**2005** ..."
+            const yearFirstMatch = cleanText.match(/^(?:In\s+)?(\d{4})[:,-]?\s+(.+)/i);
+            
+            if (yearFirstMatch) {
+                const year = yearFirstMatch[1];
+                const description = yearFirstMatch[2].trim();
+                const lowerDesc = description.toLowerCase();
+
+                // Decide if it's a lawsuit or general incident
+                if (lowerDesc.includes('sued') || lowerDesc.includes('lawsuit') || lowerDesc.includes('settlement') || lowerDesc.includes('complaint')) {
+                    parsedData.lawsuits.push({
+                        name: `${year} Lawsuit`,
+                        description: description
+                    });
+                } else {
+                    parsedData.lawsuits.push({
+                        name: `${year} Incident`,
+                        description: description
+                    });
+                }
+                return; 
             }
 
-            // Incident pattern: paragraph starting with "In YYYY," (but not a lawsuit)
-            const incidentMatch = trimmed.match(/^In (\d{4}),\s*([\s\S]+)/i);
-            if (incidentMatch) {
-                const year = incidentMatch[1];
-                const description = incidentMatch[2].trim();
+            // 2. Generic lawsuit detection (contains year + legal keywords)
+            // e.g. "A lawsuit was filed in 2005 by..."
+            const genericLawsuitMatch = cleanText.match(/(\d{4})/);
+            if (genericLawsuitMatch) {
+                const year = genericLawsuitMatch[1];
+                const lowerText = cleanText.toLowerCase();
                 
-                parsedData.lawsuits.push({
-                    name: `${year} Incident`,
-                    description: description
-                });
+                if (lawsuitKeywords.some(kw => lowerText.includes(kw))) {
+                     parsedData.lawsuits.push({
+                        name: `${year} Lawsuit`,
+                        description: cleanText
+                    });
+                    return;
+                }
             }
 
             // Regulatory/Compliance violations
-            const complianceMatch = trimmed.match(/(?:was|were)\s+found\s+[""]?(?:non-compliant|in violation)[""]?[^\.]*?(\d+)\s+times[^\.]*?between\s+(\d{4})\s+and\s+(\d{4})[^\.]*?(?:for|regarding|concerning)\s+([^\.]+)/i);
+            const complianceMatch = cleanText.match(/(?:was|were)\s+found\s+[""]?(?:non-compliant|in violation)[""]?[^\.]*?(\d+)\s+times[^\.]*?between\s+(\d{4})\s+and\s+(\d{4})[^\.]*?(?:for|regarding|concerning)\s+([^\.]+)/i);
             if (complianceMatch) {
                 parsedData.allegations.push({
                     type: 'Regulatory Violations',
@@ -1338,39 +1383,90 @@ function parseWikiMarkdown(markdown) {
     ]);
 
     if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
-        // Parse testimonies - look for pattern: **Date: (TYPE)** "quote" - [Source (Platform)](URL)
-        const testimonyBlocks = testimoniesSection.split(/\n\n+/);
+        // Split by double newlines to preserve multi-line testimonies
+        let testimonyBlocks = testimoniesSection.split(/\n\n+/);
+        
+        // Handle case where testimonies are a tight bulleted list (single newlines)
+        const expandedBlocks = [];
         testimonyBlocks.forEach(block => {
-            const trimmed = block.trim();
-            if (!trimmed) return;
-
-            // Match pattern: **MM/DD/YYYY: (SURVIVOR|PARENT)** "quote" - [Name (Source)](URL)
-            const testimonyMatch = trimmed.match(/^\*\*([^:]+):\s*\(([^)]+)\)\*\*\s+"([^"]+)"\s*[-–—]\s*\[([^\]]+)\]\(([^)]+)\)/);
-            if (testimonyMatch) {
-                parsedData.testimonies.push({
-                    date: testimonyMatch[1].trim(),
-                    type: testimonyMatch[2].trim(),
-                    quote: testimonyMatch[3].trim(),
-                    source: testimonyMatch[4].trim(),
-                    url: sanitizeUrl(testimonyMatch[5])
+            // If block contains multiple lines starting with "**" or "* **", it's likely a list
+            // Check if it has multiple date-like headers
+            const dateHeaders = block.match(/\*\*[\d/]+\s*[:(]/g);
+            if (dateHeaders && dateHeaders.length > 1) {
+                // Split this block by newlines
+                const lines = block.split(/\n+/);
+                lines.forEach(line => {
+                    if (line.trim().length > 10) expandedBlocks.push(line);
                 });
             } else {
-                // Fallback to simpler pattern: "quote" - Source [Link](URL)
-                const simpleMatch = trimmed.match(/"([^"]+)"\s*[-–—]\s*([^[\n]+)(?:\[([^\]]+)\]\(([^)]+)\))?/);
-                if (simpleMatch) {
-                    parsedData.testimonies.push({
-                        date: '',
-                        type: '',
-                        quote: simpleMatch[1].trim(),
-                        source: simpleMatch[2].trim(),
-                        url: simpleMatch[4] ? sanitizeUrl(simpleMatch[4]) : ''
-                    });
-                }
+                expandedBlocks.push(block);
+            }
+        });
+        
+        expandedBlocks.forEach(block => {
+            const trimmed = block.trim();
+            if (!trimmed || trimmed.length < 10) return;
+
+            // Pattern 1: Standard "**Date: (Type)** Quote" (flexible whitespace)
+            // Matches: **9/9/2021: (SURVIVOR)** "Quote..."
+            // Using [\s\S] for quote capture to handle multi-line content
+            const stdMatch = trimmed.match(/^\*\*([^:]+?):?\s*\(([^)]+)\)\*\*\s*"?([\s\S]+?)"?\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
+            
+            if (stdMatch) {
+                parsedData.testimonies.push({
+                    date: stdMatch[1].trim(),
+                    type: stdMatch[2].trim(),
+                    quote: stdMatch[3].trim(),
+                    source: (stdMatch[4] || stdMatch[6] || '').trim(),
+                    url: stdMatch[5] ? sanitizeUrl(stdMatch[5]) : ''
+                });
+                return;
+            }
+
+            // Pattern 2: "**Date** (Type) Quote" (no colon, maybe no quotes)
+            const noColonMatch = trimmed.match(/^\*\*([^*]+)\*\*\s*\(([^)]+)\)\s*"?([\s\S]+?)"?\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
+            
+            if (noColonMatch) {
+                parsedData.testimonies.push({
+                    date: noColonMatch[1].trim(),
+                    type: noColonMatch[2].trim(),
+                    quote: noColonMatch[3].trim(),
+                    source: (noColonMatch[4] || noColonMatch[6] || '').trim(),
+                    url: noColonMatch[5] ? sanitizeUrl(noColonMatch[5]) : ''
+                });
+                return;
+            }
+
+            // Pattern 3: Simple "Quote" - Source (Fallback)
+            const simpleMatch = trimmed.match(/"([\s\S]+?)"\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
+            
+            if (simpleMatch) {
+                parsedData.testimonies.push({
+                    date: '',
+                    type: '',
+                    quote: simpleMatch[1].trim(),
+                    source: (simpleMatch[2] || simpleMatch[4] || '').trim(),
+                    url: simpleMatch[3] ? sanitizeUrl(simpleMatch[3]) : ''
+                });
             }
         });
 
         // DON'T store everything in testimoniesMisc - let the user edit form fields
         // parsedData.testimoniesMisc = testimoniesSection;
+        
+        // Scan testimonies for abuse allegations keywords
+        const testimoniesLower = testimoniesSection.toLowerCase();
+        commonComplaints.forEach(complaint => {
+            const complaintLower = complaint.toLowerCase();
+            if (testimoniesLower.includes(complaintLower)) {
+                const normalized = normalizeAllegation(complaint);
+                if (normalized && !parsedData.selectedAllegations.includes(normalized)) {
+                    parsedData.selectedAllegations.push(normalized);
+                }
+            }
+        });
+        
+        console.log('Allegations detected from testimonies:', parsedData.selectedAllegations);
     }
 
     // Parse Related Media section
@@ -1590,18 +1686,18 @@ function generateWikiMarkdown(data) {
             historyText += `Serves ages ${data.ageRange}. `;
         }
 
-        // Generate diagnoses list from selected common + custom
+        // Generate advertised student profile
         if (data.selectedDiagnoses.length > 0 || data.customDiagnoses) {
-            const allDiagnoses = [...data.selectedDiagnoses];
+            const allProfileItems = [...data.selectedDiagnoses];
             
-            // Add custom diagnoses
+            // Add custom profile items
             if (data.customDiagnoses) {
                 const customItems = data.customDiagnoses.split(',').map(d => d.trim()).filter(Boolean);
-                allDiagnoses.push(...customItems);
+                allProfileItems.push(...customItems);
             }
             
-            if (allDiagnoses.length > 0) {
-                historyText += `Marketed for students who struggle with a variety of challenges such as ${allDiagnoses.join(', ')}. `;
+            if (allProfileItems.length > 0) {
+                historyText += `Marketed for students who struggle with a variety of challenges such as ${allProfileItems.join(', ')}. `;
             }
         }
 
@@ -1656,12 +1752,24 @@ function generateWikiMarkdown(data) {
     if (data.staffMembers && data.staffMembers.length > 0) {
         lines.push('## Founders and Notable Staff\n');
         data.staffMembers.forEach(staff => {
-            let staffLine = `**${staff.name}**`;
+            let staffLine = `**${staff.name}** `;
             if (staff.role) {
-                staffLine += ` is ${staff.role}`;
+                staffLine += `is ${staff.role}`;
             }
             if (staff.bio) {
-                staffLine += `. ${staff.bio}`;
+                // Ensure bio starts with proper spacing
+                let bio = staff.bio.trim();
+                // If we have a role, add a period if needed
+                if (staff.role && !staffLine.endsWith('.')) {
+                    staffLine += '.';
+                }
+                // Add bio with space
+                if (staff.role) {
+                    staffLine += ` ${bio}`;
+                } else {
+                    // If no role, bio might start with "is" or other verb
+                    staffLine += bio;
+                }
             }
             lines.push(staffLine);
         });
@@ -1848,15 +1956,17 @@ function getLookupTables() {
             'Academic struggles', 'Failing grades', 'School failure',
             'Social problems', 'Peer conflict', 'Bullying', 'Social isolation',
             'Family conflict', 'Parent-child conflict', 'Family dysfunction',
-            'Sexual acting out', 'Inappropriate sexual behavior',
+            'Sexual acting out', 'Inappropriate sexual behavior', 'Sexually inappropriate behavior',
             'Lying', 'Dishonesty', 'Manipulation', 'Deceit',
             'Stealing', 'Theft', 'Stealing behavior',
             'Emotional dysregulation', 'Emotional instability', 'Mood swings',
             'Disrespect', 'Disrespectful behavior', 'Poor attitude',
             'Motivation issues', 'Lack of motivation', 'Apathy',
-            'Attachment issues', 'Inability to bond', 'Trust issues',
+            'Attachment issues', 'Attachment', 'Inability to bond', 'Trust issues',
             'Blame', 'Blaming others', 'Lack of accountability',
-            'Impulsive behavior', 'Impulsivity', 'Poor impulse control'
+            'Impulsive behavior', 'Impulsivity', 'Poor impulse control',
+            'Adoption issues', 'Adoption', 'Adopted child issues',
+            'Trafficking', 'Sex trafficking', 'Human trafficking', 'Trafficking victim'
         ],
         commonPhaseStructures: [
             'Entry/Foundation/Intermediate/Advanced',

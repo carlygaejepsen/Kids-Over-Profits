@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 We have been unable to locate details of this state's regulations at this time.
 
@@ -14,13 +14,13 @@ We have been unable to locate details of this state's regulations at this time.
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Black Hills Children's Home**](https://www.reddit.com/r/troubledteens/wiki/index/blackhills) | - | - | - |
-| [**McCrossan Boys Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/mccrossan) | - | Sioux Falls, SD | - |
-| [**Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Black Hills Children's Home**](https://www.reddit.com/r/troubledteens/wiki/index/blackhills) | - | - | - |
+| [** McCrossan Boys Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/mccrossan) | - | Sioux Falls, SD | - |
+| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |
 ---
 
-## **Closed Programs in South Dakota**
+## ** Closed Programs in South Dakota**
 
 ---
 
@@ -28,7 +28,7 @@ We have been unable to locate details of this state's regulations at this time.
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -40,7 +40,8 @@ We have been unable to locate details of this state's regulations at this time.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

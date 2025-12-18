@@ -37,16 +37,16 @@ According to a 2025 wrongful death petition, the number of reported runaways fro
 The petition also alleges that the facility's policy is to refer to these incidents as "missing from care" and that staff are not allowed to physically stop boys from leaving the open campus.
 
 *
-**March 2020:**A 14-year-old resident [left the Tulsa Boys' Home](https://web.archive.org/web/20210505175621/https://tulsaworld.com/news/local/14-year-old-sand-springs-boy-killed-while-walking-on-state-highway-troopers-report/article_efbb1266-f839-554c-8905-f0c997d4db47.html) and was subsequently struck by a vehicle and killed while walking on Oklahoma 51.
+**March 2020:** A 14-year-old resident [left the Tulsa Boys' Home](https://web.archive.org/web/20210505175621/https://tulsaworld.com/news/local/14-year-old-sand-springs-boy-killed-while-walking-on-state-highway-troopers-report/article_efbb1266-f839-554c-8905-f0c997d4db47.html) and was subsequently struck by a vehicle and killed while walking on Oklahoma 51.
 
 *
-**December 2020:**A boy who left the facility with a group [drowned in the Arkansas River](https://web.archive.org/web/20210505175621/https://tulsaworld.com/news/local/body-of-missing-teen-from-tulsa-boys-home-found-by-authorities-in-arkansas-river/article_c3056b8e-394e-11eb-8553-1fe10a615b84.html) . His body was recovered later by authorities.
+**December 2020:** A boy who left the facility with a group [drowned in the Arkansas River](https://web.archive.org/web/20210505175621/https://tulsaworld.com/news/local/body-of-missing-teen-from-tulsa-boys-home-found-by-authorities-in-arkansas-river/article_c3056b8e-394e-11eb-8553-1fe10a615b84.html) . His body was recovered later by authorities.
 
 ---
 
 ### Founders and Notable Staff
 
-***Gregg Conway**is named in a 2025 lawsuit as the Executive Director of Tulsa Boys' Home, a position he allegedly held at all times from 2011 to 2021.
+***Gregg Conway** is named in a 2025 lawsuit as the Executive Director of Tulsa Boys' Home, a position he allegedly held at all times from 2011 to 2021.
 
 *Very little is currently known about staff at Tulsa Boys' Home. If you attended Tulsa Boys' Home and would like to contribute information to help complete this page, please contact [u/Signal-Strain8910](/u/Signal-Strain8910) .*
 
@@ -76,14 +76,14 @@ Many survivors have reported that abuse and neglect have occurred at Tulsa Boys'
 
 Other allegations of abuse and neglect which have been reported by survivors include but are not limited to:
 
-****September 2023:**A former employee, Matthew Whitaker, was [sentenced to 35 years in prison](https://www.newson6.com/story/64fb57f73b938c07b021d2a7/former-tulsa-boys-home-employee-gets-35-year-sentence-for-child-porn-conviction) after pleading guilty to nine counts of aggravated possession of child pornography. Whitaker was arrested in August 2022 after investigators found over 7,000 images of child sex abuse on his personal devices.
+****September 2023:** A former employee, Matthew Whitaker, was [sentenced to 35 years in prison](https://www.newson6.com/story/64fb57f73b938c07b021d2a7/former-tulsa-boys-home-employee-gets-35-year-sentence-for-child-porn-conviction) after pleading guilty to nine counts of aggravated possession of child pornography. Whitaker was arrested in August 2022 after investigators found over 7,000 images of child sex abuse on his personal devices.
 *
-***May 2024:**A 25-year-old former supervisor at the Tulsa Boys' Home, Ashley Cartwright, was arrested and charged with second-degree rape of a 16-year-old resident. According to a [FOX23 News report](https://www.fox23.com/news/former-supervisor-at-tulsa-boys-home-arrested-after-allegedly-raping-16-year-old-boy/article_43c2448a-118d-11ef-b351-5b6cefee723c.html) , the incidents occurred in December at a motel, where Cartwright also allegedly provided the boy with alcohol. She also reportedly gave him gifts, including an iPhone, and got him out of trouble on campus. Cartwright has since resigned.
+***May 2024:** A 25-year-old former supervisor at the Tulsa Boys' Home, Ashley Cartwright, was arrested and charged with second-degree rape of a 16-year-old resident. According to a [FOX23 News report](https://www.fox23.com/news/former-supervisor-at-tulsa-boys-home-arrested-after-allegedly-raping-16-year-old-boy/article_43c2448a-118d-11ef-b351-5b6cefee723c.html) , the incidents occurred in December at a motel, where Cartwright also allegedly provided the boy with alcohol. She also reportedly gave him gifts, including an iPhone, and got him out of trouble on campus. Cartwright has since resigned.
 *
-**May 2021:**The family of Rylan Harris, a former resident, [filed a wrongful death lawsuit](https://www.newson6.com/story/6091fdbc0c3ee10be2404f54/wrongful-death-lawsuit-pending-against-tulsa-boys-home-dept-of-human-services) against the Tulsa Boys' Home and the Oklahoma Department of Human Services. The lawsuit, filed by attorney Cameron Spradling, claims the facility was negligent in Rylan's care, which resulted in him running away from the campus in December 2020 and subsequently drowning in the Arkansas River.
+**May 2021:** The family of Rylan Harris, a former resident, [filed a wrongful death lawsuit](https://www.newson6.com/story/6091fdbc0c3ee10be2404f54/wrongful-death-lawsuit-pending-against-tulsa-boys-home-dept-of-human-services) against the Tulsa Boys' Home and the Oklahoma Department of Human Services. The lawsuit, filed by attorney Cameron Spradling, claims the facility was negligent in Rylan's care, which resulted in him running away from the campus in December 2020 and subsequently drowning in the Arkansas River.
 
 *
-**May 2025: (Lawsuit) - Ryan Harris and Kim Wakeman v. Tulsa Boys' Home, Inc. (CJ-2025-02320)**A wrongful death lawsuit was filed by the parents of Rylan Harris, a 13-year-old boy who drowned on December 8, 2020, after running away from the facility. The [petition alleges](https://www.oscn.net/dockets/Search.aspx) that:
+**May 2025: (Lawsuit) - Ryan Harris and Kim Wakeman v. Tulsa Boys' Home, Inc. (CJ-2025-02320)** A wrongful death lawsuit was filed by the parents of Rylan Harris, a 13-year-old boy who drowned on December 8, 2020, after running away from the facility. The [petition alleges](https://www.oscn.net/dockets/Search.aspx) that:
 
 *On the night of December 7, 2020, Rylan and four other boys walked off the TBH campus "while TBH staff members simply watched and did nothing to stop them."
 *Staff were allegedly aware the boys planned to leave.
@@ -139,4 +139,5 @@ We have not collected any survivor testimonies from Tulsa Boys' Home. If you att
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

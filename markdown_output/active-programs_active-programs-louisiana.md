@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 Although there are no requirements for accreditation, non-public schools in Louisiana may seek approval with the Louisiana Board of Elementary and Secondary Education by maintaining an approved curriculum that is similar to that of public schools. All non-public schools must be registered with the state.
 
@@ -20,12 +20,12 @@ New students in non-public schools must show proof of immunization or proper pap
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Evangel House Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/evangelhouse) | 1995 | St Martinville, LA | [HEAL](http://www.heal-online.org/evil.htm) |
-| [**River Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/riverriveroaks) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Evangel House Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/evangelhouse) | 1995 | St Martinville, LA | [HEAL](http://www.heal-online.org/evil.htm) |
+| [** River Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/riverriveroaks) | - | - | - |
 ---
 
-## **Closed Programs in Louisiana**
+## ** Closed Programs in Louisiana**
 
 ---
 
@@ -33,11 +33,11 @@ New students in non-public schools must show proof of immunization or proper pap
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Hope Youth Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/hopeyouthranch) | - | - | - |
-| [**Red River Academy/US Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/redriver) | 2006-2015 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) |
-| [**New Bethany Home for Boys**](https://www.reddit.com/r/troubledteens/wiki/index/newbethboys) | - | - | - |
-| [**New Bethany Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/newbethgirls) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Hope Youth Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/hopeyouthranch) | - | - | - |
+| [** Red River Academy/US Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/redriver) | 2006-2015 | Lecompte, LA | [HEAL](http://www.heal-online.org/redriver.htm) |
+| [** New Bethany Home for Boys**](https://www.reddit.com/r/troubledteens/wiki/index/newbethboys) | - | - | - |
+| [** New Bethany Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/newbethgirls) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -46,7 +46,8 @@ New students in non-public schools must show proof of immunization or proper pap
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -129,7 +129,7 @@ Here's a breakdown of the key components:
       - `kadence_child_enqueue_styles()` - Base CSS loading
       - `kop_enqueue_kadence_nav_guard()` - Navigation guard (loads first)
       - `load_facilities_data()` - TTI Program Index data
-      - `enqueue_facility_form_script()` - Form assets (admin/public)
+      - `enqueue_data_form_script()` - Form assets (admin/public)
       - `kop_enqueue_report_scripts()` - State report scripts
       - `kop_register_facilities_rest_routes()` - REST API setup
 
@@ -199,7 +199,7 @@ Here's a breakdown of the key components:
             - UI helpers (showUploadStatus)
             - **This file provides global functions used by all other form modules**
 
-        -   `facility-form.v4.js` (~1,900 lines) - **Main form orchestrator**
+        -   `data-form.v4.js` (~1,900 lines) - **Main form orchestrator**
             - Form initialization and lifecycle coordination
             - Event listener attachment and field mapping
             - Data loading/saving orchestration via module delegation
@@ -237,7 +237,7 @@ Here's a breakdown of the key components:
             - Export and download functionality
             - Dependencies: `utilities.js`
 
-    -   **`js/facility-form-modules/`**: Core facility form modules (new modular architecture)
+    -   **`js/data-form-modules/`**: Core data form modules (new modular architecture)
 
         -   `config.js` (~179 lines) - **Configuration module**
             - API endpoint resolution and normalization
@@ -359,7 +359,7 @@ Here's a breakdown of the key components:
 -   **`templates/`**: PHP template files included by page templates
 
     -   `data-form-admin.php` (~2,300 lines) - **Administrator data entry interface**
-        - Complete facility form HTML structure
+        - Complete data form HTML structure
         - Field groups: Facility Info, Contact, Programs, Incidents, Inspections, etc.
         - Included by `page-admin-data.php`
         - Triggers conditional loading of admin form scripts
@@ -385,9 +385,7 @@ The application uses conditional script loading based on page templates and slug
 ```
 WordPress Page (template: page-admin-data.php)
     ↓
-Template includes templates/data-form-admin.php
-    ↓
-functions.php::enqueue_facility_form_script() detects template
+functions.php::enqueue_data_form_script() detects template
     ↓
 Loads modules in dependency order:
   1. utilities.js (global helpers)
@@ -395,10 +393,10 @@ Loads modules in dependency order:
   3. ui.js → ui-events.js → ui-render.js → ui-state.js → ui-actions.js
   4. db-form-loader.js, location-form.js, referrer-form.js, notes.js
   5. autocomplete.js, facility-report-generator.js, facility-toolbar.js
-  6. facility-form.v4.js (orchestrator)
+  6. data-form.v4.js (orchestrator)
   7. admin-data-page.js (page-specific logic)
     ↓
-Localizes KOP_FACILITY_FORM_CONFIG with: mode='master', apiBase, endpoints
+Localizes KOP_DATA_FORM_CONFIG with: mode='master', apiBase, endpoints
     ↓
 User interacts → KOP_API module → Saves to facilities_master table
 ```
@@ -409,11 +407,11 @@ WordPress Page (template: page-data.php)
     ↓
 Template includes templates/data-form-public.php
     ↓
-functions.php::enqueue_facility_form_script() detects template
+functions.php::enqueue_data_form_script() detects template
     ↓
 Loads same assets but: js/data-form/data-page.js instead of admin
     ↓
-Localizes KOP_FACILITY_FORM_CONFIG with: mode='suggestion'
+Localizes KOP_DATA_FORM_CONFIG with: mode='suggestion'
     ↓
 User submits → API calls → Saves to suggested_edits table (requires approval)
 ```
@@ -464,7 +462,7 @@ preg_match('/-reports$/', $slug)         → State reports
     -   Color system & accessibility guidance (consolidated here; COLOR_SYSTEM_SUMMARY.md kept only for legacy reference)
 
 ## Collaboration Preferences
-- **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `facility-form.v4.js`). Preserve prior versions unless instructed otherwise.
+- **Versioning:** When iterating on assets, prefer explicit versioned filenames instead of overwriting (e.g., `data-form.v4.js`). Preserve prior versions unless instructed otherwise.
 - **Code style:** Follow established patterns—procedural PHP for endpoints, modular ES6 for scripts, and WordPress-friendly conventions throughout. Do not introduce new build tooling unless necessary.
 - **Documentation:** Update this guide or the relevant `*-summary.md` files when environment or process details change.
 - **Testing:** Where possible, validate changes against a WordPress instance running the Kadence parent theme plus this child theme.
@@ -501,10 +499,10 @@ Thanks for contributing! Maintain consistency with the structure above to ensure
 
 - **Facilities datasets and REST export** — `kop_get_facility_projects_dataset_urls()` discovers JSON exports in `js/data/` and orders them by newest-first so any consumer can fall back to the freshest static bundle (`functions.php`). When `kop_register_facilities_rest_routes()` runs on `rest_api_init` it exposes `kop/v1/facilities`, returning the live project set assembled by `kop_get_facilities_projects_from_database()`; this keeps cached bundles and database exports aligned. Finally, `load_facilities_data()` (hooked to `wp_enqueue_scripts`) merges the REST endpoint with any discovered static bundles, localizing both into `js/facilities-display.js` so the TTI index page can prefer the live API while gracefully degrading to packaged datasets if the API is unreachable (`functions.php`, `js/facilities-display.js`).
 
-## Facility form configuration contract
+## Data form configuration contract
 
-- **Localized config object** — `wp_localize_script('facility-form-script', 'KOP_FACILITY_FORM_CONFIG', …)` guarantees every page that embeds `[facility_form]` exposes at least `fallbackProjectsUrl`, `fallbackProjectsUrls`, and `apiBase` (`functions.php`). The JavaScript loader (`js/facility-form.v4.js`) normalizes those inputs into ordered fallback lists, supplements them with optional `apiBaseFallbacks`, and resolves endpoint overrides supplied via `KOP_FACILITY_FORM_CONFIG.endpoints` before falling back to bundled resolver targets such as `/wp-content/themes/child/api/save-master.php`, `get-master-data.php`, and `get-autocomplete.php` (`api/save-master.php`, `api/get-master-data.php`, `api/get-autocomplete.php`). It also reads `mode` (or global `FORM_MODE`) to toggle between master and suggestion workflows, inspects `debug` / `debugLogging` flags (plus `window.KOP_FACILITY_FORM_DEBUG` or storage toggles) to enable verbose logging, and records the prioritized fallback dataset URL list so the form can hydrate itself when the API is offline.
-- **Endpoint resolution helpers** — During boot the script looks for `window.KOP_API.getEndpoint()` and `window.KOP_THEME_BASES` to augment the localized config, ensuring custom hosting setups can centralize path discovery without editing the bundle. Contributors configuring staging environments should populate the localized object (or global helpers) instead of hard-coding paths so that API requests continue to point at the intended WordPress root even when the theme directory moves (`js/facility-form.v4.js`).
+- **Localized config object** — `wp_localize_script('data-form-script', 'KOP_DATA_FORM_CONFIG', …)` guarantees every page that embeds `[data_form]` exposes at least `fallbackProjectsUrl`, `fallbackProjectsUrls`, and `apiBase` (`functions.php`). The JavaScript loader (`js/data-form.v4.js`) normalizes those inputs into ordered fallback lists, supplements them with optional `apiBaseFallbacks`, and resolves endpoint overrides supplied via `KOP_DATA_FORM_CONFIG.endpoints` before falling back to bundled resolver targets such as `/wp-content/themes/child/api/save-master.php`, `get-master-data.php`, and `get-autocomplete.php` (`api/save-master.php`, `api/get-master-data.php`, `api/get-autocomplete.php`). It also reads `mode` (or global `FORM_MODE`) to toggle between master and suggestion workflows, inspects `debug` / `debugLogging` flags (plus `window.KOP_DATA_FORM_DEBUG` or storage toggles) to enable verbose logging, and records the prioritized fallback dataset URL list so the form can hydrate itself when the API is offline.
+- **Endpoint resolution helpers** — During boot the script looks for `window.KOP_API.getEndpoint()` and `window.KOP_THEME_BASES` to augment the localized config, ensuring custom hosting setups can centralize path discovery without editing the bundle. Contributors configuring staging environments should populate the localized object (or global helpers) instead of hard-coding paths so that API requests continue to point at the intended WordPress root even when the theme directory moves (`js/data-form.v4.js`).
 
 ## Anonymous document portal guidance
 

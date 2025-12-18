@@ -1,4 +1,0 @@
-survey Author   Reason   Date  |
-|  |  |  |
-|  |  |  |
-|  |  |  |

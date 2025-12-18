@@ -12,19 +12,19 @@ Lakeland Girls Academy is located at [6754 S Carter Rd, Lakeland, FL 33813](http
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dan Williams**is the Co-Owner and Co-Executive Director of Lakeland Girls Academy. He is married to Holly Williams. He also serves on the Board of Directors for the Florida Association of Christian Child Caring Agencies (FACCCA). He reportedly became involved in Teen Challenge after graduating from the Teen Challenge location in Ft. Myers, Florida. Since then, he has served in various leadership capacities with Teen Challenge that range from counseling, training, managing programs, and more.
+** Dan Williams** is the Co-Owner and Co-Executive Director of Lakeland Girls Academy. He is married to Holly Williams. He also serves on the Board of Directors for the Florida Association of Christian Child Caring Agencies (FACCCA). He reportedly became involved in Teen Challenge after graduating from the Teen Challenge location in Ft. Myers, Florida. Since then, he has served in various leadership capacities with Teen Challenge that range from counseling, training, managing programs, and more.
 
-**Holly Williams**is the Co-Owner and Co-Executive Director of Lakeland Girls Academy. She is married to Dan Williams. She reportedly became involved in Teen Challenge after graduating from the Teen Challenge location in Ft. Myers, Florida. Since then, she has served in various leadership capacities with Teen Challenge that range from counseling, training, managing programs, and more.
+** Holly Williams** is the Co-Owner and Co-Executive Director of Lakeland Girls Academy. She is married to Dan Williams. She reportedly became involved in Teen Challenge after graduating from the Teen Challenge location in Ft. Myers, Florida. Since then, she has served in various leadership capacities with Teen Challenge that range from counseling, training, managing programs, and more.
 
-**Gregory Del Valle**worked as the Co-Director of Lakeland Girls Academy from January 2003 until October 2017. He is married to Essie Del Valle. He began his career as a Petty Officer 2nd Class in the US Navy from 1986 until 1990. He then worked as a Deputy Sheriff at the Broward County Sheriff's Office from 1990 until 2003, when he began working at Lakeland Girls Academy. Currently, he is unemployed and is "focusing on family".
+** Gregory Del Valle** worked as the Co-Director of Lakeland Girls Academy from January 2003 until October 2017. He is married to Essie Del Valle. He began his career as a Petty Officer 2nd Class in the US Navy from 1986 until 1990. He then worked as a Deputy Sheriff at the Broward County Sheriff's Office from 1990 until 2003, when he began working at Lakeland Girls Academy. Currently, he is unemployed and is "focusing on family".
 
-**Essie Del Valle**worked as the Co-Director of Lakeland Girls Academy from 2003 until 2017. She is married to Gregory Del Valle. Her prior/current employment is presently unknown.
+** Essie Del Valle** worked as the Co-Director of Lakeland Girls Academy from 2003 until 2017. She is married to Gregory Del Valle. Her prior/current employment is presently unknown.
 
-**Kim Allen**worked as a Counselor at Lakeland Girls Academy beginning in 2003. A former "troubled teen" herself, she reportedly changed her negative behavior by "surrendering her heart to God and accepting Jesus Christ as her personal savior". It is unknown if she still works at LGA.
+** Kim Allen** worked as a Counselor at Lakeland Girls Academy beginning in 2003. A former "troubled teen" herself, she reportedly changed her negative behavior by "surrendering her heart to God and accepting Jesus Christ as her personal savior". It is unknown if she still works at LGA.
 
-*Lakeland Girls Academy no longer publishes a list of staff members on their website. The most recent staff list is from April of 2021, and may be viewed [here](https://web.archive.org/web/20210422204410/https://www.schoolforgirls.org/staff/) . If you have information regarding current/former staff members at LGA, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Lakeland Girls Academy no longer publishes a list of staff members on their website. The most recent staff list is from April of 2021, and may be viewed [here](https://web.archive.org/web/20210422204410/https://www.schoolforgirls.org/staff/) . If you have information regarding current/former staff members at LGA, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -32,7 +32,7 @@ Lakeland Girls Academy is located at [6754 S Carter Rd, Lakeland, FL 33813](http
 
 For the first 6 months that a teen is in the program, they are allegedly forbidden from speaking to other new residents. All communication between the girls and their parents is strictly monitored by staff, who may mute the teen at any time if they do not like what is being said. Survivors of the program have also stated that shaming and shunning are frequently used. When a teen is shunned, nobody can speak to them for weeks or sometimes months.
 
-*Very little information is presently known regarding the specifics of the program structure at Lakeland Girls Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is presently known regarding the specifics of the program structure at Lakeland Girls Academy. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,7 +40,7 @@ For the first 6 months that a teen is in the program, they are allegedly forbidd
 
 Many survivors have reported that Lakeland Girls Academy is an abusive program. Allegations of abuse and neglect that have been reported by survivors include severe medical neglect, verbal/emotional abuse, frequent shaming/shunning, communication resitrictions, isolation tactics, and brainwashing. Many survivors report developing PTSD and other trauma-related conditions as a result of their time at LGA.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Lakeland Girls Academy is a**Confirmedly Abusive**program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Lakeland Girls Academy is a** Confirmedly Abusive** program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 On May 19^(th) 2020, a 17-year-old resident at Lakeland Girls Academy, Naomi Wood, died at the program after being refused medical attention. According to [reports](https://www.myflfamilies.com/childfatality/reports/2020-145076.pdf) , Naomi igot physically ill and was vomiting on the evening of May 18, and continued to be ill throughout the night and following day. Staff members made Naomi get up for meals and fed her soup, as that is their protocol when children are sick. They also prayed for her to get better. Facility staff did not seek any medical attention for her until she was found in her room unresponsive. On May 19, 2020, Naomi was found unresponsive in her room and 911 was called at 6:15 p.m. CPR was performed until Emergency Medical Services arrived. Naomi Wood passed away while be transported to the hospital, and was pronounced dead at 7:16 p.m. Prior to her death, Naomi had repeatedly asked to be seen by a doctor in April for chronic stomach pain but was not taken to the doctor. Since being at the facility the child had received Pepto-Bismol approximately 20 times to address her stomach issues. She was never taken to the doctor and facility staff never consulted with a physician. In the days leading up to her death, she was given more Pepto-Bismol to address her stomach pain. The medical examiner's office conducted an autopsy and found that Naomi Wood died from a previously undetected seizure disorder. The DCF concluded that her death was in part caused by the neglect of the academy.
 
@@ -48,9 +48,9 @@ Following Naomi's death, Lakeland Girls Academy became the subject of widespread
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**February 2022: (UNCLEAR)**"horrible, horrible, embarrassing responses from whoever is in charge of replies here. threatening slander lawsuits (without slander) and just saying “eh, fake news” makes you look even worse than your negligence already has proven. A girl described how she liked the school prior to a few staff changes, and your response was “well, we needed to change the staff. that wasn’t ‘appreciated’ by the students with ‘unhealthy attachments’ to the teachers…. ‘if you had stayed you would have seen better.’” what tone deaf, apathetic, careless, dismissive, and belittling responses. however , I guess it’s good they’ve embarrassed themselves with these responses and shown their lack of care to negligence or problems people have at their institution. very cold, threatening responses. says enough. Don’t go here. I’ll never go back. They are horrible, horrible people - not just the staff/administrators, but also whatever nasty person is in charge of replying to these valid concerns, dissatisfaction, and, more than anything, pain. not suitable for children who already have mental problems. Sad, pathetic people in charge here. go ahead, delete my review. shows how well you guys try to cover everything up." - [Kelly (Google Reviews)](https://goo.gl/maps/XUrruhoP5DE71PAZ7)
+** February 2022: (UNCLEAR)**"horrible, horrible, embarrassing responses from whoever is in charge of replies here. threatening slander lawsuits (without slander) and just saying “eh, fake news” makes you look even worse than your negligence already has proven. A girl described how she liked the school prior to a few staff changes, and your response was “well, we needed to change the staff. that wasn’t ‘appreciated’ by the students with ‘unhealthy attachments’ to the teachers…. ‘if you had stayed you would have seen better.’” what tone deaf, apathetic, careless, dismissive, and belittling responses. however , I guess it’s good they’ve embarrassed themselves with these responses and shown their lack of care to negligence or problems people have at their institution. very cold, threatening responses. says enough. Don’t go here. I’ll never go back. They are horrible, horrible people - not just the staff/administrators, but also whatever nasty person is in charge of replying to these valid concerns, dissatisfaction, and, more than anything, pain. not suitable for children who already have mental problems. Sad, pathetic people in charge here. go ahead, delete my review. shows how well you guys try to cover everything up." - [Kelly (Google Reviews)](https://goo.gl/maps/XUrruhoP5DE71PAZ7)
 
 January 2022: (SURVIVOR)**"I attended this program 15 years ago and was taken out after 11 months. This program literally traumatized me . I now have social anxiety and ptsd. I have been on and off of psych meds for 15 years . I came out far worse than I was when I went in . When I got out I didn't even know how to function . I had major panic attacks I was suicidal .I dropped out of high school and ended up heavily addicted to narcotics . All because of the trauma I had endured . Do not send your children here!!!! All of us girls who attended this program still have nightmares to this day of the abuse ,manipulation, control and utter neglect that we endured in this program. I literally could go on for hours listing the horrible things we all went through in this program. This place needs to be shut down" - [Michelle (Google Reviews)](https://goo.gl/maps/EQNmK2vVHpwvhUTs9)
 
@@ -58,7 +58,7 @@ January 2022: (SURVIVOR)**"I attended this program 15 years ago and was taken ou
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Lakeland Girls Academy Website Homepage](https://www.schoolforgirls.org/)
 
@@ -86,7 +86,8 @@ January 2022: (SURVIVOR)**"I attended this program 15 years ago and was taken ou
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

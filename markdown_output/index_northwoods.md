@@ -16,27 +16,27 @@ Both of Northwoods' owners, David Yeats and Matt Fitzgerald, had extensive caree
 
 ## **Founders and Notable Staff**
 
-**David Yeats**is the Founder and Director of Northwoods. He previously worked as a Teacher and Counsellor at the**confirmedly abusive** [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a notorious [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, until 1993 when he founded Northwoods. He has also reportedly worked as the Individual Services Coordinator at Children’s Mental Health in the State of Idaho, a Wilderness Instructor at Marion County family court, and as a Program Specialist for Polk Adolescent Day Treatment Center in Polk County, Oregon.
+** David Yeats** is the Founder and Director of Northwoods. He previously worked as a Teacher and Counsellor at the** confirmedly abusive** [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a notorious [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, until 1993 when he founded Northwoods. He has also reportedly worked as the Individual Services Coordinator at Children’s Mental Health in the State of Idaho, a Wilderness Instructor at Marion County family court, and as a Program Specialist for Polk Adolescent Day Treatment Center in Polk County, Oregon.
 
-**Matthew "Matt" Fitzgerald**is the Co-Owner and President of Northwoods. He began his career in the Troubled Teen Industry as a Senior Counselor/Admissions Counselor at the**confirmedly abusive** [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a notorious [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, from 1989 until 1994. He then worked as the Admissions Director of CEDU's**confirmedly abusive** [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) from 1994 until 1997. He then became the Director of CEDU's**confirmedly abusive** [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) from 1997 until 1999, when he joined Northwoods.
+** Matthew "Matt" Fitzgerald** is the Co-Owner and President of Northwoods. He began his career in the Troubled Teen Industry as a Senior Counselor/Admissions Counselor at the** confirmedly abusive** [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a notorious [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program, from 1989 until 1994. He then worked as the Admissions Director of CEDU's** confirmedly abusive** [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) from 1994 until 1997. He then became the Director of CEDU's** confirmedly abusive** [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) from 1997 until 1999, when he joined Northwoods.
 
-**Dell Jones**reportedly worked as a Staff member at Northwoods for an unspecified period of time. According to [HEAL](http://www.heal-online.org/northwoods.htm) , he previously worked for [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's**confirmedly abusive** [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . His current employment is unknown.
+** Dell Jones** reportedly worked as a Staff member at Northwoods for an unspecified period of time. According to [HEAL](http://www.heal-online.org/northwoods.htm) , he previously worked for [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's** confirmedly abusive** [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . His current employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-It has been reported by several sources that Northwoods' program was heavily inspired by that of the notorious and**confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. Educational Consultant Larry Stednitz of the [Woodbury Reports](https://www.reddit.com/r/troubledteens/wiki/index/woodbury)[states](https://strugglingteens.com/artman/publish/article_5177.shtml) , "[The founders'] experience gained from CEDU cannot be overlooked in understanding [Northwoods'] model. First, accountability is a critical component of Northwoods. Before a student enrolls at Northwoods, they must show an interest and willingness to be there for a minimum of one year. Once enrolled at Northwoods, students are held accountable for their commitment and behaviors."
+It has been reported by several sources that Northwoods' program was heavily inspired by that of the notorious and** confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. Educational Consultant Larry Stednitz of the [Woodbury Reports](https://www.reddit.com/r/troubledteens/wiki/index/woodbury)[states](https://strugglingteens.com/artman/publish/article_5177.shtml) , "[The founders'] experience gained from CEDU cannot be overlooked in understanding [Northwoods'] model. First, accountability is a critical component of Northwoods. Before a student enrolls at Northwoods, they must show an interest and willingness to be there for a minimum of one year. Once enrolled at Northwoods, students are held accountable for their commitment and behaviors."
 
 Like other behavior-modification programs, Northwoods uses a level system. According to survivors, Northwoods' program consists of three levels. The levels are reported to be:
 
-***Sagle Campus:**During the first part of the resident's stay at Northwoods, they live at the Sagle campus. According to reports, this phase of the program is focused on "knowing the rules and breaking them". This level is said to last around 3-5 months. The Sagle site, called the Sagle farm, consists of one large home that is reserved for the 18-year-old boys, and is seen as a great goal and privilege. Another building houses the 17 and under boys and their dining facilities. While at the Sagle campus, the boys have a tightly scheduled day doing chores, feeding the animals, school, and doing physical exercise.
-***Costa Rica Campus:**The next part of the boys' stay at Northwoods takes place at the program's campus in La Tigra, Costa Rica. Reportedly, this phase is focused on "knowing the rules and not breaking them". The boys must live up to a higher standard while in Costa Rica. While there, students live in a five-bedroom, three-bath lodge. Nearby, a second three-bedroom, two-bath "cabaña", accommodates staff and occasional guests. For part of the time in Costa Rica, the students live with host families in the rural community of Cerritos, located on the Atlantic slope of the Tilaran Mountains. Northwoods students are required to learn Spanish so they can communicate with their host families, local townspeople and mentors while doing community service projects. This phase of the program typically lasts about 3-4 months.
-***Bonners Ferry Campus:**During the last phase of the program, which is also used as a "transition" phase, the boys live at the program's original campus in Bonners Ferry. While at this campus, the boys are expected to "know the rules and help others keep the rules". They are also enrolled in the local high school, where they are able to attend classes. The campus consists of two houses; one house serves up to six residents, ages 12–17, and a second house is available for 18-year-old students.
+***Sagle Campus:** During the first part of the resident's stay at Northwoods, they live at the Sagle campus. According to reports, this phase of the program is focused on "knowing the rules and breaking them". This level is said to last around 3-5 months. The Sagle site, called the Sagle farm, consists of one large home that is reserved for the 18-year-old boys, and is seen as a great goal and privilege. Another building houses the 17 and under boys and their dining facilities. While at the Sagle campus, the boys have a tightly scheduled day doing chores, feeding the animals, school, and doing physical exercise.
+***Costa Rica Campus:** The next part of the boys' stay at Northwoods takes place at the program's campus in La Tigra, Costa Rica. Reportedly, this phase is focused on "knowing the rules and not breaking them". The boys must live up to a higher standard while in Costa Rica. While there, students live in a five-bedroom, three-bath lodge. Nearby, a second three-bedroom, two-bath "cabaña", accommodates staff and occasional guests. For part of the time in Costa Rica, the students live with host families in the rural community of Cerritos, located on the Atlantic slope of the Tilaran Mountains. Northwoods students are required to learn Spanish so they can communicate with their host families, local townspeople and mentors while doing community service projects. This phase of the program typically lasts about 3-4 months.
+***Bonners Ferry Campus:** During the last phase of the program, which is also used as a "transition" phase, the boys live at the program's original campus in Bonners Ferry. While at this campus, the boys are expected to "know the rules and help others keep the rules". They are also enrolled in the local high school, where they are able to attend classes. The campus consists of two houses; one house serves up to six residents, ages 12–17, and a second house is available for 18-year-old students.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 *No information is currently known regarding survivor's experiences at Northwoods. This section will be updated as information becomes available.*
 
@@ -44,7 +44,7 @@ Like other behavior-modification programs, Northwoods uses a level system. Accor
 
 ## **Survivor/Parent Testimonials**
 
-*No survivor/parent testimonies have yet been found regarding the experience at Northwoods. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor/parent testimonies have yet been found regarding the experience at Northwoods. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -64,7 +64,8 @@ Like other behavior-modification programs, Northwoods uses a level system. Accor
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

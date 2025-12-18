@@ -2,7 +2,7 @@
 
 ---
 
-## **Open Roloff Homes Programs**
+## ** Open Roloff Homes Programs**
 
 ---
 
@@ -10,8 +10,8 @@
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Anchor Home for Boys/Anchor Academy**](https://www.reddit.com/r/troubledteens/wiki/index/anchoracademy) | - | - | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Anchor Home for Boys/Anchor Academy**](https://www.reddit.com/r/troubledteens/wiki/index/anchoracademy) | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -23,7 +23,7 @@
 | - | - | - | - |
 ---
 
-## **Closed Roloff Homes Programs**
+## ** Closed Roloff Homes Programs**
 
 ---
 
@@ -31,9 +31,9 @@
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**Bethesda Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/bethesdagirls) | - | - | - |
-| [**Rebekah Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) | - | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** Bethesda Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/bethesdagirls) | - | - | - |
+| [** Rebekah Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -99,7 +99,8 @@ The Ark Youth Shelter (boys) Ministry of Trinity Baptist Church, Spartanburg, SC
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

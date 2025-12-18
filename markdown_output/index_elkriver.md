@@ -12,50 +12,50 @@ The program is located at [4812 Commercial Dr NW, Huntsville, AL 35816](https://
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Karen Lee**is the Co-Founder, President, and CEO of Elk River. She is also the Chair of the Board of [Pinnacle Behavioral Health, Inc.](https://www.reddit.com/r/troubledteens/wiki/index/pinnacleinc) , which is Elk River's parent company. She worked as a nurse until she sent her troubled son to an unnamed treatment program, which prompted her interest in the industry. Lee and Elk River faced significant backlash in 2011 when two of her sons were [arrested](https://www.al.com/breaking/2012/09/huntsville_school_officials_de.html#incart_river_default) for trafficking 200+ pounds of cannabis. One of her sons, Eric, had been an employee of Elk River.
+** Karen Lee** is the Co-Founder, President, and CEO of Elk River. She is also the Chair of the Board of [Pinnacle Behavioral Health, Inc.](https://www.reddit.com/r/troubledteens/wiki/index/pinnacleinc) , which is Elk River's parent company. She worked as a nurse until she sent her troubled son to an unnamed treatment program, which prompted her interest in the industry. Lee and Elk River faced significant backlash in 2011 when two of her sons were [arrested](https://www.al.com/breaking/2012/09/huntsville_school_officials_de.html#incart_river_default) for trafficking 200+ pounds of cannabis. One of her sons, Eric, had been an employee of Elk River.
 
-**Penny Baker**is the current Director of Clinical Services at Elk River. Prior to joining Elk River as a Therapist in 2014, she worked as a Special Services Coordinator at the reportedly abusive [Three Springs](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) from 1993 until 1997. She returned to Three Springs as a Group Administrator from 2001 until 2005.
+** Penny Baker** is the current Director of Clinical Services at Elk River. Prior to joining Elk River as a Therapist in 2014, she worked as a Special Services Coordinator at the reportedly abusive [Three Springs](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) from 1993 until 1997. She returned to Three Springs as a Group Administrator from 2001 until 2005.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Elk River Treatment Program uses a level system consisting of four phases. According to one [survivor](https://www.reddit.com/r/troubledteens/comments/mzrt7m/unloading_about_elk_river_treatment_program/) , the four phases are:
 
-***Phase One - Contemplation/Preparation:**When a teenager enters Elk River, they are considered to be entering the introduction or orientation phase. The rules and routine are set up to start instilling adaptive behavioral changes which is part of the Preparation Stage. During this phase, the teenager must write a "Dirt List", a list of all of the negative things that the teenager has done, which is shared with their parents and therapist. The teen's parents will also write them an "Issue Letter", a letter detailing the emotional burden the teen has caused them, and the teen must write back with an "Issue Response" letter. In order to progress two Phase Two, the teen must complete all other assignments given to them and display to weeks of "consistent" good behavior.
-***Phase Two - Preparation/Action:**On Phase Two, the teens must begin taking action to correct their "maladaptive" behaviors. They are required to set and accomplish daily goals, hold themself and others accountable for their actions, and begin stepping into a "role model" position. They are required to write two letters to their parents each week, journal at least one page daily, and update their Dirt List.
-***Phase Three - Action/Maintenance:**On this phase, the teens take on greater responsibilities in ensuring their group's expectations and duties are met. They must become a leader in their group, and must take increased emotional risks. They must also begin working on a home safety plan and relapse prevention plan. These are made up of multiple pieces, including but not limited to, positive/negative peer lists, weekly schedule, triggers for negative behaviors, and new tools.
-***Phase Four - Relapse Prevention:**This is the final phase at Elk River. During this phase, the teens focus on "implementing the changes" they have made at Elk River to prevent relapses in the future. They must maintain a positive attitude, show integrity with peers and staff, demonstrate self-sufficiency and preparation for life with less structure, and exhibit strong self-control. The teens must also write a Personal Value Statement, a Home Contract, and complete one successful "Town pass" and one successful "Home Pass".
+***Phase One - Contemplation/Preparation:** When a teenager enters Elk River, they are considered to be entering the introduction or orientation phase. The rules and routine are set up to start instilling adaptive behavioral changes which is part of the Preparation Stage. During this phase, the teenager must write a "Dirt List", a list of all of the negative things that the teenager has done, which is shared with their parents and therapist. The teen's parents will also write them an "Issue Letter", a letter detailing the emotional burden the teen has caused them, and the teen must write back with an "Issue Response" letter. In order to progress two Phase Two, the teen must complete all other assignments given to them and display to weeks of "consistent" good behavior.
+***Phase Two - Preparation/Action:** On Phase Two, the teens must begin taking action to correct their "maladaptive" behaviors. They are required to set and accomplish daily goals, hold themself and others accountable for their actions, and begin stepping into a "role model" position. They are required to write two letters to their parents each week, journal at least one page daily, and update their Dirt List.
+***Phase Three - Action/Maintenance:** On this phase, the teens take on greater responsibilities in ensuring their group's expectations and duties are met. They must become a leader in their group, and must take increased emotional risks. They must also begin working on a home safety plan and relapse prevention plan. These are made up of multiple pieces, including but not limited to, positive/negative peer lists, weekly schedule, triggers for negative behaviors, and new tools.
+***Phase Four - Relapse Prevention:** This is the final phase at Elk River. During this phase, the teens focus on "implementing the changes" they have made at Elk River to prevent relapses in the future. They must maintain a positive attitude, show integrity with peers and staff, demonstrate self-sufficiency and preparation for life with less structure, and exhibit strong self-control. The teens must also write a Personal Value Statement, a Home Contract, and complete one successful "Town pass" and one successful "Home Pass".
 
 ---
 
-## **Punishments**
+## ** Punishments**
 
 According to one [survivor](https://www.google.com/maps/contrib/115754725183524146029/place/ChIJ5SLPtq5sYogRYRse6mtF3rI/@34.6964577,-86.8712749,10.32z/data=!4m6!1m5!8m4!1e1!2s115754725183524146029!3m1!1e1?hl=en-US) , there are three different types of punishments at Elk River, each of which have three levels:
 
 *Separation is used as a punishment in order to both physically and mentally separate teenagers from their peers.*
 
-***Separation I:**During Separation I, teenagers are forbidden from speaking to their peers and staff members. They must remain at least 10 feet away from anybody else at all times. They also must eat all of their meals alone.
-***Separation II:**On Separation II, the teens must also spend the entire day outside, and are forbidden from even seeing their group.
-***Separation III:**This is the most severe form of this punishment, and has been described by some survivors as a form of corporal punishment. During Separation III, the teens must spend the entire day on an elevated wooden platform. They must washboard their clothes, wear size 15 rubber boots, cook their own food, and shower behind a tarp with freezing cold water.
+***Separation I:** During Separation I, teenagers are forbidden from speaking to their peers and staff members. They must remain at least 10 feet away from anybody else at all times. They also must eat all of their meals alone.
+***Separation II:** On Separation II, the teens must also spend the entire day outside, and are forbidden from even seeing their group.
+***Separation III:** This is the most severe form of this punishment, and has been described by some survivors as a form of corporal punishment. During Separation III, the teens must spend the entire day on an elevated wooden platform. They must washboard their clothes, wear size 15 rubber boots, cook their own food, and shower behind a tarp with freezing cold water.
 
 *Self-Harm is used as a punishment for teenagers who have engaged in self-injurous behaviors while at the program.*
 
-***Self-Harm I:**When a teen is placed on Self-Harm I, they must be watched by staff members when using the bathroom or showering. This precaution is used on all levels of Self-Harm.
-***Self-Harm II:**On Self-Harm II, the teens must also remain within an arm-length of staff members at all times and wear size 15 boots.
-***Self-Harm III:**During Self-Harm III, the teens must adere to the guidelines of Self-Harm I and II. They must also carry a 12-inch piece of thin yellow tape with them at all times, and a staff member must hold the other end. If the teen drops the tape, the staff members reportedly put them into an "automatic containment", meaning that a staff member will restrain the teen, holding their arms and legs, often laying on the person.
+***Self-Harm I:** When a teen is placed on Self-Harm I, they must be watched by staff members when using the bathroom or showering. This precaution is used on all levels of Self-Harm.
+***Self-Harm II:** On Self-Harm II, the teens must also remain within an arm-length of staff members at all times and wear size 15 boots.
+***Self-Harm III:** During Self-Harm III, the teens must adere to the guidelines of Self-Harm I and II. They must also carry a 12-inch piece of thin yellow tape with them at all times, and a staff member must hold the other end. If the teen drops the tape, the staff members reportedly put them into an "automatic containment", meaning that a staff member will restrain the teen, holding their arms and legs, often laying on the person.
 
 *Run Risk is used as a punishment for teenagers who have attempted to run away from the program, or are perceived as being at risk of attempting to run away.*
 
-***Run Risk I:**On Run Risk I, the teens must wear size 15 rubber boots and usually an ankle monitor.
-***Run Risk II:**During Run Risk II, the teens are forbidden from eating alone and must remain within an arms-length of staff at all times.
-***Run Risk III:**On Run Risk III, the teens must abide by the rules of Run Risk I and II, but must also carry around the 12-inch piece of tape held on the other end by a staff member, like Self-Harm III. If they drop the tape, they are restrained by staff members.
+***Run Risk I:** On Run Risk I, the teens must wear size 15 rubber boots and usually an ankle monitor.
+***Run Risk II:** During Run Risk II, the teens are forbidden from eating alone and must remain within an arms-length of staff at all times.
+***Run Risk III:** On Run Risk III, the teens must abide by the rules of Run Risk I and II, but must also carry around the 12-inch piece of tape held on the other end by a staff member, like Self-Harm III. If they drop the tape, they are restrained by staff members.
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Many survivors have reported that Elk River Treatment Program is an abusive facility. Allegations of abuse and neglect that have been reported by survivors include unsafe/unsanitary conditions, verbal/emotional abuse, solitary confinement, censoring communication, and physical abuse. Many survivors report developing PTSD and recurrent nightmares as a result of their time at Elk River.
 
@@ -63,11 +63,11 @@ In September of 2012, Elk River came under fire when it was discovered that the 
 
 In October of 2012, an investigation was launched to look into allegations of physical abuse made by a 13-year-old resident at Elk River. According to [reports](https://archive.ph/hsP4E#selection-555.27-555.134) , the teenager was pulled out of class by a security guard for talking out of turn. The security guard allegedly made him go into a plank position, and whenever he rested the security guard hit him on the sides of his body with an open hand. Elk River placed the security officer on paid leave as the school system looked into the allegation, and the parents of the teen promptly transferred their son to another school.
 
-According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Elk River Treatment Program is a**Confirmedly Abusive**program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+According to the human-rights organization [HEAL](http://www.heal-online.org/thelist.htm#enviro) , Elk River Treatment Program is a** Confirmedly Abusive** program. As per HEAL's definition, “a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **4/27/2021: (SURVIVOR)** [Link to 'Unloading about Elk River Treatment Program' - u/carraedio on Reddit](https://www.reddit.com/r/troubledteens/comments/mzrt7m/unloading_about_elk_river_treatment_program/)
 
@@ -87,7 +87,7 @@ According to the human-rights organization [HEAL](http://www.heal-online.org/the
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Elk River Treatment Program Website Homepage](https://elkrivertreatment.com/)
 
@@ -105,7 +105,8 @@ According to the human-rights organization [HEAL](http://www.heal-online.org/the
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

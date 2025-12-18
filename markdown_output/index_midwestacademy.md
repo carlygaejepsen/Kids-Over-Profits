@@ -22,36 +22,36 @@ Midwest Academy closed in 2016 following a search warrant being issued by the po
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Brian Vaifanua**was the Founder and Director of Midwest Academy. Vaifanua was the previous Director of [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , another WWASP facility which was shut down by Samoan authorities in 2000 after they found credible allegations of child abuse and neglect at the facility. After its closure, Vaifanua worked at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) briefly before leaving to start Midwest Academy. He is reported to have later worked as a night staff at [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) .
+** Brian Vaifanua** was the Founder and Director of Midwest Academy. Vaifanua was the previous Director of [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , another WWASP facility which was shut down by Samoan authorities in 2000 after they found credible allegations of child abuse and neglect at the facility. After its closure, Vaifanua worked at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) briefly before leaving to start Midwest Academy. He is reported to have later worked as a night staff at [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) .
 
-**Ben Trane**was the Director of Midwest Academy following Brian Vaifanua. In 2016, Trane was arrested after an investigation into sexual abuse allegations made by a former resident at Midwest. He was [convicted](http://wwaspsurvivors.com/wp-content/uploads/2018/07/2017-11-17-FECR009152-Motion-for-Change-of-Venue.pdf) in 2018 of assault with intent to commit sexual abuse, sexual exploitation by a counselor, and child endangerment, and he was sentenced to 9 years in prison.
+** Ben Trane** was the Director of Midwest Academy following Brian Vaifanua. In 2016, Trane was arrested after an investigation into sexual abuse allegations made by a former resident at Midwest. He was [convicted](http://wwaspsurvivors.com/wp-content/uploads/2018/07/2017-11-17-FECR009152-Motion-for-Change-of-Venue.pdf) in 2018 of assault with intent to commit sexual abuse, sexual exploitation by a counselor, and child endangerment, and he was sentenced to 9 years in prison.
 
-**Devon Dade**worked as the Director of Midwest Academy at the time of its closing. During his tenure at Midwest Academy, a female student disclosed to a night staff that she was being sexually abused by the owner of the school. That employee testified at Ben Trane's trial that Devon Dade personally fired her for what she felt was retaliation for calling and reporting the abuse to DHS. Ben Trane was later convicted for that abuse. Devon Dade also supported Ben Trane throughout his trial for sexual abuse and child endangerment. After Ben Trane's conviction for sexual abuse, Devon Dade still continued to support him and even showed up at his sentencing. Recently, Devon Dade has decided to run for mayor of Keokuk, IA.
+** Devon Dade** worked as the Director of Midwest Academy at the time of its closing. During his tenure at Midwest Academy, a female student disclosed to a night staff that she was being sexually abused by the owner of the school. That employee testified at Ben Trane's trial that Devon Dade personally fired her for what she felt was retaliation for calling and reporting the abuse to DHS. Ben Trane was later convicted for that abuse. Devon Dade also supported Ben Trane throughout his trial for sexual abuse and child endangerment. After Ben Trane's conviction for sexual abuse, Devon Dade still continued to support him and even showed up at his sentencing. Recently, Devon Dade has decided to run for mayor of Keokuk, IA.
 
-**Tara Akers**worked as the Admissions Director of Midwest Academy.
+** Tara Akers** worked as the Admissions Director of Midwest Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP programs, Midwest Academy initially used a level system and merit/demerit system. The level system consisted of six levels. In order to complete the program, students needed to move up in the level system by earning points (or "merits") for good behavior while avoiding demerits for rule violations. According to a [survivor](http://safeteenschools.org/images/Sarah_Wilson_MWA_2012_2013.txt) , while a resident was on levels 1 and 2, they were only allowed to communicate with their parents once a week via letters. On level 3, residents are given the "privilege" to call their parents. Once a resident reached level 4, they were allowed to go "off-grounds" with their parents for a day or two, although they were prohibited from travelling over 60 miles away from the school, and their activities and behaviors on these off-campus visits were highly restricted.
 
 In 2014, one of Midwest Academy's [websites](https://web.archive.org/web/20150912093438/http://www.midwestacademy.net/program/character-building/) reported that they had reduced the level system to only three levels (called "phases"). The "phases" were as follows:
 
 *
-**The Structure Phase**was designed to "help the child understand the need for rules and boundaries and to ensure compliance. It also opens up lines of communication within the family."
+**The Structure Phase** was designed to "help the child understand the need for rules and boundaries and to ensure compliance. It also opens up lines of communication within the family."
 
 *
-**The Leadership Phase**claimed to help "teach the child to be honorable and stand on principles. They learn to confront their peers when necessary, which is critical to their long term success. In this phase they gain an appreciation for their parents and other authority figures. They also increase their self-esteem through service, productivity, and responsibility.
+**The Leadership Phase** claimed to help "teach the child to be honorable and stand on principles. They learn to confront their peers when necessary, which is critical to their long term success. In this phase they gain an appreciation for their parents and other authority figures. They also increase their self-esteem through service, productivity, and responsibility.
 
 *
-**The Internalization Phase**was "where students apply what they have learned and their growth and positive changes become internalized. The key to your child’s long term success is internal change."
+**The Internalization Phase** was "where students apply what they have learned and their growth and positive changes become internalized. The key to your child’s long term success is internal change."
 
 The program at Midwest Academy, like other WWASP facilities, followed a strict set of rules. Everyday activities like speaking, using the bathroom, walking freely between rooms, taking showers and talking to parents were restricted by staff. Rule infractions were punishable by demerits and the teenager would therefore be forced to remain in the program for longer.
 
-The**demerits**also had levels. They were categorized as:
+The** demerits** also had levels. They were categorized as:
 
 *
 *Category 1*: these demerits would cost a resident 5 points. They could be given for things such as bad posture, being even one second late to line up, or anything the staff or other residents felt was unsatisfactory.
@@ -63,7 +63,7 @@ The**demerits**also had levels. They were categorized as:
 *Category 3*: these demerits would cost a resident 50 points. They could be given for things such as sharing/borrowing items, having a negative attitude, or any blatant rule violation.
 
 *
-*Category 4*: these demerits would cost a resident 2 of their levels and**all**of their points. This could be given for something as small as*glancing*out the window.
+*Category 4*: these demerits would cost a resident 2 of their levels and**all** of their points. This could be given for something as small as*glancing*out the window.
 
 *
 *Category 5*: these demerits would cause a resident to lose*all*of their levels and*all*of their points, in effect starting the program over. This could be given for things like self-harm/self-infliction, or use drugs or alcohol. However, even minor things like popping pimples or throwing up from overeating were considered "self-infliction" and could result in a Category 5 demerit.
@@ -84,29 +84,29 @@ Ben Trane was arrested shortly after, and in 2018 he was convicted of assault wi
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 [Link to Midwest Academy's (archived) YouTube Page, with many survivors commenting about their abuse](https://web.archive.org/web/20091123011513/http://www.youtube.com/midwestacademy)
 
-**Unknown Deate: (SURVIVOR)** [Link to Sam's Survivor Testimony](http://www.safeteenschools.org/images/Sam_Hubar_midwest_academy_2012_2013.txt) (Safe Teen Schools)
+** Unknown Deate: (SURVIVOR)** [Link to Sam's Survivor Testimony](http://www.safeteenschools.org/images/Sam_Hubar_midwest_academy_2012_2013.txt) (Safe Teen Schools)
 
-**Unknown Date: (SURVIVOR)** [Link to James' Survivor Testimony](http://www.safeteenschools.org/images/MWA_Student_testimony_2008-2009_James_Farris.txt)
+** Unknown Date: (SURVIVOR)** [Link to James' Survivor Testimony](http://www.safeteenschools.org/images/MWA_Student_testimony_2008-2009_James_Farris.txt)
 
-**Unknown Date: (SURVIVOR)** [Link to Chelsea's Survivor Testimony](http://www.safeteenschools.org/images/MWA_student_testimony_2011-2012_Chelsea_Chitwood.txt)
+** Unknown Date: (SURVIVOR)** [Link to Chelsea's Survivor Testimony](http://www.safeteenschools.org/images/MWA_student_testimony_2011-2012_Chelsea_Chitwood.txt)
 
-**Unknown Date: (SURVIVOR)**"October of 2008 culminated what was to be the solidifying of my family estrangement. Previous to going to Midwest Academy, I was experiencing behavioral and mood disturbances (sneaking out, arguments, depression, a previous suicide attempt a year previous) which were not adequately dealt with by a psychiatrist. Now a confirmed suffered of Bipolar I disorder with severe psychotic symptoms, I believe these events to be both the beginnings of my disorder combined with sexual and religious identity conflicts with my family. My family was devotedly religious, condemned evolution, and openly despised “the gays.” I suppose my potentially just unfolding disorder combined with this deep conflict with my family is what turned a previously star student into a depressed, angry, and withdrawn teen. As an intelligent student, I secured a presidential scholarship to Illinois State University, but would later be forced to sign away the scholarship, or suffer for three months in a small, concrete room. My family could never accept that I simply could not believe in god based on my scientific understandings. They further could not understand that my homosexuality was unrelated to my views on god. They felt as if my atheism was “because” of my gayness, and that I was “acting out.” I willfully went to Midwest Academy the first time. After six months, I was released for a month before again returning. I did not return willfully the second time. When I was preparing for the first time, I was under the impression that this would be a safe, friendly environment where I could get away from my volatile family environment . I was under the impression that I would be seeing a psychiatrist and a counselor regularly to help with my obvious psychiatric issues. I thought it was a good place, a special place for “troubled teens.” I thought I would be able to work on school and my mood issues, but what was to come has forever changed me, and not for the better. My ability to have scraped some small thing out of what remains of my life and call it “good” was MY ability alone. Midwest Academy only made it harder for me to reach my goal of wholeness and happiness. Midwest Academy, most frankly put, is a hell hole. How are students supposed to work on interpersonal skills if they are banned from talking to each other almost completely? How can you work on family issues when you are so restricted from talking to family? When your communications are constantly monitored? How can it be a good thing that the students cannot access the police when they feel like they are being abused? How can it be a good thing that there are unqualified staff working with kids with psychiatric or behavioral issues? How can it be a good thing, for instance, when you are explicitly denied access to a psychiatrist, like I was? How can it be a good thing to wait for mental illness to get worse and then throw your teen onto the streets without any skills whatsoever? Midwest Academy claims to be about learning how to follow rules and discipline kids, but ultimately, those techniques do not work. Teens like this need licensed professionals and an environment in which they can be both comfortable AND growing emotionally. It can be done. I felt I was psychologically abused on many occasions in Midwest Academy and I also felt like I was consistently not fed enough, especially when in “Out of School Suspension” aka a small concrete room. The entire structure of the program simply punishes people not following the rules, and that kind of brute conditioning is shown to not work effectively on humans. Because of the pressure of being in that environment, I began screaming in my sleep. One night at the academy, I literally woke nearly fifty other students with my screaming. I continued screaming in my sleep for approximately a year or so after leaving the academy. I believe myself to have had Post Traumatic Stress Disorder for a year after the academy, especially when I would feel panicked and frantically call a friend to make sure that I wasn’t in the program anymore. The nightmares were awful. I would wake up screaming, frantically trying to make sense of where I was and if I was safe. I feel like that kind of lasting psychological release is indicative of the amount of psychological pressure being put on teens in this academy. Furthermore, the food was always inadequate. Even when you became “level 2” and were able to get additional food, I do not believe I was able to breach 155 lbs. However, the inability to maintain much weight could also have had something to do with the grueling, repetitive, militant, and dominating work-outs we were required to do. It was almost as if “gym time” was just another way for the staff to “poke the bears,” except unlike bears, many students simply just internalized this poisonous abuse. I am sure that if I were literary enough, I could extrapolate every detail of that experience in Midwest Academy, but I’m not sure that even then I would have done it as much justice as undergoing the suffering once again. If I were to have been there knowing what I know now, I probably would not have stopped at killing multiple staff members to obtain my freedom from such horrible people; however, my only intent now in life is to regain my peace and personal identity, two things that are actually going quite swimmingly now due to my own, and only my own, hard work. I only hope that some day these people can either be sued into misery or prosecuted criminally."- [James (WWASP Survivors)](http://wwaspsurvivors.com/survivor-testimony-midwest-academy-james-f/)
+** Unknown Date: (SURVIVOR)**"October of 2008 culminated what was to be the solidifying of my family estrangement. Previous to going to Midwest Academy, I was experiencing behavioral and mood disturbances (sneaking out, arguments, depression, a previous suicide attempt a year previous) which were not adequately dealt with by a psychiatrist. Now a confirmed suffered of Bipolar I disorder with severe psychotic symptoms, I believe these events to be both the beginnings of my disorder combined with sexual and religious identity conflicts with my family. My family was devotedly religious, condemned evolution, and openly despised “the gays.” I suppose my potentially just unfolding disorder combined with this deep conflict with my family is what turned a previously star student into a depressed, angry, and withdrawn teen. As an intelligent student, I secured a presidential scholarship to Illinois State University, but would later be forced to sign away the scholarship, or suffer for three months in a small, concrete room. My family could never accept that I simply could not believe in god based on my scientific understandings. They further could not understand that my homosexuality was unrelated to my views on god. They felt as if my atheism was “because” of my gayness, and that I was “acting out.” I willfully went to Midwest Academy the first time. After six months, I was released for a month before again returning. I did not return willfully the second time. When I was preparing for the first time, I was under the impression that this would be a safe, friendly environment where I could get away from my volatile family environment . I was under the impression that I would be seeing a psychiatrist and a counselor regularly to help with my obvious psychiatric issues. I thought it was a good place, a special place for “troubled teens.” I thought I would be able to work on school and my mood issues, but what was to come has forever changed me, and not for the better. My ability to have scraped some small thing out of what remains of my life and call it “good” was MY ability alone. Midwest Academy only made it harder for me to reach my goal of wholeness and happiness. Midwest Academy, most frankly put, is a hell hole. How are students supposed to work on interpersonal skills if they are banned from talking to each other almost completely? How can you work on family issues when you are so restricted from talking to family? When your communications are constantly monitored? How can it be a good thing that the students cannot access the police when they feel like they are being abused? How can it be a good thing that there are unqualified staff working with kids with psychiatric or behavioral issues? How can it be a good thing, for instance, when you are explicitly denied access to a psychiatrist, like I was? How can it be a good thing to wait for mental illness to get worse and then throw your teen onto the streets without any skills whatsoever? Midwest Academy claims to be about learning how to follow rules and discipline kids, but ultimately, those techniques do not work. Teens like this need licensed professionals and an environment in which they can be both comfortable AND growing emotionally. It can be done. I felt I was psychologically abused on many occasions in Midwest Academy and I also felt like I was consistently not fed enough, especially when in “Out of School Suspension” aka a small concrete room. The entire structure of the program simply punishes people not following the rules, and that kind of brute conditioning is shown to not work effectively on humans. Because of the pressure of being in that environment, I began screaming in my sleep. One night at the academy, I literally woke nearly fifty other students with my screaming. I continued screaming in my sleep for approximately a year or so after leaving the academy. I believe myself to have had Post Traumatic Stress Disorder for a year after the academy, especially when I would feel panicked and frantically call a friend to make sure that I wasn’t in the program anymore. The nightmares were awful. I would wake up screaming, frantically trying to make sense of where I was and if I was safe. I feel like that kind of lasting psychological release is indicative of the amount of psychological pressure being put on teens in this academy. Furthermore, the food was always inadequate. Even when you became “level 2” and were able to get additional food, I do not believe I was able to breach 155 lbs. However, the inability to maintain much weight could also have had something to do with the grueling, repetitive, militant, and dominating work-outs we were required to do. It was almost as if “gym time” was just another way for the staff to “poke the bears,” except unlike bears, many students simply just internalized this poisonous abuse. I am sure that if I were literary enough, I could extrapolate every detail of that experience in Midwest Academy, but I’m not sure that even then I would have done it as much justice as undergoing the suffering once again. If I were to have been there knowing what I know now, I probably would not have stopped at killing multiple staff members to obtain my freedom from such horrible people; however, my only intent now in life is to regain my peace and personal identity, two things that are actually going quite swimmingly now due to my own, and only my own, hard work. I only hope that some day these people can either be sued into misery or prosecuted criminally."- [James (WWASP Survivors)](http://wwaspsurvivors.com/survivor-testimony-midwest-academy-james-f/)
 
-**Unknown Date: (SURVIVOR)** [Link to Shayla's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/survivor-testimony-shayla/) (WWASP Survivors)
+** Unknown Date: (SURVIVOR)** [Link to Shayla's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/survivor-testimony-shayla/) (WWASP Survivors)
 
-**Unknown Date: (SURVIVOR)** [Link to Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/survivor-testimon-d-maurer/) (WWASP Survivors)
+** Unknown Date: (SURVIVOR)** [Link to Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/survivor-testimon-d-maurer/) (WWASP Survivors)
 
-**Unknown Date: (SURVIVOR)** [Link to Survivor Testimony](http://wwaspsurvivors.com/midwest-academy-sex-scandal/) (WWASP Survivors)
+** Unknown Date: (SURVIVOR)** [Link to Survivor Testimony](http://wwaspsurvivors.com/midwest-academy-sex-scandal/) (WWASP Survivors)
 
-**Unknown Date: (SURVIVOR)** [Link to Sarah's Survivor Testimony](http://safeteenschools.org/images/Sarah_Wilson_MWA_2012_2013.txt) (Safe Teen Schools)
+** Unknown Date: (SURVIVOR)** [Link to Sarah's Survivor Testimony](http://safeteenschools.org/images/Sarah_Wilson_MWA_2012_2013.txt) (Safe Teen Schools)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Midwest Academy's Blog (archived)](https://web.archive.org/web/20091018190358/http://midwestacademyblog.com/)
 
@@ -120,7 +120,7 @@ Ben Trane was arrested shortly after, and in 2018 he was convicted of assault wi
 
 [Midwest Academy Enrollment Agreement](https://drive.google.com/file/d/1PKi_ZRYMhrgYBjPIk0dvLym1c9bXubif/view?usp=sharing)
 
-### **News Articles**
+### ** News Articles**
 
 [Midwest Academy announces worker layoff](http://www.mississippivalleypublishing.com/daily_gate/news/midwest-academy-announces-worker-layoff/article_fbc189f2-3aca-54e8-a42e-87008f5f7550.html) (Daily Gate City, 2/05/2016)
 
@@ -136,7 +136,7 @@ Ben Trane was arrested shortly after, and in 2018 he was convicted of assault wi
 
 [Judge Sentences Former Boarding School Owner to Maximum Prison Sentence](https://www.tspr.org/post/judge-sentences-former-boarding-school-owner-maximum-prison-sentence) (Tri-State Public Radio, 5/11/2018)
 
-### **Videos**
+### ** Videos**
 
 * [Midwest Academy Campus Tour](https://youtu.be/IwNKfLM8W7I) (YouTube, 6/24/2011)
 * [Midwest Academy (Weird) Marketing Video](https://youtu.be/4tvlXhEk6rg) (YouTube, 7/14/2011)
@@ -157,7 +157,8 @@ Ben Trane was arrested shortly after, and in 2018 he was convicted of assault wi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

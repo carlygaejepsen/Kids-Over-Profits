@@ -8,37 +8,37 @@
 
 Rivendell of Utah (also called Rivendell Psychiatric Hospital of Utah) was a behavior-modification program that opened sometime in 1986. It originally was opened as a psychiatric hospital that specialized in the treatment of "sexual impulse disorders", namely, homosexuality. Rivendell was known to practice conversion therapy on LGBTQ+ residents, including horrific methods of shock therapy and aversion therapy. Rivendell had a maximum enrollment of 80 teenages, and the average length of stay is unclear. Many residents were only discharged once their insurance stopped paying.
 
-Rivendell was located at [5899 Rivendell Dr, West Jordan, UT 84081](https://www.google.com/maps/place/Copper+Hills+Youth+Center/@40.5886279,-112.0330247,286m/data=!3m1!1e3!4m5!3m4!1s0x0:0xbcb85ccd71821d01!8m2!3d40.5888767!4d-112.032339) , which is the current location of [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) .**Copper Hills Youth Center is believed to be the rebrand of Riverdell of Utah.**In addition to being in the same location as Riverdell, many former staff at Rivendell also went on to work at Copper Hills. The following is an [image](https://imgur.com/a/wfUV4kG) of the facility in September of 1997 shortly after Rivendell closed compared to Copper Hills Youth Center in June 2021.
+Rivendell was located at [5899 Rivendell Dr, West Jordan, UT 84081](https://www.google.com/maps/place/Copper+Hills+Youth+Center/@40.5886279,-112.0330247,286m/data=!3m1!1e3!4m5!3m4!1s0x0:0xbcb85ccd71821d01!8m2!3d40.5888767!4d-112.032339) , which is the current location of [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) .** Copper Hills Youth Center is believed to be the rebrand of Riverdell of Utah.** In addition to being in the same location as Riverdell, many former staff at Rivendell also went on to work at Copper Hills. The following is an [image](https://imgur.com/a/wfUV4kG) of the facility in September of 1997 shortly after Rivendell closed compared to Copper Hills Youth Center in June 2021.
 
 Rivendell of Utah was [ordered](https://sec.report/Document/0000950144-97-005874/) to close in May of 1997.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jared Balmer**is the co-Founder of Rivendell Psychiatric Hospital. He later went on to help Co-Found [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , a confirmedly abusive program owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . He later helped open several other Aspen Education Group programs, including the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He is currently the Executive Director of [WayPoint Academy](https://www.reddit.com/r/troubledteens/wiki/index/waypoint) , which he helped found in 2013 with Mike Bulloch, who is involved with various [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) .
+** Jared Balmer** is the co-Founder of Rivendell Psychiatric Hospital. He later went on to help Co-Found [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , a confirmedly abusive program owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . He later helped open several other Aspen Education Group programs, including the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He is currently the Executive Director of [WayPoint Academy](https://www.reddit.com/r/troubledteens/wiki/index/waypoint) , which he helped found in 2013 with Mike Bulloch, who is involved with various [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) .
 
-**Delbert T. Goates**was the Chief of Psychiatry at Rivendell Psychiatric Hospital. He also worked in the same position at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) , a confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program in St. George, UT. He died on April 19, 2000 in Blackburn, England. His cause of death was a massive brain hemorrhage caused by a fall he experienced while serving an LDS mission with his wife, Julie Anderson Goates. [Goates' obituary](https://www.deseret.com/2000/4/26/19551131/obituary-delbert-t-goates-m-d) .
+** Delbert T. Goates** was the Chief of Psychiatry at Rivendell Psychiatric Hospital. He also worked in the same position at the [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) , a confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program in St. George, UT. He died on April 19, 2000 in Blackburn, England. His cause of death was a massive brain hemorrhage caused by a fall he experienced while serving an LDS mission with his wife, Julie Anderson Goates. [Goates' obituary](https://www.deseret.com/2000/4/26/19551131/obituary-delbert-t-goates-m-d) .
 
-**David Ericksen**worked at Rivendell in the late 80s, providing psychological assessment services. In 2008, he began working at the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program founded by Jared Balmer ([source](https://strugglingteens.com/artman/publish/printer_AspenInstitutBN_081215.shtml) ).
+** David Ericksen** worked at Rivendell in the late 80s, providing psychological assessment services. In 2008, he began working at the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program founded by Jared Balmer ([source](https://strugglingteens.com/artman/publish/printer_AspenInstitutBN_081215.shtml) ).
 
-**Manuel Tello Jr.**worked as a Community Relations Presenter and Acute Unit Leader at Rivendell of Utah from 1987-1992. He then went on to work at [Olympus View Hospital RTC](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) from 1992 until 1999. He then returned to work at [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) from 1999 until 2012 in various roles, including Transportation Officer and Residential Center Scheduler, Staff Trainer, and Mental Health Specialist. [https://www.linkedin.com/in/manuel-tello-jr-09a84186/](https://www.linkedin.com/in/manuel-tello-jr-09a84186/)
+** Manuel Tello Jr.** worked as a Community Relations Presenter and Acute Unit Leader at Rivendell of Utah from 1987-1992. He then went on to work at [Olympus View Hospital RTC](https://www.reddit.com/r/troubledteens/wiki/index/olympusview) from 1992 until 1999. He then returned to work at [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) from 1999 until 2012 in various roles, including Transportation Officer and Residential Center Scheduler, Staff Trainer, and Mental Health Specialist. [https://www.linkedin.com/in/manuel-tello-jr-09a84186/](https://www.linkedin.com/in/manuel-tello-jr-09a84186/)
 
-**Charles McCusker**worked as a Clinical Staff at Rivendell from 1986-1988. Around 2008, he created a [website](http://charlesmccusker.com/index.html) promoting the use of Cranial Electrotherapy Stimulation (CES).
+** Charles McCusker** worked as a Clinical Staff at Rivendell from 1986-1988. Around 2008, he created a [website](http://charlesmccusker.com/index.html) promoting the use of Cranial Electrotherapy Stimulation (CES).
 
-**Lesa Nelson**worked as a Registered Nurse at Rivendell from 1988 until 1990.
+** Lesa Nelson** worked as a Registered Nurse at Rivendell from 1988 until 1990.
 
-**Lee Roy Bodily**worked as a teacher/counselor on the Adolexcent Unit at Rivendell, eventually becoming one of the head counselors over the Children's unit.
+** Lee Roy Bodily** worked as a teacher/counselor on the Adolexcent Unit at Rivendell, eventually becoming one of the head counselors over the Children's unit.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Little is known about the specifics of the program at Rivendell. Conversion Therapy is known to have been a large component of their methods.
 
 ---
 
-## **Conversion Therapy**
+## ** Conversion Therapy**
 
 Rivendell is widely known to have practiced conversion therapy. Survivors of these practices describe being forcibly shown images of homosexual sex (as well as extremely graphic images of deviant sexual acts such as sexual abuse of children and animals) and then were either shocked on their private parts or given an aversive stimuli (such as ammonia) to smell.
 
@@ -91,15 +91,15 @@ Rivendell of Utah was [ordered](https://sec.report/Document/0000950144-97-005874
 
 ---
 
-## **Notable Alumni**
+## ** Notable Alumni**
 
-**Lyn Duff**is an American journalist who was sent to Rivendell in 1991 at age 15 because her mother found out she is a lesbian. On May 19, 1992, after 168 days of incarceration, Duff escaped from Rivendell and traveled to San Francisco, where she lived on the streets and in safe housesShe is a massive advocate for youth rights, and a staunch critic of the mental health treatment system.
+** Lyn Duff** is an American journalist who was sent to Rivendell in 1991 at age 15 because her mother found out she is a lesbian. On May 19, 1992, after 168 days of incarceration, Duff escaped from Rivendell and traveled to San Francisco, where she lived on the streets and in safe housesShe is a massive advocate for youth rights, and a staunch critic of the mental health treatment system.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No survivor testimonies have yet been found. If you attended Rivendell and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have yet been found. If you attended Rivendell and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -119,7 +119,8 @@ Rivendell of Utah was [ordered](https://sec.report/Document/0000950144-97-005874
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

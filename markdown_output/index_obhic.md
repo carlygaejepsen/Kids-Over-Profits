@@ -2,17 +2,17 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Mike Merchant**is the Founder of the OBHIC.
+** Mike Merchant** is the Founder of the OBHIC.
 
 ---
 
-## **Open OBHIC Programs**
+## ** Open OBHIC Programs**
 
 ---
 
@@ -20,7 +20,7 @@
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -33,7 +33,7 @@
 | - | - | - | - |
 ---
 
-## **Closed OBHIC Programs**
+## ** Closed OBHIC Programs**
 
 ---
 
@@ -41,7 +41,7 @@
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
 | - | - | - | - |
 | - | - | - | - |
 | - | - | - | - |
@@ -66,7 +66,8 @@
 | - | - | - | - |
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

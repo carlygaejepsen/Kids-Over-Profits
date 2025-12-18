@@ -12,26 +12,26 @@ Cedar Crest Hospital & RTC is located at [3500 I-35, Belton, TX 76513](https://w
 
 In addition to the adolescent/child RTCs, the other programs offered by Cedar Crest Hospital are:
 
-***Inpatient Treatment:**This program is designed to stabilize immediate psychiatric needs for patients of all ages.
-***The Legacy Program:**This program is designed for adults (18+) who are struggling with substance abuse/addiction/chemical dependency. This program is centered around the 12-Steps used by Alcoholics Anonymous.
-***Partial Hospitalization Program:**This is a therapeutic day program for children and teens who are struggling with chemical dependency, mental illness, or a combination of the two.
-***Intensive Outpatient Program:**This program is designed to help children, adolescents, and adults with mental illness.
+***Inpatient Treatment:** This program is designed to stabilize immediate psychiatric needs for patients of all ages.
+***The Legacy Program:** This program is designed for adults (18+) who are struggling with substance abuse/addiction/chemical dependency. This program is centered around the 12-Steps used by Alcoholics Anonymous.
+***Partial Hospitalization Program:** This is a therapeutic day program for children and teens who are struggling with chemical dependency, mental illness, or a combination of the two.
+***Intensive Outpatient Program:** This program is designed to help children, adolescents, and adults with mental illness.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Caanan Blakemore**is the current CEO of Cedar Crest Hospital and has been since December 2019. Prior to this, he has held leadership positions at a variety of hospitals, including [Cross Creek Hospital and Rusk State Hospital. He has also worked as an Adjunct Professor at South College and an Adjunct Faculty at the University of Texas at Tyler.
+** Caanan Blakemore** is the current CEO of Cedar Crest Hospital and has been since December 2019. Prior to this, he has held leadership positions at a variety of hospitals, including [Cross Creek Hospital and Rusk State Hospital. He has also worked as an Adjunct Professor at South College and an Adjunct Faculty at the University of Texas at Tyler.
 
-**Wesley Stobaugh**is the Director of Clinical Services at Cedar Crest Hospital and has been since October of 2020. He previously worked as a Therapist at the hospital from July 2018 until his promotion. Prior to this, he worked as a Counselor at STARRY Counseling, which is a foster care agency in Killeen, TX, from 2017 until 2018.
+** Wesley Stobaugh** is the Director of Clinical Services at Cedar Crest Hospital and has been since October of 2020. He previously worked as a Therapist at the hospital from July 2018 until his promotion. Prior to this, he worked as a Counselor at STARRY Counseling, which is a foster care agency in Killeen, TX, from 2017 until 2018.
 
-**Amanda Wotton**is the current Program DIrector of the RTC program at Cedar Crest. Her prior employment is unknown.
+** Amanda Wotton** is the current Program DIrector of the RTC program at Cedar Crest. Her prior employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Cedar Crest Hospital. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Cedar Crest Hospital. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -45,19 +45,19 @@ During an April 2018 CMS inspection of Cedar Crest Hospital, inspectors found th
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **10/8/2021: (PARENT)**"I DO NOT RECOMMEND THIS HOSPITAL! MY DAUGHTER WAS NOT MANDATED. VOLUNTARY STAY. I took my daughter out yesterday. She was traumatized by how this facility is run. It's not a place of healing but chaos. My daughter has gone to 5 hospitals before for depression and anxiety. It was hard for her to relax and heal. She was pushed by a staff member when she was trying to help a friend. Shoved to the ground. There was a so called investigation and they told me she was fabricating the event. The staff member who did this to her also yelled in her face as well as others. My daughter is depressed, not a liar. Aggression is not a part of healing. When I interviewed the person before I took her there said there would be zoom calls and I could reach her easily. Not true! During the three weeks she was there, she was only able to call every other day and for only 10 minutes while a staff was standing over her telling her to hurry up and get off. The therapist never offered a zoom call, as she resisted doing it the first time I suggested it, then finally did. So in 3 weeks I had only 1 zoom call and no visitation. This place runs like a prison, if one person makes a mistake the whole unit suffers and they withheld a shower the first couple of days for her. And it took them two days to do an inventory of her suitcase, so she was in the same clothes. No HIKES, YOGA on their acreage and so called TRANQUIL place. This is a mentally dangerous place. Again, I DO NOT RECOMMEND THIS PLACE." - [Julie (Google Reviews)](https://www.google.com/maps/contrib/117113933395997777422/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@30.9721898,-97.620255,11.13z/data=!4m6!1m5!8m4!1e1!2s117113933395997777422!3m1!1e1?hl=en-US)
 
-**September 2021: (SURVIVOR)**"Horrendous experience on my unit as a temporary in-patient minor. Psychiatrist was not considerate of my diagnosed disorders nor medications that were given to me. Patients on my unit breached patient-to-patient guidelines multiple times,inappropriate physical contact, and nothing was done about it. Insanitary unit including my room, bathroom, and activity room. Feared my safety numerous times due to patients having unexpected episodes and my unit being understaffed to handle the situations. Exceptionally insolent staff- insensitive of patients physiological, essential, and protective needs. Very triggering setting, would not recommend to be placed in this hospital." - [Miranda (Google Reviews)](https://www.google.com/maps/contrib/115121280827693294751/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0214994,-97.4769965,17z/data=!4m6!1m5!8m4!1e1!2s115121280827693294751!3m1!1e1?hl=en-US)
+** September 2021: (SURVIVOR)**"Horrendous experience on my unit as a temporary in-patient minor. Psychiatrist was not considerate of my diagnosed disorders nor medications that were given to me. Patients on my unit breached patient-to-patient guidelines multiple times,inappropriate physical contact, and nothing was done about it. Insanitary unit including my room, bathroom, and activity room. Feared my safety numerous times due to patients having unexpected episodes and my unit being understaffed to handle the situations. Exceptionally insolent staff- insensitive of patients physiological, essential, and protective needs. Very triggering setting, would not recommend to be placed in this hospital." - [Miranda (Google Reviews)](https://www.google.com/maps/contrib/115121280827693294751/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0214994,-97.4769965,17z/data=!4m6!1m5!8m4!1e1!2s115121280827693294751!3m1!1e1?hl=en-US)
 
-**July 2021: (SURVIVOR)**"Locked us in a room once then screamed at us, causing two of us to have a panic attack and traumatized me. This was a couple months ago and I hope they fired the staff who just sat and watched this happen. Being locked in a room for a hour a day Aswell for “quiet time”does not help kids with issues being alone aswell. I got a doctors note saying I could stay in the hall during this time and the staff told me to be quiet I’m a liar and wouldn’t even check my folder where the doctor had wrote it down" - [Anonymous (Google Reviews)](https://www.google.com/maps/contrib/100526645130243350734/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@30.88001,-97.8649297,10z/data=!4m6!1m5!8m4!1e1!2s100526645130243350734!3m1!1e1?hl=en-US)
+** July 2021: (SURVIVOR)**"Locked us in a room once then screamed at us, causing two of us to have a panic attack and traumatized me. This was a couple months ago and I hope they fired the staff who just sat and watched this happen. Being locked in a room for a hour a day Aswell for “quiet time”does not help kids with issues being alone aswell. I got a doctors note saying I could stay in the hall during this time and the staff told me to be quiet I’m a liar and wouldn’t even check my folder where the doctor had wrote it down" - [Anonymous (Google Reviews)](https://www.google.com/maps/contrib/100526645130243350734/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@30.88001,-97.8649297,10z/data=!4m6!1m5!8m4!1e1!2s100526645130243350734!3m1!1e1?hl=en-US)
 
-**July 2021: (PARENT)**"Never ever take anyone to this facility! I took my son in who has depression and was having suicidal ideation. After a week I got him back with a whole new addiction! The Dr there (Dr John Pierson IV) gave a 125lb teen 400mg of Seraquil daily, 4mg of Ativan daily, Hydroxizine as needed 4x day, and a high dose of Pamelor to sleep! S&W hospital transferred him there so I had no control over it. Now I have a teen who’s suicidal and an addict! I tried many times to call this place and they hang up on you or will never call you back! Save your loved one from this place & especially this Dr!" - [Jennifer (Google Reviews)](https://www.google.com/maps/contrib/106268821565116975661/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0106455,-97.5273159,11.6z/data=!4m6!1m5!8m4!1e1!2s106268821565116975661!3m1!1e1?hl=en-US)
+** July 2021: (PARENT)**"Never ever take anyone to this facility! I took my son in who has depression and was having suicidal ideation. After a week I got him back with a whole new addiction! The Dr there (Dr John Pierson IV) gave a 125lb teen 400mg of Seraquil daily, 4mg of Ativan daily, Hydroxizine as needed 4x day, and a high dose of Pamelor to sleep! S&W hospital transferred him there so I had no control over it. Now I have a teen who’s suicidal and an addict! I tried many times to call this place and they hang up on you or will never call you back! Save your loved one from this place & especially this Dr!" - [Jennifer (Google Reviews)](https://www.google.com/maps/contrib/106268821565116975661/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0106455,-97.5273159,11.6z/data=!4m6!1m5!8m4!1e1!2s106268821565116975661!3m1!1e1?hl=en-US)
 
-**June 2021: (SURVIVOR)**"I had to stay here for 7 days in 2018 as a minor. I feared my safety several times. In one incident a fellow patient had a break down a threw a water cooler at me and others. During this time no supervisors were in the room due to them being preoccupied with a patient on a "code green". At this time a younger patient from the youngest unit entered our room looking for a place to stay as he as well did not feel safe. I witnessed others hurting them selfs and other patients encouraging others to hurt themselves. These patients were not removed or reprimanded for this behavior. I also only recall visiting with a therapist once. Please do not send your loved ones here." - [Jaye (Google Reviews)](https://www.google.com/maps/contrib/115882066228672403399/reviews?hl=en-US)
+** June 2021: (SURVIVOR)**"I had to stay here for 7 days in 2018 as a minor. I feared my safety several times. In one incident a fellow patient had a break down a threw a water cooler at me and others. During this time no supervisors were in the room due to them being preoccupied with a patient on a "code green". At this time a younger patient from the youngest unit entered our room looking for a place to stay as he as well did not feel safe. I witnessed others hurting them selfs and other patients encouraging others to hurt themselves. These patients were not removed or reprimanded for this behavior. I also only recall visiting with a therapist once. Please do not send your loved ones here." - [Jaye (Google Reviews)](https://www.google.com/maps/contrib/115882066228672403399/reviews?hl=en-US)
 
-**January 2021: (SURVIVOR)**"as a former patient, this place was very traumatizing. i never did anything harmful towards myself until i was in there. i wanted nothing to do with life. this place drained me as a human being. the staff did not take their job seriously. honestly if you have a choice to put your child. DONT NOT PICK THIS PLACE!!! AVOID IT AT ALL COST!!! this is coming from a person who stayed at the facility. it doesn’t look any in the pictures. the rooms are empty and soulless. barely a blanket if you could call it that. a matt as a mattress. there’s no shampoo bottles but u can only get a ration of shampoo and conditioner in a paper ketchup bowl u get for extra sauce at mcdonald’s. please rethink about the place and the pictures they portray as a great place. this “welcoming place” will ruin the will to live. there was times where i was ready to end it just to escape this place. nothing was wrong with me and i never harmed myself until i was in there as i stated before. this place pushed me to the point of wanting to and doing self harm. (i was in the minor section not the adult)" - [Viviana (Google Reviews)](https://www.google.com/maps/contrib/102187052122394737187/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0406479,-97.5742547,12z/data=!4m6!1m5!8m4!1e1!2s102187052122394737187!3m1!1e1?hl=en-US)
+** January 2021: (SURVIVOR)**"as a former patient, this place was very traumatizing. i never did anything harmful towards myself until i was in there. i wanted nothing to do with life. this place drained me as a human being. the staff did not take their job seriously. honestly if you have a choice to put your child. DONT NOT PICK THIS PLACE!!! AVOID IT AT ALL COST!!! this is coming from a person who stayed at the facility. it doesn’t look any in the pictures. the rooms are empty and soulless. barely a blanket if you could call it that. a matt as a mattress. there’s no shampoo bottles but u can only get a ration of shampoo and conditioner in a paper ketchup bowl u get for extra sauce at mcdonald’s. please rethink about the place and the pictures they portray as a great place. this “welcoming place” will ruin the will to live. there was times where i was ready to end it just to escape this place. nothing was wrong with me and i never harmed myself until i was in there as i stated before. this place pushed me to the point of wanting to and doing self harm. (i was in the minor section not the adult)" - [Viviana (Google Reviews)](https://www.google.com/maps/contrib/102187052122394737187/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0406479,-97.5742547,12z/data=!4m6!1m5!8m4!1e1!2s102187052122394737187!3m1!1e1?hl=en-US)
 
 **2020: (SURVIVOR)**"I was a patient in the Cedar Crest Boys Unit for a month of my life. It was horrendous. I mean, the staff were exceptional. I loved most of them, and they really did help me. But the schedule, protocols, therapy sessions itself, school, recreational time and the food were all terrible. I passed my math and science classes and should have it documented, but it’s been 3 months and I still have no transcripts. The patient controlling was horrible, a patient tried to kill me while I was there. My friend was there for 9 months, and my other friend was there for 5. The psychiatrist’s solution to everything was increasing dosage, which drove most patients to near insanity. Truly the worst place I’ve ever been." - [Dauntless (Google Reviews)](https://www.google.com/maps/contrib/100281652608006222934/place/ChIJH8Nhh6E_RYYRgUCjD9GoasM/@31.0214994,-97.4769965,17z/data=!4m6!1m5!8m4!1e1!2s100281652608006222934!3m1!1e1?hl=en-US)
 
@@ -87,7 +87,7 @@ During an April 2018 CMS inspection of Cedar Crest Hospital, inspectors found th
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Cedar Crest Hospital & RTC Website Homepage](https://www.cedarcresthospital.com/)
 
@@ -109,7 +109,8 @@ During an April 2018 CMS inspection of Cedar Crest Hospital, inspectors found th
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

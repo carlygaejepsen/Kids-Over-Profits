@@ -20,7 +20,7 @@ get_header();
         <!-- Page Header -->
         <div class="page-header" style="margin-bottom: 2em;">
             <h1 style="color: #00004d; font-size: 2.5em; margin-bottom: 0.5em;">TTI Facility Directory</h1>
-            <p style="font-size: 1.1em; color: #666;">Searchable database of Troubled Teen Industry facilities and operators</p>
+            <p style="font-size: 1.1em; color: #666;">Searchable database of Troubled Teen Industry facilities and parent companies</p>
         </div>
 
         <!-- Search & Filter Controls -->
@@ -29,7 +29,7 @@ get_header();
                 <input
                     type="text"
                     id="searchInput"
-                    placeholder="Search facilities or operators..."
+                    placeholder="Search facilities or parent companies..."
                     style="flex: 1; min-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
                 >
 

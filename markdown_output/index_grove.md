@@ -14,21 +14,21 @@ In 1986, Richard L. Chorney purchased Grove School and converted it into a for-p
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dr. Jess Perlman**was the Founder of Grove School. She worked as the Executive Director of Grove from 1934 until 1956.
+** Dr. Jess Perlman** was the Founder of Grove School. She worked as the Executive Director of Grove from 1934 until 1956.
 
-**Dr. Jack Sanford Davis**served as the Executive Director of Grove School from 1956 until 1986.
+** Dr. Jack Sanford Davis** served as the Executive Director of Grove School from 1956 until 1986.
 
-**Richard L. Chorney**purchased Grove School in 1986 and converted it into a for-profit propriety corporation (complete with a board of directors) and appointed himself Executive Director and President & CEO. In 2000, Richard's son, Peter J. Chorney, replaced his father as the Executive Director of Grove.
+** Richard L. Chorney** purchased Grove School in 1986 and converted it into a for-profit propriety corporation (complete with a board of directors) and appointed himself Executive Director and President & CEO. In 2000, Richard's son, Peter J. Chorney, replaced his father as the Executive Director of Grove.
 
-**Peter J. Chorney**replaced his father as the Executive Director of Grove in 2000.
+** Peter J. Chorney** replaced his father as the Executive Director of Grove in 2000.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*Very little information is currently known regarding the specifics of the program used by Grove School. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*Very little information is currently known regarding the specifics of the program used by Grove School. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 The teens at Grove reportedly attend individual therapy twice per week and one group session (6-10 students) once every week. According to one survivor, "We had a check in system. Essentially after school you were limited to certain amount of time you could be away from a staff. Most students started on 15s however some started on escort which required a staff to be present with you at all times. you could later apply for further checkins such as 30s 45s 1hrs and finnally downtowns which was typically decieded by a board of advisors who would take into consideration your social, thereaputic and academic progress in the program after which they would either approve or deny your request."
 
@@ -50,7 +50,7 @@ On May 23, 2021 it was reported on the [r/troubledteens](/r/troubledteens) subre
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2/19/2021: (SURVIVOR)**"This school is completely a joke, and this is why you never judge a book by its cover. ive never seen a school so unprofessional and not caring when it comes to a student especially a girl getting sexually harassed and threatened. They say they are gonna do this and that to solve it and nothing ever gets done about it. It had happened way more than once in the last year as well. This school is horrible never let your kid go there unless your a horrible person who hates their children and wants them to go crazy. Staff is also unprofessional they love to argue with the students and laugh about their problems. In all this school should be shut down I wish there would be a secret camera in there with Like a dcf worker without them knowing. Then this school would be recognized for what a horrible, awful and disgusting school this really is. Sadly to say if they don't fix this problem I'm gonna have to take it into my own hands to do whatever even get the law involved. You always wanna protect the person you love right ?" - [Gabe (Yelp)](https://www.yelp.com/not_recommended_reviews/grove-school-madison-2)
 
@@ -68,7 +68,7 @@ On May 23, 2021 it was reported on the [r/troubledteens](/r/troubledteens) subre
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Grove School Website Homepage](http://www.groveschool.org/)
 
@@ -82,7 +82,8 @@ On May 23, 2021 it was reported on the [r/troubledteens](/r/troubledteens) subre
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

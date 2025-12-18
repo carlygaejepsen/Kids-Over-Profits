@@ -14,25 +14,25 @@ Unlike other Aspen Education Group programs, Four Circles only enrolled young ad
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jack Kline**worked as the Executive Director of Four Circles from 2006 until 2014. Prior to this, he worked at the reportedly abusive [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) from around 2002 until 2005, and at [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) from 2005-2006, which are both owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . Currently, he works for Red Oak Recovery, which is another substance abuse program for young adults.
-
----
-
-## **Program Structure**
+** Jack Kline** worked as the Executive Director of Four Circles from 2006 until 2014. Prior to this, he worked at the reportedly abusive [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) from around 2002 until 2005, and at [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) from 2005-2006, which are both owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . Currently, he works for Red Oak Recovery, which is another substance abuse program for young adults.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Related Media**
+## ** Survivor/Parent Testimonials**
+
+---
+
+## ** Related Media**
 
 [Four Circles Recovery Center Website Homepage](https://web.archive.org/web/20061201163242/http://www.fourcirclesrecovery.com/index.html) (archived, 2006)
 
@@ -40,7 +40,8 @@ Unlike other Aspen Education Group programs, Four Circles only enrolled young ad
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

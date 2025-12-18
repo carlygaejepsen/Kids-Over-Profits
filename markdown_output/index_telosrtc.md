@@ -14,35 +14,35 @@ According to a [document](https://www.coursehero.com/file/9861230/Assignment-3-O
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Craig LaMont**is one of the Founders of Telos RTC. He currently works as Telos' Chief Executive Officer. He has also worked as the Vice President and later the President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He was also reportedly the Co-Owner of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , and was a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
+** Craig LaMont** is one of the Founders of Telos RTC. He currently works as Telos' Chief Executive Officer. He has also worked as the Vice President and later the President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He was also reportedly the Co-Owner of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , and was a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
 
-**Tony Mosier**is one of the Founders of Telos RTC. He currently works as Telos' Chief Operations Officer. He is the current President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He is reported to have previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
+** Tony Mosier** is one of the Founders of Telos RTC. He currently works as Telos' Chief Operations Officer. He is the current President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He is reported to have previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) . He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
 
-**Greg Rush**is one of the Founders of Telos RTC. He also worked as the Director of Clinical Services at Telos RTC. He met Tony Mosier when he was working as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) with Tony. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
+** Greg Rush** is one of the Founders of Telos RTC. He also worked as the Director of Clinical Services at Telos RTC. He met Tony Mosier when he was working as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) with Tony. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
 
-**Anthony (Tony) Hansen**is one of the Founders of Telos RTC. He currently works as Telos' Outreach Director. Prior to this, Hansen worked as a Therapist at [Second Nature](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) Wilderness program from 2001 until 2004. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
+** Anthony (Tony) Hansen** is one of the Founders of Telos RTC. He currently works as Telos' Outreach Director. Prior to this, Hansen worked as a Therapist at [Second Nature](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) Wilderness program from 2001 until 2004. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
 
-**John Hall**is the current Chief Quality Officer and a Therapist at Telos RTC. He is also a Chair on the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Research Committee. He previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) .
+** John Hall** is the current Chief Quality Officer and a Therapist at Telos RTC. He is also a Chair on the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Research Committee. He previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) .
 
-**Daniel B. Pontius**works as the Chief Branding Officer of Telos RTC. He is the brother of Alan Pontius, who worked for many years as a Teacher at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in 1990's.
+** Daniel B. Pontius** works as the Chief Branding Officer of Telos RTC. He is the brother of Alan Pontius, who worked for many years as a Teacher at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) in 1990's.
 
-**Barry Fell**is the current Executive Director of Telos RTC. He previously worked as a Unit Counselor at the reportedly abusive [Heritage Schools Inc.](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) .
+** Barry Fell** is the current Executive Director of Telos RTC. He previously worked as a Unit Counselor at the reportedly abusive [Heritage Schools Inc.](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) .
 
-**Drew Davis**is the current Clinical Director of Telos RTC. He began his career as an Intern Therapist at Wasatch Behavioral Health from May through August of 2012. He later worked at The Green House Center as a Psychotherapist from 2013 until 2014, when he began working at Telos. He was promoted to Clinical Director in October 2021.
+** Drew Davis** is the current Clinical Director of Telos RTC. He began his career as an Intern Therapist at Wasatch Behavioral Health from May through August of 2012. He later worked at The Green House Center as a Psychotherapist from 2013 until 2014, when he began working at Telos. He was promoted to Clinical Director in October 2021.
 
-**Brian McElligott**is the current Clinical Director of Residential Care at Telos RTC. He began his career as a Therapist at the confirmedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) in 2011, eventually being promoted to Executive Clinical Director from 2015 until 2018. He then worked as the Clinical Director of [Monuments RTC](https://www.reddit.com/r/troubledteens/wiki/index/monuments) from 2018 until 2019, when he joined Telos.
+** Brian McElligott** is the current Clinical Director of Residential Care at Telos RTC. He began his career as a Therapist at the confirmedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) in 2011, eventually being promoted to Executive Clinical Director from 2015 until 2018. He then worked as the Clinical Director of [Monuments RTC](https://www.reddit.com/r/troubledteens/wiki/index/monuments) from 2018 until 2019, when he joined Telos.
 
-**Nathan Sellers**is the former Clinical Director of Telos RTC. He previously worked as a a Therapist at the reportedly abusive [Coral Reef Academy](https://www.reddit.com/r/troubledteens/wiki/index/coralreef) in Samoa.
+** Nathan Sellers** is the former Clinical Director of Telos RTC. He previously worked as a a Therapist at the reportedly abusive [Coral Reef Academy](https://www.reddit.com/r/troubledteens/wiki/index/coralreef) in Samoa.
 
-**Kyle Gillett**worked as the Assistant Clinical Director, Research Director, and a Primary Therapist at Telos RTC from 2005 until 2008. He later worked as the Founder, Program Director, Clinical Director, Therapist, and Admissions Director of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest) from 2008 until 2012. In 2012, he left to create [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) in North Carolina, where he worked as Executive Director until 2021. He also created [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox) , which is also in North Carolina, where he currently works as the program's Executive Director.
+** Kyle Gillett** worked as the Assistant Clinical Director, Research Director, and a Primary Therapist at Telos RTC from 2005 until 2008. He later worked as the Founder, Program Director, Clinical Director, Therapist, and Admissions Director of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest) from 2008 until 2012. In 2012, he left to create [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast) in North Carolina, where he worked as Executive Director until 2021. He also created [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox) , which is also in North Carolina, where he currently works as the program's Executive Director.
 
-**Matt Quackenbush**worked as the Residential Director of Telos RTC from 2008 until 2015. He also worked on [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) 's Government Relations Committee from 2011 until 2014.
+** Matt Quackenbush** worked as the Residential Director of Telos RTC from 2008 until 2015. He also worked on [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) 's Government Relations Committee from 2011 until 2014.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Telos RTC uses a level system, called the "individual phase" program. It is described as:
 
@@ -60,7 +60,7 @@ If the teenager fails to comply with the program there are a number of consequen
 *For unclear reasons, as it is not defined what "inappropriate behavior" is, the the Residential Manager may place a teenager on**Residential Special Status**. He will spend free time working on writing assignments and lose activity privileges and personal phone call privileges.
 *If a teenager attempts suicide, makes suicidal gestures, or expresses a desire to hurt himself, he will be placed on**Safety Status**. Suicide Watch (Safety) lasts until the Primary Therapist removes the student from it. Your son must sleep in front of the Night Watch and must be with a staff member at all times. He will crack the door when showering or using the bathroom.
 *Writing Assignments Staff may give a teenager therapeutic writing assignments as a prearranged consequence.
-*"Speaking ban" called**Communication Block**means that the teenager is not allowed to talk with other students or a specific student if his communications have been "inappropriate". They also have a "Five-foot" Rule. If a teenager is judged to lack respect for another’s personal space, he must maintain a five-foot distance between himself and the other person.
+*"Speaking ban" called**Communication Block** means that the teenager is not allowed to talk with other students or a specific student if his communications have been "inappropriate". They also have a "Five-foot" Rule. If a teenager is judged to lack respect for another’s personal space, he must maintain a five-foot distance between himself and the other person.
 ***Shut-down**: Due to severe non-compliance or severe inappropriate behavior, a teenager may be placed on shut-down. He will not be allowed to participate in activities or socialize with other detainees.
 *If a teenager fails to earn a "C-" in school work, he will be placed on Academic Special Status, which means loss of privileges and no free time because all time has to be used on school work. Once he earns a "C-" or higher, he will resume his normal status in the program.
 *The program states that the Telos staff are trained to use passive physical restraint only when a teenager is hurting himself or others, damaging property, or attempting to run away. The facility does not have isolation rooms. Staff do not use force to extract compliance from detainees unless their non-compliance is unsafe. If the Clinical Director deems a detainee appropriate for isolation, he will need to be transferred from the facility
@@ -73,9 +73,9 @@ Telos RTC is reported by many survivors to be an abusive program. Allegations of
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**August 2022: (SURVIVOR)**"As a student, I was forced to lie to my parents with my basic freedoms being held hostage over my head. I was not allowed to speak to my own family about how I really felt, or anyone else for that matter. I was essentially forced to tell my family what the program wanted them to hear. I am an adult now, and Telos is long in the past. Recent articles about poorly run treatment programs made me think about this, and ultimately leave this review. Dear parents who are suffering with a child who is struggling, please don’t send your child here. There are better options, I witnessed many injustices here." - [Benedict (Google Reviews)](https://g.co/kgs/djmaLH)
+** August 2022: (SURVIVOR)**"As a student, I was forced to lie to my parents with my basic freedoms being held hostage over my head. I was not allowed to speak to my own family about how I really felt, or anyone else for that matter. I was essentially forced to tell my family what the program wanted them to hear. I am an adult now, and Telos is long in the past. Recent articles about poorly run treatment programs made me think about this, and ultimately leave this review. Dear parents who are suffering with a child who is struggling, please don’t send your child here. There are better options, I witnessed many injustices here." - [Benedict (Google Reviews)](https://g.co/kgs/djmaLH)
 
 **2021: (SURVIVOR)**"I don’t know where to start… about 2 years ago I was placed at this facility to help better understand and work through some problems I faced. I made a lot of great friends, A LOT. One of them I’ll never forget, not anymore at least. Jack… (and I’m keeping his last name private for the friends and family). Jack passed away from an overdose. I saw this kids face everyday for months and kept in touch with him after our paths parted. One thing for sure… Telos CAN’T help kids with substance abuse. Now I wonder everyday if this program was honest about its amenities and services if my friend would still text me. Please be careful with the placement of your son/daughter/etc, it can mean life or death." - [Kai (Google Reviews)](https://g.co/kgs/i8LNDm)
 
@@ -103,7 +103,7 @@ Telos RTC is reported by many survivors to be an abusive program. Allegations of
 
 [DHS Critical Incident Reports - Telos RTC](https://drive.google.com/drive/folders/15BMp5R5ExcsCtCBLdCEZq3wkM-frJ4KP)
 
-### **Program Documents**
+### ** Program Documents**
 
 [Telos Enrollment Documents](https://drive.google.com/file/d/1C2EzXBHa4i05SXspaTx2LyPOwHLhHelV/view?usp=sharing)
 
@@ -113,7 +113,8 @@ Telos RTC is reported by many survivors to be an abusive program. Allegations of
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

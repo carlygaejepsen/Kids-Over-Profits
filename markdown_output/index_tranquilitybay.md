@@ -16,33 +16,33 @@ Tranquility Bay closed in January 2009 after the case of Isaac Hersh, a resident
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jay Kay**served as Director of Tranquility Bay until it closed in 2009. He was also the son of Ken Kay, who was the President of WWASP. Before working for WWASP, he ran a gas station convenience store after dropping out of college. He admitted to pepper spraying students repeatedly. In 2010, his father [reported](https://archive.ph/fppMZ) that Jay was dying of liver disease.
+** Jay Kay** served as Director of Tranquility Bay until it closed in 2009. He was also the son of Ken Kay, who was the President of WWASP. Before working for WWASP, he ran a gas station convenience store after dropping out of college. He admitted to pepper spraying students repeatedly. In 2010, his father [reported](https://archive.ph/fppMZ) that Jay was dying of liver disease.
 
-**Randall Hinton**was the Assistant Director of Tranquility Bay from 1997-1998. He began working as a tech at Brightway Hospital in 1992. He worked at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) for one year in 1995. In 1996, he became Assistant Director of [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . In 1998, he became Assistant Director of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) under Narvin Lichfield. In 2001, he became the Director at [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) . Hinton also spent 3 years working for Teen Help, WWASP’s marketing arm. He briefly left WWASP to work at another school, but in 2006 he came back to WWASP to serve as Director of [Royal Peak/Royal Gorge Academy](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) in Colorado. Hinton was arrested on chrages of child abuse by authorities in 2007 and the school was shut down in 2008. Hinton was convicted in 2007 of one count each of third-degree assault and false imprisonment. He was sentenced to 25 days in jail and one year of probation.
+** Randall Hinton** was the Assistant Director of Tranquility Bay from 1997-1998. He began working as a tech at Brightway Hospital in 1992. He worked at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) for one year in 1995. In 1996, he became Assistant Director of [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . In 1998, he became Assistant Director of [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) under Narvin Lichfield. In 2001, he became the Director at [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) . Hinton also spent 3 years working for Teen Help, WWASP’s marketing arm. He briefly left WWASP to work at another school, but in 2006 he came back to WWASP to serve as Director of [Royal Peak/Royal Gorge Academy](https://www.reddit.com/r/troubledteens/wiki/index/royalgorge) in Colorado. Hinton was arrested on chrages of child abuse by authorities in 2007 and the school was shut down in 2008. Hinton was convicted in 2007 of one count each of third-degree assault and false imprisonment. He was sentenced to 25 days in jail and one year of probation.
 
-**Dr. Marcel Chappuis**was reportedly the only licensed professional who worked for Tranquility Bay. He worked as a psychologist. He later went on to help found and work at [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) . In 2019, Chappuis and his wife were [arrested](https://www.reviewjournal.com/crime/operators-of-nevada-boarding-school-free-after-posting-bail-1598089/) and charged with 43 counts of allowing child abuseor neglect in connection to the abuse that children endured at Northwest Academy.
+** Dr. Marcel Chappuis** was reportedly the only licensed professional who worked for Tranquility Bay. He worked as a psychologist. He later went on to help found and work at [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) . In 2019, Chappuis and his wife were [arrested](https://www.reviewjournal.com/crime/operators-of-nevada-boarding-school-free-after-posting-bail-1598089/) and charged with 43 counts of allowing child abuseor neglect in connection to the abuse that children endured at Northwest Academy.
 
-**Sean Britton**worked as a staff member at Tranquility Bay close to the time that the program eventually shut down. In February 2020, Britton returned to TB's former campus and uploaded a [YouTube video](https://youtu.be/1PWYKH4n1hQ) of his visit. No other information about him is available at this time.
+** Sean Britton** worked as a staff member at Tranquility Bay close to the time that the program eventually shut down. In February 2020, Britton returned to TB's former campus and uploaded a [YouTube video](https://youtu.be/1PWYKH4n1hQ) of his visit. No other information about him is available at this time.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP programs, Tranquility Bay used a level system consisting of 6 levels. The program model is based on the one developed for [Cross Creek Manor](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in Utah, and was similar to the model used by [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . The students at Tranquility Bay also go through all same seminars as the students at Cross Creek Manor, Spring Creek Lodge and [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradise%20cove) , as do their parents. In order to progress through the levels, the teenagers had to earn points for good behavior while avoiding consequences for negative behavior, in which they would lose points. The levels were:
 
 *
-**Level 1:**When a teenager arrived at Tranquility Bay, they were placed on Level 1. On this level, the child cannot speak, look out of line, or go anywhere on their own. They are given zero "privileges" and were monitored 24/7. They were forced to sit in empty rooms with other new arrivals during the day while supposedly being "observed." They were not even allowed to look at the ocean, which was located directly behind the facility.
+**Level 1:** When a teenager arrived at Tranquility Bay, they were placed on Level 1. On this level, the child cannot speak, look out of line, or go anywhere on their own. They are given zero "privileges" and were monitored 24/7. They were forced to sit in empty rooms with other new arrivals during the day while supposedly being "observed." They were not even allowed to look at the ocean, which was located directly behind the facility.
 
 *
 **Level 2:***no additional information.*
 
 *
-**Level 3:**This was reportedly the first level that the teenager was allowed contact with their parents.
+**Level 3:** This was reportedly the first level that the teenager was allowed contact with their parents.
 
 *
-**Level 4:**It is reported that this was the first level where residents were given "off-grounds" privileges.
+**Level 4:** It is reported that this was the first level where residents were given "off-grounds" privileges.
 
 *
 **Level 5:***no additional information.*
@@ -56,7 +56,7 @@ If the resident turned 18 before completing all six levels, they the youth could
 
 ---
 
-## **Daily Life**
+## ** Daily Life**
 
 As reported by a [survivor](https://www.helpsavetroubledteens.com/c-kapela---tb.html) who was at Tranquility Bay in 2001, the daily schedule was as follows:
 
@@ -89,11 +89,11 @@ As reported by a [survivor](https://www.helpsavetroubledteens.com/c-kapela---tb.
 
 While at the Tranquility Bay, students are monitored 24-hours a day are not allowed to speak or move without permission. They are also subjected to a harsh disciplinary system. If they broke one of the program's many strict rules, they were given punishments, which wer divided by the severity of the infraction. As [reported](http://tales-from-the-black-school.blogspot.com/2012/06/rebecca-shulmister-at-tranquility-bay.html) by a survivor, these categories were:
 
-***CAT 1:**examples of category 1 infractions includetalking without permission, sitting/standing without permission, and non-verbal communication
-***CAT 2:**examples of category 2 infractions include insubordination, meal violation, talking back to staff, not following instructions, being rude, acting disrespectful to staff, or crossing their ankles /legs
-***CAT 3:**examples of category 3 infractions include touching without permission or lying.
-***CAT 4:**examples of category 4 infractions include major acts of rudeness, refusal, making plans to run away, telling major lies
-***CAT 5:**examples of category 5 infractions include running away, major sexual misconduct
+***CAT 1:** examples of category 1 infractions includetalking without permission, sitting/standing without permission, and non-verbal communication
+***CAT 2:** examples of category 2 infractions include insubordination, meal violation, talking back to staff, not following instructions, being rude, acting disrespectful to staff, or crossing their ankles /legs
+***CAT 3:** examples of category 3 infractions include touching without permission or lying.
+***CAT 4:** examples of category 4 infractions include major acts of rudeness, refusal, making plans to run away, telling major lies
+***CAT 5:** examples of category 5 infractions include running away, major sexual misconduct
 
 For category 3-5 violations, the teen would lose all of their points and would have to restart the program at level 1. In addition, the residents would have be forced to go to "worksheets" where they were forced to listen to tapes and fill out worksheets about the tapes. One [survivor](http://tales-from-the-black-school.blogspot.com/2012/06/rebecca-shulmister-at-tranquility-bay.html) remembers, "upon entering the room a recorded man's voice described the life as Henry Ford. Each recording lasted on average 1 hour and 20 minutes and after the tape worksheets were passed out with 30 questions each. We needed to answer 80% correctly or that particular worksheet would not count toward the amount we were in there for. For example, CAT 2's had you doing 8 worksheets. CAT 3's had you doing approximately 20, CAT 4's about 36, and CAT 5's 50 or more. During the tape we were to sit 3 inches from the back of our chair with our heads forward. If we slipped up, another work sheet would be added. If we hadn't completed our worksheets by the end of the day (8:00 PM) we would drag our mattress to the hallway and sleep under the fluorescent lights with huge tropical bugs flying around and on us all night."
 
@@ -143,7 +143,7 @@ Tranquility Bay closed in 2009 shortly after the release of Isaac Hersh and the 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **5/19/2021: (SURVIVOR)** [Link to Ryan's Survivor Testimony](https://youtu.be/EGdKBgf8gcc)
 
@@ -173,15 +173,15 @@ Tranquility Bay closed in 2009 shortly after the release of Isaac Hersh and the 
 
 **1/9/1998: (PARENT)** [Link to the testimony of Karen Lile who sent her daughter Krysten to TB in 1997](https://nospank.net/lile.htm)
 
-**Unknown Date: (SURVIVORS)** [Link to Aaron and Lindsay's Legal Testimonies](https://www.helpsavetroubledteens.com/aaron--lindsay---tb.html)
+** Unknown Date: (SURVIVORS)** [Link to Aaron and Lindsay's Legal Testimonies](https://www.helpsavetroubledteens.com/aaron--lindsay---tb.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Anonymous Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/female-student-mistreated-in-cross-creek-manor-and-tranquility-bay/)
+** Unknown Date: (SURVIVOR)** [Link to Anonymous Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/female-student-mistreated-in-cross-creek-manor-and-tranquility-bay/)
 
-**Unknown Date: (SURVIVOR)** [Link to Ryan's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/trickery-in-tranquility-bay/)
+** Unknown Date: (SURVIVOR)** [Link to Ryan's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/trickery-in-tranquility-bay/)
 
-**Unknown Date: (SURVIVOR)** [Link to Josh's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony-2/josh-ps-tranquility-bay-story/)
+** Unknown Date: (SURVIVOR)** [Link to Josh's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony-2/josh-ps-tranquility-bay-story/)
 
-**Unknown Date: (SURVIVOR)** [Link to C. Kapela's Survivor Testimony](https://www.helpsavetroubledteens.com/c-kapela---tb.html)
+** Unknown Date: (SURVIVOR)** [Link to C. Kapela's Survivor Testimony](https://www.helpsavetroubledteens.com/c-kapela---tb.html)
 
 The novel, [*Trapped in Paradise: A Memoir*](https://www.amazon.com/Trapped-Paradise-Memoir-Cindy-Art/dp/1475192274/ref=sr_1_5?s=books&ie=UTF8&qid=1335235289&sr=1-5) by Cindy Art details the author's experiences in Tranquility Bay and [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) .
 
@@ -243,7 +243,7 @@ The novel, [*Trapped in Paradise: A Memoir*](https://www.amazon.com/Trapped-Para
 
 [Ryan's Story](https://youtu.be/EGdKBgf8gcc) (5/19/2021)
 
-### **Photos**
+### ** Photos**
 
 * ["A Day Around TB"](https://web.archive.org/web/20010702094331/http://www.wwasp.com/tbay09_08.htm) (*approx. 2000*)
 * [Photos of Tranquility Bay's Campus](https://web.archive.org/web/20010702093537/http://www.wwasp.com/tbay02_18.htm) (*approx. 2001*)
@@ -266,7 +266,8 @@ The novel, [*Trapped in Paradise: A Memoir*](https://www.amazon.com/Trapped-Para
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

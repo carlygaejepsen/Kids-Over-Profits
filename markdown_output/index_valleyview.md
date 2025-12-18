@@ -14,44 +14,44 @@ At around 7 pm on October 25^(th) 2013, a massive fire broke out at VVS and dest
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Phillip G. Spiva**was the "Founding Father" of Valley View School. He worked as the Director of Valley View from the school's inception in 1970 until his death on January 19, 2017.
+** Phillip G. Spiva** was the "Founding Father" of Valley View School. He worked as the Director of Valley View from the school's inception in 1970 until his death on January 19, 2017.
 
-**Phil Bland**worked as the Associate Director of Valley View School. He began working at Valley View in 1973.
+** Phil Bland** worked as the Associate Director of Valley View School. He began working at Valley View in 1973.
 
-**Christopher Carlin**worked as the Clinical Director of Valley View School from 2005 until 2006. Prior to this, he worked at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program in Idaho. After leaving RMA, Carlin went on to work as the Program Director of the [Academy at Swift River](https://www.reddit.com/r/troubledteens/wiki/index/swiftriver) , a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2003 until 2004. Immediately after working at Valley View, he worked as the Dean of Students at [Ashby Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) , a now-closed [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) spin-off from 2006 until 2007. He then went on to work as a Clinician at Franklin Academy, which is an outpatient program for boys with ASD and Non-Verbal Learning differences.
+** Christopher Carlin** worked as the Clinical Director of Valley View School from 2005 until 2006. Prior to this, he worked at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program in Idaho. After leaving RMA, Carlin went on to work as the Program Director of the [Academy at Swift River](https://www.reddit.com/r/troubledteens/wiki/index/swiftriver) , a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, from 2003 until 2004. Immediately after working at Valley View, he worked as the Dean of Students at [Ashby Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashbyacademy) , a now-closed [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) spin-off from 2006 until 2007. He then went on to work as a Clinician at Franklin Academy, which is an outpatient program for boys with ASD and Non-Verbal Learning differences.
 
-**Ted McCarty**is the current Residential Supervisor at VVS. He has no prior work experience in a therapeutic setting, as his previous employment was as at Geek Stuff Games and later as a Security Officer. He has been at VVS since May of 2018.
+** Ted McCarty** is the current Residential Supervisor at VVS. He has no prior work experience in a therapeutic setting, as his previous employment was as at Geek Stuff Games and later as a Security Officer. He has been at VVS since May of 2018.
 
-**Rick Bulger**worked as the Associate Director, Assistant Director for Clinical Services, and a Consultant at VVS from 1992 until 2016. In 2016, he left to work as an Admissions Recruiter and the Assistant Director Of Admissions at Becker College, which is a school that is set to close on August 31^(st) 2021.
+** Rick Bulger** worked as the Associate Director, Assistant Director for Clinical Services, and a Consultant at VVS from 1992 until 2016. In 2016, he left to work as an Admissions Recruiter and the Assistant Director Of Admissions at Becker College, which is a school that is set to close on August 31^(st) 2021.
 
-**Scott Longvall**worked as the Assistant Director for Residential Services at VVS.
+** Scott Longvall** worked as the Assistant Director for Residential Services at VVS.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Valley View School uses a level-system. However, it is somewhat different than the level systems used by other programs.
 
 Each week staff give students a rating from 1-8 dependent on their overall behavior, 8 being the highest. Students are also given 'checks' for misbehavior such as swearing, not maintaining dress code, or being unprepared for class to name a few. Each student starts with 10 points per day and each 'check' subtracts from this score varying on how major the digression was. Depending on your score for the week you could be placed in one of four groups:
 
-***Group 1:**This is the highest level the residents at Valley View can achieve. On this level, the residents are given an extra phone-call with their parents, extra spending money, and are permitted to play video-games.
-***Group 2:**On this level, residents are also given an additional phone-call, spending money, and the ability to play video games.
-***Group 3:**According to survivors, residents in Group 3 receive no special privileges, but also do not have any privileges taken away.
-***Group 4:**Residents are placed in Group 4 if they fall below a certain threshold of points. Being in this group means that the residents are forbidden from leaving campus.
+***Group 1:** This is the highest level the residents at Valley View can achieve. On this level, the residents are given an extra phone-call with their parents, extra spending money, and are permitted to play video-games.
+***Group 2:** On this level, residents are also given an additional phone-call, spending money, and the ability to play video games.
+***Group 3:** According to survivors, residents in Group 3 receive no special privileges, but also do not have any privileges taken away.
+***Group 4:** Residents are placed in Group 4 if they fall below a certain threshold of points. Being in this group means that the residents are forbidden from leaving campus.
 
 If a resident breaks a rule at Valley View School, they may be punished. The main forms of punishment are work detail, point deduction, and 'the hip'. The school has a system that allows students to earn money based on points given to you by staff (note: this is separate from the ratings system). Staff have the power to give and take points at their discretion, however the main way of getting points was by working in the kitchen, waiting tables at meals, and what was known as work detail. Each evening, studets can sign up, among other activities, for work detail if you wanted to earn points. Work detail typically comprised of general facility maintenance such as cleaning up trash, vacuuming/sweeping, etc. However, on a normal basis there are larger projects that were worked on, such as clearing out brush and other landscaping type work. This work would last from 6:30 to 8:00 PM on weekdays and from 1:30 - 3:00 PM on weekend afternoon shifts. Work detail can also be assigned as a punishment. 'The Hip' is the severest punishment given. While on 'The Hip' you have to follow a staff member at all times. 'The Hip' is also paired with work detail.
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
 Some survivors have reported that Valley View School is an abusive program. Allegations of abuse and neglect that have been reported by survivors include verbal and emotional abuse, violent and excessive restraints, extreme physical abuse, punitive punishments, and attack therapy.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **3/29/2021: (SURVIVOR)**"Ok: This is gonna be...strange for Me. I was here from the age of 11 to 13 and a half. From 1979 to 1981. This makes My story quite a bit older, but from what I've read from almost every student review here, most things have not changed. When I arrived I was a deeply troubled kid, no doubt. I'd been kicked out of two schools for being disruptive and at the last one, I pulled a blade on a kid whose offense had been to lose My baseball. Yeah, not a shining example from Me. My home life was that of a mentally abusive mother in one home and a father with a heavy addiction in the other, with Me being used as a messenger service between them. My Mom would lock Me in the attic, My dad was always out of control. So yes I acted out in school. I went with My Dad to V.V.S. in late 1979 on a tour of two schools that a child shrink had sent Us to. The first, Devero i think it was called, left Me alone with older kids who hung Me from the back of My belt to a hook in the roof of a building, leaving Me there, so I chose to go to V.V.S. Myself because the place was quiet and not made entirely from concrete brick, it looked great! there were something like 40 acres owned by the school at that time and they spoke of trips to Europe and field trips to local parks. Skiing and hiking and overnights, oh my! That was enough to get Me to tell My dad to sign Me up! I was looking for a new start where I felt people wouldn't know Me and judge Me as the failure I already felt I was. On arrival I saw looking at all the kids at dinner, that I was the smallest kid there, tho' not the youngest. The kids were from all over the country but mostly east coast. My first roomie was a vet of a few years there and really nice to a kid with homesickness right away. But other kids were out of control and violent. This was not checked in any way in advance. In the first month I saw only punishments as I earned points to get on the good kids end of week list. The write ups were notorious for going to older vets of the school, You had to earn the littlest things, and You worked for money You could spend in the outer world. I got there eventually. But to keep this from being a book: I saw sexual abuse from student to student. I was the victim of it as well from a roommate that I had starting late in My first year. There were three of Us to a room, and two of Us were made to fight each other for the thirds pleasure. He sexually abused Us both. We both told on him to the staff who told us to quit bitching and "be a man". Another kid being picked on by this guy the next year hit him with a fluke punch that tore his nose OFF the front of his face!, it was hanging by a bit of skin and fat(?). It was stitched back on. That same year, they were giving us different mood alt' drugs and experimental levels of Ritalin. After woodshop one day another student, high as a kite decided I needed to die. I lunged at my neck with a sharp wooden shop class shiv. I ducked my chin in a lucky move, it only slammed into my teeth and chin, creating a trident scar I still have and hairline fracture to My jaw. The next, My last year, was worse. in the fall We had to rake all the leaves We could into a single pile under the nine foot tall wall above the basketball court. Kids started daring each other to jump into the leaf pile, harmless fun yeah? Until one hyperactive six foot tall upper schooler grabbed Me by the scruff of the neck and a leg, putting Me over his head and threw Me off. I fell some 19/19 feet THRU the leaves onto the hard rock ground underneath, I broke My arm in two places and My back was horribly messed up. We had the arm set in a cast and NEVER treated the back injuries. I set chiropratics smiles to kill when they see Me coming. The staff never seemed to be able to solve any problems, some of the teachers tried but they never lasted long, as they were newly minted teachers on their first jobs out of school themselves. I was beaten up more times then I could count. I was nearly raped by My roomate over the course of more then a year I was made to room with him. Kids dissapeared (they may have left, but We never would know) some ran away. Honorary Doctors Bland, Spiva and Scwab were usless, two of them hardly were ever seen outside their offices while Scwab boated of being ex-hitler youth! No joke, he was the shrink! I constantly cried to My mom and dad to bring Me home but niether of them thought what I was saying was real until My mother saw Mr in My underwear covered in bruises. My father got sober while I was in the school and realized one of the living amends he could do was to take Me into his home and away from the hell that was this academy. I'm 51 now and I still shivered when I found this revue page. I left the school after going thru puberty there, do You think I learned any life skills, oh no Life has been hard but I'm happy now. No thanks to VVS." - [Morris (Yelp)](https://www.yelp.com/biz/valley-view-school-north-brookfield-2)
 
@@ -85,7 +85,7 @@ Some survivors have reported that Valley View School is an abusive program. Alle
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Valley View School Website Homepage](http://www.valleyviewschool.org)
 
@@ -97,7 +97,8 @@ Some survivors have reported that Valley View School is an abusive program. Alle
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

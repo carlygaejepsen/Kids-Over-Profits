@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 All private schools in Hawaii must register with the Hawaii Department of Consumer Affairs. Although licensing is optional, it is strongly recommended by the state.
 
@@ -20,11 +20,11 @@ Private schools in Hawaii are required to maintain reasonable health and safety 
 
 ---
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Pacific Quest**](https://www.reddit.com/r/troubledteens/wiki/index/pacificquest) | 2004 | Hilo/Keaau, HI | [HEAL](http://www.heal-online.org/pacquest.htm) |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Pacific Quest**](https://www.reddit.com/r/troubledteens/wiki/index/pacificquest) | 2004 | Hilo/Keaau, HI | [HEAL](http://www.heal-online.org/pacquest.htm) |
 ---
 
-## **Closed Programs in Hawaii**
+## ** Closed Programs in Hawaii**
 
 ---
 
@@ -32,9 +32,9 @@ Private schools in Hawaii are required to maintain reasonable health and safety 
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|
-| [**SeaChange Hawaii**](https://www.reddit.com/r/troubledteens/wiki/index/seachange) | - | - | - |
-| [**Youth Developmental Enterprises**](https://www.reddit.com/r/troubledteens/wiki/index/youthdev) | 1970-1990s | - | - |
+|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
+| [** SeaChange Hawaii**](https://www.reddit.com/r/troubledteens/wiki/index/seachange) | - | - | - |
+| [** Youth Developmental Enterprises**](https://www.reddit.com/r/troubledteens/wiki/index/youthdev) | 1970-1990s | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2025.)
@@ -46,4 +46,5 @@ Private schools in Hawaii are required to maintain reasonable health and safety 
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

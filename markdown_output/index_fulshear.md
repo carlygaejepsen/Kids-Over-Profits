@@ -14,25 +14,25 @@ Fulshear Ranch Academy is closely affiliated with two adolescent behavior-modifi
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Nikki Garza**is the CEO and Executive Director of Fulshear and has been since 2014. Prior to this, she worked as the Clinical Director of the**confirmedly abusive** [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy) from 2002 until 2014. Her employment prior to Alpine Academy is presently unknown.
+** Nikki Garza** is the CEO and Executive Director of Fulshear and has been since 2014. Prior to this, she worked as the Clinical Director of the** confirmedly abusive** [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy) from 2002 until 2014. Her employment prior to Alpine Academy is presently unknown.
 
-**Kevin Randall**is the Executive Clinical Director of Fulshear. He has worked at the program since 2013. Prior to this, he worked as the Clinical Director of the reportedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2009 until 2013. He also has worked as a Transition Specialist at Homeward Bounds, which is another transitional program in Utah, from 2006 until 2009.
+** Kevin Randall** is the Executive Clinical Director of Fulshear. He has worked at the program since 2013. Prior to this, he worked as the Clinical Director of the reportedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2009 until 2013. He also has worked as a Transition Specialist at Homeward Bounds, which is another transitional program in Utah, from 2006 until 2009.
 
 *Helaine Sandler*is the Admissions Director of Fulshear. She began her career in the troubled teen industry as an Outreach Coordinator for the**confirmedly abusive** [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy) from 2008 until 2013. She then worked as the Business Development Manager at [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) , which is a branch of [Embark Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/embark) , from 2013 until 2014, when she began working at Fulshear.
 
-**Allyson Smith**is the Program Director of Fulshear and has worked in this role since 2013. Prior to this, she worked as a Lead Supervisor at the reportedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2007 until 2013. Her employment prior to this is presently unknown.
+** Allyson Smith** is the Program Director of Fulshear and has worked in this role since 2013. Prior to this, she worked as a Lead Supervisor at the reportedly abusive [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2007 until 2013. Her employment prior to this is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program at Fulshear is split into parts. The first part of the resident's stay is spent at the "Ranch" in Needville, which typically lasts between 3 and 6 months. This appears to be referred to as the Willow Community. During the next phase, the residents spend between 6 and 9 months in "independent living" apartments in Stafford, TX. This appears to be referred to as the Redwood Community.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 Many survivors have reported that Fulshear Treatment to Transition is an abusive program. Allegations of abuse and neglect that have been reported by survivors include:
 
@@ -103,7 +103,7 @@ Many survivors report developing PTSD as a result of their time at Fulshear.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Fulshear Treatment to Transition Website Homepage](https://www.fulsheartransition.com/)
 
@@ -111,7 +111,8 @@ Many survivors report developing PTSD as a result of their time at Fulshear.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

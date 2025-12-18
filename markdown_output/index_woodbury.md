@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Woodbury Reports, Inc. was created by Lon Woodbury in November of 1989. The Woodbury Reports organization describes itself as a "consulting firm helping individual parents of out-of-control struggling teens find the right resource for their children, especially residential placement." Prior to creating Woodbury Reports, Lon Woodbury worked as the Admissions Director of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school, beginning in 1984. According to Lon, he "decided that he could better help parents find the most appropriate placement for their at-risk children if he was independent."
 
@@ -12,25 +12,25 @@ The Woodbury Reports/Struggling Teens regularly publishes 'Visit Reports' in whi
 
 ---
 
-## **Notable Employees**
+## ** Notable Employees**
 
-**Lon Woodbury**is an Educational Consultant and the founder of the Woodbury Reports. He is also the founder of [Places for Struggling Teens](https://www.reddit.com/r/troubledteens/wiki/index/strugglingteens) . Prior to creating Woodbury Reports, Lon Woodbury worked as the Admissions Director of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school, from 1984 until 1989. He has also been a long-time member of the [Independent Educational Consultants Association (IECA)](https://www.reddit.com/r/troubledteens/wiki/index/ieca) .
+** Lon Woodbury** is an Educational Consultant and the founder of the Woodbury Reports. He is also the founder of [Places for Struggling Teens](https://www.reddit.com/r/troubledteens/wiki/index/strugglingteens) . Prior to creating Woodbury Reports, Lon Woodbury worked as the Admissions Director of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school, from 1984 until 1989. He has also been a long-time member of the [Independent Educational Consultants Association (IECA)](https://www.reddit.com/r/troubledteens/wiki/index/ieca) .
 
-**Loi Eberle**worked as an Educational Consultant at the Woodbury Reports. Prior to joining Woodbury Reports, Eberle also worked as a Journalism Teacher and Student Advisor at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school, from 1997 until 1999.
+** Loi Eberle** worked as an Educational Consultant at the Woodbury Reports. Prior to joining Woodbury Reports, Eberle also worked as a Journalism Teacher and Student Advisor at [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school, from 1997 until 1999.
 
-**Linda Zimmerman**worked as an Educational Consultant at the Woodbury Reports. She previously worked at and founded several programs, mainly in New Mexico.
+** Linda Zimmerman** worked as an Educational Consultant at the Woodbury Reports. She previously worked at and founded several programs, mainly in New Mexico.
 
-**Larry Stednitz**worked as an Educational Consultant at the Woodbury Reports. His career in the TTI began when he worked as an Administrator at [Alternative Youth Adventures](https://www.reddit.com/r/troubledteens/wiki/index/alternativeyouth) in Montana from 1998 until 2002. He then worked as the School Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) , a reportedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) /[UHS](https://www.reddit.com/r/troubledteens/wiki/index/uhs) behavior-modification program in Idaho. He also worked as a Counselor at the confirmedly abusive [Boys Town](https://www.reddit.com/r/troubledteens/wiki/index/boystown) in Nebraska.
+** Larry Stednitz** worked as an Educational Consultant at the Woodbury Reports. His career in the TTI began when he worked as an Administrator at [Alternative Youth Adventures](https://www.reddit.com/r/troubledteens/wiki/index/alternativeyouth) in Montana from 1998 until 2002. He then worked as the School Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) , a reportedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) /[UHS](https://www.reddit.com/r/troubledteens/wiki/index/uhs) behavior-modification program in Idaho. He also worked as a Counselor at the confirmedly abusive [Boys Town](https://www.reddit.com/r/troubledteens/wiki/index/boystown) in Nebraska.
 
-**Stephen Migden**worked as an Educational Consultant at the Woodbury Reports.
+** Stephen Migden** worked as an Educational Consultant at the Woodbury Reports.
 
-**Kristie Campbell**worked as an Educational Consultant at the Woodbury Reports.
+** Kristie Campbell** worked as an Educational Consultant at the Woodbury Reports.
 
-**Steve Bozak**worked as an Educational Consultant at the Woodbury Reports.
+** Steve Bozak** worked as an Educational Consultant at the Woodbury Reports.
 
 ---
 
-## **Programs Recommended**
+## ** Programs Recommended**
 
 *Over the years, Woodbury Reports/Struggling Teens have recommended hundreds of programs. The following is a partial list of notable programs that Woodbury Reports has recommended over the years.*
 
@@ -155,7 +155,8 @@ The Woodbury Reports/Struggling Teens regularly publishes 'Visit Reports' in whi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

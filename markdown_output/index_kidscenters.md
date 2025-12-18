@@ -2,7 +2,7 @@
 
 ---
 
-## **History/Background Information**
+## ** History/Background Information**
 
 KIDS Centers of America were a chain of confirmedly abusive drug treatment centers founded by anthropologist Miller Newton, who was the former National Clinical Director for [Straight Inc.](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) , and whose son had previously been enrolled in Straight. He left Florida in 1982 amidst a flurry of criminal and civil allegations for abusing teenagers at Straight Inc. He moved to New Jersey and setup his own Straight-spinoff program. Newton originally planned to have KIDS Centers of America supervise a national chain of 10 to 25 local organizations. He went on to open four affiliated KIDS centers; KIDS of Bergan County (New Jersey), KIDS of El Paso (Texas), KIDS of Southern California, and KIDS of Greater Salt Lake (Utah). A fifth, KIDS of the Canadian West, was also opened in Canada.
 
@@ -12,17 +12,17 @@ For a more in-depth history of KIDS Centers of America, survivors of the program
 
 ---
 
-## **Founders and Notable Figures**
+## ** Founders and Notable Figures**
 
-**Dr. Virgil Miller Newton**was the Founder of the KIDS Centers of America. He resigned from his position as Clinical Director of Straight in 1983. He called himself Dr. Miller Newton but the "doctor" part is still up for debate. He had a degree in Anthropology and later received another degree in Psychology from an alternative school in Boston without attending any classes. He was asked to resign from Straight amid allegations of abuse and insurance fraud.
+** Dr. Virgil Miller Newton** was the Founder of the KIDS Centers of America. He resigned from his position as Clinical Director of Straight in 1983. He called himself Dr. Miller Newton but the "doctor" part is still up for debate. He had a degree in Anthropology and later received another degree in Psychology from an alternative school in Boston without attending any classes. He was asked to resign from Straight amid allegations of abuse and insurance fraud.
 
-**W. Kimball DeLaMare**was the Director of KIDS of Greater Salt Lake. He had previously worked for about 6 months at the KIDS of Bergen County program prior to working at KIDS in Utah. After KIDS in Utah was closed, he went on to help co-found the notoriously abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. DeLaMare also helped co-found two other AEG programs, the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) . In 2004, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award.
+** W. Kimball DeLaMare** was the Director of KIDS of Greater Salt Lake. He had previously worked for about 6 months at the KIDS of Bergen County program prior to working at KIDS in Utah. After KIDS in Utah was closed, he went on to help co-found the notoriously abusive [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. DeLaMare also helped co-found two other AEG programs, the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) . In 2004, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award.
 
 ---
 
-## **Locations**
+## ** Locations**
 
-### **KIDS of Bergen County:**(1984-1998)
+### ** KIDS of Bergen County:**(1984-1998)
 
 *KIDS of Bergen County (later called KIDS of North Jersey) was a KIDS Centers of America program located in New Jersey. This was first KIDS program to open, and was the headquarters of the organization. It was located at [80 Commerce Way, Hackensack, NJ 07601](https://www.google.com/maps/place/80+Commerce+Way,+Hackensack,+NJ+07601/@40.9117179,-74.030859,134m/data=!3m1!1e3!4m5!3m4!1s0x89c2fa787a6b8a5d:0x577d94800887ba37!8m2!3d40.9117652!4d-74.0304713) .
 *At the height of its operation, there were reportedly over 175 kids attending this program at one time.
@@ -70,27 +70,27 @@ For a more in-depth history of KIDS Centers of America, survivors of the program
 Like other behavior-modification programs, KIDS used a level-system consisting of 5 levels. It was extremely remniscent of the level system used at [Straight Inc.](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) .
 
 *
-**1^(st) Phase:**On 1^(st) Phase, residents had no rights, no free will, no freedom, have to ask permission to eat (and were often deprived of food). They were called "newcomers", even though most times, residents were stuck on 1^(st) phase for well over a year. All they were allowed to talk about were their shortcomings as a druggie. The teens spent seven days a week in the building, up to 18 or more hours per day. 1st phase children do not live at home; they stay with other clients on higher phases of the program and are only allowed to talk to their families twice a week for five minutes at a time (under strict supervision, of course). One survivor recalls, "being able to talk to your parents for 5 minutes twice a week was something you had to earn, not a given. I was maybe awarded this privilege a handful of times. And when we did speak to them it had to consist of us apologizing for awful behaviors from our druggie past." Some residents never got past 1^(st) phase.
+**1^(st) Phase:** On 1^(st) Phase, residents had no rights, no free will, no freedom, have to ask permission to eat (and were often deprived of food). They were called "newcomers", even though most times, residents were stuck on 1^(st) phase for well over a year. All they were allowed to talk about were their shortcomings as a druggie. The teens spent seven days a week in the building, up to 18 or more hours per day. 1st phase children do not live at home; they stay with other clients on higher phases of the program and are only allowed to talk to their families twice a week for five minutes at a time (under strict supervision, of course). One survivor recalls, "being able to talk to your parents for 5 minutes twice a week was something you had to earn, not a given. I was maybe awarded this privilege a handful of times. And when we did speak to them it had to consist of us apologizing for awful behaviors from our druggie past." Some residents never got past 1^(st) phase.
 
 *
-**2^(nd) Phase:**On 2^(nd) Phase, the kids lived at home but still spent all day at the building. At this point they were called "oldcomers" and took 1^(st) Phasers home with them. In other words, children were fully responsible for other children. A lot of abuse is reported to have occurred in the "host homes." It is reported that the parents witnessed this abuse, but were "just as brainwashed" as the kids.
+**2^(nd) Phase:** On 2^(nd) Phase, the kids lived at home but still spent all day at the building. At this point they were called "oldcomers" and took 1^(st) Phasers home with them. In other words, children were fully responsible for other children. A lot of abuse is reported to have occurred in the "host homes." It is reported that the parents witnessed this abuse, but were "just as brainwashed" as the kids.
 
 *
-**3^(rd) Phase:**On 3^(rd) Phase, the kids returned to school or were allowed to get a job, but still had to spend time at the building every day. They were not allowed to have any contact with people who are not members of the program.
+**3^(rd) Phase:** On 3^(rd) Phase, the kids returned to school or were allowed to get a job, but still had to spend time at the building every day. They were not allowed to have any contact with people who are not members of the program.
 
 *
-**4^(th) Phase:**On 4^(th) Phase, the participants are not required to go to the building every day. They still take 1^(st) Phasers home with them, but they are able to start to develop friendships with other clients, but only of the same gender.
+**4^(th) Phase:** On 4^(th) Phase, the participants are not required to go to the building every day. They still take 1^(st) Phasers home with them, but they are able to start to develop friendships with other clients, but only of the same gender.
 
 *
-**5^(th) Phase:**On 5^(th) Phase, the clients were allowed to talk to other 5th phase clients of the opposite sex, and day-off excursions could be co-ed (as long as the ratio of boys to girls was uneven). After graduation, there was six months of aftercare and no dating was allowed for five months.
+**5^(th) Phase:** On 5^(th) Phase, the clients were allowed to talk to other 5th phase clients of the opposite sex, and day-off excursions could be co-ed (as long as the ratio of boys to girls was uneven). After graduation, there was six months of aftercare and no dating was allowed for five months.
 
-The program at KIDS was based heavily on the practices of Straight Inc. Like Straight, the core of KIDS' program revoled around "**Rap Sessions**", or [attack therapy](https://en.wikipedia.org/wiki/Attack_therapy) groups which were led by a KIDS staff member on topics such as the rules of the program, clients' experiences with drug use (even if the child had no prior experience with drugs), their current feelings about their drug use and their personal and family problems. In order to be called on to speak at a rap session, a teenager would be required to practice "Motivating", a Straight tradition which the Times described as "waving your hand in the air... so hard that your arm aches and you begin to perspire." These rap sessions were strenuous and often brought the participants to tears.
+The program at KIDS was based heavily on the practices of Straight Inc. Like Straight, the core of KIDS' program revoled around "** Rap Sessions**", or [attack therapy](https://en.wikipedia.org/wiki/Attack_therapy) groups which were led by a KIDS staff member on topics such as the rules of the program, clients' experiences with drug use (even if the child had no prior experience with drugs), their current feelings about their drug use and their personal and family problems. In order to be called on to speak at a rap session, a teenager would be required to practice "Motivating", a Straight tradition which the Times described as "waving your hand in the air... so hard that your arm aches and you begin to perspire." These rap sessions were strenuous and often brought the participants to tears.
 
 Residents at KIDS had to adhere to a strict set of rules. Their showers were timed, 60 seconds (at the most), and if by the end of the time they had not rinsed off, that was just too bad. They were not allowed to speak without permission. They were not allowed to have a bowel movement without being watched, and they were limited to one square of toilet paper. They were not allowed to go to school or read. In fact, reading the back of a cereal box was punishable by severe restraint. One survivor stated, "if we read the cereal box we would mostly be screamed at and have other privileges taken away from us, which is crazy because we had virtually no privileges at all. While we were being screamed at, if we opened our mouths at all, even if we weren't being wise, they would slam our mouths shut with their hands. If we tried to protect our mouths from being slammed, they would restrain us on the floor." They would be wrestled to the floor by 5 men, one on their head, the other four on their arms and legs, forcing them into the floor. Many survivors described these restraints as extremely painful and demoralizing. Often, when the residents were restrained on the floor, they were rolled up tightly in a big blanket and left for long periods of time, unable to move.
 
 ---
 
-## **Abuse, Lawsuits, and Closure**
+## ** Abuse, Lawsuits, and Closure**
 
 Abuse at KIDS Centers ranged from verbal to physical to sexual. Clients were frequently restrained for hours at a time on the hard floor by up to five other teens. The staff members were just children themselves and completely unqualified to be responsible for such a large group of kids. The only qualification to be on staff was to be a graduate of the program. Most had not even finished high school. There were no degrees in counseling. Humiliation and bullying were accepted treatment tactics. Many instances of sexual abuse were reported to have taken place in the "host homes".
 
@@ -151,7 +151,8 @@ New Jersey knew that Kids was a controversial program and proceeded to have stat
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

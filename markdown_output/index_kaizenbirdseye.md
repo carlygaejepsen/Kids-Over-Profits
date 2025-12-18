@@ -14,21 +14,21 @@ This program was originally opened in 1989 under the name Birdseye Boys Ranch. T
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**C. Lynn Loftin**is one of the Founders of Kaizen Academy/BBR/BRTC. He has worked at the program since its inception in 1989. He currently works on Kaizen Academy's Board of Directors, and also as a Therapist at the program.
+** C. Lynn Loftin** is one of the Founders of Kaizen Academy/BBR/BRTC. He has worked at the program since its inception in 1989. He currently works on Kaizen Academy's Board of Directors, and also as a Therapist at the program.
 
-**Corbin Linde**is one of the Founders of Kaizen Academy/BBR/BRTC. He currently works on Kaizen Academy's Board of Directors.
+** Corbin Linde** is one of the Founders of Kaizen Academy/BBR/BRTC. He currently works on Kaizen Academy's Board of Directors.
 
-**Teresa Cope**worked as the Director of Birdseye Boys Ranch. In 2014, it was revealed that she had been sexually abusing a 15-year-old at the program. She pled guilty and was sentenced to 320 days in jail and 36 months probation, in addition to other fines and penalties.
+** Teresa Cope** worked as the Director of Birdseye Boys Ranch. In 2014, it was revealed that she had been sexually abusing a 15-year-old at the program. She pled guilty and was sentenced to 320 days in jail and 36 months probation, in addition to other fines and penalties.
 
-**Jared Rockwood**worked as the Clinical Director and a Primary Therapist at Birdseye RTC from 2008 until 2015. He previously worked as the Residential Director at [Youth Care](https://www.reddit.com/r/troubledteens/wiki/index/youthcareinc) from 2000 until 2005. After Birdseye, he went on to work at Intermountain Polygraphs, where he currently is still works in Credibility Assessment.
+** Jared Rockwood** worked as the Clinical Director and a Primary Therapist at Birdseye RTC from 2008 until 2015. He previously worked as the Residential Director at [Youth Care](https://www.reddit.com/r/troubledteens/wiki/index/youthcareinc) from 2000 until 2005. After Birdseye, he went on to work at Intermountain Polygraphs, where he currently is still works in Credibility Assessment.
 
-**Jessica Jenkins**worked as a Therapist at Birdseye RTC. She later went on to work as the Clinical Director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , which has been widely reported to be an abusive program.
+** Jessica Jenkins** worked as a Therapist at Birdseye RTC. She later went on to work as the Clinical Director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , which has been widely reported to be an abusive program.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Birdseye/Kaizen uses a level system. Howveer, no additional information is known about the specifics of the level system.
 
@@ -36,11 +36,11 @@ This program is highly suspected of being abusive, given their claims to treat "
 
 ---
 
-## **Abuse, Rebrands, and the Fire**
+## ** Abuse, Rebrands, and the Fire**
 
 This program was originally opened in 1989 under the name Birdseye Boys Ranch. There are also conflicting reports that the program opened in 1977. Around 2009, the program was renamed as Birdseye RTC, and the program was moved to a new location about 2 miles away.
 
-This program has been reported by*many survivors*to be an abusive program. The Human Rights Organization [HEAL](http://www.heal-online.org/thelist.htm) states that BBR/Kaizen Academy is a**Confirmedly Abusive**program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
+This program has been reported by*many survivors*to be an abusive program. The Human Rights Organization [HEAL](http://www.heal-online.org/thelist.htm) states that BBR/Kaizen Academy is a**Confirmedly Abusive** program. As per HEAL's definition, "a program categorized as "Confirmedly Abusive" matches multiple warning signs of an abusive facility, has been sued or faced official complaints, and/or HEAL has received two or more substantiated reports of fraud and abuse regarding the facility."
 
 In April of 2014, it was discovered that the former director of Birdseye Boys Ranch, Teresa Cope, had been sexually abusing a 15-year-old resident during his time at the program. The alleged "relationship" happened in April and May of 2013, but the allegations of abuse weren't made until April 2014. She was arrested and booked into the Utah County Jail on charges of unlawful custodial sexual relations, a second-degree felony; sexual activity with a minor, a third-degree felony; and sexual abuse of a minor, a class A misdemeanor. Her bail was set at $10,000, which was posted and Cope was released from jail April 25. She took a plea deal and pled guilty to five counts of custodial sexual misconduct with a youth receiving state services. Three of the counts were filed as second-degree felonies, while two are third-degree felonies. She was sentenced to 320 days in jail, 36 months of probation, and ordered to pay a $40,000 fine. She also had to complete any treatment or counseling recommended by Adult Probation and Parole.
 
@@ -50,9 +50,9 @@ With this negative publicity surrouding Birdseye, the program's name was changed
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No survivor testimonials have yet been found. If you attended BBR/BRTC/Kaizen and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonials have yet been found. If you attended BBR/BRTC/Kaizen and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -90,7 +90,8 @@ With this negative publicity surrouding Birdseye, the program's name was changed
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

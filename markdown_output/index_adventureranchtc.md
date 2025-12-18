@@ -14,36 +14,36 @@ Teen Challenge Adventure Ranch began in the early 1970s, initially operating out
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**John Nevels**was one of the Founders of Teen Challenge Adventure Ranch.
+** John Nevels** was one of the Founders of Teen Challenge Adventure Ranch.
 
-**Nelda Nevels**was one of the Founders of Teen Challenge Adventure Ranch.
+** Nelda Nevels** was one of the Founders of Teen Challenge Adventure Ranch.
 
-**Justin Smith**is the current CEO and Executive Director of Teen Challenge Adventure Ranch. He began his career working with "troubled youth" when he was still in college, working at the Lakeland Marine Institute in Lakeland, Florida. In 1996, Smith finished his bachelor’s degree in Bible with a minor in missions, and began working at TCAR as a Direct Care Staff. He then worked as the Program Director of TCAR for 24 years before being promoted to CEO and Executive Director in 2021.
+** Justin Smith** is the current CEO and Executive Director of Teen Challenge Adventure Ranch. He began his career working with "troubled youth" when he was still in college, working at the Lakeland Marine Institute in Lakeland, Florida. In 1996, Smith finished his bachelor’s degree in Bible with a minor in missions, and began working at TCAR as a Direct Care Staff. He then worked as the Program Director of TCAR for 24 years before being promoted to CEO and Executive Director in 2021.
 
-**Clint Smith**is the current Director of Facilities at Teen Challenge Adventure Ranch.
+** Clint Smith** is the current Director of Facilities at Teen Challenge Adventure Ranch.
 
-**Joshua Thomas**is the current Dean of Students at Teen Challenge Adventure Ranch.
+** Joshua Thomas** is the current Dean of Students at Teen Challenge Adventure Ranch.
 
-**Joy Thomas**is the current Director of Education at Teen Challenge Adventure Ranch.
+** Joy Thomas** is the current Director of Education at Teen Challenge Adventure Ranch.
 
-**Richie Swearingen**is the current Director of Clinical Operations at Teen Challenge Adventure Ranch.
+** Richie Swearingen** is the current Director of Clinical Operations at Teen Challenge Adventure Ranch.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Teen Challenge Adventure Ranch utilizes a level system, as is common with other Teen Challenge programs. The level system consists of 4 levels, as described below:
 
-***Level 1:**This level consists of a Day Treatment/IOP program that lasts for 90 days. It takes place at the "New Adventure Treatment Center".
-***Level 2:**After completing the 90-day outpatient program, the teens are transferred to the Adventure Ranch campus and begin the residential program.
-***Level 3:**This level also takes place on the Adventure Ranch residential campus. Levels 2 and 3 typically last for a combined total of 6-9 months.
-***Level 4:**This level consists of TCAR's aftercare program, and takes place when the child has returned to their home.
+***Level 1:** This level consists of a Day Treatment/IOP program that lasts for 90 days. It takes place at the "New Adventure Treatment Center".
+***Level 2:** After completing the 90-day outpatient program, the teens are transferred to the Adventure Ranch campus and begin the residential program.
+***Level 3:** This level also takes place on the Adventure Ranch residential campus. Levels 2 and 3 typically last for a combined total of 6-9 months.
+***Level 4:** This level consists of TCAR's aftercare program, and takes place when the child has returned to their home.
 
 Breakfast is served at 7:00 am. Afterwards, the boys have personal time until 8:00 am, when they begin group devotions in the chapel. Academic and vocational classes then begin at 8:30 am, and run until lunchtime. After lunch, residents either return to the classroom or attend group sessions. The residents then attend "Life Skills"/intervention class and PE until dinner at 5:00 pm. After dinner the residents attend Character Studies class and then have some free time before evening Chapel. After chapel, they return to their dorms and get ready for bed.
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -51,13 +51,13 @@ Breakfast is served at 7:00 am. Afterwards, the boys have personal time until 8:
 
 Many survivors have reported that Teen Challenge Adventure ranch is an abusive program. Allegations of abuse and neglect that have been reported by survivors include staff abusing their power over residents, brainwashing, cult-like tactics, sexual abuse, food restrictions, intense physical punishments, emotional abuse, forced manual labor, and conversion therapy. Many survivors have reported developing PTSD as a result of their time at Teen Challenge Adventure Ranch.
 
-*This section is currently under construction and will be updated in the future. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*This section is currently under construction and will be updated in the future. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
 ## **Survivor/Parent Testimonies**
 
-**February 2023: (SURVIVOR)**"A lot of the staff told me about drama, included me in the drama, and even smoked cigarettes with me! This place isnt what it all seems, they fire workers for nicotine but dont fire workers for having affairs in the office, its sad that a student knows all this. Sending your kid here isnt the best option i learned nothing but people abusing power." - [Sean (Google Reviews)](https://goo.gl/maps/io48GrKZvbji3Nf8A)
+** February 2023: (SURVIVOR)**"A lot of the staff told me about drama, included me in the drama, and even smoked cigarettes with me! This place isnt what it all seems, they fire workers for nicotine but dont fire workers for having affairs in the office, its sad that a student knows all this. Sending your kid here isnt the best option i learned nothing but people abusing power." - [Sean (Google Reviews)](https://goo.gl/maps/io48GrKZvbji3Nf8A)
 
 **11/22/2022: (SURVIVOR)**"I was in Teen Challenge Adventure Ranch for 271 days I was kidnapped from my house at 2am and drove all the way deep to the Arkansas mountains, the place is a literal cult brainwashing u and abusing u, they had this thing called discipline where the counselors would just abuse power and make u write books of the Bible if u didn’t like what they had to say or didn’t do exactly what you were told and if u were writing discipline you were not allowed to eat, I saw kids not eat for days because they were forced to write half the Bible before they could, it 100% is a witchcraft or evil cult fronted by Christianity" - [u/HamsterJust2831 (Reddit)](https://www.reddit.com/r/troubledteens/comments/7a83h8/comment/ixc25vo/?utm_source=share&utm_medium=web2x&context=3)
 
@@ -73,7 +73,7 @@ Many survivors have reported that Teen Challenge Adventure ranch is an abusive p
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Teen Challenge Adventure Ranch Website Homepage](https://teenchallengeranch.com/)
 
@@ -81,7 +81,8 @@ Many survivors have reported that Teen Challenge Adventure ranch is an abusive p
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,31 +14,31 @@ While Three Points Center was not opened under or owned by [WWASP](https://www.r
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Dr. Norm Thibault**is the founder and owner of Three Points Center. Thibault (pronounced T-bo) formerly worked as a Therapist at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) ([Source](https://www.foxnews.com/story/tough-love-schools-are-both-loved-hated) ), which was a notoriously abusive and now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. He later worked as a Therapist at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) ([Source](http://www.heal-online.org/liahona.htm) ). He was also the Founder and Owner of Family Life Therapy Center, PC in St. George, UT.
+** Dr. Norm Thibault** is the founder and owner of Three Points Center. Thibault (pronounced T-bo) formerly worked as a Therapist at [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) ([Source](https://www.foxnews.com/story/tough-love-schools-are-both-loved-hated) ), which was a notoriously abusive and now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. He later worked as a Therapist at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) ([Source](http://www.heal-online.org/liahona.htm) ). He was also the Founder and Owner of Family Life Therapy Center, PC in St. George, UT.
 
-**Thane Palmer**is the current Clinical Director of Three Points Center. He was previously a Therapist at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) . Like Thibault, Palmer also began his career in residential treatment as a Therpist at the confirmedly abusive [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , in La Verkin, UT.
+** Thane Palmer** is the current Clinical Director of Three Points Center. He was previously a Therapist at [Liahona Academy](https://www.reddit.com/r/troubledteens/wiki/index/liahona) . Like Thibault, Palmer also began his career in residential treatment as a Therpist at the confirmedly abusive [Cross Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , in La Verkin, UT.
 
-**Jennifer Fitkin**is the current Clinical Director of Three Points Center. She began her career in residential treatment as a Residential Counselor at Quakerdale in Iowa. She then worked as a Family Therapist at Four Oaks Family and Children's Services in Waterloo, Iowa. She later worked as a Clinical Supervisor at Eagle Quest, a specialized foster care agency in Las Vegas Nevada. She began working at Three Points Center in June 2020.
+** Jennifer Fitkin** is the current Clinical Director of Three Points Center. She began her career in residential treatment as a Residential Counselor at Quakerdale in Iowa. She then worked as a Family Therapist at Four Oaks Family and Children's Services in Waterloo, Iowa. She later worked as a Clinical Supervisor at Eagle Quest, a specialized foster care agency in Las Vegas Nevada. She began working at Three Points Center in June 2020.
 
-**Katie Soli**previously worked as the Clinical Director of Three Points Center. She previously worked as a therapist at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) .
+** Katie Soli** previously worked as the Clinical Director of Three Points Center. She previously worked as a therapist at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) .
 
-**Dr. Mayer Jeppson**is the current Psychological Assessment Specialist at Three Points Center. He is also the current Psychological Assessment Specialist at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) . He previously worked as a Therapist at [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) and [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) .
+** Dr. Mayer Jeppson** is the current Psychological Assessment Specialist at Three Points Center. He is also the current Psychological Assessment Specialist at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) . He previously worked as a Therapist at [Second Nature Entrada](https://www.reddit.com/r/troubledteens/wiki/index/snentrada) and [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada) .
 
-**Jake Roberts**is the current Advanced Practice (Psychiatry) Registered Nurse at Three Points Center. He previously worked as the Nurse at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) .
+** Jake Roberts** is the current Advanced Practice (Psychiatry) Registered Nurse at Three Points Center. He previously worked as the Nurse at [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch) .
 
-**Garth Lasater**is the Assistant Program Director at Three Points Center. He previously worked as a Therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) . He also is/was the Executive Director of [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) .
+** Garth Lasater** is the Assistant Program Director at Three Points Center. He previously worked as a Therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) . He also is/was the Executive Director of [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/ashcreekranch) .
 
-**Karen Sellars**currently works as a Therapist at Three Points Center. Her career in the Troubled Teen Industry began in 1991 when she began spending the summers working as the Educational Director of an unnamed wilderness program in Southern Utah while working as a school teacher. In 1997, she began working for the confirmedly abusive [Brown Schools Inc.](https://www.reddit.com/r/troubledteens/wiki/index/brownschools) , where she helped develop several wilderness programs for the company. One such program, [On Track Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ontrack) made [headlines](https://www.theintelligencer.com/news/article/Teen-Died-in-Illegal-Restraint-Hold-10495746.php) in 2002 when a 17-year-old boy was asphyxiated and killed by a staff member during a violent restraint. She later worked at an unnamed residential treatment program for Youth Sex Offenders in Cedar City, Utah.
+** Karen Sellars** currently works as a Therapist at Three Points Center. Her career in the Troubled Teen Industry began in 1991 when she began spending the summers working as the Educational Director of an unnamed wilderness program in Southern Utah while working as a school teacher. In 1997, she began working for the confirmedly abusive [Brown Schools Inc.](https://www.reddit.com/r/troubledteens/wiki/index/brownschools) , where she helped develop several wilderness programs for the company. One such program, [On Track Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ontrack) made [headlines](https://www.theintelligencer.com/news/article/Teen-Died-in-Illegal-Restraint-Hold-10495746.php) in 2002 when a 17-year-old boy was asphyxiated and killed by a staff member during a violent restraint. She later worked at an unnamed residential treatment program for Youth Sex Offenders in Cedar City, Utah.
 
-**Tana Frey**currently works as a Therapist at Three Points Center. She has been working in the Troubled Teen Industry since 2004 at a variety of wilderness programs, residential treatment centers, transitional boarding schools, and intensive outpatient programs. While most of these programs remain unknown, she is known to have worked at the reportedly abusive [STAR Guides Wilderness Therapy](https://www.reddit.com/r/troubledteens/wiki/index/starguides) .
+** Tana Frey** currently works as a Therapist at Three Points Center. She has been working in the Troubled Teen Industry since 2004 at a variety of wilderness programs, residential treatment centers, transitional boarding schools, and intensive outpatient programs. While most of these programs remain unknown, she is known to have worked at the reportedly abusive [STAR Guides Wilderness Therapy](https://www.reddit.com/r/troubledteens/wiki/index/starguides) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known about the program structure at TPC. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known about the program structure at TPC. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -86,7 +86,7 @@ In regards to the program's license being placed on conditional status, Thibault
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Three Points Center Website Homepage](https://www.threepointscenter.com/)
 
@@ -110,7 +110,8 @@ In regards to the program's license being placed on conditional status, Thibault
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

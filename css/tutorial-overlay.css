@@ -1,0 +1,210 @@
+/* Tutorial Overlay Styles */
+
+/* Overlay Container */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* Allow clicking through when hidden/fading */
+}
+
+.tutorial-overlay.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Highlighted Element */
+.tutorial-highlight {
+    position: relative;
+    z-index: 10001 !important;
+    background-color: white; /* Ensure background isn't transparent */
+    box-shadow: 0 0 0 4px #33A7B5, 0 0 0 1000px rgba(0, 0, 0, 0.5); /* Fake overlay effect */
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Alternative Highlight (using a simple border and z-index elevation) */
+.tutorial-target-highlight {
+    position: absolute;
+    border: 4px solid #ff6600;
+    border-radius: 6px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Tutorial Card/Popover */
+.tutorial-card {
+    position: absolute;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    width: 350px;
+    max-width: 90vw;
+    z-index: 10002;
+    transition: all 0.3s ease;
+    border-left: 5px solid #33A7B5;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .tutorial-card {
+        position: fixed !important;
+        bottom: 20px !important;
+        left: 5% !important;
+        width: 90% !important;
+        max-width: none !important;
+        top: auto !important;
+        transform: none !important;
+        z-index: 10005 !important; /* Ensure it's above everything */
+    }
+    
+    .tutorial-toggle-btn {
+        bottom: 80px; /* Move toggle up so it doesn't overlap card */
+    }
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tutorial-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: #1f2937;
+    margin: 0;
+}
+
+.tutorial-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #9ca3af;
+}
+
+.tutorial-close:hover {
+    color: #4b5563;
+}
+
+.tutorial-content {
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.tutorial-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-steps {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.tutorial-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.tutorial-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.2s;
+}
+
+.tutorial-btn-prev {
+    background-color: white;
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.tutorial-btn-prev:hover {
+    background-color: #f3f4f6;
+}
+
+.tutorial-btn-next {
+    background-color: #33A7B5;
+    color: white;
+}
+
+.tutorial-btn-next:hover {
+    background-color: #2a8c96;
+}
+
+/* Tutorial Toggle Button (Fixed) */
+.tutorial-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #33A7B5;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.tutorial-toggle-btn:hover {
+    transform: scale(1.1);
+    background-color: #2a8c96;
+}
+
+/* Notification Badge */
+.tutorial-toggle-btn.has-notification::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background-color: #ff6600;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.tutorial-toggle-tooltip {
+    position: absolute;
+    right: 60px;
+    background: #1f2937;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.tutorial-toggle-btn:hover .tutorial-toggle-tooltip {
+    opacity: 1;
+}

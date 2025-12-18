@@ -12,21 +12,21 @@ The ranch is located at [1732 72nd St W, Billings, MT 59106](https://www.google.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Franklin Robbie**founded Yellowstone Boys Ranch in 1956, following several years as a pastor and regional director for Youth for Christ. Franklin passed away March 21, 2014, at the age of 96.
+** Franklin Robbie** founded Yellowstone Boys Ranch in 1956, following several years as a pastor and regional director for Youth for Christ. Franklin passed away March 21, 2014, at the age of 96.
 
-**Michael Chavers**is the current CEO of Yellowstone Boys and Girls Ranch. He previuosly worked as a Unit Coordinator (1995-1997), Clinical Supervisor (1997-1999), Clinical Director (1999-2002), Associate Director (2002 – 2007), and Executive Director (2007-2016) of [Nexus-Indian Oaks Family Healing](https://www.reddit.com/r/troubledteens/wiki/index/indianoaksnexus) . He has worked at Yellowstone since July of 2016.
+** Michael Chavers** is the current CEO of Yellowstone Boys and Girls Ranch. He previuosly worked as a Unit Coordinator (1995-1997), Clinical Supervisor (1997-1999), Clinical Director (1999-2002), Associate Director (2002 – 2007), and Executive Director (2007-2016) of [Nexus-Indian Oaks Family Healing](https://www.reddit.com/r/troubledteens/wiki/index/indianoaksnexus) . He has worked at Yellowstone since July of 2016.
 
-**Taylor Mayer**is the Executive Director of Residential Services at Yellowstone Boys and Girls Ranch. He first joined YBGR in December 1993 as a Mental Health Worker and became a Therapist at YBGR in 1994. After leaving YBGR in December 2014, he returned in the role of Executive Director of Residential Services in 2017.
+** Taylor Mayer** is the Executive Director of Residential Services at Yellowstone Boys and Girls Ranch. He first joined YBGR in December 1993 as a Mental Health Worker and became a Therapist at YBGR in 1994. After leaving YBGR in December 2014, he returned in the role of Executive Director of Residential Services in 2017.
 
-**Tra Williams**is the Director of Nursing and Clinic Operations at Yellowstone Boys and Girls Ranch.
+** Tra Williams** is the Director of Nursing and Clinic Operations at Yellowstone Boys and Girls Ranch.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Yellowstone Boys and Girls Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Yellowstone Boys and Girls Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -40,13 +40,13 @@ In 2018, the mother of a former resident filed a lawsuit against YGBR caliming h
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2018: (PARENT)**"Very disappointed with the way things are ran at this facility not even close to what they tell you when you are admitting don’t expect your child to be seeing their therapist on a regular basis don’t expect them to monitor your kid when they are on new medications and don’t expect to get any calls when emergencies happen with your kid there is also some older guy who works in the chapel who has an open investigation with police regarding a sexual assault so think twice parents before admitting your kid here!" - [Hollie (Google Reviews)](https://www.google.com/maps/contrib/105844772782071607517/place/ChIJpZo8WpyISFMRckTkl7JpNjc/@45.7373108,-108.7000278,17z/data=!4m6!1m5!8m4!1e1!2s105844772782071607517!3m1!1e1?hl=en-US)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Yellowstone Boys and Girls Ranch Website Homepage](https://www.ybgr.org/)
 
@@ -60,7 +60,8 @@ In 2018, the mother of a former resident filed a lawsuit against YGBR caliming h
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

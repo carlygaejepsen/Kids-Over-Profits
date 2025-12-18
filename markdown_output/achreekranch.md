@@ -16,17 +16,17 @@ While Ashcreek Ranch Academy is not technically owned by [WWASP](https://www.red
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tammy Prince Berhmann**is the Co-Founder and current Executive Director of Ashcreek Ranch Academy. She previously founded another notoriously abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) , which is now operating under the name [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) under [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) . She got her start in the troubled teen industry working at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and confirmedly abusive behavior-modification program. She is also the sister of Darren Prince.
+** Tammy Prince Berhmann** is the Co-Founder and current Executive Director of Ashcreek Ranch Academy. She previously founded another notoriously abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) , which is now operating under the name [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) under [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) . She got her start in the troubled teen industry working at [Spring Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springridge) , a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated and confirmedly abusive behavior-modification program. She is also the sister of Darren Prince.
 
-**Darren L. Prince**is the Co-Founder of Ashcreek Ranch Academy and has worked as the Admissions Director and, more recently, as Executive Director of the program. He is the brother of Tammy Berhmann. Like his sister, Darren is also involed with founding [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) , which is now operating under the name [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) under [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) . He does not appear to work at Ashcreek Ranch Academy anymore. He currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
+** Darren L. Prince** is the Co-Founder of Ashcreek Ranch Academy and has worked as the Admissions Director and, more recently, as Executive Director of the program. He is the brother of Tammy Berhmann. Like his sister, Darren is also involed with founding [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) , which is now operating under the name [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky) under [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) . He does not appear to work at Ashcreek Ranch Academy anymore. He currently serves on the Board of Directors of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) .
 
-**Boyd Prince**is also reported to have been a founding member of Ashcreek Ranch Academy and is related to Tammy Berhmann and Darren Prince. He also worked as the Athletic Director and Principal of ARA.
+** Boyd Prince** is also reported to have been a founding member of Ashcreek Ranch Academy and is related to Tammy Berhmann and Darren Prince. He also worked as the Athletic Director and Principal of ARA.
 
-**Dave Archer**is the current Clinical Director of Ashcreek Ranch Academy. He previously worked as a Family Teacher at [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy) and [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) , a Therapist/Assistant Clinical Director at [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , and a Therapist/Clinical Director at [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox) . He has worked at Ashcreek Ranch Academy since November of 2019.
+** Dave Archer** is the current Clinical Director of Ashcreek Ranch Academy. He previously worked as a Family Teacher at [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy) and [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage) , a Therapist/Assistant Clinical Director at [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) , and a Therapist/Clinical Director at [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox) . He has worked at Ashcreek Ranch Academy since November of 2019.
 
-**Fotu Soliai**was an Executive Director at Ashcreek Ranch Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) and [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
+** Fotu Soliai** was an Executive Director at Ashcreek Ranch Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) and [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
 
 Survivors from multiple programs have reported cruel treatment, manipulative behavior, and verbal abuse from Fotu. Additional Information:
 
@@ -36,13 +36,13 @@ Survivors from multiple programs have reported cruel treatment, manipulative beh
 *
 [Business License: Soliai and Associates, LLC](https://www.bizapedia.com/ut/soliai-and-associates-llc.html)
 
-**Garth Lasater**worked at Ashcreek Ranch Academy as the Clinical Director and Executive Director from 2012 until around 2015. He previously worked as a Therapist at the notoriously abusive (and now-closed) [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , for 14 years. He currently works as the Assisstant Program Director at [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) , a WWASP spin-off behavior-modification program that originally opened in the former campus of Cross Creek and employs many former CC staff.
+**Garth Lasater** worked at Ashcreek Ranch Academy as the Clinical Director and Executive Director from 2012 until around 2015. He previously worked as a Therapist at the notoriously abusive (and now-closed) [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , for 14 years. He currently works as the Assisstant Program Director at [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) , a WWASP spin-off behavior-modification program that originally opened in the former campus of Cross Creek and employs many former CC staff.
 
-**Salesi Misinale Fakahua (aka Nale Fakahua)**was the Program Director at Ashcreek Ranch Academy from February until July of 2015. He previously worked for [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) as the Residential Director. He also previously worked at [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) , which is a reportedly abusive and now-closed behavior-modification program located in Utah. After he left ARA, he went back to work at Falcon Ridge Ranch, where he appears to currently still be employed.
+** Salesi Misinale Fakahua (aka Nale Fakahua)** was the Program Director at Ashcreek Ranch Academy from February until July of 2015. He previously worked for [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) as the Residential Director. He also previously worked at [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) , which is a reportedly abusive and now-closed behavior-modification program located in Utah. After he left ARA, he went back to work at Falcon Ridge Ranch, where he appears to currently still be employed.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Ashcreek Ranch Academy uses a level-system consisting of four levels. These levels (as of 2012) are:
 
@@ -50,7 +50,7 @@ Like other behavior-modification programs, Ashcreek Ranch Academy uses a level-s
 ***Level 2 – Ranch Hand:***no additional information*
 ***Level 3 – Silver Spur:***no additional information*
 ***Level 4 – Gold Buckle:***no additional information*
-***Caution Level:**This level is used as punishment for boys who break the rules. One this level, all of the boy's "privileges" are revoked. It is reported that boys on this level are even sometimes locked in a basement until they have shown remorse for their actions, which can be weeks at a time.
+***Caution Level:** This level is used as punishment for boys who break the rules. One this level, all of the boy's "privileges" are revoked. It is reported that boys on this level are even sometimes locked in a basement until they have shown remorse for their actions, which can be weeks at a time.
 
 ARA reports that their program revolves heavily around the [Seven Challenges®](http://www.sevenchallenges.com/) program, which is a model based around Alcoholics Anonymous' 12-step program. The "7 Challenges" are reported to be:
 
@@ -78,7 +78,7 @@ In January 2020, a [complaint](https://drive.google.com/file/d/1rTZALCuPZYVmUMVm
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **9/13/2020: (SURVIVOR)**"I went to Ash Creek Academy for ten months. My experience there was ineffective and traumatic. Keep in mind, I cam from [redacted] wilderness therapy in Bend Oregon, and it was one of the greatest experiences of my life. In my time at ash creek i witnessed a program director (who i believe now works at Falcon Ridge Academy) tell a student that he doesn’t agree with his homosexuality and several times stating that he thinks its a choice to be gay. One of Ash Creek’s policy is that if you refuse to do what is asked of you, you can be physically escorted or restrained, even if you are not in danger to yourself or others. It is referred to as a “refusal” and i would often be told that “you can either do what is being asked, or i will help you do it” One example is getting out of bed in the morning. I was threatened to be pulled out of my top bunk several times. The staff at this facility were very unprofessional. One staff in particular told me that the Sandy Hook (where i live) tragedy was a government conspiracy. The most severe case of misconduct i witnessed was a restraint that resulted in a medical injury causing the student to have a cast on his wrist. They didnt take him to the hospital until a few days later, and the student said that his wrist was broken. I cant confirm or deny what his actual injury was. My most severe case of abuse was when i was pushed into a window by a ranch staff, and the window shattered. The staff was suspended for two weeks and then returned. He doesnt work there anymore. Darren Prince owns the program with his sister Tammy and he coincidentally is the admissions director. He will tell you whatever you want to hear to get your money. Also, one of the temporary forms of consequence while i was there was called “basic”. During basic i spent all day in the basement alone with a staff, not allowed to talk to the staff at all. I was allowed 3 walks around the lake each day, and i went to sleep an hour later than everyone else, and woke up an hour earlier. The longest i was on basic for was a week and a half. In my opinion, most of the kids at ash creek lie and pretend their way through the program, just to come back home. I myself did this out of fear that if i was honest about my feelings i would be kept there longer. This is why i told my parents i was very “passionate” about being sober and attending NA meetings. I believe most of the kids that have graduated from ash creek did that same thing, unfortunately. I left the program as a level 2 out of 4. I am writing this to save a child from going to this school or any other one like this ( there are plenty in Utah)." - [Noah (WWASP Survivors)](http://wwaspsurvivors.com/ash-creek-academy-noah-s/)
 
@@ -118,7 +118,7 @@ All students at ARA are miserable. When I was there, the only thing that got us 
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Ashcreek Ranch Academy Website Homepage](https://www.ashcreekranchacademy.com/)
 
@@ -139,4 +139,5 @@ All students at ARA are miserable. When I was there, the only thing that got us 
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

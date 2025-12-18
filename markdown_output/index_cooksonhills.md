@@ -12,21 +12,21 @@ Cookson Hills Christian School is located at [60416 OK-10, Kansas, OK 74347](htt
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Ron Riley**is the current Executive Director of Cookson Hills Christian School.
-
----
-
-## **Program Structure**
+** Ron Riley** is the current Executive Director of Cookson Hills Christian School.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Program Structure**
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Abuse Allegations and Lawsuits**
+
+---
+
+## ** Survivor/Parent Testimonials**
 
 **2020: (SURVIVOR)**"This place was awful, reminds me of the Hephzibah House. The amount of mental and emotional turmoil this place has caused me issues til this day, 20 years later. My house parents were horrible, I would advise you not to send your child here!!!!" - [Rachel (Google Reviews)](https://www.google.com/maps/contrib/106776421994320070375/place/ChIJ_w4CUrfByYcRjeshtWkdbXs/@36.189902,-94.8860872,10.29z/data=!4m6!1m5!8m4!1e1!2s106776421994320070375!3m1!1e1?hl=en-US)
 
@@ -34,7 +34,7 @@ Cookson Hills Christian School is located at [60416 OK-10, Kansas, OK 74347](htt
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Cookson Hills Christian School Website Homepage](https://cooksonhills.org/)
 
@@ -44,7 +44,8 @@ Cookson Hills Christian School is located at [60416 OK-10, Kansas, OK 74347](htt
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

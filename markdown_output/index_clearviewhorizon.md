@@ -14,21 +14,21 @@ While it was not started as a member of the WWASP organization, it does have ext
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Mary Thielbahr**is reported to be one of the Founders of Clearview Horizon.
+** Mary Thielbahr** is reported to be one of the Founders of Clearview Horizon.
 
-**Michele "Mickey" Manning**worked as the Director of Clearview Horizon. She began working at Clearivew Horizon after leaving her previous job at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. She has also worked at [Star Peak Crossing](https://www.reddit.com/r/troubledteens/wiki/index/starpeak) , [Riverview Academy](https://www.reddit.com/r/troubledteens/wiki/index/riverviewacademy) , and [Youth Foundation Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) .
+** Michele "Mickey" Manning** worked as the Director of Clearview Horizon. She began working at Clearivew Horizon after leaving her previous job at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program. She has also worked at [Star Peak Crossing](https://www.reddit.com/r/troubledteens/wiki/index/starpeak) , [Riverview Academy](https://www.reddit.com/r/troubledteens/wiki/index/riverviewacademy) , and [Youth Foundation Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) .
 
-**Mike Linderman**worked as the Clinical Director and Psychotherapist at Clearview Horizon until very recently. He previously worked as the head of Cabinet Mountain Mental Health, which was the counseling services provided to [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also went on to found his own facility called Whispering Pines, although there is very little information about Whispering Pines. He reportedly was repsonsible for supervising the treatment of all children at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) during the time that a resident there committed suicide.
+** Mike Linderman** worked as the Clinical Director and Psychotherapist at Clearview Horizon until very recently. He previously worked as the head of Cabinet Mountain Mental Health, which was the counseling services provided to [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also went on to found his own facility called Whispering Pines, although there is very little information about Whispering Pines. He reportedly was repsonsible for supervising the treatment of all children at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) during the time that a resident there committed suicide.
 
-**Troy Knight**worked as the Executive Director of Clearview Horizon. He previously worked for [Ascent Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) , which is a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) wilderness program. He also worked as the Executive Director of the confirmedly abusive [Wilderness Quest](https://www.reddit.com/r/troubledteens/wiki/index/wildernessquest) in Utah from 2004 until 2009.
+** Troy Knight** worked as the Executive Director of Clearview Horizon. He previously worked for [Ascent Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) , which is a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) wilderness program. He also worked as the Executive Director of the confirmedly abusive [Wilderness Quest](https://www.reddit.com/r/troubledteens/wiki/index/wildernessquest) in Utah from 2004 until 2009.
 
-**Kimberley "Kim" Sparks**is reported by survivors to have worked at Clearview Horizon in an unnamed position. She previously worked as a Family Representative at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) ([source](https://www.fornits.com/WWASP/Jan-04L.pdf) ).
+** Kimberley "Kim" Sparks** is reported by survivors to have worked at Clearview Horizon in an unnamed position. She previously worked as a Family Representative at [Spring Creek Lodge Academy](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) ([source](https://www.fornits.com/WWASP/Jan-04L.pdf) ).
 
-**Jeremiah Guidos**is the current Clinical Director of Clearview Horizon. He previously worked as a Therapist at the [Monarch School](https://www.reddit.com/r/troubledteens/wiki/index/monarch) .
+** Jeremiah Guidos** is the current Clinical Director of Clearview Horizon. He previously worked as a Therapist at the [Monarch School](https://www.reddit.com/r/troubledteens/wiki/index/monarch) .
 
-**Paula Riggs**is the current Director of Admissions of Clearview Horizon. She began her career by working at the notorious and*confirmedly abusive* [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1997 until 2005. [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) was an organization created as a*direct spin-off*of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult. She also worked in Admissions at [WinGate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2013 until 2019, when she left to join Clearview.
+** Paula Riggs** is the current Director of Admissions of Clearview Horizon. She began her career by working at the notorious and*confirmedly abusive* [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1997 until 2005. [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) was an organization created as a*direct spin-off*of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult. She also worked in Admissions at [WinGate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2013 until 2019, when she left to join Clearview.
 
 ---
 
@@ -36,19 +36,19 @@ While it was not started as a member of the WWASP organization, it does have ext
 
 The Program at Clearview Horizon has been [described](https://missoulian.com/news/state-and-regional/former-students-describe-isolation-physical-punishments-cuddle-puddles/article_8a4c6430-c7f4-54c3-8c21-f44ab406e7d7.html) as startilingly similar to the program at Spring Creek Lodge Academy. Like many WWASP programs, Clearview Horizon utilizes a level system consisting of four levels. The levels are reported to be:
 
-**Level 1: Resistance**– Student refuses to cooperate and work with the program.
+** Level 1: Resistance**– Student refuses to cooperate and work with the program.
 
-**Level 2: Open**– Student is expressing openness to change and advice on improving her well-being.
+** Level 2: Open**– Student is expressing openness to change and advice on improving her well-being.
 
-**Level 3: Initial**– Student is holding herself and others accountable, being honest and reliable, taking risks, and stepping out of her comfort zone to make changes in her life.
+** Level 3: Initial**– Student is holding herself and others accountable, being honest and reliable, taking risks, and stepping out of her comfort zone to make changes in her life.
 
-**Level 4: Internalizing**– Student is taking action without thinking about the situation, internalizing the changes she's made without having to remind herself.
+** Level 4: Internalizing**– Student is taking action without thinking about the situation, internalizing the changes she's made without having to remind herself.
 
 Like Spring Creek Lodge, residents at Clearview Horizon are punished with The Pit.
 
 ---
 
-## **Abuse and Lawsuits**
+## ** Abuse and Lawsuits**
 
 Clearview Horizon is known to utilize many of the abusive tactics used in other WWASP programs, including restricting communication, isolation, and deceptive marketing practices. One reported method of abuse was every Saturday, forcing residents to hike up and down the steep sides of a gravel pit for around 50 times (2 hours), which was used as punishment for various infractions during the week.
 
@@ -58,13 +58,13 @@ There have not been any lawsuits specifically against Clearview Horizon, however
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**January 2022: (SURVIVOR)**"If your looking to traumatize your kids further, stop searching! Clearview Girls Academy is especially gifted when it comes to further abusing children! As a former student (2018-2019) I can’t decide what was worse! The head therapist whose main tactic of “growth” is to have you seated in the middle of your peers while he encourages them to say everything they HATE about you to your face (they call it the hot seat), or maybe it was the abusive “house moms” who are in charge of your well-being 24/7 (thankful for the few house moms that did care), or maybe it was the force feeding 3 HUGE meals everyday to ensure no one had an ED which ultimately only encouraged over-eating & also they didn’t care account for all types of ED they only believe in starvation hence the force feeding (since this I haven’t been able to view my body or eating habits the same)… Moral of the story there is only about 3 people (who worked there) I met from clearview that genuinely helped me and they all have since then left that h*ll hole for the same reason.. I went in there with addiction and trauma issues and I came out with more addictive behaviors and traumas I didn’t think it was possible. My father pulled me from the program because these reasons were being hidden from him by the therapists and director until someone else came forward and showed him what was happening here.. They do not care for your or your child.. It takes a certain type of person to survive this.. save your kids" - [Ally (Google Reviews)](https://goo.gl/maps/ewigGmLUkDAYbV5y6)
+** January 2022: (SURVIVOR)**"If your looking to traumatize your kids further, stop searching! Clearview Girls Academy is especially gifted when it comes to further abusing children! As a former student (2018-2019) I can’t decide what was worse! The head therapist whose main tactic of “growth” is to have you seated in the middle of your peers while he encourages them to say everything they HATE about you to your face (they call it the hot seat), or maybe it was the abusive “house moms” who are in charge of your well-being 24/7 (thankful for the few house moms that did care), or maybe it was the force feeding 3 HUGE meals everyday to ensure no one had an ED which ultimately only encouraged over-eating & also they didn’t care account for all types of ED they only believe in starvation hence the force feeding (since this I haven’t been able to view my body or eating habits the same)… Moral of the story there is only about 3 people (who worked there) I met from clearview that genuinely helped me and they all have since then left that h*ll hole for the same reason.. I went in there with addiction and trauma issues and I came out with more addictive behaviors and traumas I didn’t think it was possible. My father pulled me from the program because these reasons were being hidden from him by the therapists and director until someone else came forward and showed him what was happening here.. They do not care for your or your child.. It takes a certain type of person to survive this.. save your kids" - [Ally (Google Reviews)](https://goo.gl/maps/ewigGmLUkDAYbV5y6)
 
 **December 2021: (SURVIVOR)**"Girls need at least two years to process what happens to them at this place. This place is severely manipulative. If you look at most reviews, these girls are almost always “recent graduates”. As a former “student”, I can tell you the general consensus from girls is that this place is bad news.. By all means I’m doing good and am successful in my life two years out, after a diagnosis of CPTSD and years of therapy to resolve what I went through at this place. Lots of manipulation and unsafe environments/people for children to be around. I would never in a thousand years send my child here. Save yourself some money and go somewhere that values your child more than your wallet. 99% of the bad reviews are also deleted. I would bet that more bad reviews have been left than good, but obviously what is posted does not reflect that. Protect yourself and your child. This place teaches conformity and that’s about it." - [Faith (Google Reviews)](https://goo.gl/maps/VDN4L4nW8SM7VaC28)
 
-**December 2021: (SURVIVOR)**"Clearview was one of the most depressing times of my life. Completely isolated from loved ones and society for almost two years at the age of 15 definitely left a negative impact on my transition back into the real world. Forced to live in an environment of extreme conformity and negative reinforcement I suffered to really thrive as a healthy individual and be my true self. Although love over fear was the motto, I lived in a fearful mindset every day surrounded by a lot of mentally unstable girls and lazy staff. During my stay I witnessed a lot of suicide attempts and was even responsible for watching this girl 24/7 to make sure she didn’t self harm or kill herself. The environment was toxic and extremely degrading and unhealthy. After leaving the program I was faced with extreme social anxiety, trouble with school and ptsd. Not to mention my family issues never got any better. Do not send your daughter here, there are so many better ways to help a young girl find her identity in a very stressful and important time of her life." - [Kate (Google Reviews)](https://goo.gl/maps/VwaJ57AZ8ervwVft7)
+** December 2021: (SURVIVOR)**"Clearview was one of the most depressing times of my life. Completely isolated from loved ones and society for almost two years at the age of 15 definitely left a negative impact on my transition back into the real world. Forced to live in an environment of extreme conformity and negative reinforcement I suffered to really thrive as a healthy individual and be my true self. Although love over fear was the motto, I lived in a fearful mindset every day surrounded by a lot of mentally unstable girls and lazy staff. During my stay I witnessed a lot of suicide attempts and was even responsible for watching this girl 24/7 to make sure she didn’t self harm or kill herself. The environment was toxic and extremely degrading and unhealthy. After leaving the program I was faced with extreme social anxiety, trouble with school and ptsd. Not to mention my family issues never got any better. Do not send your daughter here, there are so many better ways to help a young girl find her identity in a very stressful and important time of her life." - [Kate (Google Reviews)](https://goo.gl/maps/VwaJ57AZ8ervwVft7)
 
 **2021: (SURVIVOR)**"Clearview is abusive and commits major fraud. They are not at all what they advertise. They manipulate parents in a vulnerable position for money. Please do more research before sending your child off. There are resources. Google WWASP and its long history. While not obviously related, the program models are near the same and the same people branch out and start these schools. The trauma your child will leave with is much worse than whatever you are currently concerned about." - [Athena (Google Reviews)](https://goo.gl/maps/K8HkzMdE7g3thFWK8)
 
@@ -80,7 +80,7 @@ There have not been any lawsuits specifically against Clearview Horizon, however
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Clearview Horizon Website Homepage](https://www.clearviewhorizon.com/)
 
@@ -94,7 +94,8 @@ There have not been any lawsuits specifically against Clearview Horizon, however
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

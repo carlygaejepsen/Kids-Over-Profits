@@ -2,9 +2,9 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
-Bill Lane & Associates was a Teen Transport Company founded in 1992. The company was founded by Bill Lane, a former member of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult who later worked alongside Mel Wasserman, another Synanon member, at the**confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He worked with CEDU from 1974 until 2005, even at one point becoming the President of CEDU. His transport company was first established as a means of transporting new CEDU enrollees to the program. The company was officially incorporated on March 28, 2005. After CEDU's bankruptcy and collapse only a few days after the company's incorporation, Bill Lane and his staff branched out and began transporting teens to a variety of behavior modification program throughout the country.
+Bill Lane & Associates was a Teen Transport Company founded in 1992. The company was founded by Bill Lane, a former member of the notorious [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) cult who later worked alongside Mel Wasserman, another Synanon member, at the** confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) . He worked with CEDU from 1974 until 2005, even at one point becoming the President of CEDU. His transport company was first established as a means of transporting new CEDU enrollees to the program. The company was officially incorporated on March 28, 2005. After CEDU's bankruptcy and collapse only a few days after the company's incorporation, Bill Lane and his staff branched out and began transporting teens to a variety of behavior modification program throughout the country.
 
 The address associated with the company was [720 Seagirt Ct, San Diego, CA 92109](https://www.google.com/maps/place/Bill+Lane+%26+Associates+Inc/@32.7854779,-117.2537469,57m/data=!3m1!1e3!4m5!3m4!1s0x0:0x920d5d3c5956dcca!8m2!3d32.7854638!4d-117.2535805) .
 
@@ -12,29 +12,29 @@ The company filed for chapter 7 bankruptcy in February of 2020 following the dea
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**William "Bill" Lane**was the Founder and Owner of Bill Lane & Associates. After becoming addicted to heroin at age 13, and after three incarcerations, he joined [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) in 1963 at the age of 21. He stayed at Synanon for over 10 years, which is where he met Mel Wasserman, the founder of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) . He began working at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) with Wasserman in 1974, and continued to work at the program until 1992, when he began his rudimentary "transport" company which transported teens to CEDU. After CEDU filed for bankruptcy and closed most of its schools, Bill continued transporting teens to various other programs until his [death](https://www.legacy.com/us/obituaries/sbsun/name/william-lane-obituary?id=8878579) on March 4, 2019. He died after a lengthy battle with esophageal cancer.
+** William "Bill" Lane** was the Founder and Owner of Bill Lane & Associates. After becoming addicted to heroin at age 13, and after three incarcerations, he joined [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) in 1963 at the age of 21. He stayed at Synanon for over 10 years, which is where he met Mel Wasserman, the founder of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) . He began working at [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) with Wasserman in 1974, and continued to work at the program until 1992, when he began his rudimentary "transport" company which transported teens to CEDU. After CEDU filed for bankruptcy and closed most of its schools, Bill continued transporting teens to various other programs until his [death](https://www.legacy.com/us/obituaries/sbsun/name/william-lane-obituary?id=8878579) on March 4, 2019. He died after a lengthy battle with esophageal cancer.
 
-**Robert "Bob" Lane**was the Vice President of Bill Lane & Associates. He was the brother of Bill Lane. He passed away only one week after his brother on March 11, 2019.
+** Robert "Bob" Lane** was the Vice President of Bill Lane & Associates. He was the brother of Bill Lane. He passed away only one week after his brother on March 11, 2019.
 
-**John Meier**worked as a Transport Agent at Bill Lane & Associates.
+** John Meier** worked as a Transport Agent at Bill Lane & Associates.
 
-**Cathy Lane Kemp**worked as the Director of Communications at Bill Lane & Associates from 2019 until its closure in 2020. She is also the daughter of Bill Lane.
+** Cathy Lane Kemp** worked as the Director of Communications at Bill Lane & Associates from 2019 until its closure in 2020. She is also the daughter of Bill Lane.
 
-**Dawn James**worked as the Director of Client Services at Bill Lane & Associates from 2005 until its closure in 2020.
+** Dawn James** worked as the Director of Client Services at Bill Lane & Associates from 2005 until its closure in 2020.
 
-**Carol Lane**worked as the Office Manager and Treasurer of Bill Lane & Associates. She was also Bill Lane's wife.
+** Carol Lane** worked as the Office Manager and Treasurer of Bill Lane & Associates. She was also Bill Lane's wife.
 
-**Derrick Ellis**worked as a Transport Agent at Bill Lane & Associates.
+** Derrick Ellis** worked as a Transport Agent at Bill Lane & Associates.
 
-**James Rowland**worked as a Transport Agent at Bill Lane & Associates from 2011 until its closure in 2020.
+** James Rowland** worked as a Transport Agent at Bill Lane & Associates from 2011 until its closure in 2020.
 
-**Tyler Reinhold**worked as a Transport Agent at Bill Lane & Associates.
+** Tyler Reinhold** worked as a Transport Agent at Bill Lane & Associates.
 
 ---
 
-## **Program Affiliations**
+## ** Program Affiliations**
 
 The following is a partial list of programs that Bill Lane & Associates reportedly transported adolescents to and from:
 
@@ -56,7 +56,7 @@ The following is a partial list of programs that Bill Lane & Associates reported
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Bill Lane & Associates Website Homepage](https://web.archive.org/web/20060630105806/http://www.billlaneandassociates.com/) (archived, 2006)
 
@@ -70,7 +70,8 @@ The following is a partial list of programs that Bill Lane & Associates reported
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

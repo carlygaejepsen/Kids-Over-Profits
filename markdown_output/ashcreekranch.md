@@ -12,37 +12,37 @@ The program was located at [652 Shady Ln, Toquerville, UT 84774](https://www.goo
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tammy Behrmann**is the sister of Darren Prince and was the former co-founder and owner of the WWASP program [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) . She is also the current co-founder and owner of [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky)
+** Tammy Behrmann** is the sister of Darren Prince and was the former co-founder and owner of the WWASP program [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) . She is also the current co-founder and owner of [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky)
 
-**Darren Prince**is the brother of Tammy Behrmann and was the former co-founder and owner of the WWASP program [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) . He is also the current co-founder and owner of [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky)
+** Darren Prince** is the brother of Tammy Behrmann and was the former co-founder and owner of the WWASP program [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) . He is also the current co-founder and owner of [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky)
 
-**Salesi Misinale Fakahua (aka Nale Fakahua)**formerly worked at the confirmedly abusive [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) in Virgin, UT.
+** Salesi Misinale Fakahua (aka Nale Fakahua)** formerly worked at the confirmedly abusive [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) in Virgin, UT.
 
-**Garth Lasater**was the Executive Director and Co-Founder of Ashcreek Ranch Academy. He is cureently the is the Assistant Program Director at [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) . He previously worked as a Therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) .
+** Garth Lasater** was the Executive Director and Co-Founder of Ashcreek Ranch Academy. He is cureently the is the Assistant Program Director at [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) . He previously worked as a Therapist at [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Ashcreek Ranch Academy utilizes a level system. The levels are:
 
-**Green Horn**- Level 1
+** Green Horn**- Level 1
 
-**Ranch Hand**- Level 2
+** Ranch Hand**- Level 2
 
-**Silver Spur**- Level 3
+** Silver Spur**- Level 3
 
-**Golden Buckle**- Level 4
+** Golden Buckle**- Level 4
 
-There is also**Caution Level**which is used as punishment.
+There is also** Caution Level** which is used as punishment.
 
 The average length of stay was around 10 months, but can be substantially longer if the child is resistant.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **1/21/2020: (PARENT)**"STAY CLEAR!!! While at one time this may have been an OK program it certainly has NOT been the past 15 months. We pulled our son after 2 months, regrettably six weeks too long. Horrible supervision, abusive, tons of bullying, atrocious food standards, no weekend activities and therapists who don't know how to connect and help students or parents. The ONLY good from our exposure to ARA was the weekend at Zions when we rescued/pulled our son." - [Amy F. (YELP)](https://www.yelp.com/biz/ashcreek-academy-toquerville)
 
@@ -56,7 +56,7 @@ The average length of stay was around 10 months, but can be substantially longer
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Ashcreek Academy - WWASP Survivors](http://wwaspsurvivors.com/ashcreek-academy/)
 
@@ -64,7 +64,8 @@ The average length of stay was around 10 months, but can be substantially longer
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

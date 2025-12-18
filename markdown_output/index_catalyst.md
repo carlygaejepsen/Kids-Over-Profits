@@ -14,27 +14,27 @@ It has been reported that the boys at Catalyst at sometimes taken on co-ed "outi
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jordan L. Larsen**is the Founder, Admissions Director and Owner of Catalyst RTC. He appears to have began his career working at [Lineline for Youth](https://www.reddit.com/r/troubledteens/wiki/index/lifelineut) , which is the confirmed rebrand of [KIDS of Greater Salt Lake](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) , which itself was a spin-off of the notorious and**confirmedly abusive** [Straight Inc](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . Larsen also formerly worked for the [Academy at Canyon Creek](https://www.reddit.com/r/troubledteens/wiki/index/somerset) (the confirmedly abusive [Somerset Program](https://www.reddit.com/r/troubledteens/wiki/index/somerset) when it was owned by [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) ), and at [Gateway Academy](https://www.reddit.com/r/troubledteens/wiki/index/gatewayaca) .
+** Jordan L. Larsen** is the Founder, Admissions Director and Owner of Catalyst RTC. He appears to have began his career working at [Lineline for Youth](https://www.reddit.com/r/troubledteens/wiki/index/lifelineut) , which is the confirmed rebrand of [KIDS of Greater Salt Lake](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) , which itself was a spin-off of the notorious and** confirmedly abusive** [Straight Inc](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . Larsen also formerly worked for the [Academy at Canyon Creek](https://www.reddit.com/r/troubledteens/wiki/index/somerset) (the confirmedly abusive [Somerset Program](https://www.reddit.com/r/troubledteens/wiki/index/somerset) when it was owned by [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) ), and at [Gateway Academy](https://www.reddit.com/r/troubledteens/wiki/index/gatewayaca) .
 
-**Kreg Edgmon**was the Executive Director and Co-Owner of Catalyst RTC from 2007 until 2019. He no longer appears to work at this program, but instead works as a consultant, writer, and speaker at "Something Greater".
+** Kreg Edgmon** was the Executive Director and Co-Owner of Catalyst RTC from 2007 until 2019. He no longer appears to work at this program, but instead works as a consultant, writer, and speaker at "Something Greater".
 
-**Seth Geisler**is the Marketing Director and Co-Owner of Catalyst RTC. He previously worked as a Primary Therapist and Team Director at [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. He has worked at Catalyst since 2006.
+** Seth Geisler** is the Marketing Director and Co-Owner of Catalyst RTC. He previously worked as a Primary Therapist and Team Director at [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) , a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. He has worked at Catalyst since 2006.
 
-**Adam Poll**is the Clinical Director and Co-Owner of Catalyst RTC. He has worked at Catalyst since 2007. He finished his Master's degree in 2000, but it is unknown where he worked between then and 2007 when he began at Catalyst.
+** Adam Poll** is the Clinical Director and Co-Owner of Catalyst RTC. He has worked at Catalyst since 2007. He finished his Master's degree in 2000, but it is unknown where he worked between then and 2007 when he began at Catalyst.
 
-**Trevor Loria**formerly worked as the Program Director and Co-Owner of Catalyst RTC. He now works as the President/CEO of Simon House Recovery Centre in Alberta, Canada.
+** Trevor Loria** formerly worked as the Program Director and Co-Owner of Catalyst RTC. He now works as the President/CEO of Simon House Recovery Centre in Alberta, Canada.
 
-**Craig LaMont**was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he currently works as Telos' Chief Executive Officer. He has also worked as the Vice President and later the President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He was also reportedly the Co-Owner of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) .
+** Craig LaMont** was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he currently works as Telos' Chief Executive Officer. He has also worked as the Vice President and later the President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He was also reportedly the Co-Owner of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) .
 
-**Tony Mosier**was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is also one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he currently works as Telos' Chief Operations Officer. He is also the current President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He is reported to have previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) .
+** Tony Mosier** was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is also one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he currently works as Telos' Chief Operations Officer. He is also the current President of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) . He is reported to have previously worked as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) .
 
-**Greg Rush**was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is also one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he previously worked as the Director of Clinical Services at Telos RTC. He met Tony Mosier when he was working as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) with Tony. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
+** Greg Rush** was a Board Member of Catalyst RTC ([source](https://web.archive.org/web/20080905120344/http://www.catalystrtc.com/new/people.html) ). He is also one of the Founders of [Telos RTC](https://www.reddit.com/r/troubledteens/wiki/index/telosrtc) , and he previously worked as the Director of Clinical Services at Telos RTC. He met Tony Mosier when he was working as a Therapist at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) with Tony. He was also a Board Member of [Catalyst RTC](https://www.reddit.com/r/troubledteens/wiki/index/catalyst) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Catalyst RTC uses a level system consisting of multiple phases. The programs uses an "incentive-based" model. Each phase introduces new privileges. On the first two phases, residents are not allowed even basic privileges such as reading non-therapeutic books.
 
@@ -46,25 +46,25 @@ During the spring to fall months, they boys are forced to run 3 miles every othe
 
 ---
 
-## **Daily Schedule**
+## ** Daily Schedule**
 
-***6:30 AM:**Wake Up
-***6:45 AM:**The Gym
-***7:45 AM:**Get Ready for the Day
-***9:00 AM:**School Block
-***11:00 AM:**Therapeutic Clinical Group
-***12:30 PM:**Lunch
-***1:30 PM:**Leisure Time
-***2:30 PM:**Study Hall
-***3:30 PM:**School Block
-***6:00 PM:**Dinner
-***7:00 PM:**Evening Activity
-***9:30 PM:**Get Ready for Bed
-***10:00 PM:**Lights Out
+***6:30 AM:** Wake Up
+***6:45 AM:** The Gym
+***7:45 AM:** Get Ready for the Day
+***9:00 AM:** School Block
+***11:00 AM:** Therapeutic Clinical Group
+***12:30 PM:** Lunch
+***1:30 PM:** Leisure Time
+***2:30 PM:** Study Hall
+***3:30 PM:** School Block
+***6:00 PM:** Dinner
+***7:00 PM:** Evening Activity
+***9:30 PM:** Get Ready for Bed
+***10:00 PM:** Lights Out
 
 ---
 
-## **Abuse**
+## ** Abuse**
 
 Catalyst RTC has been reported by many survivors to be an abusive program. Allegations of abuse and neglect that have been reported by survivors include unfair and excessive punishments, forced manual labor, homophobia, and untrained/unqualified staff members. Many survivors report PTSD and other trauma-related conditions resulting from their time at Catalyst RTC.
 
@@ -72,7 +72,7 @@ In addition, the human right's organization [HEAL](http://www.heal-online.org/th
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **2020: (SURVIVOR)**"I'll start off with positives because in all honesty there are very few. When I attended in 2016/2017 the staff were great, the teachers were great, but a lot of the practices were flawed. It is a very comfortable living situation and the food is much better than most would like to admit. I must admit as well that some of the connections I made with the few quality staff, will last a life time. Now onto, negatives or "constructive" as they would like to call it. My first issue was in the parent tour groups. They seem to strictly plan tours for when the kids are in group and not in a potentially volatile state. This is an issue because it does not reflect the genuine lifestyle we lived. When the parents went to sit and speak with students, the same students were always chosen and we were given specific things to talk about. If you did happen to bring up a negative aspect of the program, you were put on "consequences" in order to reprimand you. They will have students tell you: the therapists are great, the food is amazing and healthy, the guys are all good and the staff is nice. Meanwhile, the staff turnover rate is through the roof, the therapists use the tactics they reprimand you for, in order to make you "change," and it is rare that a whole house will get along well. Another problem I experienced was the unfair treatment between students and "Guinea Pig" mentality that the program enforced. The therapists and staff are inconsistent with consequences as well as rewards. One more issue is that they have a VERY VERY VERY loose set of guidelines for the people they accept into the program. It seems as though they want to help kids who have serious mental health issues, but are not equipped to do so whether it be in tactics, staff or therapy methods, they are equipped only to help high functioning kids. A majority of their staff are of the Mormon faith, there is nothing wrong with this, but it makes it much harder for the staff to relate to you at all, and it affects the relationships you can potentially develop. Their staff are not fairly compensated and thus their work reflects. The "change rate" of the people who attend here is much lower than they would like to admit. It is very easy to "fake it till you make it" in this program because the staff and therapists simply are not diligent enough. Because of this, out of the people I attended with, many either went back to treatment at a different place, or suffer silently. This program is not a guaranteed success. If you want to send your kid to a residential treatment center, this is not the one. I promise. I would much recommend a boarding school or even a lightly therapeutic. Don't spend 10k+ a month for fake services that wont guarantee anything. Love your child and help them, don't send them away. -A Former Student/Resident" - [Jesse (Google Reviews)](https://www.google.com/maps/place/Catalyst+Residential+Treatment/@41.4900423,-112.0359817,324a,35y,270h/data=!3m1!1e3!4m7!3m6!1s0x0:0xd5ea191b4b6d4a!8m2!3d41.4902114!4d-112.0353546!9m1!1b1)
 
@@ -88,7 +88,7 @@ In addition, the human right's organization [HEAL](http://www.heal-online.org/th
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Catalyst RTC Website Homepage](http://www.catalystrtc.com/)
 
@@ -98,7 +98,8 @@ In addition, the human right's organization [HEAL](http://www.heal-online.org/th
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -4,7 +4,7 @@
 
 ---
 
-**Essential Information**
+** Essential Information**
 
 We have been unable to determine this state's requirements for public schools at this time.
 
@@ -14,15 +14,15 @@ We have been unable to determine this state's requirements for public schools at
 
 ---
 
-|**Program Name**|**Subreddit Information**|**HEAL Information**|**Survivor Testimonies**|
-| [**Diamond Grove Center for Children**](https://www.reddit.com/r/troubledteens/wiki/index/diamondgrove) | - | - | - |
-| [**Gulfport Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/gulfportbhs) | - | - | - |
-| [**Millcreek of Pontotoc Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekpontotoc) | - | - | - |
-| [**Millcreek of Magee Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekmagee) | - | - | - |
-| [**Parkwood Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/parkwoodbhs) | - | - | - |
+|** Program Name**|** Subreddit Information**|** HEAL Information**|** Survivor Testimonies**|
+| [** Diamond Grove Center for Children**](https://www.reddit.com/r/troubledteens/wiki/index/diamondgrove) | - | - | - |
+| [** Gulfport Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/gulfportbhs) | - | - | - |
+| [** Millcreek of Pontotoc Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekpontotoc) | - | - | - |
+| [** Millcreek of Magee Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekmagee) | - | - | - |
+| [** Parkwood Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/parkwoodbhs) | - | - | - |
 ---
 
-## **Closed Programs in Mississippi**
+## ** Closed Programs in Mississippi**
 
 ---
 
@@ -30,13 +30,13 @@ We have been unable to determine this state's requirements for public schools at
 
 ---
 
-|**Program Name**|**Subreddit Information**|**HEAL Information**|**Survivor Testimonies**|
-| [**Accendo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/accendo) | - | - | - |
-| [**Bethel Boys Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) | - | - | - |
-| [**Bethel Girls Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelgirls) | - | - | - |
-| [**Bethesda Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/bethesdagirls) | - | - | - |
-| [**Eagle Point Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eaglept) | - | - | - |
-| [**Gulf Coast Academy**](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) | - | - | - |
+|** Program Name**|** Subreddit Information**|** HEAL Information**|** Survivor Testimonies**|
+| [** Accendo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/accendo) | - | - | - |
+| [** Bethel Boys Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelboys) | - | - | - |
+| [** Bethel Girls Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bethelgirls) | - | - | - |
+| [** Bethesda Home for Girls**](https://www.reddit.com/r/troubledteens/wiki/index/bethesdagirls) | - | - | - |
+| [** Eagle Point Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/eaglept) | - | - | - |
+| [** Gulf Coast Academy**](https://www.reddit.com/r/troubledteens/wiki/index/gulfcoast) | - | - | - |
 ---
 
 ^(Page Last Updated: 20 March 2020.)
@@ -48,4 +48,5 @@ We have been unable to determine this state's requirements for public schools at
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

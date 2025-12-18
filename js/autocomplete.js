@@ -1,5 +1,5 @@
 /**
- * Autocomplete Module for Facility Form
+ * Autocomplete Module for Data Form
  * Handles autocomplete dropdown functionality in a modular way
  * 
  * This module provides:
@@ -208,23 +208,23 @@ function getAllOperators() {
             // Skip project-level operator data for location projects
             // (location project names are places, not companies)
             if (project.category !== 'locations') {
-                if (project.data?.operator?.name) operators.add(project.data.operator.name);
-                if (project.data?.operator?.currentName) operators.add(project.data.operator.currentName);
-                if (project.data?.operator?.otherNames) {
+                if (project.data && project.data.operator && project.data.operator.name) operators.add(project.data.operator.name);
+                if (project.data && project.data.operator && project.data.operator.currentName) operators.add(project.data.operator.currentName);
+                if (project.data && project.data.operator && project.data.operator.otherNames) {
                     project.data.operator.otherNames.forEach(name => operators.add(name));
                 }
             }
 
             // Always collect facility-level operator data (these are valid company names)
-            project.data?.facilities?.forEach(facility => {
-                if (facility.identification?.currentOperator) {
+            project.data && project.data.facilities && project.data.facilities.forEach(facility => {
+                if (facility.identification && facility.identification.currentOperator) {
                     operators.add(facility.identification.currentOperator);
                 }
                 // Also collect sourceOperator from location project facilities
-                if (facility.sourceOperator?.name) {
+                if (facility.sourceOperator && facility.sourceOperator.name) {
                     operators.add(facility.sourceOperator.name);
                 }
-                facility.otherOperators?.forEach(op => operators.add(op));
+                facility.otherOperators && facility.otherOperators.forEach(op => operators.add(op));
             });
         });
 
@@ -244,23 +244,22 @@ function getAllFacilityNames() {
         const names = new Set(customFacilityNames);
 
         Object.values(projects).forEach(project => {
-            // Collect from facilities array
-            project.data?.facilities?.forEach(facility => {
-                if (facility.identification?.name) names.add(facility.identification.name);
-                if (facility.identification?.currentName) names.add(facility.identification.currentName);
-                facility.identification?.otherNames?.forEach(name => names.add(name));
+            project.data && project.data.facilities && project.data.facilities.forEach(facility => {
+                if (facility.identification && facility.identification.name) names.add(facility.identification.name);
+                if (facility.identification && facility.identification.currentName) names.add(facility.identification.currentName);
+                facility.identification && facility.identification.otherNames && facility.identification.otherNames.forEach(name => names.add(name));
             });
 
             // Collect from referrer consultants' facilitiesReferred (shared autocomplete)
-            if (Array.isArray(project.data?.referrerConsultants)) {
+            if (Array.isArray(project.data && project.data.referrerConsultants)) {
                 project.data.referrerConsultants.forEach(consultant => {
-                    if (Array.isArray(consultant?.facilitiesReferred)) {
+                    if (Array.isArray(consultant && consultant.facilitiesReferred)) {
                         consultant.facilitiesReferred.forEach(name => {
                             if (name && typeof name === 'string') names.add(name);
                         });
                     }
                     // Also check knownReferrals (alias field)
-                    if (Array.isArray(consultant?.knownReferrals)) {
+                    if (Array.isArray(consultant && consultant.knownReferrals)) {
                         consultant.knownReferrals.forEach(name => {
                             if (name && typeof name === 'string') names.add(name);
                         });
@@ -612,7 +611,7 @@ function getAutocompleteEndpoint() {
     }
 
     // Check config endpoints
-    const config = window.KOP_FACILITY_FORM_CONFIG || {};
+    const config = window.KOP_DATA_FORM_CONFIG || {};
     if (config.endpoints?.AUTOCOMPLETE) {
         return config.endpoints.AUTOCOMPLETE;
     }

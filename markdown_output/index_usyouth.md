@@ -14,13 +14,13 @@ US Youth Services appears to have closed in 2018, following the arrest of anothe
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Brent Hall**was the director of [Red River Academy](https://www.reddit.com/r/troubledteens/wiki/index/redriver) . It is likely that he was also involved with US Youth Services.
+** Brent Hall** was the director of [Red River Academy](https://www.reddit.com/r/troubledteens/wiki/index/redriver) . It is likely that he was also involved with US Youth Services.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 US Youth Services used an identical program to [Red River Academy](https://www.reddit.com/r/troubledteens/wiki/index/redriver) .
 
@@ -56,9 +56,9 @@ US Youth Services appears to have closed in 2018.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*There are no survivor testimonials publically available. If you are a survivor of US Youth Services and would like to provide a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*There are no survivor testimonials publically available. If you are a survivor of US Youth Services and would like to provide a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -74,7 +74,8 @@ US Youth Services appears to have closed in 2018.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

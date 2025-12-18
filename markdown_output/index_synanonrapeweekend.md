@@ -2,7 +2,7 @@
 
 ---
 
-## **The Events of Rape Weekend**
+## ** The Events of Rape Weekend**
 
 *The following is taken from the book, [The Rise and Fall of Synanon: A California Utopia](https://www.amazon.com/Rise-Fall-Synanon-California-Utopia/dp/0801865832) :*
 
@@ -34,13 +34,14 @@ An important “spring break” event in the fall of 1987 focused on ways to pre
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 Janzen, Rod A., and Janzen, Professor Rod. [The rise and fall of Synanon: a California utopia](https://www.google.com/books/edition/The_Rise_and_Fall_of_Synanon/BYnCAAAAIAAJ?hl=en) . United Kingdom, Johns Hopkins University Press, 2001.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

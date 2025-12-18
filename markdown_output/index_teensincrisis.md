@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Teens In Crisis, LLC was a company which operated as a marketing arm of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization. It was created in 2001 and the Registered Agent listed by the business is Jake Peart. The address associated with the company is [171 S Main St, Hurricane, UT 84737](https://www.google.com/maps/place/171+Main+St,+Hurricane,+UT+84737/@37.1740115,-113.2879746,115m/data=!3m1!1e3!4m5!3m4!1s0x80caf6ccb000eca5:0x609bb280589ff31!8m2!3d37.1740391!4d-113.2877828) .
 
@@ -12,13 +12,13 @@ On August 25, 2006, the prominent and prestigious Turley Law Firm of Dallas, Tex
 
 ---
 
-## **Founders and Notable Employees**
+## ** Founders and Notable Employees**
 
-**Willard Jake Peart**is listed as the Registered Agent of Teens In Crisis, LLC.
+** Willard Jake Peart** is listed as the Registered Agent of Teens In Crisis, LLC.
 
 ---
 
-## **Programs Recommended by Teens In Crisis**
+## ** Programs Recommended by Teens In Crisis**
 
 In 2003, the list of programs recommended by Teens In Crisis were:
 
@@ -67,7 +67,8 @@ The view the complete list, click [here](https://web.archive.org/web/20030602190
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

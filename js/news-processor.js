@@ -580,7 +580,7 @@
         
         if (formData.articleType) {
             text += '--- ARTICLE TYPE ---\n';
-            const typeLabel = articleTypes.find(t => t.value === formData.articleType)?.label || formData.articleType;
+            const typeLabel = articleTypes.find(t => t.value === formData.articleType) && articleTypes.find(t => t.value === formData.articleType).label || formData.articleType;
             text += `${typeLabel}\n\n`;
             
             if (formData.articleType === 'lawsuit' && output.lawsuitDetails) {
@@ -862,10 +862,10 @@
 
     async function processWithAI() {
         const url = formData.url;
-        const pastedText = document.getElementById('ai-article-text')?.value || '';
+        const pastedText = document.getElementById('ai-article-text') && document.getElementById('ai-article-text').value || '';
         const statusEl = document.getElementById('ai-status');
         const processBtn = document.getElementById('process-with-ai');
-        const provider = document.getElementById('ai-provider')?.value || 'ollama';
+        const provider = document.getElementById('ai-provider') && document.getElementById('ai-provider').value || 'ollama';
 
         if (!url && !pastedText) {
             statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';
@@ -1002,8 +1002,8 @@
                 keyPersonnel: formData.keyPersonnel,
                 ownership: formData.ownership,
                 // Submission metadata
-                submittedBy: document.getElementById('newsSubmitterEmail')?.value || '',
-                submissionNotes: document.getElementById('newsSubmissionNotes')?.value || ''
+                submittedBy: document.getElementById('newsSubmitterEmail') && document.getElementById('newsSubmitterEmail').value || '',
+                submissionNotes: document.getElementById('newsSubmissionNotes') && document.getElementById('newsSubmissionNotes').value || ''
             };
 
             try {

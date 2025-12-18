@@ -2,37 +2,37 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Acadia Healthcare is a Troubled Teen Industry company.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
 ---
 
-## **Open Acadia Teen Residential Programs**
+## ** Open Acadia Teen Residential Programs**
 
-|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|
-| [**Cedar Crest Hospital & RTC**](https://www.reddit.com/r/troubledteens/wiki/index/cedarcrest) | - | - | - |
-| [**Harbor Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/harboroaks) | - | - | - |
-| [**Lakeland Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/lakelandbhs) | - | Springfield, MO | - |
-| [**Little Creek Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/littlecreek) | - | Conway, AR | - |
-| [**Millcreek Behavioral Health PRTF**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekbh) | - | Fordyce, AR | - |
-| [**Millcreek of Pontotoc Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekpontotoc) | - | - | - |
-| [**Millcreek of Magee Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekmagee) | - | - | - |
-| [**Piney Ridge Center**](https://www.reddit.com/r/troubledteens/wiki/index/pineyridge) | - | Fayetteville, AR | - |
-| [**Ridgeview Group Home**](https://www.reddit.com/r/troubledteens/wiki/index/ridgeviewgh) | - | Fayetteville, AR | - |
-| [**Starlight Recovery Center**](https://www.reddit.com/r/troubledteens/wiki/index/starlight) | - | - | - |
-| [**Southwood Psychiatric Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/southwood) | - | Pittsburgh, PA | - |
-| [**Talisman Camps**](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) | - | Zirconia, NC | - |
-| [**Vantage Point Behavioral Health Hospital RTP**](https://www.reddit.com/r/troubledteens/wiki/index/vantagepoint) | - | Fayetteville, AR | - |
-| [**Village Behavioral Health Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) | - | Louisville, TN | - |
-| [**Youth Care of Utah**](https://www.reddit.com/r/troubledteens/wiki/index/youthcareinc) | 1989 | Draper, UT | - |
+|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
+| [** Cedar Crest Hospital & RTC**](https://www.reddit.com/r/troubledteens/wiki/index/cedarcrest) | - | - | - |
+| [** Harbor Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/harboroaks) | - | - | - |
+| [** Lakeland Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/lakelandbhs) | - | Springfield, MO | - |
+| [** Little Creek Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/littlecreek) | - | Conway, AR | - |
+| [** Millcreek Behavioral Health PRTF**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekbh) | - | Fordyce, AR | - |
+| [** Millcreek of Pontotoc Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekpontotoc) | - | - | - |
+| [** Millcreek of Magee Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/millcreekmagee) | - | - | - |
+| [** Piney Ridge Center**](https://www.reddit.com/r/troubledteens/wiki/index/pineyridge) | - | Fayetteville, AR | - |
+| [** Ridgeview Group Home**](https://www.reddit.com/r/troubledteens/wiki/index/ridgeviewgh) | - | Fayetteville, AR | - |
+| [** Starlight Recovery Center**](https://www.reddit.com/r/troubledteens/wiki/index/starlight) | - | - | - |
+| [** Southwood Psychiatric Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/southwood) | - | Pittsburgh, PA | - |
+| [** Talisman Camps**](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) | - | Zirconia, NC | - |
+| [** Vantage Point Behavioral Health Hospital RTP**](https://www.reddit.com/r/troubledteens/wiki/index/vantagepoint) | - | Fayetteville, AR | - |
+| [** Village Behavioral Health Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) | - | Louisville, TN | - |
+| [** Youth Care of Utah**](https://www.reddit.com/r/troubledteens/wiki/index/youthcareinc) | 1989 | Draper, UT | - |
 ---
 
-## **Closed Acadia Teen Residential Programs**
+## ** Closed Acadia Teen Residential Programs**
 
 ---
 
@@ -40,13 +40,13 @@ Acadia Healthcare is a Troubled Teen Industry company.
 
 ---
 
-|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|**Reopened?**|
-| [**Acadia Montana**](https://www.reddit.com/r/troubledteens/wiki/index/acadiamont) | 2006-2019 | Butte, MT | - | N |
-| [**SUWS of the Carolinas**](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) | 2000-2023 | - | - | N |
-| [**Timberline Knolls**](https://www.reddit.com/r/troubledteens/wiki/index/timberline/) | 2012-2025 | Lemont, IL | - | N |
+|**Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|** Reopened?**|
+| [** Acadia Montana**](https://www.reddit.com/r/troubledteens/wiki/index/acadiamont) | 2006-2019 | Butte, MT | - | N |
+| [** SUWS of the Carolinas**](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) | 2000-2023 | - | - | N |
+| [** Timberline Knolls**](https://www.reddit.com/r/troubledteens/wiki/index/timberline/) | 2012-2025 | Lemont, IL | - | N |
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 "Acadia Healthcare Faces $405M Judgement in Civil Abuse Case" by Chris Larson [(Behavioral Health Business, 07/12/2023)](https://bhbusiness.com/2023/07/12/acadia-healthcare-faces-405m-judgement-in-civil-abuse-case/)
 
@@ -60,7 +60,7 @@ Acadia Healthcare is a Troubled Teen Industry company.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 "Exposing a Hospital Chain’s Disturbing Practices" by Emmett Lindner [(New York Times, 09/09/2024)](https://archive.ph/20240909084251/https://www.nytimes.com/2024/09/09/insider/acadia-healthcare.html)
 
@@ -77,4 +77,5 @@ Acadia Healthcare is a Troubled Teen Industry company.
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

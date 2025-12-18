@@ -14,25 +14,25 @@ Never Give Up closed in 2023.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Matthew Leland Cox**is the owner and founder of NGUYHC. He founded the Never Give Up Foundation in 2008, and then founded Never Give Up Behavioral Health Services in 2012, where he worked as CEO and Executive Director. He currently works as a Professional Speaker at Team Never Give Up.
+** Matthew Leland Cox** is the owner and founder of NGUYHC. He founded the Never Give Up Foundation in 2008, and then founded Never Give Up Behavioral Health Services in 2012, where he worked as CEO and Executive Director. He currently works as a Professional Speaker at Team Never Give Up.
 
-**Daniel Cox**is the co-owner and co-founder of NGUYHC. He is also the brother of Matthew Cox. His prior employment is unknown.
+** Daniel Cox** is the co-owner and co-founder of NGUYHC. He is also the brother of Matthew Cox. His prior employment is unknown.
 
-**Dr. Uzoma Osuchukwu**is the current Chief Medical Coordinator at NGUYHC. Their prior employment is unknown.
+** Dr. Uzoma Osuchukwu** is the current Chief Medical Coordinator at NGUYHC. Their prior employment is unknown.
 
-**Folaalela (Risa) Tiatia**is the current Residential Coordinator at NGUYHC. They are potentially related to Simanua Tiatia, who previously worked at [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's**confirmedly abusive** [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) and also at [Coral Reef Academy](https://www.reddit.com/r/troubledteens/wiki/index/coralreef) , which is based in Nevada but operates in Samoa.
+** Folaalela (Risa) Tiatia** is the current Residential Coordinator at NGUYHC. They are potentially related to Simanua Tiatia, who previously worked at [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) 's** confirmedly abusive** [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) and also at [Coral Reef Academy](https://www.reddit.com/r/troubledteens/wiki/index/coralreef) , which is based in Nevada but operates in Samoa.
 
-**Benjamin O'steen**current works as an Administrator at NGUYHC. His prior employment is unknown.
+** Benjamin O'steen** current works as an Administrator at NGUYHC. His prior employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 No information is known about this program's structure, although it is likely similar to the program structures of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) , [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) , and other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated programs.
 
-*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,13 +42,13 @@ In December of 2019, the Nye County Sherriff's Department launched an [investiga
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2019: (SURVIVOR)**"this place is OK the kids there are able to hurt themselves because the staff don't check the kids well enough. male staff are preying on the girls there, the staff don't listen when the kids tell them they don't like to be touched, this place should be co-ed but keep the dorms separate still." - [animal lover (Google Reviews)](https://www.google.com/maps/contrib/107896616197889950883/place/ChIJu1jpUvwJx4AR9_33w-9TTIs/@36.4956939,-116.422475,17z/data=!4m6!1m5!8m4!1e1!2s107896616197889950883!3m1!1e1?hl=en-US)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Never Give Up Youth Healing Center Website Homepage](https://nevergiveupbhs.com/)
 
@@ -67,4 +67,5 @@ In December of 2019, the Nye County Sherriff's Department launched an [investiga
 Last revised by [rjm2013](/user/rjm2013/)
 ## Page title
 
-SaveCancel
+
+

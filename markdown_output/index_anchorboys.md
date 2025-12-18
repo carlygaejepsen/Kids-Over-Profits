@@ -6,7 +6,7 @@
 
 ## **History and Background Information**
 
-Anchor Home for Boys was a**confirmedly abusive** [Roloff](https://www.reddit.com/r/troubledteens/wiki/index/roloff) behavior modification program founded by Lester Roloff in 1967. The Anchor Home was begun for troubled boys under the age of eighteen, complete with a Christian school curriculum, a choir program, and vocational-training courses. The program had a maximum enrollment of nearly 300 boys. Anchor Home was the sister program to the [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) , another Roloff Home.
+Anchor Home for Boys was a** confirmedly abusive** [Roloff](https://www.reddit.com/r/troubledteens/wiki/index/roloff) behavior modification program founded by Lester Roloff in 1967. The Anchor Home was begun for troubled boys under the age of eighteen, complete with a Christian school curriculum, a choir program, and vocational-training courses. The program had a maximum enrollment of nearly 300 boys. Anchor Home was the sister program to the [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) , another Roloff Home.
 
 The program was originally located on an [old air force station in Zapata, TX](https://www.google.com/maps/place/26%C2%B057'08.0%22N+99%C2%B016'31.0%22W/@26.9523222,-99.2765877,384m/data=!3m1!1e3!4m5!3m4!1s0x0:0x0!8m2!3d26.9522222!4d-99.2752778) . The campus consisted of three big two-story buildings for dormitories, a cafeteria, gymnasium, a shop building and a dining room. Around 1979 (approximate), the program moved from Zapata to join the other Roloff Homes on [Farm Road 665 near Cuddihy Field in Corpus Christi, TX](https://www.google.com/maps/place/Roloff+Homes/@27.7258766,-97.5226141,1122m/data=!3m1!1e3!4m5!3m4!1s0x0:0xaf055d8ed01961eb!8m2!3d27.7287281!4d-97.5230569) . This 600-acre compound was owned by the People's Baptist Church and also housed the [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) and several other Roloff Homes for adults.
 
@@ -16,21 +16,21 @@ Some reports state that the schools then left the area in 1987, days after a sto
 
 However, in June of 1999, Texas Child Protective Services issued findings of physical abuse and medical neglect at the [Rebekah Home](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) and banned Wiley Cameron’s wife Fay Cameron, the head of the home, from working with juveniles in Texas ever again. Day-to-day leadership of the Anchor Home was handed over to a 25 year-old named Dennis McElwrath, who decided to move the facility out of Texas.
 
-**McElwrath re-established the school as [Anchor Academy](https://www.reddit.com/r/troubledteens/wiki/index/anchoracademy) and set up on two different sites in Montana before financial problems led him to relocate to Vanduser, Missouri, where he operates it to this day.**
+** McElwrath re-established the school as [Anchor Academy](https://www.reddit.com/r/troubledteens/wiki/index/anchoracademy) and set up on two different sites in Montana before financial problems led him to relocate to Vanduser, Missouri, where he operates it to this day.**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rev. Lester Roloff**was the Founder of Anchor Home for Boys. He was a Fundementalist Baptist minister and also a pilot.
+** Rev. Lester Roloff** was the Founder of Anchor Home for Boys. He was a Fundementalist Baptist minister and also a pilot.
 
-**Rev. Wiley Cameron**took over operations of the Anchor Home for Boys after Lester Roloff's death in 1982.
+** Rev. Wiley Cameron** took over operations of the Anchor Home for Boys after Lester Roloff's death in 1982.
 
-**Dennis McElwrath**took over operation of the Anchor Home for Boys after Fay Cameron, Wiley's wife, was banned from working with youths in the state of Texas. Dennis then moved the program to two locations in Montana before ultimately settling in Missouri.
+** Dennis McElwrath** took over operation of the Anchor Home for Boys after Fay Cameron, Wiley's wife, was banned from working with youths in the state of Texas. Dennis then moved the program to two locations in Montana before ultimately settling in Missouri.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 There are reports of the use of a demerit system which involved paddling in an extreme extent.
 
@@ -70,17 +70,17 @@ Residents with seniority in the system (named Helpers) were able to hand out dem
 
 As mentioned, after 10 demerits, it was one lick for every 2 demerits. If you had 20+ demerits, your licks would be transferred to the next day. If you recieved demerits the next day and you ended up with 20+ again (that day's demerits PLUS the rollovers), they would continue to roll over until Sunday. Being the day of rest, you didn't have to work off demerits. You attended church twice a day and rested. Demerits started at 0 on Monday, unless you were on someone's bad side. Although it may seem like it would be easy to avoid getting to that point, it wasn't. Helpers were rewarded for giving out the most demerits. Not with an award, but Bro. Mac would verbalize his admiration for their righteousness or begin to give them extra privileges or leniencies.
 
-***Licks:**Being spanked with a wood paddle. Other times, whatever was handy was used (such as the rod from a set of blinds).
-***Confinement:**Spending weeks hanging her head without speaking or making eye contact with anyone. This punishment was called "red shirt" or "discipline". The former name being due to the fact that these "deviant" girls were given only red and white checkered shirts to wear. They were only allowed to wear any other shirt when they went to bed. They were also made to stand with their nose to the wall and their arms at their sides all day. A 10 minute break allowed if they complied to the Helper's satisfaction. Many times the Helper would forget to give them a break. In this instance, the Red Shirts just had to remain silent and hope for a break to be given. Or, the Red Shirt could take a demerit (or three) for raising their hand to remind the helper or taking their nose off the wall-- no matter what, the Red Shirt will be in trouble for the Helper's oversight. More often than not, the Helper was sitting at a desk with nothing better to do than critique them. Sitting on the wall: Being required sitting (suspended above the floor, as if there was a chair beneath them) with the back against a wall and without the support of a chair, arms outstretched with the palms flat against the wall. Helpers would come around to each girl and place a book on their thighs, if the book slipped off, they would push the girl's hips down. If they failed twice, they might have to start over.
-***Kneeling:**Being ordered to kneel, while either have two bibles resting on each outstretched palm or with pencils wedged between the legs.
-***The lockup:**An isolation room used as solitary confinement. During the stay in the lockup the intercom piped in hourlong prayers from the pastor (Lester Roloff or Wiley B. Cameron) that would play in loops 24 hours a day. The detained girl could use a toilet but there was no possibility to wash or bathe. Girls have told of terrible smelling survivors of the lockup when they were released after a month of isolation.
-***Calesthenics:**Boys would do laps (1 lap run + 1 lap walk = 1 lap) for first 5 demerits, and then 100 of chosen exercise for every demerit after that up to 10. "cherry pickers", "calf lifts", "jumping jacks", "squats", "arm cirles", "lunges", "leg lifts", "kills" (10 slow "calf lifts", 10 fast "calf lifts", jumping 10 times, 10 "scissor jumps", 10 half jumping jacks, 10 whole jumping jacks, and then going back through the exercises finishing with the 10 slow "calf lifts"= 1 Kill= 1 demerit worked off) etc. No matter how hot it was, you would do the exercise outside. When it would sleet or was below freezing, they would let the girls do their exercises either on the enclosed patio or inside.
+***Licks:** Being spanked with a wood paddle. Other times, whatever was handy was used (such as the rod from a set of blinds).
+***Confinement:** Spending weeks hanging her head without speaking or making eye contact with anyone. This punishment was called "red shirt" or "discipline". The former name being due to the fact that these "deviant" girls were given only red and white checkered shirts to wear. They were only allowed to wear any other shirt when they went to bed. They were also made to stand with their nose to the wall and their arms at their sides all day. A 10 minute break allowed if they complied to the Helper's satisfaction. Many times the Helper would forget to give them a break. In this instance, the Red Shirts just had to remain silent and hope for a break to be given. Or, the Red Shirt could take a demerit (or three) for raising their hand to remind the helper or taking their nose off the wall-- no matter what, the Red Shirt will be in trouble for the Helper's oversight. More often than not, the Helper was sitting at a desk with nothing better to do than critique them. Sitting on the wall: Being required sitting (suspended above the floor, as if there was a chair beneath them) with the back against a wall and without the support of a chair, arms outstretched with the palms flat against the wall. Helpers would come around to each girl and place a book on their thighs, if the book slipped off, they would push the girl's hips down. If they failed twice, they might have to start over.
+***Kneeling:** Being ordered to kneel, while either have two bibles resting on each outstretched palm or with pencils wedged between the legs.
+***The lockup:** An isolation room used as solitary confinement. During the stay in the lockup the intercom piped in hourlong prayers from the pastor (Lester Roloff or Wiley B. Cameron) that would play in loops 24 hours a day. The detained girl could use a toilet but there was no possibility to wash or bathe. Girls have told of terrible smelling survivors of the lockup when they were released after a month of isolation.
+***Calesthenics:** Boys would do laps (1 lap run + 1 lap walk = 1 lap) for first 5 demerits, and then 100 of chosen exercise for every demerit after that up to 10. "cherry pickers", "calf lifts", "jumping jacks", "squats", "arm cirles", "lunges", "leg lifts", "kills" (10 slow "calf lifts", 10 fast "calf lifts", jumping 10 times, 10 "scissor jumps", 10 half jumping jacks, 10 whole jumping jacks, and then going back through the exercises finishing with the 10 slow "calf lifts"= 1 Kill= 1 demerit worked off) etc. No matter how hot it was, you would do the exercise outside. When it would sleet or was below freezing, they would let the girls do their exercises either on the enclosed patio or inside.
 
 ---
 
-## **Abuse Allegations**
+## ** Abuse Allegations**
 
-The Anchor Home for Boys was a**confirmedly abusive**program with a long and well-supported history of abuse. Among the abuses that occurred at this program include:
+The Anchor Home for Boys was a** confirmedly abusive** program with a long and well-supported history of abuse. Among the abuses that occurred at this program include:
 
 *Students beaten
 *Students denied meals
@@ -112,11 +112,11 @@ However, in June 1999, Texas Child Protective Services issued findings of physic
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Secret Prisons for Teens - Anchor Home for Boys](https://secretprisonsforteens.dk/wiki/index.php?title=Anchor_Home_For_Boys)
 
@@ -144,7 +144,7 @@ However, in June 1999, Texas Child Protective Services issued findings of physic
 
 [Abuse at U.S.A. Boarding Schools](http://www.heal-online.org/unjp2011.pdf) (HEAL)
 
-### **Videos/Films**
+### ** Videos/Films**
 
 [Freedom's Last Call - Part 1/7](https://www.youtube.com/watch?v=270yFyNkTzo&list=PL131F206808964E44&ab_channel=LesterRoloff) (*playlist*)
 
@@ -152,7 +152,8 @@ However, in June 1999, Texas Child Protective Services issued findings of physic
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

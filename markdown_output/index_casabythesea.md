@@ -16,35 +16,35 @@ On September 10, 2004, Mexican authorities raided Casa by the Sea following a jo
 
 ---
 
-## **Founder & Notable Staff**
+## ** Founder & Notable Staff**
 
-**Dace Goulding**was the founder/owner of Casa by the Sea. He began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Western Samoa. He also worked as the co-owner of [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) also located in B.C., Mexico. After Casa by the Sea's closure in 2004, Dace went on to open [Darrington Academy](https://www.reddit.com/r/troubledteens/wiki/index/darrington) in Georgia, where he worked as the Operations Manager until its closure in 2009.
+** Dace Goulding** was the founder/owner of Casa by the Sea. He began working for WWASP at [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) in Western Samoa. He also worked as the co-owner of [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) also located in B.C., Mexico. After Casa by the Sea's closure in 2004, Dace went on to open [Darrington Academy](https://www.reddit.com/r/troubledteens/wiki/index/darrington) in Georgia, where he worked as the Operations Manager until its closure in 2009.
 
-**Jade Robinson**was a co-founder and owner of Casa by the Sea. He had previously worked at [Cross Creek Manor](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) . He also had previously worked for a time at [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) in Jamaica until he left to help start Casa By the Sea. Jade Robinson was part of a staff team directly responsible for transferring kids from Casa by the Sea to [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) , a brutal program co-owned by Dace Goulding. He also is reported to have worked at [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . Around 2003, he attempted to open a program called [Bell Academy](https://www.reddit.com/r/troubledteens/wiki/index/bell) in California which was swiftly shut down due to licensing issues. Robinson was the owner and director of [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) , which was originally opened in the Amargosa Valley, Nevada. It later reopened on the Cross Creek property (La Verkin, UT) and was renamed as [Youth Foundation Inc./ Youth Foundation Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) .
+** Jade Robinson** was a co-founder and owner of Casa by the Sea. He had previously worked at [Cross Creek Manor](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) . He also had previously worked for a time at [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) in Jamaica until he left to help start Casa By the Sea. Jade Robinson was part of a staff team directly responsible for transferring kids from Casa by the Sea to [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) , a brutal program co-owned by Dace Goulding. He also is reported to have worked at [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . Around 2003, he attempted to open a program called [Bell Academy](https://www.reddit.com/r/troubledteens/wiki/index/bell) in California which was swiftly shut down due to licensing issues. Robinson was the owner and director of [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) , which was originally opened in the Amargosa Valley, Nevada. It later reopened on the Cross Creek property (La Verkin, UT) and was renamed as [Youth Foundation Inc./ Youth Foundation Success Academy](https://www.reddit.com/r/troubledteens/wiki/index/youthfoundation) .
 
-**Luke Hallows**was an administrator at Casa by the Sea. He is reported to have participated in, ordered, endorsed, excused, and covered up multiple incidents of abuse. He currently lives in Sahuarita, Arizona and works at the [Arivaca Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/arivaca) , an equine program for teen boys.
+** Luke Hallows** was an administrator at Casa by the Sea. He is reported to have participated in, ordered, endorsed, excused, and covered up multiple incidents of abuse. He currently lives in Sahuarita, Arizona and works at the [Arivaca Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/arivaca) , an equine program for teen boys.
 
-**Karr Farnsworth**was an Administrator at Casa by the Sea. He also worked as WWASP's President until 1998 when he was replaced by Ken Kay. According. tothis [LinkedIn Profile](https://www.linkedin.com/in/karr-farnsworth-021bb021/) , he took an ownership interest in the [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1999, where he served as Administrator until it closed.
+** Karr Farnsworth** was an Administrator at Casa by the Sea. He also worked as WWASP's President until 1998 when he was replaced by Ken Kay. According. tothis [LinkedIn Profile](https://www.linkedin.com/in/karr-farnsworth-021bb021/) , he took an ownership interest in the [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1999, where he served as Administrator until it closed.
 
-**Jason Finlinson**was the Owner of Casa by the Sea from 2000 until 2001. In 2001, he left Casa by the Sea in order to move to New York and open the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) , which he ran until its closure in 2009.
+** Jason Finlinson** was the Owner of Casa by the Sea from 2000 until 2001. In 2001, he left Casa by the Sea in order to move to New York and open the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) , which he ran until its closure in 2009.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other WWASP facilities, Casa by the Sea used a level system. There were six levels:
 
 *
-**Level 1:**New detainees started at level 1, which had no privileges of any kind. They were followed 24/7 by a junior staff member (a resident on level 4-6). They had to show good behavior and attend a number of seminars in order to be voted up to the next level by their fellow residents and therapists. They were given a full physical examination, school assessment and an individual educational program, which they began working on immediately. At first, no phone calls were allowed, but parents and detainees were allowed to write letters to each other. Children were put into small groups, and each parent had an assigned time to speak with the group leader once a week for a half hour to discuss their child's progress.
+**Level 1:** New detainees started at level 1, which had no privileges of any kind. They were followed 24/7 by a junior staff member (a resident on level 4-6). They had to show good behavior and attend a number of seminars in order to be voted up to the next level by their fellow residents and therapists. They were given a full physical examination, school assessment and an individual educational program, which they began working on immediately. At first, no phone calls were allowed, but parents and detainees were allowed to write letters to each other. Children were put into small groups, and each parent had an assigned time to speak with the group leader once a week for a half hour to discuss their child's progress.
 
 *
 **Level 2:***no additional information*
 
 *
-**Level 3:**Once Level 3 was achieved, a detainee was given phone privileges home as well as more privileges at the school, on and off the grounds.
+**Level 3:** Once Level 3 was achieved, a detainee was given phone privileges home as well as more privileges at the school, on and off the grounds.
 
 *
-**Level 4:**Teens on levels 4-6 were considered "junior staff" and were expected to help assimilate and punish newer residents.
+**Level 4:** Teens on levels 4-6 were considered "junior staff" and were expected to help assimilate and punish newer residents.
 
 *
 **Level 5:***no additional information*
@@ -99,17 +99,17 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 ---
 
-## **Notable Alumni**
+## ** Notable Alumni**
 
-**Christina Parkins**, who is the daughter of American-Canadian Actress Barbara Parkins, is reported to have attended Casa by the Sea as a teenager sometime around the year 2000. - ([source](https://buffy-boards.com/threads/nicholas-brendon-felony-arrest-for-dragging-down-gf-by-her-hair.71298/page-5) )
+** Christina Parkins**, who is the daughter of American-Canadian Actress Barbara Parkins, is reported to have attended Casa by the Sea as a teenager sometime around the year 2000. - ([source](https://buffy-boards.com/threads/nicholas-brendon-felony-arrest-for-dragging-down-gf-by-her-hair.71298/page-5) )
 
-**Redmond O'Neal**, who is an American voice actor the son of actress Farrah Fawcett and actor and former boxer Ryan O'Neal, is reported to have attended Casa by the Sea at the same time as Christina Parkins, from June 1998 until December 2000. In Ryan O'Neal's Memoir,*Both of Us: My Life with Farrah*, Ryan [states](https://books.google.com/books?id=8yo0LeZb23UC&pg=PA196&lpg=PA196&dq=redmond+o%27neal+%22casa+by+the+sea%22&source=bl&ots=Ftj1frsuSg&sig=ACfU3U2OxhomUT470k5HlN9f2hbksdfz3Q&hl=en&sa=X&ved=2ahUKEwjg8tzOx7rtAhXHup4KHXIAClIQ6AEwAnoECAEQAg#v=onepage&q=redmond%20o'neal%20%22casa%20by%20the%20sea%22&f=false) that after his son, Redmond, had been charged with several misdemeanors for small violations such as smoking weed, the judge convinced him and Farrah to send Redmond to Casa by the Sea, as it was a "superior treatment center for teens."
+** Redmond O'Neal**, who is an American voice actor the son of actress Farrah Fawcett and actor and former boxer Ryan O'Neal, is reported to have attended Casa by the Sea at the same time as Christina Parkins, from June 1998 until December 2000. In Ryan O'Neal's Memoir,*Both of Us: My Life with Farrah*, Ryan [states](https://books.google.com/books?id=8yo0LeZb23UC&pg=PA196&lpg=PA196&dq=redmond+o%27neal+%22casa+by+the+sea%22&source=bl&ots=Ftj1frsuSg&sig=ACfU3U2OxhomUT470k5HlN9f2hbksdfz3Q&hl=en&sa=X&ved=2ahUKEwjg8tzOx7rtAhXHup4KHXIAClIQ6AEwAnoECAEQAg#v=onepage&q=redmond%20o'neal%20%22casa%20by%20the%20sea%22&f=false) that after his son, Redmond, had been charged with several misdemeanors for small violations such as smoking weed, the judge convinced him and Farrah to send Redmond to Casa by the Sea, as it was a "superior treatment center for teens."
 
-**Michael J. Perry**attended Casa by the Sea as teenager, but left in 2000 when he turned 18 before he had completed the program. In October 2001, Michael Perry and a friend, Jason Burkett, decided they needed to get one or two vehicles, so on October 24, they went to the home of 50-year-old Sandra Stotler, where Perry entered the house through the garage. Perry shot Sandra Stotler with a shotgun and the two men dumped her body, which was found floating in Montgomery County’s Crater Lake. Perry was sentenced to death shortly after and was executed on July 1, 2010.
+**Michael J. Perry** attended Casa by the Sea as teenager, but left in 2000 when he turned 18 before he had completed the program. In October 2001, Michael Perry and a friend, Jason Burkett, decided they needed to get one or two vehicles, so on October 24, they went to the home of 50-year-old Sandra Stotler, where Perry entered the house through the garage. Perry shot Sandra Stotler with a shotgun and the two men dumped her body, which was found floating in Montgomery County’s Crater Lake. Perry was sentenced to death shortly after and was executed on July 1, 2010.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **9/26/2020: (SURVIVOR)** [Link to Casa by the Sea / Agape Boys Ranch (Survivor Stories) - Jared Jacobski](https://www.youtube.com/watch?v=pMi6UGNUEvU&ab_channel=TheHammerPodcast)
 
@@ -131,35 +131,35 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 **10/06/1999: (SURVIVOR):**"I am a survivor of a WWASP facility (AKA. big league money-grubbing concentration camp). I spent 22 months at Casa by the Sea, just outside Ensenada, Mexico. I was enrolled against my will/knowledge. If I come some up the entire experience in one word, I would say abuse. The children enrolled in that program were abused physically, emotionally, and mentally. We were not allowed to speak English, intimidated by employees, without contact from family or friends for months, refused access to say the truth about what was going on, denied a decent education, and raped of our dignity.Females on “lower levels” (levels 1-3) were not allowed to shave, or look in mirrors. The septic system was so horrible that used toilet paper (if there was any at the time) had to be put in a bucket next in the stall. That, mixed with the hot and humid Mexican weather made the stench frequently unbearable, and students were forced to clean out the buckets without gloved or adequate cleaning supplies. There were no vacuums and allot of mold in the trailers we slept in, resulting in frequent allergy and asthma attacks. If a student had a medical necessity, it would rarely get treatment, and maybe that’s a good thing, because the treatment was probably worse than the cause. After reporting a severely ingrown and infected toenail several times, I was taken to the nurses office where she gave me a local anaestheic and cut my big toenail off at the base, with her desk scissors. She poured some powder on it (to stop the horrible bleeding, I suppose), put a large Band-Aid on it , and told me to leave. My parents were charged about $500 for the procedure. Well, I could go on and on about the kids who were forced to eat foods they were allergic to, the 5 minute cold showers, not being permitted to wear shoes and the punishments received for doing something as random as: standing without permission, sitting without permission, looking out of line, speaking in English, speaking at all or flushing your toilet paper. I could tell you all about the psychological damage that the seminars we must attend to come home have bestowed on me, how we were told our parents were on a “vacation” and didn’t want us anymore. I could probably write a book on how many addicts came through those big gates (me being one of them) and receiving NO HELP with their illness. But I won’t, even though I kind of already did. Ha, sorry. I’m just trying to enlighten a few more people to the ways of WWASP and teen lockdowns in general. Thanks for hearing me out." - [Link to Survivor Testimonial](https://www.educatedinlaw.org/1999/10/horror-at-casa-by-the-sea/)
 
-**Unknown Date: (SURVIVOR)** [Link to Charlotte's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/casa-by-the-sea-ch/)
+** Unknown Date: (SURVIVOR)** [Link to Charlotte's Survivor Testimony](http://wwaspsurvivors.com/survivor-testimony/casa-by-the-sea-ch/)
 
-**Unknown Date: (SURVIVOR)** [Link to Carl's Survivor Testimony](https://www.helpsavetroubledteens.com/c-brown.html)
+** Unknown Date: (SURVIVOR)** [Link to Carl's Survivor Testimony](https://www.helpsavetroubledteens.com/c-brown.html)
 
-**Unknown Date: (SURVIVOR)** [Link to James' Survivor Testimony](https://www.helpsavetroubledteens.com/j-ziegenbalg.html)
+** Unknown Date: (SURVIVOR)** [Link to James' Survivor Testimony](https://www.helpsavetroubledteens.com/j-ziegenbalg.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Ashley's Survivor Testimony](https://www.helpsavetroubledteens.com/a-moon-rogers.html)
+** Unknown Date: (SURVIVOR)** [Link to Ashley's Survivor Testimony](https://www.helpsavetroubledteens.com/a-moon-rogers.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Christina's Survivor Testimony](https://www.helpsavetroubledteens.com/c-cowan.html)
+** Unknown Date: (SURVIVOR)** [Link to Christina's Survivor Testimony](https://www.helpsavetroubledteens.com/c-cowan.html)
 
-**Unknown Date: (PARENT)** [Link to Lee's Parent Testimonial](http://wwaspsurvivors.com/survivor-testimony/conned-by-casa-by-the-sea/)
+** Unknown Date: (PARENT)** [Link to Lee's Parent Testimonial](http://wwaspsurvivors.com/survivor-testimony/conned-by-casa-by-the-sea/)
 
-**Unknown Date: (SURVIVOR)** [Link to 'Captivity By the Sea by Chelsea F.'](http://wwaspsurvivors.com/survivor-testimony/casa-by-the-sea-cf/)
+** Unknown Date: (SURVIVOR)** [Link to 'Captivity By the Sea by Chelsea F.'](http://wwaspsurvivors.com/survivor-testimony/casa-by-the-sea-cf/)
 
-**Unknown Date: (SURVIVOR)** [Link to Alix's Survivor Testimony](https://www.helpsavetroubledteens.com/alix-karaitis--cbs.html)
+** Unknown Date: (SURVIVOR)** [Link to Alix's Survivor Testimony](https://www.helpsavetroubledteens.com/alix-karaitis--cbs.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Ben's Survivor Testimony](https://www.helpsavetroubledteens.com/b-ferons.html)
+** Unknown Date: (SURVIVOR)** [Link to Ben's Survivor Testimony](https://www.helpsavetroubledteens.com/b-ferons.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Carly's Survivor Testimony](https://www.helpsavetroubledteens.com/carly.html)
+** Unknown Date: (SURVIVOR)** [Link to Carly's Survivor Testimony](https://www.helpsavetroubledteens.com/carly.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Eric's Survivor Testimony](https://www.helpsavetroubledteens.com/e-beasley.html)
+** Unknown Date: (SURVIVOR)** [Link to Eric's Survivor Testimony](https://www.helpsavetroubledteens.com/e-beasley.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Myles' Survivor Testimony](https://www.helpsavetroubledteens.com/m-fredson.html)
+** Unknown Date: (SURVIVOR)** [Link to Myles' Survivor Testimony](https://www.helpsavetroubledteens.com/m-fredson.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Allison's Survivor Testimony](https://www.helpsavetroubledteens.com/a-ankrom.html)
+** Unknown Date: (SURVIVOR)** [Link to Allison's Survivor Testimony](https://www.helpsavetroubledteens.com/a-ankrom.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Troy's Survivor Testimony](https://www.helpsavetroubledteens.com/t-weisenberger.html)
+** Unknown Date: (SURVIVOR)** [Link to Troy's Survivor Testimony](https://www.helpsavetroubledteens.com/t-weisenberger.html)
 
-**Unknown Date: (SURVIVOR)** [Link to Jennifer's Survivor Testimony](https://www.helpsavetroubledteens.com/jennifer---hi--cbs.html)
+** Unknown Date: (SURVIVOR)** [Link to Jennifer's Survivor Testimony](https://www.helpsavetroubledteens.com/jennifer---hi--cbs.html)
 
 **(SURVIVOR TESTIMONIAL WEBSITE)** [Link to 'The truth about Casa By The Sea - A boarding school nightmare'](http://truthaboutcasa.blogspot.com/)
 
@@ -169,7 +169,7 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Casa by the Sea Website Homepage 1](https://web.archive.org/web/20000502205001/http://www.casabythesea.com/) (archived, 2000)
 
@@ -185,7 +185,7 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 [Casa by the Sea Parent Handbook (Part 2)](https://drive.google.com/file/d/1xO03GEV4cutxt4REOC8VX-LWalqV8zrZ/view) (July 2000)
 
-### **News Articles**
+### ** News Articles**
 
 [Mexican Officials Shut Down 3 Schools for Troubled U.S. Youths](https://www.latimes.com/archives/la-xpm-2004-sep-13-me-baja13-story.html) (LA Times, 9/13/2004)
 
@@ -203,7 +203,7 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 [Casa by the Sea / Agape Boys Ranch Survivors - JARED JACOBSKI](https://youtu.be/pMi6UGNUEvU) (YouTube, 9/26/2020)
 
-### **Photos**
+### ** Photos**
 
 * [First ever Family Weekend](https://web.archive.org/web/20010702094613/http://www.wwasp.com/casapc.htm) (*approx. 1999*)
 * [Easter Celebration at CBS](https://web.archive.org/web/20010515062536/http://www.wwasp.com/cbs05_23.htm) (*2000*)
@@ -219,7 +219,8 @@ In May 2011, Carl Brown Austen, a former student at both Casa by the Sea and Hig
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -12,31 +12,31 @@ Resolution Ranch Academy is located at [2274 County Rd 203 Loop, Cameron, TX 765
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Scott McGarrahan**is the Founder of Resolution Ranch Academy. He is also a former NFL player for Green Bay Packers, Miami Dolphins, Tennessee Titans, San Diego Chargers, and Detroit Lions between 1998 and 2005. He also previously volunteered with the D.A.R.E. (Drug Abuse Resistance Education) organization, Habitat for Humanity, and the Children's Miracle Network. His qualifications in the field of psychology are presently unknown.
+** Scott McGarrahan** is the Founder of Resolution Ranch Academy. He is also a former NFL player for Green Bay Packers, Miami Dolphins, Tennessee Titans, San Diego Chargers, and Detroit Lions between 1998 and 2005. He also previously volunteered with the D.A.R.E. (Drug Abuse Resistance Education) organization, Habitat for Humanity, and the Children's Miracle Network. His qualifications in the field of psychology are presently unknown.
 
-**Chris Langley**is the current Program Director and Clinical Director of Resolution Ranch Academy. He has worked in this position since 2005. Prior to coming to Resolution Ranch, Chris worked as a therapist and case manager at an unnamed group home for boys with severe emotional and behavioral issues. He also currently works as a Therapist at the Pathways Group Counselling Center.
+** Chris Langley** is the current Program Director and Clinical Director of Resolution Ranch Academy. He has worked in this position since 2005. Prior to coming to Resolution Ranch, Chris worked as a therapist and case manager at an unnamed group home for boys with severe emotional and behavioral issues. He also currently works as a Therapist at the Pathways Group Counselling Center.
 
-**Ernest Smith**currently works as a Therapist at Resolution Ranch Academy. He has worked at the program since 2018. He is currently a Licensed Professional Counselor**Intern**, meaning that he is a temporarily licensed professional counselor. His prior employment is presently unknown, but he reportedly has "vast experience" working with adolescents.
+** Ernest Smith** currently works as a Therapist at Resolution Ranch Academy. He has worked at the program since 2018. He is currently a Licensed Professional Counselor** Intern**, meaning that he is a temporarily licensed professional counselor. His prior employment is presently unknown, but he reportedly has "vast experience" working with adolescents.
 
-**Alicia Eggleston**currently works as a Therapist at Resolution Ranch Academy. She previously has worked as a Residential Leader/Residential Living and Learning Staff at Tarleton State University from 2013 until 2015. She then worked as a Sales Associate at Dillard's from 2016 until 2017. At the same time, she worked as a Graduate Assistant at University of Mary Hardin-Baylor. After this, she worked as a Contact Center Specialist at Baylor Scott & White Health before joining Resolution Ranch in April of 2020.
+** Alicia Eggleston** currently works as a Therapist at Resolution Ranch Academy. She previously has worked as a Residential Leader/Residential Living and Learning Staff at Tarleton State University from 2013 until 2015. She then worked as a Sales Associate at Dillard's from 2016 until 2017. At the same time, she worked as a Graduate Assistant at University of Mary Hardin-Baylor. After this, she worked as a Contact Center Specialist at Baylor Scott & White Health before joining Resolution Ranch in April of 2020.
 
-**David Stubbs**is the Director of Equine Therapy at Resolution Ranch Academy. He has worked at the program since 2011. His prior employment is presently unknown.
+** David Stubbs** is the Director of Equine Therapy at Resolution Ranch Academy. He has worked at the program since 2011. His prior employment is presently unknown.
 
 [HEAL Program Staff Information](http://www.heal-online.org/resranch.htm)
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Resolution Ranch uses a level system consisting of five levels. The level system is referred to as the R.A.N.C.H. system, which stands for "Recovery and Academics through Nature, Counseling, and Healing". During each level, the RANCH acronym changes to represent the main goals for the level. The levels are reported to be:
 
-***Level 1: Ranch Hands:**This is the first level at the ranch, and it is used as an orientatino phase. On this level, the boys must focus on Respect, Awareness, Narrative, Constructive Criticism, and Honesty.
-***Level 2: Cattle Men:**During this level, the boys must focus on Responsibility, Acknowledgement, New Beginnings, Character, and Heart.
-***Level 3: Ropers:**On this level, the boys must focus on Resolve, Admission, Nurture, Change, and Humility. At this point, the boys begin participating in family therapy sessions in addition to their weekly individual session.
-***Level 4: Wranglers:**This level focuses on Relationships, Amends, Nourishment, Confidence, and Helpfulness. On this level, they are required to do 12 hours of community service.
-***Level 5: Cowboys:**This is the final level at Resolution Ranch. The goals of this level are Re-examine, Affirm, Navigate, Commit, and Hope.
+***Level 1: Ranch Hands:** This is the first level at the ranch, and it is used as an orientatino phase. On this level, the boys must focus on Respect, Awareness, Narrative, Constructive Criticism, and Honesty.
+***Level 2: Cattle Men:** During this level, the boys must focus on Responsibility, Acknowledgement, New Beginnings, Character, and Heart.
+***Level 3: Ropers:** On this level, the boys must focus on Resolve, Admission, Nurture, Change, and Humility. At this point, the boys begin participating in family therapy sessions in addition to their weekly individual session.
+***Level 4: Wranglers:** This level focuses on Relationships, Amends, Nourishment, Confidence, and Helpfulness. On this level, they are required to do 12 hours of community service.
+***Level 5: Cowboys:** This is the final level at Resolution Ranch. The goals of this level are Re-examine, Affirm, Navigate, Commit, and Hope.
 
 In order to advance through the levels, the boys must complete a series of written assignments which they work on three times per week. These assignments are reportedly designed to "foster self-reflection and accountability." To move up a level, a student must complete the given assignments and obtain approval signatures from staff. He then must call a group and recite the program rules and vocabulary related to that level before the community. The child then receives feedback from his peers and must be voted up by other teens in the program in order to advance.
 
@@ -44,11 +44,11 @@ The residents are permitted to communicate with their families through written l
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 While at Resolution Ranch Academy, the boys are required to adhere to a strict set of rules. There are officially 12 "Cardinal Rules" and 10 "General Rules". These rules are:
 
-**Cardinal Rules**
+** Cardinal Rules**
 
 *No Drugs or Alcohol
 *No Physical or Verbal Acts or Threats of Violence
@@ -80,18 +80,18 @@ In addition to the cardinal and general rules, there are also a series of group 
 
 If the residents break any of these rules, they are punished. The punishments used by Resolution Ranch are as follows:
 
-***Zeros:**Zeros are used as a reminder that a rule has been broken, and when a resident receives a zero they are expected to change their actions immediately. When a direct care worker gives a zero, the resident must respond by saying “Thank you,” followed by a "positive behavior shift". If a resident argues or talks back to a direct care worker after he receives a zero, he will be issued another. Each zero equates to 45 minutes of extra chores on Saturday (i.e., 3 zeros in a week means the teen must put in 2 hours and 15 minutes of work the following Saturday). If a resident receives 3 zeros in one day, they will receive one day of Work Detail (described below). A resident who receives 5 zeros in a week will have L.O.P. (described below) for one week. A resident who receives 7 or more zeros in one week will be assigned 3-5 days of Work Detail, followed by some degree of L.O.P. for one week.
-***Work Detail:**If a resident repeatedly offends or break any Cardinal Rules, he will receive 1-5 days of Work Detail. Work Detail is labor or chore intensive consequence in which residents are separated from the Ranch Community and all of its normal scheduled activities. Following a Work Detail shift, your child will have to write a 5-page report detailing why he got work detail, what he learned, and what the community can expect from him. He will read this to the group, and they will give feedback. He will be let back into the Ranch Community pending peers and direct care worker approval. Following any time spent on work detail, the resident will be on L.O.P. status for twice as many days as the served work detail shift.
-***Loss of Privileges (L.O.P.):**L.O.P. or Loss of Privileges means that for a designated time your child loses certain privileges. It is designed as a "learning experience" to "increase his gratitude" toward the program and "make him appreciate what he is given".
-***Insight Writing:**A popular "learning experience" (punishment) used by Resolution Ranch is called insight-writing assignments. Insight writing assignments vary in length, content, and time allotted to complete depending on the resident and offense. All reports must be completed on time, and turned in to the direct care worker who assigned it. Failure to do so is a Cardinal Offense.
-***Extra Duties/Chores and GI:**Extra duties and chores are used as a way to provide a reminder that a behavior is not appropriate. For instance, a resident who forgets to do one day of kitchen duties may be assigned to complete two days of kitchen duty the following week. A resident who neglects to wash his clothes one week may be assigned to do laundry every day the following week. GI or General Inspection is a term used which means to thoroughly clean. This is another way in which a learning experience can reinforce a change in someone’s behaviors. For example, if a resident refuses to clean their room in the morning, they might be directed to GI their room on Sunday.
-***Talk Ban:**Talk Ban means exactly what it sounds like—the resident is prohibited from talking. For the duration of his ban, he may only communicate to staff and direct care workers with pen and paper. He may use no communication at all with other residents. This is meant to serve as an exercise in listening skills. Given the severity of the ban, he may or may not be allowed to share in groups.
-***Room Ban:**If a resident becomes uncontrollable, violent, or poses any threat to the safety and welfare of anyone in the Resolution Ranch community, Room Ban will be employed. While on room ban, the reisdnet must sit awake on their bed with no one else around except for a direct care worker or another appropriate staff member.
-***Therapeutic Interventions:**This punishment varies widely depending on the specifics of the individual resident. The treatment team will develop a specific intervention to assist in the resident's "development". The resident will be notified of this intervention and the reason for its implementation. The intervention will be discontinued when the resident has developed to an "age-appropriate" level. There will also be times that the therapist will request that the teen works through an issue by doing some "therapeutic" homework.
+***Zeros:** Zeros are used as a reminder that a rule has been broken, and when a resident receives a zero they are expected to change their actions immediately. When a direct care worker gives a zero, the resident must respond by saying “Thank you,” followed by a "positive behavior shift". If a resident argues or talks back to a direct care worker after he receives a zero, he will be issued another. Each zero equates to 45 minutes of extra chores on Saturday (i.e., 3 zeros in a week means the teen must put in 2 hours and 15 minutes of work the following Saturday). If a resident receives 3 zeros in one day, they will receive one day of Work Detail (described below). A resident who receives 5 zeros in a week will have L.O.P. (described below) for one week. A resident who receives 7 or more zeros in one week will be assigned 3-5 days of Work Detail, followed by some degree of L.O.P. for one week.
+***Work Detail:** If a resident repeatedly offends or break any Cardinal Rules, he will receive 1-5 days of Work Detail. Work Detail is labor or chore intensive consequence in which residents are separated from the Ranch Community and all of its normal scheduled activities. Following a Work Detail shift, your child will have to write a 5-page report detailing why he got work detail, what he learned, and what the community can expect from him. He will read this to the group, and they will give feedback. He will be let back into the Ranch Community pending peers and direct care worker approval. Following any time spent on work detail, the resident will be on L.O.P. status for twice as many days as the served work detail shift.
+***Loss of Privileges (L.O.P.):** L.O.P. or Loss of Privileges means that for a designated time your child loses certain privileges. It is designed as a "learning experience" to "increase his gratitude" toward the program and "make him appreciate what he is given".
+***Insight Writing:** A popular "learning experience" (punishment) used by Resolution Ranch is called insight-writing assignments. Insight writing assignments vary in length, content, and time allotted to complete depending on the resident and offense. All reports must be completed on time, and turned in to the direct care worker who assigned it. Failure to do so is a Cardinal Offense.
+***Extra Duties/Chores and GI:** Extra duties and chores are used as a way to provide a reminder that a behavior is not appropriate. For instance, a resident who forgets to do one day of kitchen duties may be assigned to complete two days of kitchen duty the following week. A resident who neglects to wash his clothes one week may be assigned to do laundry every day the following week. GI or General Inspection is a term used which means to thoroughly clean. This is another way in which a learning experience can reinforce a change in someone’s behaviors. For example, if a resident refuses to clean their room in the morning, they might be directed to GI their room on Sunday.
+***Talk Ban:** Talk Ban means exactly what it sounds like—the resident is prohibited from talking. For the duration of his ban, he may only communicate to staff and direct care workers with pen and paper. He may use no communication at all with other residents. This is meant to serve as an exercise in listening skills. Given the severity of the ban, he may or may not be allowed to share in groups.
+***Room Ban:** If a resident becomes uncontrollable, violent, or poses any threat to the safety and welfare of anyone in the Resolution Ranch community, Room Ban will be employed. While on room ban, the reisdnet must sit awake on their bed with no one else around except for a direct care worker or another appropriate staff member.
+***Therapeutic Interventions:** This punishment varies widely depending on the specifics of the individual resident. The treatment team will develop a specific intervention to assist in the resident's "development". The resident will be notified of this intervention and the reason for its implementation. The intervention will be discontinued when the resident has developed to an "age-appropriate" level. There will also be times that the therapist will request that the teen works through an issue by doing some "therapeutic" homework.
 
 ---
 
-## **Abuse Allegations and Investigations**
+## ** Abuse Allegations and Investigations**
 
 Many survivors have reported that Resolution Ranch Academy is an abusive program. Allegations of abuse and neglect that have been reported by survivors include verbal/emotional/psychological abuse, excessive use of violent physical restraints, improper supervision of the teens resulting in dangerous situations, undertrained/unqualified staff, maintaining a prison-like environment, physical abuse, deceptive marketing practices, questionable therapeutic tactics, punitive punishments, and forced manual labor. Many survivors report being traumatized by the program and developing PTSD as a result of their time there.
 
@@ -133,7 +133,7 @@ There are unconfirmed reports made by survivors/parents of the program indicatin
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Resolution Ranch Academy Website Homepage](http://www.resolutionranch.com/)
 
@@ -143,7 +143,8 @@ There are unconfirmed reports made by survivors/parents of the program indicatin
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

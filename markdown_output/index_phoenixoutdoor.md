@@ -16,27 +16,27 @@ It appears that this program is still in operation, although its business licens
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Carolyn Bradfield**was the Founder and CEO of Phoenix Outdoor until it was acquired by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 2007.
+** Carolyn Bradfield** was the Founder and CEO of Phoenix Outdoor until it was acquired by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 2007.
 
-**Dan Kemp**began working as the Director of Admissions and Marketing at Phoenix Outdoor in 2005. He previously worked as the Director of Admissions for [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school located in Bonner's Ferry, Idaho. He also previously worked in similar positions at various other reportedly abusive programs, including [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and [The Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) .
+** Dan Kemp** began working as the Director of Admissions and Marketing at Phoenix Outdoor in 2005. He previously worked as the Director of Admissions for [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , a confirmedly abusive [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) school located in Bonner's Ferry, Idaho. He also previously worked in similar positions at various other reportedly abusive programs, including [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and [The Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) .
 
-**Lynn Wadsworth**worked as the Program Manager at Phoenix Outdoor. She previously worked at [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) .
+** Lynn Wadsworth** worked as the Program Manager at Phoenix Outdoor. She previously worked at [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) .
 
-**Eric Belsterling**worked as a Therapist at Phoenix Outdoor. He previously worked for [Aspen Achivement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [Four Circles Recovery Center](https://www.reddit.com/r/troubledteens/wiki/index/fourcirclesnc) , [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , and [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) .
+** Eric Belsterling** worked as a Therapist at Phoenix Outdoor. He previously worked for [Aspen Achivement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [Four Circles Recovery Center](https://www.reddit.com/r/troubledteens/wiki/index/fourcirclesnc) , [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , and [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) .
 
-**Shawn Farrell**formerly worked as the Executive Director of Phoenix Outdoor. He has previously also worked at several other reportedly abusive programs, including [Aspen Achivement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) , Explorations Wilderness, and On Track.
+** Shawn Farrell** formerly worked as the Executive Director of Phoenix Outdoor. He has previously also worked at several other reportedly abusive programs, including [Aspen Achivement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) , [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) , Explorations Wilderness, and On Track.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 The program starts at the base camp and then the teenagers are sent on wilderness treks on pre-approved routes. While at the base camp the detained teenagers sleep in tents. If the weather is bad they can sleep in a student lodge where bathrooms also are used when they return from wilderness treks. All the rooms have alarms, so the teenagers can be "contained."
 
 ---
 
-## **Abuse/Neglect Allegations**
+## ** Abuse/Neglect Allegations**
 
 Survivors report instances of medical neglect and abuse at Phoenix Outdoor. These allegation include that injured teens were denied medical attention and multiple reports of hypothermia.
 
@@ -44,11 +44,11 @@ This program is also currently on the [HEAL Program Watchlist](http://www.heal-o
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **6/12/2017: (SURVIVOR)**"I was sent here about 10 years ago and i absolutely fucking HATED it!!! I dont understand how these places are still open and how parents still send there children there. My best friend died in a wilderness program just like this in CO and his parents couldnt sue cause of the waivers these places have you sign incase your child dies and it was 1000% the programs fault that he ended up dead. At Phoenix they did not care about the safety of the adolescence in this program. I ended up getting hypothermia multiple times the first time i was sent there due to lack of staff awareness and saw several other instances where peers in my group were injured with differed levels of severity including broken legs and other body parts. honestly most of the staff were just awful and i dont understand for the life of me how these places are still running. IF YOU SEND YOUR CHILD TO THESE PLACES GOOD LUCK IF THEY EVER FULLY FORGIVE YOU." - [Isadora (Yelp)](https://www.yelp.com/biz/phoenix-outdoor-old-fort)
 
-*If you are a survivor of Phoenix Outdoor and would like to provide a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*If you are a survivor of Phoenix Outdoor and would like to provide a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -68,7 +68,8 @@ This program is also currently on the [HEAL Program Watchlist](http://www.heal-o
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,20 +14,20 @@ Accreditation for California private schools is optional and there are no requir
 
 ---
 
-|**Program Name**|**Year Opened**|**HEAL Information**|**Location**|
-| [**Adeona Healthcare/Sovereign Health**](https://www.reddit.com/r/troubledteens/wiki/index/adeonasovereign) | - | - | - |
-| [**Adolescent Growth**](https://www.reddit.com/r/troubledteens/wiki/index/adolescentgrowth) | - | - | - |
-| [**Athena House**](https://www.reddit.com/r/troubledteens/wiki/index/athena) | - | - | - |
-| [**Benchmark Transitions**](https://www.reddit.com/r/troubledteens/wiki/index/benchmark) | 1993 | N/A | Redlands, CA |
-| [**Embark at San Martin**](https://www.reddit.com/r/troubledteens/wiki/index/sanmartin) | - | - | - |
-| [**Newport Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newport) | 2008 | N/A | Mulitple Locations |
-| [**Paradigm Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/paradigmtc) | - | - | - |
-| [**Polaris Teen Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/polarisca) | - | - | - |
-| [**River View Christian Academy/Julian Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/julianyouth) | 1993 | [HEAL](http://www.heal-online.org/julian.htm) | Lake Elsinore/ Whitmore, CA |
-| [**Visions Adolesent Treatment Centers**](https://www.reddit.com/r/troubledteens/wiki/index/visionsca) | 2001 | - | - |
+|** Program Name**|** Year Opened**|** HEAL Information**|** Location**|
+| [** Adeona Healthcare/Sovereign Health**](https://www.reddit.com/r/troubledteens/wiki/index/adeonasovereign) | - | - | - |
+| [** Adolescent Growth**](https://www.reddit.com/r/troubledteens/wiki/index/adolescentgrowth) | - | - | - |
+| [** Athena House**](https://www.reddit.com/r/troubledteens/wiki/index/athena) | - | - | - |
+| [** Benchmark Transitions**](https://www.reddit.com/r/troubledteens/wiki/index/benchmark) | 1993 | N/A | Redlands, CA |
+| [** Embark at San Martin**](https://www.reddit.com/r/troubledteens/wiki/index/sanmartin) | - | - | - |
+| [** Newport Academy**](https://www.reddit.com/r/troubledteens/wiki/index/newport) | 2008 | N/A | Mulitple Locations |
+| [** Paradigm Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/paradigmtc) | - | - | - |
+| [** Polaris Teen Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/polarisca) | - | - | - |
+| [** River View Christian Academy/Julian Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/julianyouth) | 1993 | [HEAL](http://www.heal-online.org/julian.htm) | Lake Elsinore/ Whitmore, CA |
+| [** Visions Adolesent Treatment Centers**](https://www.reddit.com/r/troubledteens/wiki/index/visionsca) | 2001 | - | - |
 ---
 
-## **Closed Programs in California**
+## ** Closed Programs in California**
 
 ---
 
@@ -35,25 +35,25 @@ Accreditation for California private schools is optional and there are no requir
 
 ---
 
-|**Program Name**|**Years Active**|**HEAL Information**|**Location**|
-| [**Bell Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bell) | 2003-2003 | N/A | Terra Bella, CA |
-| [**Blue Mountain Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/bluemountainwild) | - | N/A | - |
-| [**Camp O'Neal**](https://www.reddit.com/r/troubledteens/wiki/index/camponeal) | - | N/A | - |
-| [**Cascade School**](https://www.reddit.com/r/troubledteens/wiki/index/cascade) | 1984-2003 | N/A | Whitmore, CA |
-| [**CEDU High School**](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) | 1967-2005 | [HEAL](http://www.heal-online.org/cedu.htm) | Running Springs, CA |
-| [**CEDU Middle School**](https://www.reddit.com/r/troubledteens/wiki/index/cedums) | 1991-2005 | [HEAL](http://www.heal-online.org/cedu.htm) | Running Springs, CA |
-| [**Del Amo Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/delamo) | - | - | - |
-| [**Fred D. Jones Youth Center**](https://www.reddit.com/r/troubledteens/wiki/index/freddjones) | - | N/A | - |
-| [**Fremont Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/fremonthos) | - | - | - |
-| [**Gentle Spirit Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/gentlespirit) | - | N/A | - |
-| [**Gladman Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/gladman) | 1965-1980s | N/A | Oakland, CA |
-| [**Heritage Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/heritageoaks) | - | - | - |
-| [**KIDS Centers of America**](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) | 1988-1989 | N/A | Yorba Linda, CA |
-| [**Morningside Recovery**](https://www.reddit.com/r/troubledteens/wiki/index/morningside) | - | N/A | - |
-| [**Shepherd's Ranch Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/shepherdsranch) | - | N/A | - |
-| [**Synanon**](https://www.reddit.com/r/troubledteens/wiki/index/synanon) | 1958-1991 | N/A | Multiple Locations |
-| [**Victory Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lighthousefl/) | - | [HEAL](http://www.heal-online.org/victory.htm) | - |
-| [**Wellspring Academy/Academy of the Sierras**](https://www.reddit.com/r/troubledteens/wiki/index/wellspringcali) | - | [HEAL](http://www.heal-online.org/sierras.htm) | - |
+|** Program Name**|** Years Active**|** HEAL Information**|** Location**|
+| [** Bell Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bell) | 2003-2003 | N/A | Terra Bella, CA |
+| [** Blue Mountain Wilderness Program**](https://www.reddit.com/r/troubledteens/wiki/index/bluemountainwild) | - | N/A | - |
+| [** Camp O'Neal**](https://www.reddit.com/r/troubledteens/wiki/index/camponeal) | - | N/A | - |
+| [** Cascade School**](https://www.reddit.com/r/troubledteens/wiki/index/cascade) | 1984-2003 | N/A | Whitmore, CA |
+| [** CEDU High School**](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) | 1967-2005 | [HEAL](http://www.heal-online.org/cedu.htm) | Running Springs, CA |
+| [** CEDU Middle School**](https://www.reddit.com/r/troubledteens/wiki/index/cedums) | 1991-2005 | [HEAL](http://www.heal-online.org/cedu.htm) | Running Springs, CA |
+| [** Del Amo Behavioral Health System**](https://www.reddit.com/r/troubledteens/wiki/index/delamo) | - | - | - |
+| [** Fred D. Jones Youth Center**](https://www.reddit.com/r/troubledteens/wiki/index/freddjones) | - | N/A | - |
+| [** Fremont Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/fremonthos) | - | - | - |
+| [** Gentle Spirit Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/gentlespirit) | - | N/A | - |
+| [** Gladman Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/gladman) | 1965-1980s | N/A | Oakland, CA |
+| [** Heritage Oaks Hospital**](https://www.reddit.com/r/troubledteens/wiki/index/heritageoaks) | - | - | - |
+| [** KIDS Centers of America**](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) | 1988-1989 | N/A | Yorba Linda, CA |
+| [** Morningside Recovery**](https://www.reddit.com/r/troubledteens/wiki/index/morningside) | - | N/A | - |
+| [** Shepherd's Ranch Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/shepherdsranch) | - | N/A | - |
+| [** Synanon**](https://www.reddit.com/r/troubledteens/wiki/index/synanon) | 1958-1991 | N/A | Multiple Locations |
+| [** Victory Christian Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lighthousefl/) | - | [HEAL](http://www.heal-online.org/victory.htm) | - |
+| [** Wellspring Academy/Academy of the Sierras**](https://www.reddit.com/r/troubledteens/wiki/index/wellspringcali) | - | [HEAL](http://www.heal-online.org/sierras.htm) | - |
 | - | - | - | - |
 ---
 
@@ -63,7 +63,8 @@ Accreditation for California private schools is optional and there are no requir
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

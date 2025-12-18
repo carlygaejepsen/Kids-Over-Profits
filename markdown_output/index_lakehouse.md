@@ -12,32 +12,32 @@ Lake House Academy is located at [447 Lily Pad Ln, Flat Rock, NC 28731](https://
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Catherine "Cat" Jennings**is the Founder of Lake House Academy. She has had a lengthy career in the Troubled Teen Industry. She began her career in 1981 when she founded [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's [Talisman Camps](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) . In 1991, she founded Camp Elliott, which later became [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) . She worked as the Executive Director of Stone Mountain School until 2005, when she founded Aspen's [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . She worked at New Leaf Academy as the Executive Director until 2009. She then founded Lake House Academy in 2010 and worked as the Executive Director until 2011. Finally, she founded the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) in 2012, and has worked as the Executive Director there ever since.
+** Catherine "Cat" Jennings** is the Founder of Lake House Academy. She has had a lengthy career in the Troubled Teen Industry. She began her career in 1981 when she founded [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's [Talisman Camps](https://www.reddit.com/r/troubledteens/wiki/index/talismancamps) . In 1991, she founded Camp Elliott, which later became [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's reportedly abusive [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain) . She worked as the Executive Director of Stone Mountain School until 2005, when she founded Aspen's [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) . She worked at New Leaf Academy as the Executive Director until 2009. She then founded Lake House Academy in 2010 and worked as the Executive Director until 2011. Finally, she founded the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) in 2012, and has worked as the Executive Director there ever since.
 
-**Corey Hickman**is the current Executive Director of Lake House Academy. While completing his undergraduate degree at BYU, he began his career by working as a Residential Supervisor at the**confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2004 until 2007. He then worked as a Therapeutic Recreation Specialist at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2007 until 2015. He then became the Executive Director of the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) in Montana from 2015 until around 2020.
+** Corey Hickman** is the current Executive Director of Lake House Academy. While completing his undergraduate degree at BYU, he began his career by working as a Residential Supervisor at the** confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2004 until 2007. He then worked as a Therapeutic Recreation Specialist at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2007 until 2015. He then became the Executive Director of the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) in Montana from 2015 until around 2020.
 
-**Fotu Soliai**is the former Executive Director of Lake House Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
+** Fotu Soliai** is the former Executive Director of Lake House Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Diamond Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/diamondranch/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .
 
 Survivors have reported cruel treatment, brainwashing, and verbal abuse from him. Additional Information:* [Survivor Story (Reddit Comment)](https://www.reddit.com/r/troubledteens/comments/1ot4fta/comment/no5n3uv/)* [Business License: Soliai and Associates, LLC](https://www.bizapedia.com/ut/soliai-and-associates-llc.html)
 
-**Mackenzie Hall**is the current Associate Executive Director of Lake House Academy. Prior to joining Lake House Academy, MacKenzie worked as a Residential Manager at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2012 until 2018. She then worked at the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) beginning in 2018 as the Program Director.
+**Mackenzie Hall** is the current Associate Executive Director of Lake House Academy. Prior to joining Lake House Academy, MacKenzie worked as a Residential Manager at the reportedly abusive [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) from 2012 until 2018. She then worked at the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) beginning in 2018 as the Program Director.
 
-**Alex Hamilton**is the current Clinical Director of Lake House Academy. She previuosly worked as a Therapist at the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) . Her other prior employment is presently unknown.
+** Alex Hamilton** is the current Clinical Director of Lake House Academy. She previuosly worked as a Therapist at the reportedly abusive [Chrysalis School](https://www.reddit.com/r/troubledteens/wiki/index/chrysalis) . Her other prior employment is presently unknown.
 
-**Bridget Camacho**is the current Program Director of Lake House Academy. She has worked at a variety of institutions that do not outwardly appear to be affiliated with the TTI.
+** Bridget Camacho** is the current Program Director of Lake House Academy. She has worked at a variety of institutions that do not outwardly appear to be affiliated with the TTI.
 
-**Erika Mackey**is the current Admissions Director of Lake House Academy. She began her career in the TTI as an Educational Consultant with the Carolina Collaborative Educational Consulting LLC from 2013 until 2018. She then worked in Admissions and Outreach at [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) from 2018 until 2019, when she joined Lake House Academy.
+** Erika Mackey** is the current Admissions Director of Lake House Academy. She began her career in the TTI as an Educational Consultant with the Carolina Collaborative Educational Consulting LLC from 2013 until 2018. She then worked in Admissions and Outreach at [New Vision Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/newvisionwild) from 2018 until 2019, when she joined Lake House Academy.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Survivors of the program have reported that in the beginning of 2020, Lake House Academy stopped using a level system in an attempt to transition from a behavioral basis to a more relational model. In place of the level system, punishments such as safety protocols and physical restraints are given to residents as the main method of control. The program uses two levels of safety protocols:
 
-***Safety 1:**On Safety 1, the teens are forbidden from leaving campus and must remain within line-of-sight of staff at all times.
-***Safety 2:**On Safety 2, the teens are required to drag their matress into the living room each night and sleep there under staff supervision. Staff also watch the teens while they use the bathroom and shower.
+***Safety 1:** On Safety 1, the teens are forbidden from leaving campus and must remain within line-of-sight of staff at all times.
+***Safety 2:** On Safety 2, the teens are required to drag their matress into the living room each night and sleep there under staff supervision. Staff also watch the teens while they use the bathroom and shower.
 
 Restraints, called "Containments" by the program, are reportedly used on residents if they are being disruptive, not listening to directions, or are having panic attack. Survivors have described some of the restraint techniques used by staff, including wrapping the teen's arms around their body and holding them between their legs or lying on top of the teens. Some survivors have reported that staff will sometimes kick or hit the teen during a restraint.
 
@@ -57,7 +57,7 @@ In 2011, Lake House Academy filed a [lawsuit](https://www.casemine.com/judgement
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **6/13/2021: (PARENT)**"Lakehouse Academy is marketed as a therapeutic boarding school for pre-teen and teenage girls with academic, behavioral, or mental health conditions. I would never recommend any other parent to send their child to this school and urge any parents with children at this school to listen to their child's complaints and not allow any "therapist" to silence them. The hunger that these young kids complain of is real. When my child was a student at LHA, all three meals had to add up to 1,000 calories or less, fruit and all other natural and artificial sugar were limited, and my child reported food being taken as a punishment. Their bodyweight dropped tremendously. Homophobia and racism were a major part of my child's life at LHA. They encountered staff using the n and f word. My child was improperly medicated, physically abused, and denied free communication with me, all without my knowledge or consent I never imagined what LHA was really like. I regret not listening to my child or investigating the situation further and allowing them to go through this." - [Leviah (Yelp)](https://www.yelp.com/biz/lakehouse-academy-flat-rock?hrid=EuDtBxVnA5-0gP7F9VnxUA&utm_campaign=www_review_share_popup&utm_medium=copy_link&utm_source=(direct) )
 
@@ -83,7 +83,7 @@ In 2011, Lake House Academy filed a [lawsuit](https://www.casemine.com/judgement
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Lake House Academy Website Homepage](https://www.lakehouseacademy.com/)
 
@@ -96,4 +96,5 @@ In 2011, Lake House Academy filed a [lawsuit](https://www.casemine.com/judgement
 Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
 
-SaveCancel
+
+

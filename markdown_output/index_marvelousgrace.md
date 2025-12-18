@@ -10,30 +10,30 @@ Marvelous Grace Girls Academy (formerly known as New Beginnings Girls Academy) w
 
 MGGA was located at [3111 Zepp Ln, Pace, FL 32571](https://www.google.com/maps/place/Marvelous+Grace+Girls+Academy/@30.6544826,-87.1922913,337a,35y,180h/data=!3m1!1e3!4m5!3m4!1s0x0:0xeb3c4ce28286461a!8m2!3d30.6545687!4d-87.1935008) . This location is the same campus that was used by New Beginnings Girls Academy from 2001-2009, when the program was operating under this name. At some point, it was reported that the program relocated to [865 Sweatman Rd, Duck Hill, MS 38925](https://www.google.com/maps/place/865+Sweatman+Rd,+Duck+Hill,+MS+38925/@33.6363189,-89.5472457,270m/data=!3m1!1e3!4m6!3m5!1s0x8881afe10643c1a7:0x95c75a6c87095119!8m2!3d33.6357659!4d-89.5472203!16s%2Fg%2F11t14345gl?entry=ttu) .
 
-**Marvelous Grace Girls Academy is widely recognized as the rebrand of the confirmedly abusive [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) , which was forced to shut down by the state of Texas in 2001.**After its "closure", the Rebekah Home relocated briefly to Missouri, before settling in Florida and changing its name to New Beginnings Girls Academy. NBGA continued to operate in Pace, FL until August of 2009 when [changed its name](https://imgur.com/a/ZKgkQeq) to Marvelous Grace Girls Academy. Other than its name, everything about the program remains the same. The program's [archived website](https://imgur.com/a/3sGjJ4G) is identical before and after the name change, only substituting NBGA for MGGA. Even the executive director of NBGA, Steven Blankenship, is currently listed as the Founder/Director of MGGA.
+** Marvelous Grace Girls Academy is widely recognized as the rebrand of the confirmedly abusive [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) , which was forced to shut down by the state of Texas in 2001.** After its "closure", the Rebekah Home relocated briefly to Missouri, before settling in Florida and changing its name to New Beginnings Girls Academy. NBGA continued to operate in Pace, FL until August of 2009 when [changed its name](https://imgur.com/a/ZKgkQeq) to Marvelous Grace Girls Academy. Other than its name, everything about the program remains the same. The program's [archived website](https://imgur.com/a/3sGjJ4G) is identical before and after the name change, only substituting NBGA for MGGA. Even the executive director of NBGA, Steven Blankenship, is currently listed as the Founder/Director of MGGA.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Steven Blankenship**is the Founder and Director of MGGA. Prior to this, he was the Executive Director of New Beginnings Girls Academy leading up to the name change.
+** Steven Blankenship** is the Founder and Director of MGGA. Prior to this, he was the Executive Director of New Beginnings Girls Academy leading up to the name change.
 
-**Tanya Blankenship**
+** Tanya Blankenship**
 
-**Richard Azud**worked as the Principal/Superintendant of NBGA.
+** Richard Azud** worked as the Principal/Superintendant of NBGA.
 
-**Molly Hall**worked as a School Teacher and Dorm Mother at NBGA.
+** Molly Hall** worked as a School Teacher and Dorm Mother at NBGA.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Little information is currently known about the specifics of the program used by MGGA. It had been reported that MGGA uses a level-system, as is typical of many behavior-modification programs, consisting of four levels. The levels are reported to have been:
 
-***Level A:**This was the highest level at MGGA. These girls were given the most privileges, such as being able to talk during lunchtime and participate in "Friday Fun Night".
+***Level A:** This was the highest level at MGGA. These girls were given the most privileges, such as being able to talk during lunchtime and participate in "Friday Fun Night".
 ***Level B:***no additional information.*
 ***Level C:***no additional information.*
-***Level D/Discipline:**This level was used as punishment. It has been reported that this level was also called "Off Level". A girl was put onto Discipline/Off Level if they received anywhere from 3-10 demerits. During discipline, the girls were required to spend their meals sitting in a chair facing the wall, and were forbidden from speaking or moving. They were given sentences that must write over and over again in order to be taken off of Discipline. Typically they must rewrite these sentences many thousands of times. They were also put into a different uniform than the rest of their peers, which was reportedly a baggy red polo shirt. They were also given different meals than the rest of their peers, typically bland or low-quality foods as punishment, and were forbidden from using condiments or eating any sweets.
+***Level D/Discipline:** This level was used as punishment. It has been reported that this level was also called "Off Level". A girl was put onto Discipline/Off Level if they received anywhere from 3-10 demerits. During discipline, the girls were required to spend their meals sitting in a chair facing the wall, and were forbidden from speaking or moving. They were given sentences that must write over and over again in order to be taken off of Discipline. Typically they must rewrite these sentences many thousands of times. They were also put into a different uniform than the rest of their peers, which was reportedly a baggy red polo shirt. They were also given different meals than the rest of their peers, typically bland or low-quality foods as punishment, and were forbidden from using condiments or eating any sweets.
 
 When a resident arrived at MGGA, they were forbidden from speaking or making any non-verbal communication with anybody else, besides an older-resident known as their "Buddy". This introductory period typically lasted between 1 and 2 months.
 
@@ -45,7 +45,7 @@ After lunch, the students continued schoolwork for another few hours. After scho
 
 ---
 
-## **Rules and Punishments**
+## ** Rules and Punishments**
 
 The girls at Marvelous Grace Girls Academy were forced to adhere to a strict set of rules. Survivors have reported that the program revolved heavily around "demerits", which were given out for rule violations/negative behavior. Demerits were reportedly given out for even minor infractions such as stepping out of line, attempting to communicate or even making eye-contact with peers in any way, or not finishing a meal. Some of the other rules, as reported by survivors, included:
 
@@ -82,7 +82,7 @@ In 2010, Marvelous Grace was investigated by DCF after allegations of abuse came
 
 ---
 
-## **Closure**
+## ** Closure**
 
 On October 22, 2022, an [email](https://imgur.com/a/9r4h0KL) was sent to Carol Bishop and the Mississippi Department of Health by Steven Blankenship announcing the closure of Marvelous Grace Girls Academy. In the email, Steven stated that the decision to close the program came from a unanimous decision by staff members after they felt the rigorous nature of the program had become too taxing on them. He went on to state that, "currently, we really do not have the ability to take needed time for rest and recovery of our own selves." Steven also noted that, given he and his wife are both getting older, he wanted to focus his senior years on endeavors other than "helping to recover troubled teens".
 
@@ -90,9 +90,9 @@ Marvelous Grace Girls Academy closed permanently on October 22, 2022.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**June 2021: (SURVIVOR)**"I wish I can say different but I can't. The first couple weeks or month that you are there you can't talk to any body. How am I able to work on not separating myself from people, when we can't talk that often and you get into trouble for talking. When you are in trouble you are separated for everybody. When you have a bad relationship with your family, how is it going to hep when most people don't get to see there family for years or months. But some people got help, and lots of people didn't. I just kept getting into trouble for the things I needed to work on, then having help with it." - [Feliciana (Google Reviews)](https://www.google.com/maps/contrib/116423121657940127039/reviews/@30.65441,-87.193502,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
+** June 2021: (SURVIVOR)**"I wish I can say different but I can't. The first couple weeks or month that you are there you can't talk to any body. How am I able to work on not separating myself from people, when we can't talk that often and you get into trouble for talking. When you are in trouble you are separated for everybody. When you have a bad relationship with your family, how is it going to hep when most people don't get to see there family for years or months. But some people got help, and lots of people didn't. I just kept getting into trouble for the things I needed to work on, then having help with it." - [Feliciana (Google Reviews)](https://www.google.com/maps/contrib/116423121657940127039/reviews/@30.65441,-87.193502,17z/data=!3m1!4b1!4m3!8m2!3m1!1e1?hl=en-US)
 
 **6/20/2020: (SURVIVOR)** [Link to Abby's Survivor Testimony](https://youtu.be/DVIXbhQIZm8)
 
@@ -100,7 +100,7 @@ Marvelous Grace Girls Academy closed permanently on October 22, 2022.
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Marvelous Grace Girls Academy Website Homepage](https://web.archive.org/web/20120607191750/https://mgga.us/) (archived, 2008)
 
@@ -120,7 +120,8 @@ Marvelous Grace Girls Academy closed permanently on October 22, 2022.
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

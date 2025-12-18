@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Teen Help (a.k.a. "Teen Help Inc." and "Teen Help, LLC") was a company which operated as a marketing arm of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization. It was created in 1991 as "Teen Help Inc." by Robert B. Lichfield, as the precursor to WWASP. Lichfield is listed as the Registered Agent for Teen Help Inc. The address associated with the company is listed as [180 N State St, La Verkin, UT 84745](https://www.google.com/maps/place/180+N+State+St,+La+Verkin,+UT+84745/@37.2048625,-113.2718649,205a,35y,94.32h/data=!3m1!1e3!4m5!3m4!1s0x80caf3e25daa1a93:0x81c220c483e01bc7!8m2!3d37.2046035!4d-113.2719233) , which is the location Lichfield's first [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) .
 
@@ -14,17 +14,17 @@ In 1997, Teen Help Inc. rebranded itself as Teen Help, LLC. The registered agent
 
 ---
 
-## **Founder and Notable Employees**
+## ** Founder and Notable Employees**
 
-**Robert B. Lichfield**is the creator and owner of Teen Help/Teen Help, LLC. He is also the founder/creator of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
+** Robert B. Lichfield** is the creator and owner of Teen Help/Teen Help, LLC. He is also the founder/creator of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) .
 
-**Narvin Lichfield**is the brother of Robert Lichfield and was the managing director of Teen Help from 1991 until 1997. In 1997, he created [Adolescent Services International](https://www.reddit.com/r/troubledteens/wiki/index/adolescentservices) , another marketing arm designed to promote WWASP programs to parents.
+** Narvin Lichfield** is the brother of Robert Lichfield and was the managing director of Teen Help from 1991 until 1997. In 1997, he created [Adolescent Services International](https://www.reddit.com/r/troubledteens/wiki/index/adolescentservices) , another marketing arm designed to promote WWASP programs to parents.
 
-**Jean Foye**is listed as the Registered Agent of Teen Help Inc. He was the manager of Teen Help Inc.
+** Jean Foye** is listed as the Registered Agent of Teen Help Inc. He was the manager of Teen Help Inc.
 
 ---
 
-## **Additional Information**
+## ** Additional Information**
 
 [Teen Help Website Homepage](https://web.archive.org/web/20050313053007/http://www.teenhelp.us/ot/index.php)
 
@@ -44,7 +44,8 @@ In 1997, Teen Help Inc. rebranded itself as Teen Help, LLC. The registered agent
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -2,7 +2,7 @@
 
 ---
 
-## **History and Background Information**
+## ** History and Background Information**
 
 Acadia Montana (previously known as Rivendell of Montana, Children’s Comprehensive Services, and Kids Behavioral Health of Montana) was an [Acadia Healthcare](https://www.reddit.com/r/troubledteens/wiki/index/acadiahealth) behavior modification program that opened on September 16, 1988. It was marketed as a Residential Treatment Center for teenagers (5-18) who were struggling with various psychiatric, behavioral, emotional, and co-occurring disorders. At the time of its closure, the program had a maximum enrollment of 108 residents, and the average length of stay was reported to be between 3 and 6 months. The cost of the program's tuition is presently unknown.
 
@@ -16,35 +16,35 @@ That same year, CCS changed ownership once again and became Kids Behavioral Heal
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Kristine Carpenter**worked as the CEO of Acadia Montana from 2012 until its closure in 2019. Prior to becoming the program's CEO, she was Acadia Montana's Chief Operating Officer from 1996 until 2012.
+** Kristine Carpenter** worked as the CEO of Acadia Montana from 2012 until its closure in 2019. Prior to becoming the program's CEO, she was Acadia Montana's Chief Operating Officer from 1996 until 2012.
 
-**Carter Anderson**worked as the Director of Planning and Development at Rivendell of Montana.
+** Carter Anderson** worked as the Director of Planning and Development at Rivendell of Montana.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Acadia Montana used a level system consisting of 3 levels.
 
 ---
 
-## **Abuse Allegations and Lawsuits**
+## ** Abuse Allegations and Lawsuits**
 
 ---
 
-## **Closure**
+## ** Closure**
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **9/9/2021: (SURVIVOR)**"Acadia was a joke. My time there was a relapse. It was filled with physical violence not only from the other residents but from the staff. I was there two months and was put on "SPs" for the whole time I was there. Whenever I or the others acted out we got LOCKED in the quiet room and got injected with something. It gave me more trauma." - [Anonymous (Rehab.com)](https://www.rehab.com/acadia-montana-treatment-center)
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Acadia Montana Website Homepage](https://web.archive.org/web/20080810195051/http://www.acadiamontana.com/index) (archived, 2008)
 
@@ -62,7 +62,8 @@ Like other behavior modification programs, Acadia Montana used a level system co
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -12,24 +12,24 @@ The program was located at [389 Main St, Great Barrington, MA 01230](https://www
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Thomas Bratter**was the Founder of John Dewey Academy. He also worked as the President of the school from 1985 until his death in 2012. In 1995, Bratter pleaded no contest in Connecticut to a state charge of second-degree unlawful restraint, which involved his relationship with a 17-year-old girl. As part of his plea agreement, he received a suspended one-year sentence and was required to perform 500 hours of community service and donate $50,000 to a charity that dealt with victims of crime or abuse. However, the charges lodged by the girl in the same case in Massachusetts were dropped.
+** Thomas Bratter** was the Founder of John Dewey Academy. He also worked as the President of the school from 1985 until his death in 2012. In 1995, Bratter pleaded no contest in Connecticut to a state charge of second-degree unlawful restraint, which involved his relationship with a 17-year-old girl. As part of his plea agreement, he received a suspended one-year sentence and was required to perform 500 hours of community service and donate $50,000 to a charity that dealt with victims of crime or abuse. However, the charges lodged by the girl in the same case in Massachusetts were dropped.
 
-**Ken Steiner**worked as the Dean of Students at JDA, and was also an owner of the program. His previous employment is unknown.
+** Ken Steiner** worked as the Dean of Students at JDA, and was also an owner of the program. His previous employment is unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-The John Dewey Academy has been cited to have used [Caring Confrontation Psychotherapy (CCP)](https://link.springer.com/article/10.1023/A:1025106307945) as its primary treatment technique, which is a form of therapy created by Tom Bratter. CCP's critics refer to it as "attack therapy" and point to its consistent use in institutions that have been shut down for abuse, such as [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) , [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) , and the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) . A 2011 [blog post](https://strugglingteens.com/artman/publish/JohnDeweyAcademyBN_110328.shtml) from the John Dewey Academy addressed and criticized the closure of the**confirmedly abusive** [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) , attributing its allegations and subsequent closure to "the corrosive influence of the rumor mill as well as misconceptions about programs fostered by gossip and false information" before promoting the Academy itself as an option for those who were looking to attend a school like Elan.
+The John Dewey Academy has been cited to have used [Caring Confrontation Psychotherapy (CCP)](https://link.springer.com/article/10.1023/A:1025106307945) as its primary treatment technique, which is a form of therapy created by Tom Bratter. CCP's critics refer to it as "attack therapy" and point to its consistent use in institutions that have been shut down for abuse, such as [Synanon](https://www.reddit.com/r/troubledteens/wiki/index/synanon) , [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) , and the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) . A 2011 [blog post](https://strugglingteens.com/artman/publish/JohnDeweyAcademyBN_110328.shtml) from the John Dewey Academy addressed and criticized the closure of the** confirmedly abusive** [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) , attributing its allegations and subsequent closure to "the corrosive influence of the rumor mill as well as misconceptions about programs fostered by gossip and false information" before promoting the Academy itself as an option for those who were looking to attend a school like Elan.
 
 Like other behavior modification programs, John Dewey Academy used a level-system consisting of 4 levels. The resident's level was decided by a student vote. The levels are reported to have been:
 
-***Prospective:**This was the first level at JDA. On this level, residents were given very minimal "privileges" and were not allowed to speak to other residents on lower levels without upper-levels or staff listening.
-***Younger Member:**This was the next level, but the privileges were reportedly the same as those of Prospective Level.
-***Middle Member:**On this level, residents were finally allowed talk to any other resident regardless of level and listen to "untrusted" younger members speak to each other. They were also allowed to go into town with another student.
-***Older Member:**This was the final level at JDA. On this level, residents were allowed to travel off-campus alone, and had much higher expectations placed on them.
+***Prospective:** This was the first level at JDA. On this level, residents were given very minimal "privileges" and were not allowed to speak to other residents on lower levels without upper-levels or staff listening.
+***Younger Member:** This was the next level, but the privileges were reportedly the same as those of Prospective Level.
+***Middle Member:** On this level, residents were finally allowed talk to any other resident regardless of level and listen to "untrusted" younger members speak to each other. They were also allowed to go into town with another student.
+***Older Member:** This was the final level at JDA. On this level, residents were allowed to travel off-campus alone, and had much higher expectations placed on them.
 
 According to an [archived version of the program's website](https://web.archive.org/web/20001001063122/https://www.jda.org/) , JDA vehemently avoided the use of psychotropic medications. "No potent psychotropic mood or mind-altering medication is prescribed. Abstinence is viewed to be a viable treatment goal. The Academy minimizes claims by psychopharmacologists and neuropsychiatrists that intrapsychic problems are caused by metabolic disorders, genetic imbalances, and cellular deficiencies. Our school asserts personality and affective disorders rarely are cured by medicinal approaches. Feelings of pain, shame, fear and overwhelming loneliness are caused by conscious dysfunctional, dishonest, destructive decisions, not by biological aberrations. Personal choice is stressed, thus rejecting anti-therapeutic concepts of predestination, mental illness, and pre/subconscious etiology. We want our students to be active-autonomous rather than remaining passive-dependent. We condemn the traditional institutional atmosphere of four "C's" --i.e., care, custody, conformity and control. We use four different "C's", change, communication, co-operation and care."
 
@@ -54,9 +54,9 @@ In 2008, a former resident of JDA, Jeffrey Cameron, was [arrested](https://www.n
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-**December 2020: (SURVIVOR)**"JDA has better practices than many others in the industry, but it is still abusive and damaging to students. The program only concerns itself with successful results for those who graduated, but many are expelled in the process, almost always to their determent. Be sure, this program is a place for rich parents who hate and neglected their children. Attendance at a top tier college was once an offer for attending, but that's no longer an option. This program might seem like something special, but it uses disproven methods of therapy, with poor supervision, and the results are abuse and trauma." - Anonymous,*submitted directly to Wiki*
+** December 2020: (SURVIVOR)**"JDA has better practices than many others in the industry, but it is still abusive and damaging to students. The program only concerns itself with successful results for those who graduated, but many are expelled in the process, almost always to their determent. Be sure, this program is a place for rich parents who hate and neglected their children. Attendance at a top tier college was once an offer for attending, but that's no longer an option. This program might seem like something special, but it uses disproven methods of therapy, with poor supervision, and the results are abuse and trauma." - Anonymous,*submitted directly to Wiki*
 
 **January 2020: (SURVIVOR)**"Why would any parent in their right mind ever send their child to a place that literally abuses young adults?!?! Parents are paying for their children to be brain washed, told not to speak to their parents, told lies to make them feel like all they have is the people there. Why would you send you child somewhere that will destroy their confidence and leave them with trauma, and a whole slew of other problems....." - [Jocelyn (Google Reviews)](https://www.google.com/maps/contrib/112559435395679852610/place/ChIJaae5o65m54kRXF1iNVvuZng/@42.2118641,-73.4652647,10.44z/data=!4m6!1m5!8m4!1e1!2s112559435395679852610!3m1!1e1?hl=en-US)
 
@@ -66,7 +66,7 @@ In 2008, a former resident of JDA, Jeffrey Cameron, was [arrested](https://www.n
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [John Dewey Academy Website Homepage](https://web.archive.org/web/20210423052738/https://www.jda.org/) (archived, 2021)
 
@@ -84,7 +84,8 @@ In 2008, a former resident of JDA, Jeffrey Cameron, was [arrested](https://www.n
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

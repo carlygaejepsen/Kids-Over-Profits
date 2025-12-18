@@ -12,19 +12,19 @@ The program was located at [2595 Depot St, Manchester Center, VT 05255](https://
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Rae Ann Knopf**is the Founder of Bromley Brook School. She also worked as the Executive Director of the program from 2004 until 2006. Prior to this, she worked as the Head of School at the [King George School](https://www.reddit.com/r/troubledteens/wiki/index/kinggeorge) from May of 1998 until February 2004. During this time, she also worked as the Vice President of Private Education Operations and the Interim Chief Executive Officer and Executive Director of [CEDU Family of Services](https://www.reddit.com/r/troubledteens/wiki/index/cedu) for the [Brown Schools](https://www.reddit.com/r/troubledteens/wiki/index/brownschools) , KGS's parent company. She then worked as the Deputy Commissioner of Education Transformation and Innovation at the State of Vermont Department of Education from 2006 until 2012. After this, she worked as the Executive Director of the Connecticut Council for Education Reform from 2012 until 2013. She then worked as the Senior Program Officer GPA North America at the Bill & Melinda Gates Foundation, where she continues to work.
+** Rae Ann Knopf** is the Founder of Bromley Brook School. She also worked as the Executive Director of the program from 2004 until 2006. Prior to this, she worked as the Head of School at the [King George School](https://www.reddit.com/r/troubledteens/wiki/index/kinggeorge) from May of 1998 until February 2004. During this time, she also worked as the Vice President of Private Education Operations and the Interim Chief Executive Officer and Executive Director of [CEDU Family of Services](https://www.reddit.com/r/troubledteens/wiki/index/cedu) for the [Brown Schools](https://www.reddit.com/r/troubledteens/wiki/index/brownschools) , KGS's parent company. She then worked as the Deputy Commissioner of Education Transformation and Innovation at the State of Vermont Department of Education from 2006 until 2012. After this, she worked as the Executive Director of the Connecticut Council for Education Reform from 2012 until 2013. She then worked as the Senior Program Officer GPA North America at the Bill & Melinda Gates Foundation, where she continues to work.
 
 [HEAL Program Staff Information](http://www.heal-online.org/bromley.htm)
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, Bromley Brook School likely used a level system. The specifics of the level system are unknown.
 
-*No additional information is currently known regarding the program used by Bromley Brook School. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No additional information is currently known regarding the program used by Bromley Brook School. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -38,13 +38,13 @@ In April 2010, Peters pleaded guilty to three amended counts of sexual exploitat
 
 ---
 
-## **Closure**
+## ** Closure**
 
 In March of 2010, [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) announced that the Bromley Brook School, along with four other Aspen programs, would be closing at the end of the current school year. According to then-President of Aspen Education Group, Phil Herschmann, "It's purely the economics of the times that has really created a really reduced demand for these services." In addition to Bromley Brook, the [New Leaf Academy](https://www.reddit.com/r/troubledteens/wiki/index/newleaforegon) and the [NorthStar Center](https://www.reddit.com/r/troubledteens/wiki/index/northstar) in Oregon, as well as the [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) and [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) in Utah, also were closed around the same time.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **3/8/2015: (SURVIVOR)** [Link to 'Grintoforever at Turn-about Ranch (and Bromley Brook School)'](http://tales-from-the-black-school.blogspot.com/2015/03/grintoforever-at-turn-about-ranch-and.html)
 
@@ -52,7 +52,7 @@ In March of 2010, [Aspen Education Group](https://www.reddit.com/r/troubledteens
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Bromley Brook School Website Homepage](https://web.archive.org/web/20041118011942/http://www.bromleybrookschool.com/) (archived, 2004)
 
@@ -70,7 +70,8 @@ In March of 2010, [Aspen Education Group](https://www.reddit.com/r/troubledteens
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

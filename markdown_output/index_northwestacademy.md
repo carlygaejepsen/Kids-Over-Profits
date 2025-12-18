@@ -12,37 +12,37 @@ Northwest Academy was marketed as a specialty boarding school for teenagers aged
 
 Northwest Academy was shut down in February 2019 after the owners were arrested on charges of allowing child abuse and neglect in connection with the discovery of arsenic in the school's water supply and many reports of physical abuse. This campus is now the location of another Residential Treatment program called [Never Give Up Youth Healing Center](https://www.reddit.com/r/troubledteens/wiki/index/nevergiveup) , which appears to be indirectly affiliated with WWASP.
 
-**Note: This program is not to be confused with another behavior-modification program of the same name, [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , which was owned by [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and located in Idaho.**
+** Note: This program is not to be confused with another behavior-modification program of the same name, [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , which was owned by [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and located in Idaho.**
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Marcel and Patricia Chappuis**were the owners and directors of Northwest Academy. They had both previously been affiliated with WWASP. Marcel Chappuis was a WWASP-affiliated psychiatrist in private practice who provided medical services to students at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , and [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also had been the Director of Psychology at [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) from 1992 to 1997.
+** Marcel and Patricia Chappuis** were the owners and directors of Northwest Academy. They had both previously been affiliated with WWASP. Marcel Chappuis was a WWASP-affiliated psychiatrist in private practice who provided medical services to students at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) , [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) , and [Spring Creek Lodge](https://www.reddit.com/r/troubledteens/wiki/index/springcreeklodge) . He also had been the Director of Psychology at [Brightway Adolescent Hospital](https://www.reddit.com/r/troubledteens/wiki/index/brightway) from 1992 to 1997.
 
-**Caleb Hill**worked as a teacher at Northwest Academy. In 2019, he was arrested on charges of child abuse after several incidents where he became physical with students and left then with bruises, bloody noses, and broken bones.
+** Caleb Hill** worked as a teacher at Northwest Academy. In 2019, he was arrested on charges of child abuse after several incidents where he became physical with students and left then with bruises, bloody noses, and broken bones.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Northwest Academy is likely to have used a very similar program to that of [Horizon Academy](https://www.reddit.com/r/troubledteens/wiki/index/horizonacademy) , although the specifics of the program are unknown. It is likely that this program used a level-system.
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Over the nearly five years that it operated, dozens of complaints were noted by inspectors with the state’s child care licensing office. Once, students were caught having sex during an attempted escape; the school was supposed to report that to the state when it happened, but they never did. Another time a student told the school they were being abused. No one told the state about that either. The allegation of abuse was uncovered during an inspection of the school seven months later. None of that, though, seemed to be enough for the state of Nevada to pull their license. Instead, they handed Northwest a fine for $100.
 
 In January of 2019, several former students came forward and reported that they had suffered broken bones, bloody noses, bruising, and were refused medical care while at Northwest Academy. Investigators arrested a teacher, Caleb Hill, in connection with the abuse, and it was then that they noticed bizarre skin rashes on many of the students there. They found that the cause of these rashes were high levels of arsenic in the school's water supply, which the students drank, bathed in, and cooked with. The owners of Northwest, Patricia and Marcel Chappuis, were arrested shortly after and each charged with 45 counts of Child Abuse or Neglect, a category B felony. Northwest Academy closed shortly after in February.
 
-It appears that there is presently another behavior-modification program called**Never Give Up Youth Healing Center**occupying Northwest Academy's former campus, although this program does not appear to be outwardly affiliated with WWASP or Horizon/Northwest.
+It appears that there is presently another behavior-modification program called** Never Give Up Youth Healing Center** occupying Northwest Academy's former campus, although this program does not appear to be outwardly affiliated with WWASP or Horizon/Northwest.
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No survivor testimonies have been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No survivor testimonies have been found. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -76,7 +76,8 @@ It appears that there is presently another behavior-modification program called*
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

@@ -14,23 +14,23 @@ The program was briefly closed in 2008 following an instance of child abuse wher
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Greg Kanagy**is the current Director of Gator Wilderness Camp. His prior employment is unknown.
+** Greg Kanagy** is the current Director of Gator Wilderness Camp. His prior employment is unknown.
 
-**Andy Ard**is the President of the Board of Gator Wilderness Camp. His prior employment is unknown.
+** Andy Ard** is the President of the Board of Gator Wilderness Camp. His prior employment is unknown.
 
-**Kevin Miller**is the Vice President of the Board of Gator Wilderness Camp. His prior employment is unknown.
+** Kevin Miller** is the Vice President of the Board of Gator Wilderness Camp. His prior employment is unknown.
 
-**Arthur Dagg**was the previous Director of Gator Wilderness Camp until 2008. In 2008, he was arrested and charged with neglect following an incident where a 15-year-old resident was restrained for 3 hours and required hospitalization. Dagg reportedly waited 3 days before allowing the victim to go to the hospital. He died before the trial could take place.
+** Arthur Dagg** was the previous Director of Gator Wilderness Camp until 2008. In 2008, he was arrested and charged with neglect following an incident where a 15-year-old resident was restrained for 3 hours and required hospitalization. Dagg reportedly waited 3 days before allowing the victim to go to the hospital. He died before the trial could take place.
 
-**Carl Hochstetler**worked as a staff member at Gator Wilderness Camp. In 2008, he was arrested and charged with child abuse after he restrained a 15-year-old resident for 3 hours. The victim required hospitalization. He pleaded guilty to a lesser charge- contributing to the delinquency of a minor- andwas sentenced to probation.
+** Carl Hochstetler** worked as a staff member at Gator Wilderness Camp. In 2008, he was arrested and charged with child abuse after he restrained a 15-year-old resident for 3 hours. The victim required hospitalization. He pleaded guilty to a lesser charge- contributing to the delinquency of a minor- andwas sentenced to probation.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-Very little is known about the current structure of the program used by Gator Wilderness Camp.*If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+Very little is known about the current structure of the program used by Gator Wilderness Camp.*If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,9 +42,9 @@ Not long after the program closed, it was purchased and reopened by Greg Kanagy 
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
-*No testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No testimonies have yet been located. If you attended this program and would like to contribute a testimony of your experience, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -56,7 +56,8 @@ Not long after the program closed, it was purchased and reopened by Greg Kanagy 
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

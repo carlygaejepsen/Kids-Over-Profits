@@ -12,21 +12,21 @@ The program operates three campuses across Southern California. The outpatient f
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Jaynie Longnecker-Harper**is the Founder and CEO of Benchmark Transitions. Prior to creating Benchmark Transitions, she worked at the notorious and**confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) for 7 years beginning in 1986. Together with James Powell, she ran the first young adult "therapeutic" treatment program in the country, a division of CEDU called Hilltop for Young Adults. She worked at Hilltop/CEDU until 1993, when she created Benchmark Transitions.
+** Jaynie Longnecker-Harper** is the Founder and CEO of Benchmark Transitions. Prior to creating Benchmark Transitions, she worked at the notorious and** confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) for 7 years beginning in 1986. Together with James Powell, she ran the first young adult "therapeutic" treatment program in the country, a division of CEDU called Hilltop for Young Adults. She worked at Hilltop/CEDU until 1993, when she created Benchmark Transitions.
 
-**Nicholaus Bond**is the current Clinical Director of Benchmark Transitions. After graduating from BYU in 2011, he completed his Master's Degree in Marriage and Family Therapy from Loma Linda Univeristy in 2013. During this time, he also worked as a Graduate Assistant and Trainee at the Behavioral Health Institute from 2012-2013. He then worked as a Family Therapist Intern, Adolescent Treatment Coordinator, Program Coordication, and the Director of Outpatient Services at the MFI Recovery Center from 2013 until 2020, when he joined Benchmark.
+** Nicholaus Bond** is the current Clinical Director of Benchmark Transitions. After graduating from BYU in 2011, he completed his Master's Degree in Marriage and Family Therapy from Loma Linda Univeristy in 2013. During this time, he also worked as a Graduate Assistant and Trainee at the Behavioral Health Institute from 2012-2013. He then worked as a Family Therapist Intern, Adolescent Treatment Coordinator, Program Coordication, and the Director of Outpatient Services at the MFI Recovery Center from 2013 until 2020, when he joined Benchmark.
 
-**James Powell**worked as the Executive Clinical Director of Benchmark Transitions from 2011 until his death in 2019. Prior to this, he worked alongside Jaynie Longnecker-Harper at the notorious and**confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1988 until 2003. Together with Jaynie, he ran the first young adult "therapeutic" treatment program in the country, a division of CEDU called Hilltop for Young Adults. He also owned a consulting service, Powell & Elliott, Collaborative, LLC., with his business partner, Brandi Elliott. James was also the Clinical Director of CEDU's [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) until he joined Benchmark in 2011.
+** James Powell** worked as the Executive Clinical Director of Benchmark Transitions from 2011 until his death in 2019. Prior to this, he worked alongside Jaynie Longnecker-Harper at the notorious and** confirmedly abusive** [CEDU High School](https://www.reddit.com/r/troubledteens/wiki/index/ceduhs) from 1988 until 2003. Together with Jaynie, he ran the first young adult "therapeutic" treatment program in the country, a division of CEDU called Hilltop for Young Adults. He also owned a consulting service, Powell & Elliott, Collaborative, LLC., with his business partner, Brandi Elliott. James was also the Clinical Director of CEDU's [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) until he joined Benchmark in 2011.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior modification programs, Benchmark Transitions uses a level system. According to reports, the level system consists of three levels; Level 1, Level 2, and Level 3. The levels appear to change daily, and are dependant upon the opinion of whichever staff were watching the residents around dinner/bedtime. No further information is presently known.
 
-*No additional information regarding the specifics of the program used by Benchmark Transitions is currently known. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No additional information regarding the specifics of the program used by Benchmark Transitions is currently known. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -42,7 +42,7 @@ Angela Smith, founder of [HEAL](http://www.heal-online.org/thelist.htm#enviro) ,
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2019: (SURVIVOR)**"Please don't even attempt to bother with this place. Let me just put this out there to give you a sense of how ridiculous this place is - right now this center is trying to get me into legal trouble for the original negative review I wrote sharing my personal experience there and how I viewed and felt the treatment center is run. They threatened to call the police on me and say I am harassing them with my review, because of some trouble I had with them in the past. And I am sure they will continue to attempt to contact me and threaten me again after re-writing this review. Go ahead Benchmark. Call the police. I have every right to write this review and you legally cannot ask me to remove it. I am protected by anti-SLAPP laws in both California and Texas and according to the California and Texas penal code, am not conducting an act of harassment. Now, back to everyone else who deserves this review, if you'd like a more detailed description of Benchmark life - Here it is from the perspective of a former client. This place is a company - not a treatment center. They love money and will do and say a lot of things to get you to send your troubled son or daughter here. Next to none of the clients want to be here and because of that, they all treat each other like utter garbage and do not take the program seriously, making it very difficult to want to progress or be there. Along the lines of treatment - very few of the therapists seem to know what they are doing at all. Both in, and out of groups. Groups in which the therapists read right off of a packet they found in a google search with no extra help or explanation to the clients. All treatment approaches feel superficial and unhelpful to many. The days are all the same and become repetitive and boring making life here not all that enjoyable. Every day and every group seems to be the same thing. For days, weeks, and months. Furthermore, very little ever seems to get done in a timely manner here and many of the clients feel like they are heard by no one. Now, the facilities are nice, and well kept, so there's that as a positive. I cannot say that Benchmark is the most miserable place on Earth, but as far as I'm concerned, I never want to return to Redlands California because of Benchmark, and I do not ever again want to be affiliated with anyone there. Could this place work for your child? It's possible. However, this is my summarized view of the treatment center and, to my knowledge, how many other clients perceive Benchmark.. Please take a very, very long time to research Benchmark before you make any considerations of sending your child or yourself here. It is a very negative place. I have been to two other genuine treatment centers, and if you were to look them up they both have nearly a 5 star rating on Google. I absolutely loved those treatment centers and came out of them feeling alive, happy, insightful, and invigorated. I have no feelings resembling anything like that for Benchmark. I feel as though that speaks volume. I hope you read this carefully and are woeful in your journey of finding a proper place for your child or yourself." - [Chris (Google Reviews)](https://www.google.com/maps/contrib/110845158424237173718/place/ChIJB1SCU62r3IARHNj_QhhoUmk/@33.9719043,-117.3646276,9.11z/data=!4m6!1m5!8m4!1e1!2s110845158424237173718!3m1!1e1?hl=en-US)
 
@@ -52,7 +52,7 @@ Angela Smith, founder of [HEAL](http://www.heal-online.org/thelist.htm#enviro) ,
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Benchmark Transitions Website Homepage](https://benchmarktransitions.com/)
 
@@ -62,7 +62,8 @@ Angela Smith, founder of [HEAL](http://www.heal-online.org/thelist.htm#enviro) ,
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

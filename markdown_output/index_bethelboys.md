@@ -16,23 +16,23 @@ The Fountain family tried unsuccessfully to re-open the school in several locati
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Reverend Herman Fountain Sr.**was the founder and co-owner of Bethel Boys Academy.
+** Reverend Herman Fountain Sr.** was the founder and co-owner of Bethel Boys Academy.
 
-**John Fountain**is Herman Fountain Sr.'s son and co-owner of Bethel Boys Academy.
+** John Fountain** is Herman Fountain Sr.'s son and co-owner of Bethel Boys Academy.
 
-**Josh Fountain**is also the son of Herman Fountain Sr. and is reported to have worked at Bethel Boys Academy in an unknown role.
+** Josh Fountain** is also the son of Herman Fountain Sr. and is reported to have worked at Bethel Boys Academy in an unknown role.
 
-**Herman Fountain Jr.**is also the son of Herman Fountain Sr. and is reported to have worked at BBA.
+** Herman Fountain Jr.** is also the son of Herman Fountain Sr. and is reported to have worked at BBA.
 
-**William Knott**was a drill sergeant at Bethel Boys Academy. In 2017, he was charged with three counts of child abuse for choking, punching, and "stomping" on multiple boys at [Restoration Youth Academy](https://www.reddit.com/r/troubledteens/wiki/index/restorationyouth) , a program which he co-founded after leaving BBA. One survivor wrote "Mr. Will grabbed me by my belt and picked me up then slammed me on the ground again. Mr. Will yelled back at me to get up, but I still did not. After I said no, Mr. Will grabbed me again, picked me up, put me in a head lock, and started to choke me. Mr. Will kept me like that and I couldn't breathe for at least 15 seconds or so after he let go. When I finally calmed down Mr. Will grabbed handcuffs and handcuffed me, took me outside, and threw me down the school steps. I was made to stay in isolation for a while after that. I have seen Mr. Will slam so many of the cadets for little or no reason at all." [(Source)](https://www.local10.com/news/2013/02/16/teenagers-alleges-abuse-at-camp-2/)
+** William Knott** was a drill sergeant at Bethel Boys Academy. In 2017, he was charged with three counts of child abuse for choking, punching, and "stomping" on multiple boys at [Restoration Youth Academy](https://www.reddit.com/r/troubledteens/wiki/index/restorationyouth) , a program which he co-founded after leaving BBA. One survivor wrote "Mr. Will grabbed me by my belt and picked me up then slammed me on the ground again. Mr. Will yelled back at me to get up, but I still did not. After I said no, Mr. Will grabbed me again, picked me up, put me in a head lock, and started to choke me. Mr. Will kept me like that and I couldn't breathe for at least 15 seconds or so after he let go. When I finally calmed down Mr. Will grabbed handcuffs and handcuffed me, took me outside, and threw me down the school steps. I was made to stay in isolation for a while after that. I have seen Mr. Will slam so many of the cadets for little or no reason at all." [(Source)](https://www.local10.com/news/2013/02/16/teenagers-alleges-abuse-at-camp-2/)
 
-**David C. Owens**is reported to have worked at Bethel Boys Academy. He later worked for Westside Baptist Church at 390 Inverness Dr, Pacifica, CA 94044.
+** David C. Owens** is reported to have worked at Bethel Boys Academy. He later worked for Westside Baptist Church at 390 Inverness Dr, Pacifica, CA 94044.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 In the beginning, BBA operated similarly to [Roloffs Homes](https://www.reddit.com/r/troubledteens/wiki/index/roloffs) such as the [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah) . Its program consisted of four levels and the merit/demerit system also used by many WWASP facilities, including the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) . They are reported to have used corporal punishment as part of this system.
 
@@ -44,7 +44,7 @@ The program also heavily revolved around punishment, which often consisted of vi
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Bethel Boys Academy was an extremely cruel and abusive program. The staff abused the boys physically and emotionally. In addition, like the [Elan School](https://www.reddit.com/r/troubledteens/wiki/index/elan) , BBA forced children to box/fight each other nearly to death. According to one survivor's testimony, "During the boxing matches we would have, we would hold the matches inside the dorm. I broke my nose 3 times due to boxing, and never received medical attention to have my nose reset, I now live with a disfigured nose and a deviated septum. I have scars littering my legs, my arms and my face because of them and their forced activities (FIGHTING)/ I had personally watched a kid get knocked out and as he’s falling, he hit his head on a bunk bed, splitting his head open, to which he never received medical attention (stitches) and now lives with a horrible disfigurement on his head. I know 3 people that have tried to kill themselves because of KNOT’s torture (I will not name names, but you know who you are…) One guy jumped out of the second story floor, purposely landing on his head, trying to kill himself. When he was taken to the hospital, they lied to the hospital and said that he fell and hurt himself. Brought him back to the ‘Academy’ and beat and tortured him for 3 days and put him in a box out in the SUN… like a hotbox. 2 weeks later the kid ran away, he got caught, got beat again and then I never saw him again. Another kid drank bleach, went into convulsions, started to throw up blood. I never saw him again. Another kid slit his wrists in the ‘head’ or bathroom, never saw him again after that."
 
@@ -72,7 +72,7 @@ Around 2007, the program's name was changed again to [*Gulf Coast Academy*](http
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Bethel Boys Academy Website (archived)](https://web.archive.org/web/20050131190948/http://th.bethelacademy.org/)
 
@@ -94,7 +94,8 @@ Around 2007, the program's name was changed again to [*Gulf Coast Academy*](http
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

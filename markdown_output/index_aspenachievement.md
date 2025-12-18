@@ -14,28 +14,28 @@ In 2011, AAA merged with another [Aspen Education Group](https://www.reddit.com/
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Gil Hallows**was the Executive Director of Aspen Achievement Academy beginning in 1996. He also assisted in the creation of other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) and [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) . He has also been involved in the [Outdoor Behavioral Healthcare Industry Council (OBHIC)](https://www.reddit.com/r/troubledteens/wiki/index/obhic) since its inception, and he was also a member of the board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) from 2002 until 2011.
+** Gil Hallows** was the Executive Director of Aspen Achievement Academy beginning in 1996. He also assisted in the creation of other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) and [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery) . He has also been involved in the [Outdoor Behavioral Healthcare Industry Council (OBHIC)](https://www.reddit.com/r/troubledteens/wiki/index/obhic) since its inception, and he was also a member of the board of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) from 2002 until 2011.
 
-**Ken Murphy**worked as a Therapist at Aspen Achievement Academy. He began working for [Aspen](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 1993 at Aspen Youth Alternatives and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) . According to [HEAL](http://www.heal-online.org/aspenache.htm) , Murphy became a licenses Marriage & Family Therapist in 2009, meaning he worked at Aspen*unlicensed*for 12 years.
+** Ken Murphy** worked as a Therapist at Aspen Achievement Academy. He began working for [Aspen](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) in 1993 at Aspen Youth Alternatives and the [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley) . According to [HEAL](http://www.heal-online.org/aspenache.htm) , Murphy became a licenses Marriage & Family Therapist in 2009, meaning he worked at Aspen*unlicensed*for 12 years.
 
-**Billy Giblin**worked as a Field Instructor at Aspen Achievement Academy beginning in 1993. He later worked for another [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program called [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) . After he left Aspen, he worked for a number of other wilderness programs, including [Second Nature](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) .
+**Billy Giblin** worked as a Field Instructor at Aspen Achievement Academy beginning in 1993. He later worked for another [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program called [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) . After he left Aspen, he worked for a number of other wilderness programs, including [Second Nature](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Like other behavior-modification programs, AAA used a level system consisting of 6 levels. Although it was encouraged that the detained teenager completed all 6 levels, it is reported that many residents were allowed to "graduate" when they had only completed as few as three levels. The levels were:
 
 *
-**Assessment:**When the teenager arrived, the person would undergo an Diagnostic Assessment phase, which consisted of a review of the student's medical history and medication status, a physical examination, urine drug screen and lab work. The purpose was to find out whether the detainee had any medically based problems that must be treated prior to entering the program. It should also asses the detainee physical ability to handle the demands of the field. If a detainee had recently completed a psychological evaluation, the staff would use them to formulate a individualized treatment plan. Otherwise the staff will do the evaluation themselves. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/assess.html) .
+**Assessment:** When the teenager arrived, the person would undergo an Diagnostic Assessment phase, which consisted of a review of the student's medical history and medication status, a physical examination, urine drug screen and lab work. The purpose was to find out whether the detainee had any medically based problems that must be treated prior to entering the program. It should also asses the detainee physical ability to handle the demands of the field. If a detainee had recently completed a psychological evaluation, the staff would use them to formulate a individualized treatment plan. Otherwise the staff will do the evaluation themselves. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/assess.html) .
 
 *
-**Mouse:**On this pahse, the teenagers were taken to camp site of one of the teams, where the ceremony of introduction takes place. People in Mouse phase are not allowed to talk during. This phase typically lasted around 48 hours. After a short introduction they are taken to a place where they must remain isolated at a shelter and observe how the group function. Any need and food is cared for by the group. They must write about why they think that they are sent there and what they expect to offer the group and what they thinks need to alter in themselves. With the help of a staff person, they have selected, they will undergo a second ceremony blindfolded after they have shown a desire to move up to the next phase. A lot historically inaccurate references Indigenous peoples are also reported to have been part of this phase. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020212094025/http://www.aspenacademy.com/mouse.html) .
+**Mouse:** On this pahse, the teenagers were taken to camp site of one of the teams, where the ceremony of introduction takes place. People in Mouse phase are not allowed to talk during. This phase typically lasted around 48 hours. After a short introduction they are taken to a place where they must remain isolated at a shelter and observe how the group function. Any need and food is cared for by the group. They must write about why they think that they are sent there and what they expect to offer the group and what they thinks need to alter in themselves. With the help of a staff person, they have selected, they will undergo a second ceremony blindfolded after they have shown a desire to move up to the next phase. A lot historically inaccurate references Indigenous peoples are also reported to have been part of this phase. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020212094025/http://www.aspenacademy.com/mouse.html) .
 
 *
-**Coyote:**During this phase, which normal last about 14 days, the detainee must do chores and that behavior has consequences. It is also in this phase where the student must read the impact letter to the group. A letter from the parents which given the poor family structure of a typical detainee often is the first time the detainee learns of the motive for forcing the person to the program. As listed on the program website the tasks that a detainee must be able to handle are:
+**Coyote:** During this phase, which normal last about 14 days, the detainee must do chores and that behavior has consequences. It is also in this phase where the student must read the impact letter to the group. A letter from the parents which given the poor family structure of a typical detainee often is the first time the detainee learns of the motive for forcing the person to the program. As listed on the program website the tasks that a detainee must be able to handle are:
 
 *Complete a bow drill fire on five separate days.
 *Cooks meals for oneself.
@@ -59,7 +59,7 @@ Like other behavior-modification programs, AAA used a level system consisting of
 For more information on this phase, please follow the link [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/coyote.html) .
 
 *
-**Buffalo:**This phase also last about 14 days and after the old self image of the detainee should have broken down, it is time for the person to develop a kind of family / community relation to the team and a higher sense of consequence. Tasks in this phase are:
+**Buffalo:** This phase also last about 14 days and after the old self image of the detainee should have broken down, it is time for the person to develop a kind of family / community relation to the team and a higher sense of consequence. Tasks in this phase are:
 
 *Demonstrates improved communication skills
 *Calls groups when conflict arises
@@ -84,7 +84,7 @@ For more information on this phase, please follow the link [here](https://web.ar
 For more information on this phase, please follow the link [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/buffalo.html) .
 
 *
-**Eagle:**Based on the new inflicted self-image, this phase focus on transition them into the home settings. This phase last about 14 days. Tasks in this phase are:
+**Eagle:** Based on the new inflicted self-image, this phase focus on transition them into the home settings. This phase last about 14 days. Tasks in this phase are:
 
 *Assist in teaching one curriculum lesson makes gifts for family members
 *Be responsible for leading group in completing a service project.
@@ -101,11 +101,11 @@ For more information on this phase, please follow the link [here](https://web.ar
 
 For more information on this phase, please follow the link [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/eagle.html) .
 
-***Reunion:**In this phase the detainee was allowed to clean up the camp, their clothes and their body, so their family members don't face the harsh reality of a detainee being paced 7 weeks in the wilderness with limited possibilities of attending personal hygiene. After a good-bye to the group, the detainee runs about a mile down the track where the family waits. The physical exertion keeps the anger caused by the placement in the program to a minimum. United the family participate in family therapy, parent workshop, family solos, multifamily workshop to delay any kind of PTSD based on the ordeal. The phase end with graduation meal and ceremony, which marks the end of the program. For more information on this phase, please follow the link [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/reunion.html) .
+***Reunion:** In this phase the detainee was allowed to clean up the camp, their clothes and their body, so their family members don't face the harsh reality of a detainee being paced 7 weeks in the wilderness with limited possibilities of attending personal hygiene. After a good-bye to the group, the detainee runs about a mile down the track where the family waits. The physical exertion keeps the anger caused by the placement in the program to a minimum. United the family participate in family therapy, parent workshop, family solos, multifamily workshop to delay any kind of PTSD based on the ordeal. The phase end with graduation meal and ceremony, which marks the end of the program. For more information on this phase, please follow the link [here](https://web.archive.org/web/20020407154714/http://www.aspenacademy.com/reunion.html) .
 
 ---
 
-## **In the Media**
+## ** In the Media**
 
 The UK Television show*Brat Camp*filmed [season 3](https://www.youtube.com/watch?v=BeisjcfxVCk&ab_channel=ThaOrthodoks) of its show at Aspen Achievement Academy. However, it has been reported by survivors that the show portrays the program as much nicer than it actually was, due to the presence of cameras and the staff's knowledge that the public would be viewing what happened there.
 
@@ -129,7 +129,7 @@ In April of 2007, a 16-year-old boy successfully committed suicide at Aspen Achi
 
 ---
 
-## **Survivor Testimonies**
+## ** Survivor Testimonies**
 
 **9/10/2019: (PARENT)**"They recommended and coordinated with two men picking up my daughter and bringing her to the Academy. In route she asked to speak with her mother and was told "No". At the academy they did not have parents come visit and be a part of the healing. It's been 13 years now since I have seen her, the week of her going to the Academy. The Academy noted significant mental health issues and thought of hospitalizing her but did not. She felt abandoned, dissociated and developed false allegations. The Academy had a severe lack of addressing family dynamics, which contributed to the placement. Her brother went to another treatment school in Utah. The family came and were an active part of the healing. The outcome was a happier child with more self-assurance and self-esteem upon his return home." - [Carolyn (Yelp)](https://www.yelp.com/biz/aspen-achievement-academy-loa)
 
@@ -149,7 +149,7 @@ In April of 2007, a 16-year-old boy successfully committed suicide at Aspen Achi
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [HEAL Program Information - Aspen Achievement Academy](http://www.heal-online.org/aspenache.htm)
 
@@ -167,7 +167,8 @@ In April of 2007, a 16-year-old boy successfully committed suicide at Aspen Achi
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

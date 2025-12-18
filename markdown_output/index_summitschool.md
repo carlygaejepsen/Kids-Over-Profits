@@ -12,17 +12,17 @@ The program is located at [339 N Broadway, Nyack, NY 10960](https://www.google.c
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Mayer Stiskin**is the Founder of the Summit School. Very little additional information is available about him online.
+** Mayer Stiskin** is the Founder of the Summit School. Very little additional information is available about him online.
 
-**Bruce Goldsmith**is the Executive Director of the Summit School. Very little additional information is available about him online. His prior employment is presently unknown.
+** Bruce Goldsmith** is the Executive Director of the Summit School. Very little additional information is available about him online. His prior employment is presently unknown.
 
-**Barbara Baker**is the current Director of Clinical Services at the Summit School. She began working at the program in 2004. Her prior employment is presently unknown.
+** Barbara Baker** is the current Director of Clinical Services at the Summit School. She began working at the program in 2004. Her prior employment is presently unknown.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Very little information is presently known regarding the specifics of the program structure at the Summit School. It has been reported that they utilize a "points system", in which students earn points for good behavior and lose points for rule infractions.
 
@@ -41,7 +41,7 @@ The following is the daily schedule at the Summit School, as reported by the web
 
 ---
 
-## **Abuse Allegations, Lawsuits, and Deaths**
+## ** Abuse Allegations, Lawsuits, and Deaths**
 
 Many survivors have reported that The Summit School is an abusive program. Allegations of abuse and neglect that have been reported by survivors include physical abuse, unsanitary conditions, violent and excessive use of physical restraints, solitary confinement, medical neglect, sexual assault, racist and homophobic staff members, and verbal abuse. Several students have accused Summit of maintaining a punishment area, referred to as the "Silent Room"/"The Box", where pupils accused of poor conduct or who exhibited rebellious behavior would be taken. Survivors have described the room as a small enclosed space where students were held for hours without access to restroom facilities for even minor transgressions.
 
@@ -59,7 +59,7 @@ In February of 2021, renowned record and concert producer/promoter Jason Samel [
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2/3/2021: (SURVIVOR)** [Link to 'Summit Staff stare at FIFTEEN y/o NUDE STUDENT PHOTOS, and a suicide. Summit School’s Jordyn Cifone'](https://youtu.be/9HgmUYlprEE)
 
@@ -67,7 +67,7 @@ In February of 2021, renowned record and concert producer/promoter Jason Samel [
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Summit School Website Homepage](https://summitnyack.com/)
 
@@ -91,7 +91,8 @@ In February of 2021, renowned record and concert producer/promoter Jason Samel [
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

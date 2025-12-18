@@ -12,36 +12,36 @@ Morning Star Boys Ranch is located at [4511 S Glenrose Rd, Spokane, WA 99223](ht
 
 Murphy House is the name of the RTC operated by Morning Star Boys Ranch. Beginning in 2015, Morning Star Boys Ranch added different non-residential programs depending on the needs of the child. These programs, including the residential Murphy House, are:
 
-***Murphy House:**This program is a Behavioral Residential Treatment Program for boys (6-13.5) who are dealing with a variety of emotional/behavioral challenges. Once a boy graduates from Morning Star Boys’ Ranch, he is either reunified with parents/kinship or receives a foster care placement. He also receives a continuum of care through additional services which include: In Home Wrap Around Program, Morning Star Foster Care Services respite, and case aide and Morning Star Community Services.
-***Morning Star Case Aide Program:**This program is for boys (0-18). Established in 2016, Morning Star Case Aide Program provides supports to children and families who have identified needs for additional stabilization. Services include parent training, an in-home case aide, family therapy, and like skills mentoring.
-***Morning Star Foster Care & Adoption Home Services:**This program, established in 2015, recruits and licenses new foster care families not only for boys from the Ranch but also for all children in our community.
-***Morning Star In-Home Wrap Around Care:**This program was also established in 2015, and it provides support to children that have been in care at the Murphy House Residential and have transitioned to a foster care home or been reunified with parents or kinship.
+***Murphy House:** This program is a Behavioral Residential Treatment Program for boys (6-13.5) who are dealing with a variety of emotional/behavioral challenges. Once a boy graduates from Morning Star Boys’ Ranch, he is either reunified with parents/kinship or receives a foster care placement. He also receives a continuum of care through additional services which include: In Home Wrap Around Program, Morning Star Foster Care Services respite, and case aide and Morning Star Community Services.
+***Morning Star Case Aide Program:** This program is for boys (0-18). Established in 2016, Morning Star Case Aide Program provides supports to children and families who have identified needs for additional stabilization. Services include parent training, an in-home case aide, family therapy, and like skills mentoring.
+***Morning Star Foster Care & Adoption Home Services:** This program, established in 2015, recruits and licenses new foster care families not only for boys from the Ranch but also for all children in our community.
+***Morning Star In-Home Wrap Around Care:** This program was also established in 2015, and it provides support to children that have been in care at the Murphy House Residential and have transitioned to a foster care home or been reunified with parents or kinship.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Tim Horlacher**is the President of the Board of Directors of Morning Star Boys Ranch.
+** Tim Horlacher** is the President of the Board of Directors of Morning Star Boys Ranch.
 
-**Scott Cramer**is the Vice President of the Board of Directors of Morning Star Boys Ranch.
+** Scott Cramer** is the Vice President of the Board of Directors of Morning Star Boys Ranch.
 
-**Linda Devlin**is the Secretary on the Board of Directors of Morning Star Boys Ranch.
+** Linda Devlin** is the Secretary on the Board of Directors of Morning Star Boys Ranch.
 
-**Audrea Marhsall**is the current Executive Director of Morning Star Boys Ranch.
+** Audrea Marhsall** is the current Executive Director of Morning Star Boys Ranch.
 
-**Micaela Cathey**is the current COO of Morning Star Boys Ranch.
+** Micaela Cathey** is the current COO of Morning Star Boys Ranch.
 
-**Kate McCloskey**is the current Equine Program Director of Morning Star Boys Ranch.
+** Kate McCloskey** is the current Equine Program Director of Morning Star Boys Ranch.
 
-**Rev. Joseph Weitensteiner**was the Director of Morning Star Boys Ranch from 1966 until 2006. Weitensteiner was hired as Morning Star's first counselor in 1957 and was soon asked to run the ranch. He left in 1959 to study for the priesthood before returning in 1966 to run Morning Star for another 40 years.
+** Rev. Joseph Weitensteiner** was the Director of Morning Star Boys Ranch from 1966 until 2006. Weitensteiner was hired as Morning Star's first counselor in 1957 and was soon asked to run the ranch. He left in 1959 to study for the priesthood before returning in 1966 to run Morning Star for another 40 years.
 
-**John Hindman**worked as the Executive Director of Morning Star Boys Ranch from 2011 until 2018.
+** John Hindman** worked as the Executive Director of Morning Star Boys Ranch from 2011 until 2018.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
-*No information is currently known regarding the specifics of the program used by Morning Star Boys Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/shroomskillet](/u/shroomskillet) .*
+*No information is currently known regarding the specifics of the program used by Morning Star Boys Ranch. If you attended this program and would like to contribute information to help complete this page, please contact [u/Signal-Strain9810](/u/Signal-Strain9810) .*
 
 ---
 
@@ -67,7 +67,7 @@ Rev. Joseph Weitensteiner was removed from the ministry in 2006 amid a growing n
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 **2020: (UNCLEAR)**"Abysmal standards and very unprofessional staff. The facility was extremely dirty. They certainly sell you a bill of goods, just without all the goods to match. Be very, very weary." - [Mr. Detail (Google Reviews)](https://www.google.com/maps/contrib/114250379730815051825/place/ChIJVXgUpMkjnlQRUp_H0uemn7Q/@47.6106768,-117.3380102,14.29z/data=!4m4!1m3!8m2!1e1!2s114250379730815051825?hl=en-US)
 
@@ -79,7 +79,7 @@ Rev. Joseph Weitensteiner was removed from the ministry in 2006 amid a growing n
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Morning Star Boys Ranch Website Homepage](https://morningstarboysranch.org/)
 
@@ -109,7 +109,8 @@ Rev. Joseph Weitensteiner was removed from the ministry in 2006 amid a growing n
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

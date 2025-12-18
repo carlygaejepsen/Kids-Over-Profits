@@ -16,13 +16,13 @@ Seneca Ranch appears to have closed around 2017. After its closure, two programs
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Narvin Lichfield**is reported to have been affiliated or even owned Seneca Ranch. He also reportedly has begun going by the name**Marvin Sheffield**. "Marvin" is listed as the admissions director of Seneca Ranch and [Palmetto](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) .
+** Narvin Lichfield** is reported to have been affiliated or even owned Seneca Ranch. He also reportedly has begun going by the name** Marvin Sheffield**. "Marvin" is listed as the admissions director of Seneca Ranch and [Palmetto](https://www.reddit.com/r/troubledteens/wiki/index/palmetto) .
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Seneca Ranch likely a level-system like many [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs. It is likely the program structure was similar, if not identical, to the program at [Carolina Springs Academy](https://www.reddit.com/r/troubledteens/wiki/index/carolinasprings) .
 
@@ -30,14 +30,14 @@ It is also reported that Seneca Ranch used "seminars" (see [LGAT](https://en.wik
 
 ---
 
-## **Daily Schedule**
+## ** Daily Schedule**
 
 According to their [website](), the daily schedule (as of 2017) was as follows:
 
-**Monday through Saturday**
+** Monday through Saturday**
 - 6:30 AM Arise, clean room and personal space; set daily goals in journal; shower - 7:30 AM Exercise facility hike. - 8:30 AM Feed horses or cows - 9:30 AM Breakfast and seminary/scripture study - 10:30 AM Virtual School - 12:30PM Lunch 1:30 PM Virtual School - 3:30 PM Equine therapies, grooming horses, or Farm work - 5:30 PM Feed horses or cows, prepare for dinner - 6:30 PM Dinner - 7:30 PM Remedial work and ranch activities - 8:30 PM Recreational Activity - 9:45 PM Journal writing - 10:00 PM Lights out
 
-**Sunday Schedule**- 6:30 AM Arise, clean room and personal space; set daily goals in journal; shower
+** Sunday Schedule**- 6:30 AM Arise, clean room and personal space; set daily goals in journal; shower
 - 7:30 am Feed horses or cows
 - 8:30 AM Breakfast
 - 9:00 AM Cleanup and dress for church
@@ -52,7 +52,7 @@ According to their [website](), the daily schedule (as of 2017) was as follows:
 
 ---
 
-## **Abuse and Closure**
+## ** Abuse and Closure**
 
 Seneca Ranch appears to have closed around 2017.
 
@@ -60,11 +60,11 @@ After it's closure, two programs, [Palmetto Therapeutic Boarding School](https:/
 
 ---
 
-## **Survivor/Parent Testimonials**
+## ** Survivor/Parent Testimonials**
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Seneca Therapeutic Boarding School Website Homepage](https://web.archive.org/web/20170113064146/http://www.senecaschool.org/) (archived, 2017)
 
@@ -80,7 +80,8 @@ After it's closure, two programs, [Palmetto Therapeutic Boarding School](https:/
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

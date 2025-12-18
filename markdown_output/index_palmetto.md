@@ -20,19 +20,19 @@ As of 2020, the programs appear to have closed.
 
 ---
 
-## **Founders and Notable Staff**
+## ** Founders and Notable Staff**
 
-**Narvin Lichfield**is reported to have been associated with Palmetto.
+** Narvin Lichfield** is reported to have been associated with Palmetto.
 
 ---
 
-## **Program Structure**
+## ** Program Structure**
 
 Little is known about the program structure, however, they seem to utilize horses as a large part of their therapy. They likely used a level system, which is typical of [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs.
 
 ---
 
-## **Survivor/Parent Testimonies**
+## ** Survivor/Parent Testimonies**
 
 **2/12/2020: (SURVIVOR)**"Run by a manipulative and abusive (physically and emotionally) couple who are more troubled than your teen. Guilty of underfeeding students, choking them out for not complying, burning a student’s mole off with a soldering iron against her will, all sorts of emotional abuse towards female students for not being skinny enough for the headmistress, lying through their teeth to parents in order to keep their kids for longer, forcing students to practice Mormonism, the list goes on. Only send your teen here if you want them to leave even more troubled than when they showed up. It’s a miracle that the people who run this absolute scam aren’t in jail yet." - [Ryan (Facebook)](https://www.facebook.com/Palmettoboardingschool/reviews/?ref=page_internal)
 
@@ -42,7 +42,7 @@ Little is known about the program structure, however, they seem to utilize horse
 
 ---
 
-## **Related Media**
+## ** Related Media**
 
 [Palmetto Therapeutic Boarding School Website Homepage](https://web.archive.org/web/20160526011013/http://www.palmettotherapeuticschool.com/) (archived, 2017)
 
@@ -54,7 +54,8 @@ Little is known about the program structure, however, they seem to utilize horse
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+

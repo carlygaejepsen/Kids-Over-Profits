@@ -21,7 +21,8 @@ A common (and very troubling) practice in the TTI is frequent name/ownership cha
 
 ---
 
-Last revised by [shroomskillet](/user/shroomskillet/)
+Last revised by 
 ## Page title
 
-SaveCancel
+
+
