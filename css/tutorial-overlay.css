@@ -8,7 +8,8 @@
     width: 100%;
     height: 100%;
     background-color: transparent; /* Transparent, dimming handled by highlight shadow */
-    z-index: 200000;
+    /* Keep the overlay under the page content so the target element is not dimmed */
+    z-index: 199990;
     display: none; /* Hidden by default */
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -27,7 +28,8 @@
 /* The highlight hole element */
 .tutorial-target-highlight {
     position: absolute;
-    z-index: 199999;
+    /* keep highlight under page content; overlay creates mask via large box-shadow */
+    z-index: 199995;
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); /* Dark overlay */
     border-radius: 6px;
     pointer-events: none;
@@ -38,7 +40,8 @@
 /* Active Target Element (The element being highlighted) */
 .tutorial-active-target {
     position: relative; /* Default to relative so z-index works (JS may override) */
-    z-index: 200005 !important; /* Above the overlay */
+    /* Ensure the active target sits above the overlay and highlight */
+    z-index: 200020 !important;
     outline: 4px solid #FC8ED6 !important;
     outline-offset: 2px !important;
     border-radius: 8px !important;
