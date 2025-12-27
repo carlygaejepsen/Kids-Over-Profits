@@ -109,6 +109,19 @@
 
         window.autoSave();
 
+        // Scroll to the facility name input field
+        setTimeout(() => {
+            const facilityNameInput = document.querySelector('input[data-path="identification.name"]');
+            if (facilityNameInput) {
+                facilityNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                facilityNameInput.focus();
+            } else if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }, 100);
+
         // Dispatch custom event
         document.dispatchEvent(new CustomEvent('facilityChanged', {
             detail: { action: 'add', index: window.currentFacilityIndex }

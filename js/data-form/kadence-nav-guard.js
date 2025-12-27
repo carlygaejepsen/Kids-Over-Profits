@@ -1,183 +1,96 @@
 /**
  * Kadence Navigation Guard
  * 
- * Prevents Kadence theme's navigation.min.js from throwing errors on pages
- * where the header/navigation elements are hidden or don't exist.
- * 
- * This script should be loaded early (before Kadence scripts) with highest priority.
- * It intercepts DOM queries for missing navigation elements and provides graceful fallbacks.
+ * This script runs very early (in the head) on headerless data form pages to:
+ * 1. Intercept DOM queries that might look for navigation elements
+ * 2. Return safe dummy objects instead of null
+ * 3. Prevent the Kadence navigation script from throwing errors
  */
 (function() {
-    'use strict';
+    // Only run if we're on a page where navigation should be disabled
+    // The PHP logic handles conditional enqueueing, but we can double check
+    if (document.body && !document.body.classList.contains('page-template-page-data') && 
+        !document.body.classList.contains('page-template-page-admin-data')) {
+        // Continue anyway as the class might not be added yet
+    }
 
-    // Check if we're on a page that hides the header
-    var isHeaderlessPage = function() {
-        return document.body && (
-            document.body.classList.contains('page-template-page-admin-data') ||
-            document.body.classList.contains('page-template-page-data') ||
-            document.body.classList.contains('page-template-page-data-test')
-        );
+    // Define a safe dummy element that won't throw errors when Kadence tries to access its properties
+    const dummy = document.createElement('div');
+    dummy.id = 'kadence-nav-dummy';
+    dummy.className = 'kadence-nav-dummy';
+    dummy.style.display = 'none';
+    
+    // Add safe methods that Kadence might call
+    dummy.getAttribute = function() { return null; };
+    dummy.setAttribute = function() {};
+    dummy.addEventListener = function() {};
+    dummy.removeEventListener = function() {};
+    dummy.classList = {
+        add: function() {},
+        remove: function() {},
+        toggle: function() {},
+        contains: function() { return false; }
     };
-
-    // Store original querySelector/querySelectorAll
-    var originalQuerySelector = Document.prototype.querySelector;
-    var originalQuerySelectorAll = Document.prototype.querySelectorAll;
-    var originalElementQuerySelector = Element.prototype.querySelector;
-    var originalElementQuerySelectorAll = Element.prototype.querySelectorAll;
-
-    // Navigation-related selectors that Kadence looks for
-    var navSelectors = [
-        '.site-header',
-        'header.site-header',
-        '.main-navigation',
-        'nav.main-navigation',
-        '#masthead',
-        '.header-wrapper',
-        '.kadence-nav',
-        '.nav-drop-wrap',
-        '.header-navigation',
-        '.mobile-navigation',
-        '.mobile-nav-trigger',
-        '.drawer-navigation',
-        '#mobile-drawer',
-        '.header-menu-container',
-        '.menu-toggle',
-        '[data-toggle-target]',
-        '[data-toggle-body-class]',
-        '.sub-menu',
-        '.dropdown-nav-toggle',
-        '.menu-item-has-children'
-    ];
-
-    // Check if a selector is navigation-related
-    var isNavSelector = function(selector) {
-        if (!selector || typeof selector !== 'string') return false;
-        var lowerSelector = selector.toLowerCase();
-        return navSelectors.some(function(navSel) {
-            return lowerSelector.indexOf(navSel.toLowerCase()) !== -1;
-        });
-    };
-
-    // Create a dummy element that won't cause errors when methods are called on it
-    var createDummyElement = function() {
-        var dummy = document.createElement('div');
-        dummy.style.display = 'none';
-        dummy.setAttribute = function() { return dummy; };
-        dummy.getAttribute = function() { return null; };
-        dummy.removeAttribute = function() { return dummy; };
-        dummy.classList.add = function() {};
-        dummy.classList.remove = function() {};
-        dummy.classList.toggle = function() { return false; };
-        dummy.classList.contains = function() { return false; };
-        dummy.addEventListener = function() {};
-        dummy.removeEventListener = function() {};
-        dummy.querySelector = function() { return null; };
-        dummy.querySelectorAll = function() { return []; };
-        dummy.closest = function() { return null; };
-        dummy.getBoundingClientRect = function() { 
-            return { top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0 }; 
-        };
-        dummy.offsetWidth = 0;
-        dummy.offsetHeight = 0;
-        dummy.offsetTop = 0;
-        dummy.offsetLeft = 0;
-        dummy.scrollWidth = 0;
-        dummy.scrollHeight = 0;
-        dummy.children = [];
-        dummy.childNodes = [];
-        dummy.parentNode = null;
-        dummy.parentElement = null;
-        dummy.nextSibling = null;
-        dummy.previousSibling = null;
-        dummy.nextElementSibling = null;
-        dummy.previousElementSibling = null;
-        return dummy;
-    };
-
-    // Override document.querySelector
+    
+    // Override standard DOM query methods to intercept nav-related queries
+    const originalQuerySelector = Document.prototype.querySelector;
+    const originalGetElementById = Document.prototype.getElementById;
+    
     Document.prototype.querySelector = function(selector) {
-        var result = originalQuerySelector.call(this, selector);
-        
-        // On headerless pages, return null for nav selectors (don't use dummy)
-        // This allows proper null checks to work
-        if (!result && isHeaderlessPage() && isNavSelector(selector)) {
-            return null;
+        // If the query is for a navigation element we've hidden/removed
+        if (typeof selector === 'string' && (
+            selector.includes('.site-navigation') || 
+            selector.includes('#site-navigation') || 
+            selector.includes('.mobile-navigation') ||
+            selector.includes('kadence') && selector.includes('nav')
+        )) {
+            // Return our safe dummy instead of null
+            return dummy;
         }
         
-        return result;
+        return originalQuerySelector.call(this, selector);
     };
-
-    // Override document.querySelectorAll
-    Document.prototype.querySelectorAll = function(selector) {
-        var result = originalQuerySelectorAll.call(this, selector);
-        
-        // On headerless pages, return empty NodeList for nav selectors
-        if (result.length === 0 && isHeaderlessPage() && isNavSelector(selector)) {
-            return result; // Already empty
+    
+    Document.prototype.getElementById = function(id) {
+        if (typeof id === 'string' && (
+            id === 'site-navigation' || 
+            id === 'mobile-navigation' ||
+            (id.includes('kadence') && id.includes('nav'))
+        )) {
+            return dummy;
         }
         
-        return result;
+        return originalGetElementById.call(this, id);
     };
-
-    // Override Element.prototype.querySelector
+    
+    // Also patch Element.prototype for scoped queries
+    const originalElementQuerySelector = Element.prototype.querySelector;
     Element.prototype.querySelector = function(selector) {
-        var result = originalElementQuerySelector.call(this, selector);
-        
-        if (!result && isHeaderlessPage() && isNavSelector(selector)) {
-            return null;
+        if (typeof selector === 'string' && (
+            selector.includes('.site-navigation') || 
+            selector.includes('.mobile-navigation')
+        )) {
+            return dummy;
         }
-        
-        return result;
+        return originalElementQuerySelector.call(this, selector);
     };
 
-    // Override Element.prototype.querySelectorAll
-    Element.prototype.querySelectorAll = function(selector) {
-        var result = originalElementQuerySelectorAll.call(this, selector);
-        
-        if (result.length === 0 && isHeaderlessPage() && isNavSelector(selector)) {
-            return result;
-        }
-        
-        return result;
-    };
-
-    // Suppress errors from Kadence's navigation script
-    var originalError = window.onerror;
-    window.onerror = function(message, source, lineno, colno, error) {
-        // Check if error is from navigation.min.js and related to getAttribute
-        if (source && source.indexOf('navigation.min.js') !== -1) {
-            if (message && (
-                message.indexOf('getAttribute') !== -1 ||
-                message.indexOf('null') !== -1 ||
-                message.indexOf('undefined') !== -1
-            )) {
-                // Suppress this error on headerless pages
-                if (isHeaderlessPage()) {
-                    console.debug('[KOP Nav Guard] Suppressed Kadence navigation error:', message);
-                    return true; // Prevent error from propagating
-                }
+    // Error suppression for specific Kadence errors
+    window.addEventListener('error', function(e) {
+        if (e.message && (
+            e.message.includes('kadence') || 
+            e.message.includes('navigation') || 
+            e.message.includes('getAttribute') ||
+            e.message.includes('classList')
+        )) {
+            // If it's a known error from missing nav elements, suppress it
+            if (e.filename && (e.filename.includes('navigation') || e.filename.includes('kadence'))) {
+                e.preventDefault();
+                e.stopPropagation();
+                return true;
             }
         }
-        
-        // Call original error handler if it exists
-        if (originalError) {
-            return originalError.apply(this, arguments);
-        }
-        return false;
-    };
+    }, true); // Capture phase to catch it early
 
-    // Also handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', function(event) {
-        if (event.reason && event.reason.message) {
-            var msg = event.reason.message;
-            if (msg.indexOf('getAttribute') !== -1 || msg.indexOf('null') !== -1) {
-                if (isHeaderlessPage()) {
-                    console.debug('[KOP Nav Guard] Suppressed unhandled rejection:', msg);
-                    event.preventDefault();
-                }
-            }
-        }
-    });
-
-    console.debug('[KOP Nav Guard] Kadence navigation guard loaded');
+    console.log('🛡️ Kadence Navigation Guard Active');
 })();

@@ -35,14 +35,15 @@ get_header();
                     <div class="project-management" id="project-panel-inner">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
                         <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div style="margin-bottom: 10px;">
-                            <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                        </div>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        
+                        <div class="form-group">
+                            <label>Saved Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                            </div>
                         </div>
                     </div>
                     <div id="upload-status" style="display: none;"></div>
@@ -425,17 +426,11 @@ get_header();
                         </div>
                     </div>
                     
-                    <div class="form-group" style="max-width: 200px;">
-                        <label>Profit Status</label>
-                        <div style="display: flex; gap: 5px; margin-top: 5px;">
-                            <label class="toggle-btn-label">
-                                <input type="radio" name="profitStatus" value="for-profit" checked>
-                                <span class="toggle-btn-span">For-Profit</span>
-                            </label>
-                            <label class="toggle-btn-label">
-                                <input type="radio" name="profitStatus" value="non-profit">
-                                <span class="toggle-btn-span">Non-Profit</span>
-                            </label>
+                    <div class="form-group" style="max-width: 250px;">
+                        <label style="display: block; margin-bottom: 8px;">Profit Status</label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="profit-status-badge" class="profit-status-badge" title="Click to toggle profit status">For-Profit</span>
+                            <input type="hidden" id="profit-status-input" name="profitStatus" value="for-profit">
                         </div>
                     </div>
 
@@ -720,11 +715,11 @@ get_header();
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="max-width: 150px;">
                         <label>Capacity</label>
                         <input type="number" class="facility-field" data-field="facilityDetails.capacity">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="max-width: 150px;">
                         <label>Current Census</label>
                         <input type="number" class="facility-field" data-field="facilityDetails.currentCensus">
                     </div>
@@ -1119,7 +1114,7 @@ get_header();
                 <div id="suggestion-status" style="display: none;"></div>
 
                 <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button type="button" class="save-master-btn" onclick="submitSuggestion()">
+                    <button type="button" class="save-master-btn" id="submit-suggestion-btn-section" onclick="submitSuggestion()">
                         📮 Submit for Review
                     </button>
                     <button type="button" id="save-draft-locally-btn" class="save-master-btn" style="background: #6b7280;" title="Save your work in progress to your browser's local storage so you can continue later">
@@ -1227,6 +1222,50 @@ get_header();
         </div>
     </div>
 
+    <script>
+        // Ensure referrer-specific array fields render even if the main loader misses them.
+        document.addEventListener('formReady', () => {
+            const getActiveConsultant = () => {
+                const consultants = window.formData?.referrerConsultants || [];
+                const idx = window.currentConsultantIndex ?? 0;
+                return consultants[idx] || consultants[0] || {};
+            };
+
+            const getActiveOperator = () => {
+                const activeTab = document.querySelector('.category-tab.active');
+                const isLocationProject = activeTab && activeTab.dataset.category === 'locations';
+                if (isLocationProject) {
+                    const facility = window.formData?.facilities?.[window.currentFacilityIndex ?? 0];
+                    return facility?.sourceOperator || {};
+                }
+                return window.formData?.operator || {};
+            };
+
+            const ensureArray = (path, value, { ensureOne = false } = {}) => {
+                const container = document.querySelector(`[data-path="${path}"]`);
+                if (!container || typeof renderArray !== 'function') {
+                    return;
+                }
+                let data = Array.isArray(value) ? value : [];
+                if (ensureOne && data.length === 0) {
+                    data = [''];
+                }
+                renderArray(container, path, data);
+            };
+
+            const consultant = getActiveConsultant();
+            ensureArray('consultant.knownReferrals', consultant.knownReferrals, { ensureOne: true });
+            ensureArray('consultant.schoolDistricts', consultant.schoolDistricts, { ensureOne: true });
+
+            const operator = getActiveOperator();
+            ensureArray('operator.parentCompanies', operator.parentCompanies, { ensureOne: true });
+            ensureArray('operator.websites', operator.websites, { ensureOne: true });
+            ensureArray('operator.keyStaff.founders', operator.keyStaff?.founders, { ensureOne: true });
+            ensureArray('operator.keyStaff.keyExecutives', operator.keyStaff?.keyExecutives, { ensureOne: true });
+            ensureArray('operator.investors', operator.investors, { ensureOne: true });
+        }, { once: true });
+    </script>
+
     <!-- Data Organizer Modal -->
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content">
@@ -1301,9 +1340,39 @@ get_header();
 
     <!-- Toggle Buttons -->
     <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/toggle-buttons.css">
-    
-    <!-- Tutorial Overlay -->
-    <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tutorial-overlay.css">
-    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tutorial-overlay.js"></script>
+
+    <script>
+        (function () {
+            const cssHref = '<?php echo get_stylesheet_directory_uri(); ?>/css/tutorial-overlay.css';
+            const hasCss = Array.from(document.styleSheets || []).some(sheet => {
+                try {
+                    return sheet.href && sheet.href.indexOf('tutorial-overlay.css') !== -1;
+                } catch (err) {
+                    return false;
+                }
+            });
+            if (!hasCss) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = cssHref;
+                document.head.appendChild(link);
+            }
+
+            if (window.TutorialOverlay || window.kopTutorial) {
+                if (typeof window.initTutorialOverlay === 'function') {
+                    window.initTutorialOverlay();
+                }
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = '<?php echo get_stylesheet_directory_uri(); ?>/js/tutorial-overlay.js';
+            script.onload = () => {
+                if (typeof window.initTutorialOverlay === 'function') {
+                    window.initTutorialOverlay();
+                }
+            };
+            document.body.appendChild(script);
+        })();
+    </script>
 
 <?php get_footer(); ?>

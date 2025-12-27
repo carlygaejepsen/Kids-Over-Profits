@@ -1098,12 +1098,14 @@ function createAutocomplete(input, getDataFunction, category) {
                 hideDropdown();
             }
         } else if (e.key === 'Escape') {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            hideDropdown();
-            isCommittingSelection = false; // Reset flag
-            return; // Exit early - don't process further
+            if (dropdown.classList.contains('active')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                hideDropdown();
+                isCommittingSelection = false;
+                return;
+            }
         }
     }, { passive: false });
     

@@ -102,6 +102,43 @@ function kop_register_facilities_rest_routes() {
             ),
         )
     );
+
+    // Register search endpoint for database search (public)
+    register_rest_route(
+        'kop/v1',
+        '/search',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => 'kop_search_database_rest_callback',
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'company' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'location' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'referrer' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'limit' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'default' => 20,
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 
@@ -415,6 +452,176 @@ function kop_autocomplete_rest_callback($request) {
         'values' => $values,
         'count' => count($values),
     ));
+}
+
+/**
+ * REST API callback for database search.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_search_database_rest_callback($request) {
+    global $wpdb;
+
+    $company_query = $request->get_param('company');
+    $location_query = $request->get_param('location');
+    $referrer_query = $request->get_param('referrer');
+    $limit = $request->get_param('limit');
+    $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
+
+    // At least one search query must be provided
+    if (empty($company_query) && empty($location_query) && empty($referrer_query)) {
+        return rest_ensure_response(array(
+            'success' => true,
+            'results' => array(),
+            'count' => 0,
+        ));
+    }
+
+    // Tables to search based on query type
+    $search_tables = array();
+
+    if (!empty($company_query)) {
+        $search_tables['facilities_master'] = $company_query;
+    }
+    if (!empty($location_query)) {
+        $search_tables['locations_master'] = $location_query;
+    }
+    if (!empty($referrer_query)) {
+        $search_tables['referrers_master'] = $referrer_query;
+    }
+
+    $all_results = array();
+
+    foreach ($search_tables as $table_base => $search_query) {
+        // Check if table exists
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $table_base
+        ));
+
+        if (!$table_exists) {
+            continue;
+        }
+
+        // Get all rows from the table
+        $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$table_base}", ARRAY_A);
+
+        if (!is_array($rows)) {
+            continue;
+        }
+
+        foreach ($rows as $row) {
+            if (empty($row['json_data'])) {
+                continue;
+            }
+
+            $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
+
+            // Check if unique_name matches
+            $name_match = stripos($unique_name, $search_query) !== false;
+
+            // Decode JSON to search content
+            $data = kop_normalize_project_payload($row['json_data']);
+            if (!$data) {
+                continue;
+            }
+
+            // Search within the data
+            $content_match = kop_search_in_data($data, $search_query);
+
+            if ($name_match || $content_match) {
+                // Determine category
+                $category = 'companies';
+                if (strpos($table_base, 'referrers') !== false) {
+                    $category = 'referrers';
+                } elseif (strpos($table_base, 'locations') !== false) {
+                    $category = 'locations';
+                }
+
+                // Extract summary info
+                $operator_name = '';
+                $facility_count = 0;
+                $match_snippet = '';
+
+                if (isset($data['operator']['name'])) {
+                    $operator_name = $data['operator']['name'];
+                }
+                if (isset($data['facilities']) && is_array($data['facilities'])) {
+                    $facility_count = count($data['facilities']);
+                }
+
+                // Create match snippet
+                if ($content_match) {
+                    $match_snippet = $content_match;
+                } elseif ($name_match) {
+                    $match_snippet = 'Name: ' . $unique_name;
+                }
+
+                $all_results[] = array(
+                    'name' => $unique_name,
+                    'label' => $unique_name,
+                    'category' => $category,
+                    'operator' => $operator_name,
+                    'facilityCount' => $facility_count,
+                    'matchSnippet' => $match_snippet,
+                    'source' => 'database',
+                    'data' => $data, // Include the full data for loading
+                );
+            }
+        }
+    }
+
+    // Sort by name
+    usort($all_results, function ($a, $b) {
+        return strnatcasecmp($a['name'], $b['name']);
+    });
+
+    // Limit results
+    if (count($all_results) > $max_results) {
+        $all_results = array_slice($all_results, 0, $max_results);
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'results' => $all_results,
+        'count' => count($all_results),
+    ));
+}
+
+/**
+ * Search for a query string within project data.
+ *
+ * @param array  $data  The project data to search.
+ * @param string $query The search query.
+ * @return string|null Match snippet or null if no match.
+ */
+function kop_search_in_data($data, $query) {
+    if (!$data || !$query) {
+        return null;
+    }
+
+    $lowerQuery = strtolower($query);
+
+    $search = function($value, $path = '') use ($lowerQuery, &$search) {
+        if (is_string($value)) {
+            if (stripos($value, $lowerQuery) !== false) {
+                // Return a snippet of the matched value
+                return substr($value, 0, 60);
+            }
+        } elseif (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $match = $search($item, $path ? "{$path}.{$key}" : $key);
+                if ($match) {
+                    return $match;
+                }
+            }
+        }
+        return null;
+    };
+
+    return $search($data);
 }
 
 /**

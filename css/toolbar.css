@@ -90,12 +90,15 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 .fixed-toolbar .facility-dropdown {
-    min-width: 170px;
-    max-width: 240px;
+    min-width: 200px;
+    width: auto;
+    max-width: none;
     padding: 6px 10px;
     border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 6px;
@@ -104,6 +107,7 @@ body:not(.admin-bar) .fixed-toolbar {
     font-size: 13px;
     cursor: pointer;
     height: 32px;
+    text-overflow: ellipsis;
 }
 
 .fixed-toolbar .facility-selector .btn-toolbar {
@@ -116,14 +120,15 @@ body:not(.admin-bar) .fixed-toolbar {
 
 /* Toolbar Content */
 .fixed-toolbar .toolbar-content {
-    padding: 10px 16px;
+    padding: 8px 16px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
-    overflow-x: auto;
+    overflow-x: hidden; /* No scrolling needed with wrap */
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap; /* Allow wrapping for 2 rows */
 }
 
 .fixed-toolbar .toolbar-section {
@@ -133,6 +138,8 @@ body:not(.admin-bar) .fixed-toolbar {
     flex-wrap: wrap;
     justify-content: center;
     position: relative;
+    width: 100%; /* Take full width to manage rows */
+    max-width: none;
 }
 
 .fixed-toolbar .toolbar-group {
@@ -147,15 +154,18 @@ body:not(.admin-bar) .fixed-toolbar {
     border-radius: 0;
 }
 
+/* Force Facility Nav to 2nd Row Globally */
 .fixed-toolbar .toolbar-group.facility-nav-group {
-    flex-grow: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
     position: relative;
     left: auto;
     transform: none;
-    order: 1;
-    width: 100%;
+    order: 99; /* Force to bottom */
+    width: 100%; /* Force new line */
+    min-width: 200px;
     justify-content: center;
-    margin-top: 4px;
+    margin: 8px 0 0 0; /* Spacing from top row */
 }
 
 .fixed-toolbar .toolbar-label {
@@ -186,153 +196,14 @@ body:not(.admin-bar) .fixed-toolbar {
     text-align: center;
     overflow: hidden;
 }
+/* ... (hover states remain same) ... */
 
-.fixed-toolbar .btn-toolbar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
-    background: #FFF5CB;
-}
-
-.fixed-toolbar .btn-toolbar.btn-primary {
-    background: #33A7B5;
-    color: #FFFFFF;
-    border-color: #33A7B5;
-}
-
-.fixed-toolbar .btn-toolbar.btn-primary:hover {
-    background: #000080;
-    color: #FFFFFF;
-    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
-}
-
-.fixed-toolbar .btn-toolbar.btn-secondary {
-    background: #F2EEDF;
-    color: #000435;
-    border-color: #33A7B5;
-}
-
-.fixed-toolbar .btn-toolbar.btn-secondary:hover {
-    background: #E6DCC7;
-    color: #000435;
-    box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4);
-}
-
-.fixed-toolbar .btn-toolbar.btn-success {
-    background: #B2E102;
-    color: #000435;
-    border-color: #33A7B5;
-}
-
-.fixed-toolbar .btn-toolbar.btn-success:hover {
-    background: #9AC000;
-    color: #000435;
-    box-shadow: 0 4px 10px rgba(178, 225, 2, 0.4);
-}
-
-.fixed-toolbar .btn-toolbar.btn-danger {
-    background: #FE8088;
-    color: #000435;
-    border-color: #FE8088;
-}
-
-.fixed-toolbar .btn-toolbar.btn-danger:hover {
-    background: #FA5F69;
-    color: #000435;
-    box-shadow: 0 4px 10px rgba(254, 128, 136, 0.4);
-}
-
-/* Minimized state */
-.fixed-toolbar.minimized {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.fixed-toolbar.minimized .toolbar-header {
-    border-bottom: none;
-}
-
-.fixed-toolbar.minimized .toolbar-toggle {
-    background: #EF9034 !important;
-    color: #FFFFFF !important;
-    border-color: #B2E102 !important;
-    pointer-events: auto !important; /* Force clickable */
-    cursor: pointer !important;
-}
-
-.fixed-toolbar.minimized .toolbar-content {
-    /* Don't use display:none - it breaks the toggle! */
-    height: 0 !important;
-    max-height: 0 !important;
-    min-height: 0 !important;
-    opacity: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    visibility: hidden !important;
-    line-height: 0 !important;
-}
-
-.fixed-toolbar.minimized .btn-toolbar {
-    box-shadow: none;
-}
-
-/* Toolbar Navigation Buttons */
-.toolbar-nav-btn {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-
-.toolbar-nav-btn:disabled {
-    opacity: 0.5;
-}
-
-/* Toolbar Dropdown States */
-.toolbar-dropdown-no-project {
-    cursor: pointer;
-    color: #33A7B5;
-}
-
-/* Toolbar Expandable Section */
-.toolbar-expandable-collapsed {
-    display: none;
-}
-
-.toolbar-expandable-expanded {
-    display: block;
-}
-
-/* Facility Navigation Buttons - Multi-facility display control */
-.facility-nav-btn-hidden {
-    display: none;
-}
-
-.facility-nav-btn-visible {
-    display: inline-block;
-}
-
-/* Embedded toolbar toggle inside the form controls */
-.facility-toolbar-expandable {
-    display: none;
-}
-
-.facility-toolbar-expandable > .d-flex,
-.facility-toolbar-expandable > .controls {
-    margin-top: 10px;
-}
-
-#facility-toolbar-toggle {
-    min-width: auto;
-    padding: 4px 8px;
-    font-size: 16px;
-}
-
-/* Desktop/Fullscreen view optimizations (1025px and above) */
-@media (min-width: 1025px) {
+/* Desktop & Tablet Optimizations (769px and above) */
+/* Show full buttons with labels when space permits */
+@media (min-width: 769px) {
     .fixed-toolbar .toolbar-label {
         display: inline-block;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: #FFFFFF;
     }
@@ -343,73 +214,44 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .btn-toolbar {
         width: auto;
-        min-width: 120px;
-        max-width: 200px;
-        height: 50px;
-        min-height: 50px;
-        padding: 0 16px;
-        gap: 8px;
+        min-width: 100px;
+        max-width: 180px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0 12px;
+        gap: 6px;
         justify-content: center;
     }
 
     .fixed-toolbar .facility-selector .btn-toolbar {
         width: 32px;
         min-width: 32px;
+        max-width: 32px;
         height: 32px;
         padding: 4px;
     }
 
     .fixed-toolbar .toolbar-content {
-        flex-wrap: nowrap;
-        overflow-x: auto;
         justify-content: center;
     }
 
     .fixed-toolbar .toolbar-section {
         justify-content: center;
-        width: 100%;
-    }
-}
-
-/* Tablet view optimizations (769px to 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .fixed-toolbar .toolbar-content {
-        padding: 10px 12px;
-        justify-content: center;
-        overflow-x: auto;
-    }
-
-    .fixed-toolbar .toolbar-section {
-        justify-content: center;
-        flex-wrap: wrap;
-        width: 100%;
-    }
-
-    .fixed-toolbar .toolbar-group {
-        justify-content: center;
-    }
-
-    .fixed-toolbar .toolbar-group.facility-nav-group {
-        width: 100%;
-        justify-content: center;
-        margin: 8px 0;
-    }
-
-    .fixed-toolbar .btn-toolbar {
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        min-height: 48px;
-        font-size: 15px;
     }
 
     .fixed-toolbar .facility-dropdown {
-        min-width: 150px;
-        max-width: 200px;
+        min-width: 250px;
+        width: auto;
+        max-width: 400px;
     }
 }
 
-/* Aggressive space-saving for mobile screens <= 768px */
+/* Specific Desktop Tweaks (1025px+) */
+@media (min-width: 1025px) {
+    /* Keep the general 769px+ styles, just minor tweaks if needed */
+}
+
+/* Mobile screens <= 768px */
 @media (max-width: 768px) {
     .fixed-toolbar .toolbar-header {
         padding: 4px 8px;
@@ -432,7 +274,6 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-content {
         padding: 6px 10px;
-        overflow-x: auto;
     }
 
     .fixed-toolbar .toolbar-section {
@@ -442,15 +283,14 @@ body:not(.admin-bar) .fixed-toolbar {
     .fixed-toolbar .toolbar-group {
         gap: 4px;
     }
-
+    
+    /* Nav group is already forced to bottom by base styles, just tweak spacing */
     .fixed-toolbar .toolbar-group.facility-nav-group {
-        justify-content: center;
-        order: 1;
-        width: 100%;
+        margin-top: 6px;
     }
 
     .fixed-toolbar .toolbar-label {
-        display: none;
+        display: none; /* Hide labels on mobile to save space */
     }
 
     .fixed-toolbar .btn-toolbar {
@@ -462,82 +302,36 @@ body:not(.admin-bar) .fixed-toolbar {
     }
 
     .fixed-toolbar .facility-dropdown {
-        min-width: 110px;
-        max-width: 150px;
+        min-width: 150px;
+        width: auto;
+        max-width: 220px;
         font-size: 12px;
         padding: 4px 8px;
         height: 32px;
     }
 }
 
-/* Small-screen tweaks that keep the toolbar in one row */
+/* Small-screen tweaks (<= 640px) */
 @media (max-width: 640px) {
-    body.toolbar-active {
-        padding-top: 200px;
-    }
-
+    /* Ensure no header wrapping */
     .fixed-toolbar .toolbar-header {
-        padding: 10px 15px;
-        flex-wrap: wrap;
+        padding: 6px 10px;
+        flex-wrap: nowrap;
     }
-
+    
     .fixed-toolbar .toolbar-title {
         font-size: 14px;
         flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-
-    .fixed-toolbar .toolbar-content {
-        padding: 6px 10px;
-    }
-
-    .fixed-toolbar .toolbar-section {
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .fixed-toolbar .toolbar-group {
-        gap: 8px;
-        flex-wrap: nowrap;
-        flex: 0 0 auto;
-    }
-
-    .fixed-toolbar .toolbar-group.facility-nav-group {
-        width: 100%;
-        order: 1;
-        justify-content: center;
-    }
-
-    .fixed-toolbar .toolbar-label {
-        font-size: 13px;
-    }
-
-    .fixed-toolbar .facility-dropdown {
-        min-width: 90px;
-        max-width: 140px;
-        font-size: 12px;
-        padding: 4px 8px;
-        height: 34px;
-    }
-
-    .fixed-toolbar .facility-selector .btn-toolbar {
-        width: 32px;
-        height: 32px;
-        font-size: 12px;
-        padding: 0;
-        min-width: 32px;
-        min-height: 32px;
-    }
-
+    
     .fixed-toolbar .btn-toolbar {
-        flex: 1 1 0;
-        aspect-ratio: 1;
-        min-width: 40px;
-        max-width: 48px;
-        width: auto;
-        height: auto;
-        min-height: 40px;
-        font-size: 14px;
-        padding: 0;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+        min-height: 36px;
     }
 }
 

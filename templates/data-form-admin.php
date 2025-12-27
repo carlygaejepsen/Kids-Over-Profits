@@ -37,14 +37,15 @@ get_header();
                     <div class="project-management" id="project-panel-inner">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
                         <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Saved Projects</label>
-                        <div style="margin-bottom: 10px;">
-                            <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                        </div>
-                        <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                            <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                        
+                        <div class="form-group">
+                            <label>Saved Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                            </div>
                         </div>
                     </div>
                     <div id="upload-status" style="display: none;"></div>
@@ -74,30 +75,18 @@ get_header();
 
                     </div>
 
-                    <!-- Private Ownership Choice - HIDDEN: Now using per-facility badges in overview -->
-                    <div id="private-ownership-toggle-section" class="location-card" style="display: none;">
+                    <!-- Private Ownership Choice -->
+                    <div id="private-ownership-toggle-section" class="location-card">
                         <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
-                            <span>Privately Owned Facility (not part of a chain):</span>
+                            <span>Facility Ownership:</span>
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
-                                <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit ownership</button>
+                                <span id="private-ownership-badge" class="facility-ownership-badge not-private" title="Click to toggle ownership status">Chain/Corporate</span>
                                 <input type="checkbox" id="private-ownership-toggle" style="display: none;">
                             </div>
                         </div>
                         <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Click "Edit ownership" to answer the popup. Your choice still hides/shows operator vs owner fields like the old toggle.
+                            Click the badge to toggle between "Privately Owned" and "Chain/Corporate". This affects which fields are shown below.
                         </p>
-                    </div>
-                    <div id="ownership-modal" class="kop-modal" aria-hidden="true" role="dialog" aria-labelledby="ownership-modal-title" aria-modal="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-                        <div style="background:#fff; border-radius:10px; max-width:420px; width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.2); padding:22px; position:relative;">
-                            <h3 id="ownership-modal-title" style="margin-top:0; margin-bottom:12px; font-size:18px; color:#0f172a;">Is this a privately owned facility?</h3>
-                            <p style="margin:0 0 18px; color:#334155; line-height:1.5;">Choose "Yes" for independent facilities. Choose "No" for chain/corporate facilities.</p>
-                            <div style="display:flex; gap:12px; justify-content:flex-end;">
-                                <button type="button" data-action="ownership-no" class="kop-btn" style="background:#e2e8f0; color:#0f172a; padding:8px 14px; border-radius:6px; border:1px solid #cbd5e1;">No</button>
-                                <button type="button" data-action="ownership-yes" class="kop-btn" style="background:#10b981; color:#fff; padding:8px 14px; border-radius:6px; border:1px solid #0f9f7f;">Yes</button>
-                            </div>
-                            <button type="button" data-action="ownership-close" aria-label="Close" style="position:absolute; top:10px; right:10px; background:transparent; border:none; font-size:18px; color:#94a3b8; cursor:pointer;">×</button>
-                        </div>
                     </div>
                 </div>
 
@@ -392,17 +381,11 @@ get_header();
                         <input type="text" id="operator-name" class="input-form" data-autocomplete-category="operator" placeholder="Type operator name...">
                     </div>
 
-                    <div class="form-group" style="max-width: 200px;">
-                        <label>Profit Status</label>
-                        <div style="display: flex; gap: 5px; margin-top: 5px;">
-                            <label class="toggle-btn-label">
-                                <input type="radio" name="profitStatus" value="for-profit" checked>
-                                <span class="toggle-btn-span">For-Profit</span>
-                            </label>
-                            <label class="toggle-btn-label">
-                                <input type="radio" name="profitStatus" value="non-profit">
-                                <span class="toggle-btn-span">Non-Profit</span>
-                            </label>
+                    <div class="form-group" style="max-width: 250px;">
+                        <label style="display: block; margin-bottom: 8px;">Profit Status</label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="profit-status-badge" class="profit-status-badge" title="Click to toggle profit status">For-Profit</span>
+                            <input type="hidden" id="profit-status-input" name="profitStatus" value="for-profit">
                         </div>
                     </div>
 
@@ -687,11 +670,11 @@ get_header();
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="max-width: 150px;">
                         <label>Capacity</label>
                         <input type="number" class="facility-field" data-field="facilityDetails.capacity">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="max-width: 150px;">
                         <label>Current Census</label>
                         <input type="number" class="facility-field" data-field="facilityDetails.currentCensus">
                     </div>

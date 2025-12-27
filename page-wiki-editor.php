@@ -13,6 +13,21 @@ get_header();
         <h1>TTI Wiki Entry Generator</h1>
         <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
 
+        <!-- Empty-entry banner (hidden by default) -->
+        <div id="emptyEntryBanner" class="empty-entry-banner" style="display:none; border:1px solid #e0b4b4; background:#fff4f4; padding:10px; margin:8px 0;">
+            <strong>Reddit Wiki Entry Page has not yet been created.</strong>
+            <p style="margin:6px 0 0 0;">This wiki entry appears to be empty on the Reddit wiki. You can create a new entry by filling the form below.</p>
+            <div style="margin-top:8px;">
+                <button type="button" id="emptyBannerCreateBtn" class="button">Create New Entry</button>
+                <button type="button" id="emptyBannerCloseBtn" class="button">Dismiss</button>
+            </div>
+        </div>
+        <style>
+            /* Indicator for empty index entries */
+            .index-empty-flag { color: #b44; font-weight: 700; margin-left:6px; }
+            .empty-entry-banner .button { margin-right:8px; }
+        </style>
+
         <!-- Editor Mode Toggle -->
         <div class="editor-mode-toggle">
             <button type="button" id="modeFormBtn" class="mode-btn active">📝 Form Editor</button>

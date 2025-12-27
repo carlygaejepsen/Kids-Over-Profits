@@ -414,6 +414,29 @@ function updateCurrentFacility() {
 /**
  * Loads field notes from current facility data or localStorage
  */
+/**
+ * Cleans tooltip text from note values
+ * @param {string} noteText - The note text to clean
+ * @returns {string} - Cleaned note text
+ */
+function cleanNoteText(noteText) {
+    if (typeof noteText !== 'string') return noteText;
+
+    // Remove tooltip text patterns like "?Enter the name..." and similar
+    let cleaned = noteText
+        // Remove question mark followed by capitalized text (tooltip pattern)
+        .replace(/\?[A-Z][^.?!]*[.?!]\s*/g, '')
+        // Remove "Note" at the end if it appears alone
+        .replace(/\s+Note\s*$/i, '')
+        // Remove help text in parentheses
+        .replace(/\s*\([^)]*autocomplete[^)]*\)/gi, '')
+        .replace(/\s*\([^)]*suggestion[^)]*\)/gi, '')
+        .replace(/\s*\([^)]*duplicate[^)]*\)/gi, '')
+        .trim();
+
+    return cleaned || noteText; // Return original if cleaning results in empty string
+}
+
 function loadFieldNotes() {
     try {
         // Update current facility index
@@ -423,7 +446,25 @@ function loadFieldNotes() {
         if (typeof window.getCurrentFacilityData === 'function') {
             const facilityData = window.getCurrentFacilityData();
             if (facilityData && facilityData.fieldNotes) {
-                allFacilityNotes[notesCurrentFacilityIndex] = facilityData.fieldNotes;
+                // Clean any polluted notes before loading
+                const cleanedNotes = {};
+                Object.keys(facilityData.fieldNotes).forEach(key => {
+                    const notes = facilityData.fieldNotes[key];
+                    if (Array.isArray(notes)) {
+                        cleanedNotes[key] = notes.map(note => {
+                            if (typeof note === 'string') {
+                                return cleanNoteText(note);
+                            } else if (note && typeof note === 'object' && note.text) {
+                                return { ...note, text: cleanNoteText(note.text) };
+                            }
+                            return note;
+                        }).filter(note => note && note !== ''); // Remove empty notes
+                    } else if (typeof notes === 'string') {
+                        const cleaned = cleanNoteText(notes);
+                        if (cleaned) cleanedNotes[key] = cleaned;
+                    }
+                });
+                allFacilityNotes[notesCurrentFacilityIndex] = cleanedNotes;
                 return;
             }
         }
@@ -777,7 +818,16 @@ function createFieldNote(field, group) {
     const fieldId = getFieldIdentifier(field);
     debugLog('🔵 fieldId:', fieldId);
     const label = group.querySelector('label');
-    const fieldName = label ? label.textContent.trim() : 'Field';
+
+    // Get clean label text without tooltip content
+    let fieldName = 'Field';
+    if (label) {
+        // Clone the label and remove tooltip elements before getting text
+        const labelClone = label.cloneNode(true);
+        labelClone.querySelectorAll('.tooltip, [class*="tooltip"], .help-text, [class*="help"]').forEach(el => el.remove());
+        fieldName = labelClone.textContent.replace(/\?/g, '').trim();
+    }
+
     debugLog('🔵 fieldName:', fieldName);
 
     // Create a new note container
@@ -1022,8 +1072,13 @@ function getRenderedNotesForField(field) {
  * @param {HTMLElement} checkbox - The checkbox element
  */
 function ensureCheckboxNote(checkbox) {
+    // Skip checkboxes inside modals
+    if (checkbox.closest('.modal') || checkbox.closest('[id*="modal"]')) {
+        return;
+    }
+
     // Skip slider-style toggles (hidden checkboxes used for toggle switches)
-    const isSliderToggle = checkbox.style.display === 'none' && 
+    const isSliderToggle = checkbox.style.display === 'none' &&
                            checkbox.id && checkbox.id.endsWith('-toggle');
     if (isSliderToggle) {
         return;
@@ -1062,9 +1117,14 @@ function initializeCheckboxNoteTriggers() {
             return;
         }
 
+        // Skip checkboxes inside modals
+        if (checkbox.closest('.modal') || checkbox.closest('[id*="modal"]')) {
+            return;
+        }
+
         // Skip slider-style toggles (hidden checkboxes used for toggle switches)
         // These are identified by: hidden display + ID ending in '-toggle'
-        const isSliderToggle = checkbox.style.display === 'none' && 
+        const isSliderToggle = checkbox.style.display === 'none' &&
                                checkbox.id && checkbox.id.endsWith('-toggle');
         if (isSliderToggle) {
             return;

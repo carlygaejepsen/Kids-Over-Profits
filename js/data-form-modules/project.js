@@ -358,4 +358,10 @@ Enter new category (companies, locations, or referrers):`, currentCategory);
         recategorizeProject,
         determineProjectCategory
     };
+
+    // Compatibility shims for toolbar and legacy code
+    window.newProject = newProject;
+    window.loadProject = loadProject;
+    window.deleteProject = deleteProject;
+    window.renameProject = renameProject;
 })();

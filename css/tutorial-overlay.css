@@ -7,70 +7,98 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    background-color: transparent; /* Transparent, dimming handled by highlight shadow */
+    z-index: 200000;
     display: none; /* Hidden by default */
     opacity: 0;
     transition: opacity 0.3s ease;
-    pointer-events: none; /* Allow clicking through when hidden/fading */
+    pointer-events: none; /* Allow clicks to pass through */
+    overflow: visible;
 }
 
 .tutorial-overlay.active {
     display: block;
     opacity: 1;
-    pointer-events: auto;
 }
 
-/* Highlighted Element */
-.tutorial-highlight {
-    position: relative;
-    z-index: 10001 !important;
-    background-color: white; /* Ensure background isn't transparent */
-    box-shadow: 0 0 0 4px #33A7B5, 0 0 0 1000px rgba(0, 0, 0, 0.5); /* Fake overlay effect */
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
+/* Lock body scroll during tutorial - handled by JS now, but good fallback */
+/* Removed empty ruleset for body.tutorial-active */
 
-/* Alternative Highlight (using a simple border and z-index elevation) */
+/* The highlight hole element */
 .tutorial-target-highlight {
     position: absolute;
-    border: 4px solid #ff6600;
+    z-index: 199999;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); /* Dark overlay */
     border-radius: 6px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    z-index: 10001;
     pointer-events: none;
-    transition: all 0.3s ease;
+    display: none;
+    transition: all 0.2s ease;
+}
+
+/* Active Target Element (The element being highlighted) */
+.tutorial-active-target {
+    position: relative; /* Default to relative so z-index works (JS may override) */
+    z-index: 200005 !important; /* Above the overlay */
+    outline: 4px solid #FC8ED6 !important;
+    outline-offset: 2px !important;
+    border-radius: 8px !important;
+    filter: drop-shadow(0 0 20px rgba(252, 142, 214, 1))
+            drop-shadow(0 0 35px rgba(252, 142, 214, 0.8)) !important;
+    animation: tutorial-pulse 2s ease-in-out infinite;
+    pointer-events: auto !important; /* Ensure clickable */
+}
+
+@keyframes tutorial-pulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(252, 142, 214, 1))
+                drop-shadow(0 0 35px rgba(252, 142, 214, 0.8));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(252, 142, 214, 1))
+                drop-shadow(0 0 50px rgba(252, 142, 214, 0.9));
+    }
 }
 
 /* Tutorial Card/Popover */
 .tutorial-card {
     position: absolute;
-    background: white;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-    width: 350px;
+    width: 320px;
     max-width: 90vw;
-    z-index: 10002;
-    transition: all 0.3s ease;
+    z-index: 200010; /* Above the highlighted target */
+    transition: top 0.1s linear, left 0.1s linear; /* Smooth follow */
     border-left: 5px solid #33A7B5;
+    display: none; /* Hidden by default, shown when tutorial active */
+}
+
+/* Show card when tutorial is active */
+body.tutorial-active .tutorial-card {
+    display: block;
 }
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
     .tutorial-card {
         position: fixed !important;
-        bottom: 20px !important;
-        left: 5% !important;
-        width: 90% !important;
-        max-width: none !important;
+        bottom: 10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: calc(100vw - 20px) !important;
+        max-width: 380px !important;
         top: auto !important;
-        transform: none !important;
-        z-index: 10005 !important; /* Ensure it's above everything */
+        z-index: 200020 !important;
+        padding: 12px !important;
     }
-    
+
     .tutorial-toggle-btn {
-        bottom: 80px; /* Move toggle up so it doesn't overlap card */
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        bottom: 15px;
+        left: 15px;
     }
 }
 
@@ -83,9 +111,10 @@
 
 .tutorial-title {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 16px;
     color: #1f2937;
     margin: 0;
+    line-height: 1.3;
 }
 
 .tutorial-close {
@@ -94,6 +123,8 @@
     font-size: 20px;
     cursor: pointer;
     color: #9ca3af;
+    padding: 0;
+    line-height: 1;
 }
 
 .tutorial-close:hover {
@@ -101,20 +132,23 @@
 }
 
 .tutorial-content {
-    font-size: 15px;
+    font-size: 13px;
     color: #4b5563;
-    line-height: 1.5;
-    margin-bottom: 20px;
+    line-height: 1.45;
+    margin-bottom: 12px;
+    margin-top: 8px;
 }
 
 .tutorial-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .tutorial-steps {
-    font-size: 13px;
+    font-size: 12px;
     color: #9ca3af;
 }
 
@@ -124,9 +158,9 @@
 }
 
 .tutorial-btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     border: 1px solid transparent;
@@ -156,26 +190,34 @@
 .tutorial-toggle-btn {
     position: fixed;
     bottom: 20px;
-    right: 20px;
-    background-color: #33A7B5;
-    color: white;
-    width: 50px;
-    height: 50px;
+    left: 20px;
+    background-color: rgba(51, 167, 181, 0.8);
+    color: #33A7B5;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 2px solid #33A7B5;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
     cursor: pointer;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 20px;
     transition: transform 0.2s, background-color 0.2s;
 }
 
 .tutorial-toggle-btn:hover {
     transform: scale(1.1);
-    background-color: #2a8c96;
+    background-color: rgba(51, 167, 181, 0.4);
+}
+
+.tutorial-card {
+    pointer-events: auto;
+}
+
+.tutorial-toggle-btn {
+    pointer-events: auto;
 }
 
 /* Notification Badge */
@@ -193,7 +235,7 @@
 
 .tutorial-toggle-tooltip {
     position: absolute;
-    right: 60px;
+    left: 60px;
     background: #1f2937;
     color: white;
     padding: 5px 10px;
@@ -207,4 +249,151 @@
 
 .tutorial-toggle-btn:hover .tutorial-toggle-tooltip {
     opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .tutorial-toggle-tooltip {
+        left: auto;
+        right: auto;
+        bottom: 55px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* Field Tooltips */
+.field-tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+label.has-tooltip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+label.has-tooltip .field-tooltip-wrapper {
+    margin-left: 0;
+}
+
+.field-tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: #6b7280;
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 5px;
+    vertical-align: middle;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.field-tooltip-icon:hover {
+    background-color: #33A7B5;
+}
+
+.field-tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f2937;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: normal;
+    width: 220px;
+    max-width: calc(100vw - 40px);
+    z-index: 200003;
+    transition: opacity 0.2s, visibility 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.field-tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #1f2937;
+}
+
+.field-tooltip-icon:hover .field-tooltip-text,
+.field-tooltip-icon:focus .field-tooltip-text,
+.field-tooltip-icon.active .field-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ensure tooltip doesn't overflow viewport on the right */
+.field-tooltip-text {
+    right: auto;
+}
+
+/* If tooltip would go off left edge */
+.field-tooltip-wrapper:first-child .field-tooltip-text,
+label:first-child .field-tooltip-text {
+    left: 0;
+    transform: translateX(0);
+}
+
+.field-tooltip-wrapper:first-child .field-tooltip-text::after,
+label:first-child .field-tooltip-text::after {
+    left: 20px;
+    transform: translateX(0);
+}
+
+/* Mobile Tooltip Adjustments */
+@media (max-width: 768px) {
+    .field-tooltip-icon {
+        width: 15px;
+        height: 15px;
+        font-size: 10px;
+        margin-left: 4px;
+    }
+
+    .field-tooltip-text {
+        position: fixed;
+        bottom: auto;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: calc(100vw - 40px);
+        max-width: 280px;
+        padding: 8px 12px;
+        font-size: 13px;
+        line-height: 1.4;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .field-tooltip-text::after {
+        display: none;
+    }
+
+    /* Add touch support for mobile */
+    .field-tooltip-icon {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .field-tooltip-text {
+        width: 200px;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }

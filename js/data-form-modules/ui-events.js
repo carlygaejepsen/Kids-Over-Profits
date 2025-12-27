@@ -97,15 +97,44 @@
     }
 
     function attachFieldListeners() {
-        // Profit Status Toggle Listener
-        const profitRadios = document.querySelectorAll('input[name="profitStatus"]');
-        profitRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
+        // Profit Status Badge Toggle Logic
+        const profitBadge = document.getElementById('profit-status-badge');
+        const profitInput = document.getElementById('profit-status-input');
+        
+        if (profitBadge && profitInput) {
+            const updateProfitUI = (status) => {
+                if (status === 'non-profit') {
+                    profitBadge.textContent = 'Non-Profit';
+                    profitBadge.classList.add('non-profit');
+                } else {
+                    profitBadge.textContent = 'For-Profit';
+                    profitBadge.classList.remove('non-profit');
+                }
+            };
+
+            profitBadge.addEventListener('click', () => {
+                const currentStatus = profitInput.value;
+                const newStatus = currentStatus === 'for-profit' ? 'non-profit' : 'for-profit';
+                
+                profitInput.value = newStatus;
+                updateProfitUI(newStatus);
+
+                // Sync with formData
+                if (window.formData && window.formData.operator) {
+                    window.formData.operator.profitStatus = newStatus;
+                    if (typeof window.updateJSON === 'function') window.updateJSON();
+                    if (typeof window.autoSave === 'function') window.autoSave();
+                }
+                
+                // Trigger label update if needed
                 if (window.KOP_UI_State && typeof window.KOP_UI_State.updateLabelsForProjectType === 'function') {
                     window.KOP_UI_State.updateLabelsForProjectType();
                 }
             });
-        });
+            
+            // Initialize display from input value
+            updateProfitUI(profitInput.value);
+        }
     }
 
     function attachButtonListeners() {

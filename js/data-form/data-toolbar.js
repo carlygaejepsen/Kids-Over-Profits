@@ -116,7 +116,7 @@
             const facilitiesWithIndex = facilities.map((facility, index) => ({
                 facility,
                 originalIndex: index,
-                name: facility.identification?.name || 'Unnamed Facility'
+                name: facility.identification?.name || `Facility ${index + 1}`
             }));
 
             facilitiesWithIndex.sort((a, b) => {
@@ -149,8 +149,16 @@
     }
 
     function initializeToolbarButtons() {
+        console.log('🟢 initializeToolbarButtons() called');
         const elements = getElements();
         const { toolbar, toolbarToggle, toolbarContent, dropdown, prevBtn, nextBtn, newProjectBtn, addBtn, cloneBtn, scrollTopBtn, removeBtn } = elements;
+
+        console.log('🟢 Toolbar elements found:', {
+            toolbar: !!toolbar,
+            newProjectBtn: !!newProjectBtn,
+            addBtn: !!addBtn,
+            generateReportBtn: !!elements.generateReportBtn
+        });
 
         if (toolbar) {
             applyButtonTooltips(elements);
@@ -159,6 +167,8 @@
             if (toolbarContent) {
                 toolbarContent.setAttribute('aria-hidden', toolbar.classList.contains('minimized') ? 'true' : 'false');
             }
+        } else {
+            console.error('❌ Toolbar element not found!');
         }
 
         if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
@@ -207,20 +217,45 @@
 
         if (newProjectBtn && !newProjectBtn.dataset.listenerAttached) {
             newProjectBtn.addEventListener('click', () => {
+                log('🔵 New Project button clicked');
+                log('window.newProject exists?', typeof window.newProject === 'function');
+                log('window.KOP_Project exists?', !!window.KOP_Project);
+                log('window.KOP_Project.newProject exists?', !!(window.KOP_Project && window.KOP_Project.newProject));
+
                 if (typeof window.newProject === 'function') {
                     window.newProject();
+                    if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                        window.KOP_UI_Render.scrollToFormInput();
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                } else {
+                    console.error('❌ window.newProject is not a function');
                 }
             }, { passive: true });
             newProjectBtn.dataset.listenerAttached = 'true';
+            log('✅ New Project button listener attached');
+        } else if (!newProjectBtn) {
+            log('❌ New Project button not found in DOM');
         }
 
         if (addBtn && !addBtn.dataset.listenerAttached) {
             addBtn.addEventListener('click', () => {
+                log('🔵 Add Facility button clicked');
+                log('window.addFacility exists?', typeof window.addFacility === 'function');
+                log('window.KOP_UI_Actions exists?', !!window.KOP_UI_Actions);
+                log('window.KOP_UI_Actions.addFacility exists?', !!(window.KOP_UI_Actions && window.KOP_UI_Actions.addFacility));
+
                 if (typeof window.addFacility === 'function') {
                     window.addFacility();
+                } else {
+                    console.error('❌ window.addFacility is not a function');
                 }
             }, { passive: true });
             addBtn.dataset.listenerAttached = 'true';
+            log('✅ Add Facility button listener attached');
+        } else if (!addBtn) {
+            log('❌ Add Facility button not found in DOM');
         }
 
         if (cloneBtn && !cloneBtn.dataset.listenerAttached) {
@@ -250,37 +285,70 @@
 
         if (elements.generateReportBtn && !elements.generateReportBtn.dataset.listenerAttached) {
             elements.generateReportBtn.addEventListener('click', () => {
-                if (typeof window.generateProjectsReport !== 'function') return;
+                log('🔵 Generate Report button clicked');
+                const hasProjectsFn = typeof window.generateProjectsReport === 'function';
+                const hasHTMLReport = typeof window.generateHTMLReport === 'function';
+                log('window.generateProjectsReport exists?', hasProjectsFn);
 
-                const category = getActiveCategory();
-                let categories;
-                let filename;
+                // Preferred path: generateProjectsReport
+                if (hasProjectsFn) {
+                    const category = getActiveCategory();
+                    let categories;
+                    let filename;
 
-                if (category === 'referrers') {
-                    categories = ['referrers'];
-                    filename = 'projects-report-referrers.json';
-                } else if (category === 'locations') {
-                    categories = ['locations'];
-                    filename = 'projects-report-locations.json';
-                } else {
-                    categories = undefined;
-                    filename = 'projects-report-all.json';
+                    console.log('📊 Report Button Debug:', { category });
+
+                    if (category === 'referrers') {
+                        categories = ['referrers'];
+                        filename = 'projects-report-referrers.json';
+                    } else if (category === 'locations') {
+                        categories = ['locations'];
+                        filename = 'projects-report-locations.json';
+                    } else {
+                        categories = undefined;
+                        filename = 'projects-report-all.json';
+                    }
+
+                    log('Generating report with:', { categories, filename });
+                    try {
+                        console.log('🚀 Calling window.generateProjectsReport...');
+                        window.generateProjectsReport({ categories, filename });
+                    } catch (err) {
+                        console.error('Error calling generateProjectsReport():', err);
+                    }
+                    return;
                 }
 
-                window.generateProjectsReport({ categories, filename });
+                // Fallback: call legacy generateHTMLReport if available
+                if (hasHTMLReport) {
+                    log('Fallback: using window.generateHTMLReport()');
+                    try {
+                        window.generateHTMLReport();
+                    } catch (err) {
+                        console.error('Error calling fallback generateHTMLReport():', err);
+                    }
+                    return;
+                }
+
+                console.error('❌ No report generator available: window.generateProjectsReport and window.generateHTMLReport are missing');
             }, { passive: true });
             elements.generateReportBtn.dataset.listenerAttached = 'true';
+            log('✅ Generate Report button listener attached');
+        } else if (!elements.generateReportBtn) {
+            log('❌ Generate Report button not found in DOM');
         }
 
         log('Toolbar buttons initialized');
     }
 
     function initializeFixedToolbar() {
+        console.log('🟢 initializeFixedToolbar() called');
         const toolbar = document.getElementById('fixed-toolbar');
         if (!toolbar) {
-            log('Fixed toolbar element not found, skipping initialization.');
+            console.error('❌ Fixed toolbar element not found, skipping initialization.');
             return;
         }
+        console.log('✅ Fixed toolbar element found');
         initializeToolbarButtons();
     }
 
@@ -330,11 +398,18 @@
     window.initializeFixedToolbar = initializeFixedToolbar;
     window.initializeFacilityToolbarToggle = initializeFacilityToolbarToggle;
 
-    const bootToolbar = () => initializeFixedToolbar();
+    const bootToolbar = () => {
+        console.log('🟢 bootToolbar() called, readyState:', document.readyState);
+        initializeFixedToolbar();
+    };
+
+    console.log('🟢 data-toolbar.js loaded, readyState:', document.readyState);
 
     if (document.readyState === 'loading') {
+        console.log('🟡 Waiting for DOMContentLoaded...');
         document.addEventListener('DOMContentLoaded', bootToolbar, { once: true });
     } else {
+        console.log('🟡 DOM already ready, initializing immediately');
         bootToolbar();
     }
 })(window);

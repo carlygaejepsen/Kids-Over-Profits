@@ -39,6 +39,12 @@ get_header();
 
         <div class="admin-controls">
             <div class="filter-controls">
+                <label for="typeFilter">Type:</label>
+                <select id="typeFilter">
+                    <option value="wiki" selected>Wiki Submissions</option>
+                    <option value="data">Data Form Submissions</option>
+                </select>
+
                 <label for="statusFilter">Status:</label>
                 <select id="statusFilter">
                     <option value="">All</option>

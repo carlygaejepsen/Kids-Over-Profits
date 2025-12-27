@@ -26,13 +26,13 @@ require_once __DIR__ . '/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? 'wiki';
-    if (!in_array($type, ['wiki', 'news'], true)) {
+    if (!in_array($type, ['wiki', 'news', 'data'], true)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki" or "news"']);
+        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", or "data"']);
         exit;
     }
 
-    $table = $type === 'wiki' ? 'wiki_submissions' : 'news_submissions';
+    $table = $type === 'wiki' ? 'wiki_submissions' : ($type === 'news' ? 'news_submissions' : 'suggested_edits');
     $action = $_GET['action'] ?? 'list';
 
     if ($action === 'get') {
@@ -53,7 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit;
         }
 
-        $submission['json_data'] = json_decode($submission['json_data'] ?? '', true);
+        $jsonKey = ($type === 'data') ? 'edited_json_data' : 'json_data';
+        $submission['json_data'] = json_decode($submission[$jsonKey] ?? '', true);
+        if ($type === 'data') {
+            $submission['program_name'] = $submission['master_id'];
+            $submission['submitted_by'] = $submission['submitter_ip'] ?? 'Anonymous';
+            $submission['submission_notes'] = $submission['reason'] ?? '';
+        }
+
         echo json_encode(['success' => true, 'data' => $submission]);
         exit;
     }
@@ -72,10 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     if ($search) {
-        $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2 OR organization LIKE :search3)";
-        $params[':search1'] = "%$search%";
-        $params[':search2'] = "%$search%";
-        $params[':search3'] = "%$search%";
+        if ($type === 'data') {
+            $where[] = "(master_id LIKE :search)";
+            $params[':search'] = "%$search%";
+        } else {
+            $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2 OR organization LIKE :search3)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
+            $params[':search3'] = "%$search%";
+        }
     }
 
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -84,11 +96,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
-    $sql = "SELECT id, program_name, city_state, organization, program_type, years_active, status,
-                   submitted_by, created_at, updated_at, json_data
-            FROM $table $whereClause
-            ORDER BY created_at DESC
-            LIMIT {$limit} OFFSET {$offset}";
+    if ($type === 'data') {
+        $sql = "SELECT id, master_id as program_name, status,
+                       submitter_ip as submitted_by, created_at, edited_json_data as json_data, reason as submission_notes
+                FROM $table $whereClause
+                ORDER BY created_at DESC
+                LIMIT {$limit} OFFSET {$offset}";
+    } else {
+        $sql = "SELECT id, program_name, city_state, organization, program_type, years_active, status,
+                       submitted_by, created_at, updated_at, json_data
+                FROM $table $whereClause
+                ORDER BY created_at DESC
+                LIMIT {$limit} OFFSET {$offset}";
+    }
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -96,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     foreach ($submissions as &$row) {
         $row['json_data'] = json_decode($row['json_data'] ?? '', true);
+        if ($type === 'data' && empty($row['submitted_by'])) {
+             $row['submitted_by'] = 'Anonymous';
+        }
     }
     unset($row);
 
@@ -125,13 +148,13 @@ try {
     $ids = $data['ids'] ?? ($data['id'] ? [$data['id']] : []);
     
     // Validate type
-    if (!in_array($type, ['wiki', 'news'])) {
+    if (!in_array($type, ['wiki', 'news', 'data'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki" or "news"']);
+        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", or "data"']);
         exit;
     }
     
-    $table = $type === 'wiki' ? 'wiki_submissions' : 'news_submissions';
+    $table = $type === 'wiki' ? 'wiki_submissions' : ($type === 'news' ? 'news_submissions' : 'suggested_edits');
     
     switch ($action) {
         case 'approve':

@@ -83,6 +83,120 @@ document.addEventListener('DOMContentLoaded', () => {
     let programLevels = [];
     let importedMarkdown = ''; // Store original imported markdown
 
+    // --- Empty-slug mapping (loaded from markdown_output) ---
+    // Set of known-empty wiki slugs (derived from markdown_output/empty_files_updated.md)
+    let emptySlugSet = null;
+    async function loadEmptySlugMapping() {
+        try {
+            const resp = await fetch('/wp-content/themes/child-git/markdown_output/empty_files_updated.md', { cache: 'no-cache' });
+                if (resp.ok && resp.status === 200) {
+                const text = await resp.text();
+                emptySlugSet = new Set();
+                text.split(/\r?\n/).forEach(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+                    // Lines are formatted like "- filename.md"
+                    const entry = trimmed.replace(/^[-\s]+/, '');
+                    const name = entry.split('/').pop();
+                    if (!name) return;
+                    // We care about index_*.md files which map to wiki slugs
+                    if (name.startsWith('index_')) {
+                        let slug = name.replace(/^index_/, '').replace(/\.md$/i, '');
+                        // Remove trailing underscores
+                        slug = slug.replace(/_$/, '');
+                        if (slug) emptySlugSet.add(slug.toLowerCase());
+                    } else if (/^[a-z0-9-]+\.md$/i.test(name)) {
+                        // Fallback: consider plain slug.md files as slugs
+                        const slug = name.replace(/\.md$/i, '');
+                        emptySlugSet.add(slug.toLowerCase());
+                    }
+                });
+                console.log('Loaded empty slug list (' + (emptySlugSet.size || 0) + ' slugs)');
+            } else {
+                emptySlugSet = new Set();
+                console.warn('Empty files list not found (HTTP ' + resp.status + ')');
+            }
+        } catch (err) {
+            emptySlugSet = new Set();
+            console.warn('Failed to load empty files list:', err);
+        }
+    }
+    // Load mapping (no await so UI init continues)
+    loadEmptySlugMapping();
+
+    const emptyBannerEl = document.getElementById('emptyEntryBanner');
+    const emptyBannerCreateBtn = document.getElementById('emptyBannerCreateBtn');
+    const emptyBannerCloseBtn = document.getElementById('emptyBannerCloseBtn');
+
+    const normalizeToSlug = (name) => {
+        if (!name) return '';
+        return name.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+    };
+
+    function showEmptyBanner(programName) {
+        if (!emptyBannerEl) return;
+        emptyBannerEl.style.display = 'block';
+        // Update message with program name if available
+        const strong = emptyBannerEl.querySelector('strong');
+        if (strong) {
+            strong.textContent = 'Reddit Wiki Entry Page has not yet been created.';
+        }
+    }
+
+    function hideEmptyBanner() {
+        if (!emptyBannerEl) return;
+        emptyBannerEl.style.display = 'none';
+    }
+
+    if (emptyBannerCloseBtn) {
+        emptyBannerCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideEmptyBanner();
+        });
+    }
+
+    if (emptyBannerCreateBtn) {
+        emptyBannerCreateBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideEmptyBanner();
+            // Focus program name field to start creating
+            const programNameInput = document.getElementById('programName');
+            if (programNameInput) programNameInput.focus();
+        });
+    }
+
+    function clearFormToEmpty(programName) {
+        // Basic fields to clear
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations'];
+        clearInputs(fieldIds);
+
+        // Reset arrays and lists
+        staffMembers = [];
+        punishments = [];
+        lawsuits = [];
+        newsArticles = [];
+        testimonies = [];
+        relatedMedia = [];
+        campuses = [];
+        ownershipChanges = [];
+        rules = [];
+        allegations = [];
+        therapies = [];
+        programLevels = [];
+
+        initializeEmptyLists();
+
+        // Uncheck diagnosis/allegation boxes
+        document.querySelectorAll('input[name="diagnoses"]').forEach(cb => cb.checked = false);
+        document.querySelectorAll('input[name="allegations"]').forEach(cb => cb.checked = false);
+
+        // Set program name if provided, otherwise leave blank
+        if (programName) {
+            const pn = document.getElementById('programName');
+            if (pn) pn.value = programName;
+        }
+    }
+
 
     const staffNameInput = document.getElementById('staffName');
     const staffRoleInput = document.getElementById('staffRole');
@@ -461,9 +575,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function finalizeEntryLoad(name) {
+        // Backwards-compatible: accept optional options object as second arg
+        const options = arguments[1] || {};
         if (browserPanel) browserPanel.style.display = 'none';
         if (toggleBrowserBtn) toggleBrowserBtn.textContent = '📂 Browse Saved Entries';
-        wikiForm.scrollIntoView({ behavior: 'smooth' });
+        if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
         if (name) {
             alert(`Loaded entry: ${name}`);
         }
@@ -1474,7 +1590,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+                const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1616,7 +1732,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     // Submit to database
-                    const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+                    const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1701,24 +1817,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update view based on mode
     function updateBrowserView(viewMode) {
         const dbSection = document.querySelector('.database-entries-section');
+        const indexBrowser = document.getElementById('indexBrowser');
 
         if (viewMode === 'operators') {
-            // Hide database entries section
+            // Hide database entries section, show index browser
             if (dbSection) dbSection.style.display = 'none';
-            if (document.getElementById('indexBrowser')) {
-                document.getElementById('indexBrowser').style.display = 'block';
-            }
+            if (indexBrowser) indexBrowser.style.display = 'block';
             // Hide the dropdown selector since we're auto-loading CORPORATE
             if (indexSelect) indexSelect.style.display = 'none';
 
             // Automatically load CORPORATE organizations
             loadProgramsForState('CORPORATE');
-        } else {
-            // Show database entries section and dropdown for location selection
+        } else if (viewMode === 'all') {
+            // Show database entries section, hide index browser
             if (dbSection) dbSection.style.display = 'block';
-            if (document.getElementById('indexBrowser')) {
-                document.getElementById('indexBrowser').style.display = 'block';
-            }
+            if (indexBrowser) indexBrowser.style.display = 'none';
+            // Hide the state dropdown when showing all database entries
+            if (indexSelect) indexSelect.style.display = 'none';
+        } else {
+            // Location mode: hide database section, show index browser with state dropdown
+            if (dbSection) dbSection.style.display = 'none';
+            if (indexBrowser) indexBrowser.style.display = 'block';
             // Show the dropdown selector for state selection
             if (indexSelect) indexSelect.style.display = 'block';
 
@@ -1960,10 +2079,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const nameSpan = document.createElement('span');
             nameSpan.className = 'index-entry-name';
 
-            const slug = getSlugFromEntryUrl(entry.url);
+            // Determine candidate slug:
+            // Prefer explicit wiki slug from URL; if we're in CORPORATE view (organizations)
+            // fall back to a normalized name-based slug to detect empty org index pages.
+            const slugFromUrl = getSlugFromEntryUrl(entry.url);
             const entryName = entry.name || entry.normalizedName || 'Unnamed program';
+            let candidateSlug = '';
+            if (slugFromUrl) {
+                candidateSlug = slugFromUrl;
+            } else if (selectedIndexState === 'CORPORATE') {
+                candidateSlug = normalizeToSlug(entry.normalizedName || entry.name || '');
+            }
 
             nameSpan.appendChild(document.createTextNode(entryName));
+
+            // Visual indicator if this entry is known-empty (only when candidateSlug is available)
+            try {
+                if (emptySlugSet && candidateSlug && emptySlugSet.has(candidateSlug.toLowerCase())) {
+                    const emptyFlag = document.createElement('span');
+                    emptyFlag.className = 'index-empty-flag';
+                    emptyFlag.title = 'This wiki entry appears to be empty on Reddit';
+                    emptyFlag.style.pointerEvents = 'none';
+                    emptyFlag.style.marginLeft = '6px';
+                    emptyFlag.textContent = '⚠️ EMPTY';
+                    nameSpan.appendChild(emptyFlag);
+                }
+            } catch (e) {
+                // Fail silently
+            }
 
             const actions = document.createElement('div');
             actions.className = 'index-entry-actions';
@@ -2001,9 +2144,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 actions.appendChild(editButton);
             }
 
-            if (slug) {
+            if (slugFromUrl) {
                 const viewLink = document.createElement('a');
-                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;
+                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slugFromUrl}/`;
                 viewLink.target = '_blank';
                 viewLink.rel = 'noopener noreferrer';
                 viewLink.textContent = 'View on Reddit';
@@ -2018,12 +2161,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadOrgProgramsFromDatabase(orgName, button) {
         const originalLabel = button?.textContent || 'View Programs';
-        if (button) {
-            button.disabled = true;
-            button.textContent = 'Loading...';
-        }
+        // Delay changing the button state until after we check if the org/index is empty
 
-        try {
+            try {
+                // If the organization's wiki index page is known-empty, show banner and open an empty form
+                try {
+                    const orgSlug = normalizeToSlug(orgName || '');
+                    if (emptySlugSet && orgSlug && emptySlugSet.has(orgSlug.toLowerCase())) {
+                        console.log('Organization index is empty for', orgName, orgSlug);
+                        showEmptyBanner(orgName);
+                        clearFormToEmpty(orgName);
+                        importedMarkdown = '';
+                        updateMarkdownFromForm();
+                        // Hide browser but do not auto-scroll to the form; scroll banner into view instead
+                        finalizeEntryLoad(orgName, { noScroll: true });
+                        document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Restore button state before returning
+                        if (button) {
+                            button.disabled = false;
+                            button.textContent = originalLabel;
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Error checking organization slug in empty list:', e);
+                }
             updateIndexEntriesMessage(`Loading programs for ${orgName}...`);
 
             // Search DB for anything related to this org name
@@ -2095,13 +2257,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (programs.length === 0) {
-                 // Fallback: If absolutely nothing found, check if we at least found the org page
-                 // If not even the org page exists, then it's truly not found.
+                 // If nothing found, show the empty-entry banner and load an empty form
                  if (!searchResult.data || searchResult.data.length === 0) {
-                     throw new Error('Organization not found in database');
+                     console.warn('Organization not found in database for', orgName);
                  } else {
-                     throw new Error('No facilities found for this organization (checked database and wiki links)');
+                     console.warn('No facilities found for organization', orgName);
                  }
+                 try {
+                     showEmptyBanner(orgName);
+                     clearFormToEmpty(orgName);
+                     importedMarkdown = '';
+                     updateMarkdownFromForm();
+                     finalizeEntryLoad(orgName, { noScroll: true });
+                     document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 } catch (e) {
+                     console.error('Error preparing empty form for organization:', e);
+                 }
+                 return;
             }
 
             console.log(`Found ${programs.length} programs for "${orgName}"`);
@@ -2217,7 +2389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const createdDate = new Date(entry.created_at).toLocaleDateString();
 
                 // Check if entry content indicates it doesn't exist
-                const content = entry.markdown || entry.content || '';
+                const content = entry.generated_markdown || entry.original_markdown || '';
                 const isEmptyPage = content.toLowerCase().includes('does not exist') ||
                                    content.toLowerCase().includes('not found') ||
                                    content.trim().length < 50; // Very short content likely means empty page
@@ -2276,6 +2448,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const entry = result.data;
+            // If this entry corresponds to a known-empty wiki slug, show banner and load an empty form
+            try {
+                const candidateName = entry.program_name || entry.programName || '';
+                const slug = entry.slug || normalizeToSlug(candidateName);
+                if (emptySlugSet && slug && emptySlugSet.has(slug.toLowerCase())) {
+                    console.log('Detected empty wiki slug for', slug);
+                    showEmptyBanner(candidateName || '');
+                    clearFormToEmpty(candidateName || '');
+                    importedMarkdown = '';
+                    updateMarkdownFromForm();
+                    finalizeEntryLoad(candidateName || entry.program_name);
+                    return;
+                }
+            } catch (e) {
+                console.warn('Error checking empty slug mapping:', e);
+            }
             
             // PRIORITIZE MARKDOWN RE-PARSE
             // This ensures that updates to the parser logic (wiki-parser.js) are immediately 
@@ -2324,7 +2512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Note: We need to add DELETE endpoint to the API
             // For now, we can use a workaround by setting status to 'deleted'
-            const response = await fetch('/wp-content/themes/child/api/save-wiki-submission.php', {
+            const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2348,5 +2536,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error deleting entry:', error);
             alert(`Failed to delete entry: ${error.message}`);
         }
+    }
+
+    // Initialize database section visibility based on default view mode
+    // The database-entries-section should only be visible when view mode is 'all'
+    const dbSection = document.querySelector('.database-entries-section');
+    if (dbSection) {
+        const initialViewMode = viewModeSelect ? viewModeSelect.value : 'operators';
+        dbSection.style.display = initialViewMode === 'all' ? 'block' : 'none';
     }
 });

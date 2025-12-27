@@ -5,17 +5,70 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 try {
-    // Tables are stored without WordPress prefix in this database
-    $prefix = '';
+    // Get WordPress table prefix from wp-config.php
+    if (!defined('ABSPATH')) {
+        define('ABSPATH', dirname(dirname(dirname(__DIR__))) . '/');
+    }
+    
+    $wp_config_path = ABSPATH . 'wp-config.php';
+    $prefix = 'wp_'; // Default fallback
 
+    if (file_exists($wp_config_path)) {
+        require_once $wp_config_path;
+        if (isset($table_prefix)) {
+            $prefix = $table_prefix;
+        }
+    } else {
+        // Try one level up if we are in a theme folder in a different structure
+        $alt_path = dirname(dirname(dirname(dirname(__DIR__)))) . '/wp-config.php';
+        if (file_exists($alt_path)) {
+             require_once $alt_path;
+             if (isset($table_prefix)) {
+                $prefix = $table_prefix;
+            }
+        }
+    }
+    
     // Query all three master tables: facilities, referrers, and locations
-    $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
-    $stmt1->execute();
-    $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+    $facilitiesResults = [];
+    try {
+        $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
+        $stmt1->execute();
+        $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Table might not exist, ignore and try fallback
+    }
+    
+    // Fallback: If prefixed table is empty or failed, try non-prefixed table
+    if (empty($facilitiesResults)) {
+        try {
+            $stmt1b = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+            $stmt1b->execute();
+            $facilitiesResults = $stmt1b->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ignore error if fallback table doesn't exist
+        }
+    }
 
-    $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}referrers_master");
-    $stmt2->execute();
-    $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $referrersResults = [];
+    try {
+        $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}referrers_master");
+        $stmt2->execute();
+        $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Table might not exist
+    }
+    
+    // Fallback for referrers
+    if (empty($referrersResults)) {
+        try {
+            $stmt2b = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
+            $stmt2b->execute();
+            $referrersResults = $stmt2b->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ignore error
+        }
+    }
 
     // locations_master is optional - may not exist yet
     $locationsResults = [];
@@ -23,12 +76,24 @@ try {
         $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
-        // Mark location results with their source table
-        foreach ($locationsResults as &$row) {
-            $row['_source_table'] = 'locations';
-        }
     } catch (PDOException $e) {
-        // Table doesn't exist yet, that's fine - continue without it
+        // Table doesn't exist yet
+    }
+    
+    // Fallback for locations
+    if (empty($locationsResults)) {
+        try {
+            $stmt3b = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+            $stmt3b->execute();
+            $locationsResults = $stmt3b->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ignore error
+        }
+    }
+    
+    // Mark location results with their source table
+    foreach ($locationsResults as &$row) {
+        $row['_source_table'] = 'locations';
     }
 
     // Mark source tables for proper categorization
@@ -86,6 +151,79 @@ try {
                 'category' => $stored['category'] ?? $defaultCategory
             ];
         }
+    }
+
+    // Fetch published wiki submissions
+    try {
+        // wiki_submissions table (no prefix based on check-tables.php)
+        $stmtWiki = $pdo->prepare("SELECT id, program_name, json_data, updated_at FROM wiki_submissions WHERE status = 'published'");
+        $stmtWiki->execute();
+        $wikiResults = $stmtWiki->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($wikiResults as $wRow) {
+            $wData = json_decode($wRow['json_data'], true);
+            if (!$wData) continue;
+
+            $opName = !empty($wData['ownerName']) ? $wData['ownerName'] : (!empty($wData['programName']) ? $wData['programName'] : 'Unknown Operator');
+            $progName = !empty($wData['programName']) ? $wData['programName'] : 'Unnamed Facility';
+
+            $facList = [];
+
+            // Primary facility (the one described in the main form)
+            $facList[] = [
+                'identification' => [
+                    'name' => $progName,
+                    'currentOperator' => $opName
+                ],
+                'location' => $wData['cityState'] ?? '',
+                'address' => $wData['mainAddress'] ?? '',
+                'facilityDetails' => [
+                    'type' => $wData['programType'] ?? '',
+                    'capacity' => $wData['capacity'] ?? '',
+                    'ageRange' => [
+                        'text' => $wData['ageRange'] ?? ''
+                    ]
+                ],
+                'operatingPeriod' => [
+                    'startYear' => $wData['yearFounded'] ?? '',
+                    'text' => $wData['yearsActive'] ?? ''
+                ]
+            ];
+
+            // Additional campuses
+            if (!empty($wData['campuses']) && is_array($wData['campuses'])) {
+                foreach ($wData['campuses'] as $campus) {
+                    if (empty($campus['campusName'])) continue;
+                    $facList[] = [
+                        'identification' => [
+                            'name' => $campus['campusName'],
+                            'currentOperator' => $opName
+                        ],
+                        'location' => $campus['campusLocation'] ?? ''
+                    ];
+                }
+            }
+
+            $project = [
+                'name' => $opName, // Group by Operator Name
+                'category' => 'companies',
+                'timestamp' => $wRow['updated_at'] ?? date('c'),
+                'data' => [
+                    'operator' => [
+                        'name' => $opName,
+                        'location' => '', 
+                    ],
+                    'facilities' => $facList
+                ]
+            ];
+
+            // Use a unique key for the project to avoid collision with master data
+            // Prefixing with 'wiki_'
+            $projects['wiki_' . $wRow['id']] = $project;
+        }
+    } catch (PDOException $e) {
+        // If wiki_submissions table doesn't exist or errors, just ignore and continue with master data
+        error_log("Wiki submissions fetch error: " . $e->getMessage());
     }
 
     echo json_encode(['success' => true, 'projects' => $projects]);

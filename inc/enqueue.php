@@ -52,6 +52,15 @@ function kop_enqueue_admin_submissions() {
             filemtime(get_stylesheet_directory() . '/js/admin-submissions.js'),
             true
         );
+
+        wp_localize_script(
+            'kop-admin-submissions',
+            'adminSubmissionsConfig',
+            array(
+                'apiBase' => get_stylesheet_directory_uri() . '/api',
+                'manageApi' => get_stylesheet_directory_uri() . '/api/manage-submissions.php'
+            )
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_admin_submissions');
@@ -73,7 +82,7 @@ function kop_enqueue_kadence_nav_guard() {
         false // Load in header, not footer
     );
 }
-add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1); // Priority 1 - load very early
+// add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1); // Priority 1 - load very early
 
 /**
  * Remove Kadence navigation scripts when the page intentionally renders without a header.
@@ -119,9 +128,9 @@ function kop_maybe_disable_kadence_navigation() {
     }
 }
 
-add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
-add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
-add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+// add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+// add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
+// add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
 
 /**
  * Add inline script to block navigation on headerless pages as early as possible.
@@ -134,14 +143,14 @@ function kop_add_early_navigation_blocker() {
     ?>
     <script>
     (function(){
-        window.KADENCE_NAV_DISABLED = true;
-        window.kadenceConfig = window.kadenceConfig || {};
-        window.kadenceConfig.breakPoints = {desktop: 99999};
+        // window.KADENCE_NAV_DISABLED = true;
+        // window.kadenceConfig = window.kadenceConfig || {};
+        // window.kadenceConfig.breakPoints = {desktop: 99999};
     })();
     </script>
     <?php
 }
-add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
+// add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
 
 /**
  * Add global error suppressor for Kadence navigation.min.js errors.
@@ -187,7 +196,7 @@ function kop_add_navigation_error_suppressor() {
     </script>
     <?php
 }
-add_action('wp_head', 'kop_add_navigation_error_suppressor', 0); // Priority 0 - very first thing
+// add_action('wp_head', 'kop_add_navigation_error_suppressor', 0); // Priority 0 - very first thing
 
 /**
  * Load facilities data for TTI program index page.
@@ -525,6 +534,40 @@ function enqueue_data_form_script() {
         );
     }
 
+    // Enqueue tutorial overlay styles and script
+    $tutorial_css = get_stylesheet_directory() . '/css/tutorial-overlay.css';
+    if (file_exists($tutorial_css)) {
+        wp_enqueue_style(
+            'kop-tutorial-overlay-style',
+            get_stylesheet_directory_uri() . '/css/tutorial-overlay.css',
+            array('kop-data-form-style'),
+            filemtime($tutorial_css)
+        );
+    }
+
+    $tutorial_js = get_stylesheet_directory() . '/js/tutorial-overlay.js';
+    if (file_exists($tutorial_js)) {
+        wp_enqueue_script(
+            'kop-tutorial-overlay-script',
+            get_stylesheet_directory_uri() . '/js/tutorial-overlay.js',
+            array('jquery'),
+            filemtime($tutorial_js),
+            true
+        );
+    }
+
+    // Enqueue field tooltips script
+    $tooltips_script = get_stylesheet_directory() . '/js/field-tooltips.js';
+    if (file_exists($tooltips_script)) {
+        wp_enqueue_script(
+            'kop-field-tooltips',
+            get_stylesheet_directory_uri() . '/js/field-tooltips.js',
+            array('jquery', 'kop-tutorial-overlay-script'),
+            filemtime($tooltips_script),
+            true
+        );
+    }
+
     // Enqueue the toolbar stylesheet
     $toolbar_css = get_stylesheet_directory() . '/css/toolbar.css';
     if (file_exists($toolbar_css)) {
@@ -680,25 +723,87 @@ function enqueue_data_form_script() {
 
     
 
-        // Enqueue report generator
+                // Enqueue report config
 
-        $report_generator_relative = '/js/data-form/data-report-generator.js';
+    
 
-        $report_generator_path = get_stylesheet_directory() . $report_generator_relative;
+                $report_config_relative = '/js/data-form/report-config.js';
 
-        wp_enqueue_script(
+    
 
-            'data-report-generator',
+                $report_config_path = get_stylesheet_directory() . $report_config_relative;
 
-            get_stylesheet_directory_uri() . $report_generator_relative,
+    
 
-            array('jquery'),
+                wp_enqueue_script(
 
-            file_exists($report_generator_path) ? filemtime($report_generator_path) : time(),
+    
 
-            true
+                    'kop-report-config',
 
-        );
+    
+
+                    get_stylesheet_directory_uri() . $report_config_relative,
+
+    
+
+                    array(),
+
+    
+
+                    file_exists($report_config_path) ? filemtime($report_config_path) : time(),
+
+    
+
+                    true
+
+    
+
+                );
+
+    
+
+        
+
+    
+
+                // Enqueue report generator
+
+    
+
+                $report_generator_relative = '/js/data-form/data-report-generator.js';
+
+    
+
+                $report_generator_path = get_stylesheet_directory() . $report_generator_relative;
+
+    
+
+                wp_enqueue_script(
+
+    
+
+                    'data-report-generator',
+
+    
+
+                    get_stylesheet_directory_uri() . $report_generator_relative,
+
+    
+
+                    array('jquery', 'kop-report-config'),
+
+    
+
+                    file_exists($report_generator_path) ? filemtime($report_generator_path) : time(),
+
+    
+
+                    true
+
+    
+
+                );
 
     
 
@@ -800,6 +905,45 @@ function enqueue_data_form_script() {
 
     
 
+        // Enqueue UI Events module
+        $ui_events_relative_path = '/js/data-form-modules/ui-events.js';
+        $ui_events_file_path = get_stylesheet_directory() . $ui_events_relative_path;
+        $ui_events_uri = get_stylesheet_directory_uri() . $ui_events_relative_path;
+
+        wp_enqueue_script(
+            'kop-ui-events-script',
+            $ui_events_uri,
+            array('jquery', 'kop-form-config-script'),
+            file_exists($ui_events_file_path) ? filemtime($ui_events_file_path) : time(),
+            true
+        );
+
+        // Enqueue UI Actions module (toolbar button handlers)
+        $ui_actions_relative_path = '/js/data-form-modules/ui-actions.js';
+        $ui_actions_file_path = get_stylesheet_directory() . $ui_actions_relative_path;
+        $ui_actions_uri = get_stylesheet_directory_uri() . $ui_actions_relative_path;
+
+        wp_enqueue_script(
+            'kop-ui-actions-script',
+            $ui_actions_uri,
+            array('jquery', 'kop-ui-render-script'),
+            file_exists($ui_actions_file_path) ? filemtime($ui_actions_file_path) : time(),
+            true
+        );
+
+        // Enqueue Data Search module
+        $data_search_relative_path = '/js/data-form/data-search.js';
+        $data_search_file_path = get_stylesheet_directory() . $data_search_relative_path;
+        $data_search_uri = get_stylesheet_directory_uri() . $data_search_relative_path;
+
+        wp_enqueue_script(
+            'kop-data-search-script',
+            $data_search_uri,
+            array('jquery', 'kop-ui-render-script'),
+            file_exists($data_search_file_path) ? filemtime($data_search_file_path) : time(),
+            true
+        );
+
         $data_page_relative_path = '/js/data-form-modules/data-page.js';
 
         $data_page_file_path = get_stylesheet_directory() . $data_page_relative_path;
@@ -814,7 +958,7 @@ function enqueue_data_form_script() {
 
             $data_page_uri,
 
-            array_merge($ui_deps, ['kop-ui-render-script']), // Ensure UI Render is a direct dependency
+            array_merge($ui_deps, ['kop-ui-render-script', 'kop-ui-events-script']), // Ensure UI Render and UI Events are dependencies
 
             file_exists($data_page_file_path) ? filemtime($data_page_file_path) : time(),
 
@@ -866,41 +1010,67 @@ function enqueue_data_form_script() {
 
     
 
-                // Enqueue legacy script to handle remaining functionality until fully migrated
+        
+        // Enqueue custom modals CSS
+        $custom_modals_css = get_stylesheet_directory() . '/css/custom-modals.css';
+        if (file_exists($custom_modals_css)) {
+            wp_enqueue_style(
+                'kop-custom-modals-style',
+                get_stylesheet_directory_uri() . '/css/custom-modals.css',
+                array('kop-data-form-style'),
+                filemtime($custom_modals_css)
+            );
+        }
+
+        // Enqueue custom modals JS (modern UI replacement for alert/confirm)
+        $custom_modals_relative = '/js/data-form/custom-modals.js';
+        $custom_modals_path = get_stylesheet_directory() . $custom_modals_relative;
+
+        if (file_exists($custom_modals_path)) {
+            wp_enqueue_script(
+                'kop-custom-modals',
+                get_stylesheet_directory_uri() . $custom_modals_relative,
+                array('jquery'),
+                filemtime($custom_modals_path),
+                true
+            );
+        }
+
+        // Enqueue legacy script to handle remaining functionality until fully migrated
 
     
 
                 $legacy_script_relative = '/js/data-form/data-form.v4.js';
 
-    
+
 
                 $legacy_script_path = get_stylesheet_directory() . $legacy_script_relative;
 
-    
+
 
                 wp_enqueue_script(
 
-    
+
 
                     'data-form-legacy',
 
-    
+
 
                     get_stylesheet_directory_uri() . $legacy_script_relative,
 
-    
 
-                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script'),
 
-    
+                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
+
+
 
                     file_exists($legacy_script_path) ? filemtime($legacy_script_path) : time(),
 
-    
+
 
                     true
 
-    
+
 
                 );
 
@@ -934,7 +1104,7 @@ function enqueue_data_form_script() {
 
     
 
-                array('jquery', 'kop-project-script'),
+                array('jquery', 'data-form-legacy'),
 
     
 
@@ -1137,6 +1307,7 @@ function kop_enqueue_wiki_editor_assets() {
         'wikiEditorSettings',
         array(
             'isAdmin' => current_user_can('manage_options'),
+            'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php'
         )
     );
 }

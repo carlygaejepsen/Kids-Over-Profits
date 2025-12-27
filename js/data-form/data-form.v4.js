@@ -9,6 +9,10 @@
 // `KOP_FormConfig` module in `config.js`.
 // Access via `window.KOP_FormConfig.*`
 // ============================================
+
+// Compatibility shim: KOP_CONFIG -> KOP_FormConfig
+const KOP_CONFIG = window.KOP_FormConfig || window.KOP_CONFIG || {};
+
 const SCRIPT_BUILD_VERSION = KOP_CONFIG.SCRIPT_BUILD_VERSION || 'data-form.v4.refactored';
 
 // These constants are now pointers to the config module for convenience.
@@ -72,6 +76,13 @@ function logActiveDataFormConfigOnce() {
 // ============================================
 // Note: DEFAULT_FACILITY_TYPES, DEFAULT_OPERATORS, DEFAULT_STAFF_ROLES
 // are now available via window.DEFAULT_FACILITY_TYPES etc. from autocomplete.js
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+// Note: customChoice, customAlert, customConfirm, etc. are provided by custom-modals.js
+// They are available globally as window.customChoice, window.customAlert, etc.
 
 // ============================================
 // GLOBAL STATE
@@ -360,8 +371,8 @@ function autoSave() {
                 return;
             }
 
-            // Uses the new API module
-            const saved = window.KOP_API.persistProjectLocally(window.currentProjectName);
+            // Uses the new API module (safe access)
+            const saved = window.KOP_API?.persistProjectLocally?.(window.currentProjectName);
             if (saved) {
                 debugLog('Suggestion draft saved locally for', window.currentProjectName);
             }
@@ -380,8 +391,8 @@ function autoSave() {
             }
             isSaveInProgress = true;
             try {
-                // Uses the new API module
-                await window.KOP_API.saveProjectToCloud(window.currentProjectName);
+                // Uses the new API module (safe access)
+                await window.KOP_API?.saveProjectToCloud?.(window.currentProjectName);
             } finally {
                 isSaveInProgress = false;
             }
@@ -896,7 +907,7 @@ async function showProjectSelectionModal(categories = null) {
 
     if (projectEntries.length === 0) {
         const categoryLabel = categories ? categories.join(', ') : 'this category';
-        await customAlert(`No projects found in ${categoryLabel}.`, 'No Projects');
+        await window.customAlert(`No projects found in ${categoryLabel}.`, 'No Projects');
         return null;
     }
 
@@ -979,6 +990,10 @@ async function showProjectSelectionModal(categories = null) {
         };
     });
 
+
+
+
+
     // Step 4: Show project selection modal (checkboxes)
     const selectionPromise = customChoice(
         `Select one or more projects to include in the report (${projectEntries.length} available):`,
@@ -1041,7 +1056,7 @@ async function showProjectSelectionModal(categories = null) {
     const reportConfig = new window.ReportConfig();
     const reportTypeOptions = reportConfig.getAllPresets();
 
-    const reportType = await customChoice(
+    const reportType = await window.customChoice(
         `Selected ${selectedProjectNames.length} project(s). Choose report detail level:`,
         reportTypeOptions,
         'Select Report Type',
@@ -1059,9 +1074,16 @@ async function showProjectSelectionModal(categories = null) {
 }
 
 async function generateProjectsReport({ categories = null, filename } = {}) {
+    console.log('📄 generateProjectsReport called', { categories, filename });
     const hasCategories = categories && categories.length > 0;
     let projectsToReport;
     let reportType = 'full'; // Default to full report
+
+    console.log('🔍 Report Context:', {
+        hasCategories,
+        hasFormData: !!window.formData,
+        currentProjectName: window.currentProjectName
+    });
 
     if (hasCategories) {
         // Multiple project selection flow
@@ -1123,7 +1145,7 @@ async function generateProjectsReport({ categories = null, filename } = {}) {
             ];
 
             // Use custom modal with radio buttons for clear options
-            const choice = await customChoice(
+            const choice = await window.customChoice(
                 'No project is currently loaded. What kind of report would you like to generate?',
                 options,
                 'Select Report Type',
@@ -1157,7 +1179,7 @@ async function generateProjectsReport({ categories = null, filename } = {}) {
         const reportConfig = new window.ReportConfig();
         const reportTypeOptions = reportConfig.getAllPresets();
 
-        const selectedReportType = await customChoice(
+        const selectedReportType = await window.customChoice(
             `Generate report for: ${window.currentProjectName}`,
             reportTypeOptions,
             'Select Report Type',
@@ -1199,8 +1221,10 @@ function generateReportHTML(data, skipHeader = false) { if (window.KOP_UI_Render
 // ============================================
 // EVENT LISTENER ATTACHMENT
 // ============================================
-function attachFieldListeners() {
-    // Profit Status Toggle Listener
+// Old local implementation - DEPRECATED - now using modular version from ui-events.js
+// This function is replaced by the shim at line 328 which calls window.KOP_UI_Events.attachFieldListeners()
+function attachFieldListeners_DEPRECATED_LOCAL() {
+    // Profit Status Toggle Listener - OLD IMPLEMENTATION (radio buttons, not badge)
     const profitRadios = document.querySelectorAll('input[name="profitStatus"]');
     profitRadios.forEach(radio => {
         radio.addEventListener('change', () => {
@@ -1421,7 +1445,7 @@ function attachButtonListeners() {
         saveBtn.onclick = () => {
             const projectName = document.getElementById('project-name')?.value?.trim();
             if (projectName) {
-                window.KOP_API.saveProjectToCloud(projectName);
+                window.KOP_API?.saveProjectToCloud?.(projectName);
             } else {;
                 showUploadStatus('Please enter a project name', 'error');
             }
@@ -1440,7 +1464,12 @@ function attachButtonListeners() {
 
     const newBtn = document.getElementById('new-project-btn');
     if (newBtn && !newBtn.dataset.listenerAttached) {
-        newBtn.onclick = newProject;
+        newBtn.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
         newBtn.dataset.listenerAttached = 'true';
     }
 
@@ -1463,7 +1492,12 @@ function attachButtonListeners() {
     // Location project buttons
     const newBtnLocation = document.getElementById('new-project-btn-location');
     if (newBtnLocation && !newBtnLocation.dataset.listenerAttached) {
-        newBtnLocation.onclick = newProject;
+        newBtnLocation.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
         newBtnLocation.dataset.listenerAttached = 'true';
     }
 
@@ -1495,7 +1529,12 @@ function attachButtonListeners() {
     // Quick buttons (duplicate panel outside toolbar)
     const newBtnQuick = document.getElementById('new-project-quick-btn');
     if (newBtnQuick && !newBtnQuick.dataset.listenerAttached) {
-        newBtnQuick.onclick = newProject;
+        newBtnQuick.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
         newBtnQuick.dataset.listenerAttached = 'true';
     }
 
@@ -1517,7 +1556,12 @@ function attachButtonListeners() {
 
     const newBtnReferrer = document.getElementById('new-project-btn-referrer');
     if (newBtnReferrer && !newBtnReferrer.dataset.listenerAttached) {
-        newBtnReferrer.onclick = newProject;
+        newBtnReferrer.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
         newBtnReferrer.dataset.listenerAttached = 'true';
     }
 
@@ -1539,7 +1583,12 @@ function attachButtonListeners() {
 
     const newReferrerBtn = document.getElementById('new-referrer-project-btn');
     if (newReferrerBtn && !newReferrerBtn.dataset.listenerAttached) {
-        newReferrerBtn.onclick = newProject;
+        newReferrerBtn.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
         newReferrerBtn.dataset.listenerAttached = 'true';
     }
 
@@ -1564,7 +1613,7 @@ function attachButtonListeners() {
         saveReferrerBtn.onclick = () => {
             const projectName = document.getElementById('referrer-project-name')?.value?.trim();
             if (projectName) {
-                window.KOP_API.saveProjectToCloud(projectName);
+                window.KOP_API?.saveProjectToCloud?.(projectName);
             } else {
                 customAlert('Please enter a project name', 'Project Name Required').then(() => {
                     const projectNameInput = document.getElementById('referrer-project-name');
@@ -1842,8 +1891,13 @@ function addNoteButtons() {
 // Make key functions globally available
 window.loadProject = loadProject;
 window.newProject = newProject;
-window.saveProjectToCloud = window.KOP_API.saveProjectToCloud;
-window.persistProjectLocally = window.KOP_API.persistProjectLocally;
+// Safe accessors for API functions (may not be loaded yet)
+window.saveProjectToCloud = function() {
+    return window.KOP_API?.saveProjectToCloud?.apply(this, arguments);
+};
+window.persistProjectLocally = function() {
+    return window.KOP_API?.persistProjectLocally?.apply(this, arguments);
+};
 window.addFacility = addFacility;
 window.removeFacility = removeFacility;
 window.renameProject = renameProject;
@@ -1855,6 +1909,7 @@ window.nextFacility = nextFacility;
 window.sortFacilities = sortFacilities;
 window.navigateToFacility = navigateToFacility;
 window.scrollToFormInput = scrollToFormInput;
+window.generateProjectsReport = generateProjectsReport;
 // copyToClipboard and downloadJSON now exported from utilities.js module
 window.refreshSavedProjectPanels = refreshSavedProjectPanels;
 // Only expose autocomplete helpers if the module did not already register them
@@ -1915,14 +1970,18 @@ function initializeOverviewTabSwitching() {
 // Expose to global scope
 window.initializeOverviewTabSwitching = initializeOverviewTabSwitching;
 
-// Expose project loading function for rebuild operations
-window.loadProjectsFromServer = window.KOP_API.loadAllProjectsFromCloud;
+// Expose project loading function for rebuild operations (safe accessor)
+window.loadProjectsFromServer = function() {
+    return window.KOP_API?.loadAllProjectsFromCloud?.apply(this, arguments);
+};
 
 // Create projectManager object for backwards compatibility
 window.projectManager = {
     loadProject: loadProject,
     newProject: newProject,
-    saveProjectToCloud: window.KOP_API.saveProjectToCloud
+    saveProjectToCloud: function() {
+        return window.KOP_API?.saveProjectToCloud?.apply(this, arguments);
+    }
 };
 
 // Make field notes functions globally available

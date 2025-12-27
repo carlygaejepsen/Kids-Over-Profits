@@ -705,12 +705,10 @@
         }, { once: true });
 
                 // ============================================
-        // PRIVATE OWNERSHIP (popup-controlled)
+        // PRIVATE OWNERSHIP (badge-controlled)
         // ============================================
         const privateOwnershipToggle = document.getElementById('private-ownership-toggle');
-        const privateOwnershipStatus = document.getElementById('private-ownership-status');
-        const privateOwnershipEditBtn = document.getElementById('private-ownership-edit-btn');
-        const ownershipModal = document.getElementById('ownership-modal');
+        const privateOwnershipBadge = document.getElementById('private-ownership-badge');
         const operatorSection = document.getElementById('operator-section');
 
         function updatePrivateOwnershipSliderAppearance() {
@@ -724,8 +722,15 @@
 
             const isPrivate = !!privateOwnershipToggle.checked;
 
-            if (privateOwnershipStatus) {
-                privateOwnershipStatus.textContent = isPrivate ? 'Privately owned' : 'Part of a chain/corporate';
+            if (privateOwnershipBadge) {
+                if (isPrivate) {
+                    privateOwnershipBadge.textContent = 'Privately Owned';
+                    privateOwnershipBadge.classList.remove('not-private');
+                    // Add specific class for private if needed, or rely on default style
+                } else {
+                    privateOwnershipBadge.textContent = 'Chain/Corporate';
+                    privateOwnershipBadge.classList.add('not-private');
+                }
             }
 
             if (operatorSection) operatorSection.style.display = isPrivate ? 'none' : 'block';
@@ -830,9 +835,11 @@
             }
         }
 
-        if (privateOwnershipToggle && !privateOwnershipToggle.dataset.listenerAttached) {
-            privateOwnershipToggle.addEventListener('change', function() {
-                const isPrivate = !!privateOwnershipToggle.checked;
+        if (privateOwnershipBadge && privateOwnershipToggle) {
+            privateOwnershipBadge.addEventListener('click', function() {
+                // Toggle the checkbox
+                privateOwnershipToggle.checked = !privateOwnershipToggle.checked;
+                const isPrivate = privateOwnershipToggle.checked;
 
                 // Save the private ownership flag to the current facility
                 if (window.formData && window.formData.facilities && window.formData.facilities[window.currentFacilityIndex]) {
@@ -850,53 +857,7 @@
                 if (typeof autoSave === 'function') {
                     autoSave();
                 }
-            }, { passive: true });
-            privateOwnershipToggle.dataset.listenerAttached = 'true';
-        }
-
-        if (privateOwnershipEditBtn && privateOwnershipToggle && !privateOwnershipEditBtn.dataset.listenerAttached) {
-            privateOwnershipEditBtn.addEventListener('click', () => {
-                if (!ownershipModal) {
-                    customConfirm(
-                        'Is this a privately owned facility or part of a chain/corporate?',
-                        'Facility Ownership',
-                        { yesText: 'Privately Owned', noText: 'Part of Chain/Corporate' }
-                    ).then(choice => {
-                        privateOwnershipToggle.checked = choice;
-                        privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
-                    });
-                    return;
-                }
-                ownershipModal.style.display = 'flex';
-                ownershipModal.setAttribute('aria-hidden', 'false');
             });
-            privateOwnershipEditBtn.dataset.listenerAttached = 'true';
-        }
-
-        if (ownershipModal && !ownershipModal.dataset.bound) {
-            const yesBtn = ownershipModal.querySelector('[data-action="ownership-yes"]');
-            const noBtn = ownershipModal.querySelector('[data-action="ownership-no"]');
-            const closeBtn = ownershipModal.querySelector('[data-action="ownership-close"]');
-            const hideModal = () => {
-                ownershipModal.style.display = 'none';
-                ownershipModal.setAttribute('aria-hidden', 'true');
-            };
-
-            const applyChoice = (isPrivate) => {
-                if (!privateOwnershipToggle) return;
-                privateOwnershipToggle.checked = isPrivate;
-                privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
-                hideModal();
-            };
-
-            if (yesBtn) yesBtn.addEventListener('click', () => applyChoice(true), { passive: true });
-            if (noBtn) noBtn.addEventListener('click', () => applyChoice(false), { passive: true });
-            if (closeBtn) closeBtn.addEventListener('click', hideModal, { passive: true });
-            ownershipModal.addEventListener('click', (e) => {
-                if (e.target === ownershipModal) hideModal();
-            });
-
-            ownershipModal.dataset.bound = 'true';
         }
 window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppearance;
 

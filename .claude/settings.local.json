@@ -12,7 +12,12 @@
       "Bash(cat:*)",
       "Bash(git rm:*)",
       "Bash(ls:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node -c:*)",
+      "Bash(test:*)",
+      "Bash(for:*)",
+      "Bash(do php -l \"$f\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

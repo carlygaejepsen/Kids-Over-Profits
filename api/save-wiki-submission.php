@@ -206,7 +206,7 @@ try {
         $sql = "INSERT INTO wiki_submissions 
                     (program_name, city_state, organization, program_type, years_active, json_data, 
                      generated_markdown, original_markdown, status, submitted_by, submission_notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([

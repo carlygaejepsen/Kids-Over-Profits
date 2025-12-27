@@ -1,6 +1,6 @@
 /**
  * Admin Submissions Management JavaScript
- * Handles wiki submission review, approval, and management
+ * Handles wiki and data submission review, approval, and management
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DOM Elements
     const statusFilter = document.getElementById('statusFilter');
+    const typeFilter = document.getElementById('typeFilter'); // New type filter
     const searchFilter = document.getElementById('searchFilter');
     const refreshBtn = document.getElementById('refreshBtn');
     const submissionsList = document.getElementById('submissionsList');
@@ -58,14 +59,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentOriginalMarkdown = '';
 
     // API endpoints
-    const API_BASE = '/wp-content/themes/child/api';
-    const MANAGE_API = `${API_BASE}/manage-submissions.php`;
+    // Use localized config if available, otherwise fallback to default (though default might be wrong if theme folder differs)
+    const config = window.adminSubmissionsConfig || {};
+    const API_BASE = config.apiBase || '/wp-content/themes/child/api';
+    const MANAGE_API = config.manageApi || `${API_BASE}/manage-submissions.php`;
 
     // Initialize
     loadStats();
     loadSubmissions();
 
     // Event Listeners
+    if (typeFilter) {
+        typeFilter.addEventListener('change', () => {
+            loadStats();
+            loadSubmissions();
+        });
+    }
     statusFilter.addEventListener('change', loadSubmissions);
     searchFilter.addEventListener('input', debounce(loadSubmissions, 500));
     refreshBtn.addEventListener('click', () => {
@@ -78,7 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === submissionModal) closeModal();
     });
 
-    copyMarkdownBtn.addEventListener('click', copyMarkdown);
+    if (copyMarkdownBtn) {
+        copyMarkdownBtn.addEventListener('click', copyMarkdown);
+    }
+    
     approveBtn.addEventListener('click', () => performAction('approve'));
     rejectBtn.addEventListener('click', () => performAction('reject'));
     publishBtn.addEventListener('click', () => performAction('publish'));
@@ -101,15 +113,18 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function loadStats() {
         try {
+            const currentType = typeFilter ? typeFilter.value : 'wiki';
             const response = await fetch(MANAGE_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'stats', type: 'wiki' })
+                body: JSON.stringify({ action: 'stats', type: currentType })
             });
 
             const result = await response.json();
             if (result.success && result.wiki) {
                 const stats = result.wiki.by_status || {};
+                // If type is data, we might want to adjust these, but API currently returns wiki/news stats.
+                // You may want to update the API to return stats for the requested type specifically.
                 statPending.textContent = stats.submitted || 0;
                 statApproved.textContent = stats.approved || 0;
                 statPublished.textContent = stats.published || 0;
@@ -126,11 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadSubmissions() {
         const status = statusFilter.value;
         const search = searchFilter.value.trim();
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
 
         // Build query parameters
         const params = new URLSearchParams({
             action: 'list',
-            type: 'wiki',
+            type: currentType,
             limit: '100'
         });
         if (status) params.set('status', status);
@@ -212,9 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function viewSubmission(id) {
         try {
+            const currentType = typeFilter ? typeFilter.value : 'wiki';
             const detailParams = new URLSearchParams({
                 action: 'get',
-                type: 'wiki',
+                type: currentType,
                 id: id
             });
             const response = await fetch(`${MANAGE_API}?${detailParams.toString()}`);
@@ -236,6 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Show submission modal
      */
     function showModal(submission) {
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        
         // Parse JSON data
         const jsonData = typeof submission.json_data === 'string'
             ? JSON.parse(submission.json_data)
@@ -247,9 +266,38 @@ document.addEventListener('DOMContentLoaded', () => {
         modalStatus.className = `status-badge status-${submission.status}`;
         modalSubmittedDate.textContent = formatDateTime(submission.created_at);
         modalSubmittedBy.textContent = submission.submitted_by || 'Anonymous';
-        modalLocation.textContent = submission.city_state || '-';
-        modalProgramType.textContent = submission.program_type || '-';
-        modalYearsActive.textContent = submission.years_active || '-';
+        
+        if (currentType === 'data') {
+             modalLocation.textContent = jsonData.cityState || jsonData.location || '-'; 
+             modalProgramType.textContent = 'Data Update';
+             modalYearsActive.textContent = '-';
+             
+             // Hide markdown specific sections
+             if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'none';
+             if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
+             if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
+             if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
+
+        } else {
+            modalLocation.textContent = submission.city_state || '-';
+            modalProgramType.textContent = submission.program_type || '-';
+            modalYearsActive.textContent = submission.years_active || '-';
+            
+             // Show markdown sections
+             if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'block';
+             if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'block';
+             if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'block';
+             if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'inline-block';
+             
+             // Markdown
+            modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
+            const originalMarkdown = submission.original_markdown || '';
+            currentOriginalMarkdown = originalMarkdown;
+            if (modalOriginalMarkdown) {
+                modalOriginalMarkdown.value = originalMarkdown;
+            }
+            renderDiff(originalMarkdown, modalMarkdown.value);
+        }
 
         // Submitter notes
         if (submission.submission_notes) {
@@ -258,15 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             submitterNotesSection.style.display = 'none';
         }
-
-        // Markdown
-        modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
-        const originalMarkdown = submission.original_markdown || '';
-        currentOriginalMarkdown = originalMarkdown;
-        if (modalOriginalMarkdown) {
-            modalOriginalMarkdown.value = originalMarkdown;
-        }
-        renderDiff(originalMarkdown, modalMarkdown.value);
 
         // Form data
         modalFormData.textContent = JSON.stringify(jsonData, null, 2);
@@ -392,6 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function performAction(action) {
         if (!currentSubmission) return;
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
 
         const notes = reviewerNotes.value.trim();
         const email = reviewerEmail.value.trim();
@@ -420,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: action,
-                    type: 'wiki',
+                    type: currentType, // Dynamic type
                     ids: [currentSubmission.id],
                     reviewerNotes: notes,
                     reviewedBy: email
