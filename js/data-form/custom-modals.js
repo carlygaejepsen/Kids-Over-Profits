@@ -382,4 +382,300 @@ window.customChoice = (message, options, title, config) => modalSystem.choice(me
 window.CustomModal = CustomModal;
 window.modalSystem = modalSystem;
 
+// ============================================
+// DATA ORGANIZER MODAL
+// Handles search and organization of facility data
+// ============================================
+
+/**
+ * Organizer Modal - Facility Search & Organization
+ * Provides database search functionality with modal interface
+ */
+class OrganizerModal {
+    constructor() {
+        this.modalEl = null;
+        this.init();
+    }
+
+    init() {
+        // Modal will be initialized by data-page.js
+        // This class just provides the search/display/clear methods
+    }
+
+    /**
+     * Helper to announce status messages
+     */
+    announceStatus(message, type = 'info') {
+        if (typeof showSuggestionStatus === 'function') {
+            showSuggestionStatus(message, type);
+        } else if (typeof showUploadStatus === 'function') {
+            showUploadStatus(message, type);
+        } else {
+            console.log(`[${type}] ${message}`);
+        }
+    }
+
+    /**
+     * Perform search across database
+     */
+    async performSearch() {
+        // Get modal elements dynamically
+        const modalBySelect = document.getElementById('organize-by-modal');
+        const modalValueInput = document.getElementById('organize-value-modal');
+        const modalResults = document.getElementById('organize-results-modal');
+        const modalMatches = document.getElementById('organize-matches-modal');
+
+        console.log('🔍 Modal search triggered', {
+            modalBySelect: !!modalBySelect,
+            modalValueInput: !!modalValueInput,
+            modalResults: !!modalResults
+        });
+
+        if (!modalBySelect || !modalValueInput) {
+            console.error('Modal elements not found!');
+            this.announceStatus('Search modal elements not found. Please try again.', 'error');
+            return;
+        }
+
+        const searchType = modalBySelect.value;
+        const searchValue = modalValueInput.value.trim();
+
+        console.log('🔍 Search params:', { searchType, searchValue });
+
+        if (!searchType || !searchValue) {
+            this.announceStatus('Select a data point and enter a search value, then click Search.', 'error');
+            modalValueInput.focus();
+            return;
+        }
+
+        // Show loading state
+        this.announceStatus(`Searching for "${searchValue}"...`, 'info');
+        if (modalResults) {
+            modalResults.classList.remove('d-none');
+            if (modalMatches) {
+                modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">🔍</span><br>Searching database...</p>';
+            }
+        }
+
+        // Build query parameters exactly like data-search.js
+        const params = new URLSearchParams();
+
+        // Map search type to parameter name
+        if (searchType === 'keyword') {
+            // General keyword searches all contents
+            params.append('keyword', searchValue);
+        } else if (searchType === 'staff') {
+            params.append('staff', searchValue);
+        } else if (searchType === 'location') {
+            params.append('location', searchValue);
+        } else if (searchType === 'programType') {
+            params.append('programType', searchValue);
+        } else {
+            // Fallback: use the type as parameter name
+            params.append(searchType, searchValue);
+        }
+        params.append('limit', '20');
+
+        // Get REST URL exactly like data-search.js
+        const restUrl = window.kopData?.restUrl || '/wp-json/';
+        const searchUrl = `${restUrl}kop/v1/search?${params.toString()}`;
+
+        // Fetch from database exactly like data-search.js
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.results) {
+                    const results = [];
+
+                    // Process results
+                    data.results.forEach(result => {
+                        const facilities = result.data?.facilities || [];
+                        const projectOperator = result.data?.operator || null;
+
+                        facilities.forEach((facility, facilityIndex) => {
+                            const matches = window.extractDataPointsForSearch ?
+                                window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
+                                [searchValue];
+
+                            if (matches.length > 0) {
+                                results.push({
+                                    projectName: result.name,
+                                    facility: facility,
+                                    facilityIndex: facilityIndex,
+                                    matches: matches,
+                                    operator: result.data?.operator?.name || facility?.identification?.operator
+                                });
+                            }
+                        });
+                    });
+
+                    if (results.length === 0) {
+                        this.announceStatus(`No matches found for "${searchValue}".`, 'warning');
+                    } else {
+                        this.announceStatus(`Found ${results.length} result${results.length === 1 ? '' : 's'} for "${searchValue}".`, 'success');
+                    }
+
+                    this.displayResults(results, searchType, searchValue);
+                } else {
+                    this.announceStatus('No results found.', 'warning');
+                    this.displayResults([], searchType, searchValue);
+                }
+            })
+            .catch(error => {
+                console.error('Database search error:', error);
+                this.announceStatus('Search failed. Please try again.', 'error');
+                if (modalMatches) {
+                    modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #ef4444;">Search failed. Please try again.</p>';
+                }
+            });
+    }
+
+    /**
+     * Display search results in modal
+     */
+    displayResults(results, searchType, searchValue) {
+        const modalResults = document.getElementById('organize-results-modal');
+        const modalResultsTitle = document.getElementById('organize-results-title-modal');
+        const modalResultsCount = document.getElementById('organize-results-count-modal');
+        const modalMatches = document.getElementById('organize-matches-modal');
+        const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+
+        console.log('📊 Displaying results:', { count: results.length, modalResults: !!modalResults, modalMatches: !!modalMatches });
+
+        if (!modalResults) {
+            console.error('organize-results-modal not found!');
+            return;
+        }
+
+        const searchTypeLabels = {
+            'staff': 'Staff Member',
+            'location': 'Location',
+            'programType': 'Program Type',
+            'keyword': 'General Keyword'
+        };
+        const searchTypeLabel = searchTypeLabels[searchType] || searchType;
+
+        modalResults.classList.remove('d-none');
+
+        if (modalResultsTitle) {
+            modalResultsTitle.textContent = `Facilities with ${searchTypeLabel}: "${searchValue}"`;
+        }
+        if (modalResultsCount) {
+            modalResultsCount.textContent = `Found ${results.length} result${results.length === 1 ? '' : 's'}`;
+        }
+
+        if (modalClearBtn) {
+            modalClearBtn.classList.remove('d-none');
+        }
+
+        if (modalMatches) {
+            if (results.length === 0) {
+                modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
+            } else {
+                modalMatches.innerHTML = results.map(result => {
+                    const facilityName = result.facility.identification?.name || result.facility.identification?.currentName || 'Unnamed Facility';
+                    const location = result.facility.location || '';
+                    return `
+                        <div style="padding: 15px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;"
+                             onclick="window.organizerModal.goToFacility('${result.projectName.replace(/'/g, "\\'")}', ${result.facilityIndex})"
+                             onmouseover="this.style.background='#f3f4f6'"
+                             onmouseout="this.style.background='transparent'">
+                            <div style="font-weight: 600; color: #1f2937;">${facilityName}</div>
+                            <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                                <span style="color: #33A7B5;">${result.projectName}</span>
+                                ${location ? ` • ${location}` : ''}
+                            </div>
+                            <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">
+                                Matches: ${result.matches.join(', ')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    }
+
+    /**
+     * Clear search results
+     */
+    clearResults() {
+        const modalResults = document.getElementById('organize-results-modal');
+        const modalMatches = document.getElementById('organize-matches-modal');
+        const modalClearBtn = document.getElementById('organize-clear-btn-modal');
+        const modalValueInput = document.getElementById('organize-value-modal');
+
+        if (modalResults) {
+            modalResults.classList.add('d-none');
+        }
+        if (modalClearBtn) {
+            modalClearBtn.classList.add('d-none');
+        }
+        if (modalValueInput) {
+            modalValueInput.value = '';
+        }
+        if (modalMatches) {
+            modalMatches.innerHTML = '';
+        }
+    }
+
+    /**
+     * Navigate to a specific facility
+     */
+    async goToFacility(projectName, facilityIndex) {
+        console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
+
+        // Hide the modal first
+        const modal = document.getElementById('data-organizer-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+
+        // Use loadProjectAndSync if available (admin page)
+        if (typeof window.loadProjectAndSync === 'function') {
+            await window.loadProjectAndSync(projectName);
+
+            // Wait for project to load then navigate to facility
+            setTimeout(() => {
+                if (typeof window.loadFacility === 'function') {
+                    window.loadFacility(facilityIndex);
+                } else if (window.currentFacilityIndex !== undefined) {
+                    window.currentFacilityIndex = facilityIndex;
+                    if (typeof window.renderFacilityToForm === 'function') {
+                        window.renderFacilityToForm();
+                    }
+                }
+            }, 500);
+        }
+        // Use loadProject if available (standard data form)
+        else if (window.projectManager && typeof window.projectManager.loadProject === 'function') {
+            window.projectManager.loadProject(projectName);
+
+            setTimeout(() => {
+                if (typeof window.loadFacility === 'function') {
+                    window.loadFacility(facilityIndex);
+                } else if (window.currentFacilityIndex !== undefined) {
+                    window.currentFacilityIndex = facilityIndex;
+                    if (typeof window.renderFacilityToForm === 'function') {
+                        window.renderFacilityToForm();
+                    }
+                }
+            }, 500);
+        }
+        else {
+            console.error('No project loading function available');
+            this.announceStatus('Unable to load project. Please try manually.', 'error');
+        }
+    }
+}
+
+// Create singleton instance
+const organizerModal = new OrganizerModal();
+window.organizerModal = organizerModal;
+
+// Export global functions for backward compatibility
+window.performOrganizedSearchModal = () => organizerModal.performSearch();
+window.displayOrganizerResultsModal = (results, searchType, searchValue) => organizerModal.displayResults(results, searchType, searchValue);
+window.clearOrganizerResultsModal = () => organizerModal.clearResults();
+window.goToFacility = (projectName, facilityIndex) => organizerModal.goToFacility(projectName, facilityIndex);
+
 console.log('[Custom Modals] Loaded successfully - modern UI ready!');

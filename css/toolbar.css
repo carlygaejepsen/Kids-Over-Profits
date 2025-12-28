@@ -70,7 +70,7 @@ body:not(.admin-bar) .fixed-toolbar {
     justify-content: center;
     pointer-events: auto !important;
     position: relative;
-    z-index: 100000; /* ABOVE EVERYTHING including WP admin bar */
+    z-index: 200005; /* ABOVE EVERYTHING including WP admin bar and tutorial overlay */
     flex-shrink: 0;
     user-select: none;
 }
@@ -129,6 +129,15 @@ body:not(.admin-bar) .fixed-toolbar {
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap; /* Allow wrapping for 2 rows */
+}
+
+/* MINIMIZED STATE */
+.fixed-toolbar.minimized .toolbar-content {
+    max-height: 0;
+    padding: 0 16px;
+    opacity: 0;
+    pointer-events: none;
+    border-top: none;
 }
 
 .fixed-toolbar .toolbar-section {

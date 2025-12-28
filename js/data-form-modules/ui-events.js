@@ -41,6 +41,41 @@
         initializeMobileSectionControls();
     }
 
+    function initializeSubSectionToggles() {
+        const subSections = document.querySelectorAll('.sub-section');
+        subSections.forEach(subSection => {
+            if (subSection.dataset.toggleInit === 'true') return;
+            subSection.dataset.toggleInit = 'true';
+            const header = subSection.querySelector('.sub-section-header');
+            const toggle = subSection.querySelector('.sub-section-toggle');
+            const content = subSection.querySelector('.sub-section-content');
+            if (!header || !toggle || !content) return;
+
+            toggle.setAttribute('role', 'button');
+            toggle.setAttribute('tabindex', '0');
+            const setState = (expanded) => {
+                subSection.classList.toggle('expanded', expanded);
+                content.style.display = expanded ? 'block' : 'none';
+                toggle.setAttribute('aria-expanded', expanded.toString());
+            };
+            
+            const shouldExpand = subSection.classList.contains('expanded');
+            setState(shouldExpand);
+            
+            const handleToggle = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setState(!subSection.classList.contains('expanded'));
+            };
+            
+            toggle.addEventListener('click', handleToggle, { passive: false });
+            header.addEventListener('click', (event) => {
+                if (event.target.closest('.sub-section-toggle')) return;
+                handleToggle(event);
+            });
+        });
+    }
+
     function initializeMobileSectionControls() {
         if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) return;
         const controlsBar = document.createElement('div');
@@ -189,6 +224,7 @@
 
     window.KOP_UI_Events = {
         initializeSectionToggles,
+        initializeSubSectionToggles,
         initializeMobileSectionControls,
         expandAllSections,
         collapseAllSections,

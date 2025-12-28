@@ -324,6 +324,9 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="btn-toolbar btn-secondary" title="Go back to homepage">🏠<span class="toolbar-label">Home</span></a>
+                    </div>
+                    <div class="toolbar-group">
                         <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕<span class="toolbar-label">New Project</span></button>
                         <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊<span class="toolbar-label">Report</span></button>
                     </div>
@@ -447,35 +450,26 @@ get_header();
                     </div>
                 </div>
 
-                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Primary Location</h3>
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label for="operator-location-city">City</label>
-                        <input type="text" id="operator-location-city" placeholder="e.g., Waynesboro">
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🏢 Headquarters</h3>
+                        <span class="sub-section-toggle">▼</span>
                     </div>
-                    <div class="form-group">
-                        <label for="operator-location-state">State / Province</label>
-                        <input type="text" id="operator-location-state" placeholder="e.g., TN">
-                    </div>
-                    <div class="form-group">
-                        <label for="operator-location-country">Country</label>
-                        <input type="text" id="operator-location-country" placeholder="e.g., USA (leave blank for US)">
-                    </div>
-                </div>
-
-                <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label for="operator-headquarters-city">City</label>
-                        <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
-                    </div>
-                    <div class="form-group">
-                        <label for="operator-headquarters-state">State / Province</label>
-                        <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
-                    </div>
-                    <div class="form-group">
-                        <label for="operator-headquarters-country">Country</label>
-                        <input type="text" id="operator-headquarters-country" placeholder="e.g., USA (leave blank for US)">
+                    <div class="sub-section-content">
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="operator-headquarters-city">City</label>
+                                <input type="text" id="operator-headquarters-city" placeholder="e.g., Nashville">
+                            </div>
+                            <div class="form-group">
+                                <label for="operator-headquarters-state">State / Province</label>
+                                <input type="text" id="operator-headquarters-state" placeholder="e.g., TN">
+                            </div>
+                            <div class="form-group">
+                                <label for="operator-headquarters-country">Country</label>
+                                <input type="text" id="operator-headquarters-country" placeholder="e.g., USA (leave blank for US)">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -505,26 +499,32 @@ get_header();
                     <div class="array-container" data-path="operator.websites"></div>
                 </div>
                 
-                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Key Staff</h3>
-                
-                <div class="form-group">
-                    <label for="operator-ceo">CEO/President</label>
-                    <input type="text" id="operator-ceo" data-autocomplete-category="human" placeholder="e.g., John Smith">
-                </div>
-                
-                <div class="form-group">
-                    <label>Founders</label>
-                    <div class="array-container" data-path="operator.keyStaff.founders"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Key Executives</label>
-                    <div class="array-container" data-path="operator.keyStaff.keyExecutives"></div>
-                </div>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">👥 Key Staff</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label for="operator-ceo">CEO/President</label>
+                            <input type="text" id="operator-ceo" data-autocomplete-category="human" placeholder="e.g., John Smith">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Founders</label>
+                            <div class="array-container" data-path="operator.keyStaff.founders"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Key Executives</label>
+                            <div class="array-container" data-path="operator.keyStaff.keyExecutives"></div>
+                        </div>
 
-                <div class="form-group">
-                    <label>Investors</label>
-                    <div class="array-container" data-path="operator.investors"></div>
+                        <div class="form-group">
+                            <label>Investors</label>
+                            <div class="array-container" data-path="operator.investors"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -553,29 +553,69 @@ get_header();
                         <input type="text" class="facility-field" data-field="identification.currentName" data-autocomplete-category="facility">
                     </div>
                 </div>
-                <!-- Current Operator (shown for corporate ownership) -->
-                <div class="form-group" id="current-operator-group">
-                    <label id="current-operator-label">Current Parent Company</label>
-                    <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">👤 Facility Ownership</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <!-- Current Operator (shown for corporate ownership) -->
+                        <div class="form-group" id="current-operator-group">
+                            <label id="current-operator-label">Current Parent Company</label>
+                            <input type="text" class="facility-field" data-field="identification.currentOperator" data-autocomplete-category="operator">
+                        </div>
+                        <!-- Current Owner(s) (shown for private ownership) -->
+                        <div class="form-group" id="current-owner-group" style="display: none;">
+                            <label>Current Owner(s)</label>
+                            <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add one or more current owners.</div>
+                            <div class="array-container" data-path="identification.currentOwners" data-autocomplete-category="human"></div>
+                        </div>
+                        <!-- Past Owners (shown for private ownership) -->
+                        <div class="form-group" id="past-owners-group" style="display: none;">
+                            <label>Past Owners</label>
+                            <div class="array-container" data-path="identification.pastOwners" data-autocomplete-category="human"></div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Current Owner(s) (shown for private ownership) -->
-                <div class="form-group" id="current-owner-group" style="display: none;">
-                    <label>Current Owner(s)</label>
-                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add one or more current owners.</div>
-                    <div class="array-container" data-path="identification.currentOwners" data-autocomplete-category="human"></div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🏷️ Other Names</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Other Names</label>
+                            <div class="array-container" data-path="identification.otherNames"></div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Past Owners (shown for private ownership) -->
-                <div class="form-group" id="past-owners-group" style="display: none;">
-                    <label>Past Owners</label>
-                    <div class="array-container" data-path="identification.pastOwners" data-autocomplete-category="human"></div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">👥 Known Referrers</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Known Referrers (Education Consultants / School Districts)</label>
+                            <div class="array-container" data-path="identification.knownReferrers"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Other Names</label>
-                    <div class="array-container" data-path="identification.otherNames"></div>
-                </div>
-                <div class="form-group">
-                    <label>Known Referrers (Education Consultants / School Districts)</label>
-                    <div class="array-container" data-path="identification.knownReferrers"></div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🌐 Website Links</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Websites</label>
+                            <div class="array-container" data-path="identification.websites"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -587,52 +627,68 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <!-- International Program Toggle -->
-                <div id="international-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
-                        <span>International Program:</span>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span>No</span>
-                            <div style="position: relative; display: inline-block;">
-                                <input type="checkbox" id="international-program-toggle" class="facility-field" data-field="isInternational" style="display: none;">
-                                <span id="international-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                                    <span id="international-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                                </span>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🌍 International Program</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <!-- International Program Toggle -->
+                        <div id="international-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;">
+                            <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937;">
+                                <span>International Program:</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span>No</span>
+                                    <div style="position: relative; display: inline-block;">
+                                        <input type="checkbox" id="international-program-toggle" class="facility-field" data-field="isInternational" style="display: none;">
+                                        <span id="international-slider-track" style="display: block; width: 48px; height: 24px; background-color: #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                                            <span id="international-slider-knob" style="display: block; width: 20px; height: 20px; background-color: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                        </span>
+                                    </div>
+                                    <span>Yes</span>
+                                </div>
                             </div>
-                            <span>Yes</span>
+                            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                                Toggle to "Yes" for programs outside the United States to show Country field instead of State.
+                            </p>
                         </div>
                     </div>
-                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                        Toggle to "Yes" for programs outside the United States to show Country field instead of State.
-                    </p>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>City</label>
-                        <input type="text" class="facility-field" data-field="locationDetails.city" placeholder="e.g., Salt Lake City">
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">📍 Address Details</h3>
+                        <span class="sub-section-toggle">▼</span>
                     </div>
-                    <div class="form-group" id="state-field-group">
-                        <label>State</label>
-                        <input type="text" class="facility-field" data-field="locationDetails.state" data-autocomplete-category="location" placeholder="e.g., UT">
+                    <div class="sub-section-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" class="facility-field" data-field="locationDetails.city" placeholder="e.g., Salt Lake City">
+                            </div>
+                            <div class="form-group" id="state-field-group">
+                                <label>State</label>
+                                <input type="text" class="facility-field" data-field="locationDetails.state" data-autocomplete-category="location" placeholder="e.g., UT">
+                            </div>
+                            <div class="form-group" id="country-field-group" style="display: none;">
+                                <label>Country</label>
+                                <input type="text" class="facility-field" data-field="locationDetails.country" data-autocomplete-category="country" placeholder="e.g., Mexico">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Location (Legacy)</label>
+                            <input type="text" class="facility-field" data-field="location" placeholder="City, State or City, Country">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Additional Locations</label>
+                            <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city + address only).</div>
+                            <div class="array-container" data-path="locationDetails.additionalLocations"></div>
+                        </div>
                     </div>
-                    <div class="form-group" id="country-field-group" style="display: none;">
-                        <label>Country</label>
-                        <input type="text" class="facility-field" data-field="locationDetails.country" data-autocomplete-category="country" placeholder="e.g., Mexico">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Full Location (Legacy)</label>
-                    <input type="text" class="facility-field" data-field="location" placeholder="City, State or City, Country">
-                </div>
-                <div class="form-group">
-                    <label>Address</label>
-                    <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Additional Locations</label>
-                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city + address only).</div>
-                    <div class="array-container" data-path="locationDetails.additionalLocations"></div>
                 </div>
             </div>
         </div>
@@ -644,33 +700,48 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <div class="form-group">
-                    <label>Other Parent Companies</label>
-                    <div class="array-container" data-path="otherOperators"></div>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🏢 Other Parent Companies</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Other Parent Companies</label>
+                            <div class="array-container" data-path="otherOperators"></div>
+                        </div>
+                    </div>
                 </div>
                 
-                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Facility Operating Dates</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Facility Opened (Year)</label>
-                        <input type="number" class="facility-field" data-field="operatingPeriod.startYear" placeholder="e.g., 1985">
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">📅 Facility Operating Dates</h3>
+                        <span class="sub-section-toggle">▼</span>
                     </div>
-                    <div class="form-group">
-                        <label>Facility Closed (Year)</label>
-                        <input type="number" class="facility-field" data-field="operatingPeriod.endYear" placeholder="Leave blank if still open">
+                    <div class="sub-section-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Facility Opened (Year)</label>
+                                <input type="number" class="facility-field" data-field="operatingPeriod.startYear" placeholder="e.g., 1985">
+                            </div>
+                            <div class="form-group">
+                                <label>Facility Closed (Year)</label>
+                                <input type="number" class="facility-field" data-field="operatingPeriod.endYear" placeholder="Leave blank if still open">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Status</label>
+                            <input type="text" class="facility-field input-wide" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Open, Closed, Transferred, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Years of Operation</label>
+                            <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present">
+                        </div>
+                        <div class="form-group">
+                            <label>Operational Notes</label>
+                            <textarea class="facility-field" data-field="operatingPeriod.notes" rows="4" placeholder="Add operational notes..." style="width: 100%;"></textarea>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Current Status</label>
-                    <input type="text" class="facility-field input-wide" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Open, Closed, Transferred, etc.">
-                </div>
-                <div class="form-group">
-                    <label>Years of Operation</label>
-                    <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present">
-                </div>
-                <div class="form-group">
-                    <label>Operational Notes</label>
-                    <textarea class="facility-field" data-field="operatingPeriod.notes" rows="4" placeholder="Add operational notes..." style="width: 100%;"></textarea>
                 </div>
             </div>
         </div>
@@ -682,21 +753,21 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <div class="form-group">
-                    <label>Administrator</label>
-                    <div class="array-container" data-path="staff.administrator"></div>
-                </div>
-                <div class="form-group">
-                    <label>Notable Staff</label>
-                    <div class="array-container" data-path="staff.notableStaff"></div>
-                </div>
-                <div class="form-group">
-                    <label>Past TTI Employment (Role + Employer)</label>
-                    <div class="array-container" data-path="staff.pastTTIJobs"></div>
-                </div>
-                <div class="form-group">
-                    <label>Profile Links</label>
-                    <div class="array-container" data-path="profileLinks"></div>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">👥 Key Staff Positions</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Administrator</label>
+                            <div class="array-container" data-path="staff.administrator"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Notable Staff</label>
+                            <div class="array-container" data-path="staff.notableStaff"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -748,25 +819,51 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <div class="form-group">
-                    <label>Current Accreditations</label>
-                    <div class="array-container" data-path="accreditations.current"></div>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">✅ Current Accreditations</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Current Accreditations</label>
+                            <div class="array-container" data-path="accreditations.current"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Past Accreditations</label>
-                    <div class="array-container" data-path="accreditations.past"></div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">📜 Past Accreditations & Memberships</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Past Accreditations</label>
+                            <div class="array-container" data-path="accreditations.past"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Professional Memberships</label>
+                            <div class="array-container" data-path="memberships"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Professional Memberships</label>
-                    <div class="array-container" data-path="memberships"></div>
-                </div>
-                <div class="form-group">
-                    <label>Certifications</label>
-                    <div class="array-container" data-path="certifications"></div>
-                </div>
-                <div class="form-group">
-                    <label>Licensing Information</label>
-                    <div class="array-container" data-path="licensing"></div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🆔 Licensing & Certifications</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Certifications</label>
+                            <div class="array-container" data-path="certifications"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Licensing Information</label>
+                            <div class="array-container" data-path="licensing"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -780,100 +877,135 @@ get_header();
             <div class="section-content">
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Resource Types</h3>
                 
-                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">News & Media</h4>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasNews" data-note-scope="facility" data-note-key="resources.hasNews" id="has-news">
-                    <label for="has-news">News Articles</label>
-                </div>
-                <div id="has-news-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
-                    <textarea class="facility-field" data-field="resources.newsDetails" placeholder="Enter details about news articles..." rows="2"></textarea>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPressReleases" data-note-scope="facility" data-note-key="resources.hasPressReleases" id="has-press">
-                    <label for="has-press">Press Releases</label>
-                </div>
-                <div id="has-press-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
-                    <textarea class="facility-field" data-field="resources.pressReleasesDetails" placeholder="Enter details about press releases..." rows="2"></textarea>
-                </div>
-                
-                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Official Documentation</h4>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasInspections" data-note-scope="facility" data-note-key="resources.hasInspections" id="has-inspections">
-                    <label for="has-inspections">Inspection Reports</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStateReports" data-note-scope="facility" data-note-key="resources.hasStateReports" id="has-state-reports">
-                    <label for="has-state-reports">State Reports</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasRegulatoryFilings" data-note-scope="facility" data-note-key="resources.hasRegulatoryFilings" id="has-regulatory">
-                    <label for="has-regulatory">Regulatory Filings</label>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h4 class="sub-section-title">📰 News & Media</h4>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasNews" data-note-scope="facility" data-note-key="resources.hasNews" id="has-news">
+                            <label for="has-news">News Articles</label>
+                        </div>
+                        <div id="has-news-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
+                            <textarea class="facility-field" data-field="resources.newsDetails" placeholder="Enter details about news articles..." rows="2"></textarea>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasPressReleases" data-note-scope="facility" data-note-key="resources.hasPressReleases" id="has-press">
+                            <label for="has-press">Press Releases</label>
+                        </div>
+                        <div id="has-press-details" style="display: none; margin-left: 30px; margin-bottom: 15px;">
+                            <textarea class="facility-field" data-field="resources.pressReleasesDetails" placeholder="Enter details about press releases..." rows="2"></textarea>
+                        </div>
+                    </div>
                 </div>
                 
-                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Legal & Compliance</h4>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasLawsuits" data-note-scope="facility" data-note-key="resources.hasLawsuits" id="has-lawsuits">
-                    <label for="has-lawsuits">Lawsuits</label>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h4 class="sub-section-title">📋 Official Documentation</h4>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasInspections" data-note-scope="facility" data-note-key="resources.hasInspections" id="has-inspections">
+                            <label for="has-inspections">Inspection Reports</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasStateReports" data-note-scope="facility" data-note-key="resources.hasStateReports" id="has-state-reports">
+                            <label for="has-state-reports">State Reports</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasRegulatoryFilings" data-note-scope="facility" data-note-key="resources.hasRegulatoryFilings" id="has-regulatory">
+                            <label for="has-regulatory">Regulatory Filings</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPoliceReports" data-note-scope="facility" data-note-key="resources.hasPoliceReports" id="has-police-reports">
-                    <label for="has-police-reports">Police Reports</label>
+                
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h4 class="sub-section-title">⚖️ Legal & Compliance</h4>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasLawsuits" data-note-scope="facility" data-note-key="resources.hasLawsuits" id="has-lawsuits">
+                            <label for="has-lawsuits">Lawsuits</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasPoliceReports" data-note-scope="facility" data-note-key="resources.hasPoliceReports" id="has-police-reports">
+                            <label for="has-police-reports">Police Reports</label>
+                        </div>
+                    </div>
                 </div>
 
-                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Business & Property</h4>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasArticlesOfOrganization" data-note-scope="facility" data-note-key="resources.hasArticlesOfOrganization" id="has-articles">
-                    <label for="has-articles">Articles of Organization</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPropertyRecords" data-note-scope="facility" data-note-key="resources.hasPropertyRecords" id="has-property">
-                    <label for="has-property">Property Records</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasPromotionalMaterials" data-note-scope="facility" data-note-key="resources.hasPromotionalMaterials" id="has-promotional">
-                    <label for="has-promotional">Promotional Materials</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasEnrollmentDocuments" data-note-scope="facility" data-note-key="resources.hasEnrollmentDocuments" id="has-enrollment">
-                    <label for="has-enrollment">Enrollment Documents</label>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h4 class="sub-section-title">🏢 Business & Property</h4>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasArticlesOfOrganization" data-note-scope="facility" data-note-key="resources.hasArticlesOfOrganization" id="has-articles">
+                            <label for="has-articles">Articles of Organization</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasPropertyRecords" data-note-scope="facility" data-note-key="resources.hasPropertyRecords" id="has-property">
+                            <label for="has-property">Property Records</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasPromotionalMaterials" data-note-scope="facility" data-note-key="resources.hasPromotionalMaterials" id="has-promotional">
+                            <label for="has-promotional">Promotional Materials</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasEnrollmentDocuments" data-note-scope="facility" data-note-key="resources.hasEnrollmentDocuments" id="has-enrollment">
+                            <label for="has-enrollment">Enrollment Documents</label>
+                        </div>
+                    </div>
                 </div>
 
-                <h4 style="margin: 15px 0 10px 0; color: #1f2937; font-size: 13px;">Other Standard Resources</h4>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasResearch" data-note-scope="facility" data-note-key="resources.hasResearch" id="has-research">
-                    <label for="has-research">Academic Research</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasFinancial" data-note-scope="facility" data-note-key="resources.hasFinancial" id="has-financial">
-                    <label for="has-financial">Financial Reports</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStudent" data-note-scope="facility" data-note-key="resources.hasStudent" id="has-student">
-                    <label for="has-student">Student or Resident Manual</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasStaff" data-note-scope="facility" data-note-key="resources.hasStaff" id="has-staff">
-                    <label for="has-staff">Staff Manual</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasParent" data-note-scope="facility" data-note-key="resources.hasParent" id="has-parent">
-                    <label for="has-parent">Parent Manual</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasWebsite" data-note-scope="facility" data-note-key="resources.hasWebsite" id="has-website">
-                    <label for="has-website">Archived Website</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasNATSAP" data-note-scope="facility" data-note-key="resources.hasNATSAP" id="has-NATSAP">
-                    <label for="has-NATSAP">NATSAP Profile</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasSurvivorStories" data-note-scope="facility" data-note-key="resources.hasSurvivorStories" id="has-survivor-stories">
-                    <label for="has-survivor-stories">Survivor Stories</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="resources.hasOther" data-note-scope="facility" data-note-key="resources.hasOther" id="has-other">
-                    <label for="has-other">Other Documentation</label>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h4 class="sub-section-title">📚 Other Standard Resources</h4>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasResearch" data-note-scope="facility" data-note-key="resources.hasResearch" id="has-research">
+                            <label for="has-research">Academic Research</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasFinancial" data-note-scope="facility" data-note-key="resources.hasFinancial" id="has-financial">
+                            <label for="has-financial">Financial Reports</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasStudent" data-note-scope="facility" data-note-key="resources.hasStudent" id="has-student">
+                            <label for="has-student">Student or Resident Manual</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasStaff" data-note-scope="facility" data-note-key="resources.hasStaff" id="has-staff">
+                            <label for="has-staff">Staff Manual</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasParent" data-note-scope="facility" data-note-key="resources.hasParent" id="has-parent">
+                            <label for="has-parent">Parent Manual</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasWebsite" data-note-scope="facility" data-note-key="resources.hasWebsite" id="has-website">
+                            <label for="has-website">Archived Website</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasNATSAP" data-note-scope="facility" data-note-key="resources.hasNATSAP" id="has-NATSAP">
+                            <label for="has-NATSAP">NATSAP Profile</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasSurvivorStories" data-note-scope="facility" data-note-key="resources.hasSurvivorStories" id="has-survivor-stories">
+                            <label for="has-survivor-stories">Survivor Stories</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="resources.hasOther" data-note-scope="facility" data-note-key="resources.hasOther" id="has-other">
+                            <label for="has-other">Other Documentation</label>
+                        </div>
+                    </div>
                 </div>
 
                 <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Resource Notes</h3>
@@ -890,99 +1022,112 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Treatment Types</h3>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasABA" data-note-scope="facility" data-note-key="treatmentTypes.hasABA" id="has-aba">
-                    <label for="has-aba">Applied Behavior Analysis</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEquineTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasEquineTherapy" id="has-equine-therapy">
-                    <label for="has-equine-therapy">Equine Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWorkTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasWorkTherapy" id="has-work-therapy">
-                    <label for="has-work-therapy">Work Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWildernessTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasWildernessTherapy" id="has-wilderness-therapy">
-                    <label for="has-wilderness-therapy">Wilderness Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRealityTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRealityTherapy" id="has-reality-therapy">
-                    <label for="has-reality-therapy">Reality Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasLGATSeminars" data-note-scope="facility" data-note-key="treatmentTypes.hasLGATSeminars" id="has-lgat">
-                    <label for="has-lgat">Large Group Awareness Training Seminars</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasFeedbackHotseatGroups" data-note-scope="facility" data-note-key="treatmentTypes.hasFeedbackHotseatGroups" id="has-feedback-hotseat">
-                    <label for="has-feedback-hotseat">Feedback/Hotseat Groups (aka The Game)</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPrimalScreamTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasPrimalScreamTherapy" id="has-primal-scream">
-                    <label for="has-primal-scream">Primal Scream Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRepressedMemoryTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRepressedMemoryTherapy" id="has-repressed-memory">
-                    <label for="has-repressed-memory">Repressed Memory Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasBehaviorModification" data-note-scope="facility" data-note-key="treatmentTypes.hasBehaviorModification" id="has-behavior-mod">
-                    <label for="has-behavior-mod">Behavior Modification</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasKetamineTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasKetamineTherapy" id="has-ketamine">
-                    <label for="has-ketamine">Ketamine Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasExposureTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasExposureTherapy" id="has-exposure">
-                    <label for="has-exposure">Exposure Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasUnlicensedProvider" data-note-scope="facility" data-note-key="treatmentTypes.hasUnlicensedProvider" id="has-unlicensed">
-                    <label for="has-unlicensed">Therapy with an Unlicensed Provider</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasConversionTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasConversionTherapy" id="has-conversion">
-                    <label for="has-conversion">Sexual Orientation Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE)</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasAttachmentTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasAttachmentTherapy" id="has-attachment">
-                    <label for="has-attachment">Attachment Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRebirthingTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRebirthingTherapy" id="has-rebirthing">
-                    <label for="has-rebirthing">Rebirthing Therapy</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasTappingTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasTappingTherapy" id="has-tapping">
-                    <label for="has-tapping">Tapping/Thought Field Therapy (TFT)</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPsychoanalysis" data-note-scope="facility" data-note-key="treatmentTypes.hasPsychoanalysis" id="has-psychoanalysis">
-                    <label for="has-psychoanalysis">Psychoanalysis</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEMDR" data-note-scope="facility" data-note-key="treatmentTypes.hasEMDR" id="has-emdr-treatment">
-                    <label for="has-emdr-treatment">Eye Movement Desensitization and Reprocessing (EMDR)</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasHypnosis" data-note-scope="facility" data-note-key="treatmentTypes.hasHypnosis" id="has-hypnosis">
-                    <label for="has-hypnosis">Hypnosis</label>
-                </div>
-
-                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Treatment Types</h3>
-                <div class="form-group">
-                    <label>Add Custom Treatment Type</label>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="custom-treatment-input" placeholder="Enter treatment type name..." style="flex: 1;">
-                        <button class="btn" id="add-custom-treatment-btn">Add</button>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🏥 Standard Treatment Types</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasABA" data-note-scope="facility" data-note-key="treatmentTypes.hasABA" id="has-aba">
+                            <label for="has-aba">Applied Behavior Analysis</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEquineTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasEquineTherapy" id="has-equine-therapy">
+                            <label for="has-equine-therapy">Equine Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWorkTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasWorkTherapy" id="has-work-therapy">
+                            <label for="has-work-therapy">Work Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasWildernessTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasWildernessTherapy" id="has-wilderness-therapy">
+                            <label for="has-wilderness-therapy">Wilderness Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRealityTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRealityTherapy" id="has-reality-therapy">
+                            <label for="has-reality-therapy">Reality Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasLGATSeminars" data-note-scope="facility" data-note-key="treatmentTypes.hasLGATSeminars" id="has-lgat">
+                            <label for="has-lgat">Large Group Awareness Training Seminars</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasFeedbackHotseatGroups" data-note-scope="facility" data-note-key="treatmentTypes.hasFeedbackHotseatGroups" id="has-feedback-hotseat">
+                            <label for="has-feedback-hotseat">Feedback/Hotseat Groups (aka The Game)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPrimalScreamTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasPrimalScreamTherapy" id="has-primal-scream">
+                            <label for="has-primal-scream">Primal Scream Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRepressedMemoryTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRepressedMemoryTherapy" id="has-repressed-memory">
+                            <label for="has-repressed-memory">Repressed Memory Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasBehaviorModification" data-note-scope="facility" data-note-key="treatmentTypes.hasBehaviorModification" id="has-behavior-mod">
+                            <label for="has-behavior-mod">Behavior Modification</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasKetamineTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasKetamineTherapy" id="has-ketamine">
+                            <label for="has-ketamine">Ketamine Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasExposureTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasExposureTherapy" id="has-exposure">
+                            <label for="has-exposure">Exposure Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasUnlicensedProvider" data-note-scope="facility" data-note-key="treatmentTypes.hasUnlicensedProvider" id="has-unlicensed">
+                            <label for="has-unlicensed">Therapy with an Unlicensed Provider</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasConversionTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasConversionTherapy" id="has-conversion">
+                            <label for="has-conversion">Sexual Orientation Gender Identity Change Efforts/Conversion/Reparative Therapy (SOGICE)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasAttachmentTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasAttachmentTherapy" id="has-attachment">
+                            <label for="has-attachment">Attachment Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasRebirthingTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasRebirthingTherapy" id="has-rebirthing">
+                            <label for="has-rebirthing">Rebirthing Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasTappingTherapy" data-note-scope="facility" data-note-key="treatmentTypes.hasTappingTherapy" id="has-tapping">
+                            <label for="has-tapping">Tapping/Thought Field Therapy (TFT)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasPsychoanalysis" data-note-scope="facility" data-note-key="treatmentTypes.hasPsychoanalysis" id="has-psychoanalysis">
+                            <label for="has-psychoanalysis">Psychoanalysis</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasEMDR" data-note-scope="facility" data-note-key="treatmentTypes.hasEMDR" id="has-emdr-treatment">
+                            <label for="has-emdr-treatment">Eye Movement Desensitization and Reprocessing (EMDR)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasHypnosis" data-note-scope="facility" data-note-key="treatmentTypes.hasHypnosis" id="has-hypnosis">
+                            <label for="has-hypnosis">Hypnosis</label>
+                        </div>
                     </div>
                 </div>
-                <div id="custom-treatment-list" style="margin-top: 15px;">
-                    <!-- Custom treatment checkboxes will be rendered here -->
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🧪 Custom Treatment Types</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Add Custom Treatment Type</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="custom-treatment-input" placeholder="Enter treatment type name..." style="flex: 1;">
+                                <button class="btn" id="add-custom-treatment-btn">Add</button>
+                            </div>
+                        </div>
+                        <div id="custom-treatment-list" style="margin-top: 15px;">
+                            <!-- Custom treatment checkboxes will be rendered here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -994,59 +1139,72 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Philosophies</h3>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPositivePeerCulture" data-note-scope="facility" data-note-key="philosophy.hasPositivePeerCulture" id="has-ppc">
-                    <label for="has-ppc">Positive Peer Culture</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.has12Steps" data-note-scope="facility" data-note-key="philosophy.has12Steps" id="has-12-steps">
-                    <label for="has-12-steps">12 Steps</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasFundamentalistBaptist" data-note-scope="facility" data-note-key="philosophy.hasFundamentalistBaptist" id="has-baptist">
-                    <label for="has-baptist">Fundamentalist Baptist</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPentecostal" data-note-scope="facility" data-note-key="philosophy.hasPentecostal" id="has-pentecostal">
-                    <label for="has-pentecostal">Pentecostal</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasScientology" data-note-scope="facility" data-note-key="philosophy.hasScientology" id="has-scientology">
-                    <label for="has-scientology">Scientology</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasTherapeuticCommunity" data-note-scope="facility" data-note-key="philosophy.hasTherapeuticCommunity" id="has-tc">
-                    <label for="has-tc">Therapeutic Community</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasWildernessRoad" data-note-scope="facility" data-note-key="philosophy.hasWildernessRoad" id="has-wilderness-road">
-                    <label for="has-wilderness-road">Wilderness Road</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPsychoanalytic" data-note-scope="facility" data-note-key="philosophy.hasPsychoanalytic" id="has-psychoanalytic">
-                    <label for="has-psychoanalytic">Psychoanalytic</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasLawOfAttraction" data-note-scope="facility" data-note-key="philosophy.hasLawOfAttraction" id="has-loa">
-                    <label for="has-loa">Law of Attraction</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasHumanPotentialMovement" data-note-scope="facility" data-note-key="philosophy.hasHumanPotentialMovement" id="has-hpm">
-                    <label for="has-hpm">Human Potential Movement</label>
-                </div>
-
-                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Philosophies</h3>
-                <div class="form-group">
-                    <label>Add Custom Philosophy</label>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="custom-philosophy-input" placeholder="Enter philosophy name..." style="flex: 1;">
-                        <button class="btn" id="add-custom-philosophy-btn">Add</button>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">📜 Standard Philosophies</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPositivePeerCulture" data-note-scope="facility" data-note-key="philosophy.hasPositivePeerCulture" id="has-ppc">
+                            <label for="has-ppc">Positive Peer Culture</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.has12Steps" data-note-scope="facility" data-note-key="philosophy.has12Steps" id="has-12-steps">
+                            <label for="has-12-steps">12 Steps</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasFundamentalistBaptist" data-note-scope="facility" data-note-key="philosophy.hasFundamentalistBaptist" id="has-baptist">
+                            <label for="has-baptist">Fundamentalist Baptist</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPentecostal" data-note-scope="facility" data-note-key="philosophy.hasPentecostal" id="has-pentecostal">
+                            <label for="has-pentecostal">Pentecostal</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasScientology" data-note-scope="facility" data-note-key="philosophy.hasScientology" id="has-scientology">
+                            <label for="has-scientology">Scientology</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasTherapeuticCommunity" data-note-scope="facility" data-note-key="philosophy.hasTherapeuticCommunity" id="has-tc">
+                            <label for="has-tc">Therapeutic Community</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasWildernessRoad" data-note-scope="facility" data-note-key="philosophy.hasWildernessRoad" id="has-wilderness-road">
+                            <label for="has-wilderness-road">Wilderness Road</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPsychoanalytic" data-note-scope="facility" data-note-key="philosophy.hasPsychoanalytic" id="has-psychoanalytic">
+                            <label for="has-psychoanalytic">Psychoanalytic</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasLawOfAttraction" data-note-scope="facility" data-note-key="philosophy.hasLawOfAttraction" id="has-loa">
+                            <label for="has-loa">Law of Attraction</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasHumanPotentialMovement" data-note-scope="facility" data-note-key="philosophy.hasHumanPotentialMovement" id="has-hpm">
+                            <label for="has-hpm">Human Potential Movement</label>
+                        </div>
                     </div>
                 </div>
-                <div id="custom-philosophy-list" style="margin-top: 15px;">
-                    <!-- Custom philosophy checkboxes will be rendered here -->
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🖋️ Custom Philosophies</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Add Custom Philosophy</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="custom-philosophy-input" placeholder="Enter philosophy name..." style="flex: 1;">
+                                <button class="btn" id="add-custom-philosophy-btn">Add</button>
+                            </div>
+                        </div>
+                        <div id="custom-philosophy-list" style="margin-top: 15px;">
+                            <!-- Custom philosophy checkboxes will be rendered here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1058,35 +1216,48 @@ get_header();
                 <span class="section-toggle">🔎</span>
             </div>
             <div class="section-content">
-                <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Incident Types</h3>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasDeaths" data-note-scope="facility" data-note-key="criticalIncidents.hasDeaths" id="has-deaths">
-                    <label for="has-deaths">Deaths</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStaffArrests" data-note-scope="facility" data-note-key="criticalIncidents.hasStaffArrests" id="has-staff-arrests">
-                    <label for="has-staff-arrests">Staff Arrests</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStudentHospitalizations" data-note-scope="facility" data-note-key="criticalIncidents.hasStudentHospitalizations" id="has-hospitalizations">
-                    <label for="has-hospitalizations">Student Hospitalizations</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasRiots" data-note-scope="facility" data-note-key="criticalIncidents.hasRiots" id="has-riots">
-                    <label for="has-riots">Riots</label>
-                </div>
-
-                <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Critical Incidents</h3>
-                <div class="form-group">
-                    <label>Add Custom Critical Incident</label>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="custom-incident-input" placeholder="Enter incident type name..." style="flex: 1;">
-                        <button class="btn" id="add-custom-incident-btn">Add</button>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🚨 Standard Incident Types</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasDeaths" data-note-scope="facility" data-note-key="criticalIncidents.hasDeaths" id="has-deaths">
+                            <label for="has-deaths">Deaths</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStaffArrests" data-note-scope="facility" data-note-key="criticalIncidents.hasStaffArrests" id="has-staff-arrests">
+                            <label for="has-staff-arrests">Staff Arrests</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasStudentHospitalizations" data-note-scope="facility" data-note-key="criticalIncidents.hasStudentHospitalizations" id="has-hospitalizations">
+                            <label for="has-hospitalizations">Student Hospitalizations</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasRiots" data-note-scope="facility" data-note-key="criticalIncidents.hasRiots" id="has-riots">
+                            <label for="has-riots">Riots</label>
+                        </div>
                     </div>
                 </div>
-                <div id="custom-incidents-list" style="margin-top: 15px;">
-                    <!-- Custom incident checkboxes will be rendered here -->
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">🛠️ Custom Critical Incidents</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>Add Custom Critical Incident</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="custom-incident-input" placeholder="Enter incident type name..." style="flex: 1;">
+                                <button class="btn" id="add-custom-incident-btn">Add</button>
+                            </div>
+                        </div>
+                        <div id="custom-incidents-list" style="margin-top: 15px;">
+                            <!-- Custom incident checkboxes will be rendered here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1279,16 +1450,10 @@ get_header();
                     <div class="form-group">
                         <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
                         <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
-                            <option value="">Select data point...</option>
-                            <option value="keyword">General Keyword Search</option>
+                            <option value="keyword" selected>General Keyword</option>
                             <option value="staff">Staff Member</option>
-                            <option value="operator">Operator/Company</option>
                             <option value="location">Location</option>
                             <option value="programType">Program Type</option>
-                            <option value="status">Operating Status</option>
-                            <option value="year">Opening Year</option>
-                            <option value="accreditation">Accreditation</option>
-                            <option value="certification">Certification</option>
                         </select>
                     </div>
                     <div class="form-group">

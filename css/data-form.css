@@ -1235,6 +1235,56 @@ select:focus {
     display: block;
 }
 
+/* Sub-sections within main sections */
+.sub-section {
+    margin-bottom: 15px;
+    border: 1px solid #B6E3D4;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.sub-section-header {
+    background: #B6E3D4;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.sub-section-header:hover {
+    background: #A5D6C4;
+}
+
+.sub-section-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000435;
+}
+
+.sub-section-toggle {
+    color: #000435;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.sub-section.expanded .sub-section-toggle {
+    transform: rotate(180deg);
+}
+
+.sub-section-content {
+    padding: 15px;
+    display: none;
+    background: #fafafa;
+}
+
+.sub-section.expanded .sub-section-content {
+    display: block;
+}
+
 /* ============================================
    FORM ELEMENTS
    ============================================ */

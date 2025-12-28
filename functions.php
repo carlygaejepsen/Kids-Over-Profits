@@ -462,6 +462,49 @@ function kop_register_facilities_rest_routes() {
             ),
         )
     );
+
+    // Register search endpoint for database search (public)
+    register_rest_route(
+        'kop/v1',
+        '/search',
+        array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => 'kop_search_database_rest_callback',
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'keyword' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'staff' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'location' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'programType' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'limit' => array(
+                    'required' => false,
+                    'type' => 'integer',
+                    'default' => 20,
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 
@@ -1384,6 +1427,396 @@ function kop_collect_operatingperiod_values($data, &$set) {
             kop_add_autocomplete_value($set, isset($period['yearsOfOperation']) ? $period['yearsOfOperation'] : null);
         }
     }
+}
+
+/**
+ * REST API callback for database search.
+ *
+ * @param WP_REST_Request $request The request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function kop_search_database_rest_callback($request) {
+    global $wpdb;
+
+    // Get search parameters
+    $keyword_query = $request->get_param('keyword');
+    $staff_query = $request->get_param('staff');
+    $location_query = $request->get_param('location');
+    $program_type_query = $request->get_param('programType');
+    $limit = $request->get_param('limit');
+    $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
+
+    // At least one search query must be provided
+    if (empty($keyword_query) && empty($staff_query) && empty($location_query) && empty($program_type_query)) {
+        return rest_ensure_response(array(
+            'success' => true,
+            'results' => array(),
+            'count' => 0,
+        ));
+    }
+
+    $all_results = array();
+    $table_base = 'facilities_master';
+
+    // Check if table exists
+    $table_exists = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+        DB_NAME,
+        $table_base
+    ));
+
+    if (!$table_exists) {
+        return rest_ensure_response(array(
+            'success' => false,
+            'results' => array(),
+            'count' => 0,
+            'error' => 'Database table not found',
+        ));
+    }
+
+    // Get all rows from the table
+    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$table_base}", ARRAY_A);
+
+    if (!is_array($rows)) {
+        return rest_ensure_response(array(
+            'success' => true,
+            'results' => array(),
+            'count' => 0,
+        ));
+    }
+
+    foreach ($rows as $row) {
+        if (empty($row['json_data'])) {
+            continue;
+        }
+
+        $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
+
+        // Decode JSON to search content
+        $data = kop_normalize_project_payload($row['json_data']);
+        if (!$data) {
+            continue;
+        }
+
+        $match_snippet = null;
+        $match_type = '';
+
+        // General keyword search - searches all content
+        if (!empty($keyword_query)) {
+            // Check unique_name first
+            if (stripos($unique_name, $keyword_query) !== false) {
+                $match_snippet = 'Name: ' . $unique_name;
+                $match_type = 'keyword';
+            } else {
+                // Search all data recursively
+                $match_snippet = kop_search_in_data($data, $keyword_query);
+                if ($match_snippet) {
+                    $match_type = 'keyword';
+                }
+            }
+        }
+
+        // Staff member search - searches staff-related fields
+        if (!empty($staff_query) && !$match_snippet) {
+            $match_snippet = kop_search_staff($data, $staff_query);
+            if ($match_snippet) {
+                $match_type = 'staff';
+            }
+        }
+
+        // Location search - searches location-related fields
+        if (!empty($location_query) && !$match_snippet) {
+            $match_snippet = kop_search_location($data, $location_query);
+            if ($match_snippet) {
+                $match_type = 'location';
+            }
+        }
+
+        // Program type search - searches program type fields
+        if (!empty($program_type_query) && !$match_snippet) {
+            $match_snippet = kop_search_program_type($data, $program_type_query);
+            if ($match_snippet) {
+                $match_type = 'programType';
+            }
+        }
+
+        if ($match_snippet) {
+            // Extract summary info
+            $operator_name = '';
+            $facility_count = 0;
+
+            if (isset($data['operator']['name'])) {
+                $operator_name = $data['operator']['name'];
+            }
+            if (isset($data['facilities']) && is_array($data['facilities'])) {
+                $facility_count = count($data['facilities']);
+            }
+
+            $all_results[] = array(
+                'name' => $unique_name,
+                'label' => $unique_name,
+                'category' => 'facilities',
+                'operator' => $operator_name,
+                'facilityCount' => $facility_count,
+                'matchSnippet' => $match_snippet,
+                'matchType' => $match_type,
+                'source' => 'database',
+                'data' => $data,
+            );
+        }
+    }
+
+    // Sort by name
+    usort($all_results, function ($a, $b) {
+        return strnatcasecmp($a['name'], $b['name']);
+    });
+
+    // Limit results
+    if (count($all_results) > $max_results) {
+        $all_results = array_slice($all_results, 0, $max_results);
+    }
+
+    return rest_ensure_response(array(
+        'success' => true,
+        'results' => $all_results,
+        'count' => count($all_results),
+    ));
+}
+
+/**
+ * Search for a query string within project data.
+ *
+ * @param array  $data  The project data to search.
+ * @param string $query The search query.
+ * @return string|null Match snippet or null if no match.
+ */
+function kop_search_in_data($data, $query) {
+    if (!$data || !$query) {
+        return null;
+    }
+
+    $lowerQuery = strtolower($query);
+
+    $search = function($value, $path = '') use ($lowerQuery, &$search) {
+        if (is_string($value)) {
+            if (stripos($value, $lowerQuery) !== false) {
+                return substr($value, 0, 60);
+            }
+        } elseif (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $match = $search($item, $path ? "{$path}.{$key}" : $key);
+                if ($match) {
+                    return $match;
+                }
+            }
+        }
+        return null;
+    };
+
+    return $search($data);
+}
+
+/**
+ * Search for staff members in project data.
+ *
+ * @param array  $data  The project data to search.
+ * @param string $query The search query.
+ * @return string|null Match snippet or null if no match.
+ */
+function kop_search_staff($data, $query) {
+    if (!$data || !$query) {
+        return null;
+    }
+
+    $lowerQuery = strtolower($query);
+    $facilities = isset($data['facilities']) ? $data['facilities'] : array();
+
+    foreach ($facilities as $facility) {
+        // Search in staff object (administrator, notableStaff, etc.)
+        if (isset($facility['staff']) && is_array($facility['staff'])) {
+            $staff_obj = $facility['staff'];
+
+            // Search administrators
+            if (isset($staff_obj['administrator'])) {
+                $admins = is_array($staff_obj['administrator']) ? $staff_obj['administrator'] : array($staff_obj['administrator']);
+                foreach ($admins as $admin) {
+                    $adminStr = is_string($admin) ? $admin : (isset($admin['name']) ? $admin['name'] : '');
+                    if ($adminStr && stripos($adminStr, $lowerQuery) !== false) {
+                        return 'Administrator: ' . substr($adminStr, 0, 60);
+                    }
+                }
+            }
+
+            // Search notable staff
+            if (isset($staff_obj['notableStaff'])) {
+                $notable = is_array($staff_obj['notableStaff']) ? $staff_obj['notableStaff'] : array($staff_obj['notableStaff']);
+                foreach ($notable as $person) {
+                    $personStr = is_string($person) ? $person : (isset($person['name']) ? $person['name'] : '');
+                    if ($personStr && stripos($personStr, $lowerQuery) !== false) {
+                        return 'Staff: ' . substr($personStr, 0, 60);
+                    }
+                }
+            }
+
+            // Search other staff fields within staff object
+            $staff_sub_fields = array('director', 'owner', 'ceo', 'founder', 'management', 'leadership');
+            foreach ($staff_sub_fields as $field) {
+                if (isset($staff_obj[$field])) {
+                    if (is_string($staff_obj[$field]) && stripos($staff_obj[$field], $lowerQuery) !== false) {
+                        return ucfirst($field) . ': ' . substr($staff_obj[$field], 0, 60);
+                    }
+                    if (is_array($staff_obj[$field])) {
+                        $match = kop_search_in_data($staff_obj[$field], $query);
+                        if ($match) {
+                            return ucfirst($field) . ': ' . $match;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Search in top-level leadership/management fields
+        $staff_fields = array('director', 'owner', 'ceo', 'founder', 'leadership', 'management', 'administrators');
+        foreach ($staff_fields as $field) {
+            if (isset($facility[$field])) {
+                if (is_string($facility[$field]) && stripos($facility[$field], $lowerQuery) !== false) {
+                    return ucfirst($field) . ': ' . substr($facility[$field], 0, 60);
+                }
+                if (is_array($facility[$field])) {
+                    $match = kop_search_in_data($facility[$field], $query);
+                    if ($match) {
+                        return ucfirst($field) . ': ' . $match;
+                    }
+                }
+            }
+        }
+    }
+
+    // Search operator staff
+    if (isset($data['operator'])) {
+        $operator = $data['operator'];
+        $staff_fields = array('owner', 'ceo', 'founder', 'leadership', 'management', 'staff');
+        foreach ($staff_fields as $field) {
+            if (isset($operator[$field])) {
+                if (is_string($operator[$field]) && stripos($operator[$field], $lowerQuery) !== false) {
+                    return 'Operator ' . ucfirst($field) . ': ' . substr($operator[$field], 0, 60);
+                }
+                if (is_array($operator[$field])) {
+                    $match = kop_search_in_data($operator[$field], $query);
+                    if ($match) {
+                        return 'Operator ' . ucfirst($field) . ': ' . $match;
+                    }
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Search for location in project data.
+ *
+ * @param array  $data  The project data to search.
+ * @param string $query The search query.
+ * @return string|null Match snippet or null if no match.
+ */
+function kop_search_location($data, $query) {
+    if (!$data || !$query) {
+        return null;
+    }
+
+    $lowerQuery = strtolower($query);
+    $facilities = isset($data['facilities']) ? $data['facilities'] : array();
+
+    foreach ($facilities as $facility) {
+        $location_fields = array('location', 'address', 'city', 'state', 'country', 'region', 'zip', 'zipCode', 'postalCode');
+        foreach ($location_fields as $field) {
+            if (isset($facility[$field]) && is_string($facility[$field]) && stripos($facility[$field], $lowerQuery) !== false) {
+                return ucfirst($field) . ': ' . substr($facility[$field], 0, 60);
+            }
+        }
+
+        if (isset($facility['location']) && is_array($facility['location'])) {
+            $match = kop_search_in_data($facility['location'], $query);
+            if ($match) {
+                return 'Location: ' . $match;
+            }
+        }
+
+        if (isset($facility['identification']) && is_array($facility['identification'])) {
+            foreach ($location_fields as $field) {
+                if (isset($facility['identification'][$field]) && is_string($facility['identification'][$field]) && stripos($facility['identification'][$field], $lowerQuery) !== false) {
+                    return ucfirst($field) . ': ' . substr($facility['identification'][$field], 0, 60);
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Search for program type in project data.
+ *
+ * @param array  $data  The project data to search.
+ * @param string $query The search query.
+ * @return string|null Match snippet or null if no match.
+ */
+function kop_search_program_type($data, $query) {
+    if (!$data || !$query) {
+        return null;
+    }
+
+    $lowerQuery = strtolower($query);
+    $facilities = isset($data['facilities']) ? $data['facilities'] : array();
+
+    foreach ($facilities as $facility) {
+        $type_fields = array('programType', 'type', 'facilityType', 'category', 'classification', 'programTypes', 'types');
+        foreach ($type_fields as $field) {
+            if (isset($facility[$field])) {
+                if (is_string($facility[$field]) && stripos($facility[$field], $lowerQuery) !== false) {
+                    return 'Program Type: ' . substr($facility[$field], 0, 60);
+                }
+                if (is_array($facility[$field])) {
+                    foreach ($facility[$field] as $item) {
+                        if (is_string($item) && stripos($item, $lowerQuery) !== false) {
+                            return 'Program Type: ' . substr($item, 0, 60);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (isset($facility['identification']) && is_array($facility['identification'])) {
+            foreach ($type_fields as $field) {
+                if (isset($facility['identification'][$field])) {
+                    if (is_string($facility['identification'][$field]) && stripos($facility['identification'][$field], $lowerQuery) !== false) {
+                        return 'Program Type: ' . substr($facility['identification'][$field], 0, 60);
+                    }
+                    if (is_array($facility['identification'][$field])) {
+                        foreach ($facility['identification'][$field] as $item) {
+                            if (is_string($item) && stripos($item, $lowerQuery) !== false) {
+                                return 'Program Type: ' . substr($item, 0, 60);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $service_fields = array('services', 'programs', 'offerings', 'treatments');
+        foreach ($service_fields as $field) {
+            if (isset($facility[$field])) {
+                $match = kop_search_in_data($facility[$field], $query);
+                if ($match) {
+                    return 'Program: ' . $match;
+                }
+            }
+        }
+    }
+
+    return null;
 }
 
 /**

@@ -369,7 +369,7 @@ if (window.TutorialOverlay) {
                             }
                         }
 
-                        this.highlightMultipleElements(targetEls, step.highlightMode);
+                        this.highlightMultipleElements(targetEls, step.highlightMode, step.highlightPadding);
                         // Position card relative to first element
                         this.positionCard(targetEls[0], step.position || 'bottom');
                     } else {
@@ -493,15 +493,14 @@ if (window.TutorialOverlay) {
             document.body.classList.add('tutorial-active');
         }
 
-        highlightMultipleElements(elements, mode) {
+        highlightMultipleElements(elements, mode, padding = 8) {
             this.clearHighlight();
             this.activeElements = elements;
 
-            // Use dark overlay for multi-element highlighting to ensure glow visibility
-            this.overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-
             // Temporarily unlock scroll
             document.body.classList.remove('tutorial-active');
+
+            const rects = [];
 
             elements.forEach((element, index) => {
                 const computedStyle = window.getComputedStyle(element);
@@ -536,7 +535,18 @@ if (window.TutorialOverlay) {
                 }
 
                 // Force the z-index to be above overlay
-                element.style.zIndex = '200005';
+                element.style.zIndex = '200025';
+
+                // Collect rect for clip-path
+                const rect = element.getBoundingClientRect();
+                rects.push({
+                    left: rect.left - padding,
+                    top: rect.top - padding,
+                    right: rect.right + padding,
+                    bottom: rect.bottom + padding,
+                    width: rect.width + padding * 2,
+                    height: rect.height + padding * 2
+                });
 
                 // Handle parent overflows (up to 4 levels)
                 let curr = parent;
@@ -562,6 +572,10 @@ if (window.TutorialOverlay) {
                 }
             });
 
+            // Create clip-path with holes for each element
+            // Use an SVG-based approach with multiple rects cut out
+            this.createMultiHoleOverlay(rects);
+
             // Start sequential cycle
             if (mode === 'sequential' && elements.length > 1) {
                 let currentIndex = 0;
@@ -574,11 +588,81 @@ if (window.TutorialOverlay) {
 
                     // Add class to new current
                     elements[currentIndex].classList.add('tutorial-active-target');
+
+                    // Update clip-path to highlight current element more prominently
+                    // (optional: could animate the holes)
                 }, 2000);
             }
 
             // Re-lock scrolling
             document.body.classList.add('tutorial-active');
+        }
+
+        createMultiHoleOverlay(rects) {
+            // Remove existing multi-hole overlay if any
+            const existing = document.getElementById('tutorial-multi-hole-overlay');
+            if (existing) existing.remove();
+
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            // Create SVG overlay with holes
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.id = 'tutorial-multi-hole-overlay';
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 199995;
+                pointer-events: none;
+            `;
+
+            // Create defs with mask
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+            mask.id = 'tutorial-holes-mask';
+
+            // White background (visible area)
+            const whiteBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            whiteBg.setAttribute('x', '0');
+            whiteBg.setAttribute('y', '0');
+            whiteBg.setAttribute('width', '100%');
+            whiteBg.setAttribute('height', '100%');
+            whiteBg.setAttribute('fill', 'white');
+            mask.appendChild(whiteBg);
+
+            // Black rects for holes (transparent areas)
+            rects.forEach(r => {
+                const hole = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                hole.setAttribute('x', r.left);
+                hole.setAttribute('y', r.top);
+                hole.setAttribute('width', r.width);
+                hole.setAttribute('height', r.height);
+                hole.setAttribute('rx', '8');
+                hole.setAttribute('ry', '8');
+                hole.setAttribute('fill', 'black');
+                mask.appendChild(hole);
+            });
+
+            defs.appendChild(mask);
+            svg.appendChild(defs);
+
+            // Dark overlay rect with mask applied
+            const overlay = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            overlay.setAttribute('x', '0');
+            overlay.setAttribute('y', '0');
+            overlay.setAttribute('width', '100%');
+            overlay.setAttribute('height', '100%');
+            overlay.setAttribute('fill', 'rgba(0, 0, 0, 0.5)');
+            overlay.setAttribute('mask', 'url(#tutorial-holes-mask)');
+            svg.appendChild(overlay);
+
+            document.body.appendChild(svg);
+            this.multiHoleOverlay = svg;
         }
 
         clearHighlight() {
@@ -592,6 +676,15 @@ if (window.TutorialOverlay) {
             if (this.overlay) {
                 this.overlay.style.backgroundColor = 'transparent';
             }
+
+            // Remove multi-hole SVG overlay if exists
+            if (this.multiHoleOverlay) {
+                this.multiHoleOverlay.remove();
+                this.multiHoleOverlay = null;
+            }
+            // Also check by ID in case reference was lost
+            const existingSvg = document.getElementById('tutorial-multi-hole-overlay');
+            if (existingSvg) existingSvg.remove();
 
             // Clear single highlight box
             if (this.highlight) {
@@ -838,7 +931,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Select an Entry',
-                content: 'Use the dropdown to choose the facility or consultant you want to edit.',
+                content: 'Use the dropdown in the toolbar OR the facility loader panel to choose the facility or consultant you want to edit.',
                 target: '.facility-loader-panel, #facility-dropdown',
                 highlightAll: true,
                 position: 'bottom',
@@ -892,7 +985,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Generate Report',
-                content: 'Generate a formatted report of your current project data for review or export.',
+                content: 'Create a formatted, printable report and open it in a new window. You can then print it or save it as a PDF.',
                 target: '#generate-report-btn-toolbar',
                 position: 'bottom'
             },
@@ -905,9 +998,10 @@ if (window.TutorialOverlay) {
             {
                 title: 'Navigation Controls',
                 content: 'Use the arrows (Prev/Next) or dropdown menu to navigate between different entries in your project.',
-                target: '.facility-selector',
+                target: '#prev-facility-btn-toolbar, #facility-dropdown, #next-facility-btn-toolbar',
+                highlightAll: true,
                 position: 'bottom',
-                highlightPadding: 2
+                highlightPadding: 4
             },
             {
                 title: 'Jump to Top',
@@ -919,12 +1013,6 @@ if (window.TutorialOverlay) {
                 title: 'Search Data',
                 content: 'Search and organize your facility data by various criteria like staff, location, or program type.',
                 target: '#show-organizer-modal-btn',
-                position: 'bottom'
-            },
-            {
-                title: 'Navigating Entries',
-                content: 'After creating a project with multiple facilities or referrers, use the <strong>dropdown menu</strong> in the toolbar to switch between them. Each entry is saved separately within your project.',
-                target: '#facility-dropdown',
                 position: 'bottom'
             },
             {

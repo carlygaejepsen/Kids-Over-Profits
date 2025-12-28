@@ -175,10 +175,13 @@
             toolbarToggle.setAttribute('aria-controls', 'toolbar-content');
             applyToolbarState(toolbar.classList.contains('minimized'), elements);
 
-            toolbarToggle.addEventListener('click', () => { // UI-only, can be passive
-                const isMinimized = toolbar.classList.toggle('minimized');
-                applyToolbarState(isMinimized, elements);
-            }, { passive: true });
+            toolbarToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🔘 Toolbar toggle clicked');
+                const freshElements = getElements();
+                const isMinimized = freshElements.toolbar.classList.toggle('minimized');
+                applyToolbarState(isMinimized, freshElements);
+            });
 
             toolbarToggle.dataset.listenerAttached = 'true';
         }

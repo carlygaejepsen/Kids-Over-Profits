@@ -485,9 +485,16 @@
                             role = match[1].trim();
                             name = match[2].trim();
                         }
-                        normalized = { role, name };
+                        normalized = { role, name, pastJobs: '', links: '' };
                         data[index] = normalized;
                     }
+
+                    // Main Row
+                    const mainRow = document.createElement('div');
+                    mainRow.style.display = 'flex';
+                    mainRow.style.gap = '10px';
+                    mainRow.style.width = '100%';
+                    mainRow.style.alignItems = 'center';
 
                     const roleInp = document.createElement('input');
                     roleInp.type = 'text';
@@ -517,8 +524,97 @@
                         }
                     };
 
-                    row.appendChild(roleInp);
-                    row.appendChild(nameInp);
+                    const detailsBtn = document.createElement('button');
+                    detailsBtn.type = 'button';
+                    detailsBtn.className = 'btn-secondary';
+                    detailsBtn.innerHTML = '📝';
+                    detailsBtn.title = 'Add details (Past Jobs, Links)';
+                    detailsBtn.style.padding = '4px 8px';
+                    detailsBtn.style.fontSize = '14px';
+                    
+                    mainRow.appendChild(roleInp);
+                    mainRow.appendChild(nameInp);
+                    mainRow.appendChild(detailsBtn);
+
+                    // Details Container
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'staff-details-container';
+                    detailsDiv.style.display = 'none';
+                    detailsDiv.style.marginTop = '10px';
+                    detailsDiv.style.padding = '10px';
+                    detailsDiv.style.background = '#f9f9f9';
+                    detailsDiv.style.border = '1px solid #eee';
+                    detailsDiv.style.borderRadius = '6px';
+                    detailsDiv.style.width = '100%';
+
+                    // Past Jobs
+                    const jobsLabel = document.createElement('label');
+                    jobsLabel.textContent = 'Past TTI Employment (Role - Employer, one per line)';
+                    jobsLabel.style.display = 'block';
+                    jobsLabel.style.fontSize = '12px';
+                    jobsLabel.style.marginBottom = '4px';
+                    jobsLabel.style.color = '#666';
+                    
+                    const jobsInp = document.createElement('textarea');
+                    jobsInp.className = 'input-form';
+                    jobsInp.rows = 3;
+                    jobsInp.style.fontSize = '13px';
+                    jobsInp.value = normalized.pastJobs || '';
+                    jobsInp.placeholder = 'e.g. Program Director - Old School\nTherapist - Another Place';
+                    jobsInp.oninput = (e) => {
+                        if (typeof window.updateArrayObjectItemValue === 'function') {
+                            window.updateArrayObjectItemValue(path, index, 'pastJobs', e.target.value);
+                        } else {
+                            normalized.pastJobs = e.target.value;
+                            if (window.updateJSON) window.updateJSON();
+                        }
+                    };
+
+                    // Links
+                    const linksLabel = document.createElement('label');
+                    linksLabel.textContent = 'Profile Links (one per line)';
+                    linksLabel.style.display = 'block';
+                    linksLabel.style.fontSize = '12px';
+                    linksLabel.style.marginBottom = '4px';
+                    linksLabel.style.marginTop = '10px';
+                    linksLabel.style.color = '#666';
+
+                    const linksInp = document.createElement('textarea');
+                    linksInp.className = 'input-form';
+                    linksInp.rows = 2;
+                    linksInp.style.fontSize = '13px';
+                    linksInp.value = normalized.links || '';
+                    linksInp.placeholder = 'https://linkedin.com/in/...\nhttps://news-article.com/...';
+                    linksInp.oninput = (e) => {
+                        if (typeof window.updateArrayObjectItemValue === 'function') {
+                            window.updateArrayObjectItemValue(path, index, 'links', e.target.value);
+                        } else {
+                            normalized.links = e.target.value;
+                            if (window.updateJSON) window.updateJSON();
+                        }
+                    };
+
+                    detailsDiv.appendChild(jobsLabel);
+                    detailsDiv.appendChild(jobsInp);
+                    detailsDiv.appendChild(linksLabel);
+                    detailsDiv.appendChild(linksInp);
+
+                    // Toggle logic
+                    detailsBtn.onclick = () => {
+                        const isHidden = detailsDiv.style.display === 'none';
+                        detailsDiv.style.display = isHidden ? 'block' : 'none';
+                        detailsBtn.style.background = isHidden ? '#e2e8f0' : '';
+                    };
+
+                    // Auto-open if data exists
+                    if (normalized.pastJobs || normalized.links) {
+                        detailsDiv.style.display = 'block';
+                        detailsBtn.style.background = '#e2e8f0';
+                    }
+
+                    row.style.flexWrap = 'wrap'; // Allow wrapping for details
+                    row.appendChild(mainRow);
+                    row.appendChild(detailsDiv);
                 } else if (isAdditionalLocation) {
                     let normalized = item;
                     if (typeof normalized !== 'object' || normalized === null) {

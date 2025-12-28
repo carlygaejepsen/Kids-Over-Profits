@@ -327,6 +327,9 @@ get_header();
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="btn-toolbar btn-secondary" title="Go back to homepage">🏠<span class="toolbar-label">Home</span></a>
+                    </div>
+                    <div class="toolbar-group">
                         <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕<span class="toolbar-label">New Project</span></button>
                         <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊<span class="toolbar-label">Report</span></button>
                     </div>
