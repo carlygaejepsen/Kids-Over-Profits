@@ -350,6 +350,25 @@ if (window.TutorialOverlay) {
                         // Force sequential mode for last step if detected by title
                         if (step.title.includes('Save & Submit')) step.highlightMode = 'sequential';
 
+                        // If this is the final step and a scrollTarget/container is specified,
+                        // elevate the entire container so the whole submission section sits above the overlay.
+                        if (index === this.steps.length - 1 && step.scrollTarget) {
+                            const container = document.querySelector(step.scrollTarget);
+                            if (container) {
+                                // Store to restore later
+                                this.elevatedContainer = {
+                                    el: container,
+                                    originalZIndex: container.style.zIndex,
+                                    originalPosition: container.style.position
+                                };
+                                if (window.getComputedStyle(container).position === 'static') {
+                                    container.style.position = 'relative';
+                                }
+                                container.style.zIndex = '200020';
+                                container.classList.add('tutorial-active-target');
+                            }
+                        }
+
                         this.highlightMultipleElements(targetEls, step.highlightMode);
                         // Position card relative to first element
                         this.positionCard(targetEls[0], step.position || 'bottom');
@@ -666,6 +685,21 @@ if (window.TutorialOverlay) {
 
                 this.activeElements = [];
                 this.originalStyles = [];
+            }
+
+            // Restore any elevated container (e.g., submission section for final step)
+            if (this.elevatedContainer) {
+                const c = this.elevatedContainer;
+                if (c.el) {
+                    if (c.originalZIndex !== undefined && c.originalZIndex !== '') c.el.style.zIndex = c.originalZIndex;
+                    else c.el.style.removeProperty('z-index');
+
+                    if (c.originalPosition !== undefined && c.originalPosition !== '') c.el.style.position = c.originalPosition;
+                    else c.el.style.removeProperty('position');
+
+                    c.el.classList.remove('tutorial-active-target');
+                }
+                this.elevatedContainer = null;
             }
         }
 
