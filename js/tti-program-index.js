@@ -246,7 +246,15 @@ function displayFacilities(facilitiesData, containerId) {
         // Helper to check if a value is meaningfully empty
         const isEmptyValue = (value) => {
             if (value === null || value === undefined || value === '') return true;
-            if (typeof value === 'boolean') return false;
+            // Treat "None", "No", "N/A", "Unknown" as empty
+            if (typeof value === 'string') {
+                const lower = value.trim().toLowerCase();
+                if (lower === 'none' || lower === 'no' || lower === 'n/a' ||
+                    lower === 'unknown' || lower === 'null' || lower === 'undefined') {
+                    return true;
+                }
+            }
+            if (typeof value === 'boolean') return !value; // false is empty, true is not
             if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
             if (typeof value === 'object') {
                 const keys = Object.keys(value);
@@ -283,15 +291,18 @@ function displayFacilities(facilitiesData, containerId) {
             if (!obj || typeof obj !== 'object' || depth > 3) return [];
             const fields = [];
 
+            // Skip these keys - they're already shown in the operator header
+            const skipFullKeys = ['name', 'location', 'headquarters', 'status'];
+
             Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
                 const value = obj[key];
 
+                // Skip keys already shown in header (top-level only for operators)
+                if (depth === 0 && skipFullKeys.includes(key)) return;
+
                 // Skip empty values (would show "None" or be blank)
                 if (isEmptyValue(value)) return;
-
-                // Skip boolean false values (would show "No")
-                if (typeof value === 'boolean' && !value) return;
 
                 if (Array.isArray(value)) {
                     if (value.length > 0 && !value.every(isEmptyValue)) {
@@ -402,12 +413,19 @@ function displayFacilities(facilitiesData, containerId) {
             // Helper to check if a value is meaningfully empty
             const isEmptyValue = (value) => {
                 if (value === null || value === undefined || value === '') return true;
-                if (typeof value === 'boolean') return false; // booleans are never "empty"
+                // Treat "None", "No", "N/A", "Unknown" as empty
+                if (typeof value === 'string') {
+                    const lower = value.trim().toLowerCase();
+                    if (lower === 'none' || lower === 'no' || lower === 'n/a' ||
+                        lower === 'unknown' || lower === 'null' || lower === 'undefined') {
+                        return true;
+                    }
+                }
+                if (typeof value === 'boolean') return !value; // false is empty, true is not
                 if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
                 if (typeof value === 'object') {
                     const keys = Object.keys(value);
                     if (keys.length === 0) return true;
-                    // Check if all values in object are empty
                     return keys.every(k => isEmptyValue(value[k]));
                 }
                 return false;
@@ -443,15 +461,22 @@ function displayFacilities(facilitiesData, containerId) {
                 if (!obj || typeof obj !== 'object' || depth > 3) return [];
                 const fields = [];
 
+                // Skip these keys - they're already shown in the card header
+                const skipFullKeys = [
+                    'identification.name',
+                    'location', 'operatingPeriod.startYear', 'operatingPeriod.endYear',
+                    'operatingPeriod.status'
+                ];
+
                 Object.keys(obj).forEach(key => {
                     const fullKey = prefix ? `${prefix}.${key}` : key;
                     const value = obj[key];
 
+                    // Skip keys already shown in header
+                    if (skipFullKeys.includes(fullKey)) return;
+
                     // Skip empty values (would show "None" or be blank)
                     if (isEmptyValue(value)) return;
-
-                    // Skip boolean false values (would show "No")
-                    if (typeof value === 'boolean' && !value) return;
 
                     if (Array.isArray(value)) {
                         if (value.length > 0 && !value.every(isEmptyValue)) {

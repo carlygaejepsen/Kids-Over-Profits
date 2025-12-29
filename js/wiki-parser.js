@@ -108,6 +108,7 @@ function parseWikiMarkdown(markdown) {
         affiliations: [],
         rebrand: '',
         rebrandLink: '',
+        relatedPrograms: [], // Programs listed in tables (e.g. WWASP affiliates)
 
         // Structured data arrays
         staffMembers: [],
@@ -1183,17 +1184,23 @@ function parseWikiMarkdown(markdown) {
         'Abuse Allegations and Investigations',
         'Abuse Allegations and Rebranding',
         'Abuse and Closure',
+        'Closure',
+        'Closure and Rebranding',
+        'The Death of Taylor Goodridge', // Specific significant events
         'Abuse, Deaths, and Investigations',
         'Abuse and Investigations',
         'Abuse and Death',
         'Abuse and Lawsuits',
         'Abuse, Rebrands, and the Fire',
         'Abuse Allegations and Red Flags',
+        'WWASP Program Red Flags',
+        'Red Flags',
         'Abuse',
         'Abuse and Violence',
         'Controversy, Abuse, and Deaths',
         'Abuse/Neglect Allegations',
-        'Abuse and Neglect Allegations'
+        'Abuse and Neglect Allegations',
+        'Controversies'
     ]);
 
     if (abuseSection && !abuseSection.includes('No information is known')) {
@@ -1385,7 +1392,8 @@ function parseWikiMarkdown(markdown) {
         punishmentPatterns.forEach(block => {
             const trimmed = block.trim();
             // Match patterns like "**Name:** description" or "**Name** - description"
-            const punishmentMatch = trimmed.match(/^\*\*([^*:]+?)(?::|–|-)\*\*\s*(.+)$/m);
+            // Also handles "** Name:**" (with space inside bold) and leading bullets
+            const punishmentMatch = trimmed.match(/^(?:[*•-]\s*)?\*\*\s*([^*:]+?)(?::|–|-)\*\*\s*(.+)$/m);
             if (punishmentMatch) {
                 parsedData.punishments.push({
                     name: punishmentMatch[1].trim(),
@@ -1563,6 +1571,60 @@ function parseWikiMarkdown(markdown) {
 
         // DON'T store everything in relatedMediaMisc - let the user edit form fields
         // parsedData.relatedMediaMisc = relatedMediaSection;
+    }
+
+    // Parse Program Tables (e.g. WWASP Programs, Closed Programs)
+    // Look for sections that might contain lists of programs
+    const programTableSections = getSectionAny(normalizedMarkdown, [
+        'WWASP Programs',
+        'WWASP-Affiliated/WWASP Spin-Off Programs',
+        'Active Teen Challenge Programs',
+        'Closed Teen Challenge Program',
+        'CEDU Programs',
+        'CEDU Spin-off Programs',
+        'Related Programs',
+        'Affiliated Programs'
+    ]);
+
+    if (programTableSections) {
+        // Simple table parser
+        const lines = programTableSections.split('\n');
+        let inTable = false;
+        
+        lines.forEach(line => {
+            if (line.trim().startsWith('|') && line.includes('---')) {
+                inTable = true;
+                return;
+            }
+            if (inTable && line.trim().startsWith('|')) {
+                // Extract cells
+                const cells = line.split('|').map(c => c.trim()).filter(c => c);
+                if (cells.length >= 3) { // Expecting at least Name, Years, Location
+                    // Extract name and link
+                    const nameMatch = cells[0].match(/\[([^\]]+)\]\(([^)]+)\)/);
+                    const name = nameMatch ? nameMatch[1].trim() : cells[0].replace(/\*\*/g, '').trim();
+                    const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
+                    
+                    // Simple extraction for other fields based on position
+                    // Usually: Name | Years | Location | HEAL | Reopened
+                    const years = cells[1] || '';
+                    const location = cells[2] || '';
+                    const healInfo = cells.length > 3 ? cells[3] : '';
+                    const reopened = cells.length > 4 ? cells[4] : '';
+
+                    if (name && name !== 'Program Name' && !name.includes('---')) {
+                        parsedData.relatedPrograms.push({
+                            name,
+                            link,
+                            yearsActive: years,
+                            location,
+                            healLink: healInfo.includes('http') ? sanitizeUrl(healInfo.match(/\(([^)]+)\)/)[1]) : '',
+                            reopened
+                        });
+                    }
+                }
+            }
+        });
     }
 
     // Collect unparsed sections
@@ -1953,6 +2015,19 @@ function generateWikiMarkdown(data) {
             if (testimonyLine) {
                 lines.push(testimonyLine);
             }
+        });
+        lines.push('');
+    }
+
+    // Related Programs Table
+    if (data.relatedPrograms && data.relatedPrograms.length > 0) {
+        lines.push('## Related Programs\n');
+        lines.push('|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|');
+        data.relatedPrograms.forEach(prog => {
+            let line = `| [** ${prog.name}**](${prog.link}) | ${prog.yearsActive} | ${prog.location} | `;
+            line += prog.healLink ? `[HEAL](${prog.healLink})` : 'N/A';
+            line += ` | ${prog.reopened || '-'} |`;
+            lines.push(line);
         });
         lines.push('');
     }
