@@ -283,15 +283,14 @@ function displayFacilities(facilitiesData, containerId) {
             if (!obj || typeof obj !== 'object' || depth > 3) return [];
             const fields = [];
 
-            // Keys to skip for operators
-            const skipKeys = ['notes', 'fieldNotes'];
-
             Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
                 const value = obj[key];
 
-                if (skipKeys.includes(key)) return;
+                // Skip empty values (would show "None" or be blank)
                 if (isEmptyValue(value)) return;
+
+                // Skip boolean false values (would show "No")
                 if (typeof value === 'boolean' && !value) return;
 
                 if (Array.isArray(value)) {
@@ -444,21 +443,14 @@ function displayFacilities(facilitiesData, containerId) {
                 if (!obj || typeof obj !== 'object' || depth > 3) return [];
                 const fields = [];
 
-                // Keys to skip entirely (shown elsewhere or not useful)
-                const skipKeys = ['fieldNotes', 'resources', 'customResources', 'customTreatmentTypes',
-                                  'customPhilosophy', 'customIncidents', 'customConditions'];
-
                 Object.keys(obj).forEach(key => {
                     const fullKey = prefix ? `${prefix}.${key}` : key;
                     const value = obj[key];
 
-                    // Skip certain keys
-                    if (skipKeys.includes(key)) return;
-
-                    // Skip empty values
+                    // Skip empty values (would show "None" or be blank)
                     if (isEmptyValue(value)) return;
 
-                    // Skip boolean false values (only show true flags)
+                    // Skip boolean false values (would show "No")
                     if (typeof value === 'boolean' && !value) return;
 
                     if (Array.isArray(value)) {

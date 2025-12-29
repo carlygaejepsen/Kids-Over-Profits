@@ -480,7 +480,6 @@ function enqueue_data_form_script() {
     $is_admin_template = is_page_template('page-admin-data.php')
         || is_page_template('child/page-admin-data.php')
         || is_page_template('templates/data-form-admin.php')
-        || is_page_template('page-tti-program-index.php')
         || is_page('admin-data')
         || is_page('tti-admin-data');
     $is_data_form_page = $is_data_template || $is_admin_template;
