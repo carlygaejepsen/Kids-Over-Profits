@@ -272,27 +272,22 @@
     font-size: 0.82em;
 }
 
-/* Field rows - true table layout */
-.field-row {
-    display: table-row;
-}
-
-.field-row:nth-child(odd) {
+/* Field rows - zebra striping ONLY for facility cards */
+.facility-card .field-row:nth-child(odd) {
     background: #f5f5f5;
 }
 
-.field-row:nth-child(even) {
+.facility-card .field-row:nth-child(even) {
     background: #fafafa;
 }
 
-.field-label {
-    display: table-cell;
-    font-weight: 600;
-    color: #00004d !important;
-    padding: 3px 6px 3px 0;
-    white-space: nowrap;
-    vertical-align: top;
-    width: 1%;
+/* Ensure operator details fields have NO background to avoid white-on-white */
+.operator-details .field-row {
+    background: transparent !important;
+    display: grid; /* Use grid for internal row layout if needed, or stick to flex */
+    grid-template-columns: 1fr;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 0;
 }
 
 .field-label::after {
@@ -516,7 +511,7 @@ details.operator-section[open] .facility-card {
     display: block;
     font-size: 0.85em;
     font-weight: 700;
-    color: #00004d;
+    color: #00004d !important; /* Force dark text on white card */
     margin-bottom: 2px;
     width: auto;
 }
@@ -524,7 +519,7 @@ details.operator-section[open] .facility-card {
 .facility-card .field-value {
     display: block;
     padding: 0;
-    color: #333333;
+    color: #333333 !important; /* Force dark text on white card */
     word-break: break-word;
     line-height: 1.4;
 }
