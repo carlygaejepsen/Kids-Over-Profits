@@ -86,7 +86,7 @@ window.facilitiesConfig = {
 };
 </script>
 
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tti-program-index.js"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tti-program-index-enhanced.js"></script>
 
 <?php
 get_footer();
