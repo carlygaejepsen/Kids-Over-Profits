@@ -209,22 +209,23 @@
 }
 
 /* Status badge colors - WCAG AA compliant */
-.status-badge.status-open {
+/* Higher specificity to override .facility-card * rule */
+.tti-program-index-wrapper .facility-card .status-badge.status-open {
     color: #ffffff !important;
     background: #d45500;
 }
 
-.status-badge.status-closed {
+.tti-program-index-wrapper .facility-card .status-badge.status-closed {
     color: #ffffff !important;
     background: #0d7a8a;
 }
 
-.status-badge.status-transferred {
+.tti-program-index-wrapper .facility-card .status-badge.status-transferred {
     color: #ffffff !important;
     background: #5a5a5a;
 }
 
-.status-badge.status-unknown {
+.tti-program-index-wrapper .facility-card .status-badge.status-unknown {
     color: #ffffff !important;
     background: #767676;
 }
