@@ -1,0 +1,24 @@
+{
+    "legal_name": "HUMAN CARE SERVICES",
+    "facility_status": "Active",
+    "address": "36550 West Santa Maria Street, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH7917",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "9/13/2025",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0072508",
+    "inspection_date": "2/8/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 2. Is completed: b. Before the resident receives physical health services or behavioral health services or within 48 hours after the assessment is completed;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a treatment plan was completed, before physical health or behavioral health services was provided, for one of three residents sampled. The deficient practice posed a risk as a treatment plan was not developed to articulate decisions and agreements before treatment was initiated.",
+            "findings": "1. A review of R3's medical record revealed an intake assessment for R3 was completed on November 28, 2023. However, the treatment plan (completed December 2, 2023) was not completed before physical health services or behavioral health services were provided for R3. 2. A review of R3's medication administration record (MAR) for the month of November, 2023, revealed R3 received assistance in the self-administration of medication beginning on November 28, 2023 for the following medications: Aripiprazole 10 mg and Hydroxizine 2 mg. 3. In an interview, E1 acknowledged a treatment plan for R3 was not completed before R3 was provided physical health services or behavioral health services. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-03-26 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "2502 North Dodge Boulevard, Suite 190a, Tucson, AZ",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH9011",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "11/29/2024",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "11/28/2025",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0131615",
+    "inspection_date": "5/15/2025",
+    "inspection_type": "Complaint",
+    "certificate_number": "BH9011",
+    "deficiencies": [
+        {
+            "rule": "R9-10-718.C.6.a. Medication Services C. If a behavioral health residential facility provides assistance in the self-administration of medication, an administrator shall ensure that: 6. Assistance in the self-administration of medication provided to a resident: a. Is in compliance with an order, and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure assistance in the self-administration of medication provided to a resident was in compliance with an order, for one of one discharged resident sampled. The deficient practice posed a risk if the resident experienced a change in condition due to improper assistance in the self-administration of medication.",
+            "findings": "1. A review of R1's electronic medical record revealed a medication order for \"BusPIRone..15 mg...PO TID.\" 2. A review of R1's electronic medication administration record (MAR) revealed R1 did not receive assistance in the self- administration of \"BusPIRone..15 mg...PO TID\" on February 13 2025. 3. A review of R1's electronic medical record revealed an incident report dated February 14, 2025. The report stated \"...Writer was doing evening medication pass, writer had looked over the scheduled medications for the day and had noticed that a 2pm medication had been skipped. Writer was not informed that member had a 2pm medication. Writer informed member that they had a 2pm medication. Member responded 'yes that is correct.' Writer took member's vitals, asked member who they had felt. Member did not require any emergency care...\" 4. In an interview, E1 reported BH9011 had implemented a plan for personnel members who provide medication services. E1 reported all personnel members who provide medication services now wear a watch with timers set for medication pass times. 5. In a joint exit interview, E1 and E2 acknowledged assistance in the self- administration of medication provided to R1 was not in compliance with an order. Plan of Correction Name, title and/or Position of the Person Responsible Joseph Salome Meraz Site Supervisor Date temporary correction was implemented 2025-05-23 Date permanent correction will be complete 2025-06-02 Temporary Solution Residential RN provided retraining with staff on checking EMAR and wearing watch set with afternoon med time reminders. Permanent Solution Site staff provided watches programmed with afternoon med time reminders that must be worn every shift. Monitoring Site supervisor will complete the daily supervisor checklist which includes daily review of EMAR. Site Supervisor will monitor staff daily to ensure watches with med time reminders are being worn."
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "legal_name": "AVERY'S HOUSE, LLC",
+    "facility_status": "Active",
+    "address": "2416 North 113th Street, Apache Junction, AZ 85120",
+    "license_status": "Active",
+    "phone": "4806706761",
+    "license_number": "BH7513",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "KALEIGH TELLES",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "AVERY'S HOUSE, LLC",
+    "inspection_number": "INSP-0062347",
+    "inspection_date": "8/31/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "K. An administrator shall: 8. Maintain a written log of unauthorized absences for at least 12 months after the date of a resident's absence that includes the: a. Name of a resident absent without authorization, b. Name of the individual to whom the report required in subsection (K)(7) was submitted, and c. Date of the report; and",
+            "evidence": "Based on documentation review and interview, the administrator failed to maintain a log of unauthorized absences that included the name of a resident absent without authorization, the name of the individual to whom the report required in subsection (K)(7) was submitted, and the date of the report.",
+            "findings": "1. A review of facility incident reports revealed three resident elopements on July 18, 2023, and two resident elopements on July 23, 2023. A review of facility documentation revealed no log of unauthorized absences was available for review. 2. In documentation review, a facility policy, titled, \"Discharge Against Medical Advice (AMA) and (AWOL), page 81, documented, \"...An AWOL log will be maintained by the Clinical Director of all clients leaving AWOL, this log shall be reviewed as a part of the quality management program. The log must contain a list of all unauthorized absences for at least 12 months after the date of a clients absence that includes the residences name, to whom the report was submitted, the date of the report the evaluation and any action that was taken because of the unauthorized absence.\" 3. During an interview, E1, E2, and E3 reported R1, R2, R3, and R4 left the facility without authorization in July 2023. E1 reported a log of unauthorized absences had not been maintained by the administrator. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-10-28 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 2. A personnel member's skills and knowledge are verified and documented: a. Before the personnel member provides physical health services or behavioral health services, and b. According to policies and procedures; and",
+            "evidence": "Based on record review, and interview, for one of two personnel members reviewed, the administrator failed to ensure the personnel members' skills and knowledge were verified and documented before the personnel member provided behavioral health services. The deficient practice posed a health risk to residents if a personnel's skills and knowledge were not verified.",
+            "findings": "1. In record review, the personnel record for E6 (hired November 7, 2022, as a Behavioral Health Technician) included documentation of the verification of skills and knowledge dated March 24, 2023. 2. During an interview, E1 reported E6 was hired on November 7, 2022; however, the documentation of E4's skills and knowledge was not completed until March 24, 2023, and before E4 provided behavioral health services, as required. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-10-28 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "E. An administrator shall ensure that: 2. A personnel member completes orientation before providing behavioral health services or physical health services;",
+            "evidence": "Based on record review, and interview, for one of two personnel records reviewed, the administrator failed to ensure a personnel member completed orientation before providing behavioral health services. The deficient practice posed a risk if an employee was not provided orientation before providing behavioral health services to residents.",
+            "findings": "R9-10-101(155) \"Orientation\" means the initial instruction and information provided to an individual before the individual starts work or volunteer services in a health care institution. 1. In record review, the personnel record for E6 (hired November 7, 2022, as a Behavioral Health Technician), did not include documentation of orientation. 2. During an interview, the personnel record was reviewed with E1, who acknowledged E6's personnel record did not include documentation of completed orientation before providing behavioral and/or physical health services. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-10-28 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on record review and interview, for two of two personnel records reviewed, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of compliance with the requirements in A.R.S. \\'a7 36-425.03(A)(E), The deficient practice posed a risk if an employee was a danger to a vulnerable population.",
+            "findings": "A.R.S. \\'a7 36-425.03(E) states \"Children's behavioral health program personnel shall certify on forms that are provided by the department and notarized that they are not awaiting trial on or have never been convicted of or admitted in open court or pursuant to a plea agreement to committing any of the offenses listed in section 41-1758.03, subsection B or C in this state or similar offenses in another state or jurisdiction.\" 1. In record review, E6's personnel record (hired November 7 2022) as a behavioral health technician (BHT) included a valid fingerprint clearance card; however, documentation of compliance with A.R.S. \\'a7 36-425.03(E) was not provided for review. 2. In record review, E7's personnel record (hired September 2, 2022) as a behavioral health technician (BHT) included a valid fingerprint clearance card; however, documentation of compliance with A.R.S. \\'a7 36-425.03(E) was not provided for review. 3. During an interview, E1 acknowledged the personnel records did not include the required documentation of compliance with A.R.S. \\'a7 36-425.03(E). Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-10-28 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

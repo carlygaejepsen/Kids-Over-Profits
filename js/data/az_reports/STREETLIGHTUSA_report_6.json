@@ -1,0 +1,24 @@
+{
+    "legal_name": "STREETLIGHTUSA",
+    "facility_status": "Active",
+    "address": "6805 North 81st Ave, Units 150, 160, & Bldg A, Glendale,",
+    "license_status": "Active",
+    "phone": "6234350900",
+    "license_number": "BH5096",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "8/1/2025",
+    "chief_administrative_officer": "LERBBY ANTUNEZ",
+    "license_expires_date": "7/31/2026",
+    "owner_licensee": "STREETLIGHTUSA",
+    "inspection_number": "INSP-0087385",
+    "inspection_date": "3/27/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 1. The premises and equipment are: c. Free from a condition or situation that may cause a resident or other individual to suffer physical injury;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the premises were free from a condition or situation that may cause a resident or other individual to suffer physical injury. The deficient practice posed a potential ligature hazard that may cause a resident or other individual to suffer physical injury.",
+            "findings": "1. The Compliance Officer observed a shared bathroom assigned to R1. The bathroom contained grab bars mounted to the wall. 2. In an interview, E1 acknowledged the grab bars posed a potential ligature hazard, and the premises was not free from a condition or situation that may cause a resident or other individual to suffer physical injury. Technical assistance was provided on this Rule during the compliance inspection conducted on February 27, 2024. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-05-24 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

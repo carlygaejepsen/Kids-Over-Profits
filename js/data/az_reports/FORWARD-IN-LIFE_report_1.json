@@ -1,0 +1,24 @@
+{
+    "legal_name": "FORWARD IN LIFE",
+    "facility_status": "Active",
+    "address": "8402 North 33rd Drive, Phoenix, AZ 85051",
+    "license_status": "Active",
+    "phone": "4804044159",
+    "license_number": "BH6589",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "12/9/2024",
+    "chief_administrative_officer": "MELISSA NASH",
+    "license_expires_date": "12/8/2025",
+    "owner_licensee": "MELISSA NASH",
+    "inspection_number": "INSP-0069273",
+    "inspection_date": "7/31/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 4. Includes: b. The physical health services or behavioral health services to be provided to the resident;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a treatment plan included the behavioral health services to be provided to the resident, for two of two residents sampled.",
+            "findings": "R9-10-101.24. \"Assistance in the self-administration of medication\" means restricting a patient's access to the patient's medication and providing support to the patient while the patient takes the medication to ensure that the medication is taken as ordered. R9-10-101.135. \"Medication administration\" means restricting a patient's access to the patient's medication and providing the medication to the patient or applying the medication to the patient's body, as ordered by a medical practitioner. 1. A review of facility documentation revealed policies and procedures to cover assistance in the self-administration of medication and medication administration. 2. A review of R1's medical record revealed a treatment plan (dated in 2024). However, R1's treatment plan did not include whether assistance in the self- administration of medication or medication administration was to be provided to R1. 3. A review of R2's medical record revealed a treatment plan (dated in 2024). However, R2's treatment plan did not include whether assistance in the self-administration of medication or medication administration was to be provided to R2. 4. In an interview, E5 reported E5 puts medication in a cup and then gives the cup to the resident. 5. In an interview, E5 reported the level of medication services (self-administration, assistance in the self- administration of medication, or medication administration) to be provided to a resident depended on the resident. 6. In an interview, E5 acknowledged R1's and R2's treatment plans did not include the behavioral health services to be provided to the resident. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-30 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

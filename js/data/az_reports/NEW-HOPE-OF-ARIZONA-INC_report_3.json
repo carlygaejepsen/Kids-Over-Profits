@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA INC",
+    "facility_status": "Active",
+    "address": "1881 South 235th Drive, Buckeye, AZ 85326",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4630",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078732",
+    "inspection_date": "8/28/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "E. A resident has the following rights: 3. To receive privacy in treatment and care for personal needs, including the right not to be fingerprinted, photographed, or recorded without consent, except: a. A resident may be photographed when admitted to a behavioral health residential facility for identification and administrative purposes;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a resident received privacy in treatment. The deficient practice posed a risk as the administrator did not ensure confidentiality in treatment as well as a resident's right to privacy in treatment.",
+            "findings": "1. The Compliance Officer observed the facility identified an opened loft area at the front of the residential facility and an office/privacy room available for residents for privacy in treatment and visitation. 2. In an interview, R1 reported R1 received counseling in the open loft room while other residents were present in the facility living room. 3. In a phone interview, E3 acknowledged E3 provided counseling in the open loft area due to E3 having Internet connectivity issues in the identified privacy room. 4. In an interview, E1 acknowleged the administrator to ensure confidentiality in treatment as well as a resident's right to privacy in treatment. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-25 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 6. If a resident bathroom door locks from the inside, an employee has a key and access to the bathroom;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure an employee had a key and access to a bathroom with a door capable of being locked from the inside.",
+            "findings": "1. The Compliance Officer observed a resident shared bathroom which contained a door lockable from the inside. 2. The Compliance Officer requested E1 to demonstrate the bathroom door could be unlocked. E1 was unable to demonstrate the bathroom door could be unlocked. E1 acknowledged an employee could not gain access to the bathroom which contained a door lockable from the inside. 3. In an interview, E2 acknowledged the administrator failed to ensure an employee had a key and access to a bathroom with a door capable of being locked from the inside. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-25 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

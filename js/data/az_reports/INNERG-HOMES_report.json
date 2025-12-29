@@ -1,0 +1,44 @@
+{
+    "legal_name": "INNERG HOMES",
+    "facility_status": "Active",
+    "address": "13053 East Marigold Lane, Florence, AZ 85132",
+    "license_status": "Active",
+    "phone": "6026722066",
+    "license_number": "BH9804",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "6/21/2025",
+    "chief_administrative_officer": "DAVIANA ROSALES-CORDER",
+    "license_expires_date": "6/20/2026",
+    "owner_licensee": "INNERG HOMES LLC",
+    "inspection_number": "INSP-0073207",
+    "inspection_date": "10/11/2024",
+    "inspection_type": "Initial Monitoring",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission, for one of one resident sampled. The deficient practice posed a risk as this information was required for the development and implementation of a treatment plan, per R9-10-708.A.1. Findings include: 1. A review of R1's medical record did not reveal a nursing assessment or medical history and physical examination dated within 30 calendar days before admission or within 72 hours after admission. 2. In an interview, E1 acknowledged R1's nursing assessment or medical history and physical examinations was not available for review. R1 reported R1 had to request the record from a provider. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 8. If a behavioral health assessment is conducted by a: a. Behavioral health technician or registered nurse, within 24 hours a behavioral health professional, certified or licensed to provide the behavioral health services needed by the resident, reviews and signs the behavioral health assessment to ensure that the behavioral health assessment identifies the behavioral health services needed by the resident; or",
+            "evidence": "Based on record review and interview, the administrator failed to ensure, if a behavioral health assessment was conducted by a behavioral health technician (BHT) or registered nurse, within 24 hours a behavioral health professional (BHP), certified or licensed to provide the behavioral health services needed by the resident, reviewed and signed the behavioral health assessment to ensure that the behavioral health assessment identified the behavioral health services needed by the resident, for one of one resident sampled.",
+            "findings": "1. A review of R1's medical record revealed a document titled, \"Student Intake,\" dated September, 2024. At the time of the inspection it was unknown which personnel conducted the assessment and the assessment did not include a signature of the behavioral health professional who reviewed the behavioral health assessment. 2. In an interview, E1 acknowledged R1's behavioral health assessment was not reviewed and signed by a behavioral health professional to ensure the behavioral health assessment identified the behavioral health services needed by R1. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 11. A behavioral health assessment: b. Includes: iii. The signature and date signed of the personnel member conducting the behavioral health assessment; and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a behavioral health assessment included the signature and date signed by the personnel member conducting the behavioral health assessment, for one of one resident sampled. The deficient practice posed a risk if the Department was unable to determine if an assessment had been completed and in accordance with R9-10- 707.A.11.b.iii.",
+            "findings": "1. A review of R1's medical record revealed a behavioral health assessment dated September 23, 2024. However, the document was not signed or dated by the personnel member conducting the behavioral health assessment. 2. In an interview, E1 acknowledged R1's behavioral health assessment did not include the signature and date signed by the personnel member who conducted the behavioral health assessment. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 13. Except as provided in subsection (E)(1)(d), a resident provides",
+            "evidence": "of freedom from infectious tuberculosis: a. Before or within seven calendar days after the resident's admission, and b. As specified in R9-10-113. Evidence Based on record review and interview, the administrator failed to ensure a resident provided evidence of freedom from infectious tuberculosis (TB) before or within seven calendar days after the resident's admission, for one of one resident sampled. The deficient practice posed risk to infection control.",
+            "findings": "1. A review of R1's medical record (admitted September, 2024) did not reveal documentation of R1's freedom from infectious TB. 2. In an interview, E1 acknowledged R1's medical record did not contain documentation of freedom from infectious TB. E1 stated E1 would have to request the document from a provider. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 2. Is completed: b. Before the resident receives physical health services or behavioral health services or within 48 hours after the assessment is completed;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a treatment plan was completed, before physical health or behavioral health services were provided, or within 48 hours after the assessment is completed for one of one resident sampled. The deficient practice posed a risk as a treatment plan was not developed to articulate decisions and agreements before treatment was initiated.",
+            "findings": "1. A review of R1's medical record revealed an intake assessment dated September 23, 2024. R1's medical record revealed a treatment plan dated September 27, 2024. The treatment plan was not completed within 48 hours after the assessment was completed and as per R9-10- 708.A.2.b. 2. In an interview, E1 acknowledged a treatment plan for R1 was not completed within 48 hours after the assessment was completed and as per R9-10-708.A.2.b. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

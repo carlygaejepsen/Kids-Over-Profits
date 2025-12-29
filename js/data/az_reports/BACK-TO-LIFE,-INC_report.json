@@ -1,0 +1,24 @@
+{
+    "legal_name": "BACK TO LIFE, INC",
+    "facility_status": "Active",
+    "address": "5915 West Roanoke Avenue, Phoenix, AZ 85035",
+    "license_status": "Active",
+    "phone": "6235189552",
+    "license_number": "BH2772",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "GRACIE PADILLA",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "BACK TO LIFE INCORPORATED.",
+    "inspection_number": "INSP-0060270",
+    "inspection_date": "1/15/2025",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that a resident's medical record contains: 9. Orders;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a resident's medical record contained orders for two of two resident records sampled. The deficient practice posed a risk as medication taken by residents could not be verified against a medication order.",
+            "findings": "1. A review of R1's medications and prescription labels revealed R1 received assistance in the self administration of the following medications: - Guanfacine HCL 4 MG Tablet, Take 1 tablet by mouth every morning; - Fluoxetine HCL 20 MG Capsule, Take 1 capsule by mouth every morning; - Cyproheptadine 4 MG Tablet, Take 1 tablet by mouth twice a day; - Bisacodyl USP 5 MG Tablets; - Haloperidol 1 MG Tablet, Take 1 tablet by mouth twice daily; - Hydroxyzine PAM 25 MG Cap, Take 1 capsule by mouth twice daily; and - Melatonin 5 MG Tablets. 2. A review of R1's medical record revealed medication orders for the aforementioned medications were not available for review. 3. A review of R1's medications and prescription labels revealed the phrase \"twice a day\" from the prescription label for R1's medication \"Cyproheptadine 4 MG Tablet\" had been scribbled out with black marker. The word \"AM\" was written on the bottom of the prescription label. A review of R1's medication administration record (MAR) revealed R1 received assistance in the self administration of \"Cyproheptadine 4 MG Tablet\" once daily at 7:00 AM for fifteen days. However, an order to change medication dosage was not available for review in R1's medical record. 4. A review of R2's medications and prescription labels revealed R2 received assistance in the self administration of the following medications: - Amphetamine Salts 5 MG Tablets, Take one tab by mouth every morning; - Adderall 5 MG; - Polyethylene Glycol 3350 POWD, Mix 1 capful w/ 8 ox of water every day for 30 days; and - Hydroxyzine PAM 50 MG Cap, Take 1 capsule by mouth twice a day at 7:00 am and 7:00 pm as needed for anxiety. 5. A review of R2's medical record revealed medication orders for the aforementioned medications were not available for review. 6. A review of R2's medications and prescription labels revealed the phrase \"mouth two times a day at 7:00 am and\" from the prescription label for R2's medication \"Hydroxyzine PAM 50 MG Cap\" had been scribbled out with black marker. The words \"PM only\" were written on the bottom of the prescription label. A review of R2's MAR revealed R2 received assistance in the self administration of \"Hydroxyzine PAM 50 MG Cap\" once daily at 6:00 PM for five days. However, an order to change medication dosage was not available for review in R2's medical record. 7. In an exit interview, E1 and E2 reported the facility was having trouble obtaining medication orders from the residents' prescriber's, as the providers claimed giving the facility medications orders was a HIPAA violation. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

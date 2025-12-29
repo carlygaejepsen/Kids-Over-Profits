@@ -1,0 +1,29 @@
+{
+    "legal_name": "MONTE NIDO ROSEWOOD SCOTTSDALE",
+    "facility_status": "Active",
+    "address": "14138 East Peak View Road, Scottsdale, AZ 85262",
+    "license_status": "Active",
+    "phone": "4805206848",
+    "license_number": "BH9530",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "RACHEL HOFFMAN",
+    "license_expires_date": "9/14/2025",
+    "owner_licensee": "ROSEWOOD RANCH, LP",
+    "inspection_number": "INSP-0077947",
+    "inspection_date": "7/5/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of compliance with the requirements in Arizona Revised Statutes (A.R.S.) \\'a7 36-425.03(E), for three of four personnel members sampled. The deficient practice posed a risk if E5, E6, and E7 were a danger to a vulnerable population. Findings include: A.R.S. \\'a7 36-425.03(A) states \"Except as provided in subsections B, C and D of this section, children's behavioral health program personnel, including volunteers, shall submit the form prescribed in subsection E of this section to the employer and shall have a valid fingerprint clearance card issued pursuant to title 41, chapter 12, article 3.1 or, within seven working days after employment or beginning volunteer work, shall apply for a fingerprint clearance card.\" A.R.S. \\'a7 36-425.03(E) states \"Children's behavioral health program personnel shall certify on forms that are provided by the department and notarized that they are not awaiting trial on or have never been convicted of or admitted in open court or pursuant to a plea agreement to committing any of the offenses listed in section 41- 1758.03, subsection B or C in this state or similar offenses in another state or jurisdiction.\" 1. A review of E5's (hired in 2024) personnel record revealed E5 was hired as a behavioral health technician (BHT). E5's personnel record revealed a valid fingerprint clearance card. However, documentation of compliance with A.R.S. \\'a7 36-425.03(E) was not available for review. 2. A review of E6's (hired in 2023) personnel record revealed E6 was hired as a BHT. E6's personnel record revealed documentation of compliance with A.R.S. \\'a7 36-425.03(A) and A.R.S. \\'a7 36- 425.03(E), however, the document was not completed within seven working days after employment. 3. A review of E7's (hired in 2023) personnel record revealed E7 was hired as a BHT. E7's personnel record revealed documentation of compliance with A.R.S. \\'a7 36-425.03(A) and A.R.S. \\'a7 36-425.03(E), however, the document was not completed within seven working days after employment. 4. In a joint interview, E1, E2, and E3 acknowledged E5's personnel record did not contain documentation of compliance with A.R.S. \\'a7 36-425.03(E), and documentation of compliance with A.R.S. \\'a7 36-425.03(E), was not completed within seven working days after employment for E6 and E7. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-07-23 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "K. An administrator shall ensure that: 3. There is a daily staffing schedule that: b. Includes documentation of the employees who work each calendar day and the hours worked by each employee; and",
+            "evidence": "Based on documentation review, and interview, the administrator failed to ensure a daily staffing schedule included documentation of the employees who work each calendar day and the hours worked by each employee.",
+            "findings": "1. A review of E4's personnel record revealed a document titled \"Termination\". The document stated \"Ineligible due to licensure background. LAST DAY WORKED [date]\". 2. A review of facility documentation revealed a staffing schedule dated November 2023. The staffing schedule did not include documentation of the hours worked by E4. 3. In an interview, E8 reported E4 was on-site receiving training on November 27-29, 2024 4. In a joint interview, E1, E2, and E3 acknowledged the daily staffing schedule did not include documentation of the hours worked by E4. . Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-07-23 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

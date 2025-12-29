@@ -1,0 +1,34 @@
+{
+    "legal_name": "OUR HOUSE RESIDENTIALS",
+    "facility_status": "Active",
+    "address": "8910 West Monroe Street, Peoria, AZ 85345",
+    "license_status": "Active",
+    "phone": "6232484347",
+    "license_number": "BH5607",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "4/1/2025",
+    "chief_administrative_officer": "KANESHA ANDERSON",
+    "license_expires_date": "3/31/2026",
+    "owner_licensee": "ANGEL KIDS ACADEMY LLC",
+    "inspection_number": "INSP-0081380",
+    "inspection_date": "4/9/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "36-420.01. Health care institutions; fall prevention and fall recovery; training programs; definition A. Each health care institution shall develop and administer a training program for all staff regarding fall prevention and fall recovery. The training program shall include initial training and continued competency training in fall prevention and fall recovery. A health care institution may use information and training materials from the department's Arizona falls prevention coalition in developing the training program.",
+            "evidence": "Based on documentation review, record review, and interview, the health care institution failed to develop and administer a training program for all staff regarding fall prevention and fall recovery including initial training and continued competency training in fall prevention and fall recovery. The deficient practice posed a risk as organized instruction and information related to resident care and safety was not implemented.",
+            "findings": "1. A review of facility documentation revealed a PDF of policy and procedures dated October 2020(revised 2022). However a training program in fall prevention and fall recovery was not available for review. 2. A review of E6's personnel record revealed documention for initial training and continued training in fall prevention and fall recovery was not available for review. 3. In an interview, E1 reported training in fall prevention and fall recovery for E6 was not conducted. This is a repeat deficiency from the on-site compliance and complaint inspection conducted on March 7, 2023. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-06-18 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: h. Cardiopulmonary resuscitation training, if required for the individual according to R9-10- 703(C)(1)(e); i. First aid training, if required for the individual according to this Article or policies and procedures; and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of cardiopulmonary resuscitation (CPR) training, if required for the individual according to R9- 10-703(C)(1)(e), and first aid training, for one of three behavioral health technicians sampled. The deficient practice posed a risk if E4 was unable to meet a resident's needs during an emergency or during an accident. Findings include: 1. A review of E4's (hired as a behavioral health technician) personnel record revealed documentation of CPR and first aid training. However, the training had expired in March 2024. 2. In an interview, E1 acknowledged documentation of current CPR and first aid training was not available for review and was unsure if E4 had taken another CPR and first aid training. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-06-18 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 2. A pest control program that complies with A.A.C. R3-8-20l(C)(4) is implemented and documented;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure a pest control program in compliance with A.A.C. R3- 8-20l(C)(4) was documented.",
+            "findings": "R3-8-201.C.4. Applicator licensure. An individual may not provide pest management services at a school, child care facility, health care institution, or food-handling establishment unless the individual is a certified applicator in the certification category for which services are being provided. 1. The Compliance Officer requested to review the facility's current pest control documentation. However, a pest control service program, invoice or contract was not provided for review. 2. In an interview, E1 acknowledged the facility did not have a pest control program documented. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-06-18 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

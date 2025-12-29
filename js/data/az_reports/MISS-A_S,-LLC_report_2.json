@@ -1,0 +1,24 @@
+{
+    "legal_name": "MISS A'S, LLC",
+    "facility_status": "Active",
+    "address": "9143 North 82nd Lane, Peoria, AZ 85345",
+    "license_status": "Active",
+    "phone": "6236700039",
+    "license_number": "BH6116",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "3/12/2025",
+    "chief_administrative_officer": "ALLISA DENEKE",
+    "license_expires_date": "3/11/2026",
+    "owner_licensee": "MISS A'S LLC",
+    "inspection_number": "INSP-0077923",
+    "inspection_date": "2/13/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that: 5. Unless otherwise stated: a. Documentation required by this Article is provided to the Department within two hours after a Department request; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure documentation required by Article 7 was provided to the Department within two hours after a Department request. The deficient practice posed a risk as the Department was unable to determine substantial compliance. Findings include: R9-10-720.C.3. An administrator shall maintain documentation of a current fire inspection. 1. The Compliance Officer requested to review the facility's current fire inspection. However, a current fire inspection report was not provided for review within two hours after a Department request. 2. In an interview, E1 reported the facility had a current fire inspection and E1 reported to be unable to locate the documentation. E1 acknowledged a current fire inspection report was not provided for review within two hours after a Department request. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "HUMAN CARE SERVICES",
+    "facility_status": "Active",
+    "address": "36550 West Santa Maria Street, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH7917",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "9/13/2025",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0072501",
+    "inspection_date": "7/13/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall provide written notification to the Department of a resident's: 2. Self-injury, within two working days after the resident inflicts a self-injury or has an accident that requires immediate intervention by an emergency medical services provider.",
+            "evidence": "Based on documentation review and interview, the administrator failed to provide written notification to the Department of a resident's self-injury, within two working days after the resident inflicts a self-injury that requires immediate intervention by an emergency medical services provider.",
+            "findings": "1. A review of Department documentation, revealing evidence the Department was notified by BH7917 of a resident's self-injury requiring immediate intervention by an emergency medical services provider was not available for review. 2. A review of documents titled, \"Incident Report,\" revealed a report dated June 12, 2023, which stated R1 had left the facility without authorization, and also described a self-injury incident involving R1. 3. In an interview, E1 acknowledged written notification to the Department of the incident was not provided within two days as required. 4. In an interview, E1 reported R1 did not need medical attention for R1's self-harm. However, documentation to prove otherwise was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

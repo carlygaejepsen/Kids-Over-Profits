@@ -1,0 +1,34 @@
+{
+    "legal_name": "BACK TO LIFE, INCORPORATED",
+    "facility_status": "Active",
+    "address": "6420 West Cocopah Street, Phoenix, AZ 85043",
+    "license_status": "Active",
+    "phone": "6235189552",
+    "license_number": "BH5803",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "GRACIE PADILLA",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "BACK TO LIFE INCORPORATED.",
+    "inspection_number": "INSP-0060273",
+    "inspection_date": "8/8/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: d. The individual's license or certification, if the individual is required to be licensed or certified in this Article or policies and procedures;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's license, for one of seven personnel records sampled.",
+            "findings": "1. A review of E4's personnel record revealed E4 was the facility's registered nurse. However, documentation of E4's nursing license was not available for review. 2. In an interview, E1 reported E4 had a nursing license, and was not sure why the nursing license was not in E4's personnel record. 3. In an interview, E1 acknowledged E1 failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's license. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-09 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a",
+            "evidence": "Based on documentation review, record personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: h. Cardiopulmonary resuscitation training, if required for the individual according to R9-10- 703(C)(1)(e); i. First aid training, if required for the individual according to this Article or policies and procedures; and review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of cardiopulmonary resuscitation (CPR) training, if required for the individual according to R9-10-703(C)(1)(e), and first aid training, for one of seven personnel members sampled. The deficient practice posed a risk if E3 was unable to meet a resident's needs during an emergency or an accident.",
+            "findings": "1. A review of facility documentation revealed a policy and procedure (dated March 2020) titled \"First Aid, CPR, and prevention and support instruction.\" The policy stated \"Employees will be notified prior to the expiration of their First Aid, CPR, or Prevention and Support training and will need to schedule time to attend the trainings annually.\" 2. A review of E1's personnel record revealed a CPR/First Aid card. However, the CPR/First Aid card expired August 1, 2023. 3. In an interview, E1 acknowledged E1 failed to ensure a personnel record was maintained for each personnel member to include documentation of CPR training and first aid training. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-09 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for a behavioral health outdoor program, an administrator shall ensure that the premises and equipment are sufficient to accommodate: 2. An individual admitted as a resident by the behavioral health residential facility.",
+            "evidence": "Based on observation, record review and interview, the administrator failed to ensure the premises was sufficient to accomodate an individual admitted as a resident by the behavioral health residential facility. Findings include: 1. The Compliance Officer observed an opening in the facility's backyard wall which allowed unimpeded access into and out of the backyard. 2. A review of R2's medical record revealed a facility document titled \"Pre- admission profile sheet.\" The document stated R2 \"leaves house unauthorized.\" 3. In an interview, E1 acknowledged E1 failed to ensure the premises was sufficient to accomodate an individual admitted as a resident by the behavioral health residential facility. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-10 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "2502 North Dodge Boulevard, Suite 190a, Tucson, AZ",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH9011",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "11/29/2024",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "11/28/2025",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073290",
+    "inspection_date": "8/20/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A.R.S. \u00a7 36-406.1.c. Powers and duties of the department In addition to its other powers and duties: 1. The department shall: c. Have access to books, records, accounts and any other information of any health care institution reasonably necessary for the purposes of this chapter.",
+            "evidence": "Based on documentation review and interview, the department did not have access to books, records, accounts and any other information of any health care institution reasonably necessary for the purposes of this chapter. The deficient practice posed a risk as the facility established and implemented a policy that restricted how the Department collects evidence needed to determine substantial compliance.",
+            "findings": "1. In an interview, E1 reported E1 was directed to inform the Compliance Officer that photos of facility documentation, medical records, and personnel records were not allowed. However, BH9011 would provide the Compliance Officer with copies of any documentation the Compliance Officer requested. 2. In a joint interview, E1 and E2 acknowledged the department shall have access to books, records, accounts and any other information of any health care institution reasonably necessary for the purposes of this chapter and E1 was directed to not allow the Compliance Officer to take photos as evidence. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-20 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "8571 East Tanque Verde Road, Tucson, AZ 85749",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH1618",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073242",
+    "inspection_date": "9/29/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "36-420.01. Health care institutions; fall prevention and fall recovery; training programs; definition A. Each health care institution shall develop and administer a training program for all staff regarding fall prevention and fall recovery. The training program shall include initial training and continued competency training in fall prevention and fall recovery. A health care institution may use information and training materials from the department's Arizona falls prevention coalition in developing the training program.",
+            "evidence": "Based on record review and interview, the manager failed to ensure the health care institution administered a training program for all staff regarding fall prevention and fall recovery for two of two personnel sampled. The deficient practice posed a risk to the physical health and safety of a resident.",
+            "findings": "1. A review of E7's (hire date May 30, 2023) personnel record revealed E7 completed orientation, however, no documentation of E7's completion of initial fall prevention and fall recovery training was provided. 2. A review of E8's (hire date July 10, 2023) personnel record revealed E8 completed orientation, however, no documentation of E8's completion of initial fall prevention and fall recovery training was provided. 3. During an interview, E6 acknowledged there was no documentation provided indicating E7 or E8 had completed an initial training program for fall prevention and fall recovery. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2023-11-07"
+        },
+        {
+            "rule": "J. An administrator shall ensure that the following personnel members have first-aid and cardiopulmonary resuscitation training specific to the populations served by the behavioral health residential facility: 1. At least one personnel member who is present at the behavioral health residential facility during hours of operation of the behavioral health residential facility, and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure at least one personnel member who was present at the behavioral health residential facility during hours of operation of the behavioral health resident facility had first- aid and cardiopulmonary resuscitation (CPR) training, for one of two personnel members sampled. The deficient practice posed a risk if the personnel member did not have proper training to perform life saving techniques in the event of an emergency. 1. A review of a staff schedule for August and September 2023 revealed E8 worked alone from 9:00 PM to 7:00 AM on August 15, 16, 22, 29 adn 30, 2023, and on September 5, 6, 13, 16, 20, 23 and 27, 2023. 2. A review of E8's personnel record revealed a first-aid card which expired on July 21, 2023. E8's personnel record did not contain documentation of current first-aid training. 3. In an interview, E1 acknowledged there were times when no personnel present at the facility had current first-aid training. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-07 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical",
+            "evidence": "Based upon record review and interview, the administrator failed to ensure that a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission; practitioner performed a medial history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documented the medial history and physical examination or nursing assessment in the resident's medial record within 72 hours after admission, for one of two resident's sampled.",
+            "findings": "1. A review of R2's medical record revealed evidence of a medical history and physical exam or nursing assessment within 30 calendar days before admission or 72 hours after admission was not available for review. Based on R2's date of admission, this document was required. 2. In an interview, E1 acknowledged R2's medical history and physical exam or nursing assessment was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-07 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 1. The premises and equipment are: c. Free from a condition or situation that may cause a resident or other individual to suffer physical injury;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the premises was free from a condition or situation that may cause a resident or other individual to suffer physical injury. The deficient practice posed a risk to the physical health and safety of a resident.",
+            "findings": "1. During a tour of the facility, the Compliance Officer observed a common bathroom available to guests and residents to use. The bathroom contained a shower which included grab bars attached to the wall. The Compliance Officer also observed grab bars mounted behind and next to a toilet. 2. In another bathroom used by residents, the Compliance Officer observed a metal towel bar mounted to the wall with screws. When the Compliance Officer applied considerable downward pressure, the towel bar did not give easily. 3. During an interview, E1 acknowledged that the grab bars and towel bar posed a potential ligature hazard. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-07 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "legal_name": "ZAREPHATH, INC",
+    "facility_status": "Active",
+    "address": "9310 East Princess Drive, Mesa, AZ 85207",
+    "license_status": "Active",
+    "phone": "4805186826",
+    "license_number": "BH4096",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "11/1/2024",
+    "chief_administrative_officer": "CHANTEL CATALFO",
+    "license_expires_date": "10/31/2025",
+    "owner_licensee": "ZAREPHATH INC.",
+    "inspection_number": "INSP-0055331",
+    "inspection_date": "2/28/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that: 1. Policies and procedures are established, documented, and implemented to protect the health and safety of a resident that: e. Cover cardiopulmonary resuscitation training including: i. The method and content of cardiopulmonary resuscitation training, which includes a demonstration of the individual's ability to perform cardiopulmonary resuscitation; ii. The qualifications for an individual to provide cardiopulmonary resuscitation training; iii. The time-frame for renewal of cardiopulmonary resuscitation training; and iv. The documentation that verifies that the individual has received cardiopulmonary resuscitation training;",
+            "evidence": "Based on documentation review, record review and interview, the administrator failed to implement policies and procedures to protect the health and safety of a resident to cover cardiopulmonary resuscitation (CPR) training to include a demonstration of the individual's ability to perform CPR. The deficient practice posed a risk if an individual was unable to perform CPR, the Department was unable to determine substantial compliance as the documentation was not in the personnel record during the inspection, and the documentation was not provided at the exit interview.",
+            "findings": "1. A review of facility documentation revealed a policy and procedure titled \"Policy 703.4: Cardiopulmonary Resuscitation/First Aid Training\" (dated January 15, 2023). The policy and procedure stated \"...Zarephath personnel are to attend training through one of the approved training providers that require a demonstration of skills learned...\" 2. A review of E3's (hired in 2022) personnel record revealed documentation of CPR training from \"National Health & Safety Association\" (cpr.io) issued November 30, 2021 and valid for two years. 3. A review of the \"National Health & Safety Association\" website revealed courses were conducted online. The website stated \"Online CPR certification made easy...Our courses are designed for professionals who use CPR on a regular basis. We do not require you to practice skills in order to receive a certification card.\" 4. In an interview, E1 acknowledged policies and procedures were not implemented to protect the health and safety of a resident to cover CPR training to include a demonstration of the individual's ability to perform cardiopulmonary resuscitation. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-04-14 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 1. A behavioral health residential facility has a: a. Room that provides privacy for a resident to receive treatment or visitors; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the behavioral health residential facility had a room to provide privacy for a resident to receive treatment or visitors. The deficient practice posed a risk if the administrator was unable to ensure confidentiality in treatment as well as a resident's right to privacy in treatment and visitation.",
+            "findings": "R9-10-722.B.8.a. An administrator shall ensure that a resident bedroom complies with the following: Is not used as a common area. R9-10-101.52.a. \"Common area\" means licensed space in health care institution that is: Not a resident's bedroom or a residential unit. 1. The Compliance Officer observed the facility did not have a room to provide privacy for a resident to receive treatment or visitors. 2. In an interview, E1 acknowledged the facility did not have a privacy room for a resident to receive treatment or visitors. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-04-14 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

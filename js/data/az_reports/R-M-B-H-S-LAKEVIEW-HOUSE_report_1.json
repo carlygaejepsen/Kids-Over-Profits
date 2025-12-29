@@ -1,0 +1,29 @@
+{
+    "legal_name": "R M B H S LAKEVIEW HOUSE",
+    "facility_status": "Active",
+    "address": "7005 East Lakeview Avenue, Mesa, AZ 85209",
+    "license_status": "Active",
+    "phone": "4806419552",
+    "license_number": "BH3637",
+    "max_licensed_capacity": "7",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MOSHE LOBL",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "RED MOUNTAIN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0083246",
+    "inspection_date": "2/7/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained to include documentation of Arizona Revised Statutes (A.R.S.) \\'a7 36-411(C)(1), for two of two behavioral health technicians sampled. The deficient practice posed a risk if the personnel members were unfit to work in a residential care institution.",
+            "findings": "1. A.R.S. \\'a7 36-411(C)(1) states: \"C. Owners shall make documented, good faith efforts to: 1. Contact previous employers to obtain information or recommendations that may be relevant to a person's fitness to work in a residential care institution, nursing care institution or home health agency.\" 2. A review of E3's and E4's personnel records revealed valid fingerprint clearance cards. However, documentation of compliance with A.R.S. \\'a7 36-411(C)(1) for E3 and E4 was not provided for review. 3. In an interview, E1 reported the facility started implementing a new reference verification process after the compliance inspection conducted on February 14, 2023. E1 acknowledged E3's and E4's personnel records did not include documentation of compliance with A.R.S. \\'a7 36-411(C)(1). Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete 2024-02-23 Monitoring"
+        },
+        {
+            "rule": "E. If a behavioral health residential facility is authorized to provide respite services, an administrator shall ensure that: 1. Upon admission of a resident for respite services: a. Except as provided in subsection (F), a medical history and physical examination of the resident: i. Is performed; or ii. If dated within the previous 12 months, is available in the resident's medical record from a previous admission to the behavioral health residential facility;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure upon admission of a resident for respite services, a medical history and physical examination of the resident was performed. The deficient practice posed a risk if the facility was unable to meet the needs of a resident.",
+            "findings": "1. A review of R1's medical record revealed R1 was admitted to the facility for respite services. R1's medical record revealed no documentation to indiate a medical history and physical examination of the resident was performed when R1 was admitted to the facility. 2. In an interview, E1 reported E1 believed participants in the facility's program did not need to complete a medical history and physical examination. E1 reported the facility used a medical history completed by an outside health care agency to determine R1's treatment needs. E1 acknowledged R1 did not have a medical history or physical examination performed upon admission to the facility for respite services. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-23 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

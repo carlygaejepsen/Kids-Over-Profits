@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA INC",
+    "facility_status": "Active",
+    "address": "21615 West Watkins Street, Buckeye, AZ 85326",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4629",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078721",
+    "inspection_date": "5/12/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "K. An administrator shall ensure that: 3. There is a daily staffing schedule that: a. Indicates the date, scheduled work hours, and name of each employee assigned to work, including on-call personnel members; b. Includes documentation of the employees who work each calendar day and the hours worked by each employee; and c. Is maintained for at least 12 months after the last date on the documentation;",
+            "evidence": "Based on observation, documentation review, observation, and interview, the administrator failed to ensure there was a daily staffing schedule which indicated the date, scheduled work hours, and name of each employee assigned to work, including on-call personnel members, included documentation of the employees who worked each calendar day and the hours worked by each employee. Findings include: 1. The compliance officer observed E2 working at the facility at the time of the inspection. 2. A request of the facility's staffing schedule revealed a current schedule dated May 7, 2023 through May 13, 2023. The schedule revealed no documentation of the name of the employee assigned to work including on-call for the hours of 9 am to 2 pm.. The schedule for May 9, 2023, May 10, 2023, and May 11, 2023, revealed only the date, work hours and name of the employee working 2 pm to 11:30 pm. The personnel schedule for May 12, 2023, revealed only the date, work hours and name of the employee working 2 pm to 10 pm and 10 pm to 12 am. The personnel schedule did not identify E2 working at the facility on May 12, 2023. 3. In an interview, E1 acknowledged the administrator failed to ensure there was a daily staffing schedule which indicated the date, scheduled work hours, and name of each employee assigned to work, including on-call personnel members, and included documentation of the employees who worked each calendar day and the hours worked by each employee. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-06-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 7. A resident does not: a. Use or have access to any materials, furnishings, or equipment or participate in any activity or treatment that may present a threat to the resident's health or safety based on the resident's documented diagnosis, treatment needs, developmental levels, social skills, verbal skills, or personal history; or",
+            "evidence": "Based on documentation review, record review, observation, and interview, the administrator failed to ensure a resident did not use or have access to any materials, furnishings, or equipment or participate in any activity or treatment that may present a threat to the resident's health or safety based on the resident's documented diagnosis, treatment needs, developmental levels, social skills, verbal skills, or personal history. Findings include: 1. A review of R1's medical record revealed a behavioral health assessment. The assessment identified R1 has a history of self harm. 2. A review of R1's medical record revealed an incident report dated March 14, 2023. The incident report stated \"One of the peers went into the lock box located in the office and took the chemical cleaning product Bar Keeper. Original canned scouring powder product. They poured the powder into a small container and kept it in their room. Their peers were snorting the cleaning product. The member informed the DSP where the item was being stored in their room....DSP contacted Poison Control. The incident report identified no further medical evaluations were required. 3. In an interview E1 reported R1 gained access to a chemical cleaning product stored by the facility and ingested the cleaning product. E1 acknowledged the administrator failed to ensure R1 did not use or have access to any materials, furnishings, or equipment or participate in any activity or treatment that may present a threat to the resident's health or safety based on the resident's documented diagnosis, treatment needs, developmental levels, social skills, verbal skills, or personal history. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-06-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

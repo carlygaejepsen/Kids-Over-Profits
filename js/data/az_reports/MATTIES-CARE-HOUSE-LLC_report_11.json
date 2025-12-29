@@ -1,0 +1,29 @@
+{
+    "legal_name": "MATTIES CARE HOUSE LLC",
+    "facility_status": "Active",
+    "address": "6823 West Pleasant Lane, Laveen, AZ 85339",
+    "license_status": "Active",
+    "phone": "6026860419",
+    "license_number": "BH4867",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "6/1/2025",
+    "chief_administrative_officer": "LATOYA LEE",
+    "license_expires_date": "5/31/2026",
+    "owner_licensee": "MATTIE'S CARE HOUSE, LLC",
+    "inspection_number": "INSP-0076876",
+    "inspection_date": "11/2/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that food is obtained, prepared, served, and stored as follows: 3. Potentially hazardous food is maintained as follows: a. Foods requiring refrigeration are maintained at 41\u00b0 F or below; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure foods requiring refrigeration were maintained at 41\\'b0 F or below. The deficient practice posed a risk for potential food borne illnesses. Findings include: 1. The Compliance Officer observed a thawed, opened cylinder of beef, wrapped in a ziplock bag, thawing on the kitchen counter. The beef was warm to the touch. The beef cylinder's label stated \"Keep refrigerated or frozen. Thaw in refrigerator or microwave.\" 2. In an interview, E2 reported the meat had been frozen and was placed on the kitchen counter that morning. E2 acknowledged the meat was now warm and remained on the kitchen counter. 3. In an interview, E1 acknowledged the meat on the kitchen counter had remained outside of the refrigerator all day and was not maintained at 41\\'b0 F or below. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-02 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 14. Poisonous or toxic materials stored by the behavioral health residential facility are maintained in labeled containers in a locked area separate from food preparation and storage, dining areas, and medications and are inaccessible to residents;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure poisonous or toxic materials stored by the behavioral health residential facility were locked and inaccessible to residents. The deficient practice posed a physical health and risk to residents.",
+            "findings": "1. The Compliance Officer observed the following in an unlocked cabinet beneath the kitchen sink: -Dishwasher pods - Dishwasher detergent The containers contained warning labels. 2. The Compliance Officer observed nine residents on the premises. 3. In an interview, E1 acknowledged the poisonous or toxic materials stored by the facility were not locked away and inaccessible to residents. E1 reported to be unaware the two items were considered toxic and required being locked up. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-02 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

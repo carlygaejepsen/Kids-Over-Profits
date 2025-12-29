@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "12545 West Woodland Avenue, Avondale, AZ 85323",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH6883",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "5/24/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "5/23/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078776",
+    "inspection_date": "6/26/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 7. If a medical practitioner performs a medical history and physical examination or a nurse performs a nursing assessment on a resident before admission, the medical practitioner enters an interval note or the nurse enters a progress note in the resident's medical record within seven calendar days after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure if a medical practitioner performed a medical history and physical examination or a nurse performed a nursing assessment on a resident before admission, the medical practitioner entered an interval note or the nurse entered a progress note in the resident's medical record within seven calendar days after admission, for one of two residents sampled.",
+            "findings": "1. A review of R2's medical record revealed a physical and medical history completed before admission. R2's medical record did not contain evidence the medical practitioner entered an interval note or the nurse entered a progress note in the resident's medical record within seven calendar days after admission. 2. In an interview, E1 reviewed R2's medical record. E1 acknowledged the medical record did not contain evidence the medical practitioner entered an interval note or the nurse entered a progress note in the resident's medical record within seven calendar days after admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Temporary Solution Permanent Solution Monitoring Date permanent correction will be complete 2023-07-28"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 5. Behavioral health services listed in the behavioral health residential facility's scope of services are provided on the premises;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure behavioral health services listed in the behavioral health residential facility's scope of services were provided on the premises.",
+            "findings": "1. A review of the facility policies and procedures reviewed July 1, 2020, revealed a scope of services. The scope of services stated, \"...Behavioral Health Residential Services provides a structured treatment setting with twenty four hour supervision and counseling...\" 2. A review of R1 and R2's treatment plans revealed no documentation of counseling identified in the residents medical record. 3. In an interview, E1 reported the identified facility residents receive respite services. E1 acknowledged the facility is licensed as a behavioral health residential facility. E1 acknowledged the behavioral health services listed in the behavioral health residential facility's scope of services were not provided on the premises. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-07-28 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

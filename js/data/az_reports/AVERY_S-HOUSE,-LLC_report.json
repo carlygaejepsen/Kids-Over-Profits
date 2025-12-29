@@ -1,0 +1,24 @@
+{
+    "legal_name": "AVERY'S HOUSE, LLC",
+    "facility_status": "Active",
+    "address": "2416 North 113th Street, Apache Junction, AZ 85120",
+    "license_status": "Active",
+    "phone": "4806706761",
+    "license_number": "BH7513",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "KALEIGH TELLES",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "AVERY'S HOUSE, LLC",
+    "inspection_number": "INSP-0096939",
+    "inspection_date": "2/12/2025",
+    "inspection_type": "Complaint",
+    "certificate_number": "BH7513",
+    "deficiencies": [
+        {
+            "rule": "R9-10-703.C.1.f. Administration C. An administrator shall ensure that: 1. Policies and procedures are established, documented, and implemented to protect the health and safety of a resident that: f. Cover implementation of the requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on observation, documentation review and record review, the administrator failed to ensure policies and procedures were implemented to protect the health and safety of a resident that cover implementation of the requirements in A.R.S. \u00a7\u00a7 36-425.03.",
+            "findings": "1. The Compliance Officer observed E4 working on-site. 2. A review of the facility\u2019s policies and procedures revealed a policy titled \u201cJob Descriptions\u201c dated November 1, 2021. The policy stated \u201cPosition: Behavioral Health Technician\u2026Minimum qualifications\u2026Current and valid Arizona Fingerprint Card.\u201d 3. A review of E4\u2019s (hired as a behavioral health technician) personnel record revealed a print out from the Department of Public Safety\u2019s website. The document included a fingerprint clearance card application number for E4, however, the document stated \u201cStatus In process\u201d. 4. A review of the AZDPS Fingerprint Clearance Status website revealed E4's fingerprint clearance card application was received by AZDPS on September 10, 2024, however the status was \"In Process\". 5. In an interview, E1 reported to not be sure of the current status of E4\u2019s fingerprint clearance card. 6. In an exit interview, the findings were reviewed with E1, E2, and E3, and further documentation or comment was not provided. Plan of Correction Name, title and/or Position of the Person Responsible Kaleigh Telles, President Date temporary correction was implemented Date permanent correction will be complete 2025-03-14 Temporary Solution Attached is a record of a processing error for the fingerprint application for E4 tracking the updates. Permanent Solution Fingerprint clearance card for E4 was successfully processed after the error with AZDPS was identified and as of 02/21/2025 the status is \"valid\" (see attached). Job description qualifications section will be updated to include verbiage covering new hires who have applied and the application is in process in accordance with ADHS standards. Monitoring We will continue to monitor processing applications and confirm clearance is approved timely. We will review all job descriptions to ensure qualifications are in line with current practices and ADHS standards."
+        }
+    ]
+}

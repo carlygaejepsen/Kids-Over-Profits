@@ -1,0 +1,24 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "facility_status": "Active",
+    "address": "11213 West Coronado Road, Avondale, AZ 85392",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4305",
+    "max_licensed_capacity": "3",
+    "license_effective_date": "7/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "6/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078785",
+    "inspection_date": "2/8/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 4. Equipment used at the behavioral health residential facility is: a. Maintained in working order;",
+            "evidence": "Based on observation, and interview, the administrator failed to ensure equipment used at the facility was maintained in working order.",
+            "findings": "1. The compliance officer observed the resident shared bathroom ventilation fan was not operating. The bathroom did not contain a window or an operable exhaust fan. 2. The compliance officer observed three smoke detectors located in the facility living room, privacy room, and a resident bedroom that were inoperable. 3. In an interview, E1 acknowledged the hallway bathroom did not contain a window or an operating exhaust fan. E1 reviewed the three identified smoke detectors and acknowledged the identified smoke detectors were not operable. E1 acknowledged the behavioral health residential facility equipment identified was not maintained in working order. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-08 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

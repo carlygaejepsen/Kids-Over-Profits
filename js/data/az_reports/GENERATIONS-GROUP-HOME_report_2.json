@@ -1,0 +1,39 @@
+{
+    "legal_name": "GENERATIONS GROUP HOME",
+    "facility_status": "Active",
+    "address": "1763 Paseo San Luis Suite B, Sierra Vista, AZ 85635",
+    "license_status": "Active",
+    "phone": "5204598433",
+    "license_number": "BH6723",
+    "max_licensed_capacity": "16",
+    "license_effective_date": "7/12/2025",
+    "chief_administrative_officer": "TWILA MAYO",
+    "license_expires_date": "7/11/2026",
+    "owner_licensee": "GENERATIONS GROUP HOME",
+    "inspection_number": "INSP-0068104",
+    "inspection_date": "9/13/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. An administrator shall ensure that: 3. Sufficient personnel members are present on a behavioral health residential facility's premises with the qualifications, experience, skills, and knowledge necessary to: a. Provide the services in the behavioral health residential facility's scope of services, b. Meet the needs of a resident, and c. Ensure the health and safety of a resident.",
+            "evidence": "Based on documentation review, record review, and interview the administrator failed to ensure sufficient personnel members were present on the facility's premises with the qualifications, experience, skills and knowledge necessary to meet the needs of a resident and ensure the health and safety of a resident.",
+            "findings": "1. A review of the facility's work schedule revealed E5 worked alone on the 8 am to 8 pm shift on Saturday, September 2, 2022, Sunday, September 3, 2023, Saturday, September 9, 2023, and Sunday, September 10, 2023, and worked alone on the 4 pm to 12 am shift on Monday September 1, 2023, Monday, September 4, 2023, Tuesday September 5, 2023, and Friday, September 8, 2023. 2. A review of E5's personnel record revealed E5 was hired as a behavioral health paraprofessional (BHPP) in May of 2023. However, E5's personnel record did not include documentation of cardiopulmonary resuscitation (CPR) training certification or first aid training certification. 3. In an interview, E1, E2, and E3 acknowledged E5 did not have CPR or First Aid training and did not have the skills necessary to work alone at the facility. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-09-14 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained to include documentation of compliance with Arizona Revised Statutes (A.R.S.) \\'a7 36-411, for one of two personnel members sampled.",
+            "findings": "1. A.R.S. \\'a7 36-411(C)(1) states: \"Owners shall make documented, good faith efforts to: 1. Contact previous employers to obtain information or recommendations that may be relevant to a person's fitness to work in a residential care institution, nursing care institution or home health agency.\" 2. A review of E5's personnel record revealed E5 was hired as a behavioral health paraprofessional (BHPP). E5's personnel record also contained an employment application with a section to list prior employer contact information and to include an employment history, and documented previous employers. However, documentation of good faith efforts to contact previous employers included only one documented contact with a previous employer. 3. In an interview, E1, E2, and E3 acknowledged the personnel record provided for E5 did not include documentation of compliance with A.R.S. \\'a7 36-411(C). Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2023-09-14"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: h. Cardiopulmonary resuscitation training, if required for the individual according to R9-10- 703(C)(1)(e); i. First aid training, if required for the individual according to this Article or policies and procedures; and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of cardiopulmonary resuscitation (CPR) training, if required for the individual according to R9-10-703(C)(1)(e), and first aid training, for one of two behavioral health paraprofessionals (BHPP) sampled. The deficient practice posed a risk if E5 was unable to respond or assist a resident in the event of an emergency.",
+            "findings": "1. A review of the facility's work schedule revealed E5 worked alone on the 8 am to 8 pm shift on Saturday, September 2, 2022, Sunday, September 3, 2023, Saturday, September 9, 2023, and Sunday, September 10, 2023, and worked alone on the 4 pm to 12 am shift on Monday September 1, 2023, Monday, September 4, 2023, Tuesday September 5, 2023, and Friday, September 8, 2023. 2. A review of E5's personnel record revealed E5 was hired as a behavioral health paraprofessional (BHPP) in May of 2023. However, E5's personnel record did not include documentation of cardiopulmonary resuscitation (CPR) training certification or first aid training certification. 3. In an interview, E1, E2, and E3 acknowledged E5' s personnel record did not include documentation of CPR training and first aid training certification. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-09-13 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 6. Is reviewed and updated on an on-going basis: a. According to the review date specified in the treatment plan,",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a treatment plan for each resident was reviewed and updated on an on-going basis according to the review date specified in the treatment plan, for one of two residents sampled.",
+            "findings": "1. A review of R2's medical record revealed a treatment plan dated June 30, 2023. The treatment plan include a review date of July 30, 2023. However, a treatment plan review dated on or before July 30, 2023 was not provided for review. 2. In an interview, E1, E2, and E3 acknowledged a treatment update for R2, dated on or before July 30, 2023, had not been provided for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-09-14 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

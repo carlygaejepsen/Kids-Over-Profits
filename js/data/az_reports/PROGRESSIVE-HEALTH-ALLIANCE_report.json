@@ -1,0 +1,24 @@
+{
+    "legal_name": "PROGRESSIVE HEALTH ALLIANCE",
+    "facility_status": "Active",
+    "address": "4605 West Donner Drive, Laveen, AZ 85339",
+    "license_status": "Active",
+    "phone": "4804276723",
+    "license_number": "BH7118",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "NAJI DEKHARN",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "PROGRESSIVE HEALTH ALLIANCE LLC",
+    "inspection_number": "INSP-0132566",
+    "inspection_date": "5/29/2025",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "BH7118",
+    "deficiencies": [
+        {
+            "rule": "R9-10-712.C.15. Medical Records C. An administrator shall ensure that a resident's medical record contains: 15. Documentation of behavioral health services and physical health services provided to the resident;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure residents' medical records contained documentation of behavioral health services provided to the residents for two of two residents sampled. The deficient practice posed a risk if the Department could not verify residents received treatment to cure, improve, or palliate the residents\u2019 behavioral health issues at the health care institution.",
+            "findings": "1. A review of R1's treatment plan revealed that the facility was to provide R1 two one- hour group counseling sessions each week, and a single one-hour individual counseling session per week. 2. A review of R2's treatment plan revealed the facility was to provide R2 two one-hour group counseling sessions each week, and a single one-hour individual counseling session per week. 3. A review of R1's medical record revealed one group counseling note. The counseling note was dated April 2025. Additionally, there were no individual counseling notes in R1's medical record. 4. A review of R2's medical record revealed documentation of two one-hour group counseling sessions each week following R2's admission. However, R2's record did not contain documentation of group counseling sessions for the month of May 2024. Additionally, there were no individual counseling notes in R2's medical record. 5. In an exit interview, E1 reported R1 and R2 each received more counseling sessions than documented in R1's and R2's medical records. However, there was no documentation of additional counseling sessions. Plan of Correction Name, title and/or Position of the Person Responsible Suma Hodge, Behavioral Health Professional Date temporary correction was implemented Date permanent correction will be complete 2025-07-18 Temporary Solution Effective immediately, all contracted counseling staff have been directed to submit all outstanding and recent counseling notes for R1, R2, and any other active residents by Friday, July 18, 2025. The Administrator will personally audit and confirm that these records are inputted into each resident\u2019s medical record. Residents\u2019 current schedules and attendance records will be cross- referenced to ensure any undocumented sessions are accurately captured. Permanent Solution We will implement a formal documentation policy requiring that all behavioral health service notes (individual and group) be completed, signed, and inputted to the resident\u2019s medical record within 48 hours of service delivery. All counselors will receive training on this documentation policy by Friday, July 18, 2025, and sign an attestation acknowledging their responsibility. A standardized Documentation Checklist will be maintained in each resident\u2019s file to track required counseling sessions against actual notes. Monitoring The Administrator or designee will conduct weekly audits of 100% of active resident records for the next 60 days to verify the presence of all required counseling documentation. Following the initial 60 days, the Administrator will continue monthly random audits of at least 50% of active resident files. Audit results will be documented in a quality assurance log and discussed at monthly staff meetings. Any discrepancies found will result in immediate corrective counseling for the responsible staff member or contractor. Ongoing compliance with documentation requirements will be integrated into staff performance evaluations and contractor oversight."
+        }
+    ]
+}

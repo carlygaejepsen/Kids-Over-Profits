@@ -1,0 +1,29 @@
+{
+    "legal_name": "SUNFLOWER LIVING LLC",
+    "facility_status": "Active",
+    "address": "8506 West Highland Avenue, Phoenix, AZ 85037",
+    "license_status": "Active",
+    "phone": "419-902-6878",
+    "license_number": "BH7288",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "5/9/2025",
+    "chief_administrative_officer": "TIFFANY CARTER",
+    "license_expires_date": "5/8/2026",
+    "owner_licensee": "SUNFLOWER LIVING LLC",
+    "inspection_number": "INSP-0088167",
+    "inspection_date": "10/11/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall provide written notification to the Department of a resident's: 1. Death, if the resident's death is required to be reported according to A.R.S. \u00a7 11-593, within one working day after the resident's death; and",
+            "evidence": "Based on documentation review and interview, the administrator failed to provide written notification to the Department of a resident's death, if the resident's death was required to be reported according to A.R.S. \\'a7 11-593, within one working day after the resident's death. The deficient practice posed a risk as the Department was unable to assess if there was an immediate health and safety concern for the other residents residing in the assisted living facility.",
+            "findings": "1. A review of facility documentation revealed an incident report dated September 24, 2023. The report stated \" [R1] yelled that [R1] is leaving and is not coming back and stated [expletive] this place as [R1] ran off. Staff attempted to find [R1] and went around the neighborhood for about 20 minutes before calling the police non- emergency number to report the incident. Police have been alerted and have been provided information on [R1]...\" 2. A review of facility documentation revealed e-mail correspondence between O1 and E1. The e- mail from O1 was dated September 27, 2023 and stated \"I received a call from Durango Detention and they informed me a medical examiner [O2] called them and they identified a youth that has an ankle monitor that has been deceased...I asked if [O3] knows what happen and [O3] stated early in the morning, a witness stated [R1] was seen smoking a unknown substance at a QT off [street name] and [R1] was taken to the emergency room where [R1] died of a drug overdose...\" 3. A review of Department documentation revealed the administrator failed to provide written notification to the Department of R1's death. 4. In an interview, E1 acknowledged E1 did not provide written notification to the Department of a resident's death within one working day after the resident's death. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-04 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 8. If a behavioral health assessment is conducted by a: a. Behavioral health technician or registered nurse, within 24 hours a behavioral health professional, certified or licensed to provide the behavioral health services needed by the resident, reviews and signs the behavioral health assessment to ensure that the behavioral health assessment identifies the behavioral health services needed by the resident; or",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a behavioral health assessment conducted by a behavioral health technician (BHT) or registered nurse (RN) was reviewed and signed by a behavioral health professional (BHP) within 24 hours, for two of two residents sampled. The deficient practice posed a risk as an analysis of the resident's needs for behavioral health services was not reviewed within 24 hours to ensure the behavioral health assessment identified the behavioral health services needed by the resident.",
+            "findings": "1. A review of R1's medical record revealed a behavioral health assessment signed and dated by E2, a BHT, on August 24, 2023. However, the assessment was not signed and dated by E4, the facility's BHP. 2. A review of R2's medical record revealed a behavioral health assessment signed and dated by E2, a BHT, on July 28, 2023. However, the assessment was not signed and dated by E4, the facility's BHP. 3. In an interview, E1 acknowledged the BHP did not review and sign the behavioral health assessments for R1 and R2 within 24 hours to ensure the behavioral health assessments identified the behavioral health services needed by the residents. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-04 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

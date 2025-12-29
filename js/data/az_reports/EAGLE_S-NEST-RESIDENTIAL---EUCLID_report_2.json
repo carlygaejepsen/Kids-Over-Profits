@@ -1,0 +1,34 @@
+{
+    "legal_name": "EAGLE'S NEST RESIDENTIAL - EUCLID",
+    "facility_status": "Active",
+    "address": "1832 East Euclid Avenue, Phoenix, AZ 85042",
+    "license_status": "Active",
+    "phone": "6023059599",
+    "license_number": "BH5899",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "10/1/2024",
+    "chief_administrative_officer": "BARBARA MCCLURE",
+    "license_expires_date": "9/30/2025",
+    "owner_licensee": "EAGLES NEST GROUP HOME",
+    "inspection_number": "INSP-0095508",
+    "inspection_date": "12/12/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 11. A behavioral health assessment: a. Documents a resident's: i. Presenting issue; ii. Substance abuse history; iii. Co-occurring disorder; iv. Legal history, including: (1) Custody, (2) Guardianship, and (3) Pending litigation; v. Criminal justice record; vi. Family history; vii. Behavioral health treatment history; viii. Symptoms reported by the resident; and ix. Referrals needed by the resident, if any;",
+            "evidence": "Based on record review and interview, the administrator failed ensure a behavioral health assessment documented a resident's substance abuse history, co-occurring disorder, family history, and health treatment history, for one of two residents sampled.",
+            "findings": "1. A review of R1's medical record revealed a behavioral health assessment titled \"Eagle's Nest Treatment Plan/Assessment\" dated in May 2023. However, R1's behavioral health assessment did not include the following: - Substance abuse H\\, -Co-occurring disorder, - Family history, and -Behavioral health treatment history 2. In an interview, E8 acknowledged R1's behavioral health assessment did not document all required components. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-22 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "C. An administrator shall ensure that: 2. Each",
+            "evidence": "Based on record review and interview, the counseling session is documented in a resident's medical record to include: c. Whether the counseling was individual counseling, family counseling, or group counseling; administrator failed to ensure each counseling session was documented in the resident's medical record to include whether the counseling was individual counseling, family counseling, or group counseling, for two of two residents sampled.",
+            "findings": "1. A review of R1's medical record revealed a counseling note dated November 16, 2023. However, the counseling note did not indicate if the counseling was individual counseling, family counseling, or group counseling. 2. A review of R2's medical record revealed counseling note dated November 8, 2023. However, the counseling note did not indicate if the counseling was individual counseling, family counseling, or group counseling. 3. In an interview, E8 reported the aforementioned counseling was individual counseling provided by E4. E8 acknowledged the documentation of counseling sessions did not indicate they were individual counseling sessions. Technical assistance was provided on this Rule during the compliance inspection completed on December 19, 2022. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-22 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 2. At least one bathroom is accessible from a common area that: c. Contains the following: vii. A window that opens or another means of ventilation;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure at least one bathroom was accessible from a common area containing a window that opened or had another means of ventilation.",
+            "findings": "1. The Compliance Officer observed a hallway bathroom, accessible from a common area, contained an exhaust fan. However, the exhaust fan was not operable and the bathroom did not contain a window. 2. In an interview, E8 acknowledged the hallway bathroom did not contain a window or an operable exhaust fan. Technical assistance was provided on this Rule during the compliance inspection completed on December 19, 2022. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-30 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "legal_name": "YOUTH DEVELOPMENT INSTITUTE - PORTLAND HOUSE",
+    "facility_status": "Active",
+    "address": "1927 East Portland Street, Phoenix, AZ 85006",
+    "license_status": "Active",
+    "phone": "6022565300",
+    "license_number": "BH3760",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "11/1/2024",
+    "chief_administrative_officer": "DAVID J COCOROS",
+    "license_expires_date": "10/31/2025",
+    "owner_licensee": "YOUTH DEVELOPMENT INSTITUTE",
+    "inspection_number": "INSP-0055400",
+    "inspection_date": "10/16/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "M. An administrator shall ensure that the following information or documents are conspicuously posted on the premises and are available upon request to a personnel member, employee, resident, or a resident's representative: 1. The behavioral health residential facility's current license,",
+            "evidence": "Based on observation, documentation review and interview, the administrator failed to ensure the behavioral health residential facility's current license was conspicuously posted and available upon request to a personnel member, employee, resident or a resident's representative. The deficient practice posed a risk as the Department was unable to ensure the facility's compliance.",
+            "findings": "1. The Compliance Officer observed the facility's license was not conspicuously posted on the premises or available upon request. 2. In an interview, E2 stated \"it's posted in the front office\" of the administration building. E1 and E2 acknowledged the facility's license was not conspicuously posted on the premises. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "K. An administrator shall ensure that: 3. There is a daily staffing schedule that: a. Indicates the date, scheduled work hours, and name of each employee assigned to work, including on-call personnel members; b. Includes documentation of the employees who work each calendar day and the hours worked by each employee; and c. Is maintained for at least 12 months after the last date on the documentation;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure there was a daily staffing schedule required per R9-10- 706(K). The deficient practice posed a risk if there was no record to ensure shifts and tasks were covered.",
+            "findings": "1. The Compliance Officer requested the facility's daily staffing schedule but the schedule was not available. 2. In an interview, E4 reported the facility did not have staff scheduled due to having no residents at the facility. 3. In a joint interview, E1 and E2 acknowledged there was no daily staffing schedule maintained per R9- 10-706(K). Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "R9-10-109.Changes Affecting a License B. If a licensee intends to terminate the operation of a health care institution , the licensee shall ensure that the Department is notified in writing of: 1. The termination of the health care institution ' s operations, as required in A.R.S. \u00a7 36-422(D), at least 30 calendar days before the termination, and",
+            "evidence": "Based on documentation review and interview, the licensee failed to ensure the Department was notified in writing of the termination of the health care institution's operations, as required in A.R.S. \\'a7 36-422(D), at least 30 calendar days before the termination. The deficient practice posed a risk as the facility was not operating as a health care institution, and the condition of the facility posed a health and safety risk if a resident were to be admitted.",
+            "findings": "A.R.S. \\'a7 36-401(23) \"Health care institution\" means every place, institution, building or agency, whether organized for profit or not, that provides facilities with medical services, nursing services, behavioral health services, health screening services, other health-related services, supervisory care services, personal care services or directed care services and includes home health agencies as defined in section 36-151, outdoor behavioral health care programs and hospice service agencies. A.R.S. \\'a7 36-422(D) If a current licensee intends to terminate the operation of a licensed health care institution or if a change of ownership is planned, the current licensee shall notify the director in writing at least thirty days before the termination of operation or change in ownership is to take place. The current licensee is responsible for preventing any interruption of services required to sustain the life, health and safety of the patients or residents. A new owner shall not begin operating the health care institution until the director issues a license to the new owner. 1. A review of Department documentation revealed the behavioral health residential facility's perpetual license (BH3760) was effective on 2. In an interview, E4 stated \"The last date of residents was on March 27, 2020.\" 3. In a joint interview, E1 and E2 reported the facility has been closed but does not want to close the facility license. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 4. A registered dietitian is employed full- time, part-time, or as a consultant; and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a registered dietitian (RD) was employed full-time, part- time, or as a consultant. The deficient practice posed a risk if a resident's nutritional needs were not met.",
+            "findings": "1. A review of E5's personnel record revealed a contract to provide dietary services, however, the contract did not indicate E5 provided dietary services to the facility license BH3760. 2. In a joint interview, E1 and E2 acknowledged E5 was not employed full-time, part-time, or as a consultant for the facility. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

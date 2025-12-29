@@ -1,0 +1,24 @@
+{
+    "legal_name": "R M B H S VINCENT HOUSE",
+    "facility_status": "Active",
+    "address": "1320 North Vincent Circle, Mesa, AZ 85207",
+    "license_status": "Active",
+    "phone": "4806419552",
+    "license_number": "BH3792",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MOSHE LOBI",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "RED MOUNTAIN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0083270",
+    "inspection_date": "9/26/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. An administrator shall ensure that: 8. A resident bedroom complies with the following: g. Is a: ii. Shared bedroom that: (2) Except as provided in subsection (C), contains at least 60 square feet of floor space, not including a closet, for each individual occupying the shared bedroom; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a shared resident bedroom contained at least 60 square feet of floor space, not including a closet, for each individual occupying the shared bedroom.",
+            "findings": "1. The Compliance Officer observed three beds in a bedroom located on the first floor of the facility, directly across from the living room. Using an electronic measuring device, the Compliance Officer measured the bedroom to be 179 square feet. 2. In an interview, E1 acknowledged the bedroom did not contain at least 60 square feet of floor space for each individual occupying the bedroom. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-10-03 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

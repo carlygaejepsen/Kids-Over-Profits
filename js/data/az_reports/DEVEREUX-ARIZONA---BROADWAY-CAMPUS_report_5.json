@@ -1,0 +1,24 @@
+{
+    "legal_name": "DEVEREUX ARIZONA - BROADWAY CAMPUS",
+    "facility_status": "Active",
+    "address": "7444 East Broadway Boulevard, Tucson, AZ 85710",
+    "license_status": "Active",
+    "phone": "623-633-3418",
+    "license_number": "BH6614",
+    "max_licensed_capacity": "24",
+    "license_effective_date": "4/29/2025",
+    "chief_administrative_officer": "YVETTE JACKSON",
+    "license_expires_date": "4/28/2026",
+    "owner_licensee": "THE DEVEREUX FOUNDATION",
+    "inspection_number": "INSP-0094088",
+    "inspection_date": "4/10/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "F. An administrator shall ensure that a personnel member immediately reports a medication error or a resident's adverse reaction to a medication to the medical practitioner who ordered or prescribed the medication and, if applicable, the behavioral health residential facility's clinical director.",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel member immediately reported a medication error to the medical practitioner who ordered or prescribed the medication, for one of two resident records reviewed.",
+            "findings": "A.A.C. R9-10-101(135) \"Medication error\" means: a. The failure to administer an ordered medication; b. The administration of a medication not ordered; or c. The administration of a medication: i. In an incorrect dosage, ii. More than 60 minutes before or after the ordered time of administration unless ordered to do so, or iii. By an incorrect route of administration. 1. A review of R1's medical record revealed the following medication orders: - \"Escitalopram 20mg tablet: take 1 tablet every morning ...\"; - \"Prazosin 1 mg PO qhs\"; and - \"Aripiprazole 20 mg Oral Nightly at Bedtime\". 2. A review of R1's Medication Administration Record (MAR) dated \"January/2023\", revealed the following: - Escitalopram 20mg, 1 tablet, was to be provided at \"8AM\"; - Prazosin 1 mg, 1 capsule, was to be administered at \"8PM\"; and - Aripiprazole 20 mg, 1 tablet, was to be administered at \"8PM\". 3. The MAR indicated the following medications were provided more than 60 minutes after the ordered time of administration: - Escitalopram was administered at 9:28AM on January 9, 2023; - Prazosin was administered at 6:53PM on January 9, 2023, and; - Aripiprazole was administered at 6:52PM on January 9, 2023. 4. In an interview E1 acknowledged there was no documentation the medication errors were immediately reported to the medical practitioner who ordered or prescribed the medications. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-06-02 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

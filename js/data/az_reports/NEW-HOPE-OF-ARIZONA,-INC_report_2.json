@@ -1,0 +1,24 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "3120 West Pollack Street, Phoenix, AZ 85041",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4921",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "8/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "7/31/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078741",
+    "inspection_date": "8/5/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, a registered dietitian or director of food services shall ensure that: 2. A food menu: c. Is conspicuously posted at least one calendar day before the first meal on the food menu will be served,",
+            "evidence": "Based on observation and interview, the registered dietitian failed to ensure a food menu was conspicuously posted at least one calendar day before the first meal on the food menu will be served. The deficient practice posed a risk if the dietary guidelines per R9-10- 719(B)(4), were not followed.",
+            "findings": "1. The Compliance Officer observed a food menu posted at the facility. However, the menu identified a date of \"July 28, 2024, through August 3, 2024.\" 2. In an interview, E1 acknowledged a food menu was not conspicuously posted at least one calendar day before the first meal on the food menu would be served. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-05 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

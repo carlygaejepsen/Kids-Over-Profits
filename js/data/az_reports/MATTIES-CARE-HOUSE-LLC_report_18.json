@@ -1,0 +1,24 @@
+{
+    "legal_name": "MATTIES CARE HOUSE LLC",
+    "facility_status": "Active",
+    "address": "8015 South 23rd Drive, Phoenix, AZ 85040",
+    "license_status": "Active",
+    "phone": "6026860419",
+    "license_number": "BH8438",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "8/16/2025",
+    "chief_administrative_officer": "LATOYA LEE",
+    "license_expires_date": "8/15/2026",
+    "owner_licensee": "MATTIE'S CARE HOUSE, LLC",
+    "inspection_number": "INSP-0076895",
+    "inspection_date": "7/15/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. If a behavioral health residential facility provides medication administration, an administrator shall ensure that: 3. A medication administered to a resident: a. Is administered in compliance with an order, and",
+            "evidence": "Based on documentation review, record review, and interview, an administrator failed to ensure medication administered to a resident was administered in compliance with an order, for one of two residents sampled. The deficient practice posed a health risk if the resident experienced a change in condition due to improper medication administration.",
+            "findings": "1. A review of facility documentation revealed an incident report, dated April 1, 2024. The incident report stated \"Staff were getting clients in order to begin administering meds. Staff punched the medication from bubble pack into the medication cup. Staff became distracted trying to keep clients in line and not horse playing during medication. R1 looked at the medication for a second, prompting the staff to ask R1 if there was something wrong. R1 then proceeded to take the medication and the staff administered the medication by pouring the pills in the cup into R1's mouth. Staff went to prepare the next client's medication when staff noticed that staff was holding the medication for R1. Staff realized that staff had given R1 another clients medication...\" 2. A review of R1's medical record revealed a signed list of medication orders dated April 5, 2024. The orders stated \"Prozosin 1mg Capsule by oral every bedtime for sleep, Sertraline 100mg by oral every morning for depression, Abilify 20mg before bed for irritability/aggression. With a medication start date of January 17, 2024.\" 3. A review of R1's medication administration record (MAR) for the month of April 2024 revealed resident did not receive medication for Prozosin 1mg and Abilify 20mg on April 1, 2024. 4. In an interview, E1 acknowledged R1's medications were not administered in compliance with R1's medication orders. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-04-04 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

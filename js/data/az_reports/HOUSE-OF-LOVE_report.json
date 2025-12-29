@@ -1,0 +1,29 @@
+{
+    "legal_name": "HOUSE OF LOVE",
+    "facility_status": "Active",
+    "address": "45657 West Morning View Lane, Maricopa, AZ 85139",
+    "license_status": "Active",
+    "phone": "6027565564",
+    "license_number": "BH9304",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "2/2/2025",
+    "chief_administrative_officer": "ALBERTA WATKINS",
+    "license_expires_date": "2/1/2026",
+    "owner_licensee": "HOUSE OF LOVE LLC",
+    "inspection_number": "INSP-0072452",
+    "inspection_date": "12/9/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of compliance with the requirements in A.R.S. \\'a7 36-425.03(A)(E), for two of four personnel members sampled. The deficient practice posed a risk if E2 and E3 were a danger to a vulnerable population.",
+            "findings": "A.R.S. \\'a7 36-425.03(A) states \"Except as provided in subsections B, C and D of this section, children's behavioral health program personnel, including volunteers, shall submit the form prescribed in subsection E of this section to the employer and shall have a valid fingerprint clearance card issued pursuant to title 41, chapter 12, article 3.1 or, within seven working days after employment or beginning volunteer work, shall apply for a fingerprint clearance card.\" A.R.S. \\'a7 36-425.03(E) states \"Children's behavioral health program personnel shall certify on forms that are provided by the department and notarized that they are not awaiting trial on or have never been convicted of or admitted in open court or pursuant to a plea agreement to committing any of the offenses listed in section 41- 1758.03, subsection B or C in this state or similar offenses in another state or jurisdiction.\" 1. A review of E2's (hired in 2024) personnel record revealed E2 was hired as a behavioral health technician (BHT). E2's personnel record revealed a documentation of a valid fingerprint clearance card. Additionally, E2's personnel record contained a document titled \"ARIZONA DEPARTMENT OF ECONOMIC SECURITY...CRIMINAL HISTORY SELF DISCLOSURE AFFIDAVIT\". The document was signed and dated by E2 and a notary, however, the document was from the Arizona Department of Economic Security, and was not from the Bureau of Behavioral Health Licensing, per A.R.S. \\'a7 36-425.03(E) 2. A review of E3's (hired in 2024) personnel record revealed E3 was hired as a behavioral health technician (BHT). E2's personnel record revealed a documentation of a valid fingerprint clearance card, and documentation of compliance with A.R.S. \\'a7 36-425.03(E) was not available for review. 3. A review of the Arizona Department of Public Safety (AZDPS) fingerprint clearance card status request website, conducted on December 9, 2024, revealed E3 had a valid fingerprint clearance card, issued on June 24, 2022. 4. In a joint interview, E1 and E2 acknowledged E2's and E3's documentation of compliance with A.R.S. \\'a7 36-425.03(E) was not available for review, and a copy of E3's valid fingerprint clearance card was not maintained in E3's personnel record. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 1. The premises and equipment are: c. Free from a condition or situation that may cause a resident or other individual to suffer physical injury;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the premises and equipment were free from a condition or situation which might cause a resident or other individual to suffer physical injury. The deficient practice posed a risk to the physical health and safety of a resident. Findings include: 1. During an environmental tour of the facility, the Compliance Officer observed at least one hundred instances of bird feces, bird feathers, and one deceased bird on the ground in the back yard area. 2. In an interview, E2 reported the neighborhood had a pigeon infestation due to solar roof panels. 3. In a joint interview, E1 and E2 acknowledged the premises was not free from a condition or situation that may cause a resident or other individual to suffer physical injury. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

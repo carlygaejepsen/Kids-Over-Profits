@@ -1,0 +1,24 @@
+{
+    "legal_name": "STREETLIGHTUSA",
+    "facility_status": "Active",
+    "address": "6805 North 81st Ave, Units 150, 160, & Bldg A, Glendale,",
+    "license_status": "Active",
+    "phone": "6234350900",
+    "license_number": "BH5096",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "8/1/2025",
+    "chief_administrative_officer": "LERBBY ANTUNEZ",
+    "license_expires_date": "7/31/2026",
+    "owner_licensee": "STREETLIGHTUSA",
+    "inspection_number": "INSP-0099946",
+    "inspection_date": "3/4/2025",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "BH5096",
+    "deficiencies": [
+        {
+            "rule": "R9-10-706.B.2.a. Personnel B. An administrator shall ensure that: 2. A personnel member's skills and knowledge are verified and documented: a. Before the personnel member provides physical health services or behavioral health services, and",
+            "evidence": "Based on documentation review, and interview, the administrator failed to ensure a personnel member's skills and knowledge were verified and documented before the personnel member provided behavioral health services. The deficient practice posed a risk to the health and safety of residents if a personnel member was unqualified or unsafe to work in a healthcare institution.",
+            "findings": "1. In a documentation review of E3's personal file revealed, E3 had a hire date of December 4, 2024. 2. In a documentation review of E3's personal file revealed, E3's skills and knowledge were not verified nor documented before E3 provided behavioral health services. 3. In an interview, E1 acknowledged E3's skills and knowledge were not verified nor documented before E3 provided behavioral health services. 4. In an exit interview, the findings were reviewed with E1, and no further documentation or comment was provided. Plan of Correction Name, title and/or Position of the Person Responsible Director of Programs, Residential Services Temporary Solution All employee files have been reviewed to Manager, Client Services Manager, & Human Resources Manager Date temporary correction was implemented 2025-03-31 Date permanent correction will be complete 2025-05-12 ensure the Skills Verification (On the Job Training Form) has been submitted. Permanent Solution Moving forward, all new hires shall not be assigned or scheduled to provide behavioral health services without the support of a trained peer until the On the Job Training Form (OJT) has been signed and submitted to the Human Resource Manager (or designee). The Residential Services Manager and Client Services Manager shall ensure their staff members submit their completed OJT forms. Once the forms are confirmed to be completed, the staff member shall be notified, along with their immediate supervisor, that they may now provide direct care services to clients without the need to be accompanied by another staff member. Monitoring The Director of Programs, Human Resource Manager, Client Services Manager, and Residential Services Manager will collectively review the OJT completion process to ensure it is completed and the documentation is submitted into the Employee File."
+        }
+    ]
+}

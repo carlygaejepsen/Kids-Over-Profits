@@ -1,0 +1,34 @@
+{
+    "legal_name": "MATTIES CARE HOUSE LLC",
+    "facility_status": "Active",
+    "address": "6823 West Pleasant Lane, Laveen, AZ 85339",
+    "license_status": "Active",
+    "phone": "6026860419",
+    "license_number": "BH4867",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "6/1/2025",
+    "chief_administrative_officer": "LATOYA LEE",
+    "license_expires_date": "5/31/2026",
+    "owner_licensee": "MATTIE'S CARE HOUSE, LLC",
+    "inspection_number": "INSP-0076871",
+    "inspection_date": "2/7/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission, for one of two residents sampled. The deficient practice posed a risk as this information was required for the development and implementation of a treatment plan, per R9-10-708.A.1., the Department was unable to ensure substantial compliance as the required documentation was not completed per the Rule, and documentation in compliance with the Rule was not provided at the exit interview. Findings include: 1. A review of R2's medical record revealed R2 discharged in December 2022. 2. A review of R2's medical record revealed R2 was readmitted in January 2023. However, the documentation of a medical history and physical examination was dated November 5, 2021. 3. In an interview, E1 acknowledged R2 did not have a medical history and physical examination or nursing assessment completed within 30 calendar days before admission or within 72 hours after admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-08 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "C. An administrator shall ensure that a resident's medical record contains: 18. Except as allowed in R9-10-707(E)(1)(d), documentation of freedom from infectious tuberculosis required in R9-10-707(A)(13);",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a resident's medical record contained documentation of freedom from infectious tuberculosis (TB) required in R9-10-707(A)(13), for one of two residents sampled. The deficient practice posed a TB exposure risk to residents, the Department was unable to determine substantial compliance as the documentation was not in the medical record during the inspection, and the documentation was not provided within two hours after a Department request.",
+            "findings": "1. A review of R1's (admitted in 2022) medical record revealed documentation of evidence of freedom from infectious TB dated November 4, 2022. However, the document listed the PPD result as pending. 2. In an interview, E2 acknowledged E2 failed to ensure a resident's medical record contained documentation of freedom from infectious tuberculosis. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-10 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 10. Hot water temperatures are maintained between 95\u00b0 F and 120\u00b0 F in the areas of the behavioral health residential facility used by residents;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure hot water temperatures were maintained between 95\\'b0 F and 120\\'b0 F in the areas of the behavioral health residential facility used by residents. The deficient practice posed a burn risk to residents.",
+            "findings": "1. The Compliance Officers observed the hot water temperature at a bathroom sink to be 140.2\\'b0 F, using a Department-issued thermometer. 2. In an interview, E2 acknowledged the temperature of the hot water in the facility was not maintained between 95\\'b0 F and 120\\'b0 F. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-08 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

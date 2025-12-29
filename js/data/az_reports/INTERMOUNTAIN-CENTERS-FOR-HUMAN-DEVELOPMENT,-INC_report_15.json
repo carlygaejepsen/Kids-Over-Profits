@@ -1,0 +1,29 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "2502 North Dodge Boulevard, Suite 160, Tucson, AZ 85716",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH7317",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "1/30/2025",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "1/31/2026",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073272",
+    "inspection_date": "12/12/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. An administrator shall ensure that: 2. A personnel member's skills and knowledge are verified and documented: a. Before the personnel member provides physical health services or behavioral health services, and b. According to policies and procedures; and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel member's skills and knowledge were verified and documented before the personnel member provided behavioral health services and according to policies and procedures, for one of three personnel sampled. The deficient practice posed a risk if a personnel member was unable to meet a resident's needs.",
+            "findings": "1. A review of the facility policies and procedures (revised in 2021) revealed a policy titled, \"Orientation and Training.\" The policy stated, \"Initial competency of skills prior to working unsupervised: New staff will participate in training required to meet requirements set forth by the contractual agreements as relevant to each person's job duties and responsibilities. Initial competency will be based on skills acquired during the training period along with prior experience and qualifications; Skills verification will be acquired and initially assessed at the end of the 40-hour orientation period via observation, written testing and/or verbal acquisition; The training period of initial skills acquisition and competency will be provided in multiple training forums to include: New Hire Training, clinical site orientation, classroom training, online training and in-house and/or external training; At the end of the training period an Initial Skills and Knowledge verification Form will be completed on each staff member and verification will be authenticated by the training coordinator or program director.\" 2. A review of E5's personnel record revealed E5 was hired as a Behavioral Health Professional (BHP) in February 2022. E5's personnel record revealed E5's skills and knowledge were not verified until May 2023, after providing behavioral health services to residents. 3. A review of the facility documentation revealed a staffing schedule. The schedule revealed E5 was scheduled to work Monday-Friday from 9 a.m. to 5 p.m. beginning from E5's hire date until May 2023 when E5's skills and knowledge was verified. 4. In an interview, E1 acknowledged E5's skills and knowledge had not been verified and documented before providing behavioral health services and according to policies and procedures. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-13 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: g. If the individual is a behavioral health technician, clinical oversight required in R9-10-115;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of clinical oversight, for one of two behavioral health technicians (BHT's) who provided counseling services. The deficient practice posed a risk to the health and safety of residents if BHT's provided clinical services they were not licensed to provide without clinical oversight by a licensed behavioral health professional (BHP).",
+            "findings": "1. A review of the facility policy and procedure (revised in 2021) revealed a policy titled, \"Clinical Oversight\" The policy stated, \"All Intermountain Centers staff providing behavioral health services receive regular clinical oversight from a qualified Behavioral Health Professional (BHP) in accordance with state laws and regulations... All full-time and part-time BHTs and BHPPs receive clinical oversight at least once during each two week period, if the BHT or BHPP provides services related to client care during the two week period. Clinical oversight is provided by BHPs or LIPs with skills and knowledge in the behavioral health services provided and the populations served by Intermountain Centers.\" 2. A review of R3's medical record revealed seven counseling notes dated throughout November 2023. The counseling notes were signed by E4. 3. A review of E4's personnel record revealed no documentation of clinical oversight for November 2023. 4. In an interview, E1 acknowledged E4's personnel record did not contain documentation of clinical oversight for the month of November 2023. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-13 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

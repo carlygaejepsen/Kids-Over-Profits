@@ -1,0 +1,34 @@
+{
+    "legal_name": "HUMAN CARE SERVICE II",
+    "facility_status": "Active",
+    "address": "45060 West Sage Brush Drive, Maricopa, AZ 85139",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH8688",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "6/28/2025",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "6/27/2026",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0100758",
+    "inspection_date": "6/27/2025",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "BH8688",
+    "deficiencies": [
+        {
+            "rule": "R9-10-706.B.2.a. Personnel B. An administrator shall ensure that: 2. A personnel member's skills and knowledge are verified and documented: a. Before the personnel member provides physical health services or behavioral health services, and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel member's skills and knowledge were verified and documented before the personnel member provided physical health services or behavioral health services. The deficient practice posed a health and safety risk if the personnel member's skills and knowledge had not been verified to ensure proper delivery of services to residents.",
+            "findings": "1. A review of the facility policies and procedures dated in 2023 under the section titled \u201cEmployees and Volunteers Qualifications\u201d stated, \"The hiring person or manager will ensure, check, and document that the employee or volunteer providing physical health services or behavioral health services has the required skills and knowledge before providing any services.\" 2. A review of E2's personnel record revealed a document titled \"Verification of Skills and Knowledge.\" However, the document was not signed by the administrator, indicating E2's skills and knowledge had been verified. 3. A review of R1's medical record (admitted in 2025) revealed E2 provided assistance in the self-administration of medication on June 6, 2025. 4. In an exit interview, no further information or documentation was provided."
+        },
+        {
+            "rule": "R9-10-706.G.3.f. Personnel G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: f. The individual ' s compliance with the requirements in A.R.S. \u00a7 8-804, if applicable;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member, employee, volunteer, or student, which included documentation of the individual's compliance with the requirements in A.R.S. \u00a7 8-804. The deficient practice posed a safety risk for residents if personnel did not clear a Department of Child Safety (DCS) registry check before working with vulnerable residents under 18 years of age.",
+            "findings": "A.R.S. 8-804. states, \"The department shall conduct central registry background checks and shall use the information contained in the central registry only for the following purposes: -As a factor to determine qualifications for any of the following: (g) An adult who works in a group home, residential treatment center, shelter, or other congregate care setting.\" 1. A review of Department documentation revealed BH8688 was licensed as a behavioral health residential facility to provide services to residents under the age of 18 in June 2023. 2. A review of E2's (hired in January 2025) and E3's (hired in May 2025) personnel records revealed a document titled \"Direct Service Central Registry Clearance Form.\" The forms were completed by E2 and E3. However, the forms were not sent to DCS for processing. It is unknown if E1 and E2 had substantiated reports with DCS as a DCS registry check has not been completed. 3. In an exit interview, the findings were reviewed with E1, who did not provide additional comments or documentation."
+        },
+        {
+            "rule": "R9-10-707.A.6. Admission; Assessment A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission. The deficient practice posed a health and safety risk if medical personnel did not have a baseline medical assessment on the resident to begin needed services.",
+            "findings": "1. A review of R1's medical record revealed no documentation of a medical history and physical examination or a nursing assessment dated within 30 calendar days before admission or within 72 hours after admission. E1 reported E1 would send the requested document via email. However, the document was never sent to the Compliance Officer. 2. In an exit interview, no further comments or documentation were provided."
+        }
+    ]
+}

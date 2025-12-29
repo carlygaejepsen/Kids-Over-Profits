@@ -1,0 +1,34 @@
+{
+    "legal_name": "BACK TO LIFE, INCORPORATED",
+    "facility_status": "Active",
+    "address": "6420 West Cocopah Street, Phoenix, AZ 85043",
+    "license_status": "Active",
+    "phone": "6235189552",
+    "license_number": "BH5803",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "GRACIE PADILLA",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "BACK TO LIFE INCORPORATED.",
+    "inspection_number": "INSP-0060275",
+    "inspection_date": "7/23/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that: 3. Policies and procedures are reviewed at least once every three years and updated as needed;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure policies and procedures were reviewed and updated at least once every three years. The deficient practice posed a risk as policies and procedures reinforce and clarify the health care institution's standards.",
+            "findings": "1. A review of Department documentation revealed the facility's perpetual license was effective on September 20, 2019. 2. A review of facility documentation revealed a policy and procedure manual dated April 5, 2018. 3. A review of facility documentation revealed documentation to demonstrate the policies and procedures were reviewed and updated at least once every three years was not available for review. 4. In an interview, E2 reported the policies and procedures were always reviewed, but have not been updated. 5. In an interview, E2 acknowledged the the administrator failed to ensure policies and procedures were reviewed and updated at least once every three years. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-07-23 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "J. An administrator shall ensure that the following personnel members have first-aid and cardiopulmonary resuscitation training specific to the populations served by the behavioral health residential facility: 1. At least one personnel member who is present at the behavioral health residential facility during hours of operation of the behavioral health residential facility, and",
+            "evidence": "Based on documentation review, and interview the administrator failed to ensure at least one personnel member present at the behavioral health facility during hours of operation had valid cardiopulmonary resuscitation (CPR) training. The deficient practice posed a health and safety risk to residents if facility staff were unable to ensure the health and safety of a resident during an emergency. Findings include: 1. A review of E4's personnel record revealed documentation of CPR training. However, the CPR training card was through the NationalCPRfoundation, an online CPR training program dated January 7, 2024. 2. A review of the facilities personnel schedule for July 2024 revealed E4 worked alone on July 22, and July 23 from 10 pm to 8 am. 3. In an interview, E2 reported E2 was unaware the facility accepted online CPR training for E4. E2 acknowleged the administrator failed to ensure at least one personnel member present at the behavioral health facility during hours of operation had CPR training. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-10-28 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, a registered dietitian or director of food services shall ensure that: 2. A food menu: a. Is prepared at least one week in advance, b. Includes the foods to be served each day, c. Is conspicuously posted at least one calendar day before the first meal on the food",
+            "evidence": "Based on observation and interview, the registered dietician failed to ensure a food menu was prepared at least one week in advance, included the foods to be served each day and was conspicuously posted at least one calendar day before the first meal on the food menu will be served. The deficient practice posed a risk as the Department was unable to menu will be served, d. Includes any food substitution no later than the morning of the day of meal service with a food substitution, and e. Is maintained for at least 60 calendar days after the last day included in the food menu; determine the food served to the residents was in substantial compliance.",
+            "findings": "1. The Compliance Officer observed a menu conspicuously posted at the facility dated July 2024. The menu consisted of breakfast and snack. However, no additional menu's for dinner were provided for review. 2. In an interview, E2, stated E2 was unaware of what happened to the dinner menu. E2 acknowledged the registered dietician failed to ensure a food menu was prepared at least one week in advance, included the foods to be served each day and was conspicuously posted at least one calendar day before the fist meal on the food menu will be served. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-16 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

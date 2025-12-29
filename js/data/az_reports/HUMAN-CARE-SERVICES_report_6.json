@@ -1,0 +1,39 @@
+{
+    "legal_name": "HUMAN CARE SERVICES",
+    "facility_status": "Active",
+    "address": "36550 West Santa Maria Street, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH7917",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "9/13/2025",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0072510",
+    "inspection_date": "6/4/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "An administrator shall ensure that: 2. A documented report is submitted to the governing authority that includes: a. An identification of each concern about the delivery of services related to resident care, and b. Any change made or action taken as a result of the identification of a concern about the delivery of services related to resident care;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure a documented reported was submitted to the governing authority to include an identification of each concern about the delivery of services related to resident care, and any change made or action taken as a result of the identification of a concern about the delivery of services related to resident care.",
+            "findings": "1. A review of facility documentation revealed a policy and procedure manual dated in 2023 under section \"Quality Management\" stated, \"In order to provide quality and safe services to the facility residents, the administrator shall ensure that: Facility personnel will document and evaluate incidents at the facility to ensure adequate quality of services provided. Facility may use a survey tool (Quality of Service Month Recording Form) to help in identifying and collecting information. Data and reports collected are used to identify a concern about the delivery of services related to resident care and are available as per procedure below. The facility governing authority reviews and evaluates the effectiveness of the quality management program at least once every 12 months.\" 2. A review of facility documentation revealed the facility had no documentation of quality management tracking or reports, per the facility policy and procedures. 3. In an interview with E1, acknowledged the facility had no documentation of quality management tracking or reports, per the facility policy and procedures. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Date temporary correction was implemented Date permanent correction will be complete 2024-08-27 Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission, for one of two residents sampled. The deficient practice posed a risk of not meeting a resident's needs if no medical history and physical examination or nursing assessment were completed to assess a resident's needs prior to treatment. Findings include: 1. A review of R2's medical record (admitted April 2024) revealed a document titled \"Nursing Assessment\" dated on April 16, 2024. Based on R2's date of admission, the nursing assessment was not dated within 30 calendar days before admission or within 72 hours after admission. 2. In an interview, E1 acknowledged R2's medical record revealed a registered nurse had not performed a nursing assessment within 30 calendar days before R2's admission or within 72 hours after R2's admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-27 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, a registered dietitian or director of food services shall ensure that: 3. Meals and snacks provided by the behavioral health residential facility are served according to posted menus;",
+            "evidence": "Based on documentation review and interview, the registered dietician or director of food services failed to ensure meals provided by the behavioral health residential facility were served according to posted menus. Findings include: 1. A review of facility documentation revealed a posted menu dated in June 2024. The menu revealed for Tuesday June 4, 2024, breakfast would include the following: Banana bread or cereal, applesauce, and orange juice. 2. In an interview, R1 reported R1's breakfast consisted of oatmeal and cereal. 3. A review of facility documentation revealed the lunch menu for the previous day June 3, 2024 consisted of pork chop with roll, baked potato with sour cream and butter, green beans and applesauce. 4. In an interview, R1 reported R1's lunch was a beef patty, and no potato or green beans as indicated on the menu. 5. In an interview, E1 acknowledged the meal provided for lunch on June 3, 2024 and the breakfast served on June 4, 2024 was not served according to the posted menu. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-27 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 5. An evacuation drill for employees and residents on the premises is conducted at least once every six months on each shift;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure an evacuation drill for employees and residents on the premises was conducted at least once every six months on each shift. The deficient practice posed a risk if the employees were not able to implement the disaster plan in the case of the need to evacuate in an emergency.",
+            "findings": "1. A review of the facility documentation revealed no evidence evacuation drills were conducted for employees and residents at least once every six months on each shift for the past 12 months. 2. In an interview, E1 acknowledged the facility did not have documentation evacuation drills were conducted for employees and residents at least once every six months on each shift for the past 12 months. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-27 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

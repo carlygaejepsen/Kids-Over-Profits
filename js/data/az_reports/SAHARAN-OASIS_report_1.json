@@ -1,0 +1,29 @@
+{
+    "legal_name": "SAHARAN OASIS",
+    "facility_status": "Active",
+    "address": "1705 South 64th Avenue, Phoenix, AZ 85043",
+    "license_status": "Active",
+    "phone": "6025743610",
+    "license_number": "BH7034",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "ROBERT HOWARD",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "SAHARAN OASIS LLC",
+    "inspection_number": "INSP-0085275",
+    "inspection_date": "9/3/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: h. Cardiopulmonary resuscitation training, if required for the individual according to R9-10- 703(C)(1)(e); i. First aid training, if required for the individual according to this Article or policies and procedures; and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of cardiopulmonary resuscitation (CPR) training, if required for the individual according to R9-10-703(C)(1)(e), for two of four personnel sampled. The deficient practice posed a risk if an employee was unable to meet a resident's needs during an emergency, and the documentation was not provided within two hours after a Department request.",
+            "findings": "1. A review of the facility's policies and procedures revealed a policy titled \"CPR/First Aid\" dated in 2022. The policy stated \"CPR and First Aid Standards Only accept CPR trainings from American Safety and Health Institute (ASHI) or American Heart Association...Trainings must include Hands-On training where demonstration to perform CPR can occur prior to receiving certification. All staff, contractors, and volunteers must possess current certification and a copy of the certificate(s) are in their training file.\" 2. A review of the facility's staffing schedule revealed E3 was the only staff expected to work from 10:00 pm-10:00 am shift on September 6, 2024. 3. A review of the facility's staffing schedule revealed E4 was the only staffing working from 6:00 pm-10:00 pm shift on September 2, 2024. 4. A review of E3's personnel record revealed documentation of current CPR training dated July 12, 2023, from \"NationalCPRFoundation\". The document stated \"Valid for 2 years\" 5. A review of E4's personnel record revealed documentation of current CPR training dated February 9, 2023, from \"NationalCPRFoundation\". The document stated \"Valid for 2 years\" 6. A review of the \"nationalcprfoundation.com\" website revealed the following statement: \"National CPR Foundation is known for providing Life-Skill Techniques for longer more lasting lives. Harness the Power of Our Online Training and Earn Your Certification Today - The Smarter Way.\" 7. In an interview, E1 acknowledged CPR and first aid for E3 and E4 was completed online. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-26 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to maintain documentation of registered nurse who performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission, for two of two residents sampled. The deficient practice posed a risk as this information was required for the development and implementation of a treatment plan, per R9-10-708.A.1. Findings include: 1. A review of R1's medical record revealed a nursing assessment dated in August 2024. The document contained a nursing assessment for R1. However, the document did not contain a signature from the registered nurse who performed the assessment. 2. A review of R2's medical record revealed a nursing assessment dated in August 2024. The document contained a nursing assessment for R2. However, the document did not contain a signature from the registered nurse who performed the assessment. 3. In an interview, E1 acknowledged R1's and R2's nursing assessments did not include the signature of the individual who performed the nursing assessment. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-26 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

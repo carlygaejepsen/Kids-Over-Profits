@@ -1,0 +1,44 @@
+{
+    "legal_name": "ALL ABOUT KIDS",
+    "facility_status": "Active",
+    "address": "2510 East Yellowstone Place, Chandler, AZ 85249",
+    "license_status": "Active",
+    "phone": "4802289510",
+    "license_number": "BH3031",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "7/1/2025",
+    "chief_administrative_officer": "MICHAEL NOYD",
+    "license_expires_date": "6/30/2026",
+    "owner_licensee": "MICHAEL NOYD",
+    "inspection_number": "INSP-0057601",
+    "inspection_date": "8/7/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that: 5. Unless otherwise stated: a. Documentation required by this Article is provided to the Department within two hours after a Department request; and",
+            "evidence": "Based on record review, documentation review and interview, the administrator failed to ensure documentation required by Article 7 was provided to the Department within two hours after a Department request. The deficient practice posed a risk as the Department was unable to determine substantial compliance.",
+            "findings": "1. The Compliance Officer requested to review the review of the facility's disaster plan per R9- 10-720.B.3 at 12:30 PM. 2. A review of facility documentation revealed an undated disaster plan. However, documentation to indicate the disaster plan was reviewed at least once every 12 months was not available for review. 3. In an interview, E1 reported the facility's disaster plan had been reviewed at least once within the last 12 months but was unable to locate the documentation. 4. In an interview, E1 acknowledged documentation required by Article 7 was not provided to the Department within two hours after a Department request. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2024-09-20"
+        },
+        {
+            "rule": "I. If an administrator has a reasonable basis, according to A.R.S. \u00a7 13-3620 or 46-454, to believe abuse, neglect, or exploitation has occurred on the premises or while a resident is receiving services from a behavioral health residential facility's employee or personnel member, the administrator shall: 1. If applicable, take immediate action to stop the suspected abuse, neglect, or exploitation; 2. Report the suspected abuse, neglect, or exploitation of the resident: a. For a resident 18 years of age or older, according to A.R.S. \u00a7 46-454; or b. For a resident under 18 years of age, according to A.R.S. \u00a7 13-3620; 3. Document: a. The suspected abuse, neglect, or exploitation; b. Any action taken according to subsection (I)(1); and c. The report in subsection (I)(2); 4. Maintain the documentation in subsection (I)(3) for at least 12 months after the date of the report in subsection (I)(2); 5. Initiate an investigation of the suspected abuse, neglect, or exploitation and document the following information within five working days after the report required in (I)(2): a. The dates, times, and description of the suspected abuse, neglect, or exploitation; b. A description of any injury to the resident related to the suspected abuse or neglect and any change to the resident ' s physical, cognitive, functional, or emotional condition; c. The names of witnesses to the suspected abuse, neglect, or exploitation; and d. The actions taken by the administrator to prevent the suspected abuse, neglect, or exploitation from occurring in the future; and 6. Maintain a copy of the documented information required in subsection (I)(5) and any other information obtained during the investigation for at least 12 months after the date the investigation was initiated.",
+            "evidence": "Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "F. An administrator shall ensure that a personnel member, or an employee, a volunteer, or a student who has or is expected to have more than eight hours of direct interaction per week with residents, provides",
+            "evidence": "of freedom from infectious tuberculosis: 1. On or before the date the individual begins providing services at or on behalf of the behavioral health residential facility, and 2. As specified in R9-10-113. Evidence Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: h. Cardiopulmonary resuscitation training, if required for the individual according to R9-10- 703(C)(1)(e);",
+            "evidence": "Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "D. An administrator shall ensure that there is a documented discharge order by a medical practitioner or behavioral health professional before a resident is discharged unless the resident leaves the behavioral health residential facility against a medical practitioner's or behavioral health professional's advice.",
+            "evidence": "Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

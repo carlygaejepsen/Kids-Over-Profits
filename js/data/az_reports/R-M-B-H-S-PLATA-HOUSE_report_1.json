@@ -1,0 +1,29 @@
+{
+    "legal_name": "R M B H S PLATA HOUSE",
+    "facility_status": "Active",
+    "address": "7956 East Plata Avenue, Mesa, AZ 85212",
+    "license_status": "Active",
+    "phone": "4806419552",
+    "license_number": "BH3640",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MOSHE LOBI",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "RED MOUNTAIN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0083254",
+    "inspection_date": "2/21/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "F. An administrator shall ensure that a personnel member, or an employee, a volunteer, or a student who has or is expected to have more than eight hours of direct interaction per week with residents, provides",
+            "evidence": "of freedom from infectious tuberculosis: 1. On or before the date the individual begins providing services at or on behalf of the behavioral health residential facility, and 2. As specified in R9-10-113. Evidence Based on record review and interview, the administrator failed to ensure a personnel member provided evidence of freedom from infectious tuberculosis (TB), as specified in Arizona Administrative Code (A.A.C.) R9-10- 113(A)(2)(a)(i-iii), for one of two behavioral health technicians sampled. The deficient practice posed a potential TB infection risk to residents.",
+            "findings": "1. A review of E2's personnel record revealed a TB skin test dated in December 2023. However, documentation of second TB skin test and a TB baseline screening was not available for review. 2. In an interview, E4 acknowledged documentation of evidence of freedom from infectious TB, as specified in R9-10-113(A)(2)(a)(i-iii) was not available for review. Technical Assistance was provided on this Rule during the compliance inspection conducted on February 13, 2023. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-21 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, a registered dietitian or director of food services shall ensure that: 2. A food menu: c. Is conspicuously posted at least one calendar day before the first meal on the food menu will be served,",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a food menu was conspicuously posted at least one calendar day before the first meal on the food menu would be served. The deficient practice posed a risk if the dietary guidelines were not followed.",
+            "findings": "1. The Compliance Officer observed a current food menu was not conspicuously posted. 2. In an interview, E4 acknowledged the food menu was not conspicuously posted. Technical Assistance was provided on this Rule during the compliance inspection completed on February 13, 2023. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-02-23 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

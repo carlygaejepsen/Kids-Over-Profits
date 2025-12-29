@@ -1,0 +1,29 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "2502 North Dodge Boulevard, Suite 160, Tucson, AZ 85716",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH7317",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "1/30/2025",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "1/31/2026",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073281",
+    "inspection_date": "10/1/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: a. The individual's qualifications, including skills and knowledge applicable to the individual's job duties;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's qualifications, including skills and knowledge applicable to the individual's job duties, for one of seven personnel members sampled. The deficient practice posed a risk if E10 was not qualified to work in a health care institution.",
+            "findings": "R9-10- 706.B.1.a.b. An administrator shall ensure that: The qualifications, skills, and knowledge required for each type of personnel member: a. Are based on: The type of behavioral health services or physical health services expected to be provided by the personnel member according to the established job description, and The acuity of the residents receiving behavioral health services or physical health services from the personnel member according to the established job description; and Include: The specific skills and knowledge necessary for the personnel member to provide the expected behavioral health services or physical health services listed in the established job description, The type and duration of education that may allow the personnel member to have acquired the specific skills and knowledge for the personnel member to provide the expected behavioral health services or physical health services listed in the established job description, and The type and duration of experience that may allow the personnel member to have acquired the specific skills and knowledge for the personnel member to provide the expected behavioral health services or physical health services listed in the established job description; 1. A review of E10's (hired in February 2024, behavioral health technician) personnel record revealed documentation of the verification of qualifications, including skills and knowledge was not available for review. 2. In a joint interview, E1, E2, and E12 acknowledged documentation of the verification of E10's qualifications, including skills and knowledge was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-29 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: c. The individual's completed orientation and in- service education as required by policies and procedures;",
+            "evidence": "Based on documentation review, record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's completed orientation, for one of seven personnel members. The deficient practice posed a risk if a personnel member was not qualified to work in a health care institution.",
+            "findings": "R9-10-101.155. \"Orientation\" means the initial instruction and information provided to an individual before the individual starts work or volunteer services in a health care institution. R9-10-706.E.1.2.3.An administrator shall ensure that: A plan to provide orientation specific to the duties of a personnel member, an employee, a volunteer, and a student is developed, documented, and implemented; A personnel member completes orientation before providing behavioral health services or physical health services; An individual's orientation is documented, to include: The individual's name, The date of the orientation, and The subject or topics covered in the orientation; 1. A review of E6's (hired in October 2023, behavioral health technician) personnel record revealed documentation of completed orientation was not available for review. 2. In a joint interview, E1, E2, and E12 acknowledged documentation of E6's completed orientation was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-29 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

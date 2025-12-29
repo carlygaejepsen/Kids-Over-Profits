@@ -1,0 +1,44 @@
+{
+    "legal_name": "LIFE CHANGE FAMILY SERVICES INC",
+    "facility_status": "Active",
+    "address": "20018 North Toledo Avenue, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "5203740072",
+    "license_number": "BH5008",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "CLAUDETTE WALKER-SIMON",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "LIFE CHANGE FAMILY SERVICES INC.",
+    "inspection_number": "INSP-0073315",
+    "inspection_date": "8/2/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "An administrator shall ensure that: 2. Documentation of current contracted services is maintained that includes a description of the contracted services provided.",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure documentation of current contracted services was maintained, for one of four personnel members sampled. Findings include: 1. A review E5's personnel record, revealed a contract between the facility an an individual registered nurse, was not available for review. 2. In an interview, E1 reported E5 was hired in 2016, and a contract has never existed. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-17 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 4. Includes: c. The signature of the resident or the resident's representative, and date signed, or documentation of the refusal to sign;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure that a treatment plan included the signature of the resident or the resident's representative, and date signed, or documentation of the refusal to sign, for one of one resident sampled.",
+            "findings": "1. A review of R1's medical record, revealed a treatment plan titled, \"Life Change Family Services Individual Service Plan\" dated June 06, 2023. The service plan revealed no documentation of the signature of the resident and/or the resident's representative, and/or documentation of the refusal to sign. 2. In an interview E1 acknowledged R1's treatment plan did not include the signature of the resident and/or the resident's representative, and/or documentation of the refusal to sign. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-17 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 4. Includes: d. The date when the resident's treatment plan will be reviewed;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure that a treatment plan includes the date when the resident's treatment plan would be reviewed for one of one resident sampled.",
+            "findings": "1. A review of R1's medical record, revealed a treatment plan dated June 6, 2023. The treatment plan revealed no documented evidence of the date when the resident's treatment plan would be reviewed. 2. In an interview, E1 acknowledged R1's treatment plan, revealed no documented evidence of the date when the resident's treatment plan would be reviewed. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-17 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 1. A request for participation in developing a resident's treatment plan is made to the resident or the resident's representative, 2. An opportunity for participation in developing the resident's treatment plan is provided to the resident or the resident's representative, and 3. The request in subsection (B)(1) and the opportunity in subsection (B)(2) are documented in the resident's medical record.",
+            "evidence": "Based on record review, and interview, the administrator failed to ensure that a request for participation in developing a resident's treatment plan is made to the resident or the resident's representative; an opportunity for participation in developing the resident's treatment plan is provided to the resident or the resident's representative, and the request in subsection (B)(1) and the opportunity in subsection (B)(2) are documented in the resident's medical record for one of one resident sampled.",
+            "findings": "1. A review of R1's medical record, did not reveal evidence a request for participation in developing R1's treatment plan was made to R1 or the R1's representative; an opportunity for participation in developing R1's treatment plan was provided to R1 or R1's representative, and the request in subsection (B)(1) and the opportunity in subsection (B)(2) were documented in R1's medical record. 2. In an interview, E1 acknowledged R1's medical record did not reveal evidence a request for participation in developing a resident's treatment plan was made to the resident or the resident's representative; an opportunity for participation in developing the resident's treatment plan was provided to the resident or the resident' s representative; and the request in subsection (B)(1) and the opportunity in subsection (B)(2) were documented in the resident's medical record. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-17 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 1. A request for participation in developing a resident's discharge plan is made to the resident or the resident's representative, 2. An opportunity for participation in developing the resident's discharge plan is provided to the resident or the resident's representative, and 3. The request in subsection (B)(1) and the opportunity in subsection (B)(2) are documented in the resident's medical record.",
+            "evidence": "Based on record review and interview, the administrator failed to ensure that a request for participation in developing the resident's discharge plan is provided to the resident or the resident's representative, an opportunity for participation in developing the resident's discharge plan is provided to the resident or the resident's representative and is documented in the resident's medical record for one of one resident sampled. Findings include: 1. A review of R1's medical record did not reveal documentation an opportunity for participation in developing the resident's discharge plan was provided to the resident or the resident's representative; the request in subsection (B)(1) and the opportunity in subsection (B)(2) were documented in the resident's medical record. 2. In an interview, E1 acknowledged R1's medical record did not reveal documented evidence, pursuant R9-10- 709.B.1-3. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-17 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "STREETLIGHTUSA",
+    "facility_status": "Active",
+    "address": "6805 North 81st Ave, Units 150, 160, & Bldg A, Glendale,",
+    "license_status": "Active",
+    "phone": "6234350900",
+    "license_number": "BH5096",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "8/1/2025",
+    "chief_administrative_officer": "LERBBY ANTUNEZ",
+    "license_expires_date": "7/31/2026",
+    "owner_licensee": "STREETLIGHTUSA",
+    "inspection_number": "INSP-0087383",
+    "inspection_date": "2/27/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "K. An administrator shall ensure that: 5. A registered nurse is present at the behavioral health residential facility or on-call; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a registered nurse (RN) was present at the behavioral health residential facility or on-call. Findings include: 1. The Compliance Officer requested to review the personnel record for the RN. 2. In an interview, E8 reported the facility did not have a contract with a RN at this time. E8 acknowledged a RN was not present at the behavioral health facility or on-call. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-04-30 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

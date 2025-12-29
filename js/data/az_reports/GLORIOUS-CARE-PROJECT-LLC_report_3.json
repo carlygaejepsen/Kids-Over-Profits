@@ -1,0 +1,29 @@
+{
+    "legal_name": "GLORIOUS CARE PROJECT LLC",
+    "facility_status": "Active",
+    "address": "1087 West Avalon Canyon Drive, Casa Grande, AZ 85122",
+    "license_status": "Active",
+    "phone": "2406606597",
+    "license_number": "BH8106",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "12/20/2024",
+    "chief_administrative_officer": "FRANKLIN FONUTCHI",
+    "license_expires_date": "12/19/2025",
+    "owner_licensee": "GLORIOUS CARE PROJECT LLC",
+    "inspection_number": "INSP-0068486",
+    "inspection_date": "10/27/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission for two of two residents sampled. The deficient practice posed a risk to residents if no medical history and physical examination or nursing assessment were completed to assess a resident's needs prior to treatment. Findings include: 1. A review of R1's (admitted in February 2023) medical record revealed a physical examination. However, the document was dated August 26, 2023. The document was not dated 30 calendar days before admission or within 72 hours after admission. 2. A review of R2's (admitted in May 2023) medical record revealed a physical examination dated October 7, 2022. The document was not dated 30 calendar days before admission or within 72 hours after admission. 3. In an interview, E1 acknowledged R1's and R2's physical examinations were not dated 30 calendar days before admission or within 72 hours after admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2023-11-06",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 2. If a behavioral health residential facility is licensed to provide behavioral health services to individuals whose behavioral health issue limits the individuals' ability to function independently, a resident admitted to the behavioral health residential facility with limited ability to function independently receives: b. Continuous protective oversight;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure, if a behavioral health residential facility was licensed to provide behavioral health services to individuals whose behavioral health issue limits the individuals' ability to function independently, a resident admitted to the behavioral health residential facility with limited ability to function independently received continuous protective oversight. The deficient practice posed a risk to the health and safety of R3 who was under 18 years old and required continuous protective oversight. Findings: Finding include: 1. A review of the facility's documentation, revealed two incident reports dated in October 2023. The incident reports included R3 leaving the facility without authorization and without the facility being aware of the incidents. 2. A review of R3's medial record did not include evidence a plan for continuous oversight protection had been implemented for R3 after leaving the facility the first time in October, 2023. 3. In an interview, E1 acknowledged both incidents involving R3 leaving the facility without authorization and unnoticed. E1 acknowledged R3 required continuous oversight protection after R3 left the facility without authorization the first time, in October, 2023. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-06 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

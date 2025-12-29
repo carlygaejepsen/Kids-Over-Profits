@@ -1,0 +1,34 @@
+{
+    "legal_name": "HEART OF GOLD GROUP HOME LLC",
+    "facility_status": "Active",
+    "address": "41261 West Lucera Lane, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "5208404298",
+    "license_number": "BH8884",
+    "max_licensed_capacity": "6",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "LAURA EARLY",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "HEART OF GOLD HOME LLC",
+    "inspection_number": "INSP-0072432",
+    "inspection_date": "11/20/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "K. An administrator shall ensure that: 3. There is a daily staffing schedule that: a. Indicates the date, scheduled work hours, and name of each employee assigned to work, including on-call personnel members; b. Includes documentation of the employees who work each calendar day and the hours worked by each employee; and c. Is maintained for at least 12 months after the last date on the documentation;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure there was a daily staffing schedule which indicated the date and on-call personnel members and included documentation of the employees who worked each calendar day. The deficient practice posed a risk as the Department was unable to determine substantial compliance.",
+            "findings": "1. A review of facility documentation revealed a daily staffing schedule titled \"Week: 1 HEART OF GOLD GROUP HOME STAFF SCHEDULE.\" The schedule listed all seven days with three shifts per day. The documentation indicated the scheduled working hours and the names of each employee assigned to work. However, the daily staffing schedule did not list the dates, the on-call personnel members, or the employees who worked each day. 2. In an interview, E1 reported this was the facilities current daily staffing schedule. E1 acknowledged the documentation indicated the scheduled working hours and the names of each employee assigned to work. E1 also acknowledged the daily staffing schedule did not list the dates, the on-call personnel members, or the employees who worked each day. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2024-11-21"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 7. If a medical practitioner performs a medical history and physical examination or a nurse performs a nursing assessment on a resident before admission, the medical practitioner enters an interval note or the nurse enters a progress note in the resident's medical record within seven calendar days after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure if a medical practitioner performed a medical history and physical examination or a nurse performed a nursing assessment on a resident before admission, the medical practitioner entered an interval note or the nurse entered a progress note in the resident's medical record within seven calendar days after admission, for two of two resident records sampled. The deficient practice posed a health and safety risk as the Department was unable to determine substantial compliance.",
+            "findings": "1. A review of R1's medical record revealed R1 was accepted into the behavioral health residential facility September 2024 with a completed medical history and physical examination. However, documentation of an interval note or progress note in R1's medical record was not established for review. 2. A review of R2's medical record revealed R2 was accepted into the behavioral health residential facility October 2024 with a completed medical history and physical examination. However, documentation of an interval note or progress note in R2's medical record was not established for review. 3. In an interview, E1 acknowledged documentation of an interval note or progress note in R1's and R2's medical records were not established for review. E1 reported R1's and R2's medical histories and physical evaluations were reviewed, but not documented. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-21 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 10. If a behavioral health assessment that complies with the requirements in this Section is received from a behavioral health provider other than the behavioral health residential facility or if the behavioral health residential facility has a medical record for the resident that contains a behavioral health assessment that was completed within 12 months before the date of the resident's current admission: b. The review and update of the resident's assessment information is documented in the resident's medical record within 48 hours after the review is completed;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a behavioral health assessment in compliance with the requirements in this Section, received from a behavioral health provider other than the behavioral health residential facility, was reviewed, updated, and documented in the resident's medical record within 48 hours after the review was completed, for two of two residents sampled. The deficient practice posed a risk as the Department was unable to determine substantial compliance. Findings include: 1. A review of R1's and R2's medical records revealed behavioral health assessments completed within the last twelve months from a behavioral health provider other than BH8884. However, documentation of a review and update of R1's and R2's assessment information was not available for review. 2. In an interview, E1 reported R1's and R2's behavioral health assessments were reviewed by the facility BHP. E1 reported E1 was unaware the review was required to be documented and updated within 48 hours after the review was completed. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-21 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

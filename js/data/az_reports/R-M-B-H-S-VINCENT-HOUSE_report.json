@@ -1,0 +1,34 @@
+{
+    "legal_name": "R M B H S VINCENT HOUSE",
+    "facility_status": "Active",
+    "address": "1320 North Vincent Circle, Mesa, AZ 85207",
+    "license_status": "Active",
+    "phone": "4806419552",
+    "license_number": "BH3792",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MOSHE LOBI",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "RED MOUNTAIN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0083272",
+    "inspection_date": "10/2/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "F. An administrator shall ensure that a personnel member, or an employee, a volunteer, or a student who has or is expected to have more than eight hours of direct interaction per week with residents, provides",
+            "evidence": "of freedom from infectious tuberculosis: 1. On or before the date the individual begins providing services at or on behalf of the behavioral health residential facility, and 2. As specified in R9-10-113. Evidence Based on record review and interview, the administrator failed to ensure a personnel member provided evidence of freedom from infectious tuberculosis (TB), as specified in Arizona Administrative Code (A.A.C.) R9-10- 113(A)(2)(a)(i-ii) for four of four personnel sampled. The deficient practice posed a health and safety risk to residents.",
+            "findings": "R9-10-113(A)(2)(a)(i-ii)For each individual who is employed by the health care institution, provides volunteer services for the health care institution, or is admitted to the health care institution and who is subject to the requirements of this Section, baseline screening, on or before the date specified in the applicable Article of this Chapter, that consists of: i. Assessing risks of prior exposure to infectious tuberculosis, ii. Determining if the individual has signs or symptoms of tuberculosis, and 1. A review of E1's, E2's, E3's and E4's personnel record revealed a current negative TB skin test . However, documentation of TB baseline screening to include assessing risks of prior exposure to infectious tuberculosis, and determining if the individuals had signs or symptoms of tuberculosis was not available for review. 2. In a joint interview, E1 and E7 acknowledged E1, E2, E3 and E4 documentation of evidence of freedom from infectious TB, as specified in R9- 10-113(A)(2)(a)(i-ii) was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-08 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 1. A behavioral health residential facility has a: a. Room that provides privacy for a resident to receive treatment or visitors; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the behavioral health residential facility had a room to provide privacy for a resident to receive treatment or visitors. The deficient practice posed a risk if the administrator was unable to ensure confidentiality in treatment as well as a resident's right to privacy in treatment and visitation.",
+            "findings": "1. The Compliance Officers observed the facility did not have a room to provide privacy for a resident to receive treatment or for visitors. The Compliance Officers observed a room was designated to be the privacy room, however, the room was occupied by three beds. 2. In a joint interview, E1 and E6 acknowledged the facility did not have a room to provide privacy for a resident to receive treatment or visitors. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-10-16 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 8. A resident bedroom complies with the following: b. Is not used as a passageway to another bedroom or bathroom unless the bathroom is for the exclusive use of an individual occupying the bedroom;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a resident bedroom was not used as a passageway to another bedroom or bathroom. The deficient practice posed a possible resident rights violation.",
+            "findings": "1. The Compliance Officer observed a bedroom across from stairs, which included two single beds. The bedroom contained a locked walk in closet that contained: multiple televisions, multiple computer screens, art decorations, and random house hold items. 2. In an interview, E1 reported the closet was used as storage for facilities belongings. 3. In a joint interview, E1 and E6 acknowledged the administrator failed to ensure a resident bedroom was not used as a passageway to another bedroom or bathroom. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-10-16 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "HUMAN CARE SERVICES",
+    "facility_status": "Active",
+    "address": "36550 West Santa Maria Street, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH7917",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "9/13/2025",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0072505",
+    "inspection_date": "10/4/2023",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 1. The premises and equipment are: c. Free from a condition or situation that may cause a resident or other individual to suffer physical injury;",
+            "evidence": "Based on observation, and interview, the administrator failed to ensure the premises was free from a condition or situation that may cause a resident or other individual to suffer physical injury. The deficient practice posed a risk to the physical health and safety of residents.",
+            "findings": "1. Upon arrival to the facility, the Compliance Officer observed a broken window in a resident bedroom, which had not been repaired since a rule violation was cited on September 9, 2023. 2. In an interview, E1 acknowledged the broken window in one of the resident's bedrooms. E1 reported the window would be fixed but could not provide an exact or estimated date of completion as an insurance claim was involved and reported the repair could take up to three months from the time the claim was filed. This Rule was cited on September 5, 2023. A letter sent to the facility, dated September 20, 2023, stated \"...the Department requires that you make immediate corrections of violations that present a threat to the health or safety of a client, resident, patient or agency personnel. Additionally, the Department urges correction of all deficiencies at the earliest possible date.\" Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2023-11-03"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "7723 South 65th Lane, Laveen, AZ 85339",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH5603",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "11/1/2024",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "10/31/2025",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078745",
+    "inspection_date": "10/22/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 1. A resident is admitted based upon: a. The resident's primary condition for which the resident is admitted to the behavioral health residential facility being a behavioral health issue, and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a resident was admitted based upon the resident's primary condition being a behavioral health issue, for one of two residents sampled who's primary condition was not a behavioral health issue. The deficient practice posed a risk if R2's primary condition was a physical health issue.",
+            "findings": "R9-10-101.32. \"Behavioral health issue\" means an individual's condition related to a mental disorder, a personality disorder, substance abuse, or a significant psychological or behavioral response to an identifiable stressor or stressors. 1. A review of Department documentation revealed BH5603 was licensed as a Behavioral Health Residential Facility authorized to provide respite services. 2. A review of facility documentation revealed a policy and procedure titled \"Scope of Service.\" The policy and procedure stated, \"Behavioral Health Residential Services provides a structured treatment setting with 24 hour supervision and counseling or other therapeutic activities for members who do not require on site medical services, under the supervision of an on call behavioral health professional...\" 3. A review of R2's medical record revealed a behavioral health assessment dated in 2022. The behavioral health assessment revealed R2's diagnoses included; F34.81 Disruptive Mood Dysregulation order, F84 Autism Spectrum Disorder.\" R2's medical record revealed an updated assessment dated in 2023, reflecting \"Assessment/Diagnosis F84.0 Autism Spectrum Disorder, F34.81 Disruptive Mood Dysregulation Order, Other Problems related to psychosocial circumstances.\" R2's medical record did not reveal any incident reports. 4. In an interview, E1 reported R2 was admitted prior to the facility understanding Autism Spectrum Disorder diagnosis was not within the facilities scope of services. E1 reported the facility was currently working on transitioning resident's with this diagnosis to appropriate providers. E1 acknowledged R2's medical records revealed no additional diagnoses. E1 acknowledged the administrator failed to ensure a resident was admitted based on the resident's primary condition for which the resident was admitted was a behavioral health issue. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-19 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 6. Is reviewed and updated on an on-going basis: a. According to the review date specified in the treatment plan,",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a treatment plan was developed and implemented for each resident and was reviewed and updated on an on-going basis according to the review date specified in the treatment plan. The deficient practice posed a health risk as a treatment plan was not completed to articulate decisions and agreements of services to be provided.",
+            "findings": "1. A review of R2's medical record revealed a treatment plan dated October 13, 2023. The treatment plan indicated a review date of \"October 13, 2024.\" However, an updated treatment plan was not available for review. 2. In an interview, E1 reviewed R2's medical record. E1 acknowledged R2's 2023, treatment plan was the most current treatment plan. E1 acknowledged R2's treatment plan was not reviewed and updated according to the review date specified in the treatment plan. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-19 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

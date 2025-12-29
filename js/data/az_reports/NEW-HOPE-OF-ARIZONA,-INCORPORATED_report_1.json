@@ -1,0 +1,24 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "facility_status": "Active",
+    "address": "11213 West Coronado Road, Avondale, AZ 85392",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4305",
+    "max_licensed_capacity": "3",
+    "license_effective_date": "7/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "6/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078787",
+    "inspection_date": "2/13/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 5. Behavioral health services listed in the behavioral health residential facility's scope of services are provided on the premises;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure behavioral health services listed in the behavioral health residential facility's scope of services were provided on the premises for one of two residents sampled. The deficient practice posed a risk if the residents admitted to the residential facility did not receive the behavioral health services expected to be provided on the premises.",
+            "findings": "1. A review of the facility policies and procedures revealed a scope of services. The scope of services stated, \"...Behavioral Health Residential Services provides a structured treatment setting with twenty four hour supervision and counseling...\" 2. A review of R1's treatment plan revealed no evidence counseling was provided to R1. 3. In an interview, E1 reported the identified facility resident receive respite services. E1 acknowledged the facility is licensed as a behavioral health residential facility. E1 acknowledged the behavioral health services listed in the behavioral health residential facility's scope of services was not provided on the premises for R1. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete 2024-04-18 Monitoring"
+        }
+    ]
+}

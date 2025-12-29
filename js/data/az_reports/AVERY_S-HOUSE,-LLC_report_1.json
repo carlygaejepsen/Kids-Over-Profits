@@ -1,0 +1,29 @@
+{
+    "legal_name": "AVERY'S HOUSE, LLC",
+    "facility_status": "Active",
+    "address": "2416 North 113th Street, Apache Junction, AZ 85120",
+    "license_status": "Active",
+    "phone": "4806706761",
+    "license_number": "BH7513",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "KALEIGH TELLES",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "AVERY'S HOUSE, LLC",
+    "inspection_number": "INSP-0062351",
+    "inspection_date": "9/5/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall provide written notification to the Department of a resident's: 2. Self-injury, within two working days after the resident inflicts a self-injury or has an accident that requires immediate intervention by an emergency medical services provider.",
+            "evidence": "Based on record review, documentation review and interview, the administrator failed to provide written notification to the Department of a resident's self-injury, within two working days after the resident inflicted a self-injury requiring immediate intervention by an emergency medical services provider. The deficient practice posed a risk as the Department was unable to determine if there was an immediate health and safety risk to other residents admitted into the facility.",
+            "findings": "1. A review of R1' s medical record revealed an incident report of a medical overdose by R1 on September 1, 2024. The report stated \"At med pass, [R1] was given [R1] seroquel and [R1] took the bottle, emptied it into [R1] mouth, and swallowed 13 or 14 tablets.\" The report indicated E4 contacted 911 and poison control, and R1 was transported and admitted to the hospital. 2. A review of Department documentation revealed documentation to demonstrate BH7513 provided written notification to the Department of R1's self-injury was not available for review. 3. In an interview, E1 reported R1 was receiving assistance in the self-administration of medication during the aforementioned incident by E4. E1 reported E4 opened the medication bottle of Seroquel 100 mg and handed it to R1 to complete the assistance in the self-administration of medication. E1 reported R1 reported the overdose was a suicide attempt. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-22 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 7. A resident does not: a. Use or have access to any materials, furnishings, or equipment or participate in any activity or treatment that may present a threat to the resident's health or safety based on the resident's documented diagnosis, treatment needs, developmental levels, social skills, verbal skills, or personal history; or",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a resident did not have access to any materials, furnishings, or equipment or participate in any activity or treatment to present a threat to the resident's health or safety based on the resident's personal history. The deficient practice posed a risk as R1 had access to administer medication while admitted into a behavioral health residential facility in contradiction with their personal history.",
+            "findings": "1. A review of R1's medical record revealed an incident report of a medical overdose by R1 on September 1, 2024. The report stated \"At med pass, [R1] was given [R1] seroquel and [R1] took the bottle, emptied it into [R1] mouth, and swallowed 13 or 14 tablets.\" The report indicated E4 contacted 911 and poison control, and R1 was transported and admitted to the hospital. 2. A review of R1's medical record revealed a medication administration record (MAR) for September 2024. The MAR indicated E5 provided assistance in the self- administration of medication for Seroquel 100 mg on September 1, 2024. 3. A review of R1's medical record revealed a behavioral health assessment dated in 2024. The assessment stated R1 is diagnosed with \"bipolar disorder\", had \"3-4 attempts\" of suicide, and had \"tried to overdose with Benadryl.\" 4. In an interview, E1 reported R1 was receiving assistance in the self-administration of medication during the aforementioned incident by E4. E1 reported E4 opened the medication bottle of Seroquel 100 mg and handed it to R1 to complete the assistance in the self-administration of medication. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-11-22 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

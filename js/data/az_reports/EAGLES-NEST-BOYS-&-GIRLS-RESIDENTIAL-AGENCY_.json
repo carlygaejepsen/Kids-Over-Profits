@@ -1,0 +1,34 @@
+{
+    "legal_name": "EAGLES NEST BOYS & GIRLS RESIDENTIAL AGENCY",
+    "facility_status": "Active",
+    "address": "1802 East Dobbins Road, Phoenix, AZ 85042",
+    "license_status": "Active",
+    "phone": "6023059599",
+    "license_number": "BH4442",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "1/1/2025",
+    "chief_administrative_officer": "BARBARA MCCLURE",
+    "license_expires_date": "12/31/2025",
+    "owner_licensee": "EAGLES NEST GROUP HOME",
+    "inspection_number": "INSP-0095523",
+    "inspection_date": "12/14/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission, for one of two residents sampled.",
+            "findings": "1. A review of R2's (admitted in May 2023) medical record revealed a nursing assessment. However, the nursing assessment was completed six days after R2's date of admission. 2. In an interview, E1 acknowledged a nursing assessment for R2 was not performed within 30 calendar days before admission or within 72 hours after admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-20 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 11. A behavioral health assessment: a. Documents a resident's: i. Presenting issue; ii. Substance abuse history; iii. Co-occurring disorder; iv. Legal history, including: (1) Custody, (2) Guardianship, and (3) Pending litigation; v. Criminal justice record; vi. Family history; vii. Behavioral health treatment history; viii. Symptoms reported by the resident; and ix. Referrals needed by the resident, if any;",
+            "evidence": "Based on record review and interview, the administrator failed ensure a behavioral health assessment documented a resident's substance abuse history, co-occurring disorder, family history; and health treatment history, for one of two residents sampled. Findings include: 1. A review of R2's medical record revealed a behavioral health assessment titled \"Eagle's Nest Treatment Plan/Assessment\" dated in May 2023. However, R1's behavioral health assessment did not include the following: -Substance abuse history, -Co- occurring disorder, -Family history, and - Behavioral health treatment history. 2. In an interview, E1 acknowledged R2's behavioral health assessment did not document all required components. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-22 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 13. Except as provided in subsection (E)(1)(d), a resident provides",
+            "evidence": "of freedom from infectious tuberculosis: a. Before or within seven calendar days after the resident's admission, and b. As specified in R9-10-113. Evidence Based on record review and interview, the administrator failed to ensure a resident provided evidence of freedom from infectious tuberculosis (TB) before or within seven calendar days after the resident's admission and as specified in R9-10-113, for one of two residents sampled. The deficient practice posed a TB exposure risk to residents. Findings include: 1. A review of R1's medical record revealed a chest x-ray completed in August 2023. The chest x-ray stated ...\"no radiographic evidence of active pulmonary tuberculosis.\" However, documentation to demonstrate R1 had a history of tuberculosis or documentation of latent tuberculosis infection was not available for review. 2. In an interview, E1 reported to be unaware a chest x-ray was not an acceptable form of freedom from infectious TB. E1 acknowledged R1 did not provide evidence of freedom from infectious TB before or within seven calendar days after R1's admission. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-12-20 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

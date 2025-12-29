@@ -1,0 +1,24 @@
+{
+    "legal_name": "DEVEREUX ARIZONA - BROADWAY CAMPUS",
+    "facility_status": "Active",
+    "address": "7444 East Broadway Boulevard, Tucson, AZ 85710",
+    "license_status": "Active",
+    "phone": "623-633-3418",
+    "license_number": "BH6614",
+    "max_licensed_capacity": "24",
+    "license_effective_date": "4/29/2025",
+    "chief_administrative_officer": "YVETTE JACKSON",
+    "license_expires_date": "4/28/2026",
+    "owner_licensee": "THE DEVEREUX FOUNDATION",
+    "inspection_number": "INSP-0094096",
+    "inspection_date": "1/7/2025",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. If a behavioral health residential facility provides assistance in the self-administration of medication, an administrator shall ensure that: 6. Assistance in the self-administration of medication provided to a resident: a. Is in compliance with an order, and b. Is documented in the resident's medical record.",
+            "evidence": "Based on record review, documentation review, and interview, the administrator failed to ensure assistance in the self-administration of medication provided to a resident was in compliance with an order and was documented in the resident's medical record, for four of four resident records sampled. The deficient practice posed a risk to the health and safety of residents if residents did not receive their required medication and a medication error occurred.",
+            "findings": "1. A review of R1's medical record revealed a medication administration record (MAR) dated in August 2024. The MAR stated, \"Buspirone HCL 7.5 MG Tablets... take 2 tablet by mouth daily for anxiety.\" However, on August 10, 2024, the MAR was blank as the medication was not taken. The back of the MAR included a section for personnel to make notes which was titled \"Medication Not Administered (Refused/Missed/Extra/AWOL),\" however personnel did not fill out the section for the August 10, 2024. 2. A review of R2's medical record revealed a MAR dated in July 2024. The MAR stated, \"Guanfacine 2 MG... take one tablet by mouth 2 times a day at [7:00 AM and 4:00 PM].\" However, from July 16, 2024, through July 26, 2024, the MAR revealed the medication was taken at 8:30 AM on July 16, 2024, 8:11 AM on July 17, 2024, 7:56 AM on July 18, 2024, and an average time in between 8:00 AM through 8:30 AM up until July 26, 2024. 3. A review of R2's medical record revealed a MAR dated in August 2024. The MAR stated, \"Cetirizine 10 MG... take 1 tablet by mouth every morning as needed.\" However, the MAR revealed the medication was given on August 21, 2024, at 4:08 PM. The medication order stated it needed to be taken in the morning as needed. 4. A review of the facility's policies and procedures revealed a policy and procedure titled \"Medication Procedure for BHRF Programs.\" The policy and procedure stated \"G. Medication Administration Record (MAR)... 3. BHRF staff will document each medication pass with time and initials. Individuals will initial the MAR after medication administration is completed. 4. ... will document any variance on the MAR and note any changes in medication administration: R-refused, P-pass, H-Hold, A-AWOL, NA-Not Available.\" 5. In an interview, O2, O3, and O reported medication services were provided as ordered by the medication prescriber, however, O1, O2, and O3 reported not knowing the policy and procedure of documenting any variance on the MAR and noting any changes in medication administration provided to a resident. 6. In an exit interview, O1, O2, O3, and O4 reviewed the findings and no additional statements were made. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "2502 North Dodge Boulevard, Suite 160, Tucson, AZ 85716",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH7317",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "1/30/2025",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "1/31/2026",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073278",
+    "inspection_date": "8/20/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 7. A resident does not: a. Use or have access to any materials, furnishings, or equipment or participate in any activity or treatment that may present a threat to the resident's health or safety based on the resident's documented diagnosis, treatment needs, developmental levels, social skills, verbal skills, or personal history; or",
+            "evidence": "Based on record review, documentation review, observation, and interview, the administrator failed to ensure a resident did not have access to any materials to present a threat to the resident's health or safety based on the resident's documented diagnosis and treatment needs. The deficient practice posed a risk as a resident had access to a broken marker cap, and inflicted a self-injury, while admitted into a behavioral health residential facility in contradiction with their behavioral health issue.",
+            "findings": "1. A review of R1's (admitted in 2024) electronic medical record revealed a behavioral health assessment (dated June 2024). The assessment stated \" ... Member was reported as having the following behaviors: self-harm, SI, and aggression...\" 2. A review of electronic documentation revealed an incident report (dated in August 2024). The incident report stated \"...member's roommate alerted staff that peer was self harming. Staff immediately went into room and found member bleeding from [R1's] wrist from 2 cuts. Member was holding something in [R1's] hand and staff asked to have it...it was a broken marker cap...\" 3. A review of facility documentation revealed a document titled \"Incident Accident Or Death Report\" (dated August 9, 2024). The document stated \"...Member was transported...due to self- harm...\" 4. In an interview, E1 reported R1 self- harmed by a broken marker cap. 5. In a joint interview, E1 and E2 acknowledged a resident had access to materials to present a threat to the resident's health or safety based on the resident's documented diagnosis and treatment needs. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-09 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

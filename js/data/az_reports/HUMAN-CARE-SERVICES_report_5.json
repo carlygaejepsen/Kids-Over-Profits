@@ -1,0 +1,29 @@
+{
+    "legal_name": "HUMAN CARE SERVICES",
+    "facility_status": "Active",
+    "address": "36550 West Santa Maria Street, Maricopa, AZ 85138",
+    "license_status": "Active",
+    "phone": "8056360700",
+    "license_number": "BH7917",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "9/14/2024",
+    "chief_administrative_officer": "ANDREW REEVES",
+    "license_expires_date": "9/13/2025",
+    "owner_licensee": "HUMAN CARE SERVICES",
+    "inspection_number": "INSP-0072511",
+    "inspection_date": "8/13/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 1. A resident is admitted based upon: b. The resident's behavioral health issue and treatment needs are within the behavioral health residential facility's scope of services;",
+            "evidence": "Based on documentation review, record review and interview, the administrator failed to ensure a resident's admission based on a resident's behavioral health issue, and treatment needs were within the facility's scope of services for one of two residents sampled. The deficient practice posed a risk to the health and safety of resident if the facility was unable to meet the treatment needs of residents.",
+            "findings": "1. A review of the facility's policies and procedures revealed a policy titled \"Scope of Services\" dated August 1, 2022. The policy stated \"Admission Criteria...Diagnosed with mental disorder...Enrolled with a mental health agency...Able to actively participate in treatment and developing his/her care...Not a danger to self or others...\" 2. A review of R1's medical record revealed a behavioral health assessement dated in 2024. The assessment stated \"History of Presenting Issues: [R1] was admitted at [facility name] on [date] for passive suicidal ideation and substance abuse. [R1] admitted to self-harming via cutting [R1's] arms stating the last time was a couple weeks ago...SI/Self Harm (Suicidal ideation/Self- Harm) [R1] with DTO behaviors to include self- injury...\" 3. In an interview, E1 reported R1 is not currently a danger to self. E1 acknowledged R1's behavioral health issues were not consistent within the behavioral health residential facility's scope of services. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete 2024-09-01 Monitoring"
+        },
+        {
+            "rule": "A. An administrator shall ensure that: 2. If a behavioral health residential facility is licensed to provide behavioral health services to individuals whose behavioral health issue limits the individuals' ability to function independently, a resident admitted to the behavioral health residential facility with limited ability to function independently receives: b. Continuous protective oversight;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure if a behavioral health residential facility was licensed to provide behavioral health services to individuals whose behavioral health issue limits the individuals' ability to function independently, a resident admitted to the behavioral health residential facility with limited ability to function independently received continuous protective oversight. The deficient practice posed a risk to health and safety of residents, who required continuous protective oversight. Finding include: 1. A review of facility documentation, revealed a document titled \"Incident Report\" dated August 11, 2024. The document stated \"Client [R2] informed staff that [R2] was touched on [R2's] inner thigh area, and private spot by client [R1] during group activity in the living room, as they sat together as staff was not looking. Client [R2] informed staff that [R2] and client [R1] were in former a relationship, but [R2] no longer wants to be in the relationship. Client [R2] stated [R2] was unsure on how to end the relationship, so wants staff to intervene. Staff [E2] spoke with each client individually, and both client stated they consented to touching on the inner thighs. Staff advised both clients about the inappropriateness of their relationship, and that they will not be able to have that type of relationship. Staff further advised that it's best if they are kept separated. Both clients understood and agreed to stay separated...\" 2. In an interview, E1 reported the incident occurred in the living room area, and R1 and R2 were sitting on the couch next to each other. E1 reported multiple staff work each shift, and provide continuous protective oversight, however, the incident occurred when staff were not facing the residents. E1 acknowledged the residents did not receive continuous protective oversight. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-01 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

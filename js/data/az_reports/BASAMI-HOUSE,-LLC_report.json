@@ -1,0 +1,34 @@
+{
+    "legal_name": "BASAMI HOUSE, LLC",
+    "facility_status": "Active",
+    "address": "21851 North 34th Drive, Phoenix, AZ 85027",
+    "license_status": "Active",
+    "phone": "6029039193",
+    "license_number": "BH5341",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "2/1/2025",
+    "chief_administrative_officer": "JOYCE ODONGO",
+    "license_expires_date": "1/31/2026",
+    "owner_licensee": "BASAMI HOUSE, LLC",
+    "inspection_number": "INSP-0061219",
+    "inspection_date": "6/27/2023",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "36-420.01. Health care institutions; fall prevention and fall recovery; training programs; definition A. Each health care institution shall develop and administer a training program for all staff regarding fall prevention and fall recovery. The training program shall include initial training and continued competency training in fall prevention and fall recovery. A health care institution may use information and training materials from the department's Arizona falls prevention coalition in developing the training program.",
+            "evidence": "Based on documentation review, record review, and interview, the health care institution failed to develop and administer a training program for all staff regarding fall prevention and fall recovery.",
+            "findings": "1. A review of facility documentation revealed no evidence to indicate a training program for fall prevention and fall recovery was developed and administered to all staff. 2. A review of the personnel records for E5 and E7 revealed documentation of initial training and continued competency training in fall prevention and fall recovery per the facility training program was not available for review. 3. In an interview, E8 acknowledged a fall prevention and recovery training program was developed and administered to staff and personnel. However, E8 acknowledged contracted personnel had not received facility fall prevention and fall recovery training. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-08-15 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. A governing authority shall: 6. Designate, in writing, an acting administrator who has the qualifications established in subsection (A)(2)(b), if the administrator is: a. Expected not to be present on the behavioral health residential facility's premises for more than 30 calendar days, or b. Not present on the behavioral health residential facility's premises for more than 30 calendar days; and",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to designate, in writing, an acting administrator who has the qualifications established in subsection (A)(2)(b).",
+            "findings": "1. A review of facility documentation revealed no evidence to indicate the administrator designated, in writing, an acting administrator who has the qualifications established in subsection (A)(2)(b). 2. In an interview, E8 acknowledged E8 failed to designate, in writing, an acting administrator. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-07-31 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 1. A behavioral health residential facility has a: a. Room that provides privacy for a resident to receive treatment or visitors; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the behavioral health facility had a room to provide privacy for a resident to receive treatment or visitors.",
+            "findings": "1. During the environmental inspection of the facility, the Compliance Officers observed the facility did not have a room to provide privacy for a resident to receive treatment or visitors. 2. In a joint interview, E8 and E7 reported counseling sessions were currently conducted in the living room area, dining area, or the resident bedrooms, as needed. E8 confirmed the facility did not have a dedicated privacy room at the time of inspection. E8 stated the office/storage room could be converted into the privacy room in the near future. This is a repeat citation from the previous on-site compliance inspection conducted on July 21, 2022. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-07-11 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

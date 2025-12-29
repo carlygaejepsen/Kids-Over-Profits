@@ -1,0 +1,39 @@
+{
+    "legal_name": "MATTIES CARE HOUSE LLC",
+    "facility_status": "Active",
+    "address": "6823 West Pleasant Lane, Laveen, AZ 85339",
+    "license_status": "Active",
+    "phone": "6026860419",
+    "license_number": "BH4867",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "6/1/2025",
+    "chief_administrative_officer": "LATOYA LEE",
+    "license_expires_date": "5/31/2026",
+    "owner_licensee": "MATTIE'S CARE HOUSE, LLC",
+    "inspection_number": "INSP-0076888",
+    "inspection_date": "8/23/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. An administrator shall ensure that: 5. Unless otherwise stated: a. Documentation required by this Article is provided to the Department within two hours after a Department request; and",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure documentation required by Article 7 was provided to the Department within two hours after a Department request. The deficient practice posed a risk as the Department was unable to determine substantial compliance.",
+            "findings": "1. The Compliance Officer arrived at the facility at 9:45 AM. 2. The Compliance Officer requested, at 10:15 AM, the following documentation for review: - Disaster drills for the last 12 months 3. In an interview, at 1:10 PM, E1 acknowledged the aforementioned documentation had not been provided within two hours after a Department request. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-27 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "E. An administrator shall ensure that: 2. A personnel member completes orientation before providing behavioral health services or physical health services;",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a personnel member completed orientation before providing behavioral health services, for one of five personnel members sampled. The deficient practice posed a risk if E5 was unable to meet the needs of the residents.",
+            "findings": "R9-10-101.153. \"Orientation\" means the initial instruction and information provided to an individual before the individual starts work or volunteer services in a health care institution. 1. A review of E5's (hired in 2024) personnel record revealed documentation to demonstrate E5 had been oriented to the facility was not availble for review. 2. In an interview, E1 acknowledged E5 had not received orientation. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-10-01 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 4. A disaster drill for employees is conducted on each shift at least once every three months and documented;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure a disaster drill for employees was conducted on each shift at least once every three months. The deficient practice posed a risk if employees were unable to implement a disaster plan.",
+            "findings": "1. A review of the daily staffing schedule for August 2024 revealed the facility maintained the following shifts: -1st shift - 8:00 AM - 4:00 PM -2nd shift - 4:00 PM - 12:00 AM -3rd shift - 12:00 AM - 8:00 AM 2. A review of facility documentation revealed the following disaster drills were completed and documented: -September 6, 2023 - 1st shift - September 15, 2023 - 3rd shift -September 16, 2023 - 2nd shift -December 1, 2023 - 2nd shift -December 16, 2023 - 1st shift -December 23, 2023 - 3rd shift -March 9, 2024 - 1st shift - March 9, 2024 - 2nd shift -March 21, 2024 - 3rd shift 3. In an interview, E1 acknowledged disaster drills were not conducted on each shift at least once every three months. E1 reported E1 was fairly sure the drills had been done but acknowledged E1 was unable to provide the disaster drill documentation for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-09-04 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "B. An administrator shall ensure that: 8. A resident bedroom complies with the following: b. Is not used as a passageway to another bedroom or bathroom unless the bathroom is for the exclusive use of an individual occupying the bedroom;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a resident bedroom was not used as a passageway to another bedroom or bathroom. The deficient practice posed a possible resident rights violation.",
+            "findings": "1. The Compliance Officer observed the master bedroom, with four sets of bunkbeds, contained a master bathroom. The master bathroom contained a locked closet and contained cleaning supplies used by personnel members. 2. In an interview, E1 reported to be unaware the master bedroom could not be used as a passageway by personnel members to the bathroom. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-08-23 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

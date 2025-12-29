@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "2428 South 86th Drive, Tolleson, AZ 85353",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH5839",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "7/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "6/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078757",
+    "inspection_date": "11/20/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "J. An administrator shall ensure that the following personnel members have first-aid and cardiopulmonary resuscitation training specific to the populations served by the behavioral health residential facility: 1. At least one personnel member who is present at the behavioral health residential facility during hours of operation of the behavioral health residential facility, and",
+            "evidence": "Based on record review, documentation review, and interview the administrator failed to ensure at least one personnel member present at the behavioral health facility during hours of operation had valid first-aid and cardiopulmonary resuscitation (CPR) training. The deficient practice posed a health and safety risk to residents if facility staff were unable to ensure the health and safety of a resident during an emergency. Findings include: 1. A review of E5's personnel record revealed no documentation of cardiopulmonary and first aid training. A review of E5's personnel record revealed a document dated November 4, 2024, stating \"The employment requirements you must submit are: First Aid/CPR... You have until 2/4/25 at 1:00 pm to submit the requirement(s)....\" 2. A review of the facility staffing scheduled for November 2024, revealed E5 worked alone on November 15, 2024, from 2:00 PM to 9:00 PM and November 16, 2024, 9:00 AM to 9:00 PM. 3. In an interview, E1 reported E5 worked alone as identified on the personnel schedule. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-12-19 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. An administrator shall ensure that a treatment plan is developed and implemented for each resident that: 6. Is reviewed and updated on an on-going basis: a. According to the review date specified in the treatment plan,",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a treatment plan was developed and implemented for each resident and was reviewed and updated on an on-going basis according to the review date specified in the treatment plan. The deficient practice posed a health risk as a treatment plan was not completed to articulate decisions and agreements of services to be provided.",
+            "findings": "1. A review of R1's medical record revealed a treatment plan dated August 23, 2023. The treatment plan identified a review date of \"August 23, 2024.\" However, an updated treatment plan was not provided. 2. A review of R2's medical record revealed a treatment plan dated July 7, 2023. The treatment plan identified a review date of \"July 7, 2024.\" However, an updated treatment plan was not provided. 3. In an interview, E1 reviewed R1 and R2's medical records. E1 acknowledged the identified treatment plans were the most current plans available for review. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-12-19 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

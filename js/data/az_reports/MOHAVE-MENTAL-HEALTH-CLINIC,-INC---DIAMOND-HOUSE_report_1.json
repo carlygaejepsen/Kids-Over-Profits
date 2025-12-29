@@ -1,0 +1,29 @@
+{
+    "legal_name": "MOHAVE MENTAL HEALTH CLINIC, INC - DIAMOND",
+    "facility_status": "Active",
+    "address": "3745 North Diamond Drive, Kingman, AZ 86409",
+    "license_status": "Active",
+    "phone": "9286815591",
+    "license_number": "BH5202",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "6/1/2025",
+    "chief_administrative_officer": "DAWN D ABBOTT",
+    "license_expires_date": "5/31/2026",
+    "owner_licensee": "MOHAVE MENTAL HEALTH CLINIC, INC.",
+    "inspection_number": "INSP-0077682",
+    "inspection_date": "1/30/2024 - 6/21/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. An administrator shall ensure that: 1. A resident is treated with dignity, respect, and consideration;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure a resident was treated with dignity, respect, and consideration. The deficient practice posed a risk to the physical health and safety of R1.",
+            "findings": "1. A review of facility documentation revealed an incident report dated August 18, 2023 at 8:15 pm. The incident report stated, \" Description of the Incident: [R1] was involved in a verbal altercation with [R1's] peers which resulted in [R1's] peers throwing hot water at [R1's] face. The client was transported by EMS to the hospital; Individual's Condition Before & After the Incident: Physically fine before the incident but became upset during the incident. [R1] was crying and in pain after the incident; Description of any Medical Services Received: EMS transported [R1] to the hospital where [R1] was treated for first degree burns to [R1's] chest.\" 2. In an interview, E1 and E2 reported that they removed the hot water feature from the cold/hot water dispenser next to the TV in the main living room. 3. In an interview, E1 and E2 reported the first peer who threw water on R1 used hot water and the second peer used cold water, after E1 and E2 investigated the incident. E1 and E2 reported removing the peer who threw hot water from the facility and relocating the peer who threw cold water. 4. In an interview, E1 and E2 acknowledged the administrator failed to ensure a resident was treated with dignity, respect, and consideration. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-03-26 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 1. The premises and equipment are: c. Free from a condition or situation that may cause a resident or other individual to suffer physical injury;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure the premises and equipment were free from a condition or situation which caused a resident to suffer physical injury. The deficient practice posed a physical health and safety risk to R1. Findings include: 1. A review of facility documentation revealed an incident report dated August 18, 2023 at 8:15 pm. The incident report stated, \" Description of the Incident: [R1] was involved in a verbal altercation with [R1's] peers which resulted in [R1's] peers throwing hot water at [R1's] face. The client was transported by EMS to the hospital; Individual's Condition Before & After the Incident: Physically fine before the incident but became upset during the incident. [R1] was crying and in pain after the incident; Description of any Medical Services Received: EMS transported [R1] to the hospital where [R1] was treated for first degree burns to [R1's] chest.\" 2. In an interview, E1 and E2 reported that they removed the hot water feature from the cold/hot water dispenser next to the TV in the main living room. 3. In an interview, E1 and E2 acknowledged the administrator failed to ensure the premises and equipment were free from a condition or situation which caused a resident to suffer physical injury. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-06-14 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        }
+    ]
+}

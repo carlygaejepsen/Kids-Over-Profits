@@ -1,0 +1,29 @@
+{
+    "legal_name": "DIVINE HELP LLC",
+    "facility_status": "Active",
+    "address": "7208 West Windsor Avenue, Phoenix, AZ 85035",
+    "license_status": "Active",
+    "phone": "6026010586",
+    "license_number": "BH9356",
+    "max_licensed_capacity": "5",
+    "license_effective_date": "11/29/2024",
+    "chief_administrative_officer": "HENRIETTA TECHAGO",
+    "license_expires_date": "11/28/2025",
+    "owner_licensee": "DIVINE HELP LLC",
+    "inspection_number": "INSP-0095205",
+    "inspection_date": "11/5/2024",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of compliance with the requirements in Arizona Revised Statutes (A.R.S.) \\'a7 36-425.03(A), for two of four personnel members sampled. The deficient practice posed a risk if E3 and E4 were a danger to a vulnerable population. Findings include: 1. A.R.S. \\'a7 36-425.03(A) states \"Except as provided in subsections B, C and D of this section, children's behavioral health program personnel, including volunteers, shall submit the form prescribed in subsection E of this section to the employer and shall have a valid fingerprint clearance card issued pursuant to title 41, chapter 12, article 3.1 or, within seven working days after employment or beginning volunteer work, shall apply for a fingerprint clearance card.\" 2. A.R.S. \\'a7 36- 425.03(E) states \"Children's behavioral health program personnel shall certify on forms that are provided by the department and notarized that they are not awaiting trial on or have never been convicted of or admitted in open court or pursuant to a plea agreement to committing any of the offenses listed in section 41-1758.03, subsection B or C in this state or similar offenses in another state or jurisdiction.\" 3. A review of E4's personnel record revealed E4 was hired as a behavioral health professional. E4's personnel record revealed a fingerprint clearance card, however, the card stated \"Issue date: 11-01- 2018...Expiration Date: 11-01-2024\". A review of the Department of the Arizona Department of Public Safety (AZDPS) fingerprint clearance card status website for E4's fingerprint clearance card stated \"Status...Not Valid.\". Additionally, documentation of compliance with A.R.S. \\'a7 36-425.03(E), was not available for review. 4. In a joint interview, E1 and E2 acknowledged documentation of A.R.S. \\'a7 36- 425.03(E) for E4 was not available for review, and E4's fingerprint clearance card was expired. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 4. A disaster drill for employees is conducted on each shift at least once every three months and documented;",
+            "evidence": "Based on documentation review and interview, the administrator failed to ensure a disaster drill for employees was conducted on each shift at least once every three months. The deficient practice posed a risk if employees were unable to implement a disaster plan.",
+            "findings": "1. A review of Department documentation revealed the perpetual license for BH9356 was effective on November 16, 2023. 2. A review of the daily staffing schedule, dated October 2024. A current schedule was not available for review. The staffing schedule revealed the facility maintained three (3) shifts: -12:00 AM to 8:00 AM; -8:00 AM to 4:00 PM;and -4:00 PM to 12:00 AM. 3. The Compliance Officer requested to review the facility's disaster drills. However, disaster drills were not provided for review. 4. In a joint interview, E1 and E2 reported the facility maintains three shifts. E1 and E2 acknowledged disaster drills for employees were not conducted on each shift at least once every three months. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Date temporary correction was implemented Date permanent correction will be complete Permanent Solution Monitoring"
+        }
+    ]
+}

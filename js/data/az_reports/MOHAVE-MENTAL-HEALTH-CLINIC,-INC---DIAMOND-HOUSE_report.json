@@ -1,0 +1,24 @@
+{
+    "legal_name": "MOHAVE MENTAL HEALTH CLINIC, INC - DIAMOND",
+    "facility_status": "Active",
+    "address": "3745 North Diamond Drive, Kingman, AZ 86409",
+    "license_status": "Active",
+    "phone": "9286815591",
+    "license_number": "BH5202",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "6/1/2025",
+    "chief_administrative_officer": "DAWN D ABBOTT",
+    "license_expires_date": "5/31/2026",
+    "owner_licensee": "MOHAVE MENTAL HEALTH CLINIC, INC.",
+    "inspection_number": "INSP-0097753",
+    "inspection_date": "2/6/2025",
+    "inspection_type": "Complaint",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. If a behavioral health residential facility provides assistance in the self-administration of medication, an administrator shall ensure that: 6. Assistance in the self-administration of medication provided to a resident: a. Is in compliance with an order, and",
+            "evidence": "Based on record review, documentation review, and interview, the administrator failed to ensure assistance in the self-administration of medication provided to a resident was in compliance with an order, for one of one resident sampled. The deficient practice posed a risk as assistance in the self administration of medication could not be verified against a medication order.",
+            "findings": "1. A review of Department documentation revealed a complaint for BH5202 stating a staff member reported giving a resident two doses of Aripiprazole 2 mg tablet instead of one. 2. A review of R1's medical record revealed a medication order for Aripiprazole 2 mg tablet: Take one tablet(s) by mouth every day at bedtime. 3. A review of BH5202's staff schedule revealed E2 was scheduled during the time of the incident and provided assistance in the self-administration of medication to a resident. 4. A review of R1's MAR's record revealed E2 provided assistance in the self- administration of medication to R1. 5. In an interview, E1 acknowledged E2 provided assistance in the self-administration of medication to a resident not in compliance with the orders. 6. In an exit interview, E1 was present during the review of the inspection that covered E2 provided assistance in the self- administration of medication to a resident not in compliance with the orders. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

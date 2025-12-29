@@ -1,0 +1,24 @@
+{
+    "legal_name": "R M B H S LAKEVIEW HOUSE",
+    "facility_status": "Active",
+    "address": "7005 East Lakeview Avenue, Mesa, AZ 85209",
+    "license_status": "Active",
+    "phone": "4806419552",
+    "license_number": "BH3637",
+    "max_licensed_capacity": "7",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MOSHE LOBL",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "RED MOUNTAIN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0097313",
+    "inspection_date": "2/25/2025",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "BH3637",
+    "deficiencies": [
+        {
+            "rule": "R9-10-707.A.6. Admission; Assessment A. An administrator shall ensure that: 6. Except as provided in subsection (E)(1)(a), a medical practitioner performs a medical history and physical examination or a registered nurse performs a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documents the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission;",
+            "evidence": "Based on record review, documentation review, and interview, the administrator failed to ensure a medical practitioner performed a medical history and physical examination or a registered nurse performed a nursing assessment on a resident within 30 calendar days before admission or within 72 hours after admission and documented the medical history and physical examination or nursing assessment in the resident's medical record within 72 hours after admission, for five of five resident records sampled. The deficient practice posed a risk of not meeting a resident's needs if no medical history and physical examination were completed to assess a resident's needs prior to treatment.",
+            "findings": "1. A review of R1's medical record (admitted in 2022) revealed a behavioral health assessment and a treatment plan. However, R1's medical record did not contain a medical history and physical examination or nursing assessment. 2. A review of R2's medical record (admitted in 2024) revealed a behavioral health assessment and a treatment plan. However, R2's medical record did not contain a medical history and physical examination or nursing assessment. 3. A review of R3's medical record (admitted in 2023) revealed a behavioral health assessment and a treatment plan. However, R3's medical record did not contain a medical history and physical examination or nursing assessment. 4. A review of R4's medical record (admitted in 2024) revealed a behavioral health assessment and a treatment plan. However, R4's medical record did not contain a medical history and physical examination or nursing assessment. 5. A review of R5's medical record (admitted in 2024) revealed a behavioral health assessment and a treatment plan. However, R5's medical record did not contain a medical history and physical examination or nursing assessment. 6. A review of R1's, R2's, R3's, R4's, and R5's medical records revealed each resident was admitted or expected to be admitted to the facility for more than 10 days in a 90- consecutive-day period. 7. In an interview, E1 reported the facility did not require residents to have a medical practitioner complete a medical history and physical examination or a registered nurse perform a nursing assessment because residents received less than 72 hours per week of services from the facility. 8. In an exit interview, E1 and O1 reviewed the findings and no additional documentation was provided."
+        }
+    ]
+}

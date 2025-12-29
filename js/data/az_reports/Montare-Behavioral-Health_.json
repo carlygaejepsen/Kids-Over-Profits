@@ -1,0 +1,29 @@
+{
+    "legal_name": "Montare Behavioral Health",
+    "facility_status": "Active",
+    "address": "750 East Foothills Drive, Tucson, AZ 85718",
+    "license_status": "Active",
+    "phone": "5612470248",
+    "license_number": "IFBH11256",
+    "max_licensed_capacity": "22",
+    "license_effective_date": "10/1/2024",
+    "chief_administrative_officer": "JODDI JACOBSON",
+    "license_expires_date": "9/30/2025",
+    "owner_licensee": "CANYON BEHAVIORAL HEALTH LLC",
+    "inspection_number": "INSP-0017678",
+    "inspection_date": "11/22/2022",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "R9-10-322. Emergency and Safety Standards B. An administrator shall ensure that: 4. A disaster drill for employees is conducted on each shift at least once every three months and documented;",
+            "evidence": "Based on a review of facility documents, and interview, the Department determined that the administrator failed to ensure a disaster drill for employees was conducted on each shift at least once every three months. This deficient practice poses a patient safety risk if staff are not trained and competent in implementing the facility's disaster plan in the event of an internal or external disaster at the facility.",
+            "findings": "The facility documents revealed a monthly evacuation drill for both staff and patients on the second shift, there was no documentation provided showing evacuation drills for the first and third shift. Employee #1 confirmed in an interview on November 22, 2022, that a disaster drill for staff had not been completed according to regulatory requirements. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2022-12-27 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "R9-10-322. Emergency and Safety Standards C. An administrator shall: 1. Obtain a fire inspection conducted according to the time- frame established by the local fire department or the State Fire Marshal,",
+            "evidence": "Based on review of facility documents, and interview, the Department determined that the administrator failed to ensure that a fire inspection was conducted per fire department, which has the potential risk that patients, visitors and staff could suffer harm in case of a fire.",
+            "findings": "A copy of the most recent fire inspection report was requested. No documentation was provided. Employee #1, verified, in an exit interview conducted on November 22, 2022, that no fire department fire inspection was performed in the past year. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2022-12-27 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

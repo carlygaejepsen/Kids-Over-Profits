@@ -1,0 +1,24 @@
+{
+    "legal_name": "TREE OF LIFE ARIZONA",
+    "facility_status": "Active",
+    "address": "2935 East Dartmouth Street, Mesa, AZ 85213",
+    "license_status": "Active",
+    "phone": "4802846498",
+    "license_number": "BH5668",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "2/1/2025",
+    "chief_administrative_officer": "FLOYD PATTERSON II",
+    "license_expires_date": "1/31/2026",
+    "owner_licensee": "TREE OF LIFE ARIZONA LLC",
+    "inspection_number": "INSP-0090029",
+    "inspection_date": "2/8/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 10. If a behavioral health assessment that complies with the requirements in this Section is received from a behavioral health provider other than the behavioral health residential facility or if the behavioral health residential facility has a medical record for the resident that contains a behavioral health assessment that was completed within 12 months before the date of the resident's current admission: a. The resident's assessment information is reviewed before treatment for the resident is initiated and updated if additional information that affects the resident's assessment is identified, and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a behavioral health assessment received from a behavioral health provider, completed within 12 months before the date of the resident's current admission, was reviewed before treatment for the resident was initiated and updated if additional information that affects the resident's assessment was identified, for two of three residents sampled.",
+            "findings": "1. A review of R1's (admitted in 2024) medical record revealed a behavioral health assessment (dated in November 2023), received from R1's former behavioral health provider. The assessment was dated within twelve months prior to R1's admission. The documentation met the criteria in R9-10- 708.A.8. However, facility documentation to indicate this assessment information was reviewed by E2 before treatment for R1 was initiated and updated was not available for review. 2. A review of R2's (admitted in 2023) medical record revealed a behavioral health assessment (dated in October 2023), received from R1's former behavioral health provider. The assessment was dated within twelve months prior to R2's admission. The assessment met the criteria in R9-10-708.A.8. However, facility documentation to indicate this assessment information was reviewed by E2 before treatment for R2 was initiated and updated was not available for review. 3. A review of R1's medical record revealed a group counseling note dated in January 2024 and a family counseling note dated in January 2024. 4. A review of R2's medical record revealed a group and individual counseling note, both dated in October 2023 5. In a joint interview, E4 and E6 acknowledged the behavioral health assessments conducted prior to R1's and R2's admission were not reviewed and updated prior to R1 and R2 receiving treatment. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-03-07 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

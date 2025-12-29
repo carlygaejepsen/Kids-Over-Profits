@@ -1,0 +1,29 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "1310 North Speedway Place, Tucson, AZ 85715",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH2914",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "ROSE LOPEZ",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0073254",
+    "inspection_date": "9/12/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "C. If a behavioral health residential facility provides assistance in the self-administration of medication, an administrator shall ensure that: 2. The following assistance is provided to a resident: d. Verifying that the medication is taken as prescribed by the resident's medical practitioner by confirming that: ii. The resident is taking the dosage of the medication stated on the medication container label or according to an order from a medical practitioner dated later than the date on the medication container label, and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure a resident provided assistance in the self-administration of medication was taking the dosage of the medication according to an order from a medical practitioner. 1. A review of R1's medical record revealed an order from a medical practitioner, dated April 5, 2023, for \"lithium carbonate ER 450 mg tablet, extended release take 1 tablet by oral route 2 times every day.\" Further review revealed R1's medication administration record (MAR) which revealed R1 received assistance in the self- administration of \"Lithium 450 mg ERT tablet,\" during the month of April, 2023. However, the MAR indicated R1 was administered one Lithium 450 mg tablet per day from April 6, 2023 through April 23, 2023. 2. In an interview, E1 acknowledged a failure to ensure R1 was taking the dosage medication as ordered. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-09-26 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "E. When medication is stored at a behavioral health residential facility, an administrator shall ensure that: 3. Policies and procedures are established, documented, and implemented for: a. Receiving, storing, inventorying, tracking, dispensing, and discarding medication, including expired medication;",
+            "evidence": "Based on observation, documentation review and interview, the administrator failed to ensure policies and procedures were implemented for discarding medication.",
+            "findings": "1. During a tour of the facility the Compliance Officer observed a metal locker used for storing medications. Inside the locker was a blister packet of \"Acetaminophen 500MG Tab\" prescribed to R1 (discharged in 2023). 2. A review of facility policy and procedures revealed a policy titled, \"Medication Inventory, Storage & Disposal,\" (dated May 8, 2023). The policy indicated medications were to be disposed of after, \"The member is no longer in treatment...\" 3. In an interview, E1 reported the medication should not be in the facility as R1 had discharged months prior. E1 acknowledged the medication had not been disposed of according to policy and procedure. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-09-26 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

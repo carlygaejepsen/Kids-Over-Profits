@@ -1,0 +1,24 @@
+{
+    "legal_name": "ZAREPHATH CHAPARRAL HOUSE",
+    "facility_status": "Active",
+    "address": "3838 South Chaparral Road, Apache Junction, AZ 85119",
+    "license_status": "Active",
+    "phone": "4805186826",
+    "license_number": "BH4880",
+    "max_licensed_capacity": "10",
+    "license_effective_date": "4/1/2025",
+    "chief_administrative_officer": "CHANTEL CATALFO",
+    "license_expires_date": "3/31/2026",
+    "owner_licensee": "ZAREPHATH INC.",
+    "inspection_number": "INSP-0055294",
+    "inspection_date": "9/13/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. An administrator shall ensure that: 8. A resident bedroom complies with the following: g. Is a: ii. Shared bedroom that: (2) Except as provided in subsection (C), contains at least 60 square feet of floor space, not including a closet, for each individual occupying the shared bedroom; and",
+            "evidence": "Based on observation and interview, the administrator failed to ensure a shared resident bedroom contained at least 60 square feet of floor space, not including a closet, for each individual occupying the shared bedroom.",
+            "findings": "1. The Compliance Officer observed two beds in a bedroom located on the second floor of the facility, directly across from the stairwell. Using an electronic measuring device, the Compliance Officer measured the bedroom to be 119 square feet. 2. In an interview, E6 acknowledged the bedroom did not contain at least 60 square feet of floor space for each individual occupying the bedroom. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-11-17 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "legal_name": "BACK TO LIFE, INC",
+    "facility_status": "Active",
+    "address": "5915 West Roanoke Avenue, Phoenix, AZ 85035",
+    "license_status": "Active",
+    "phone": "6235189552",
+    "license_number": "BH2772",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "GRACIE PADILLA",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "BACK TO LIFE INCORPORATED.",
+    "inspection_number": "INSP-0060267",
+    "inspection_date": "1/24/2024",
+    "inspection_type": "Complaint;Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: c. The individual's completed orientation and in- service education as required by policies and procedures;",
+            "evidence": "Based on documentation review, record review and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's completed in-service education as required by policies and procedures, for two of seven personnel members sampled.",
+            "findings": "R9-10- 101.115. \"In-service education\" means organized instruction or information that is related to physical health services or behavioral health services and that is provided to a medical staff member, personnel member, employee, or volunteer. 1. A review of facility documentation revealed a policy and procedure titled \"Fall Prevention and Fall Recovery\" (dated March 28, 2023). The policy and procedure stated \" ...All staff employed with Back to Life, Inc. who provide direct care services [sic] ...will be required to complete mandatory training program initially, and continued competency annually ...\" 2. A review of E4's (hired in 2019) personnel record revealed documentation of fall prevention and fall recovery training, dated January 11, 2023. However, documentation of annual fall prevention and fall recovery training was not available for review. 3. A review of E5's (hired in 2018) personnel record revealed documentation of fall prevention and fall recovery training, dated August 14, 2022. However, documentation of annual fall prevention and fall recovery training was not available for review. 4. In a joint interview, E1 and E2 acknowledged E4's and E5's personnel records did not include documentation of the individual's completed in-service education as required by policies and procedures. This is a repeat deficiency from the on-site compliance inspection conducted on December 28, 2022. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2024-03-20 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: e. The individual's compliance with requirements in A.R.S. \u00a7\u00a7 36-411, 36-411.01, and 36-425.03, as applicable;",
+            "evidence": "Based on record review, documentation review, and interview, the administrator failed to ensure a personnel record included documentation of compliance with requirements in Arizona Revised Statutes (A.R.S.) \\'a7 36-411, for one of seven personnel members sampled. The deficient practice posed a risk if E3 was a danger to a vulnerable population.",
+            "findings": "1. A review of E3's personnel record revealed documentation of compliance with A.R.S. \\'a7 36-411(A). 2. A review of the Department of Public Safety (DPS) Fingerprint Clearance verification website revealed E3's status as \"Invalid.\" 3. A review of facility documentation revealed documentation of compliance with A.R.S. \\'a7 36-411(C)(2), dated in October 2023. 4. In an interview, E2 attempted to contact E3 via telephone call and left a voicemail. However, E3 did not contact E2 while the Compliance Officer was on-site. 5. A review of facility documentation revealed daily staffing schedules, dated from October 2023 to January 2024. A review of the daily staffing schedules revealed E3 never worked alone. 6. In a joint interview, E1 and E2 acknowledged E3's card became invalid while employed at BH2772, and acknowledged documentation of a valid fingerprint clearance card and A.R.S. \\'a7 36-411(C)(2) was not available for review. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Date temporary correction was implemented Date permanent correction will be complete 2024-03-20 Permanent Solution Monitoring"
+        }
+    ]
+}

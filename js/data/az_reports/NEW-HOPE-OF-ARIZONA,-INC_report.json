@@ -1,0 +1,24 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "12834 W Sells Dr, Litchfield Park, AZ 85340",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH4774",
+    "max_licensed_capacity": "3",
+    "license_effective_date": "12/1/2024",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "11/30/2025",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078735",
+    "inspection_date": "12/6/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 5. Behavioral health services listed in the behavioral health residential facility's scope of services are provided on the premises;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure behavioral health services listed in the behavioral health residential facility's scope of services were provided on the premises. The deficient practice posed a risk if the residents admitted to the residential facility did not receive the behavioral health services expected to be provided on the premises.",
+            "findings": "1. A review of the facility policies and procedures revealed a scope of services. The scope of services stated, \"...Behavioral Health Residential Services provides a structured treatment setting with twenty four hour supervision and counseling...\" 2. A review of R1's and R2's treatment plans revealed no documentation of counseling identified in the residents medical record. 3. In an interview, E1 reported the identified facility residents receive respite services. E1 acknowledged the facility is licensed as a behavioral health residential facility. E1 acknowledged the behavioral health services listed in the behavioral health residential facility's scope of services were not provided on the premises. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete 2023-12-19 Monitoring"
+        }
+    ]
+}

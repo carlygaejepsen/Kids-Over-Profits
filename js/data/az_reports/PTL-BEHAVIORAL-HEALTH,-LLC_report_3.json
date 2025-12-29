@@ -1,0 +1,29 @@
+{
+    "legal_name": "PTL BEHAVIORAL HEALTH, LLC",
+    "facility_status": "Active",
+    "address": "10839 East Sonrisa Avenue, Mesa, AZ 85212",
+    "license_status": "Active",
+    "phone": "4804856075",
+    "license_number": "BH8503",
+    "max_licensed_capacity": "9",
+    "license_effective_date": "7/26/2025",
+    "chief_administrative_officer": "PHILOMINA A LAUDER",
+    "license_expires_date": "7/25/2026",
+    "owner_licensee": "PTL BEHAVIORAL HEALTH, LLC",
+    "inspection_number": "INSP-0082850",
+    "inspection_date": "11/13/2023",
+    "inspection_type": "Initial Monitoring",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "G. An administrator shall ensure that a personnel record is maintained for each personnel member, employee, volunteer, or student that includes: 3. Documentation of: c. The individual's completed orientation and in- service education as required by policies and procedures;",
+            "evidence": "Based on documentation review, record review, and interview, the administrator failed to ensure a personnel record was maintained for each personnel member to include documentation of the individual's completed in-service education as required by policies and procedures, for six of six personnel members sampled.",
+            "findings": "R9-10- 101.115. \"In-service education\" means organized instruction or information that is related to physical health services or behavioral health services and that is provided to a medical staff member, personnel member, employee, or volunteer. 1. A review of facility documentation revealed an undated policy and procedure titled \"FALL PREVENTION AND FALL RECOVERY.\" The policy and procedure stated \" ...PTL Behavioral Health LLC personnel will be required to complete a Fall Prevention and Fall Recovery training within their first 30 days of hire ...\" 2. A review of E1's, E2's, E3's, and E4's personnel records revealed training documents titled \"FALLS PREVENTION MEASURES.\" However, the training documents did not include fall recovery. 3. A review of E5's and E6's personnel records revealed initial training in fall prevention and fall recovery was not available for review. 4. In an interview, E1 acknowledged personnel records did not include documentation of the individual's completed in-service education as required. Plan of Correction Name, title and/or Position of the Person Responsible Temporary Solution Permanent Solution Date temporary correction was implemented Date permanent correction will be complete 2023-11-14 Monitoring"
+        },
+        {
+            "rule": "R9-10-113. Tuberculosis Screening A. If a health care institution is subject to the requirements of this Section, as specified in an Article in this Chapter, the health care institution's chief administrative officer shall ensure that the health care institution establishes, documents, and implements tuberculosis infection control activities that: 2. Include: c. Annually providing training and education related to recognizing the signs and symptoms of tuberculosis to individuals employed by or providing volunteer services for the health care institution;",
+            "evidence": "Based on documentation review, record review, and interview, the health care institution's chief administrative officer failed to establish and document tuberculosis infection control activities to include annual training and education related to recognizing the signs and symptoms of tuberculosis (TB) to individuals employed by the health care institution.",
+            "findings": "R9-10-113.A.2.c. If a health care institution is subject to the requirements of this Section, as specified in an Article in this Chapter, the health care institution ' s chief administrative officer shall ensure that the health care institution establishes, documents, and implements tuberculosis infection control activities that: Include: c. Annually providing training and education related to recognizing the signs and symptoms of tuberculosis to individuals employed by or providing volunteer services for the health care institution; 1. A review of facility documentation revealed an undated document. The document contained compliance with R9-10-113.A.2.a.b.d.e. However, the document revealed non- compliance with R9-10-113.A.2.c. 3. In an interview, E1 acknowledged the facility had not established and documented TB infection control activities as specified in R9-10- 113.A.2.c. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Temporary Solution Permanent Solution Monitoring Date permanent correction will be complete 2023-11-14"
+        }
+    ]
+}

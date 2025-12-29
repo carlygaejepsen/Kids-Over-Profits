@@ -1,0 +1,24 @@
+{
+    "legal_name": "MINGUS MOUNTAIN ESTATE RESIDENTIAL CENTER, INC",
+    "facility_status": "Active",
+    "address": "100 Dewey Road, Dewey, AZ 86327",
+    "license_status": "Active",
+    "phone": "6023352000",
+    "license_number": "BH1122",
+    "max_licensed_capacity": "9",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "SHAUN MOHON",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "MINGUS MOUNTAIN ESTATE RESIDENTIAL CENTER, INC.",
+    "inspection_number": "INSP-0077611",
+    "inspection_date": "7/8/2024",
+    "inspection_type": "Complaint",
+    "certificate_number": "BH1122",
+    "deficiencies": [
+        {
+            "rule": "A. An administrator shall ensure that: 1. The requirements in subsection (B) and the resident rights in subsection (E) are conspicuously posted on the premises;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the resident rights in subsection (E) were conspicuously posted on the premises. The deficient practice posed a risk if residents were not aware of all relevant resident rights while resident at BH1122.",
+            "findings": "1. The Compliance Officer observed a facility posting titled \"Patient Rights\" on the premises. The posting stated, \"Youth Receiving Services at Mingus Mountain Youth Treatment Center have the Following Rights: (Per A.A.C. R9-10-311)...\" The posting listed requirements in subsection (B) and the patient rights in subsection (D) from Article 3 - Behavioral Health Inpatient Facilities. The resident rights in subsection D of A.A.C. R9-10-311 did not include all of the resident rights in subsection E of A.A.C. R9-10- 711. 2. In an interview, E1 acknowledged the posted resident rights were not the resident rights required by R9-10-711(A)(1). Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete Temporary Solution Permanent Solution Monitoring 2024-07-29"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "legal_name": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "facility_status": "Active",
+    "address": "8571 East Tanque Verde Road, Tucson, AZ 85749",
+    "license_status": "Active",
+    "phone": "5207211887",
+    "license_number": "BH1618",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "9/1/2024",
+    "chief_administrative_officer": "Rose Lopez",
+    "license_expires_date": "8/31/2025",
+    "owner_licensee": "INTERMOUNTAIN CENTERS FOR HUMAN",
+    "inspection_number": "INSP-0098030",
+    "inspection_date": "2/26/2025",
+    "inspection_type": "Complaint",
+    "certificate_number": "BH1618",
+    "deficiencies": [
+        {
+            "rule": "R9-10-721.A.14. Environmental Standards A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 14. Poisonous or toxic materials stored by the behavioral health residential facility are maintained in labeled containers in a locked area separate from food preparation and storage, dining areas, and medications and are inaccessible to residents;",
+            "evidence": "Based on observation and interview, the administrator failed to ensure poisonous or toxic materials stored by the behavioral health residential facility were stored in labeled containers in a locked area and inaccessible to residents. The deficient practice posed a risk to the physical health and safety of a resident.",
+            "findings": "1. The Compliance Officer observed the following in an unlocked cabinet beneath the kitchen sink: An unlabeled bottle containing blue liquid. The unlabeled bottle did contain a warning that stated \"Keep out of reach of children.\" The bottle had a list of potential cleaning agents to check off what the contents of the bottle may contain. However, no option was selected. 2. In an interview, E1 acknowledged an unlabeled toxic material was in an unlocked cabinet beneath the kitchen sink and accessible to residents. E1 reported the unlabeled bottle contained glass cleaner. 3. In an exit interview, the findings were discussed with E1, E2, E3 and E4 and no additional statements were provided. Plan of Correction Name, title and/or Position of the Person Responsible Justin Betancourt, Director, Residential and Inpatient Services Date temporary correction was implemented 2025-02-26 Date permanent correction will be complete 2025-03-31 Temporary Solution The container with liquid was removed and placed in a secure location only accessible by staff. Permanent Solution All cleaning products will only be stored in secure areas that members cannot access. Monitoring Cabinet checks for hazardous materials added to the weekly facility walkthrough checklist conducted by site supervisor."
+        },
+        {
+            "rule": "R9-10-722.E.2.f.i. Physical Plant Standards E. If a swimming pool is located on the premises, an administrator shall ensure that: 2. The swimming pool is enclosed by a wall or fence that: f. Has a self-closing, self-latching gate that: i. Opens away from the swimming pool,",
+            "evidence": "Based on observation and interview, the administrator failed to ensure the swimming pool located on the premises, enclosed by a fence, had a self-closing, self-latching gate that opened away from the swimming pool.",
+            "findings": "1. The Compliance Officer observed a swimming pool on the premises, enclosed by a fence. The pool fence contained two gates. The pool gate to the left was locked. The gate to the right of the pool contained a self-closing latch, however, the gate entered into the pool area. 2. In an interview, E1 acknowledged one gate did not open away from the swimming pool. 3. In an exit interview, the findings were discussed with E1, E2, E3 and E4 and no additional statements were provided. Plan of Correction Name, title and/or Position of the Person Responsible Justin Betancourt, Director, Residential and Inpatient Services Date temporary correction was implemented 2025-02-26 Date permanent correction will be complete 2025-04-11 Temporary Solution Gate has been locked and staff have been directed to not use the gate until the repair is made. Permanent Solution Work order has been submitted to have gate open outwards. Monitoring Pool gates added to facility weekly walkthrough checklist to be completed by site supervisor to ensure gate functions and properly opens outward of pool area."
+        },
+        {
+            "rule": "R9-10-722.E.2.f.iii. Physical Plant Standards E. If a swimming pool is located on the premises, an administrator shall ensure that: 2. The swimming pool is enclosed by a wall or fence that: f. Has a self-closing, self-latching gate that: iii. Is locked when the swimming pool is not in use; and",
+            "evidence": "Based on observation and interview, the Administrator failed to ensure the swimming pool, enclosed by a fence, had a self-closing, self-latching gate that was locked when the swimming pool was not in use.",
+            "findings": "1. The Compliance Officer observed a swimming pool on the premises, enclosed by a fence. The pool fence contained two gates. The gate to the right of the pool contained a self- closing latch, however, the gate entered into the pool area and was not locked. The swimming pool was not currently in use. 2. In an interview, E1 acknowledged one gate was not locked. 3. In an exit interview, the findings were discussed with E1, E2, E3 and E4 and no additional statements were provided. Plan of Correction Name, title and/or Position of the Person Responsible Justin Betancourt, Director, Residential and Inpatient Services Date temporary correction was implemented 2025-02-26 Date permanent correction will be complete 2025-03-31 Temporary Solution Pool gate was locked. Permanent Solution Pool gate will remain locked when not in use. Monitoring Pool gate locks added to weekly facility walkthrough checklist completed by site supervisor to ensure the pool gate remains locked when not in place."
+        }
+    ]
+}

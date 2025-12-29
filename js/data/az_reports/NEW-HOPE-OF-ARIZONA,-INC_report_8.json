@@ -1,0 +1,29 @@
+{
+    "legal_name": "NEW HOPE OF ARIZONA, INC",
+    "facility_status": "Active",
+    "address": "8149 West Forest Grove Avenue, Phoenix, AZ 85043",
+    "license_status": "Active",
+    "phone": "6025355686",
+    "license_number": "BH5762",
+    "max_licensed_capacity": "4",
+    "license_effective_date": "5/1/2025",
+    "chief_administrative_officer": "MATTHEW J BEATY",
+    "license_expires_date": "4/30/2026",
+    "owner_licensee": "NEW HOPE OF ARIZONA, INCORPORATED",
+    "inspection_number": "INSP-0078750",
+    "inspection_date": "2/13/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "B. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, a registered dietitian or director of food services shall ensure that: 2. A food menu: c. Is conspicuously posted at least one calendar day before the first meal on the food menu will be served,",
+            "evidence": "Based on observation, documentation review, and interview, the registered dietitian failed to ensure a food menu was conspicuously posted at least one calendar day before the first meal on the food menu would be served. Findings include: 1. The surveyor observed a food menu posted at the facility with the dates of February 5, 2023, through February 11, 2023. 2. In an interview, E1 acknowledged the food menu posted on the facility refrigerator was not a current food menu. E1 located the current food menu in a binder in the facility office. E1 acknowledge the food menu had not been conspicuously posted at least one calendar day before the first meal on the food menu would be served. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-22 Temporary Solution Permanent Solution Monitoring",
+            "findings": ""
+        },
+        {
+            "rule": "A. Except for an outdoor behavioral health care program provided by a behavioral health residential facility, an administrator shall ensure that: 4. Equipment used at the behavioral health residential facility is: a. Maintained in working order;",
+            "evidence": "Based on observation, and interview, the administrator failed to ensure equipment used at the facility was maintained in working order.",
+            "findings": "1. The compliance officer observed the resident shared bathroom ventilation fan was not operating. The bathroom did not contain a window or an operable exhaust fan. 2. In an interview, E1 acknowledged the hallway bathroom did not contain a window or an operating exhaust fan. E1 acknowledged the behavioral health residential facility equipment identified was not maintained in working order. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-22 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}

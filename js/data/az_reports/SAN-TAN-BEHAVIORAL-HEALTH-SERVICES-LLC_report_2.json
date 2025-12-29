@@ -1,0 +1,29 @@
+{
+    "legal_name": "SAN TAN BEHAVIORAL HEALTH SERVICES LLC",
+    "facility_status": "Active",
+    "address": "3970 East Juanita Avenue, Gilbert, AZ 85234",
+    "license_status": "Active",
+    "phone": "4805073644",
+    "license_number": "BH5514",
+    "max_licensed_capacity": "8",
+    "license_effective_date": "10/1/2024",
+    "chief_administrative_officer": "DAN BREWER",
+    "license_expires_date": "9/30/2025",
+    "owner_licensee": "SAN TAN BEHAVIORAL HEALTH SERVICES LLC",
+    "inspection_number": "INSP-0085283",
+    "inspection_date": "2/13/2023",
+    "inspection_type": "Compliance (Annual)",
+    "certificate_number": "Initial Comments",
+    "deficiencies": [
+        {
+            "rule": "36-420.01. Health care institutions; fall prevention and fall recovery; training programs; definition A. Each health care institution shall develop and administer a training program for all staff regarding fall prevention and fall recovery. The training program shall include initial training and continued competency training in fall prevention and fall recovery. A health care institution may use information and training materials from the department's Arizona falls prevention coalition in developing the training program.",
+            "evidence": "Based on documentation review, record review, and interview, the health care institution failed to administer a training program for all staff regarding fall prevention and fall recovery. The deficient practice posed a risk as the Department was unable to determine substantial compliance as the documentation was not available during the inspection, and the documentation was not provided within two hours after a Department request.",
+            "findings": "1. A review of facility documentation revealed an undated electronic online training course titled \"Slips, Trips, and Falls Prevention.\" The document stated \"Preventing falls is everyone's responsibility. It takes a team effort to have an eye out for potential hazards and then ACT to remove them. This course is designed to help you get engaged in preventing slips, trips, and falls within your community\". 2. A review of the facility's policies and procedures revealed a policy titled \"Staff Training & Orientation Policy\" dated August 2021. The policy stated \"6. STBHS utilizes Relias Training Modules. Each employee has a training plan within Relias, which is monitored for compliance through the HR department. All Respite Employees will complete the following trainings at hire (before providing services), as well as annually from their hire date:...Fall Prevention and Fall Recovery Training.\" 3. In a joint interview, E1 and E2 reported the aforementioned documentation was the facility's fall prevention and fall recovery training program. 4. A review of E3's personnel record revealed the record did not include documentation of initial training or continued competency training in fall prevention and fall recovery. 5. In a joint interview, E1 and E2 the facility had not administered a training program for all staff regarding fall prevention and fall recovery. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-27 Temporary Solution Permanent Solution Monitoring"
+        },
+        {
+            "rule": "C. An administrator shall ensure that: 5. Unless otherwise stated: a. Documentation required by this Article is provided to the Department within two hours after a Department request; and",
+            "evidence": "Based on record review and interview, the administrator failed to ensure documentation required by this Article was provided to the Department within two hours after a Department request. The deficient practice posed a risk as the Department was unable to determine substantial compliance as the following was not provided for review: a fall prevention and fall recovery training program.",
+            "findings": "1. A review of E3's personnel record revealed the record did not include documentation of initial training or continued competency training in fall prevention and fall recovery. 2. In a joint interview E1 and E2 acknowledged documentation required by this Article was not provided to the Department within two hours after a Department request. Plan of Correction Name, title and/or Position of the Person Responsible Date temporary correction was implemented Date permanent correction will be complete 2023-02-27 Temporary Solution Permanent Solution Monitoring"
+        }
+    ]
+}
