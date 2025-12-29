@@ -17,7 +17,10 @@
       "Bash(test:*)",
       "Bash(for:*)",
       "Bash(do php -l \"$f\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
