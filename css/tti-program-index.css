@@ -224,6 +224,76 @@
     font-size: 0.9em;
 }
 
+/* Facility expanded details section */
+.facility-expanded-info {
+    margin-top: 8px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 8px;
+}
+
+.facility-expanded-info summary {
+    cursor: pointer;
+    color: #0066cc;
+    font-weight: 600;
+    font-size: 0.85em;
+    padding: 4px 0;
+    user-select: none;
+}
+
+.facility-expanded-info summary:hover {
+    color: #004499;
+}
+
+.facility-extra-content {
+    padding: 12px 0 4px 0;
+}
+
+.facility-extra-content p {
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+    font-size: 0.9em;
+    color: #333333 !important;
+    word-wrap: break-word;
+}
+
+.facility-extra-content p:last-child {
+    margin-bottom: 0;
+}
+
+.facility-extra-content strong {
+    color: #000080 !important;
+    font-weight: 600;
+}
+
+.facility-extra-content a {
+    color: #0066cc !important;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.facility-extra-content a:hover {
+    text-decoration: underline;
+}
+
+/* Facility summary info (location, years, status) */
+.facility-summary {
+    margin-bottom: 4px;
+}
+
+.facility-summary p {
+    margin: 2px 0;
+    font-size: 0.85em;
+    color: #555555 !important;
+}
+
+.facility-location {
+    font-style: italic;
+}
+
+.facility-years {
+    color: #666666 !important;
+}
+
 /* Operator section - NAVY backgrounds get WHITE text */
 .operator-section {
     padding: 15px;
@@ -401,14 +471,25 @@ details[open] > summary.operator-header::after {
 
 .operator-details {
     font-size: 0.9em;
-    opacity: 0.9;
     font-weight: normal;
     margin-top: 8px;
     color: #ffffff;
 }
 
+.operator-details p {
+    margin: 6px 0;
+    line-height: 1.4;
+}
+
 .operator-details a {
-    color: #ffffff;
+    color: #AEE0ED !important;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.operator-details a:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
 }
 
 .operator-content-scrollable p {

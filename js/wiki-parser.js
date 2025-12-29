@@ -181,11 +181,12 @@ function parseWikiMarkdown(markdown) {
         'Conduct Disorder', 'Oppositional Defiant Disorder', 'ODD',
         'Learning Disorder', 'Learning Disability', 'Learning Disabilities',
         'Dyslexia', 'Non-Verbal Learning Disorder', 'NVLD',
-        'Borderline Personality Disorder', 'BPD',
+        'Personality Disorders', 'Borderline Personality Disorder', 'BPD',
+        'Histrionic Personality Disorder', 'Narcissistic Personality Disorder',
         'Schizoaffective Disorder', 'Schizophrenia', 'Psychosis',
         'Eating Disorder', 'Anorexia Nervosa', 'Anorexia', 'Bulimia Nervosa', 'Bulimia',
         'Substance Use Disorder', 'Substance Abuse', 'Drug Abuse', 'Alcohol Abuse',
-        'Behavioral Addiction', 'Internet Addiction', 'Gaming Addiction',
+        'Behavioral Addiction', 'Internet Addiction', 'Gaming Addiction', 'Screen Addiction', 'Technology Addiction',
         'Self-Harm', 'Self-Injurious Behavior', 'Cutting',
         'Suicidal Ideation', 'Suicidality', 'Suicide Risk',
         'Fetal Alcohol Spectrum Disorder', 'FAS', 'Fetal Alcohol Effects',
@@ -216,7 +217,9 @@ function parseWikiMarkdown(markdown) {
         'blame', 'blaming others', 'lack of accountability',
         'impulsive behavior', 'impulsivity', 'poor impulse control',
         'adoption issues', 'adoption', 'adopted child issues',
-        'trafficking', 'sex trafficking', 'human trafficking', 'trafficking victim'
+        'trafficking', 'sex trafficking', 'human trafficking', 'trafficking victim',
+        'low self-esteem', 'negative self-talk', 'identity issues', 'executive functioning issues',
+        'failure to launch', 'risky behaviors'
     ];
 
     // Common phase/stage/level/tier system structures
@@ -272,6 +275,8 @@ function parseWikiMarkdown(markdown) {
         // ═══════════════════════════════════════════════════════════
         'corporal punishment': 'physical abuse',
         'excessive punishment': 'physical abuse',
+        'excessive force': 'physical abuse',
+        'violent behavior by staff': 'physical abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "emotional abuse"
@@ -279,12 +284,19 @@ function parseWikiMarkdown(markdown) {
         'emotional/verbal abuse': 'emotional abuse',
 
         // Note: "psychological abuse" and "verbal abuse" are their OWN checkboxes
+        'gaslighting': 'psychological abuse',
+        'brainwashing': 'psychological abuse',
+        'mind control': 'psychological abuse',
+        'coercive control': 'psychological abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "sexual abuse"
         // ═══════════════════════════════════════════════════════════
         'sexual exploitation': 'sexual abuse',
         'sexual misconduct': 'sexual abuse',
+        'sexual harassment': 'sexual abuse',
+        'grooming': 'sexual abuse',
+        'strip searches': 'sexual abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "medical neglect"
@@ -301,6 +313,7 @@ function parseWikiMarkdown(markdown) {
         // ═══════════════════════════════════════════════════════════
         'inappropriate medication': 'overmedication',
         'medication abuse': 'overmedication',
+        'forced medication': 'overmedication',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "restraint abuse"
@@ -314,6 +327,7 @@ function parseWikiMarkdown(markdown) {
         // → CHECKBOX: "solitary confinement"
         // ═══════════════════════════════════════════════════════════
         'lock-down': 'solitary confinement',
+        'seclusion': 'solitary confinement',
 
         // Note: "isolation" is its OWN checkbox
 
@@ -327,6 +341,7 @@ function parseWikiMarkdown(markdown) {
         // ═══════════════════════════════════════════════════════════
         'withholding food': 'food deprivation',
         'starvation': 'food deprivation',
+        'restricted diet': 'food deprivation',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "humiliation"
@@ -341,6 +356,7 @@ function parseWikiMarkdown(markdown) {
         'threats': 'intimidation',
         'coercion': 'intimidation',
         'fear-based practices': 'intimidation',
+        'fear tactics': 'intimidation',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "inadequate supervision"

@@ -243,29 +243,74 @@ function displayFacilities(facilitiesData, containerId) {
         // Build other operator data
         let otherOperatorData = '';
 
+        // Helper to check if a value is meaningfully empty
+        const isEmptyValue = (value) => {
+            if (value === null || value === undefined || value === '') return true;
+            if (typeof value === 'boolean') return false;
+            if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
+            if (typeof value === 'object') {
+                const keys = Object.keys(value);
+                if (keys.length === 0) return true;
+                return keys.every(k => isEmptyValue(value[k]));
+            }
+            return false;
+        };
+
+        // Helper to render a single item (handles objects in arrays)
+        const renderItemOp = (item) => {
+            if (item === null || item === undefined || item === '') return '';
+            if (typeof item === 'boolean') return item ? 'Yes' : 'No';
+            if (typeof item === 'string') return escapeHtml(item);
+            if (typeof item === 'number') return escapeHtml(String(item));
+            if (typeof item === 'object' && !Array.isArray(item)) {
+                const parts = [];
+                Object.entries(item).forEach(([k, v]) => {
+                    if (v && typeof v === 'string' && v.trim()) {
+                        if (k === 'name' || k === 'value' || k === 'text') {
+                            parts.push(escapeHtml(v));
+                        } else if (k !== 'role' || v.trim()) {
+                            parts.push(escapeHtml(v));
+                        }
+                    }
+                });
+                return parts.join(' - ');
+            }
+            return escapeHtml(String(item));
+        };
+
         // Function to recursively render all fields from an object
         const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
             if (!obj || typeof obj !== 'object' || depth > 3) return [];
             const fields = [];
 
+            // Keys to skip for operators
+            const skipKeys = ['notes', 'fieldNotes'];
+
             Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
                 const value = obj[key];
 
-                if (value === null || value === undefined || value === '') return;
+                if (skipKeys.includes(key)) return;
+                if (isEmptyValue(value)) return;
+                if (typeof value === 'boolean' && !value) return;
 
                 if (Array.isArray(value)) {
-                    if (value.length > 0) {
+                    if (value.length > 0 && !value.every(isEmptyValue)) {
                         const label = formatFieldLabel(fullKey);
                         const isUrl = value.some(v => typeof v === 'string' && (v.startsWith('http://') || v.startsWith('https://')));
                         fields.push({ key: fullKey, label, value: value, isList: true, renderListAsLinks: isUrl });
                     }
                 } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-                    // Recursively add nested object fields
                     fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
+                } else if (typeof value === 'boolean' && value) {
+                    const label = formatFieldLabel(fullKey);
+                    fields.push({ key: fullKey, label, value: 'Yes' });
                 } else {
                     const label = formatFieldLabel(fullKey);
-                    fields.push({ key: fullKey, label, value: cleanText(value) });
+                    const textValue = cleanText(value);
+                    if (textValue) {
+                        fields.push({ key: fullKey, label, value: textValue });
+                    }
                 }
             });
 
@@ -290,11 +335,14 @@ function displayFacilities(facilitiesData, containerId) {
 
                 if (field.renderListAsLinks) {
                     renderedValue = items.map(url => {
+                        if (typeof url !== 'string') return '';
                         const safeUrl = escapeAttribute(url);
-                        return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(url)}</a>` : '';
-                    }).filter(Boolean).join(', ');
+                        let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
+                        if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
+                        return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+                    }).filter(Boolean).join('<br>');
                 } else {
-                    renderedValue = items.map(item => escapeHtml(item)).filter(Boolean).join(', ');
+                    renderedValue = items.map(item => renderItemOp(item)).filter(Boolean).join(', ');
                 }
             } else {
                 renderedValue = escapeHtml(field.value);
@@ -352,28 +400,85 @@ function displayFacilities(facilitiesData, containerId) {
             // Build other facility data
             let otherFacilityData = '';
 
+            // Helper to check if a value is meaningfully empty
+            const isEmptyValue = (value) => {
+                if (value === null || value === undefined || value === '') return true;
+                if (typeof value === 'boolean') return false; // booleans are never "empty"
+                if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
+                if (typeof value === 'object') {
+                    const keys = Object.keys(value);
+                    if (keys.length === 0) return true;
+                    // Check if all values in object are empty
+                    return keys.every(k => isEmptyValue(value[k]));
+                }
+                return false;
+            };
+
+            // Helper to render a single item (handles objects in arrays)
+            const renderItem = (item) => {
+                if (item === null || item === undefined || item === '') return '';
+                if (typeof item === 'boolean') return item ? 'Yes' : 'No';
+                if (typeof item === 'string') return escapeHtml(item);
+                if (typeof item === 'number') return escapeHtml(String(item));
+                if (typeof item === 'object' && !Array.isArray(item)) {
+                    // For objects like {role: "", name: "Scott Hess"}, extract meaningful values
+                    const parts = [];
+                    Object.entries(item).forEach(([k, v]) => {
+                        if (v && typeof v === 'string' && v.trim()) {
+                            // If key is 'name' or 'value', just use the value
+                            if (k === 'name' || k === 'value' || k === 'text') {
+                                parts.push(escapeHtml(v));
+                            } else if (k !== 'role' || v.trim()) {
+                                // Include role only if non-empty
+                                parts.push(escapeHtml(v));
+                            }
+                        }
+                    });
+                    return parts.join(' - ');
+                }
+                return escapeHtml(String(item));
+            };
+
             // Function to recursively render all fields from an object
             const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
                 if (!obj || typeof obj !== 'object' || depth > 3) return [];
                 const fields = [];
 
+                // Keys to skip entirely (shown elsewhere or not useful)
+                const skipKeys = ['fieldNotes', 'resources', 'customResources', 'customTreatmentTypes',
+                                  'customPhilosophy', 'customIncidents', 'customConditions'];
+
                 Object.keys(obj).forEach(key => {
                     const fullKey = prefix ? `${prefix}.${key}` : key;
                     const value = obj[key];
 
-                    if (value === null || value === undefined || value === '') return;
+                    // Skip certain keys
+                    if (skipKeys.includes(key)) return;
+
+                    // Skip empty values
+                    if (isEmptyValue(value)) return;
+
+                    // Skip boolean false values (only show true flags)
+                    if (typeof value === 'boolean' && !value) return;
 
                     if (Array.isArray(value)) {
-                        if (value.length > 0) {
+                        if (value.length > 0 && !value.every(isEmptyValue)) {
                             const label = formatFieldLabel(fullKey);
                             fields.push({ key: fullKey, label, value: value, isList: true });
                         }
                     } else if (typeof value === 'object' && Object.keys(value).length > 0) {
                         // Recursively add nested object fields
                         fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
+                    } else if (typeof value === 'boolean' && value) {
+                        // Only show boolean true values
+                        const label = formatFieldLabel(fullKey);
+                        fields.push({ key: fullKey, label, value: 'Yes' });
                     } else {
                         const label = formatFieldLabel(fullKey);
-                        fields.push({ key: fullKey, label, value: cleanText(value) });
+                        const textValue = cleanText(value);
+                        if (textValue) {
+                            fields.push({ key: fullKey, label, value: textValue });
+                        }
                     }
                 });
 
@@ -396,13 +501,23 @@ function displayFacilities(facilitiesData, containerId) {
                         return;
                     }
 
-                    if (field.renderListAsLinks) {
+                    // Check if items look like URLs
+                    const isUrlList = items.some(item =>
+                        typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://'))
+                    );
+
+                    if (isUrlList) {
                         renderedValue = items.map(url => {
+                            if (typeof url !== 'string') return '';
                             const safeUrl = escapeAttribute(url);
-                            return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(url)}</a>` : '';
-                        }).filter(Boolean).join(', ');
+                            // Shorten displayed URL for readability
+                            let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
+                            if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
+                            return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+                        }).filter(Boolean).join('<br>');
                     } else {
-                        renderedValue = items.map(item => escapeHtml(item)).filter(Boolean).join(', ');
+                        // Use renderItem which handles objects properly
+                        renderedValue = items.map(item => renderItem(item)).filter(Boolean).join(', ');
                     }
                 } else {
                     renderedValue = escapeHtml(field.value);
