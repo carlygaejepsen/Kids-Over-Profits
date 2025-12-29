@@ -192,6 +192,16 @@ get_header();
                         <input type="text" id="ownerLink" name="ownerLink" placeholder="e.g., /r/troubledteens/wiki/...">
                     </div>
                 </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="rebrand">Rebrand/Spin-off of:</label>
+                        <input type="text" id="rebrand" name="rebrand" data-autocomplete-category="facility" placeholder="e.g., Cross Creek Manor">
+                    </div>
+                    <div class="field-group">
+                        <label for="rebrandLink">Rebrand Link:</label>
+                        <input type="text" id="rebrandLink" name="rebrandLink" placeholder="e.g., /r/troubledteens/wiki/...">
+                    </div>
+                </div>
                 <div class="field-row facility-only-field">
                     <div class="field-group">
                         <label for="avgStay">Avg. Stay:</label>
@@ -238,6 +248,8 @@ get_header();
                             <label><input type="checkbox" name="diagnoses" value="Behavioral Disorders"> Behavioral Disorders</label>
                             <label><input type="checkbox" name="diagnoses" value="Emotional Disorders"> Emotional Disorders</label>
                             <label><input type="checkbox" name="diagnoses" value="Co-occurring Disorders"> Co-occurring Disorders</label>
+                            <label><input type="checkbox" name="diagnoses" value="Reactive Attachment Disorder"> Reactive Attachment Disorder (RAD)</label>
+                            <label><input type="checkbox" name="diagnoses" value="Personality Disorders"> Personality Disorders</label>
                         </div>
                         <div class="checklist-column">
                             <h4>Behavioral Issues</h4>
@@ -252,6 +264,10 @@ get_header();
                             <label><input type="checkbox" name="diagnoses" value="stealing"> Stealing</label>
                             <label><input type="checkbox" name="diagnoses" value="emotional dysregulation"> Emotional dysregulation</label>
                             <label><input type="checkbox" name="diagnoses" value="impulsive behavior"> Impulsive behavior</label>
+                            <label><input type="checkbox" name="diagnoses" value="sexually reactive behaviors"> Sexually reactive behaviors</label>
+                            <label><input type="checkbox" name="diagnoses" value="attachment issues"> Attachment issues</label>
+                            <label><input type="checkbox" name="diagnoses" value="adoption issues"> Adoption issues</label>
+                            <label><input type="checkbox" name="diagnoses" value="trafficking"> Trafficking</label>
                         </div>
                     </div>
                     <label for="customDiagnoses">Additional Diagnoses/Behaviors (comma-separated):</label>
@@ -280,6 +296,22 @@ get_header();
                 <label for="historyNotes">Additional History Notes (will be included as-is):</label>
                 <textarea id="historyNotes" name="historyNotes" rows="4" placeholder="Any additional background information that doesn't fit the fields above..."></textarea>
                 <div class="facility-only-field">
+                    <hr>
+                    <h4>Affiliations</h4>
+                    <div class="form-adder">
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label for="affiliationName">Affiliation Name:</label>
+                                <input type="text" id="affiliationName" placeholder="e.g., NATSAP">
+                            </div>
+                            <div class="field-group">
+                                <label for="affiliationLink">Link (optional):</label>
+                                <input type="text" id="affiliationLink" placeholder="https://...">
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" id="addAffiliationBtn">Add Affiliation</button>
+                    </div>
+                    <div class="list-preview" id="affiliationListOutput"></div>
                     <hr>
                     <h4>Additional Locations / Campuses</h4>
                     <div class="form-adder">
@@ -598,6 +630,84 @@ get_header();
                 <hr>
                 <label for="testimoniesMisc">Additional Testimony Notes (will be included as-is):</label>
                 <textarea id="testimoniesMisc" name="testimoniesMisc" rows="4" placeholder="Any additional survivor testimony information that doesn't fit the fields above..."></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Related Programs</legend>
+                <p style="color: #004435; font-size: 0.9rem;">Add related or affiliated programs here to generate a table.</p>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgName">Program Name:</label>
+                            <input type="text" id="relProgName" data-autocomplete-category="facility">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgLink">Link:</label>
+                            <input type="text" id="relProgLink">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgYears">Years Active:</label>
+                            <input type="text" id="relProgYears">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgLocation">Location:</label>
+                            <input type="text" id="relProgLocation" data-autocomplete-category="location">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgHeal">HEAL Link:</label>
+                            <input type="text" id="relProgHeal">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgReopened">Reopened/Status:</label>
+                            <input type="text" id="relProgReopened">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addRelatedProgBtn">Add Program</button>
+                </div>
+                <div class="list-preview" id="relatedProgramsListOutput"></div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Related Programs</legend>
+                <p style="color: #004435; font-size: 0.9rem;">Add related or affiliated programs here to generate a table.</p>
+                <div class="form-adder">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgName">Program Name:</label>
+                            <input type="text" id="relProgName" data-autocomplete-category="facility">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgLink">Link:</label>
+                            <input type="text" id="relProgLink">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgYears">Years Active:</label>
+                            <input type="text" id="relProgYears">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgLocation">Location:</label>
+                            <input type="text" id="relProgLocation" data-autocomplete-category="location">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgHeal">HEAL Link:</label>
+                            <input type="text" id="relProgHeal">
+                        </div>
+                        <div class="field-group">
+                            <label for="relProgReopened">Reopened/Status:</label>
+                            <input type="text" id="relProgReopened">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="addRelatedProgBtn">Add Program</button>
+                </div>
+                <div class="list-preview" id="relatedProgramsListOutput"></div>
             </fieldset>
 
             <fieldset>

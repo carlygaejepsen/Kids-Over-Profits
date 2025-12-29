@@ -28,3 +28,4 @@ api/config.local.php
 api/ai-config.php
 .claude/settings.local.json
 .claude/settings.local.json
+.claude/settings.local.json

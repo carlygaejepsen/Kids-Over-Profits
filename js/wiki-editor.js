@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let allegations = [];
     let therapies = [];
     let programLevels = [];
+    let affiliations = [];
+    let relatedPrograms = [];
     let importedMarkdown = ''; // Store original imported markdown
     let isOrganizationEntry = false; // Track if current entry is an organization
 
@@ -168,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearFormToEmpty(programName) {
         // Basic fields to clear
-        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations'];
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink'];
         clearInputs(fieldIds);
 
         // Reset arrays and lists
@@ -184,6 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         allegations = [];
         therapies = [];
         programLevels = [];
+        affiliations = [];
+        relatedPrograms = [];
 
         initializeEmptyLists();
 
@@ -211,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
         const emptyHtml = '<p style="color:#999;">No items added yet</p>';
-        const listIds = ['staffListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput'];
+        const listIds = ['staffListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput', 'affiliationListOutput', 'relatedProgramsListOutput'];
         listIds.forEach(id => {
             const element = document.getElementById(id);
             if (element && !element.innerHTML.trim()) {
@@ -456,6 +460,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('relatedMediaMisc', data.relatedMediaMisc);
         setFieldValue('customDiagnoses', data.customDiagnoses);
         setFieldValue('customAllegations', data.customAllegations);
+        setFieldValue('rebrand', data.rebrand);
+        setFieldValue('rebrandLink', data.rebrandLink);
 
         staffMembers = Array.isArray(data.staffMembers) ? data.staffMembers : [];
         punishments = Array.isArray(data.punishments) ? data.punishments : [];
@@ -468,6 +474,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rules = Array.isArray(data.rules) ? data.rules : [];
         allegations = Array.isArray(data.allegations) ? data.allegations : [];
         therapies = Array.isArray(data.therapies) ? data.therapies : [];
+        programLevels = Array.isArray(data.programLevels) ? data.programLevels : [];
+        affiliations = Array.isArray(data.affiliations) ? data.affiliations : [];
+        relatedPrograms = Array.isArray(data.relatedPrograms) ? data.relatedPrograms : [];
 
         renderStaffList();
         renderList(punishments, 'punishmentListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.description || '').substring(0, 60)}...`);
@@ -490,6 +499,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         renderList(rules, 'ruleListOutput', item => escapeHtml(item.name || item));
         renderList(therapies, 'therapyListOutput', item => `<strong>${escapeHtml(item.label || item.type || '')}</strong>${item.frequency ? ` (${escapeHtml(item.frequency)})` : ''}`);
+        
+        renderList(affiliations, 'affiliationListOutput', item => {
+            const linkPart = item.link ? ` (<a href="${escapeHtml(item.link)}" target="_blank">Link</a>)` : '';
+            return `<strong>${escapeHtml(item.name)}</strong>${linkPart}`;
+        });
+
+        renderList(relatedPrograms, 'relatedProgramsListOutput', item => {
+            const healPart = item.healLink ? ` <a href="${escapeHtml(item.healLink)}" target="_blank">[HEAL]</a>` : '';
+            return `<strong>${escapeHtml(item.name)}</strong> (${escapeHtml(item.yearsActive || '?')}) - ${escapeHtml(item.location || '?')}${healPart}`;
+        });
 
         setCheckboxGroup('diagnoses', data.selectedDiagnoses);
         setCheckboxGroup('allegations', data.selectedAllegations);
@@ -980,6 +999,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Add Button: Affiliations ---
+    const addAffiliationBtn = document.getElementById('addAffiliationBtn');
+    if (addAffiliationBtn) {
+        addAffiliationBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('affiliationName').value.trim();
+            const link = sanitizeUrl(document.getElementById('affiliationLink').value);
+            if (name) {
+                affiliations.push({ name, link });
+                renderList(affiliations, 'affiliationListOutput', item => {
+                    const linkPart = item.link ? ` (<a href="${escapeHtml(item.link)}" target="_blank">Link</a>)` : '';
+                    return `<strong>${escapeHtml(item.name)}</strong>${linkPart}`;
+                });
+                clearInputs(['affiliationName', 'affiliationLink']);
+            } else {
+                alert('Please enter an affiliation name.');
+            }
+        });
+    }
+
+    // --- Add Button: Related Programs ---
+    const addRelatedProgBtn = document.getElementById('addRelatedProgBtn');
+    if (addRelatedProgBtn) {
+        addRelatedProgBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('relProgName').value.trim();
+            const link = sanitizeUrl(document.getElementById('relProgLink').value);
+            const yearsActive = document.getElementById('relProgYears').value.trim();
+            const location = document.getElementById('relProgLocation').value.trim();
+            const healLink = sanitizeUrl(document.getElementById('relProgHeal').value);
+            const reopened = document.getElementById('relProgReopened').value.trim();
+
+            if (name) {
+                relatedPrograms.push({ name, link, yearsActive, location, healLink, reopened });
+                renderList(relatedPrograms, 'relatedProgramsListOutput', item => {
+                    const healPart = item.healLink ? ` <a href="${escapeHtml(item.healLink)}" target="_blank">[HEAL]</a>` : '';
+                    return `<strong>${escapeHtml(item.name)}</strong> (${escapeHtml(item.yearsActive || '?')}) - ${escapeHtml(item.location || '?')}${healPart}`;
+                });
+                clearInputs(['relProgName', 'relProgLink', 'relProgYears', 'relProgLocation', 'relProgHeal', 'relProgReopened']);
+            } else {
+                alert('Please enter at least a program name.');
+            }
+        });
+    }
+
     // --- Organization Mode Detection ---
     // Add event listeners to programType and programName fields to detect organization mode changes
     const programTypeField = document.getElementById('programType');
@@ -1125,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ...vals,
             staffMembers, punishments, lawsuits, newsArticles, testimonies,
             relatedMedia, campuses, ownershipChanges, rules, allegations,
-            therapies, programLevels,
+            therapies, programLevels, affiliations, relatedPrograms,
             selectedDiagnoses, selectedAllegations
         };
 

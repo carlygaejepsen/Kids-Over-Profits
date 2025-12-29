@@ -161,6 +161,20 @@ function generateWikiMarkdown(formData) {
             });
         }
 
+        // Rebrand/Spin-off info
+        if (formData.rebrand) {
+            const rebrandLink = formData.rebrandLink ? `[${escapeMarkdown(formData.rebrand)}](${formData.rebrandLink})` : escapeMarkdown(formData.rebrand);
+            historySentences.push(`It is believed to be a rebrand or spin-off of ${rebrandLink}.`);
+        }
+
+        // Affiliations
+        if (formData.affiliations && formData.affiliations.length > 0) {
+            const affList = formData.affiliations.map(aff => {
+                return aff.link ? `[${escapeMarkdown(aff.name)}](${aff.link})` : escapeMarkdown(aff.name);
+            });
+            historySentences.push(`The program is affiliated with ${joinWithAnd(affList)}.`);
+        }
+
         historySection = historySentences.length > 0
             ? historySentences.join('\n\n')
             : getPlaceholder('History and Background Information', programName);
@@ -414,6 +428,19 @@ function generateWikiMarkdown(formData) {
         testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
     }
 
+    // --- Build Related Programs Section ---
+    let relatedProgramsSection = '';
+    if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
+        const tableHeader = '|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|';
+        const tableSep = '|---|---|---|---|---|';
+        const tableRows = formData.relatedPrograms.map(prog => {
+            const nameLink = prog.link ? `[** ${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `** ${escapeMarkdown(prog.name)}**`;
+            const healLink = prog.healLink ? `[HEAL](${sanitizeUrl(prog.healLink)})` : (prog.healInfo || '-');
+            return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
+        });
+        relatedProgramsSection = `##**Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
+    }
+
     // --- Build Related Media Section ---
     let relatedMediaSection;
     if (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc)) {
@@ -479,7 +506,7 @@ ${testimoniesSection}
 
 ***
 
-##**Related Media**
+${relatedProgramsSection}##**Related Media**
 
 ${relatedMediaSection}
     `;
