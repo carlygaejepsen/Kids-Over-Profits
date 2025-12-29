@@ -184,15 +184,13 @@ function parseWikiMarkdown(markdown) {
         'Dyslexia', 'Non-Verbal Learning Disorder', 'NVLD',
         'Personality Disorders', 'Borderline Personality Disorder', 'BPD',
         'Histrionic Personality Disorder', 'Narcissistic Personality Disorder',
-        'Schizoaffective Disorder', 'Schizophrenia', 'Psychosis',
+        'Schizoaffective Disorder', 'Schizophrenia', 'Psychosis', 'Psychotic Disorders',
         'Eating Disorder', 'Anorexia Nervosa', 'Anorexia', 'Bulimia Nervosa', 'Bulimia',
+        'Emotionally Disturbed Youth', 'IEP (Individualized Education Plan)',
         'Substance Use Disorder', 'Substance Abuse', 'Drug Abuse', 'Alcohol Abuse',
-        'Behavioral Addiction', 'Internet Addiction', 'Gaming Addiction', 'Screen Addiction', 'Technology Addiction',
-        'Self-Harm', 'Self-Injurious Behavior', 'Cutting',
-        'Suicidal Ideation', 'Suicidality', 'Suicide Risk',
-        'Fetal Alcohol Spectrum Disorder', 'FAS', 'Fetal Alcohol Effects',
-        'Sensory Processing Disorder', 'SPD',
-        'Oppositional Behavior', 'Defiance', 'Defiant Behavior'
+        'Drug Addiction', 'Alcoholism', 'Chemical Dependency',
+        'Dysthymia', 'Identity Disorder', 'Cognitive Disorder', 'Relational Disorders',
+        'Aspergers', 'Asperger Syndrome', 'Reactive Attachment Disorder', 'RAD'
     ];
 
     // Behavioral issues and challenges (non-clinical)
@@ -220,7 +218,13 @@ function parseWikiMarkdown(markdown) {
         'adoption issues', 'adoption', 'adopted child issues',
         'trafficking', 'sex trafficking', 'human trafficking', 'trafficking victim',
         'low self-esteem', 'negative self-talk', 'identity issues', 'executive functioning issues',
-        'failure to launch', 'risky behaviors'
+        'failure to launch', 'risky behaviors', 'angry', 'deceitful', 'entitled', 
+        'ill-tempered', 'adrift', 'isolated', 'loving and loveable', 'academic underachievement',
+        'difficulty with interpersonal relationships', 'sexually reactive behaviors',
+        'destruction of property', 'disrespect of authority', 'school avoidance',
+        'school problems', 'poor peer choices', 'accountability and responsibility issues',
+        'integrity', 'runaway and curfew', 'minimal legal issues',
+        'chronic stress', 'inconsistent care from caregivers', 'neurodiverse'
     ];
 
     // Common phase/stage/level/tier system structures
@@ -238,7 +242,20 @@ function parseWikiMarkdown(markdown) {
         'Rank-based system',
         'Privilege-based system',
         'Tier 1/2/3/4/5',
-        'Step 1/2/3/4'
+        'Step 1/2/3/4',
+        'Search & Rescue/The Village/Academic',
+        'E&O/Evaluation & Observation',
+        'Orientation/Round-Up/Mustang/Maverick/Greenhorn/Rider/Wrangler',
+        'Homeless/Discovery/Student/Supervisor/Manager/Director/Graduate/Post-Graduate',
+        'Orientation/Pre-team/Team/Advanced Team/Achievement/Advanced Achievement/Senior/Advanced Senior',
+        'Trust Stages',
+        'Trust Levels',
+        'Humility/Accountability/Service/Leadership',
+        'Work Crew',
+        'E&O',
+        'Evaluation & Observation',
+        'Trust of Care/Trust of Control/Trust of Self/Interdependence',
+        'Spark/Elevate/Launch'
     ];
 
     // Common complaints and allegations in TTI
@@ -289,6 +306,9 @@ function parseWikiMarkdown(markdown) {
         'brainwashing': 'psychological abuse',
         'mind control': 'psychological abuse',
         'coercive control': 'psychological abuse',
+        'simulated death therapy': 'psychological abuse',
+        'vague rules': 'psychological abuse',
+        'contradictory rules': 'psychological abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "sexual abuse"
@@ -298,11 +318,13 @@ function parseWikiMarkdown(markdown) {
         'sexual harassment': 'sexual abuse',
         'grooming': 'sexual abuse',
         'strip searches': 'sexual abuse',
+        'person searches': 'sexual abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "medical neglect"
         // ═══════════════════════════════════════════════════════════
         'failure to treat illness': 'medical neglect',
+        'denial of medical treatment': 'medical neglect',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "withholding medical care"
@@ -315,12 +337,14 @@ function parseWikiMarkdown(markdown) {
         'inappropriate medication': 'overmedication',
         'medication abuse': 'overmedication',
         'forced medication': 'overmedication',
+        'sedation by medication': 'overmedication',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "restraint abuse"
         // ═══════════════════════════════════════════════════════════
         'violent restraints': 'restraint abuse',
         'violent and excessive restraints': 'restraint abuse',
+        'gooseneck hold': 'restraint abuse',
 
         // Note: "excessive restraints" is its OWN checkbox
 
@@ -480,6 +504,8 @@ function parseWikiMarkdown(markdown) {
         'asd': 'Autism Spectrum Disorder',
         'asperger\'s': 'Autism Spectrum Disorder',
         'aspergers': 'Autism Spectrum Disorder',
+        'spectrum-like traits': 'Autism Spectrum Disorder',
+        'level 1 autism': 'Autism Spectrum Disorder',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "Bipolar Disorder"
@@ -494,6 +520,9 @@ function parseWikiMarkdown(markdown) {
         'major depressive disorder': 'Depression',
         'mdd': 'Depression',
         'depressive disorder': 'Depression',
+        'mood disorder': 'Depression',
+        'mood disorders': 'Depression',
+        'dysthymia': 'Depression',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "Anxiety"
@@ -501,12 +530,16 @@ function parseWikiMarkdown(markdown) {
         'anxiety disorder': 'Anxiety',
         'generalized anxiety disorder': 'Anxiety',
         'gad': 'Anxiety',
+        'social anxiety': 'Anxiety',
+        'social phobias': 'Anxiety',
+        'panic': 'Anxiety',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "OCD"
         // ═══════════════════════════════════════════════════════════
         'obsessive compulsive disorder': 'OCD',
         'obsessive-compulsive disorder': 'OCD',
+        'obsessive compulsive tendencies': 'OCD',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "PTSD"
@@ -514,6 +547,9 @@ function parseWikiMarkdown(markdown) {
         'post traumatic stress disorder': 'PTSD',
         'post-traumatic stress disorder': 'PTSD',
         'trauma': 'PTSD',
+        'complex trauma': 'PTSD',
+        'c-ptsd': 'PTSD',
+        'cptsd': 'PTSD',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "Oppositional Defiant Disorder"
@@ -531,6 +567,8 @@ function parseWikiMarkdown(markdown) {
         // ═══════════════════════════════════════════════════════════
         'anorexia': 'Eating Disorder',
         'bulimia': 'Eating Disorder',
+        'anorexia nervosa': 'Eating Disorder',
+        'bulimia nervosa': 'Eating Disorder',
         'eating disorders': 'Eating Disorder',
 
         // ═══════════════════════════════════════════════════════════
@@ -539,6 +577,8 @@ function parseWikiMarkdown(markdown) {
         'drug abuse': 'Substance Abuse',
         'addiction': 'Substance Abuse',
         'substance use disorder': 'Substance Abuse',
+        'substance experimentation': 'Substance Abuse',
+        'chemical dependency': 'Substance Abuse',
 
         // ═══════════════════════════════════════════════════════════
         // → CHECKBOX: "Borderline Personality Disorder"
@@ -571,34 +611,51 @@ function parseWikiMarkdown(markdown) {
         'aggressive behavior': 'aggression',
         'violence': 'aggression',
         'violent behavior': 'aggression',
+        'excessive anger': 'aggression',
+        'verbal aggression': 'aggression',
         'cutting': 'self-harm',
         'self harm': 'self-harm',
         'self injury': 'self-harm',
         'self-injurious behavior': 'self-harm',
+        'suicidal gestures': 'self-harm',
         'elopement': 'running away',
         'runaway': 'running away',
+        'leaving home without permission': 'running away',
         'school refusal': 'truancy',
         'skipping school': 'truancy',
         'school struggles': 'academic struggles',
         'academic problems': 'academic struggles',
         'failing grades': 'academic struggles',
+        'declining academic performance': 'academic struggles',
         'peer problems': 'social problems',
         'social issues': 'social problems',
         'social isolation': 'social problems',
         'bullying': 'social problems',
+        'withdrawal': 'social problems',
+        'isolation from family and friends': 'social problems',
+        'making and maintaining relationships': 'social problems',
+        'being easily influenced by others': 'social problems',
         'family problems': 'family conflict',
         'parent-child conflict': 'family conflict',
+        'relationship problems with family': 'family conflict',
         'sexual acting out': 'sexually inappropriate behavior',
         'inappropriate sexual behavior': 'sexually inappropriate behavior',
+        'risky sexual activity': 'sexually inappropriate behavior',
         'dishonesty': 'lying',
         'deceit': 'lying',
+        'dishonest communication': 'lying',
+        'frequent dishonest communication': 'lying',
         'manipulative behavior': 'manipulation',
         'manipulative': 'manipulation',
         'theft': 'stealing',
         'mood swings': 'emotional dysregulation',
         'emotional instability': 'emotional dysregulation',
+        'temper tantrums': 'emotional dysregulation',
+        'poor emotional regulation': 'emotional dysregulation',
         'impulsivity': 'impulsive behavior',
         'poor impulse control': 'impulsive behavior',
+        'instant gratification': 'impulsive behavior',
+        'acting out impulsively': 'impulsive behavior',
         'attachment issues': 'attachment',
         'inability to bond': 'attachment',
         'trust issues': 'attachment',
@@ -607,7 +664,22 @@ function parseWikiMarkdown(markdown) {
         'adopted': 'adoption',
         'sex trafficking': 'trafficking',
         'human trafficking': 'trafficking',
-        'trafficking victim': 'trafficking'
+        'trafficking victim': 'trafficking',
+        'overuse of social media': 'internet addiction',
+        'technology issues': 'internet addiction',
+        'video game addiction': 'gaming addiction',
+        'negative internal dialogue': 'low self-esteem',
+        'poor self-esteem': 'low self-esteem',
+        'externalizing blame': 'blaming others',
+        'school failure': 'academic struggles',
+        'academic underachievement': 'academic struggles',
+        'academic challenges': 'academic struggles',
+        'disrespect of authority': 'defiance',
+        'destruction of property': 'aggression',
+        'sexually reactive behaviors': 'sexually inappropriate behavior',
+        'emotional challenges': 'emotional disorders',
+        'behavioral challenges': 'behavioral disorders',
+        'school avoidance': 'truancy'
     };
 
     // Normalization function for behaviors
@@ -848,7 +920,8 @@ function parseWikiMarkdown(markdown) {
             /treats?\s+(?:students|residents|clients|girls|boys|young people)[^:]*:\s*([^\.]+)\./i,
             /struggling with\s+(?:a variety of |various )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
             /who (?:struggle|are struggling|deal|are dealing)\s+with\s+(?:a variety of )?(?:challenges such as )?([^\.]+?)(?:\.|The program|The cost|The average|The facility|The campus)/i,
-            /marketed (?:as|to)[^\.]*?for[^\.]*?who struggle with\s+([^\.]+?)(?:\.|The program)/i
+            /marketed (?:as|to)[^\.]*?for[^\.]*?who struggle with\s+([^\.]+?)(?:\.|The program)/i,
+            /enroll(?:s)?\s+(?:teens|students|residents|adolescents|youth)\s+(?:with|who have)\s+(?:a\s+)?history\s+of[:\s]+([^\.]+)\./i
         ];
         diagnosisPatterns.forEach(pattern => {
             const match = normalizedHistory.match(pattern);
@@ -1014,19 +1087,19 @@ function parseWikiMarkdown(markdown) {
         }
 
         // Rebrand/Legacy
-        const rebrandMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?\[([^\]]+)\]\(([^)]+)\)/i);
+        const rebrandMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to|reopened\/rebranded as|integrated into|merged with|merged into|clone of)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?\[([^\]]+)\]\(([^)]+)\)/i);
         if (rebrandMatch) {
             parsedData.rebrand = rebrandMatch[1].trim();
             parsedData.rebrandLink = sanitizeUrl(rebrandMatch[2]);
         } else {
-             const rebrandTextMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?([^\.]+)/i);
+             const rebrandTextMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to|reopened\/rebranded as|integrated into|merged with|merged into|clone of)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?([^\.]+)/i);
              if (rebrandTextMatch) {
                  parsedData.rebrand = rebrandTextMatch[1].trim();
              }
         }
 
         // Affiliations
-        const affiliationMatches = normalizedHistory.matchAll(/affiliated with\s+\[([^\]]+)\]\(([^)]+)\)/gi);
+        const affiliationMatches = normalizedHistory.matchAll(/(?:affiliated with|partnered with)\s+\[([^\]]+)\]\(([^)]+)\)/gi);
         for (const match of affiliationMatches) {
             parsedData.affiliations.push({
                 name: match[1].trim(),
@@ -1035,7 +1108,7 @@ function parseWikiMarkdown(markdown) {
         }
         // Text affiliations (fallback)
         if (parsedData.affiliations.length === 0) {
-             const affTextMatch = normalizedHistory.match(/affiliated with\s+([^\.]+)/i);
+             const affTextMatch = normalizedHistory.match(/(?:affiliated with|partnered with)\s+([^\.]+)/i);
              if (affTextMatch) {
                  parsedData.affiliations.push({
                      name: affTextMatch[1].trim(),
@@ -1283,8 +1356,8 @@ function parseWikiMarkdown(markdown) {
             const trimmed = para.trim();
             if (!trimmed || trimmed.length < 10) return;
 
-            // Remove leading bullet points
-            const cleanText = trimmed.replace(/^[*•-]\s*/, '');
+            // Remove leading bullet points and optional quotes
+            const cleanText = trimmed.replace(/^[*•"'-]\s*"?/, '').replace(/"$/, '').trim();
 
             // 1. Year-first patterns: "In 2005, ..." or "2005: ..." or "**2005** ..."
             const yearFirstMatch = cleanText.match(/^(?:In\s+)?(\d{4})[:,-]?\s+(.+)/i);
@@ -1573,6 +1646,42 @@ function parseWikiMarkdown(markdown) {
         // parsedData.relatedMediaMisc = relatedMediaSection;
     }
 
+    // Parse Campuses/Locations
+    const locationSection = getSectionAny(normalizedMarkdown, ['Locations', 'Facilities', 'Campuses']);
+    if (locationSection && !locationSection.includes('No information is known')) {
+        // Split by bold state/region headers or just lines
+        const lines = locationSection.split('\n');
+        let currentRegion = '';
+        
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+
+            // Region header e.g. "** California**"
+            const regionMatch = trimmed.match(/^\*\*\s*([^*]+?)\s*\*\*$/);
+            if (regionMatch) {
+                currentRegion = regionMatch[1].trim();
+                return;
+            }
+
+            // Campus entry e.g. "*Yorba Linda, CA (*1989-1990*)"
+            // or "** Elan One**"
+            const campusMatch = trimmed.match(/^(?:[*•-]\s*)?(?:\*\*\s*)?([^*]+?)(?:\s*\*\*|$)/);
+            if (campusMatch) {
+                const name = campusMatch[1].trim();
+                if (name && name !== currentRegion) {
+                    // Try to extract dates if present in the same line
+                    const dateMatch = trimmed.match(/\(([^)]+)\)/);
+                    parsedData.campuses.push({
+                        name: name,
+                        location: currentRegion,
+                        yearsActive: dateMatch ? dateMatch[1].trim() : ''
+                    });
+                }
+            }
+        });
+    }
+
     // Parse Program Tables (e.g. WWASP Programs, Closed Programs)
     // Look for sections that might contain lists of programs
     const programTableSections = getSectionAny(normalizedMarkdown, [
@@ -1582,49 +1691,90 @@ function parseWikiMarkdown(markdown) {
         'Closed Teen Challenge Program',
         'CEDU Programs',
         'CEDU Spin-off Programs',
+        'Open Acadia Teen Residential Programs',
+        'Closed Acadia Teen Residential Programs',
+        'Open Aspen Education Group Programs',
+        'Closed Aspen Education Group Programs',
+        'Open Sequel Programs',
+        'Closed Sequel Programs',
+        'Active Programs in Utah',
+        'Closed Programs in Utah',
+        'Active Programs in California',
+        'Closed Programs in California',
         'Related Programs',
-        'Affiliated Programs'
+        'Affiliated Programs',
+        'Active Programs',
+        'Closed Programs'
     ]);
 
     if (programTableSections) {
-        // Simple table parser
+        // More robust table parser
         const lines = programTableSections.split('\n');
-        let inTable = false;
+        let headerIndex = -1;
+        let columnMap = {};
         
-        lines.forEach(line => {
-            if (line.trim().startsWith('|') && line.includes('---')) {
-                inTable = true;
-                return;
-            }
-            if (inTable && line.trim().startsWith('|')) {
-                // Extract cells
-                const cells = line.split('|').map(c => c.trim()).filter(c => c);
-                if (cells.length >= 3) { // Expecting at least Name, Years, Location
-                    // Extract name and link
-                    const nameMatch = cells[0].match(/\[([^\]]+)\]\(([^)]+)\)/);
-                    const name = nameMatch ? nameMatch[1].trim() : cells[0].replace(/\*\*/g, '').trim();
-                    const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line.startsWith('|') && line.includes('---')) {
+                // Previous line was the header
+                if (i > 0) {
+                    headerIndex = i - 1;
+                    const headers = lines[headerIndex].split('|').map(h => h.trim().toLowerCase()).filter(h => h);
+                    headers.forEach((h, idx) => {
+                        if (h.includes('name')) columnMap.name = idx;
+                        else if (h.includes('year') || h.includes('active')) columnMap.years = idx;
+                        else if (h.includes('location')) columnMap.location = idx;
+                        else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
+                        else if (h.includes('reopened')) columnMap.reopened = idx;
+                        else if (h.includes('type')) columnMap.type = idx;
+                        else if (h.includes('abuse')) columnMap.abuse = idx;
+                        else if (h.includes('death')) columnMap.deaths = idx;
+                        else if (h.includes('warning')) columnMap.warning = idx;
+                    });
+                }
+                
+                // Process data rows after the separator
+                for (let j = i + 1; j < lines.length; j++) {
+                    const dataLine = lines[j].trim();
+                    if (!dataLine.startsWith('|')) continue;
                     
-                    // Simple extraction for other fields based on position
-                    // Usually: Name | Years | Location | HEAL | Reopened
-                    const years = cells[1] || '';
-                    const location = cells[2] || '';
-                    const healInfo = cells.length > 3 ? cells[3] : '';
-                    const reopened = cells.length > 4 ? cells[4] : '';
+                    const cells = dataLine.split('|').map(c => c.trim()).filter(c => c);
+                    if (cells.length < 2) continue;
 
-                    if (name && name !== 'Program Name' && !name.includes('---')) {
-                        parsedData.relatedPrograms.push({
+                    // Extract name and link from the name cell
+                    const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
+                    const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
+                    const name = nameMatch ? nameMatch[1].trim() : nameCell.replace(/\*\*/g, '').trim();
+                    const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
+
+                    if (name && !name.includes('---') && name.toLowerCase() !== 'program name') {
+                        const entry = {
                             name,
                             link,
-                            yearsActive: years,
-                            location,
-                            healLink: healInfo.includes('http') ? sanitizeUrl(healInfo.match(/\(([^)]+)\)/)[1]) : '',
-                            reopened
-                        });
+                            yearsActive: columnMap.years !== undefined ? cells[columnMap.years] : '',
+                            location: columnMap.location !== undefined ? cells[columnMap.location] : '',
+                            type: columnMap.type !== undefined ? cells[columnMap.type] : '',
+                            reopened: columnMap.reopened !== undefined ? cells[columnMap.reopened] : ''
+                        };
+
+                        // HEAL link
+                        const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
+                        if (healCell && healCell.includes('http')) {
+                            const healMatch = healCell.match(/\(([^)]+)\)/);
+                            if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
+                        }
+
+                        // Watchlist specific fields
+                        if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
+                        if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
+                        if (columnMap.warning !== undefined) entry.warningLevel = cells[columnMap.warning];
+
+                        parsedData.relatedPrograms.push(entry);
                     }
                 }
+                break; // Only process the first table found in the section
             }
-        });
+        }
     }
 
     // Collect unparsed sections
@@ -1704,7 +1854,42 @@ function parseWikiMarkdown(markdown) {
         'Related Media (Links)',
         'Related Links',
         'External Links',
-        'Related External Resources'
+        'Related External Resources',
+        'Lingo',
+        'Terminology',
+        'Program Lingo',
+        'CEDU Lingo/Terminology',
+        'Abuse and Closure',
+        'Closure',
+        'Closure and Rebranding',
+        'Deaths in Aspen Education Group Programs',
+        'Deaths in WWASP Programs',
+        'Deaths',
+        'The Death of Taylor Goodridge',
+        'WWASP Program Red Flags',
+        'Red Flags',
+        'Controversies',
+        'WWASP Programs',
+        'WWASP-Affiliated/WWASP Spin-Off Programs',
+        'Active Teen Challenge Programs',
+        'Closed Teen Challenge Program',
+        'CEDU Programs',
+        'CEDU Spin-off Programs',
+        'Open Acadia Teen Residential Programs',
+        'Closed Acadia Teen Residential Programs',
+        'Open Aspen Education Group Programs',
+        'Closed Aspen Education Group Programs',
+        'Open Sequel Programs',
+        'Closed Sequel Programs',
+        'Active Programs in Utah',
+        'Closed Programs in Utah',
+        'Active Programs in California',
+        'Closed Programs in California',
+        'Related Programs',
+        'Affiliated Programs',
+        'Active Programs',
+        'Closed Programs',
+        'Essential Information'
     ];
 
     // Split markdown into sections
@@ -2019,10 +2204,23 @@ function generateWikiMarkdown(data) {
         lines.push('');
     }
 
+    // Campuses
+    if (data.campuses && data.campuses.length > 0) {
+        lines.push('## Locations\n');
+        data.campuses.forEach(campus => {
+            let campusLine = `**${campus.name}**`;
+            if (campus.location) campusLine += ` - ${campus.location}`;
+            if (campus.yearsActive) campusLine += ` (${campus.yearsActive})`;
+            lines.push(campusLine);
+        });
+        lines.push('');
+    }
+
     // Related Programs Table
     if (data.relatedPrograms && data.relatedPrograms.length > 0) {
         lines.push('## Related Programs\n');
         lines.push('|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|');
+        lines.push('|---|---|---|---|---|');
         data.relatedPrograms.forEach(prog => {
             let line = `| [** ${prog.name}**](${prog.link}) | ${prog.yearsActive} | ${prog.location} | `;
             line += prog.healLink ? `[HEAL](${prog.healLink})` : 'N/A';

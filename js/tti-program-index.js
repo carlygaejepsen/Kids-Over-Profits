@@ -264,16 +264,28 @@ function displayFacilities(facilitiesData, containerId) {
             return false;
         };
 
+        // Helper to check if a string is a placeholder/empty value
+        const isPlaceholderValueOp = (str) => {
+            if (!str || typeof str !== 'string') return true;
+            const lower = str.trim().toLowerCase();
+            return !lower || lower === 'none' || lower === 'no' || lower === 'n/a' ||
+                   lower === 'unknown' || lower === 'null' || lower === 'undefined' ||
+                   lower === 'not specified' || lower === 'not available';
+        };
+
         // Helper to render a single item (handles objects in arrays)
         const renderItemOp = (item) => {
             if (item === null || item === undefined || item === '') return '';
-            if (typeof item === 'boolean') return item ? 'Yes' : 'No';
-            if (typeof item === 'string') return escapeHtml(item);
+            if (typeof item === 'boolean') return item ? 'Yes' : '';
+            if (typeof item === 'string') {
+                if (isPlaceholderValueOp(item)) return '';
+                return escapeHtml(item);
+            }
             if (typeof item === 'number') return escapeHtml(String(item));
             if (typeof item === 'object' && !Array.isArray(item)) {
                 const parts = [];
                 Object.entries(item).forEach(([k, v]) => {
-                    if (v && typeof v === 'string' && v.trim()) {
+                    if (v && typeof v === 'string' && v.trim() && !isPlaceholderValueOp(v)) {
                         if (k === 'name' || k === 'value' || k === 'text') {
                             parts.push(escapeHtml(v));
                         } else if (k !== 'role' || v.trim()) {
@@ -362,10 +374,24 @@ function displayFacilities(facilitiesData, containerId) {
                 return;
             }
 
+            // Final check - skip if rendered value is empty or meaningless
+            const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
+            const lowerValue = strippedValue.toLowerCase();
+            // Skip if empty, or contains only placeholder values
+            const emptyPatterns = ['none', 'no', 'n/a', 'unknown', 'null', 'undefined', 'not specified', 'not available'];
+            const isEmptyText = !strippedValue ||
+                emptyPatterns.includes(lowerValue) ||
+                /^[\s,\-–—;:]+$/.test(strippedValue) || // Just punctuation/whitespace
+                /^(none|no|n\/a|unknown|null|undefined)([\s,;]+|$)/i.test(strippedValue); // Starts with empty value
+
+            if (isEmptyText) {
+                return;
+            }
+
             if (field.label) {
-                otherOperatorData += '<p><strong>' + escapeHtml(field.label) + ':</strong> ' + renderedValue + '</p>';
+                otherOperatorData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
             } else {
-                otherOperatorData += '<p>' + renderedValue + '</p>';
+                otherOperatorData += '<div class="field-row"><span class="field-value">' + renderedValue + '</span></div>';
             }
         });
 
@@ -431,17 +457,29 @@ function displayFacilities(facilitiesData, containerId) {
                 return false;
             };
 
+            // Helper to check if a string is a placeholder/empty value
+            const isPlaceholderValue = (str) => {
+                if (!str || typeof str !== 'string') return true;
+                const lower = str.trim().toLowerCase();
+                return !lower || lower === 'none' || lower === 'no' || lower === 'n/a' ||
+                       lower === 'unknown' || lower === 'null' || lower === 'undefined' ||
+                       lower === 'not specified' || lower === 'not available';
+            };
+
             // Helper to render a single item (handles objects in arrays)
             const renderItem = (item) => {
                 if (item === null || item === undefined || item === '') return '';
-                if (typeof item === 'boolean') return item ? 'Yes' : 'No';
-                if (typeof item === 'string') return escapeHtml(item);
+                if (typeof item === 'boolean') return item ? 'Yes' : '';
+                if (typeof item === 'string') {
+                    if (isPlaceholderValue(item)) return '';
+                    return escapeHtml(item);
+                }
                 if (typeof item === 'number') return escapeHtml(String(item));
                 if (typeof item === 'object' && !Array.isArray(item)) {
                     // For objects like {role: "", name: "Scott Hess"}, extract meaningful values
                     const parts = [];
                     Object.entries(item).forEach(([k, v]) => {
-                        if (v && typeof v === 'string' && v.trim()) {
+                        if (v && typeof v === 'string' && v.trim() && !isPlaceholderValue(v)) {
                             // If key is 'name' or 'value', just use the value
                             if (k === 'name' || k === 'value' || k === 'text') {
                                 parts.push(escapeHtml(v));
@@ -544,11 +582,25 @@ function displayFacilities(facilitiesData, containerId) {
                     return;
                 }
 
+                // Final check - skip if rendered value is empty or meaningless
+                const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
+                const lowerValue = strippedValue.toLowerCase();
+                // Skip if empty, or contains only placeholder values
+                const emptyPatterns = ['none', 'no', 'n/a', 'unknown', 'null', 'undefined', 'not specified', 'not available'];
+                const isEmptyText = !strippedValue ||
+                    emptyPatterns.includes(lowerValue) ||
+                    /^[\s,\-–—;:]+$/.test(strippedValue) || // Just punctuation/whitespace
+                    /^(none|no|n\/a|unknown|null|undefined)([\s,;]+|$)/i.test(strippedValue); // Starts with empty value
+
+                if (isEmptyText) {
+                    return;
+                }
+
                 if (field.label) {
-                    otherFacilityData += '<p><strong>' + escapeHtml(field.label) + ':</strong> ' + renderedValue + '</p>';
+                    otherFacilityData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
                     otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 } else {
-                    otherFacilityData += '<p>' + renderedValue + '</p>';
+                    otherFacilityData += '<div class="field-row"><span class="field-value">' + renderedValue + '</span></div>';
                 }
             });
 
@@ -583,8 +635,11 @@ function displayFacilities(facilitiesData, containerId) {
                 }
 
                 if (resources.length > 0) {
-                    const safeResources = resources.map(item => escapeHtml(item)).join(', ');
-                    resourcesAvailable = safeResources ? '<p><strong>Resources Available:</strong> ' + safeResources + '</p>' : '';
+                    const filteredResources = resources.filter(item => item && !isPlaceholderValue(item));
+                    if (filteredResources.length > 0) {
+                        const safeResources = filteredResources.map(item => escapeHtml(item)).join(', ');
+                        resourcesAvailable = '<div class="field-row"><span class="field-label">Resources Available</span><span class="field-value">' + safeResources + '</span></div>';
+                    }
                 }
             }
 
