@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let emptySlugSet = null;
     async function loadEmptySlugMapping() {
         try {
-            const resp = await fetch('/wp-content/themes/child-git/markdown_output/empty_files_updated.md', { cache: 'no-cache' });
+            const resp = await fetch('/wp-content/themes/child/markdown_output/empty_files_updated.md', { cache: 'no-cache' });
                 if (resp.ok && resp.status === 200) {
                 const text = await resp.text();
                 emptySlugSet = new Set();
