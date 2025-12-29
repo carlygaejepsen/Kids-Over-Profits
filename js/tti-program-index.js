@@ -377,16 +377,21 @@ function displayFacilities(facilitiesData, containerId) {
             // Final check - skip if rendered value is empty or meaningless
             const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
             const lowerValue = strippedValue.toLowerCase();
-            // Skip if empty, or contains only placeholder values
-            const emptyPatterns = ['none', 'no', 'n/a', 'unknown', 'null', 'undefined', 'not specified', 'not available'];
-            const isEmptyText = !strippedValue ||
-                emptyPatterns.includes(lowerValue) ||
-                /^[\s,\-–—;:]+$/.test(strippedValue) || // Just punctuation/whitespace
-                /^(none|no|n\/a|unknown|null|undefined)([\s,;]+|$)/i.test(strippedValue); // Starts with empty value
 
-            if (isEmptyText) {
-                return;
-            }
+            // Skip empty or placeholder values
+            if (!strippedValue) return;
+
+            // Exact matches for empty placeholders
+            const emptyExact = ['none', 'no', 'n/a', 'na', 'unknown', 'null', 'undefined',
+                               'not specified', 'not available', 'not applicable',
+                               'false', '-', '--', '—', 'tbd', 'tba', 'n.a.', 'n.a'];
+            if (emptyExact.includes(lowerValue)) return;
+
+            // Just punctuation, whitespace, or common separators
+            if (/^[\s,\-–—;:\.\/_|]+$/.test(strippedValue)) return;
+
+            // Starts with empty placeholder followed by separator or end
+            if (/^(none|no|n\/a|na|unknown|null|undefined|false)[\s,;:\-–—]*$/i.test(strippedValue)) return;
 
             if (field.label) {
                 otherOperatorData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
@@ -585,16 +590,21 @@ function displayFacilities(facilitiesData, containerId) {
                 // Final check - skip if rendered value is empty or meaningless
                 const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
                 const lowerValue = strippedValue.toLowerCase();
-                // Skip if empty, or contains only placeholder values
-                const emptyPatterns = ['none', 'no', 'n/a', 'unknown', 'null', 'undefined', 'not specified', 'not available'];
-                const isEmptyText = !strippedValue ||
-                    emptyPatterns.includes(lowerValue) ||
-                    /^[\s,\-–—;:]+$/.test(strippedValue) || // Just punctuation/whitespace
-                    /^(none|no|n\/a|unknown|null|undefined)([\s,;]+|$)/i.test(strippedValue); // Starts with empty value
 
-                if (isEmptyText) {
-                    return;
-                }
+                // Skip empty or placeholder values
+                if (!strippedValue) return;
+
+                // Exact matches for empty placeholders
+                const emptyExact = ['none', 'no', 'n/a', 'na', 'unknown', 'null', 'undefined',
+                                   'not specified', 'not available', 'not applicable',
+                                   'false', '-', '--', '—', 'tbd', 'tba', 'n.a.', 'n.a'];
+                if (emptyExact.includes(lowerValue)) return;
+
+                // Just punctuation, whitespace, or common separators
+                if (/^[\s,\-–—;:\.\/_|]+$/.test(strippedValue)) return;
+
+                // Starts with empty placeholder followed by separator or end
+                if (/^(none|no|n\/a|na|unknown|null|undefined|false)[\s,;:\-–—]*$/i.test(strippedValue)) return;
 
                 if (field.label) {
                     otherFacilityData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
