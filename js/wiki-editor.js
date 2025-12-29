@@ -2233,14 +2233,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     let match;
 
                     while ((match = linkRegex.exec(markdown)) !== null) {
-                        const name = match[1];
+                        let name = match[1];
                         const url = match[2];
 
+                        // Remove markdown bold/italic markers from name
+                        name = name.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
+
                         const isUserLink = url.includes('/u/') || url.includes('/user/');
-                        const isExternal = url.includes('http');
-                        const isWikiLink = url.includes('/wiki/');
+                        const isExternal = url.startsWith('http') && !url.includes('/wiki/');
+                        const isWikiLink = url.includes('/wiki/index/');
                         const isJustIndexPage = url.endsWith('/index/') || url.endsWith('/index');
 
+                        // Include relative wiki links (start with / or contain /wiki/)
                         if (isWikiLink && !isUserLink && !isExternal && !isJustIndexPage && name.length > 2) {
                             if (!processedNames.has(name.toLowerCase())) {
                                 programs.push({
@@ -2257,51 +2261,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (programs.length === 0) {
-                 // Check if the organization page itself exists in the database
+                 // No child facilities found in database - check if the organization page exists
+                 // and show it as the main entry instead of an empty list
                  const orgPage = searchResult.data?.find(e =>
                      e.program_name.toLowerCase() === orgName.toLowerCase()
                  );
 
                  if (orgPage) {
-                     // Organization page found - load it into the form
-                     console.log('Loading organization page from database:', orgName);
+                     // Organization page found - treat it as a single "program" entry
+                     console.log('No child facilities found, showing organization page as main entry:', orgName);
+                     programs.push({
+                         name: orgName,
+                         url: '',
+                         normalizedName: orgName.toLowerCase(),
+                         source: 'database',
+                         id: orgPage.id,
+                         isOrgPage: true
+                     });
+                 } else {
+                     // If nothing found at all, show empty form
+                     if (!searchResult.data || searchResult.data.length === 0) {
+                         console.warn('Organization not found in database for', orgName);
+                     } else {
+                         console.warn('No facilities found for organization', orgName);
+                     }
                      try {
-                         // Load the saved data into the form
-                         if (orgPage.original_markdown) {
-                             importedMarkdown = orgPage.original_markdown;
-                             const parsed = parseWikiMarkdown(orgPage.original_markdown);
-                             populateFormFromParsedData(parsed);
-                         } else if (orgPage.json_data) {
-                             const jsonData = typeof orgPage.json_data === 'string'
-                                 ? JSON.parse(orgPage.json_data)
-                                 : orgPage.json_data;
-                             populateFormFromParsedData(jsonData);
-                         }
+                         showEmptyBanner(orgName);
+                         clearFormToEmpty(orgName);
+                         importedMarkdown = '';
                          updateMarkdownFromForm();
                          finalizeEntryLoad(orgName, { noScroll: true });
+                         document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                      } catch (e) {
-                         console.error('Error loading organization page:', e);
+                         console.error('Error preparing empty form for organization:', e);
                      }
                      return;
                  }
-
-                 // If nothing found, show the empty-entry banner and load an empty form
-                 if (!searchResult.data || searchResult.data.length === 0) {
-                     console.warn('Organization not found in database for', orgName);
-                 } else {
-                     console.warn('No facilities found for organization', orgName);
-                 }
-                 try {
-                     showEmptyBanner(orgName);
-                     clearFormToEmpty(orgName);
-                     importedMarkdown = '';
-                     updateMarkdownFromForm();
-                     finalizeEntryLoad(orgName, { noScroll: true });
-                     document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                 } catch (e) {
-                     console.error('Error preparing empty form for organization:', e);
-                 }
-                 return;
             }
 
             console.log(`Found ${programs.length} programs for "${orgName}"`);
