@@ -23,7 +23,8 @@
       "Bash(git push:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nRemove WordPress core files from child theme repository\n\n- Removed wp-content/ and wp-includes/ directories from tracking\n- These WordPress core files were accidentally added in previous commit\n- Updated .gitignore to prevent WordPress core files from being tracked\n- This is a child theme repository and should only contain theme files\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "WebFetch(domain:kidsoverprofits.org)"
     ],
     "deny": [],
     "ask": []

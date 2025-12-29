@@ -1220,16 +1220,32 @@ function enqueue_tti_processor_scripts() {
         file_exists($theme_dir . '/css/tti-program-index.css') ? filemtime($theme_dir . '/css/tti-program-index.css') : time()
     );
 
-    // Scripts
+    // Enhanced display script (shows all database fields) - standalone, no dependencies
     wp_enqueue_script(
         'tti-program-index-script',
-        $theme_uri . '/js/tti-program-index.js',
-        array('jquery', 'facilities-display'), // Depends on the display logic
-        file_exists($theme_dir . '/js/tti-program-index.js') ? filemtime($theme_dir . '/js/tti-program-index.js') : time(),
+        $theme_uri . '/js/tti-program-index-enhanced.js',
+        array('jquery'),
+        file_exists($theme_dir . '/js/tti-program-index-enhanced.js') ? filemtime($theme_dir . '/js/tti-program-index-enhanced.js') : time(),
         true
     );
 
-    // Localize
+    // Build dataset URLs
+    $rest_endpoint = esc_url_raw(rest_url('kop/v1/facilities'));
+    $api_endpoint = $theme_uri . '/api/get-master-data.php';
+
+    $json_sources = array($rest_endpoint, $api_endpoint);
+
+    // Localize facilitiesConfig for the script
+    wp_localize_script(
+        'tti-program-index-script',
+        'facilitiesConfig',
+        array(
+            'jsonDataUrl' => $rest_endpoint,
+            'jsonFileUrls' => $json_sources
+        )
+    );
+
+    // Additional config
     wp_localize_script(
         'tti-program-index-script',
         'ttiIndexConfig',

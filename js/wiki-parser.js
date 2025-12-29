@@ -103,6 +103,11 @@ function parseWikiMarkdown(markdown) {
         accreditingBody: '',
         accreditingBodyLink: '',
         historyMisc: '',
+        
+        // Affiliations and History
+        affiliations: [],
+        rebrand: '',
+        rebrandLink: '',
 
         // Structured data arrays
         staffMembers: [],
@@ -630,7 +635,7 @@ function parseWikiMarkdown(markdown) {
         const escapedTitle = escapeRegex(sectionTitle);
         const headerPattern = `#{1,6}\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
         const regex = new RegExp(
-            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,6}\\s|\\n\\*\\*\\*|$)',
+            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}\\s|\\n\\*\\*\\*|$)',
             'i'
         );
 
@@ -655,21 +660,21 @@ function parseWikiMarkdown(markdown) {
     let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
     
     if (headerMatch) {
-        parsedData.programName = headerMatch[1].trim();
+        parsedData.programName = headerMatch[1].trim().replace(/:$/, '');
         parsedData.yearsActive = headerMatch[2].trim();
         parsedData.cityState = headerMatch[3].trim();
     } else {
         // 2. Try simpler format: ## **Name** (Years)
         headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)/m);
         if (headerMatch) {
-            parsedData.programName = headerMatch[1].trim();
+            parsedData.programName = headerMatch[1].trim().replace(/:$/, '');
             parsedData.yearsActive = headerMatch[2].trim();
         } else {
             // 3. Try simplest format: ## Name
             // We search for the first header that isn't a known section header
             const allHeaders = normalizedMarkdown.matchAll(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*$/gm);
             for (const match of allHeaders) {
-                const candidate = match[1].trim();
+                const candidate = match[1].trim().replace(/:$/, '');
                 const invalidTitles = [
                     'History', 'Background', 'Staff', 'Founders', 'Program Structure', 
                     'Structure', 'Rules', 'Punishments', 'Media', 'News', 'Testimonies', 
@@ -989,6 +994,37 @@ function parseWikiMarkdown(markdown) {
         if (accreditMatch) {
             parsedData.accreditingBody = accreditMatch[1];
             parsedData.accreditingBodyLink = sanitizeUrl(accreditMatch[2]);
+        }
+
+        // Rebrand/Legacy
+        const rebrandMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?\[([^\]]+)\]\(([^)]+)\)/i);
+        if (rebrandMatch) {
+            parsedData.rebrand = rebrandMatch[1].trim();
+            parsedData.rebrandLink = sanitizeUrl(rebrandMatch[2]);
+        } else {
+             const rebrandTextMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?([^\.]+)/i);
+             if (rebrandTextMatch) {
+                 parsedData.rebrand = rebrandTextMatch[1].trim();
+             }
+        }
+
+        // Affiliations
+        const affiliationMatches = normalizedHistory.matchAll(/affiliated with\s+\[([^\]]+)\]\(([^)]+)\)/gi);
+        for (const match of affiliationMatches) {
+            parsedData.affiliations.push({
+                name: match[1].trim(),
+                link: sanitizeUrl(match[2])
+            });
+        }
+        // Text affiliations (fallback)
+        if (parsedData.affiliations.length === 0) {
+             const affTextMatch = normalizedHistory.match(/affiliated with\s+([^\.]+)/i);
+             if (affTextMatch) {
+                 parsedData.affiliations.push({
+                     name: affTextMatch[1].trim(),
+                     link: ''
+                 });
+             }
         }
 
         // DON'T store everything in historyMisc - let the user edit form fields
@@ -1594,7 +1630,7 @@ function parseWikiMarkdown(markdown) {
     ];
 
     // Split markdown into sections
-    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##|\n\*\*\*|$)/g;
+    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##\s|\n\*\*\*|$)/g;
     const unparsedSections = [];
     let match;
 
@@ -1741,6 +1777,21 @@ function generateWikiMarkdown(data) {
             } else {
                 historyText += `Accredited through ${data.accreditingBody}. `;
             }
+        }
+
+        if (data.rebrand) {
+            if (data.rebrandLink) {
+                historyText += `Believed to be a rebrand of [${data.rebrand}](${data.rebrandLink}). `;
+            } else {
+                historyText += `Believed to be a rebrand of ${data.rebrand}. `;
+            }
+        }
+
+        if (data.affiliations && data.affiliations.length > 0) {
+            const affLinks = data.affiliations.map(aff => {
+                return aff.link ? `[${aff.name}](${aff.link})` : aff.name;
+            });
+            historyText += `Affiliated with ${affLinks.join(', ')}. `;
         }
 
         if (historyText) {
