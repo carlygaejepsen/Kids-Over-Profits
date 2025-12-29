@@ -242,26 +242,38 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Build other operator data
         let otherOperatorData = '';
-        const parentCompanies = joinList(operator.parentCompanies);
-        const keyStaff = operator.keyStaff || {};
-        const founders = joinList(keyStaff.founders);
-        const keyExecutives = joinList(keyStaff.keyExecutives);
-        const websites = joinList(operator.websites);
-        const ceoName = cleanText(keyStaff.ceo);
-        const pastNames = combineLists(operator.pastNames, operator.otherNames);
-        const operatorNotes = joinList(operator.notes);
 
-        const operatorFields = [
-            { key: 'status', label: 'Status', value: cleanText(operator.status) },
-            { key: 'founded', label: 'Founded', value: cleanText(operator.founded) },
-            { key: 'parentCompanies', label: 'Parent Companies', value: parentCompanies.length > 0 ? parentCompanies : null, isList: true },
-            { key: 'pastNames', label: 'Past Names', value: pastNames.length > 0 ? pastNames : null, isList: true },
-            { key: 'keyStaff.founders', label: 'Founders', value: founders.length > 0 ? founders : null, isList: true },
-            { key: 'keyStaff.keyExecutives', label: 'Key Executives', value: keyExecutives.length > 0 ? keyExecutives : null, isList: true },
-            { key: 'keyStaff.ceo', label: 'CEO', value: ceoName || null },
-            { key: 'notes', label: 'Notes', value: operatorNotes.length > 0 ? operatorNotes : null, isList: true },
-            { key: 'websites', label: '', value: websites.length > 0 ? websites : null, isList: true, renderListAsLinks: true }
-        ];
+        // Function to recursively render all fields from an object
+        const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
+            if (!obj || typeof obj !== 'object' || depth > 3) return [];
+            const fields = [];
+
+            Object.keys(obj).forEach(key => {
+                const fullKey = prefix ? `${prefix}.${key}` : key;
+                const value = obj[key];
+
+                if (value === null || value === undefined || value === '') return;
+
+                if (Array.isArray(value)) {
+                    if (value.length > 0) {
+                        const label = formatFieldLabel(fullKey);
+                        const isUrl = value.some(v => typeof v === 'string' && (v.startsWith('http://') || v.startsWith('https://')));
+                        fields.push({ key: fullKey, label, value: value, isList: true, renderListAsLinks: isUrl });
+                    }
+                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                    // Recursively add nested object fields
+                    fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
+                } else {
+                    const label = formatFieldLabel(fullKey);
+                    fields.push({ key: fullKey, label, value: cleanText(value) });
+                }
+            });
+
+            return fields;
+        };
+
+        // Get all fields from the operator object
+        const operatorFields = renderAllObjectFields(operator);
 
         operatorFields.forEach(field => {
             if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
@@ -339,22 +351,37 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Build other facility data
             let otherFacilityData = '';
-            const identificationPastNames = combineLists(identification.pastNames, identification.otherNames);
-            const facilityFields = [
-                { key: 'facilityDetails.type', label: 'Type', value: cleanText(facilityDetails.type) },
-                { key: 'facilityDetails.capacity', label: 'Capacity', value: cleanText(facilityDetails.capacity) },
-                { key: 'facilityDetails.ageRange', label: 'Age Range', value: (ageRange.min || ageRange.max) ? `${ageRange.min || '?'}-${ageRange.max || '?'}` : null },
-                { key: 'facilityDetails.gender', label: 'Gender', value: cleanText(facilityDetails.gender) },
-                { key: 'identification.currentOperator', label: 'Current Parent Company', value: cleanText(identification.currentOperator) },
-                { key: 'identification.pastNames', label: 'Past Names', value: identificationPastNames, isList: true },
-                { key: 'staff.administrator', label: 'Administrator', value: joinList(staff.administrator), isList: true },
-                { key: 'accreditations.current', label: 'Current Accreditations', value: joinList(accreditations.current), isList: true },
-                { key: 'accreditations.past', label: 'Past Accreditations', value: joinList(accreditations.past), isList: true },
-                { key: 'memberships', label: 'Memberships', value: memberships, isList: true },
-                { key: 'licensing', label: 'Licensing', value: licensing, isList: true },
-                { key: 'address', label: 'Full Address', value: cleanText(facility && facility.address) },
-                { key: 'profileLinks', label: 'Archived Website', value: profileLinks, isList: true, renderListAsLinks: true }
-            ];
+
+            // Function to recursively render all fields from an object
+            const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
+                if (!obj || typeof obj !== 'object' || depth > 3) return [];
+                const fields = [];
+
+                Object.keys(obj).forEach(key => {
+                    const fullKey = prefix ? `${prefix}.${key}` : key;
+                    const value = obj[key];
+
+                    if (value === null || value === undefined || value === '') return;
+
+                    if (Array.isArray(value)) {
+                        if (value.length > 0) {
+                            const label = formatFieldLabel(fullKey);
+                            fields.push({ key: fullKey, label, value: value, isList: true });
+                        }
+                    } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                        // Recursively add nested object fields
+                        fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
+                    } else {
+                        const label = formatFieldLabel(fullKey);
+                        fields.push({ key: fullKey, label, value: cleanText(value) });
+                    }
+                });
+
+                return fields;
+            };
+
+            // Get all fields from the facility object
+            const facilityFields = renderAllObjectFields(facility);
 
             facilityFields.forEach(field => {
                 if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
