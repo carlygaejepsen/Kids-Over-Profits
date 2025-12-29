@@ -2257,6 +2257,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (programs.length === 0) {
+                 // Check if the organization page itself exists in the database
+                 const orgPage = searchResult.data?.find(e =>
+                     e.program_name.toLowerCase() === orgName.toLowerCase()
+                 );
+
+                 if (orgPage) {
+                     // Organization page found - load it into the form
+                     console.log('Loading organization page from database:', orgName);
+                     try {
+                         // Load the saved data into the form
+                         if (orgPage.original_markdown) {
+                             importedMarkdown = orgPage.original_markdown;
+                             const parsed = parseWikiMarkdown(orgPage.original_markdown);
+                             populateFormFromParsedData(parsed);
+                         } else if (orgPage.json_data) {
+                             const jsonData = typeof orgPage.json_data === 'string'
+                                 ? JSON.parse(orgPage.json_data)
+                                 : orgPage.json_data;
+                             populateFormFromParsedData(jsonData);
+                         }
+                         updateMarkdownFromForm();
+                         finalizeEntryLoad(orgName, { noScroll: true });
+                     } catch (e) {
+                         console.error('Error loading organization page:', e);
+                     }
+                     return;
+                 }
+
                  // If nothing found, show the empty-entry banner and load an empty form
                  if (!searchResult.data || searchResult.data.length === 0) {
                      console.warn('Organization not found in database for', orgName);
