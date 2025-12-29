@@ -8,18 +8,61 @@ function displayFacilities(facilitiesData, containerId) {
         return;
     }
     
+    // --- Helper Functions ---
+
     const toArray = value => Array.isArray(value) ? value : [];
+    
     const cleanText = value => {
-        if (typeof value === 'string') {
-            return value.trim();
-        }
-
-        if (typeof value === 'number') {
-            return String(value);
-        }
-
+        if (typeof value === 'string') return value.trim();
+        if (typeof value === 'number') return String(value);
         return '';
     };
+
+    // Robust check for empty/placeholder values
+    const isValueEmpty = (value) => {
+        if (value === null || value === undefined) return true;
+        
+        if (typeof value === 'boolean') return !value; // Hide false values
+        
+        if (typeof value === 'string') {
+            const lower = value.trim().toLowerCase();
+            // Standard empty strings
+            if (!lower) return true;
+            
+            // Explicit placeholder list
+            const placeholders = [
+                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 
+                'unknown', 'null', 'undefined', 'false',
+                '-', '--', '—', 'tbd', 'tba',
+                'not specified', 'not available', 'not applicable'
+            ];
+            
+            // Exact match check
+            if (placeholders.includes(lower)) return true;
+            
+            // Check for placeholders with trailing punctuation
+            // e.g. "None." or "No;"
+            const stripped = lower.replace(/[.,;:\-–—]+$/, '');
+            if (placeholders.includes(stripped)) return true;
+
+            return false;
+        }
+        
+        if (typeof value === 'number') return false; // Numbers are valid (even 0)
+
+        if (Array.isArray(value)) {
+            return value.length === 0 || value.every(item => isValueEmpty(item));
+        }
+        
+        if (typeof value === 'object') {
+            const keys = Object.keys(value);
+            if (keys.length === 0) return true;
+            return keys.every(k => isValueEmpty(value[k]));
+        }
+        
+        return true;
+    };
+
     const htmlEscapeMap = {
         '&': '&amp;',
         '<': '&lt;',
@@ -27,32 +70,37 @@ function displayFacilities(facilitiesData, containerId) {
         '"': '&quot;',
         "'": '&#39;'
     };
+    
     const escapeHtml = value => {
         const text = cleanText(value);
         return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
+    
     const escapeAttribute = value => escapeHtml(value);
-    const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
-    const combineLists = (...lists) => {
-        const combined = [];
-        lists.forEach(list => {
-            joinList(list).forEach(item => {
-                if (!combined.includes(item)) {
-                    combined.push(item);
-                }
-            });
-        });
-        return combined;
-    };
+    
+    const joinList = values => toArray(values)
+        .filter(item => !isValueEmpty(item))
+        .map(item => cleanText(item))
+        .filter(item => item); // Double check for empty strings
+
     const formatFieldLabel = (key) => {
         if (!key || typeof key !== 'string') return 'Field';
-        return key
-            .replace(/\./g, ' ')
+        
+        // Strip common redundant prefixes
+        let cleanKey = key
+            .replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '')
+            .replace(/\./g, ' ');
+            
+        return cleanKey
             .replace(/([A-Z])/g, ' $1')
             .replace(/has\s*/gi, '')
             .replace(/\s+/g, ' ')
-            .trim() || 'Field';
+            .trim()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ') || 'Field';
     };
+
     const getNotesForKey = (fieldNotes, key) => {
         if (!fieldNotes || typeof fieldNotes !== 'object' || !key) return [];
         const notes = fieldNotes[key];
@@ -76,6 +124,7 @@ function displayFacilities(facilitiesData, containerId) {
         }
         return collected;
     };
+
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
         const notes = getNotesForKey(fieldNotes, key);
         if (!notes.length) return '';
@@ -83,6 +132,7 @@ function displayFacilities(facilitiesData, containerId) {
         const noteText = notes.map(n => escapeHtml(n)).join('; ');
         return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
     };
+
     const renderRemainingFieldNotes = (fieldNotes, usedKeys) => {
         if (!fieldNotes || typeof fieldNotes !== 'object') return '';
         const items = [];
@@ -106,33 +156,29 @@ function displayFacilities(facilitiesData, containerId) {
             </div>
         `;
     };
+
     const normalizeProjectCategory = project => {
         if (!project || typeof project !== 'object') {
             return 'companies';
         }
-
         let rawCategory = '';
-
         if (typeof project.category === 'string' && project.category) {
             rawCategory = project.category;
         } else if (project.data && typeof project.data === 'object' && typeof project.data.category === 'string' && project.data.category) {
             rawCategory = project.data.category;
         }
-
-        if (!rawCategory) {
-            return 'companies';
-        }
-
+        if (!rawCategory) return 'companies';
         return rawCategory.toLowerCase();
     };
+
     const isOperatorCategory = project => {
         const category = normalizeProjectCategory(project);
         return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
     };
 
-    let html = '<div class="facilities-database">';
+    // --- Main Rendering Logic ---
 
-    // Don't inject controls - use the existing ones from the template
+    let html = '<div class="facilities-database">';
 
     // Convert the new JSON structure to work with existing code
     let operatorGroups = [];
@@ -243,49 +289,16 @@ function displayFacilities(facilitiesData, containerId) {
         // Build other operator data
         let otherOperatorData = '';
 
-        // Helper to check if a value is meaningfully empty
-        const isEmptyValue = (value) => {
-            if (value === null || value === undefined || value === '') return true;
-            // Treat "None", "No", "N/A", "Unknown" as empty
-            if (typeof value === 'string') {
-                const lower = value.trim().toLowerCase();
-                if (lower === 'none' || lower === 'no' || lower === 'n/a' ||
-                    lower === 'unknown' || lower === 'null' || lower === 'undefined') {
-                    return true;
-                }
-            }
-            if (typeof value === 'boolean') return !value; // false is empty, true is not
-            if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
-            if (typeof value === 'object') {
-                const keys = Object.keys(value);
-                if (keys.length === 0) return true;
-                return keys.every(k => isEmptyValue(value[k]));
-            }
-            return false;
-        };
-
-        // Helper to check if a string is a placeholder/empty value
-        const isPlaceholderValueOp = (str) => {
-            if (!str || typeof str !== 'string') return true;
-            const lower = str.trim().toLowerCase();
-            return !lower || lower === 'none' || lower === 'no' || lower === 'n/a' ||
-                   lower === 'unknown' || lower === 'null' || lower === 'undefined' ||
-                   lower === 'not specified' || lower === 'not available';
-        };
-
         // Helper to render a single item (handles objects in arrays)
         const renderItemOp = (item) => {
-            if (item === null || item === undefined || item === '') return '';
-            if (typeof item === 'boolean') return item ? 'Yes' : '';
-            if (typeof item === 'string') {
-                if (isPlaceholderValueOp(item)) return '';
-                return escapeHtml(item);
-            }
+            if (isValueEmpty(item)) return '';
+            if (typeof item === 'boolean') return item ? 'Yes' : ''; // strict boolean check
+            if (typeof item === 'string') return escapeHtml(item);
             if (typeof item === 'number') return escapeHtml(String(item));
             if (typeof item === 'object' && !Array.isArray(item)) {
                 const parts = [];
                 Object.entries(item).forEach(([k, v]) => {
-                    if (v && typeof v === 'string' && v.trim() && !isPlaceholderValueOp(v)) {
+                    if (!isValueEmpty(v)) {
                         if (k === 'name' || k === 'value' || k === 'text') {
                             parts.push(escapeHtml(v));
                         } else if (k !== 'role' || v.trim()) {
@@ -299,7 +312,7 @@ function displayFacilities(facilitiesData, containerId) {
         };
 
         // Function to recursively render all fields from an object
-        const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
+        const renderAllObjectFieldsOp = (obj, prefix = '', depth = 0) => {
             if (!obj || typeof obj !== 'object' || depth > 3) return [];
             const fields = [];
 
@@ -313,20 +326,22 @@ function displayFacilities(facilitiesData, containerId) {
                 // Skip keys already shown in header (top-level only for operators)
                 if (depth === 0 && skipFullKeys.includes(key)) return;
 
-                // Skip empty values (would show "None" or be blank)
-                if (isEmptyValue(value)) return;
+                // Skip empty values
+                if (isValueEmpty(value)) return;
 
                 if (Array.isArray(value)) {
-                    if (value.length > 0 && !value.every(isEmptyValue)) {
+                    if (value.length > 0 && !value.every(isValueEmpty)) {
                         const label = formatFieldLabel(fullKey);
                         const isUrl = value.some(v => typeof v === 'string' && (v.startsWith('http://') || v.startsWith('https://')));
                         fields.push({ key: fullKey, label, value: value, isList: true, renderListAsLinks: isUrl });
                     }
                 } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-                    fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
-                } else if (typeof value === 'boolean' && value) {
-                    const label = formatFieldLabel(fullKey);
-                    fields.push({ key: fullKey, label, value: 'Yes' });
+                    fields.push(...renderAllObjectFieldsOp(value, fullKey, depth + 1));
+                } else if (typeof value === 'boolean') {
+                    if (value) {
+                         const label = formatFieldLabel(fullKey);
+                         fields.push({ key: fullKey, label, value: 'Yes' });
+                    }
                 } else {
                     const label = formatFieldLabel(fullKey);
                     const textValue = cleanText(value);
@@ -340,23 +355,21 @@ function displayFacilities(facilitiesData, containerId) {
         };
 
         // Get all fields from the operator object
-        const operatorFields = renderAllObjectFields(operator);
+        const operatorFields = renderAllObjectFieldsOp(operator);
 
         operatorFields.forEach(field => {
-            if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
-                return;
-            }
+            if (isValueEmpty(field.value)) return;
 
             let renderedValue = '';
 
             if (field.isList) {
                 const items = Array.isArray(field.value) ? field.value : [field.value];
-                if (!items.length) {
-                    return;
-                }
+                const validItems = items.filter(i => !isValueEmpty(i));
+                
+                if (!validItems.length) return;
 
                 if (field.renderListAsLinks) {
-                    renderedValue = items.map(url => {
+                    renderedValue = validItems.map(url => {
                         if (typeof url !== 'string') return '';
                         const safeUrl = escapeAttribute(url);
                         let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
@@ -364,34 +377,13 @@ function displayFacilities(facilitiesData, containerId) {
                         return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
                     }).filter(Boolean).join('<br>');
                 } else {
-                    renderedValue = items.map(item => renderItemOp(item)).filter(Boolean).join(', ');
+                    renderedValue = validItems.map(item => renderItemOp(item)).filter(Boolean).join(', ');
                 }
             } else {
                 renderedValue = escapeHtml(field.value);
             }
 
-            if (!renderedValue) {
-                return;
-            }
-
-            // Final check - skip if rendered value is empty or meaningless
-            const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
-            const lowerValue = strippedValue.toLowerCase();
-
-            // Skip empty or placeholder values
-            if (!strippedValue) return;
-
-            // Exact matches for empty placeholders
-            const emptyExact = ['none', 'no', 'n/a', 'na', 'unknown', 'null', 'undefined',
-                               'not specified', 'not available', 'not applicable',
-                               'false', '-', '--', '—', 'tbd', 'tba', 'n.a.', 'n.a'];
-            if (emptyExact.includes(lowerValue)) return;
-
-            // Just punctuation, whitespace, or common separators
-            if (/^[\s,\-–—;:\.\/_|]+$/.test(strippedValue)) return;
-
-            // Starts with empty placeholder followed by separator or end
-            if (/^(none|no|n\/a|na|unknown|null|undefined|false)[\s,;:\-–—]*$/i.test(strippedValue)) return;
+            if (!renderedValue || isValueEmpty(renderedValue)) return;
 
             if (field.label) {
                 otherOperatorData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
@@ -441,50 +433,17 @@ function displayFacilities(facilitiesData, containerId) {
             // Build other facility data
             let otherFacilityData = '';
 
-            // Helper to check if a value is meaningfully empty
-            const isEmptyValue = (value) => {
-                if (value === null || value === undefined || value === '') return true;
-                // Treat "None", "No", "N/A", "Unknown" as empty
-                if (typeof value === 'string') {
-                    const lower = value.trim().toLowerCase();
-                    if (lower === 'none' || lower === 'no' || lower === 'n/a' ||
-                        lower === 'unknown' || lower === 'null' || lower === 'undefined') {
-                        return true;
-                    }
-                }
-                if (typeof value === 'boolean') return !value; // false is empty, true is not
-                if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
-                if (typeof value === 'object') {
-                    const keys = Object.keys(value);
-                    if (keys.length === 0) return true;
-                    return keys.every(k => isEmptyValue(value[k]));
-                }
-                return false;
-            };
-
-            // Helper to check if a string is a placeholder/empty value
-            const isPlaceholderValue = (str) => {
-                if (!str || typeof str !== 'string') return true;
-                const lower = str.trim().toLowerCase();
-                return !lower || lower === 'none' || lower === 'no' || lower === 'n/a' ||
-                       lower === 'unknown' || lower === 'null' || lower === 'undefined' ||
-                       lower === 'not specified' || lower === 'not available';
-            };
-
             // Helper to render a single item (handles objects in arrays)
-            const renderItem = (item) => {
-                if (item === null || item === undefined || item === '') return '';
+            const renderItemFac = (item) => {
+                if (isValueEmpty(item)) return '';
                 if (typeof item === 'boolean') return item ? 'Yes' : '';
-                if (typeof item === 'string') {
-                    if (isPlaceholderValue(item)) return '';
-                    return escapeHtml(item);
-                }
+                if (typeof item === 'string') return escapeHtml(item);
                 if (typeof item === 'number') return escapeHtml(String(item));
                 if (typeof item === 'object' && !Array.isArray(item)) {
                     // For objects like {role: "", name: "Scott Hess"}, extract meaningful values
                     const parts = [];
                     Object.entries(item).forEach(([k, v]) => {
-                        if (v && typeof v === 'string' && v.trim() && !isPlaceholderValue(v)) {
+                        if (!isValueEmpty(v)) {
                             // If key is 'name' or 'value', just use the value
                             if (k === 'name' || k === 'value' || k === 'text') {
                                 parts.push(escapeHtml(v));
@@ -500,7 +459,7 @@ function displayFacilities(facilitiesData, containerId) {
             };
 
             // Function to recursively render all fields from an object
-            const renderAllObjectFields = (obj, prefix = '', depth = 0) => {
+            const renderAllObjectFieldsFac = (obj, prefix = '', depth = 0) => {
                 if (!obj || typeof obj !== 'object' || depth > 3) return [];
                 const fields = [];
 
@@ -519,20 +478,22 @@ function displayFacilities(facilitiesData, containerId) {
                     if (skipFullKeys.includes(fullKey)) return;
 
                     // Skip empty values (would show "None" or be blank)
-                    if (isEmptyValue(value)) return;
+                    if (isValueEmpty(value)) return;
 
                     if (Array.isArray(value)) {
-                        if (value.length > 0 && !value.every(isEmptyValue)) {
+                        if (value.length > 0 && !value.every(isValueEmpty)) {
                             const label = formatFieldLabel(fullKey);
                             fields.push({ key: fullKey, label, value: value, isList: true });
                         }
                     } else if (typeof value === 'object' && Object.keys(value).length > 0) {
                         // Recursively add nested object fields
-                        fields.push(...renderAllObjectFields(value, fullKey, depth + 1));
-                    } else if (typeof value === 'boolean' && value) {
+                        fields.push(...renderAllObjectFieldsFac(value, fullKey, depth + 1));
+                    } else if (typeof value === 'boolean') {
                         // Only show boolean true values
-                        const label = formatFieldLabel(fullKey);
-                        fields.push({ key: fullKey, label, value: 'Yes' });
+                        if (value) {
+                             const label = formatFieldLabel(fullKey);
+                             fields.push({ key: fullKey, label, value: 'Yes' });
+                        }
                     } else {
                         const label = formatFieldLabel(fullKey);
                         const textValue = cleanText(value);
@@ -546,28 +507,26 @@ function displayFacilities(facilitiesData, containerId) {
             };
 
             // Get all fields from the facility object
-            const facilityFields = renderAllObjectFields(facility);
+            const facilityFields = renderAllObjectFieldsFac(facility);
 
             facilityFields.forEach(field => {
-                if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
-                    return;
-                }
+                if (isValueEmpty(field.value)) return;
 
                 let renderedValue = '';
 
                 if (field.isList) {
                     const items = Array.isArray(field.value) ? field.value : [field.value];
-                    if (!items.length) {
-                        return;
-                    }
+                    const validItems = items.filter(i => !isValueEmpty(i));
+                    
+                    if (!validItems.length) return;
 
                     // Check if items look like URLs
-                    const isUrlList = items.some(item =>
+                    const isUrlList = validItems.some(item =>
                         typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://'))
                     );
 
                     if (isUrlList) {
-                        renderedValue = items.map(url => {
+                        renderedValue = validItems.map(url => {
                             if (typeof url !== 'string') return '';
                             const safeUrl = escapeAttribute(url);
                             // Shorten displayed URL for readability
@@ -576,35 +535,14 @@ function displayFacilities(facilitiesData, containerId) {
                             return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
                         }).filter(Boolean).join('<br>');
                     } else {
-                        // Use renderItem which handles objects properly
-                        renderedValue = items.map(item => renderItem(item)).filter(Boolean).join(', ');
+                        // Use renderItemFac which handles objects properly
+                        renderedValue = validItems.map(item => renderItemFac(item)).filter(Boolean).join(', ');
                     }
                 } else {
                     renderedValue = escapeHtml(field.value);
                 }
 
-                if (!renderedValue) {
-                    return;
-                }
-
-                // Final check - skip if rendered value is empty or meaningless
-                const strippedValue = renderedValue.replace(/<[^>]*>/g, '').trim();
-                const lowerValue = strippedValue.toLowerCase();
-
-                // Skip empty or placeholder values
-                if (!strippedValue) return;
-
-                // Exact matches for empty placeholders
-                const emptyExact = ['none', 'no', 'n/a', 'na', 'unknown', 'null', 'undefined',
-                                   'not specified', 'not available', 'not applicable',
-                                   'false', '-', '--', '—', 'tbd', 'tba', 'n.a.', 'n.a'];
-                if (emptyExact.includes(lowerValue)) return;
-
-                // Just punctuation, whitespace, or common separators
-                if (/^[\s,\-–—;:\.\/_|]+$/.test(strippedValue)) return;
-
-                // Starts with empty placeholder followed by separator or end
-                if (/^(none|no|n\/a|na|unknown|null|undefined|false)[\s,;:\-–—]*$/i.test(strippedValue)) return;
+                if (!renderedValue || isValueEmpty(renderedValue)) return;
 
                 if (field.label) {
                     otherFacilityData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
@@ -641,15 +579,12 @@ function displayFacilities(facilitiesData, containerId) {
                 });
                 
                 if (facility.resources.customResources && facility.resources.customResources.length > 0) {
-                    resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(Boolean));
+                    resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
                 }
 
                 if (resources.length > 0) {
-                    const filteredResources = resources.filter(item => item && !isPlaceholderValue(item));
-                    if (filteredResources.length > 0) {
-                        const safeResources = filteredResources.map(item => escapeHtml(item)).join(', ');
-                        resourcesAvailable = '<div class="field-row"><span class="field-label">Resources Available</span><span class="field-value">' + safeResources + '</span></div>';
-                    }
+                    const safeResources = resources.map(item => escapeHtml(item)).join(', ');
+                    resourcesAvailable = '<div class="field-row"><span class="field-label">Resources Available</span><span class="field-value">' + safeResources + '</span></div>';
                 }
             }
 
