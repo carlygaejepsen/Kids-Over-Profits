@@ -8,6 +8,14 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/tti-program-index 2>/dev/null || true
     - /bin/rm -f $DEPLOYPATH/data 2>/dev/null || true
 
+    # Remove any WordPress core files that shouldn't be in child theme
+    - /bin/rm -f $DEPLOYPATH/wp-*.php 2>/dev/null || true
+    - /bin/rm -f $DEPLOYPATH/index.php 2>/dev/null || true
+    - /bin/rm -f $DEPLOYPATH/xmlrpc.php 2>/dev/null || true
+    - /bin/rm -rf $DEPLOYPATH/wp-content 2>/dev/null || true
+    - /bin/rm -rf $DEPLOYPATH/wp-includes 2>/dev/null || true
+    - /bin/rm -rf $DEPLOYPATH/wp-admin 2>/dev/null || true
+
     # Copy specific directories and files (avoid copying WordPress content snippets)
     - /bin/cp -R api $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R inc $DEPLOYPATH 2>/dev/null || true
@@ -15,8 +23,11 @@ deployment:
     - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -R templates $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp *.php $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp *.html $DEPLOYPATH 2>/dev/null || true
+
+    # Copy only child theme PHP files (exclude WordPress core files)
+    - /bin/cp functions.php $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp page-*.php $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp style.css $DEPLOYPATH 2>/dev/null || true
 
     # Copy hidden files (except .env which should stay on server only)
     - /bin/cp .htaccess $DEPLOYPATH 2>/dev/null || true
