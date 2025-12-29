@@ -258,10 +258,28 @@
     background: linear-gradient(135deg, #e8e8e8 0%, #ddd 100%);
 }
 
+.tti-program-index-wrapper .facility-card .facility-expanded-info[open] summary,
+.tti-program-index-wrapper .facility-card .facility-expanded-info[open] summary * {
+    color: #ffffff !important;
+}
+
 .facility-expanded-info[open] summary {
     margin-bottom: 12px;
     background: #00004d;
-    color: #ffffff;
+    color: #ffffff !important;
+}
+
+summary.operator-header::after {
+    content: '+ Click for details';
+    font-size: 1em;
+    font-weight: bold;
+    color: #ffffff !important;
+    pointer-events: none;
+}
+
+details[open] > summary.operator-header::after {
+    content: '- Collapse details';
+    color: #ffffff !important;
 }
 
 .facility-extra-content {

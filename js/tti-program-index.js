@@ -268,18 +268,18 @@ function displayFacilities(facilitiesData, containerId) {
         const locationLines = [];
 
         const operatorLocation = cleanText(operator.location);
-        if (operatorLocation) {
+        if (!isValueEmpty(operatorLocation)) {
             locationLines.push(`<div>${escapeHtml(operatorLocation)}</div>`);
         }
         const operatorHQ = cleanText(operator.headquarters);
-        if (operatorHQ) {
+        if (!isValueEmpty(operatorHQ)) {
             locationLines.push(`<div>${escapeHtml(operatorHQ)}</div>`);
         }
         const operatorOperatingPeriod = cleanText(operator.operatingPeriod);
-        if (operatorOperatingPeriod) {
+        if (!isValueEmpty(operatorOperatingPeriod)) {
             locationLines.push(`<div>${escapeHtml(operatorOperatingPeriod)}</div>`);
-        } else if (cleanText(operator.founded)) {
-            const endYear = operator.status === 'Defunct' ? 'Defunct' : 'Present';
+        } else if (!isValueEmpty(operator.founded)) {
+            const endYear = isValueEmpty(operator.status) || operator.status === 'Defunct' ? 'Defunct' : 'Present';
             locationLines.push(`<div>${escapeHtml(`${cleanText(operator.founded)}-${endYear}`)}</div>`);
         }
 
@@ -318,7 +318,7 @@ function displayFacilities(facilitiesData, containerId) {
             const fields = [];
 
             // Skip these keys - they're already shown in the operator header
-            const skipFullKeys = ['name', 'location', 'headquarters', 'status'];
+            const skipFullKeys = ['name', 'location', 'headquarters', 'status', 'operatingPeriod', 'founded'];
 
             Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
@@ -393,8 +393,8 @@ function displayFacilities(facilitiesData, containerId) {
             }
         });
 
-        // Always create the div, even if empty
-        otherOperatorData = `<div class="operator-details">${otherOperatorData}</div>`;
+        // Only create the div if there's actual content
+        const operatorDetailsDiv = otherOperatorData ? `<div class="operator-details">${otherOperatorData}</div>` : '';
 
         html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '">' +
                 '<summary class="operator-header">' +
@@ -402,7 +402,7 @@ function displayFacilities(facilitiesData, containerId) {
                     locationYearsLine +
                 '</summary>' +
                 '<div class="operator-content-scrollable">' +
-                    otherOperatorData;
+                    operatorDetailsDiv;
 
         facilities.forEach(facility => {
             const identification = facility && facility.identification ? facility.identification : {};
@@ -427,9 +427,9 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Data for display above the "cut"
             const facilityLocationRaw = cleanText(facility && facility.location);
-            const facilityLocation = escapeHtml(facilityLocationRaw);
-            const yearRangeRaw = operatingPeriod.startYear ? `${operatingPeriod.startYear}-${operatingPeriod.endYear || 'Present'}` : null;
-            const yearRange = escapeHtml(yearRangeRaw);
+            const facilityLocation = isValueEmpty(facilityLocationRaw) ? '' : escapeHtml(facilityLocationRaw);
+            const yearRangeRaw = !isValueEmpty(operatingPeriod.startYear) ? `${operatingPeriod.startYear}-${operatingPeriod.endYear || 'Present'}` : null;
+            const yearRange = isValueEmpty(yearRangeRaw) ? '' : escapeHtml(yearRangeRaw);
 
             // Build other facility data
             let otherFacilityData = '';
@@ -599,7 +599,7 @@ function displayFacilities(facilitiesData, containerId) {
 
                 if (resources.length > 0) {
                     const safeResources = resources.map(item => escapeHtml(item)).join(', ');
-                    resourcesAvailable = '<div class="field-row"><span class="field-label">Resources Available</span><span class="field-value">' + safeResources + '</span></div>';
+                    resourcesAvailable = `<div class="field-row full-width-grid"><span class="field-label">Resources Available</span><span class="field-value">${safeResources}</span></div>`;
                 }
             }
 
