@@ -475,6 +475,26 @@ details.operator-section[open] .facility-card {
     grid-column: 1 / -1;
 }
 
+/* Long lists (like Staff) span the full width and use their own internal grid */
+.field-row.full-width-grid {
+    grid-column: 1 / -1;
+    display: block; /* Allow internal grid to flow */
+}
+
+.field-row.full-width-grid .field-value {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Masonry-like grid for items */
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.list-item {
+    background: rgba(0,0,0,0.03);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
 /* Field Row Styling inside Grid */
 .field-row {
     display: flex;
@@ -492,34 +512,41 @@ details.operator-section[open] .facility-card {
     }
 }
 
-.field-label {
+.facility-card .field-label {
     display: block;
     font-size: 0.85em;
     font-weight: 700;
-    color: #00004d !important;
+    color: #00004d;
     margin-bottom: 2px;
     width: auto;
+}
+
+.facility-card .field-value {
+    display: block;
+    padding: 0;
+    color: #333333;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
 .field-label::after {
     content: '';
 }
 
-.field-value {
-    display: block;
-    padding: 0;
-    color: #333333 !important;
-    word-break: break-word;
-    line-height: 1.4;
-}
-
 /* Operator details specific overrides (Dark background) */
 .operator-details .field-label {
     color: #AEE0ED !important;
+    display: block;
+    font-size: 0.85em;
+    font-weight: 700;
+    margin-bottom: 2px;
 }
 
 .operator-details .field-value {
     color: #ffffff !important;
+    display: block;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
 .operator-details p {

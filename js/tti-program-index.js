@@ -57,6 +57,7 @@ function displayFacilities(facilitiesData, containerId) {
         if (typeof value === 'object') {
             const keys = Object.keys(value);
             if (keys.length === 0) return true;
+            // Recursively check values, but clean them first to ensure whitespace objects are caught
             return keys.every(k => isValueEmpty(value[k]));
         }
         
@@ -513,12 +514,19 @@ function displayFacilities(facilitiesData, containerId) {
                 if (isValueEmpty(field.value)) return;
 
                 let renderedValue = '';
+                let isMultiColumn = false;
 
                 if (field.isList) {
                     const items = Array.isArray(field.value) ? field.value : [field.value];
                     const validItems = items.filter(i => !isValueEmpty(i));
                     
                     if (!validItems.length) return;
+                    
+                    // Mark lists (like Staff, Accreditations) as multi-column eligible
+                    // if they have more than 1 item or are complex objects
+                    if (validItems.length > 1 || typeof validItems[0] === 'object') {
+                        isMultiColumn = true;
+                    }
 
                     // Check if items look like URLs
                     const isUrlList = validItems.some(item =>
@@ -537,6 +545,11 @@ function displayFacilities(facilitiesData, containerId) {
                     } else {
                         // Use renderItemFac which handles objects properly
                         renderedValue = validItems.map(item => renderItemFac(item)).filter(Boolean).join(', ');
+                        
+                        // If it's a list of objects rendered as strings, separate them clearly for grid
+                         if (isMultiColumn && typeof validItems[0] === 'object') {
+                             renderedValue = validItems.map(item => `<div class="list-item">${renderItemFac(item)}</div>`).join('');
+                         }
                     }
                 } else {
                     renderedValue = escapeHtml(field.value);
@@ -544,11 +557,13 @@ function displayFacilities(facilitiesData, containerId) {
 
                 if (!renderedValue || isValueEmpty(renderedValue)) return;
 
+                const rowClass = isMultiColumn ? 'field-row full-width-grid' : 'field-row';
+
                 if (field.label) {
-                    otherFacilityData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';
+                    otherFacilityData += `<div class="${rowClass}"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
                     otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 } else {
-                    otherFacilityData += '<div class="field-row"><span class="field-value">' + renderedValue + '</span></div>';
+                    otherFacilityData += `<div class="${rowClass}"><span class="field-value">${renderedValue}</span></div>`;
                 }
             });
 
