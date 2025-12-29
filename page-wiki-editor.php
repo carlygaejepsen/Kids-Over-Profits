@@ -137,6 +137,35 @@ get_header();
                 <input type="text" id="programType" name="programType" data-autocomplete-category="type" placeholder="e.g., Residential Treatment Center">
             </fieldset>
 
+            <!-- Organization-Specific Fields (only shown for organizations) -->
+            <fieldset class="organization-only-field">
+                <legend>Organization Information</legend>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="headquarters">Headquarters / Main Office:</label>
+                        <input type="text" id="headquarters" name="headquarters" placeholder="e.g., Franklin, TN">
+                    </div>
+                    <div class="field-group">
+                        <label for="parentCompany">Parent Company:</label>
+                        <input type="text" id="parentCompany" name="parentCompany" data-autocomplete-category="operator" placeholder="e.g., Universal Health Services">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="parentCompanyLink">Parent Company Wiki Link:</label>
+                        <input type="text" id="parentCompanyLink" name="parentCompanyLink" placeholder="e.g., /r/troubledteens/wiki/...">
+                    </div>
+                </div>
+
+                <h4>Facilities Operated</h4>
+                <p style="color: #004435; font-size: 0.95rem; margin-bottom: 10px;">
+                    This list is automatically generated from the organization's wiki page. To add or remove facilities, edit the markdown in the "Generated Output" tab.
+                </p>
+                <div class="organization-facilities-list" id="organizationFacilitiesList" style="background-color: #F0F9FA; border: 2px solid #AEE0ED; border-radius: 5px; padding: 15px; min-height: 100px;">
+                    <p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>
+                </div>
+            </fieldset>
+
             <fieldset>
                 <legend>History and Background Information</legend>
                 <div class="field-row">
@@ -144,11 +173,11 @@ get_header();
                         <label for="yearFounded">Year Founded:</label>
                         <input type="text" id="yearFounded" name="yearFounded" placeholder="e.g., 1989">
                     </div>
-                    <div class="field-group">
+                    <div class="field-group facility-only-field">
                         <label for="ageRange">Age Range:</label>
                         <input type="text" id="ageRange" name="ageRange" placeholder="e.g., 13-17">
                     </div>
-                    <div class="field-group">
+                    <div class="field-group facility-only-field">
                         <label for="capacity">Maximum Enrollment/Capacity:</label>
                         <input type="text" id="capacity" name="capacity" placeholder="e.g., 40 students">
                     </div>
@@ -163,7 +192,7 @@ get_header();
                         <input type="text" id="ownerLink" name="ownerLink" placeholder="e.g., /r/troubledteens/wiki/...">
                     </div>
                 </div>
-                <div class="field-row">
+                <div class="field-row facility-only-field">
                     <div class="field-group">
                         <label for="avgStay">Avg. Stay:</label>
                         <input type="text" id="avgStay" name="avgStay" placeholder="e.g., 100 days">
@@ -173,7 +202,7 @@ get_header();
                         <input type="text" id="tuition" name="tuition" placeholder="e.g., $40,000+">
                     </div>
                 </div>
-                <div class="field-row">
+                <div class="field-row facility-only-field">
                     <div class="field-group">
                         <label for="natsapMember">NATSAP Member?</label>
                         <select id="natsapMember" name="natsapMember">
@@ -188,45 +217,47 @@ get_header();
                         <input type="text" id="natsapYear" name="natsapYear" placeholder="e.g., 1999">
                     </div>
                 </div>
-                <label>Target Diagnoses/Behaviors (select all that apply):</label>
-                <div class="diagnoses-checklist">
-                    <div class="checklist-column">
-                        <h4>Clinical Diagnoses</h4>
-                        <label><input type="checkbox" name="diagnoses" value="ADHD"> ADHD</label>
-                        <label><input type="checkbox" name="diagnoses" value="Autism Spectrum Disorder"> Autism Spectrum Disorder</label>
-                        <label><input type="checkbox" name="diagnoses" value="Bipolar Disorder"> Bipolar Disorder</label>
-                        <label><input type="checkbox" name="diagnoses" value="Depression"> Depression</label>
-                        <label><input type="checkbox" name="diagnoses" value="Anxiety"> Anxiety</label>
-                        <label><input type="checkbox" name="diagnoses" value="OCD"> OCD</label>
-                        <label><input type="checkbox" name="diagnoses" value="PTSD"> PTSD</label>
-                        <label><input type="checkbox" name="diagnoses" value="Oppositional Defiant Disorder"> Oppositional Defiant Disorder (ODD)</label>
-                        <label><input type="checkbox" name="diagnoses" value="Conduct Disorder"> Conduct Disorder</label>
-                        <label><input type="checkbox" name="diagnoses" value="Eating Disorder"> Eating Disorder</label>
-                        <label><input type="checkbox" name="diagnoses" value="Substance Abuse"> Substance Abuse</label>
-                        <label><input type="checkbox" name="diagnoses" value="Borderline Personality Disorder"> Borderline Personality Disorder (BPD)</label>
-                        <label><input type="checkbox" name="diagnoses" value="Psychiatric Disorders"> Psychiatric Disorders</label>
-                        <label><input type="checkbox" name="diagnoses" value="Behavioral Disorders"> Behavioral Disorders</label>
-                        <label><input type="checkbox" name="diagnoses" value="Emotional Disorders"> Emotional Disorders</label>
-                        <label><input type="checkbox" name="diagnoses" value="Co-occurring Disorders"> Co-occurring Disorders</label>
+                <div class="facility-only-field">
+                    <label>Target Diagnoses/Behaviors (select all that apply):</label>
+                    <div class="diagnoses-checklist">
+                        <div class="checklist-column">
+                            <h4>Clinical Diagnoses</h4>
+                            <label><input type="checkbox" name="diagnoses" value="ADHD"> ADHD</label>
+                            <label><input type="checkbox" name="diagnoses" value="Autism Spectrum Disorder"> Autism Spectrum Disorder</label>
+                            <label><input type="checkbox" name="diagnoses" value="Bipolar Disorder"> Bipolar Disorder</label>
+                            <label><input type="checkbox" name="diagnoses" value="Depression"> Depression</label>
+                            <label><input type="checkbox" name="diagnoses" value="Anxiety"> Anxiety</label>
+                            <label><input type="checkbox" name="diagnoses" value="OCD"> OCD</label>
+                            <label><input type="checkbox" name="diagnoses" value="PTSD"> PTSD</label>
+                            <label><input type="checkbox" name="diagnoses" value="Oppositional Defiant Disorder"> Oppositional Defiant Disorder (ODD)</label>
+                            <label><input type="checkbox" name="diagnoses" value="Conduct Disorder"> Conduct Disorder</label>
+                            <label><input type="checkbox" name="diagnoses" value="Eating Disorder"> Eating Disorder</label>
+                            <label><input type="checkbox" name="diagnoses" value="Substance Abuse"> Substance Abuse</label>
+                            <label><input type="checkbox" name="diagnoses" value="Borderline Personality Disorder"> Borderline Personality Disorder (BPD)</label>
+                            <label><input type="checkbox" name="diagnoses" value="Psychiatric Disorders"> Psychiatric Disorders</label>
+                            <label><input type="checkbox" name="diagnoses" value="Behavioral Disorders"> Behavioral Disorders</label>
+                            <label><input type="checkbox" name="diagnoses" value="Emotional Disorders"> Emotional Disorders</label>
+                            <label><input type="checkbox" name="diagnoses" value="Co-occurring Disorders"> Co-occurring Disorders</label>
+                        </div>
+                        <div class="checklist-column">
+                            <h4>Behavioral Issues</h4>
+                            <label><input type="checkbox" name="diagnoses" value="defiance"> Defiance</label>
+                            <label><input type="checkbox" name="diagnoses" value="aggression"> Aggression</label>
+                            <label><input type="checkbox" name="diagnoses" value="self-harm"> Self-harm</label>
+                            <label><input type="checkbox" name="diagnoses" value="running away"> Running away</label>
+                            <label><input type="checkbox" name="diagnoses" value="academic struggles"> Academic struggles</label>
+                            <label><input type="checkbox" name="diagnoses" value="social problems"> Social problems</label>
+                            <label><input type="checkbox" name="diagnoses" value="family conflict"> Family conflict</label>
+                            <label><input type="checkbox" name="diagnoses" value="lying"> Lying</label>
+                            <label><input type="checkbox" name="diagnoses" value="stealing"> Stealing</label>
+                            <label><input type="checkbox" name="diagnoses" value="emotional dysregulation"> Emotional dysregulation</label>
+                            <label><input type="checkbox" name="diagnoses" value="impulsive behavior"> Impulsive behavior</label>
+                        </div>
                     </div>
-                    <div class="checklist-column">
-                        <h4>Behavioral Issues</h4>
-                        <label><input type="checkbox" name="diagnoses" value="defiance"> Defiance</label>
-                        <label><input type="checkbox" name="diagnoses" value="aggression"> Aggression</label>
-                        <label><input type="checkbox" name="diagnoses" value="self-harm"> Self-harm</label>
-                        <label><input type="checkbox" name="diagnoses" value="running away"> Running away</label>
-                        <label><input type="checkbox" name="diagnoses" value="academic struggles"> Academic struggles</label>
-                        <label><input type="checkbox" name="diagnoses" value="social problems"> Social problems</label>
-                        <label><input type="checkbox" name="diagnoses" value="family conflict"> Family conflict</label>
-                        <label><input type="checkbox" name="diagnoses" value="lying"> Lying</label>
-                        <label><input type="checkbox" name="diagnoses" value="stealing"> Stealing</label>
-                        <label><input type="checkbox" name="diagnoses" value="emotional dysregulation"> Emotional dysregulation</label>
-                        <label><input type="checkbox" name="diagnoses" value="impulsive behavior"> Impulsive behavior</label>
-                    </div>
+                    <label for="customDiagnoses">Additional Diagnoses/Behaviors (comma-separated):</label>
+                    <input type="text" id="customDiagnoses" name="customDiagnoses" placeholder="Add any diagnoses not listed above">
                 </div>
-                <label for="customDiagnoses">Additional Diagnoses/Behaviors (comma-separated):</label>
-                <input type="text" id="customDiagnoses" name="customDiagnoses" placeholder="Add any diagnoses not listed above">
-                <div class="field-row">
+                <div class="field-row facility-only-field">
                     <div class="field-group flex-2">
                         <label for="mainAddress">Main Address:</label>
                         <input type="text" id="mainAddress" name="mainAddress" data-autocomplete-category="location" placeholder="e.g., 280 N 300 E, Escalante, UT 84726">
@@ -236,7 +267,7 @@ get_header();
                         <input type="text" id="addressLink" name="addressLink" placeholder="https://...">
                     </div>
                 </div>
-                <div class="field-row">
+                <div class="field-row facility-only-field">
                     <div class="field-group">
                         <label for="accreditingBody">Accrediting Body:</label>
                         <input type="text" id="accreditingBody" name="accreditingBody" data-autocomplete-category="accreditation" placeholder="e.g., NWAC">
@@ -248,23 +279,25 @@ get_header();
                 </div>
                 <label for="historyNotes">Additional History Notes (will be included as-is):</label>
                 <textarea id="historyNotes" name="historyNotes" rows="4" placeholder="Any additional background information that doesn't fit the fields above..."></textarea>
-                <hr>
-                <h4>Additional Locations / Campuses</h4>
-                <div class="form-adder">
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="campusName">Campus Name:</label>
-                            <input type="text" id="campusName" placeholder="e.g., Girls Campus">
+                <div class="facility-only-field">
+                    <hr>
+                    <h4>Additional Locations / Campuses</h4>
+                    <div class="form-adder">
+                        <div class="field-row">
+                            <div class="field-group">
+                                <label for="campusName">Campus Name:</label>
+                                <input type="text" id="campusName" placeholder="e.g., Girls Campus">
+                            </div>
+                            <div class="field-group">
+                            <label for="campusLocation">Location:</label>
+                            <input type="text" id="campusLocation" data-autocomplete-category="location" placeholder="e.g., Cedar City, UT">
+                            </div>
                         </div>
-                        <div class="field-group">
-                        <label for="campusLocation">Location:</label>
-                        <input type="text" id="campusLocation" data-autocomplete-category="location" placeholder="e.g., Cedar City, UT">
-                        </div>
+                        <button type="button" class="add-btn" id="addCampusBtn">Add Campus</button>
                     </div>
-                    <button type="button" class="add-btn" id="addCampusBtn">Add Campus</button>
+                    <div class="list-preview" id="campusListOutput"></div>
+                    <hr>
                 </div>
-                <div class="list-preview" id="campusListOutput"></div>
-                <hr>
                 <h4>Ownership Changes</h4>
                 <div class="form-adder">
                     <div class="field-row">

@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let therapies = [];
     let programLevels = [];
     let importedMarkdown = ''; // Store original imported markdown
+    let isOrganizationEntry = false; // Track if current entry is an organization
 
     // --- Empty-slug mapping (loaded from markdown_output) ---
     // Set of known-empty wiki slugs (derived from markdown_output/empty_files_updated.md)
@@ -492,6 +493,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setCheckboxGroup('diagnoses', data.selectedDiagnoses);
         setCheckboxGroup('allegations', data.selectedAllegations);
+
+        // Detect and toggle organization mode after populating the form
+        detectAndToggleOrganizationMode();
     }
 
     const fetchSubmissionByName = async (programName) => {
@@ -976,6 +980,109 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Organization Mode Detection ---
+    // Add event listeners to programType and programName fields to detect organization mode changes
+    const programTypeField = document.getElementById('programType');
+    const programNameField = document.getElementById('programName');
+
+    // Function to detect if current entry is an organization and toggle form layout
+    function detectAndToggleOrganizationMode() {
+        const pageContainer = document.querySelector('.wiki-editor-page');
+        if (!pageContainer) return;
+
+        // Detect if this is an organization entry
+        // Organizations typically:
+        // 1. Have no program type (or explicitly say "Organization")
+        // 2. Are known corporate entities (Acadia Healthcare, Universal Health Services, etc.)
+        const programType = programTypeField?.value?.trim() || '';
+        const programName = programNameField?.value?.trim() || '';
+
+        // Check if this looks like an organization
+        const isOrgByType = programType === '' || programType.toLowerCase() === 'organization';
+        const isKnownOrg = /healthcare|health services|educational consultants|inc\.|corp\.|corporation|group/i.test(programName);
+
+        isOrganizationEntry = isOrgByType && (isKnownOrg || programType.toLowerCase() === 'organization');
+
+        // Toggle the organization-mode class
+        if (isOrganizationEntry) {
+            pageContainer.classList.add('organization-mode');
+            console.log('Organization mode enabled for:', programName);
+            // Update facilities list when switching to organization mode
+            updateOrganizationFacilitiesList();
+        } else {
+            pageContainer.classList.remove('organization-mode');
+        }
+    }
+
+    // Function to populate the organization facilities list from markdown
+    function updateOrganizationFacilitiesList() {
+        const facilitiesList = document.getElementById('organizationFacilitiesList');
+        if (!facilitiesList) return;
+
+        // Parse facilities from the current markdown
+        const outputCode = document.getElementById('outputCode');
+        const markdown = outputCode?.value || '';
+
+        if (!markdown.trim()) {
+            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>';
+            return;
+        }
+
+        const facilities = [];
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        let match;
+
+        while ((match = linkRegex.exec(markdown)) !== null) {
+            let name = match[1];
+            const url = match[2];
+
+            // Remove markdown formatting
+            name = name.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
+
+            const isWikiLink = url.includes('/wiki/index/');
+            const isUserLink = url.includes('/u/') || url.includes('/user/');
+            const isExternal = url.startsWith('http') && !url.includes('/wiki/');
+            const isJustIndex = url.endsWith('/index/') || url.endsWith('/index');
+
+            // Only include facility links
+            if (isWikiLink && !isUserLink && !isExternal && !isJustIndex && name.length > 2) {
+                facilities.push({ name, url });
+            }
+        }
+
+        if (facilities.length === 0) {
+            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
+        } else {
+            facilitiesList.innerHTML = '<ul style="list-style: none; padding: 0; margin: 0;">' +
+                facilities.map(f => `
+                    <li style="padding: 8px; margin: 5px 0; background-color: #FFFFFF; border-left: 4px solid #33A7B5; border-radius: 4px;">
+                        <strong style="color: #000080;">${escapeHtml(f.name)}</strong>
+                        <br><span style="font-size: 0.85rem; color: #666;">${escapeHtml(f.url)}</span>
+                    </li>
+                `).join('') +
+                '</ul>' +
+                `<p style="margin-top: 10px; font-size: 0.9rem; color: #004435;"><strong>Total: ${facilities.length} facilities</strong></p>`;
+        }
+    }
+
+    if (programTypeField) {
+        programTypeField.addEventListener('input', () => {
+            detectAndToggleOrganizationMode();
+        });
+        programTypeField.addEventListener('change', () => {
+            detectAndToggleOrganizationMode();
+        });
+    }
+
+    if (programNameField) {
+        programNameField.addEventListener('input', () => {
+            detectAndToggleOrganizationMode();
+        });
+        programNameField.addEventListener('change', () => {
+            detectAndToggleOrganizationMode();
+        });
+    }
+
     // --- MODE TOGGLE & GENERATION LOGIC ---
     const modeFormBtn = document.getElementById('modeFormBtn');
     const modeMarkdownBtn = document.getElementById('modeMarkdownBtn');
@@ -1042,6 +1149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (outputCode) {
             outputCode.value = output.trim();
         }
+
+        // Update organization facilities list if in organization mode
+        if (isOrganizationEntry) {
+            updateOrganizationFacilitiesList();
+        }
+
         return output;
     }
 

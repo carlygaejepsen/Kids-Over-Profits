@@ -1435,3 +1435,22 @@
         width: 100%;
     }
 }
+
+/* ========================================
+   Organization Mode
+   ======================================== */
+
+/* Hide facility-only fields when the form is in organization mode */
+.wiki-editor-page.organization-mode .facility-only-field {
+    display: none;
+}
+
+/* Hide organization-only fields by default (show only in organization mode) */
+.wiki-editor-page .organization-only-field {
+    display: none;
+}
+
+/* Show organization-only fields when in organization mode */
+.wiki-editor-page.organization-mode .organization-only-field {
+    display: block;
+}
