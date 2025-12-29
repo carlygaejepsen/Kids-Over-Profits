@@ -9,7 +9,17 @@ Thumbs.db
 .vscode/
 .idea/
 
-# WordPress files
+# WordPress core files (this is a child theme - exclude WP core)
+wp-content/
+wp-includes/
+wp-admin/
+wp-*.php
+xmlrpc.php
+license.txt
+readme.html
+
+# WordPress configuration
+wp-config.php
 wp-config-local.php
 
 # KOP API configuration
