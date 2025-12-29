@@ -43,7 +43,7 @@ try {
 
     // Add the missing column
     $alterSQL = "ALTER TABLE `wiki_submissions`
-                 ADD COLUMN `original_markdown` longtext DEFAULT '' COMMENT 'Raw markdown submitted/imported by user'
+                 ADD COLUMN `original_markdown` longtext COMMENT 'Raw markdown submitted/imported by user'
                  AFTER `generated_markdown`";
 
     $pdo->exec($alterSQL);

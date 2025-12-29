@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `wiki_submissions` (
   `years_active` varchar(100) DEFAULT NULL COMMENT 'Years the program operated',
   `json_data` longtext NOT NULL COMMENT 'Full form data as JSON',
   `generated_markdown` longtext COMMENT 'Generated Reddit wiki markdown output',
-  `original_markdown` longtext DEFAULT '' COMMENT 'Raw markdown submitted/imported by user',
+  `original_markdown` longtext COMMENT 'Raw markdown submitted/imported by user',
   `status` enum('draft','submitted','approved','published','rejected') NOT NULL DEFAULT 'submitted',
   `submitted_by` varchar(255) DEFAULT NULL COMMENT 'User identifier or email',
   `submission_notes` text COMMENT 'Notes from submitter',
