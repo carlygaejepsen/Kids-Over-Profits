@@ -478,7 +478,9 @@ function displayFacilities(facilitiesData, containerId) {
                 const skipFullKeys = [
                     'identification.name',
                     'location', 'operatingPeriod.startYear', 'operatingPeriod.endYear',
-                    'operatingPeriod.status'
+                    'operatingPeriod.status',
+                    'resources', // Handled separately by dedicated Resources Available section
+                    'fieldNotes' // Handled separately by field notes renderer
                 ];
 
                 Object.keys(obj).forEach(key => {
