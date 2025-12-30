@@ -31,10 +31,11 @@ function displayFacilities(facilitiesData, containerId) {
             
             // Explicit placeholder list
             const placeholders = [
-                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 
-                'unknown', 'null', 'undefined', 'false',
-                '-', '--', '—', 'tbd', 'tba',
-                'not specified', 'not available', 'not applicable'
+                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a',
+                'unknown', 'null', 'undefined', 'false', 'empty',
+                '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}',
+                'not specified', 'not available', 'not applicable',
+                'no data', 'no info', 'no information'
             ];
             
             // Exact match check
@@ -294,7 +295,11 @@ function displayFacilities(facilitiesData, containerId) {
         const renderItemOp = (item) => {
             if (isValueEmpty(item)) return '';
             if (typeof item === 'boolean') return item ? 'Yes' : ''; // strict boolean check
-            if (typeof item === 'string') return escapeHtml(item);
+            if (typeof item === 'string') {
+                // Double-check string isn't a placeholder
+                if (isValueEmpty(item)) return '';
+                return escapeHtml(item);
+            }
             if (typeof item === 'number') return escapeHtml(String(item));
             if (typeof item === 'object' && !Array.isArray(item)) {
                 const parts = [];
@@ -346,7 +351,8 @@ function displayFacilities(facilitiesData, containerId) {
                 } else {
                     const label = formatFieldLabel(fullKey);
                     const textValue = cleanText(value);
-                    if (textValue) {
+                    // Double-check: skip empty/placeholder values like "No", "None", etc.
+                    if (textValue && !isValueEmpty(textValue)) {
                         fields.push({ key: fullKey, label, value: textValue });
                     }
                 }
@@ -438,7 +444,11 @@ function displayFacilities(facilitiesData, containerId) {
             const renderItemFac = (item) => {
                 if (isValueEmpty(item)) return '';
                 if (typeof item === 'boolean') return item ? 'Yes' : '';
-                if (typeof item === 'string') return escapeHtml(item);
+                if (typeof item === 'string') {
+                    // Double-check string isn't a placeholder
+                    if (isValueEmpty(item)) return '';
+                    return escapeHtml(item);
+                }
                 if (typeof item === 'number') return escapeHtml(String(item));
                 if (typeof item === 'object' && !Array.isArray(item)) {
                     // For objects like {role: "", name: "Scott Hess"}, extract meaningful values
@@ -498,7 +508,8 @@ function displayFacilities(facilitiesData, containerId) {
                     } else {
                         const label = formatFieldLabel(fullKey);
                         const textValue = cleanText(value);
-                        if (textValue) {
+                        // Double-check: skip empty/placeholder values like "No", "None", etc.
+                        if (textValue && !isValueEmpty(textValue)) {
                             fields.push({ key: fullKey, label, value: textValue });
                         }
                     }

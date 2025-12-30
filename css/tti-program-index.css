@@ -282,13 +282,7 @@ details[open] > summary.operator-header::after {
     color: #ffffff !important;
 }
 
-.facility-extra-content {
-    padding: 0;
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82em;
-}
+/* Removed table display - using grid from later definition */
 
 /* Field rows - zebra striping ONLY for facility cards */
 .facility-card .field-row:nth-child(odd) {
@@ -308,17 +302,7 @@ details[open] > summary.operator-header::after {
     padding: 8px 0;
 }
 
-.field-label::after {
-    content: ':';
-}
-
-.field-value {
-    display: table-cell;
-    padding: 3px 0;
-    color: #333333 !important;
-    word-break: break-word;
-    vertical-align: top;
-}
+/* .field-value styles defined per-context below */
 
 .facility-extra-content a {
     color: #0066cc !important;
@@ -511,7 +495,9 @@ details.operator-section[open] .facility-card {
 /* Field Row Styling inside Grid */
 .field-row {
     display: flex;
-    flex-direction: column; /* Label on top of value */
+    flex-direction: row; /* Label and value inline */
+    align-items: baseline;
+    gap: 8px;
     border-bottom: 1px solid rgba(0,0,0,0.05);
     padding-bottom: 4px;
     break-inside: avoid; /* Prevent split across columns if we used columns property */
@@ -526,16 +512,15 @@ details.operator-section[open] .facility-card {
 }
 
 .facility-card .field-label {
-    display: block;
+    display: inline;
     font-size: 0.85em;
     font-weight: 700;
     color: #00004d !important; /* Force dark text on white card */
-    margin-bottom: 2px;
-    width: auto;
+    flex-shrink: 0;
 }
 
 .facility-card .field-value {
-    display: block;
+    display: inline;
     padding: 0;
     color: #333333 !important; /* Force dark text on white card */
     word-break: break-word;
@@ -543,21 +528,21 @@ details.operator-section[open] .facility-card {
 }
 
 .field-label::after {
-    content: '';
+    content: ':';
 }
 
 /* Operator details specific overrides (Dark background) */
 .operator-details .field-label {
     color: #AEE0ED !important;
-    display: block;
+    display: inline;
     font-size: 0.85em;
     font-weight: 700;
-    margin-bottom: 2px;
+    flex-shrink: 0;
 }
 
 .operator-details .field-value {
     color: #ffffff !important;
-    display: block;
+    display: inline;
     word-break: break-word;
     line-height: 1.4;
 }
