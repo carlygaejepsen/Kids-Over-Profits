@@ -226,7 +226,18 @@ function displayFacilities(facilitiesData, containerId) {
     // Generate operator sections
     operatorGroups.forEach(operatorGroup => {
         const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
-        const facilities = toArray(operatorGroup && operatorGroup.facilities).slice();
+        const rawFacilities = toArray(operatorGroup && operatorGroup.facilities).slice();
+
+        // Deduplicate facilities by name
+        const seenFacilityNames = new Set();
+        const facilities = rawFacilities.filter(f => {
+            if (!f) return false;
+            const id = f.identification || {};
+            const name = cleanText(id.name) || cleanText(id.currentName) || '';
+            if (!name || seenFacilityNames.has(name)) return false;
+            seenFacilityNames.add(name);
+            return true;
+        });
 
         // Check if this is a privately owned facility (has isPrivatelyOwned flag set)
         const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
