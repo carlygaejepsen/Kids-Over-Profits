@@ -29,7 +29,9 @@
       "Bash(git pull origin main)",
       "Bash(git merge staging.v4 -m \"Merge staging.v4: TTI program index improvements\")",
       "Bash(git stash pop:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(git ls-tree:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []
