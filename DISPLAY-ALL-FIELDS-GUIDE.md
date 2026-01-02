@@ -13,16 +13,16 @@ The TTI Program Index page now supports two viewing modes:
 
 #### Standard View (Default)
 ```
-https://kids-over-profits.local/tti-program-index/
+https://kidsoverprofits.org/tti-program-index/
 ```
 or
 ```
-https://kids-over-profits.local/tti-program-index/?view=standard
+https://kidsoverprofits.org/tti-program-index/?view=standard
 ```
 
 #### Show All Fields View
 ```
-https://kids-over-profits.local/tti-program-index/?view=all
+https://kidsoverprofits.org/tti-program-index/?view=all
 ```
 
 ### Toggle Between Views
@@ -212,4 +212,5 @@ Potential improvements:
 - Custom field visibility toggles
 - Save preferred view in user settings
 - Print-friendly all-fields report
+- Data comparison between records
 - Data comparison between records
