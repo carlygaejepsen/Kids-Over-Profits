@@ -715,7 +715,7 @@ function clearSearch() {
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = '';
     if (sortBy) sortBy.value = '';
-    if (clearButton) clearButton.style.display = 'none';
+    if (clearButton) clearButton.classList.remove('visible');
     filterFacilities();
 }
 
@@ -754,7 +754,7 @@ function setupEventListeners() {
         searchInput.addEventListener('keyup', function() {
             const clearBtn = document.getElementById('clearSearch');
             if (clearBtn) {
-                clearBtn.style.display = this.value ? 'inline-block' : 'none';
+                clearBtn.classList.toggle('visible', this.value.length > 0);
             }
             filterFacilities();
         });

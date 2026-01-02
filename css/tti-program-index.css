@@ -164,26 +164,7 @@
     align-items: start;
 }
 
-.controls {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
-    border-radius: 8px;
-    border: 2px solid #33A7B5;
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.2);
-}
-
-.controls input,
-.controls select {
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-}
-
-.controls input {
-    width: 300px;
-}
+/* Controls styling moved to wrapper-scoped section below */
 
 .facility-name {
     font-size: 1em;
@@ -579,11 +560,31 @@ details.operator-section[open] .facility-card {
 }
 
 /* ==========================================================
+PAGE HEADER
+================================================================*/
+.tti-program-index-wrapper .page-header {
+    margin-bottom: 2em;
+}
+
+.tti-program-index-wrapper .page-header h1 {
+    color: #00004d;
+    font-size: 2.5em;
+    margin-bottom: 0.5em;
+    font-family: sans-serif;
+}
+
+.tti-program-index-wrapper .page-header p {
+    font-size: 1.1em;
+    color: #666666;
+    margin: 0;
+}
+
+/* ==========================================================
 CONTROLS
 ================================================================*/
 .tti-program-index-wrapper .controls {
     grid-column: 1 / -1;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     padding: 15px;
     background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
     border-radius: 8px;
@@ -591,23 +592,75 @@ CONTROLS
     box-shadow: 0 3px 8px rgba(51, 167, 181, 0.2);
 }
 
-.tti-program-index-wrapper .controls input[type="text"] {
+.tti-program-index-wrapper .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tti-program-index-wrapper .controls input[type="text"],
+.tti-program-index-wrapper .controls #searchInput {
     flex: 1;
+    min-width: 250px;
     max-width: 400px;
-    padding: 8px 12px;
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 1em;
     cursor: text;
+    background-color: #ffffff;
+    color: #000000;
 }
 
-.tti-program-index-wrapper .controls select {
-    min-width: 180px;
-    padding: 8px 12px;
+.tti-program-index-wrapper .controls select,
+.tti-program-index-wrapper .controls #statusFilter,
+.tti-program-index-wrapper .controls #sortBy {
+    min-width: 150px;
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 1em;
     cursor: pointer;
+    background-color: #ffffff;
+    color: #000000;
 }
 
-.tti-program-index-wrapper .controls button {
-    padding: 8px 16px;
+.tti-program-index-wrapper .controls button,
+.tti-program-index-wrapper .controls #clearSearch {
+    display: none;
+    padding: 10px 20px;
+    background-color: #ff6600;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
     white-space: nowrap;
-    cursor: pointer;
+}
+
+.tti-program-index-wrapper .controls #clearSearch.visible {
+    display: inline-block;
+}
+
+.tti-program-index-wrapper .controls button:hover {
+    background-color: #e55a00;
+}
+
+/* ==========================================================
+LOADING MESSAGE
+================================================================*/
+.tti-program-index-wrapper .loading-message {
+    text-align: center;
+    padding: 40px;
+}
+
+.tti-program-index-wrapper .loading-message p {
+    color: #666666;
+    font-size: 1.1em;
+    margin: 0;
 }
 
 .open-text,
@@ -619,126 +672,145 @@ CONTROLS
 RESPONSIVE
 ===============================================================*/
 @media (max-width: 768px) {
-    .facilities-database {
+    .tti-program-index-wrapper .facilities-database {
         grid-template-columns: 1fr;
         padding: 5px;
         gap: 10px;
     }
 
-    .operator-section,
-    details.operator-section:not([open]),
-    details.operator-section[open] {
+    .tti-program-index-wrapper .operator-section,
+    .tti-program-index-wrapper details.operator-section:not([open]),
+    .tti-program-index-wrapper details.operator-section[open] {
         width: 100%;
         min-width: 100%;
         max-width: 100%;
     }
 
-    details.operator-section:not([open]) {
+    .tti-program-index-wrapper details.operator-section:not([open]) {
         height: auto;
         min-height: 120px;
     }
 
-    details.operator-section[open] .operator-content-scrollable {
+    .tti-program-index-wrapper details.operator-section[open] .operator-content-scrollable {
         padding: 12px;
         max-height: none;
     }
 
-    .facility-card {
+    .tti-program-index-wrapper .facility-card {
         border-width: 4px;
         border-left-width: 6px !important;
         padding: 10px;
     }
 
-    .facility-name {
+    .tti-program-index-wrapper .facility-name {
         font-size: 0.95em;
         padding-bottom: 5px;
         margin-bottom: 6px;
     }
 
-    .facility-summary p {
+    .tti-program-index-wrapper .facility-summary p {
         font-size: 0.85em;
     }
 
-    .status-badge {
+    .tti-program-index-wrapper .status-badge {
         padding: 3px 8px;
         font-size: 0.7em;
     }
 
-    .facility-expanded-info summary {
+    .tti-program-index-wrapper .facility-expanded-info summary {
         font-size: 0.85em;
         padding: 5px 8px;
         display: block;
         text-align: center;
     }
 
-    .facility-extra-content {
+    .tti-program-index-wrapper .facility-extra-content {
         font-size: 0.8em;
     }
 
-    .field-label {
+    .tti-program-index-wrapper .field-label {
         padding: 2px 4px 2px 0;
     }
 
-    .field-value {
+    .tti-program-index-wrapper .field-value {
         padding: 2px 0;
     }
 
-    .operator-details {
+    .tti-program-index-wrapper .operator-details {
         font-size: 0.8em;
     }
 
-    #alphabet-filter {
+    .tti-program-index-wrapper #alphabet-filter {
         gap: 3px;
         padding-bottom: 1em;
         flex-wrap: wrap;
     }
 
-    #alphabet-filter button {
+    .tti-program-index-wrapper #alphabet-filter button {
         padding: 5px 8px;
         font-size: 0.8em;
     }
 
-    .controls {
+    .tti-program-index-wrapper .controls {
         padding: 10px;
     }
 
-    .controls input,
-    .controls select {
+    .tti-program-index-wrapper .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tti-program-index-wrapper .controls input[type="text"],
+    .tti-program-index-wrapper .controls #searchInput,
+    .tti-program-index-wrapper .controls select {
         width: 100%;
         max-width: 100%;
+        min-width: 100%;
         margin-bottom: 8px;
     }
 
-    .operator-name {
+    .tti-program-index-wrapper .operator-name {
         font-size: 1.1em;
         padding: 8px;
+    }
+
+    .tti-program-index-wrapper .page-header h1 {
+        font-size: 1.8em;
+    }
+
+    .tti-program-index-wrapper .page-header p {
+        font-size: 1em;
     }
 }
 
 @media (max-width: 480px) {
-    .facility-card {
+    .tti-program-index-wrapper .facility-card {
         padding: 8px;
     }
 
-    .facility-name {
+    .tti-program-index-wrapper .facility-name {
         font-size: 0.9em;
     }
 
-    .facility-extra-content,
-    .operator-details {
+    .tti-program-index-wrapper .facility-extra-content,
+    .tti-program-index-wrapper .operator-details {
         font-size: 0.75em;
     }
 
-    .field-label {
+    .tti-program-index-wrapper .field-label {
         white-space: normal;
     }
 
-    #alphabet-filter button {
+    .tti-program-index-wrapper #alphabet-filter button {
         padding: 4px 6px;
         font-size: 0.75em;
     }
 
-    .operator-name {
+    .tti-program-index-wrapper .operator-name {
         font-size: 1em;
+    }
+
+    .tti-program-index-wrapper .page-header h1 {
+        font-size: 1.5em;
     }
 }
