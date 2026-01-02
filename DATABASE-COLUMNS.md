@@ -87,10 +87,10 @@ Get a complete overview of all tables and columns:
 
 ```bash
 # Browser (HTML view)
-https://kids-over-profits.local/wp-content/themes/child/api/get-database-schema.php?format=html
+https://kidsoverprofits.org/wp-content/themes/child/api/get-database-schema.php?format=html
 
 # Browser (JSON)
-https://kids-over-profits.local/wp-content/themes/child/api/get-database-schema.php
+https://kidsoverprofits.org/wp-content/themes/child/api/get-database-schema.php
 
 # Command line
 php api/get-database-schema.php
@@ -101,19 +101,19 @@ Display data from any table:
 
 ```bash
 # View specific table (HTML)
-https://kids-over-profits.local/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=html
+https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=html
 
 # View specific table (JSON)
-https://kids-over-profits.local/wp-content/themes/child/api/get-all-data.php?table=facilities_master
+https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master
 
 # View all tables
-https://kids-over-profits.local/wp-content/themes/child/api/get-all-data.php?show=all
+https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?show=all
 
 # Export to CSV
-https://kids-over-profits.local/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=csv
+https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=csv
 
 # Limit results
-https://kids-over-profits.local/wp-content/themes/child/api/get-all-data.php?table=facilities_master&limit=10
+https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&limit=10
 ```
 
 ---
