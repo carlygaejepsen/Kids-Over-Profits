@@ -5,9 +5,7 @@ deployment:
     - /bin/cp -R inc /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp -R css /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp -R js /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R images /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp -R templates /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp functions.php /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp style.css /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp config-loader.php /home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp page-*.php /home/kidsover/public_html/wp-content/themes/child/
