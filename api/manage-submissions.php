@@ -80,8 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if ($search) {
         if ($type === 'data') {
-            $where[] = "(master_id LIKE :search)";
+            $where[] = "(unique_name LIKE :search)";
             $params[':search'] = "%$search%";
+        } elseif ($type === 'news') {
+            $where[] = "(article_title LIKE :search1 OR publication_name LIKE :search2 OR author LIKE :search3)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
+            $params[':search3'] = "%$search%";
         } else {
             $where[] = "(program_name LIKE :search1 OR city_state LIKE :search2 OR organization LIKE :search3)";
             $params[':search1'] = "%$search%";
@@ -97,8 +102,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $total = (int)$countStmt->fetchColumn();
 
     if ($type === 'data') {
-        $sql = "SELECT id, master_id as program_name, status,
-                       submitter_ip as submitted_by, created_at, edited_json_data as json_data, reason as submission_notes
+        $sql = "SELECT id, unique_name as program_name, status,
+                       submitted_by, created_at, json_data, submission_reason as submission_notes
+                FROM $table $whereClause
+                ORDER BY created_at DESC
+                LIMIT {$limit} OFFSET {$offset}";
+    } elseif ($type === 'news') {
+        $sql = "SELECT id, article_title as program_name, publication_name as organization, 
+                       article_type as program_type, author as submitted_by, 
+                       publication_date as years_active, status, created_at, updated_at, json_data
                 FROM $table $whereClause
                 ORDER BY created_at DESC
                 LIMIT {$limit} OFFSET {$offset}";
@@ -171,14 +183,23 @@ try {
             $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
             
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $sql = "UPDATE $table SET 
-                        status = ?,
-                        reviewer_notes = ?,
-                        reviewed_by = ?,
-                        reviewed_at = CURRENT_TIMESTAMP
-                    WHERE id IN ($placeholders)";
             
-            $params = array_merge([$status, $reviewerNotes, $reviewedBy], $ids);
+            if ($type === 'data') {
+                // suggested_edits table has limited columns
+                $sql = "UPDATE $table SET 
+                            status = ?
+                        WHERE id IN ($placeholders)";
+                $params = array_merge([$status], $ids);
+            } else {
+                $sql = "UPDATE $table SET 
+                            status = ?,
+                            reviewer_notes = ?,
+                            reviewed_by = ?,
+                            reviewed_at = CURRENT_TIMESTAMP
+                        WHERE id IN ($placeholders)";
+                $params = array_merge([$status, $reviewerNotes, $reviewedBy], $ids);
+            }
+            
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             
@@ -298,7 +319,8 @@ try {
     echo json_encode([
         'success' => false,
         'error' => 'Database error occurred',
-        'details' => $e->getMessage()
+        'details' => $e->getMessage(),
+        'query_error' => true
     ]);
 } catch (Exception $e) {
     error_log("Manage submissions error: " . $e->getMessage());
