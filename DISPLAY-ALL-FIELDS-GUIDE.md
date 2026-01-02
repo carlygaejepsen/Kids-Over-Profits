@@ -4,7 +4,7 @@
 
 The TTI Program Index page now supports two viewing modes:
 
-1. **Standard View** (default) - Shows curated, commonly-used fields in a clean, organized layout
+
 2. **Show All Fields View** - Displays **every available field** from the database dynamically
 
 ## How to Use
@@ -76,41 +76,32 @@ Click the buttons at the top of the page:
 
 ## How It Works
 
-### Standard View ([tti-program-index.js](js/tti-program-index.js))
-- Uses hardcoded field mappings
-- Shows only predefined fields
-- Clean, consistent layout
-- Best for public viewing
-
-### Show All Fields View ([tti-program-index-enhanced.js](js/tti-program-index-enhanced.js))
+### Unified View ([tti-program-index.js](js/tti-program-index.js))
 - Dynamically renders ALL fields in the JSON data
 - Automatically formats field names (camelCase → Title Case)
 - Handles nested objects and arrays
 - Converts URLs to clickable links
 - Shows complex data structures
-- Best for administrators and data verification
+- Uses a responsive, robust layout logic
 
 ## Technical Details
 
 ### Files Modified/Created:
 
 1. **[page-tti-program-index.php](page-tti-program-index.php)**
-   - Added view toggle buttons
-   - Dynamic script loading based on `?view=` parameter
+   - Template for the page
 
-2. **[js/tti-program-index-enhanced.js](js/tti-program-index-enhanced.js)** (NEW)
-   - Enhanced display function: `displayFacilitiesEnhanced()`
-   - Dynamic field rendering: `renderAllFields()`
-   - Smart value rendering: `renderValue()`
-   - Auto-detects URLs and makes them clickable
-   - Handles nested objects up to 3 levels deep
+2. **[js/tti-program-index.js](js/tti-program-index.js)**
+   - Unified display function: `displayFacilities()`
+   - Robust field rendering and empty value checking
+   - Clean layout logic using CSS Grid
 
-3. **Original [js/tti-program-index.js](js/tti-program-index.js)**
-   - Unchanged, still used for standard view
+3. **[css/tti-program-index.css](css/tti-program-index.css)**
+   - Updated grid layouts for better space usage
 
 ### Data Source
 
-Both views pull data from the same source:
+The view pulls data from:
 - API: `api/get-master-data.php`
 - Fallback: `js/data/facilities_master.json`
 - Database table: `facilities_master` (column: `json_data`)
@@ -119,7 +110,7 @@ Both views pull data from the same source:
 
 ### Smart Field Rendering
 
-The enhanced view automatically:
+The unified view automatically:
 
 1. **Formats field names**: `facilityDetails.ageRange.min` → "Facility Details Age Range Min"
 2. **Detects URLs**: Automatically converts to clickable links
@@ -131,7 +122,7 @@ The enhanced view automatically:
 ### Search & Filter
 
 Both views support:
-- Text search (searches through ALL text, including hidden fields in enhanced view)
+- Text search (searches through ALL text, including all fields)
 - Status filtering (Open/Closed/Transferred)
 - Alphabetical sorting
 - Alphabet quick-filter
@@ -216,7 +207,7 @@ The JSON data in `facilities_master.json_data` typically contains:
 ## Future Enhancements
 
 Potential improvements:
-- Export to CSV/Excel from enhanced view
+- Export to CSV/Excel
 - Field-level search (search specific columns)
 - Custom field visibility toggles
 - Save preferred view in user settings

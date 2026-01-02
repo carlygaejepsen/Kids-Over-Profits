@@ -65,17 +65,5 @@ get_header();
     </div>
 </div>
 
-<script>
-// Configure the JSON data source
-window.facilitiesConfig = {
-    jsonDataUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
-    jsonFileUrls: [
-        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
-    ]
-};
-</script>
-
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tti-program-index.js?v=<?php echo time(); ?>"></script>
-
 <?php
 get_footer();

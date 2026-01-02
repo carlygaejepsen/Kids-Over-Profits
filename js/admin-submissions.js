@@ -121,10 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            if (result.success && result.wiki) {
-                const stats = result.wiki.by_status || {};
-                // If type is data, we might want to adjust these, but API currently returns wiki/news stats.
-                // You may want to update the API to return stats for the requested type specifically.
+            if (result.success) {
+                let stats = {};
+                if (currentType === 'news' && result.news) {
+                    stats = result.news.by_status || {};
+                } else if (result.wiki) {
+                    stats = result.wiki.by_status || {};
+                }
+                
                 statPending.textContent = stats.submitted || 0;
                 statApproved.textContent = stats.approved || 0;
                 statPublished.textContent = stats.published || 0;
@@ -193,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function renderSubmissions(submissions) {
         submissionsList.innerHTML = '';
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
 
         submissions.forEach(submission => {
             const card = document.createElement('div');
@@ -202,21 +207,57 @@ document.addEventListener('DOMContentLoaded', () => {
             const statusClass = `status-${submission.status}`;
             const date = formatDate(submission.created_at);
 
-            card.innerHTML = `
-                <div class="submission-header">
-                    <h3>${escapeHtml(submission.program_name)}</h3>
-                    <span class="status-badge ${statusClass}">${submission.status}</span>
-                </div>
-                <div class="submission-meta">
-                    <span>📍 ${escapeHtml(submission.city_state || 'Location unknown')}</span>
-                    <span>📅 ${escapeHtml(submission.years_active || 'Years unknown')}</span>
-                    <span>🏷️ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
-                </div>
-                <div class="submission-footer">
-                    <span class="submission-date">Submitted: ${date}</span>
-                    <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
-                </div>
-            `;
+            if (currentType === 'news') {
+                const title = submission.article_title || 'Untitled Article';
+                const source = submission.publication_name || 'Unknown Source';
+                const author = submission.author || 'Unknown Author';
+                
+                card.innerHTML = `
+                    <div class="submission-header">
+                        <h3>${escapeHtml(title)}</h3>
+                        <span class="status-badge ${statusClass}">${submission.status}</span>
+                    </div>
+                    <div class="submission-meta">
+                        <span>📰 ${escapeHtml(source)}</span>
+                        <span>✍️ ${escapeHtml(author)}</span>
+                        <span>🏷️ ${escapeHtml(submission.article_type || 'general')}</span>
+                    </div>
+                    <div class="submission-footer">
+                        <span class="submission-date">Submitted: ${date}</span>
+                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
+                    </div>
+                `;
+            } else if (currentType === 'data') {
+                card.innerHTML = `
+                    <div class="submission-header">
+                        <h3>${escapeHtml(submission.program_name)}</h3>
+                        <span class="status-badge ${statusClass}">${submission.status}</span>
+                    </div>
+                    <div class="submission-meta">
+                        <span>🔄 Data Update</span>
+                    </div>
+                    <div class="submission-footer">
+                        <span class="submission-date">Submitted: ${date}</span>
+                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="submission-header">
+                        <h3>${escapeHtml(submission.program_name)}</h3>
+                        <span class="status-badge ${statusClass}">${submission.status}</span>
+                    </div>
+                    <div class="submission-meta">
+                        <span>📍 ${escapeHtml(submission.city_state || 'Location unknown')}</span>
+                        <span>📅 ${escapeHtml(submission.years_active || 'Years unknown')}</span>
+                        <span>🏷️ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
+                    </div>
+                    <div class="submission-footer">
+                        <span class="submission-date">Submitted: ${date}</span>
+                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
+                    </div>
+                `;
+            }
 
             card.querySelector('.btn-view').addEventListener('click', () => viewSubmission(submission.id));
             submissionsList.appendChild(card);
@@ -261,36 +302,80 @@ document.addEventListener('DOMContentLoaded', () => {
             : submission.json_data;
 
         // Basic info
-        modalProgramName.textContent = submission.program_name;
         modalStatus.textContent = submission.status;
         modalStatus.className = `status-badge status-${submission.status}`;
         modalSubmittedDate.textContent = formatDateTime(submission.created_at);
         modalSubmittedBy.textContent = submission.submitted_by || 'Anonymous';
         
-        if (currentType === 'data') {
-             modalLocation.textContent = jsonData.cityState || jsonData.location || '-'; 
-             modalProgramType.textContent = 'Data Update';
-             modalYearsActive.textContent = '-';
+        if (currentType === 'news') {
+            modalProgramName.textContent = submission.article_title || 'News Article';
+            
+            // Re-purpose existing fields for news info
+            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Author:';
+            modalLocation.textContent = submission.author || '-';
+            
+            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Publication:';
+            modalProgramType.textContent = submission.publication_name || '-';
+            
+            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'URL:';
+            modalYearsActive.innerHTML = submission.article_url 
+                ? `<a href="${submission.article_url}" target="_blank" rel="noopener noreferrer">${submission.article_url}</a>`
+                : '-';
+            
+            // Show summary instead of markdown
+            if (modalMarkdown) {
+                modalMarkdown.closest('.markdown-preview').querySelector('h3').textContent = 'Trauma-Sensitive Summary';
+                modalMarkdown.value = submission.summary || 'No summary provided';
+                modalMarkdown.readOnly = true;
+            }
+            
+            // Hide other markdown sections
+            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
+            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
+            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
+
+        } else if (currentType === 'data') {
+            modalProgramName.textContent = submission.program_name;
+            
+            // Restore labels
+            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Location:';
+            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Type:';
+            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'Years Active:';
+
+            modalLocation.textContent = jsonData.cityState || jsonData.location || '-'; 
+            modalProgramType.textContent = 'Data Update';
+            modalYearsActive.textContent = '-';
              
-             // Hide markdown specific sections
-             if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'none';
-             if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
-             if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
-             if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
+            // Hide markdown specific sections
+            if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'none';
+            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
+            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
+            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
 
         } else {
+            modalProgramName.textContent = submission.program_name;
+
+            // Restore labels
+            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Location:';
+            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Type:';
+            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'Years Active:';
+
             modalLocation.textContent = submission.city_state || '-';
             modalProgramType.textContent = submission.program_type || '-';
             modalYearsActive.textContent = submission.years_active || '-';
             
-             // Show markdown sections
-             if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'block';
-             if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'block';
-             if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'block';
-             if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'inline-block';
+            // Show markdown sections
+            if (modalMarkdown) {
+                modalMarkdown.closest('.markdown-preview').querySelector('h3').textContent = 'Generated Wiki Markdown';
+                modalMarkdown.closest('.markdown-preview').style.display = 'block';
+                modalMarkdown.readOnly = false;
+                modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
+            }
+            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'block';
+            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'block';
+            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'inline-block';
              
-             // Markdown
-            modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
+            // Markdown
             const originalMarkdown = submission.original_markdown || '';
             currentOriginalMarkdown = originalMarkdown;
             if (modalOriginalMarkdown) {

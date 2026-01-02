@@ -1219,12 +1219,12 @@ function enqueue_tti_processor_scripts() {
         file_exists($theme_dir . '/css/tti-program-index.css') ? filemtime($theme_dir . '/css/tti-program-index.css') : time()
     );
 
-    // Enhanced display script (shows all database fields) - standalone, no dependencies
+    // Unified display script (shows all database fields) - standalone, no dependencies
     wp_enqueue_script(
         'tti-program-index-script',
-        $theme_uri . '/js/tti-program-index-enhanced.js',
+        $theme_uri . '/js/tti-program-index.js',
         array('jquery'),
-        file_exists($theme_dir . '/js/tti-program-index-enhanced.js') ? filemtime($theme_dir . '/js/tti-program-index-enhanced.js') : time(),
+        file_exists($theme_dir . '/js/tti-program-index.js') ? filemtime($theme_dir . '/js/tti-program-index.js') : time(),
         true
     );
 

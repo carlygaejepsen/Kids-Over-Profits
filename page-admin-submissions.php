@@ -42,6 +42,7 @@ get_header();
                 <label for="typeFilter">Type:</label>
                 <select id="typeFilter">
                     <option value="wiki" selected>Wiki Submissions</option>
+                    <option value="news">News Submissions</option>
                     <option value="data">Data Form Submissions</option>
                 </select>
 
