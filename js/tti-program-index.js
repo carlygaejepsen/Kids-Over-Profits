@@ -1,518 +1,312 @@
-// Facilities Database Display - Drop-in JavaScript
-// Usage: Include this file and call displayFacilities(jsonData, containerId)
+/**
+ * TTI Program Index - Unified Display Logic
+ * Restored Enhanced Rendering for complete field visibility.
+ */
 
-(function() { // Wrap in IIFE to prevent global namespace pollution
+// Global configuration
+const facilitiesConfig = window.facilitiesConfig || {};
+const ttiIndexConfig = window.ttiIndexConfig || { isAdmin: false };
 
-    const CONFIG = {
-        emptyPlaceholders: [
-            'none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 
-            'unknown', 'null', 'undefined', 'false', 'empty', 
-            '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 
-            'not specified', 'not available', 'not applicable',
-            'no data', 'no info', 'no information', 'nil'
-        ]
-    };
+// --- Utility Functions ---
 
-    // --- Helper Functions ---
+const cleanText = (text) => {
+    if (typeof text !== 'string') return '';
+    return text.replace(/\'/g, "'").replace(/\"/g, '"').trim();
+};
 
-    const cleanText = (text) => {
-        if (typeof text !== 'string') return '';
-        // Remove single and double quotes wrapping the string if present, but keep apostrophes
-        // This is a simple trim for now.
-        return text.trim();
-    };
+const escapeHtml = (unsafe) => {
+    if (typeof unsafe !== 'string') return '';
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return unsafe.replace(/[&<>'"']/g, m => map[m]);
+};
 
-    const escapeHtml = (unsafe) => {
-        if (typeof unsafe !== 'string') return '';
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    };
+const escapeAttribute = (unsafe) => {
+    if (typeof unsafe !== 'string') return '';
+    return unsafe.replace(/"/g, "&quot;");
+};
 
-    const escapeAttribute = (unsafe) => {
-        if (typeof unsafe !== 'string') return '';
-        return unsafe.replace(/"/g, "&quot;");
-    };
+const toArray = (val) => {
+    if (!val) return [];
+    if (Array.isArray(val)) return val;
+    return [val];
+};
 
-    const toArray = (val) => {
-        if (val === null || val === undefined) return [];
-        if (Array.isArray(val)) return val;
-        return [val];
-    };
+const formatFieldLabel = (key) => {
+    if (!key || typeof key !== 'string') return 'Field';
+    return key
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/[._-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(' ')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+};
 
-    // Strict check for empty values
-    const isValueEmpty = (value) => {
-        if (value === null || value === undefined) return true;
-        if (typeof value === 'boolean') return !value; // Hide false, show true
-        if (typeof value === 'number') return false;   // Numbers (even 0) are valid
-        
-        if (typeof value === 'string') {
-            const lower = value.trim().toLowerCase();
-            if (!lower) return true;
-            
-            // Check against placeholder list
-            // We check for exact matches or matches with trailing punctuation stripped
-            const stripped = lower.replace(/[.,;:\-–—!]+$/, '');
-            
-            if (CONFIG.emptyPlaceholders.includes(stripped) || CONFIG.emptyPlaceholders.includes(lower)) {
-                return true;
+const isUrl = (str) => {
+    if (typeof str !== 'string') return false;
+    const s = str.trim();
+    return s.startsWith('http://') || s.startsWith('https://') || s.startsWith('www.');
+};
+
+const isValueEmpty = (value) => {
+    if (value === null || value === undefined) return true;
+    if (typeof value === 'boolean' || typeof value === 'number') return false;
+    if (typeof value === 'string') {
+        const lower = value.trim().toLowerCase();
+        const placeholders = ['none', 'no', 'n/a', 'na', 'unknown', 'null', 'undefined', '-', '--', 'not specified', 'no data'];
+        return !lower || placeholders.includes(lower.replace(/[.,;:]+$/, ''));
+    }
+    if (Array.isArray(value)) return value.length === 0 || value.every(isValueEmpty);
+    if (typeof value === 'object') return Object.keys(value).length === 0 || Object.values(value).every(isValueEmpty);
+    return false;
+};
+
+// --- Recursive Rendering (The "Enhanced" Logic) ---
+
+const renderValue = (value, depth = 0) => {
+    if (isValueEmpty(value)) return null;
+
+    if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+    
+    if (typeof value === 'string') {
+        if (isUrl(value)) {
+            let display = value.replace(/^https?:\/\/(www\.)?/, '');
+            if (display.length > 50) display = display.substring(0, 47) + '...';
+            return `<a href="${escapeAttribute(value)}" target="_blank" rel="noopener">${escapeHtml(display)}</a>`;
+        }
+        return escapeHtml(value);
+    }
+
+    if (typeof value === 'number') return escapeHtml(String(value));
+
+    if (Array.isArray(value)) {
+        const validItems = value.filter(i => !isValueEmpty(i));
+        if (validItems.length === 0) return null;
+
+        // If simple strings/numbers, comma separate
+        if (validItems.every(i => typeof i === 'string' || typeof i === 'number')) {
+            if (validItems.some(i => isUrl(String(i)))) {
+                return validItems.map(i => renderValue(i)).join('<br>');
             }
-            return false;
+            return validItems.map(i => `<span class="list-item">${escapeHtml(String(i))}</span>`).join(' ');
         }
         
-        if (Array.isArray(value)) {
-            // Array is empty if it has no items or all items are empty
-            return value.length === 0 || value.every(item => isValueEmpty(item));
-        }
+        // If complex objects, stack them
+        return validItems.map(i => renderValue(i, depth + 1)).join('<br>');
+    }
+
+    if (typeof value === 'object') {
+        // Prevent infinite recursion or deep nesting mess
+        if (depth > 3) return escapeHtml(JSON.stringify(value));
+
+        let html = '<div class="nested-object" style="margin-left: 10px; border-left: 2px solid #eee; padding-left: 10px;">';
+        let hasContent = false;
         
-        if (typeof value === 'object') {
-            // Object is empty if it has no keys or all values are empty
-            const keys = Object.keys(value);
-            if (keys.length === 0) return true;
-            return keys.every(k => isValueEmpty(value[k]));
-        }
-        
-        return true;
-    };
-
-    const formatLabel = (key) => {
-        if (!key) return '';
-        // Extract the last part of a dot-notation key (e.g., 'facilityDetails.ageRange' -> 'ageRange')
-        const label = key.split('.').pop();
-        // Insert space before capital letters and capitalize first letter
-        return label
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/^./, str => str.toUpperCase())
-            .trim();
-    };
-
-    // --- Rendering Functions ---
-
-    const renderResources = (resources) => {
-        if (!resources || typeof resources !== 'object') return '';
-        
-        const list = [];
-        const map = {
-            'hasNews': 'News', 
-            'hasPressReleases': 'Press Releases', 
-            'hasInspections': 'Inspections',
-            'hasStateReports': 'State Reports', 
-            'hasRegulatoryFilings': 'Regulatory Filings',
-            'hasLawsuits': 'Lawsuits', 
-            'hasSettlements': 'Settlements',
-            'hasViolations': 'Violations', 
-            'hasResearch': 'Research', 
-            'hasFinancial': 'Financial', 
-            'hasNATSAP': 'NATSAP Profile',
-            'hasWebsite': 'Website Screenshots', 
-            'hasOther': 'Other'
-        };
-        
-        Object.keys(map).forEach(k => { 
-            if (resources[k] === true) list.push(map[k]); 
-        });
-        
-        if (Array.isArray(resources.customResources)) {
-            resources.customResources.forEach(res => {
-                if (!isValueEmpty(res)) list.push(cleanText(res));
-            });
-        }
-
-        if (list.length === 0) return '';
-        
-        const itemsHtml = list.map(r => `<span class="list-item">${escapeHtml(r)}</span>`).join(' ');
-        return `
-            <div class="field-row full-width-grid">
-                <span class="field-label">Resources Available</span>
-                <span class="field-value">${itemsHtml}</span>
-            </div>
-        `;
-    };
-
-    // Recursively render object fields
-    const renderFields = (obj, skipKeys = [], prefix = '', depth = 0) => {
-        if (!obj || typeof obj !== 'object' || depth > 3) return '';
-        
-        let html = '';
-        
-        Object.keys(obj).forEach(key => {
-            const fullKey = prefix ? `${prefix}.${key}` : key;
-            const value = obj[key];
-
-            // Skip strict blocks
-            if (skipKeys.includes(key) || skipKeys.includes(fullKey)) return;
-            
-            // Skip empty values
-            if (isValueEmpty(value)) return;
-
-            // Handle nested objects (recurse)
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                html += renderFields(value, skipKeys, fullKey, depth + 1);
-                return;
-            }
-
-            // Render value
-            let renderedValue = '';
-            let isFullWidth = false;
-
-            if (Array.isArray(value)) {
-                // Filter array for empty items
-                const validItems = value.filter(i => !isValueEmpty(i));
-                if (validItems.length === 0) return;
-
-                isFullWidth = true; // Lists usually take full width
-
-                // Check if it's a list of URLs
-                const isUrlList = validItems.some(i => typeof i === 'string' && (i.startsWith('http://') || i.startsWith('https://')));
-
-                if (isUrlList) {
-                    renderedValue = validItems.map(url => {
-                        const safeUrl = escapeAttribute(url);
-                        // Shorten URL for display
-                        let display = url.replace(/^https?:\/\/(www\.)?/, '');
-                        if (display.length > 40) display = display.substring(0, 37) + '...';
-                        return `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(display)}</a>`;
-                    }).join('<br>');
-                } else {
-                    // Regular list (strings or objects)
-                    renderedValue = validItems.map(i => {
-                        if (typeof i === 'object') {
-                            // Render object values joined by dash
-                            return Object.values(i)
-                                .filter(v => !isValueEmpty(v))
-                                .map(escapeHtml)
-                                .join(' - ');
-                        }
-                        return `<span class="list-item">${escapeHtml(String(i))}</span>`;
-                    }).join(' ');
-                }
-
-            } else if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
-                // Single URL
-                const safeUrl = escapeAttribute(value);
-                renderedValue = `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(value)}</a>`;
-                isFullWidth = true;
-            } else {
-                // Simple string/number
-                renderedValue = escapeHtml(String(value));
-                if (renderedValue.length > 60) isFullWidth = true;
-            }
-
-            // Only append if we actually generated content
-            if (renderedValue) {
-                const rowClass = isFullWidth ? 'field-row full-width-grid' : 'field-row';
-                html += `
-                    <div class="${rowClass}">
-                        <span class="field-label">${escapeHtml(formatLabel(fullKey))}</span>
-                        <span class="field-value">${renderedValue}</span>
-                    </div>
-                `;
+        Object.keys(value).forEach(key => {
+            const val = renderValue(value[key], depth + 1);
+            if (val) {
+                html += `<div class="field-row-nested">
+                            <strong class="field-label-nested">${escapeHtml(formatFieldLabel(key))}:</strong> 
+                            <span class="field-value-nested">${val}</span>
+                         </div>`;
+                hasContent = true;
             }
         });
+        html += '</div>';
+        return hasContent ? html : null;
+    }
 
-        return html;
-    };
+    return escapeHtml(String(value));
+};
 
-    // --- Main Display Function ---
-
-    window.displayFacilities = function(facilitiesData, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        if (!facilitiesData) {
-            container.innerHTML = '<p>No data available to display.</p>';
-            return;
+const renderAllFields = (obj, excludeKeys = []) => {
+    if (!obj || typeof obj !== 'object') return '';
+    
+    let html = '';
+    Object.keys(obj).forEach(key => {
+        if (excludeKeys.includes(key)) return;
+        const val = renderValue(obj[key]);
+        
+        if (val) {
+            html += `<div class="field-row full-width-grid">
+                        <span class="field-label">${escapeHtml(formatFieldLabel(key))}</span>
+                        <span class="field-value">${val}</span>
+                     </div>`;
         }
+    });
+    return html;
+};
 
-        let operatorGroups = [];
+// --- Main Display Function ---
 
-        // Parse Data Structure (Supports multiple formats)
-        if (facilitiesData.projects) {
-            // Object of projects format
-            const cats = ['companies', 'company', 'operators', 'operator'];
-            Object.values(facilitiesData.projects).forEach(proj => {
-                if (!proj) return;
-                const cat = (proj.category || (proj.data && proj.data.category) || '').toLowerCase();
-                
-                if (cats.includes(cat)) {
-                    operatorGroups.push({
-                        name: cleanText(proj.name),
-                        operator: proj.data?.operator || {},
-                        facilities: toArray(proj.data?.facilities)
-                    });
-                }
-            });
-        } else if (Array.isArray(facilitiesData)) {
-            // Array format
-            operatorGroups = facilitiesData;
-        }
+function displayFacilities(facilitiesData, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        if (operatorGroups.length === 0) {
-            container.innerHTML = '<p>No facility operators found.</p>';
-            return;
-        }
+    if (!facilitiesData) {
+        container.innerHTML = '<p>No data available.</p>';
+        return;
+    }
 
-        // Sort Operators A-Z
-        operatorGroups.sort((a, b) => {
-            const nameA = (a.name || a.operator?.name || '').toLowerCase();
-            const nameB = (b.name || b.operator?.name || '').toLowerCase();
-            return nameA.localeCompare(nameB);
+    let operatorGroups = [];
+    if (facilitiesData.projects) {
+        Object.values(facilitiesData.projects).forEach(p => {
+            if (p.category === 'companies' || p.category === 'company') {
+                operatorGroups.push({
+                    operator: p.data?.operator || {},
+                    facilities: toArray(p.data?.facilities),
+                    name: cleanText(p.name)
+                });
+            }
+        });
+    } else if (Array.isArray(facilitiesData)) {
+        operatorGroups = facilitiesData;
+    }
+
+    if (!operatorGroups.length) {
+        container.innerHTML = '<p>No facilities found.</p>';
+        return;
+    }
+
+    operatorGroups.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    let html = '';
+
+    operatorGroups.forEach(group => {
+        const operator = group.operator || {};
+        const facilities = group.facilities || [];
+        
+        // Deduplicate facilities
+        const seen = new Set();
+        const uniqueFacilities = facilities.filter(f => {
+            const name = cleanText(f.identification?.name || f.identification?.currentName);
+            if (!name || seen.has(name)) return false;
+            seen.add(name);
+            return true;
         });
 
-        let html = '<div class="facilities-database">';
+        const opName = cleanText(operator.name || operator.currentName || group.name);
+        if (!opName || opName === 'Unknown Parent Company') return;
 
-        operatorGroups.forEach(group => {
-            const operator = group.operator || {};
-            let rawFacilities = toArray(group.facilities);
+        // Operator Header Info
+        const opHeader = `<span class="operator-name">${escapeHtml(opName)}</span>`;
+        const opLoc = cleanText(operator.location || operator.headquarters);
+        const opSub = opLoc ? `<div class="operator-location">${escapeHtml(opLoc)}</div>` : '';
 
-            // Deduplicate facilities by name
-            const seen = new Set();
-            const facilities = rawFacilities.filter(f => {
-                const name = f?.identification?.name || f?.identification?.currentName;
-                if (!name || seen.has(name)) return false;
-                seen.add(name);
-                return true;
-            });
+        // Render ALL Operator Fields (excluding already shown ones)
+        const opFields = renderAllFields(operator, ['name', 'currentName', 'location', 'headquarters', 'projects']);
+        const opDetails = opFields ? `<div class="operator-details">${opFields}</div>` : '';
 
-            // Determine Operator Name
-            const hasPrivateOwner = facilities.some(f => f.isPrivatelyOwned === true);
-            let operatorName = cleanText(operator.name || operator.currentName);
-            
-            if (!operatorName) {
-                if (hasPrivateOwner) operatorName = 'Privately Owned';
-                else operatorName = cleanText(group.name);
-            }
-
-            // Skip invalid or placeholder operators
-            if (!operatorName || 
-                operatorName === 'Unknown Parent Company' || 
-                isValueEmpty(operatorName)) {
-                return;
-            }
-
-            // Build Operator Header Info
-            const locationParts = [];
-            if (!isValueEmpty(operator.location)) locationParts.push(escapeHtml(operator.location));
-            if (!isValueEmpty(operator.headquarters)) locationParts.push(escapeHtml(operator.headquarters));
-            
-            let years = '';
-            if (!isValueEmpty(operator.operatingPeriod)) {
-                years = escapeHtml(operator.operatingPeriod);
-            } else if (!isValueEmpty(operator.founded)) {
-                const end = (!operator.status || operator.status === 'Active') ? 'Present' : 'Defunct';
-                years = `${escapeHtml(operator.founded)}-${end}`;
-            }
-            if (years) locationParts.push(years);
-
-            const locationHtml = locationParts.length > 0 
-                ? `<div class="operator-location">${locationParts.join(' • ')}</div>` 
-                : '';
-
-            // Render Operator Details
-            const opFields = renderFields(operator, [
-                'name', 'currentName', 'location', 'headquarters', 'status', 'operatingPeriod', 'founded',
-                'identification', 'facilities'
-            ]);
-            
-            const opDetailsHtml = opFields ? `<div class="operator-details">${opFields}</div>` : '';
-
-            // Build HTML for this Operator Group
-            html += `
-                <details class="operator-section" data-operator="${escapeAttribute(operatorName)}">
+        html += `<details class="operator-section" data-operator="${escapeAttribute(opName)}">
                     <summary class="operator-header">
-                        <span class="operator-name">${escapeHtml(operatorName)}</span>
-                        ${locationHtml}
+                        ${opHeader}
+                        ${opSub}
                     </summary>
                     <div class="operator-content-scrollable">
-                        ${opDetailsHtml}
-            `;
+                        ${opDetails}`;
 
-            // Render Facilities Cards
-            facilities.sort((a, b) => {
-                const na = (a.identification?.name || '').toLowerCase();
-                const nb = (b.identification?.name || '').toLowerCase();
-                return na.localeCompare(nb);
-            });
+        uniqueFacilities.forEach(fac => {
+            const ident = fac.identification || {};
+            const opPeriod = fac.operatingPeriod || {};
+            
+            const facName = cleanText(ident.name || ident.currentName || 'Unnamed Facility');
+            const status = cleanText(opPeriod.status || 'Unknown');
+            const statusClass = status.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            
+            // Render ALL Facility Fields (excluding header info)
+            const facFields = renderAllFields(fac, ['identification', 'operatingPeriod', 'location']);
+            
+            // Re-inject summary fields for header
+            const loc = cleanText(fac.location);
+            const years = opPeriod.startYear ? `${opPeriod.startYear}-${opPeriod.endYear||'Present'}` : '';
+            const subLine = [loc, years].filter(Boolean).join(' • ');
 
-            facilities.forEach(fac => {
-                const ident = fac.identification || {};
-                const period = fac.operatingPeriod || {};
-                
-                const facName = cleanText(ident.name || ident.currentName || 'Unnamed Facility');
-                const status = cleanText(period.status) || 'Unknown';
-                const statusClass = status.toLowerCase().replace(/[^a-z0-9]/g, '-');
-                
-                // Facility Subtitle (Location • Years)
-                const facLoc = cleanText(fac.location);
-                let facYears = '';
-                if (!isValueEmpty(period.startYear)) {
-                    facYears = `${period.startYear}-${period.endYear || 'Present'}`;
-                }
-                
-                const subParts = [];
-                if (facLoc) subParts.push(facLoc);
-                if (facYears) subParts.push(facYears);
-                const subtitle = subParts.join(' • ');
-
-                // Render Facility Body
-                const facFields = renderFields(fac, [
-                    'identification.name', 'identification.currentName', 
-                    'location', 'operatingPeriod', 'resources', 'fieldNotes',
-                    'isPrivatelyOwned'
-                ]);
-                
-                const resourcesHtml = renderResources(fac.resources);
-
-                html += `
-                    <div class="facility-card status-${statusClass}" data-facility="${escapeAttribute(facName)}" data-status="${statusClass}">
-                        <div class="facility-summary">
-                            <h3 class="facility-name">${escapeHtml(facName)}</h3>
-                            ${subtitle ? `<p class="facility-location">${escapeHtml(subtitle)}</p>` : ''}
-                            <p class="facility-status">
-                                <span class="status-badge status-${statusClass}">${escapeHtml(status)}</span>
-                            </p>
+            html += `<div class="facility-card status-${statusClass}" data-facility="${escapeAttribute(facName)}" data-status="${statusClass}">
+                        <div class="facility-header">
+                            <div class="facility-title-group">
+                                <span class="facility-name">${escapeHtml(facName)}</span>
+                                <span class="facility-location">${escapeHtml(subLine)}</span>
+                            </div>
+                            <span class="status-badge ${statusClass}">${escapeHtml(status)}</span>
                         </div>
-                        <div class="facility-details">
-                            <details class="facility-expanded-info">
-                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                                <div class="facility-extra-content">
-                                    ${facFields}
-                                    ${resourcesHtml}
-                                </div>
-                            </details>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `
-                    </div>
-                </details>
-            `;
+                        <details class="facility-expanded-info">
+                            <summary>View Full Details</summary>
+                            <div class="facility-extra-content">
+                                ${facFields}
+                            </div>
+                        </details>
+                    </div>`;
         });
 
-        html += '</div>';
-        container.innerHTML = html;
-        
-        // Expose data for filtering
-        window.facilitiesData = facilitiesData;
-    };
-
-    // --- Filter & Search Logic ---
-
-    window.filterFacilities = function() {
-        const searchInput = document.getElementById('searchInput');
-        const term = searchInput ? searchInput.value.toLowerCase() : '';
-        const statusSelect = document.getElementById('statusFilter');
-        const statusVal = statusSelect ? statusSelect.value : '';
-
-        document.querySelectorAll('.operator-section').forEach(section => {
-            const opName = section.dataset.operator.toLowerCase();
-            let hasVisibleCards = false;
-
-            section.querySelectorAll('.facility-card').forEach(card => {
-                const facName = card.dataset.facility.toLowerCase();
-                const facStatus = card.dataset.status; // status-open, status-closed
-
-                const matchesTerm = opName.includes(term) || facName.includes(term);
-                // Status filter check: if 'open', match 'status-open'. 
-                // Note: The select values are likely 'open', 'closed'. The dataset is 'status-open'.
-                const matchesStatus = !statusVal || facStatus.includes(statusVal);
-
-                if (matchesTerm && matchesStatus) {
-                    card.style.display = 'block';
-                    hasVisibleCards = true;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            section.style.display = hasVisibleCards ? 'block' : 'none';
-        });
-    };
-
-    window.clearSearch = function() {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.value = '';
-            document.getElementById('clearSearch').classList.remove('visible');
-        }
-        const statusFilter = document.getElementById('statusFilter');
-        if (statusFilter) statusFilter.value = '';
-        
-        window.filterFacilities();
-    };
-
-    window.filterByLetter = function(letter) {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.value = letter;
-            // Show clear button since we have a value
-            document.getElementById('clearSearch').classList.add('visible');
-            window.filterFacilities();
-        }
-    };
-
-    // --- Initialization ---
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('facilities-container');
-        if (!container) return;
-
-        // Setup UI Events
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', function() {
-                const btn = document.getElementById('clearSearch');
-                if (btn) btn.classList.toggle('visible', this.value.length > 0);
-                window.filterFacilities();
-            });
-        }
-
-        const statusFilter = document.getElementById('statusFilter');
-        if (statusFilter) {
-            statusFilter.addEventListener('change', window.filterFacilities);
-        }
-
-        const alphabetFilter = document.getElementById('alphabet-filter');
-        if (alphabetFilter) {
-            alphabetFilter.innerHTML = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-                .map(l => `<button onclick="filterByLetter('${l}')">${l}</button>`)
-                .join('') + `<button onclick="filterByLetter('')">All</button>`;
-        }
-
-        // Fetch Data
-        const facilitiesConfig = window.facilitiesConfig || {};
-        // Combine all potential URLs
-        const urls = [
-            facilitiesConfig.jsonDataUrl, 
-            ...(facilitiesConfig.jsonFileUrls || [])
-        ].filter(u => u);
-
-        if (urls.length === 0) {
-            container.innerHTML = '<p>Error: No data source configured.</p>';
-            return;
-        }
-
-        // Attempt fetch
-        (async () => {
-            for (const url of urls) {
-                try {
-                    const resp = await fetch(url);
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        window.displayFacilities(data, 'facilities-container');
-                        return; // Success
-                    }
-                } catch (e) {
-                    console.error('Failed to load:', url, e);
-                }
-            }
-            container.innerHTML = '<p>Error loading facilities data. Please try again later.</p>';
-        })();
+        html += `</div></details>`;
     });
 
-})();
+    container.innerHTML = html;
+}
+
+// --- Filtering Logic ---
+
+function filterFacilities() {
+    const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const status = document.getElementById('statusFilter')?.value || '';
+    
+    document.querySelectorAll('.operator-section').forEach(section => {
+        let visibleCount = 0;
+        const opName = section.dataset.operator.toLowerCase();
+        
+        section.querySelectorAll('.facility-card').forEach(card => {
+            const name = card.dataset.facility.toLowerCase();
+            const stat = card.dataset.status;
+            
+            const matchesSearch = opName.includes(search) || name.includes(search);
+            const matchesStatus = !status || stat === status;
+            
+            if (matchesSearch && matchesStatus) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        section.style.display = visibleCount > 0 ? 'block' : 'none';
+    });
+}
+
+function clearSearch() {
+    if(document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    if(document.getElementById('statusFilter')) document.getElementById('statusFilter').value = '';
+    filterFacilities();
+    document.getElementById('clearSearch')?.classList.remove('visible');
+}
+window.clearSearch = clearSearch;
+
+// --- Init ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('facilities-container');
+    if (!container) return;
+
+    // Filters
+    document.getElementById('searchInput')?.addEventListener('keyup', (e) => {
+        document.getElementById('clearSearch')?.classList.toggle('visible', e.target.value.length > 0);
+        filterFacilities();
+    });
+    document.getElementById('statusFilter')?.addEventListener('change', filterFacilities);
+
+    // Load Data
+    const load = async () => {
+        if (facilitiesConfig.jsonDataUrl) {
+            try {
+                const res = await fetch(facilitiesConfig.jsonDataUrl);
+                if (res.ok) {
+                    displayFacilities(await res.json(), 'facilities-container');
+                    return;
+                }
+            } catch(e) {}
+        }
+        container.innerHTML = '<p>Error loading data.</p>';
+    };
+    load();
+});
