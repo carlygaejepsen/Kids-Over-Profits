@@ -1,11 +1,16 @@
 ---
 deployment:
   tasks:
-    - /bin/cp -R api /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R inc /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R css /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R js /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R templates /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp functions.php /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp style.css /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp page-*.php /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/api
+    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/inc
+    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/css
+    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/js
+    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/templates
+    - /bin/cp -rf api/. /home/kidsover/public_html/wp-content/themes/child/api/
+    - /bin/cp -rf inc/. /home/kidsover/public_html/wp-content/themes/child/inc/
+    - /bin/cp -rf css/. /home/kidsover/public_html/wp-content/themes/child/css/
+    - /bin/cp -rf js/. /home/kidsover/public_html/wp-content/themes/child/js/
+    - /bin/cp -rf templates/. /home/kidsover/public_html/wp-content/themes/child/templates/
+    - /bin/cp -f functions.php /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/cp -f style.css /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/cp -f page-*.php /home/kidsover/public_html/wp-content/themes/child/
