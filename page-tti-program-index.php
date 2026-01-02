@@ -12,8 +12,6 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
-
 <div class="tti-program-index-wrapper">
     <div class="facility-report-container">
 
@@ -64,6 +62,17 @@ get_header();
 
     </div>
 </div>
+
+<script>
+// Configure the JSON data source
+window.facilitiesConfig = {
+    jsonDataUrl: '<?php echo esc_url_raw(rest_url('kop/v1/facilities')); ?>',
+    jsonFileUrls: [
+        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
+        '<?php echo get_stylesheet_directory_uri(); ?>/js/data/facilities_master.json'
+    ]
+};
+</script>
 
 <?php
 get_footer();

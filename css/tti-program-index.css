@@ -1,567 +1,30 @@
-/* =================================================================
-   TTI PROGRAM INDEX - Dedicated Styles
-   ================================================================= */
-
-/* =================================================================
-   GLOBAL & SHARED STYLES (scoped to TTI index)
-   ================================================================= */
-
-/* Hides the default dropdown arrow for operator sections only */
-.tti-program-index-wrapper summary::-webkit-details-marker,
-.tti-program-index-wrapper summary::marker {
-    display: none;
-}
-
-/* Fallback to ensure no list-style icon appears in operator sections */
-.tti-program-index-wrapper summary {
-    list-style: none;
-}
-
-/* Show/Hide text based on details open/closed state */
-.tti-program-index-wrapper .closed-text {
-    display: inline;
-}
-
-.tti-program-index-wrapper .open-text {
-    display: none;
-}
-
-.tti-program-index-wrapper details[open] > summary .closed-text {
-    display: none;
-}
-
-.tti-program-index-wrapper details[open] > summary .open-text {
-    display: inline;
-}
-
-/* =================================================================
-   TTI PROGRAM INDEX CONTAINER
-   ================================================================= */
+/* ========================================================== 
+   TTI Program Index Styles
+   Enhanced Version - Unified Flex Layout
+================================================================*/
 
 .tti-program-index-wrapper {
-    font-family: sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    max-width: 900px;
+    font-family: 'Open Sans', sans-serif;
+    max-width: 1200px;
     margin: 0 auto;
-}
-
-.tti-program-index-wrapper h1,
-.tti-program-index-wrapper h2,
-.tti-program-index-wrapper h4 {
-    font-family: sans-serif;
-    margin: 0;
-}
-
-/* --- Alphabet Filter (Navy Blue Theme) --- */
-#alphabet-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 2em;
-    padding-bottom: 1.5em;
-    border-bottom: 1px solid #dddddd;
-}
-
-#alphabet-filter button {
-    padding: 8px 15px;
-    text-decoration: none;
-    background-color: #00004d;
-    color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-#alphabet-filter button.active {
-    background-color: #00004d;
-    color: #ffffff;
-    border-color: #dddddd;
-}
-
-/* Facility card text colors - WHITE backgrounds get BLACK text */
-.tti-program-index-wrapper .facility-card,
-.tti-program-index-wrapper .facility-card *,
-.tti-program-index-wrapper .facility-card p,
-.tti-program-index-wrapper .facility-card span,
-.tti-program-index-wrapper .facility-card div {
-    color: #000000 !important;
-}
-
-.tti-program-index-wrapper .facility-card .facility-details p {
-    color: #000000 !important;
-}
-
-.tti-program-index-wrapper .facility-card .facility-details strong {
-    color: #333333 !important;
-}
-
-.tti-program-index-wrapper .facility-card .facility-name {
-    color: #000000 !important;
-}
-
-/* =================================================================
-   FACILITY DIRECTORY
-   ================================================================= */
-
-.facility-card {
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF5CB 100%);
-    color: #000000;
-    word-wrap: break-word;
-    border: 5px solid #e0e0e0;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.facility-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-}
-
-.facility-card.status-open {
-    border-color: #d45500; /* Accessible orange */
-    border-left-width: 8px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF0E6 100%);
-}
-
-.facility-card.status-transferred {
-    border-color: #5a5a5a; /* Accessible gray */
-    border-left-width: 8px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
-}
-
-.facility-card.status-closed {
-    border-color: #0d7a8a; /* Accessible teal */
-    border-left-width: 8px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #E6F7F9 100%);
-}
-
-.facility-card.status-unknown {
-    border-color: #767676; /* Accessible gray */
-    border-left-width: 8px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #F9F9F9 100%);
-}
-
-/* =================================================================
-   FACILITIES GRID & OPERATORS
-   ================================================================= */
-
-.facilities-database {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 220px);
-    justify-content: center;
-    gap: 20px;
-    grid-auto-rows: auto;
-    align-items: start;
-}
-
-/* Controls styling moved to wrapper-scoped section below */
-
-.facility-name {
-    font-size: 1em;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    color: #00004d;
-    border-bottom: 2px solid #33A7B5;
-    padding: 0 0 6px 0;
-    line-height: 1.3;
-}
-
-.facility-details strong {
-    color: #333333;
-}
-
-.status-badge {
-    padding: 4px 10px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 0.75em;
-    letter-spacing: 0.5px;
-}
-
-/* Status badge colors - WCAG AA compliant */
-/* Higher specificity to override .facility-card * rule */
-.tti-program-index-wrapper .facility-card .status-badge.status-open {
-    color: #ffffff !important;
-    background: #d45500;
-}
-
-.tti-program-index-wrapper .facility-card .status-badge.status-closed {
-    color: #ffffff !important;
-    background: #0d7a8a;
-}
-
-.tti-program-index-wrapper .facility-card .status-badge.status-transferred {
-    color: #ffffff !important;
-    background: #5a5a5a;
-}
-
-.tti-program-index-wrapper .facility-card .status-badge.status-unknown {
-    color: #ffffff !important;
-    background: #767676;
-}
-
-.facility-details {
-    color: #000000;
-    font-size: 0.9em;
-}
-
-/* Facility expanded details section */
-.facility-expanded-info {
-    margin-top: 10px;
-    border-top: 2px solid #e0e0e0;
-    padding-top: 10px;
-}
-
-.facility-expanded-info summary {
-    cursor: pointer;
-    color: #00004d;
-    font-weight: 700;
-    font-size: 0.9em;
-    padding: 6px 10px;
-    user-select: none;
-    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-    border-radius: 4px;
-    display: inline-block;
-}
-
-.facility-expanded-info summary:hover {
-    background: linear-gradient(135deg, #e8e8e8 0%, #ddd 100%);
-}
-
-.tti-program-index-wrapper .facility-card .facility-expanded-info[open] summary,
-.tti-program-index-wrapper .facility-card .facility-expanded-info[open] summary * {
-    color: #ffffff !important;
-}
-
-.facility-expanded-info[open] summary {
-    margin-bottom: 12px;
-    background: #00004d;
-    color: #ffffff !important;
-}
-
-summary.operator-header::after {
-    content: '+ Click for details';
-    font-size: 1em;
-    font-weight: bold;
-    color: #ffffff !important;
-    pointer-events: none;
-}
-
-details[open] > summary.operator-header::after {
-    content: '- Collapse details';
-    color: #ffffff !important;
-}
-
-/* Removed table display - using grid from later definition */
-
-/* Field rows - zebra striping ONLY for facility cards */
-.facility-card .field-row:nth-child(odd) {
-    background: #f5f5f5;
-}
-
-.facility-card .field-row:nth-child(even) {
-    background: #fafafa;
-}
-
-/* Ensure operator details fields have NO background to avoid white-on-white */
-.operator-details .field-row {
-    background: transparent !important;
-    display: grid; /* Use grid for internal row layout if needed, or stick to flex */
-    grid-template-columns: 1fr;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 8px 0;
-}
-
-/* .field-value styles defined per-context below */
-
-.facility-extra-content a {
-    color: #0066cc !important;
-    text-decoration: none;
-    word-break: break-all;
-}
-
-.facility-extra-content a:hover {
-    text-decoration: underline;
-    color: #004499 !important;
-}
-
-/* Facility summary info (location, years, status) */
-.facility-summary {
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px dashed #ddd;
-}
-
-.facility-summary p {
-    margin: 3px 0;
-    font-size: 0.88em;
-    color: #444444 !important;
-}
-
-.facility-location {
-    font-weight: 500;
-}
-
-.facility-years {
-    color: #666666 !important;
-    font-size: 0.85em !important;
-}
-
-.facility-status {
-    margin-top: 6px !important;
-}
-
-/* Operator section - NAVY backgrounds get WHITE text */
-.operator-section {
-    padding: 15px;
-    width: 220px;
-    min-height: 220px;
-    background: #00004d;
-    color: #ffffff !important;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border: 2px solid #33A7B5;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.25);
-}
-
-/* Ensure ALL text within operator sections is white */
-.operator-section *,
-.operator-section p,
-.operator-section span,
-.operator-section div,
-.operator-section strong {
-    color: #ffffff !important;
-}
-
-.operator-section:hover {
-    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.35);
-    transform: translateY(-2px);
-}
-
-.operator-name {
-    color: #ffffff;
-    padding: 12px;
-    font-size: 1.4em;
-    font-weight: bold;
-    cursor: default;
-    user-select: none;
-    position: relative;
-    margin: 0 auto;
-    line-height: 1.2;
-    text-align: center;
-    overflow: hidden;
-    display: block;
-}
-
-.operator-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.operator-name-long {
-    font-size: 0.9em;
-}
-
-.operator-location {
-    display: block;
-    color: #fff;
-    font-weight: normal;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    text-align: center;
-    border-top: 1px solid #dddddd;
-    line-height: 1.3em;
-}
-
-details.operator-section:not([open]) {
-    width: 220px;
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: pointer;
-}
-
-details.operator-section[open] {
-    width: 100%;
-    max-width: 600px;
-    grid-column: 1 / -1;
-    height: auto;
-}
-
-details.operator-section[open] .operator-header {
-    padding: 12px;
-    flex-shrink: 0;
-}
-
-details.operator-section[open] .operator-content-scrollable {
-    height: auto;
-    max-height: 800px;
-    overflow-y: auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.05);
-    display: block; /* Stack facilities vertically */
+    background-color: #f8f9fa;
 }
 
-/* Facility cards grid layout */
-.facility-extra-content {
-    padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
-    width: 100%;
-    font-size: 0.9em;
-}
-
-.operator-details {
-    margin-bottom: 15px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
-}
-
-/* Ensure full width for resources or long text if needed */
-.field-row.full-width,
-.field-row.full-width-grid {
-    grid-column: 1 / -1;
-}
-
-.field-row.full-width-grid .field-value {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 5px;
-}
-
-.list-item {
-    background: rgba(0,0,0,0.05);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.95em;
-    display: inline-block;
-}
-
-/* Field Row Styling - simplified for better reading */
-.field-row {
-    display: flex;
-    flex-direction: column;
-    background: #f9f9f9;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border-left: 4px solid #33A7B5;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-/* Responsive: 1 column on small screens */
-@media (max-width: 600px) {
-    .facility-extra-content,
-    .operator-details {
-        grid-template-columns: 1fr;
-    }
-}
-
-.facility-card .field-label {
-    display: block;
-    font-size: 0.75em;
-    font-weight: 700;
-    color: #555 !important;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.facility-card .field-value {
-    display: block;
-    color: #222 !important;
-    word-break: break-word;
-    line-height: 1.4;
-    font-size: 1em;
-}
-
-.field-label::after {
-    content: '';
-}
-
-/* Operator details specific overrides (Dark background) */
-.operator-details .field-row {
-    background: rgba(255, 255, 255, 0.05);
-    border-left-color: #AEE0ED;
-}
-
-.operator-details .field-label {
-    color: #AEE0ED !important;
-    display: block;
-    font-size: 0.8em;
-    font-weight: 700;
-    margin-bottom: 1px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.operator-details .field-value {
-    color: #ffffff !important;
-    display: block;
-    word-break: break-word;
-    line-height: 1.3;
-}
-
-.operator-details p {
-    margin: 3px 0;
-    line-height: 1.4;
-}
-
-.operator-details a {
-    color: #AEE0ED !important;
-    text-decoration: none;
-    word-break: break-all;
-}
-
-.operator-details a:hover {
-    color: #ffffff !important;
-    text-decoration: underline;
-}
-
-.operator-content-scrollable p {
-    margin: 3px 0;
-    line-height: 1.3;
-    color: #ffffff;
-}
-
-.facilities-list {
-    padding: 8px;
-}
-
-/* ==========================================================
-PAGE HEADER
+/* ========================================================== 
+   PAGE HEADER
 ================================================================*/
 .tti-program-index-wrapper .page-header {
     margin-bottom: 2em;
+    text-align: center;
 }
 
 .tti-program-index-wrapper .page-header h1 {
     color: #00004d;
     font-size: 2.5em;
     margin-bottom: 0.5em;
-    font-family: sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
 }
 
 .tti-program-index-wrapper .page-header p {
@@ -570,238 +33,371 @@ PAGE HEADER
     margin: 0;
 }
 
-/* ==========================================================
-CONTROLS
+/* ========================================================== 
+   CONTROLS
 ================================================================*/
 .tti-program-index-wrapper .controls {
     grid-column: 1 / -1;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #ffffff;
     border-radius: 8px;
-    border: 2px solid #33A7B5;
-    box-shadow: 0 3px 8px rgba(51, 167, 181, 0.2);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .tti-program-index-wrapper .controls-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.tti-program-index-wrapper .controls input[type="text"],
+.tti-program-index-wrapper .controls input[type="text"],      
 .tti-program-index-wrapper .controls #searchInput {
-    flex: 1;
+    flex: 2;
     min-width: 250px;
-    max-width: 400px;
-    padding: 10px;
-    border: 1px solid #dddddd;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 1em;
-    cursor: text;
-    background-color: #ffffff;
-    color: #000000;
+    transition: border-color 0.2s;
+}
+
+.tti-program-index-wrapper .controls input[type="text"]:focus,
+.tti-program-index-wrapper .controls #searchInput:focus {
+    border-color: #33A7B5;
+    outline: none;
 }
 
 .tti-program-index-wrapper .controls select,
 .tti-program-index-wrapper .controls #statusFilter,
 .tti-program-index-wrapper .controls #sortBy {
+    flex: 1;
     min-width: 150px;
-    padding: 10px;
-    border: 1px solid #dddddd;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 1em;
     cursor: pointer;
     background-color: #ffffff;
-    color: #000000;
 }
 
 .tti-program-index-wrapper .controls button,
 .tti-program-index-wrapper .controls #clearSearch {
     display: none;
-    padding: 10px 20px;
-    background-color: #ff6600;
+    padding: 12px 25px;
+    background-color: #dc3545;
     color: #ffffff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
-    white-space: nowrap;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: background-color 0.2s;
 }
 
-.tti-program-index-wrapper .controls #clearSearch.visible {
+.tti-program-index-wrapper .controls #clearSearch.visible {   
     display: inline-block;
 }
 
 .tti-program-index-wrapper .controls button:hover {
-    background-color: #e55a00;
+    background-color: #c82333;
 }
 
-/* ==========================================================
-LOADING MESSAGE
-================================================================*/
-.tti-program-index-wrapper .loading-message {
-    text-align: center;
-    padding: 40px;
+/* Alphabet Filter */
+#alphabet-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }
 
-.tti-program-index-wrapper .loading-message p {
-    color: #666666;
-    font-size: 1.1em;
-    margin: 0;
-}
-
-.open-text,
-.closed-text {
+#alphabet-filter button {
+    display: inline-block; /* Override default hidden state */
+    padding: 6px 10px;
+    background: #f1f3f5;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    color: #495057;
+    font-size: 0.9em;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* ===========================================================
-RESPONSIVE
-===============================================================*/
+#alphabet-filter button:hover {
+    background: #e9ecef;
+    color: #33A7B5;
+}
+
+/* ========================================================== 
+   OPERATOR SECTIONS
+================================================================*/
+.operator-section {
+    margin-bottom: 25px;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+}
+
+.operator-header {
+    background: #00004d;
+    color: #ffffff;
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    list-style: none; /* Hide default summary marker */
+}
+
+.operator-header::-webkit-details-marker {
+    display: none;
+}
+
+/* Custom indicator */
+.operator-header::after {
+    content: '+';
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 1.5em;
+    font-weight: 300;
+    transition: transform 0.3s;
+}
+
+details[open] .operator-header::after {
+    transform: rotate(45deg);
+}
+
+.operator-name {
+    font-size: 1.3em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.operator-location {
+    font-size: 0.95em;
+    opacity: 0.9;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.operator-location div {
+    display: flex;
+    align-items: center;
+}
+
+.operator-content-scrollable {
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+/* Operator Details Box */
+.operator-details {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #00004d;
+    
+    /* Flex Wrap Layout */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: stretch;
+}
+
+/* ========================================================== 
+   FACILITY CARDS
+================================================================*/
+.facility-card {
+    background: #ffffff;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-left: 5px solid #ccc;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.facility-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Status Colors */
+.facility-card.status-open { border-left-color: #28a745; }
+.facility-card.status-closed { border-left-color: #dc3545; }
+.facility-card.status-transferred { border-left-color: #ffc107; }
+.facility-card.status-unknown { border-left-color: #6c757d; }
+
+.facility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.facility-title-group {
+    flex: 1;
+}
+
+.facility-name {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.facility-location {
+    font-size: 0.95em;
+    color: #666;
+    display: block;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+    margin-left: 15px;
+}
+
+.status-badge.open { background-color: #28a745; }
+.status-badge.closed { background-color: #dc3545; }
+.status-badge.transferred { background-color: #ffc107; color: #333; }
+.status-badge.unknown { background-color: #6c757d; }
+
+/* Expanded Info Section */
+.facility-expanded-info summary {
+    cursor: pointer;
+    color: #33A7B5;
+    font-weight: 600;
+    padding: 10px 0;
+    user-select: none;
+    outline: none;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.facility-expanded-info summary:hover {
+    color: #26808b;
+}
+
+.facility-extra-content {
+    /* Flex Wrap Layout - matching operator details */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: stretch;
+}
+
+/* ========================================================== 
+   FIELD ROWS
+================================================================*/
+.field-row {
+    display: flex;
+    flex-direction: column; /* ENSURE LABEL STACKS ABOVE VALUE */
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #33A7B5;
+    
+    /* Smart Sizing */
+    flex: 1 1 350px;
+    min-width: 280px;
+    box-sizing: border-box;
+}
+
+.field-row:hover {
+    background: #eef1f3;
+}
+
+.field-row.full-width-grid {
+    flex: 1 1 100%;
+    width: 100%;
+}
+
+.field-label {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block; /* Ensure it takes its own line */
+}
+
+.field-value {
+    font-size: 0.95em;
+    color: #212529;
+    line-height: 1.5;
+    word-break: break-word;
+    display: block; /* Ensure it takes its own line */
+}
+
+.field-value a {
+    color: #33A7B5;
+    text-decoration: none;
+}
+
+.field-value a:hover {
+    text-decoration: underline;
+}
+
+/* List items inside values */
+.list-item {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    margin: 2px 4px 2px 0;
+}
+
+/* ========================================================== 
+   RESPONSIVE
+================================================================*/
 @media (max-width: 768px) {
-    .tti-program-index-wrapper .facilities-database {
-        grid-template-columns: 1fr;
-        padding: 5px;
-        gap: 10px;
-    }
-
-    .tti-program-index-wrapper .operator-section,
-    .tti-program-index-wrapper details.operator-section:not([open]),
-    .tti-program-index-wrapper details.operator-section[open] {
-        width: 100%;
-        min-width: 100%;
-        max-width: 100%;
-    }
-
-    .tti-program-index-wrapper details.operator-section:not([open]) {
-        height: auto;
-        min-height: 120px;
-    }
-
-    .tti-program-index-wrapper details.operator-section[open] .operator-content-scrollable {
-        padding: 12px;
-        max-height: none;
-    }
-
-    .tti-program-index-wrapper .facility-card {
-        border-width: 4px;
-        border-left-width: 6px !important;
-        padding: 10px;
-    }
-
-    .tti-program-index-wrapper .facility-name {
-        font-size: 0.95em;
-        padding-bottom: 5px;
-        margin-bottom: 6px;
-    }
-
-    .tti-program-index-wrapper .facility-summary p {
-        font-size: 0.85em;
-    }
-
-    .tti-program-index-wrapper .status-badge {
-        padding: 3px 8px;
-        font-size: 0.7em;
-    }
-
-    .tti-program-index-wrapper .facility-expanded-info summary {
-        font-size: 0.85em;
-        padding: 5px 8px;
-        display: block;
-        text-align: center;
-    }
-
-    .tti-program-index-wrapper .facility-extra-content {
-        font-size: 0.8em;
-    }
-
-    .tti-program-index-wrapper .field-label {
-        padding: 2px 4px 2px 0;
-    }
-
-    .tti-program-index-wrapper .field-value {
-        padding: 2px 0;
-    }
-
-    .tti-program-index-wrapper .operator-details {
-        font-size: 0.8em;
-    }
-
-    .tti-program-index-wrapper #alphabet-filter {
-        gap: 3px;
-        padding-bottom: 1em;
-        flex-wrap: wrap;
-    }
-
-    .tti-program-index-wrapper #alphabet-filter button {
-        padding: 5px 8px;
-        font-size: 0.8em;
-    }
-
-    .tti-program-index-wrapper .controls {
-        padding: 10px;
-    }
-
     .tti-program-index-wrapper .controls-row {
         flex-direction: column;
         align-items: stretch;
     }
-
+    
     .tti-program-index-wrapper .controls input[type="text"],
-    .tti-program-index-wrapper .controls #searchInput,
     .tti-program-index-wrapper .controls select {
         width: 100%;
-        max-width: 100%;
+        min-width: 0;
+    }
+    
+    .facility-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .status-badge {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+    
+    /* Force 1 column on mobile */
+    .field-row {
+        flex-basis: 100%;
         min-width: 100%;
-        margin-bottom: 8px;
-    }
-
-    .tti-program-index-wrapper .operator-name {
-        font-size: 1.1em;
-        padding: 8px;
-    }
-
-    .tti-program-index-wrapper .page-header h1 {
-        font-size: 1.8em;
-    }
-
-    .tti-program-index-wrapper .page-header p {
-        font-size: 1em;
-    }
-}
-
-@media (max-width: 480px) {
-    .tti-program-index-wrapper .facility-card {
-        padding: 8px;
-    }
-
-    .tti-program-index-wrapper .facility-name {
-        font-size: 0.9em;
-    }
-
-    .tti-program-index-wrapper .facility-extra-content,
-    .tti-program-index-wrapper .operator-details {
-        font-size: 0.75em;
-    }
-
-    .tti-program-index-wrapper .field-label {
-        white-space: normal;
-    }
-
-    .tti-program-index-wrapper #alphabet-filter button {
-        padding: 4px 6px;
-        font-size: 0.75em;
-    }
-
-    .tti-program-index-wrapper .operator-name {
-        font-size: 1em;
-    }
-
-    .tti-program-index-wrapper .page-header h1 {
-        font-size: 1.5em;
     }
 }
