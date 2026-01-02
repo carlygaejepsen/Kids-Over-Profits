@@ -27,7 +27,8 @@
       "WebFetch(domain:kidsoverprofits.org)",
       "Bash(git update-index:*)",
       "Bash(git pull origin main)",
-      "Bash(git merge staging.v4 -m \"Merge staging.v4: TTI program index improvements\")"
+      "Bash(git merge staging.v4 -m \"Merge staging.v4: TTI program index improvements\")",
+      "Bash(git stash pop:*)"
     ],
     "deny": [],
     "ask": []
