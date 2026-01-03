@@ -10,10 +10,20 @@ if (!$pdo) {
     die("Could not connect to the database (pdo is null).");
 }
 
-// Fetch pending suggestions
+// Fetch pending suggestions (Data Form)
 $stmt = $pdo->prepare("SELECT * FROM suggested_edits WHERE status = 'pending'");
 $stmt->execute();
 $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch pending news
+$stmt = $pdo->prepare("SELECT * FROM news_submissions WHERE status = 'submitted'");
+$stmt->execute();
+$news_submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch pending wiki
+$stmt = $pdo->prepare("SELECT * FROM wiki_submissions WHERE status = 'submitted' AND status != 'deleted'");
+$stmt->execute();
+$wiki_submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 function json_diff($old, $new) {
     $diff = [];
@@ -62,116 +72,206 @@ function render_diff($diff) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Approve Edits</title>
+    <title>Approve Submissions</title>
     <style>
         body { font-family: sans-serif; }
-        .container { width: 80%; margin: 0 auto; }
-        .suggestion { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        .container { width: 90%; margin: 0 auto; max-width: 1200px; }
+        .section { margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .suggestion { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; background: #fff; border-radius: 4px; }
         .suggestion h3 { margin-top: 0; }
-        .actions { margin-top: 10px; }
-        .actions button { margin-right: 10px; }
-        .diff { border: 1px solid #eee; padding: 10px; }
-        .diff dt { font-weight: bold; }
-        .diff dd { margin-left: 20px; }
-        .added { background-color: #dfd; }
-        .removed { background-color: #fdd; }
+        .actions { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+        .actions button { margin-right: 10px; padding: 5px 15px; cursor: pointer; }
+        .diff { border: 1px solid #eee; padding: 10px; background: #f9f9f9; overflow-x: auto; }
+        .diff dt { font-weight: bold; margin-top: 5px; }
+        .diff dd { margin-left: 20px; margin-bottom: 5px; font-family: monospace; }
+        .added { background-color: #dfd; padding: 2px 4px; }
+        .removed { background-color: #fdd; padding: 2px 4px; }
         .changed .removed-value { text-decoration: line-through; background-color: #fdd; }
         .changed .added-value { background-color: #dfd; }
+        
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; color: white; background: #666; }
+        .badge-news { background: #007bff; }
+        .badge-wiki { background: #28a745; }
+        .badge-data { background: #6f42c1; }
+        
+        .meta-row { display: flex; gap: 20px; color: #666; font-size: 0.9em; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Approve Edits</h1>
-        <div id="suggestions-container">
-            <?php if (empty($suggestions)): ?>
-                <p>No pending suggestions.</p>
-            <?php else: ?>
-                <?php foreach ($suggestions as $suggestion): ?>
-                    <div class="suggestion" id="suggestion-<?php echo $suggestion['id']; ?>">
-                        <?php
-                        $new_data = json_decode($suggestion['edited_json_data'], true);
-                        $master_id = $suggestion['master_id'];
+        <h1>Approve Submissions</h1>
 
-                        // Check both facilities_master and referrers_master tables
-                        $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ?");
-                        $stmt->execute([$master_id]);
-                        $original_data = $stmt->fetchColumn();
+        <!-- Section 1: Data Form Suggestions (Suggested Edits) -->
+        <div class="section">
+            <h2>Data Form Updates <span class="badge badge-data"><?php echo count($suggestions); ?></span></h2>
+            <div id="suggestions-container">
+                <?php if (empty($suggestions)): ?>
+                    <p>No pending data suggestions.</p>
+                <?php else: ?>
+                    <?php foreach ($suggestions as $suggestion): ?>
+                        <div class="suggestion" id="suggestion-<?php echo $suggestion['id']; ?>">
+                            <?php
+                            $new_data = json_decode($suggestion['edited_json_data'], true);
+                            $master_id = $suggestion['master_id'];
 
-                        // If not found in facilities, try referrers
-                        if (!$original_data) {
-                            $stmt = $pdo->prepare("SELECT json_data FROM referrers_master WHERE unique_name = ?");
+                            // Check both facilities_master and referrers_master tables
+                            $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ?");
                             $stmt->execute([$master_id]);
                             $original_data = $stmt->fetchColumn();
-                        }
 
-                        $old_data = $original_data ? json_decode($original_data, true) : [];
+                            // If not found in facilities, try referrers
+                            if (!$original_data) {
+                                $stmt = $pdo->prepare("SELECT json_data FROM referrers_master WHERE unique_name = ?");
+                                $stmt->execute([$master_id]);
+                                $original_data = $stmt->fetchColumn();
+                            }
 
-                        $diff = json_diff($old_data, $new_data);
+                            $old_data = $original_data ? json_decode($original_data, true) : [];
 
-                        // Determine display names based on data type (facility vs referrer)
-                        $operator_name = $new_data['operator']['name'] ?? 'N/A';
-                        $facility_name = $new_data['facilities'][0]['identification']['name'] ?? 'N/A';
-                        $referrer_agency = $new_data['referrerAgency']['name'] ?? '';
-                        $referrer_consultant = '';
-                        if (!empty($new_data['referrerConsultants'][0]['firstName']) || !empty($new_data['referrerConsultants'][0]['lastName'])) {
-                            $referrer_consultant = trim(
-                                ($new_data['referrerConsultants'][0]['firstName'] ?? '') . ' ' .
-                                ($new_data['referrerConsultants'][0]['lastName'] ?? '')
-                            );
-                        }
-                        ?>
-                        <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
-                        <?php if ($operator_name !== 'N/A'): ?>
-                            <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
-                        <?php endif; ?>
-                        <?php if ($facility_name !== 'N/A'): ?>
-                            <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
-                        <?php endif; ?>
-                        <?php if (!empty($referrer_agency)): ?>
-                            <p><strong>Referrer Agency:</strong> <?php echo htmlspecialchars($referrer_agency); ?></p>
-                        <?php endif; ?>
-                        <?php if (!empty($referrer_consultant)): ?>
-                            <p><strong>Referrer Consultant:</strong> <?php echo htmlspecialchars($referrer_consultant); ?></p>
-                        <?php endif; ?>
-                        <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
-                        <div class="diff">
-                            <?php echo render_diff($diff); ?>
+                            $diff = json_diff($old_data, $new_data);
+
+                            // Determine display names based on data type (facility vs referrer)
+                            $operator_name = $new_data['operator']['name'] ?? 'N/A';
+                            $facility_name = $new_data['facilities'][0]['identification']['name'] ?? 'N/A';
+                            $referrer_agency = $new_data['referrerAgency']['name'] ?? '';
+                            $referrer_consultant = '';
+                            if (!empty($new_data['referrerConsultants'][0]['firstName']) || !empty($new_data['referrerConsultants'][0]['lastName'])) {
+                                $referrer_consultant = trim(
+                                    ($new_data['referrerConsultants'][0]['firstName'] ?? '') . ' ' .
+                                    ($new_data['referrerConsultants'][0]['lastName'] ?? '')
+                                );
+                            }
+                            ?>
+                            <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
+                            <?php if ($operator_name !== 'N/A'): ?>
+                                <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
+                            <?php endif; ?>
+                            <?php if ($facility_name !== 'N/A'): ?>
+                                <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($referrer_agency)): ?>
+                                <p><strong>Referrer Agency:</strong> <?php echo htmlspecialchars($referrer_agency); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($referrer_consultant)): ?>
+                                <p><strong>Referrer Consultant:</strong> <?php echo htmlspecialchars($referrer_consultant); ?></p>
+                            <?php endif; ?>
+                            <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
+                            <div class="diff">
+                                <?php echo render_diff($diff); ?>
+                            </div>
+                            <div class="actions">
+                                <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approve', 'suggestion')">Approve</button>
+                                <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'reject', 'suggestion')">Reject</button>
+                            </div>
                         </div>
-                        <div class="actions">
-                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approve')">Approve</button>
-                            <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'reject')">Reject</button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
+
+        <!-- Section 2: News Submissions -->
+        <div class="section">
+            <h2>News Submissions <span class="badge badge-news"><?php echo count($news_submissions); ?></span></h2>
+            <div id="news-container">
+                <?php if (empty($news_submissions)): ?>
+                    <p>No pending news submissions.</p>
+                <?php else: ?>
+                    <?php foreach ($news_submissions as $news): ?>
+                        <div class="suggestion" id="news-<?php echo $news['id']; ?>">
+                            <h3><?php echo htmlspecialchars($news['article_title']); ?></h3>
+                            <div class="meta-row">
+                                <span><strong>Publication:</strong> <?php echo htmlspecialchars($news['publication_name']); ?></span>
+                                <span><strong>Date:</strong> <?php echo htmlspecialchars($news['publication_date']); ?></span>
+                                <span><strong>Type:</strong> <?php echo htmlspecialchars($news['article_type']); ?></span>
+                            </div>
+                            <p><a href="<?php echo htmlspecialchars($news['article_url']); ?>" target="_blank">Read Article</a></p>
+                            
+                            <div style="background: #f9f9f9; padding: 10px; font-size: 0.9em;">
+                                <strong>Summary:</strong><br>
+                                <?php echo nl2br(htmlspecialchars($news['summary'])); ?>
+                            </div>
+
+                            <div class="actions">
+                                <button onclick="processEdit(<?php echo $news['id']; ?>, 'approve', 'news')">Approve</button>
+                                <button onclick="processEdit(<?php echo $news['id']; ?>, 'reject', 'news')">Reject</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Section 3: Wiki Submissions -->
+        <div class="section">
+            <h2>Wiki Submissions <span class="badge badge-wiki"><?php echo count($wiki_submissions); ?></span></h2>
+            <div id="wiki-container">
+                <?php if (empty($wiki_submissions)): ?>
+                    <p>No pending wiki submissions.</p>
+                <?php else: ?>
+                    <?php foreach ($wiki_submissions as $wiki): ?>
+                        <div class="suggestion" id="wiki-<?php echo $wiki['id']; ?>">
+                            <h3><?php echo htmlspecialchars($wiki['program_name']); ?></h3>
+                            <div class="meta-row">
+                                <span><strong>Location:</strong> <?php echo htmlspecialchars($wiki['city_state']); ?></span>
+                                <span><strong>Type:</strong> <?php echo htmlspecialchars($wiki['program_type']); ?></span>
+                                <span><strong>Years Active:</strong> <?php echo htmlspecialchars($wiki['years_active']); ?></span>
+                            </div>
+                            <?php if(!empty($wiki['organization'])): ?>
+                                <p><strong>Organization:</strong> <?php echo htmlspecialchars($wiki['organization']); ?></p>
+                            <?php endif; ?>
+                            
+                            <div class="actions">
+                                <button onclick="processEdit(<?php echo $wiki['id']; ?>, 'approve', 'wiki')">Approve (Publish)</button>
+                                <button onclick="processEdit(<?php echo $wiki['id']; ?>, 'reject', 'wiki')">Reject</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
     </div>
 
     <script>
-    function processEdit(id, action) {
-        if (!confirm(`Are you sure you want to ${action} this suggestion?`)) {
+    function processEdit(id, action, type) {
+        if (!confirm(`Are you sure you want to ${action} this ${type}?`)) {
             return;
         }
 
-        const data = { id: id, action: action };
+        let url = '';
+        let body = {};
 
-        fetch('process-edit.php', {
+        if (type === 'suggestion') {
+            url = 'process-edit.php';
+            body = { id: id, action: action };
+        } else {
+            // News and Wiki use manage-submissions.php
+            url = 'manage-submissions.php';
+            body = {
+                action: action,
+                type: type,
+                ids: [id]
+            };
+        }
+
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(body)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Suggestion ' + action + 'd successfully!');
-                const suggestionElement = document.getElementById('suggestion-' + id);
-                if (suggestionElement) {
-                    suggestionElement.remove();
+                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} ${action}d successfully!`);
+                const elementId = (type === 'suggestion' ? 'suggestion-' : type + '-') + id;
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.remove();
                 }
             } else {
-                alert('Error: ' + data.error);
+                alert('Error: ' + (data.error || 'Unknown error'));
             }
         })
         .catch(error => {
