@@ -25,39 +25,28 @@ get_header();
 
         <!-- Search & Filter Controls -->
         <div class="controls">
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px;">
+            <div class="controls-row">
                 <input
                     type="text"
                     id="searchInput"
                     placeholder="Search facilities or parent companies..."
-                    style="flex: 1; min-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
                 >
 
-                <select
-                    id="statusFilter"
-                    style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-width: 150px;"
-                >
+                <select id="statusFilter">
                     <option value="">All Statuses</option>
                     <option value="open">Open</option>
                     <option value="closed">Closed</option>
                     <option value="transferred">Transferred</option>
                 </select>
 
-                <select
-                    id="sortBy"
-                    style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-width: 150px;"
-                >
+                <select id="sortBy">
                     <option value="name">Sort A-Z</option>
                     <option value="violations-only">Violations Only</option>
                     <option value="violations-desc">Most Violations</option>
                     <option value="recent-inspection">Recent Inspections</option>
                 </select>
 
-                <button
-                    id="clearSearch"
-                    onclick="clearSearch()"
-                    style="display: none; padding: 10px 20px; background-color: #ff6600; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;"
-                >
+                <button id="clearSearch" onclick="clearSearch()">
                     Clear
                 </button>
             </div>
@@ -68,7 +57,7 @@ get_header();
 
         <!-- Facilities Container (populated by JavaScript) -->
         <div id="facilities-container">
-            <div style="text-align: center; padding: 40px; color: #666;">
+            <div class="loading-message">
                 <p>Loading facility data...</p>
             </div>
         </div>
@@ -79,9 +68,10 @@ get_header();
 <script>
 // Configure the JSON data source
 window.facilitiesConfig = {
-    jsonDataUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
+    jsonDataUrl: '<?php echo esc_url_raw(rest_url('kop/v1/facilities')); ?>',
     jsonFileUrls: [
-        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
+        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
+        '<?php echo get_stylesheet_directory_uri(); ?>/js/data/facilities_master.json'
     ]
 };
 </script>
