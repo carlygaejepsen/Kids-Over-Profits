@@ -4,6 +4,7 @@
     
     const formData = {
         title: '', author: '', publicationDate: '', publicationName: '', url: '',
+        location: '', tags: '',
         facilities: '', staff: '', survivors: '', contentWarnings: [],
         summary: '', alternateTitle: '', needsAlternateTitle: false,
         articleType: '', plaintiffs: '', defendants: '', legalRep: '',
@@ -480,6 +481,8 @@
                 publicationDate: formData.publicationDate,
                 publicationName: formData.publicationName,
                 url: formData.url,
+                location: formData.location,
+                tags: formData.tags.split('\n').filter(t => t.trim()),
                 facilities: formData.facilities.split('\n').filter(f => f.trim()),
                 staff: formData.staff.split('\n').filter(s => s.trim()),
                 survivors: formData.survivors.split('\n').filter(s => s.trim())
@@ -549,8 +552,15 @@
         text += `Author: ${formData.author}\n`;
         text += `Publication: ${formData.publicationName}\n`;
         text += `Date: ${formData.publicationDate}\n`;
+        text += `Location: ${formData.location}\n`;
         text += `URL: ${formData.url}\n\n`;
         
+        if (output.basicDetails.tags.length > 0) {
+            text += 'Tags:\n';
+            output.basicDetails.tags.forEach(t => text += `  - ${t}\n`);
+            text += '\n';
+        }
+
         if (output.basicDetails.facilities.length > 0) {
             text += 'news Facilities/Companies:\n';
             output.basicDetails.facilities.forEach(f => text += `  - ${f}\n`);
@@ -564,7 +574,7 @@
         }
         
         if (output.basicDetails.survivors.length > 0) {
-            text += 'Survivors Mentioned:\n';
+            text += 'Survivors & Victims Mentioned:\n';
             output.basicDetails.survivors.forEach(s => text += `  - ${s}\n`);
             text += '\n';
         }
@@ -701,7 +711,8 @@
         const fields = {
             facilities: { container: 'facilities-container', category: 'facility', placeholder: 'Facility name' },
             staff: { container: 'staff-container', category: 'human', placeholder: 'Staff member name' },
-            survivors: { container: 'survivors-container', category: 'human', placeholder: 'Survivor name' }
+            survivors: { container: 'survivors-container', category: 'human', placeholder: 'Survivor or Victim name' },
+            tags: { container: 'tags-container', category: 'tag', placeholder: 'Tag/Keyword' }
         };
 
         Object.keys(fields).forEach(fieldName => {
@@ -868,6 +879,7 @@
         const aiUrlInput = document.getElementById('ai-article-url');
         const url = aiUrlInput ? aiUrlInput.value.trim() : '';
         const pastedText = document.getElementById('ai-article-text') && document.getElementById('ai-article-text').value || '';
+        const customInstructions = document.getElementById('ai-custom-instructions') && document.getElementById('ai-custom-instructions').value || '';
         const statusEl = document.getElementById('ai-status');
         const processBtn = document.getElementById('process-with-ai');
         const provider = document.getElementById('ai-provider') && document.getElementById('ai-provider').value || 'ollama';
@@ -875,6 +887,11 @@
         if (!url && !pastedText) {
             statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';
             return;
+        }
+
+        // Save custom instructions if present
+        if (customInstructions) {
+            localStorage.setItem('news_ai_custom_instructions', customInstructions);
         }
 
         statusEl.innerHTML = '<span class="loading">🤖 Processing with AI...</span>';
@@ -893,7 +910,8 @@
                 body: JSON.stringify({
                     url: url,
                     articleText: pastedText,
-                    provider: provider
+                    provider: provider,
+                    customInstructions: customInstructions
                 })
             });
 
@@ -909,6 +927,8 @@
                 if (data.author) formData.author = data.author;
                 if (data.publicationDate) formData.publicationDate = data.publicationDate;
                 if (data.publicationName) formData.publicationName = data.publicationName;
+                if (data.location) formData.location = data.location;
+                if (data.tags) formData.tags = Array.isArray(data.tags) ? data.tags.join('\n') : data.tags;
                 if (data.facilities) formData.facilities = data.facilities.join('\n');
                 if (data.staff) formData.staff = data.staff.join('\n');
                 if (data.survivors) formData.survivors = data.survivors.join('\n');
@@ -984,6 +1004,8 @@
                 publicationName: formData.publicationName,
                 publicationDate: formData.publicationDate,
                 url: formData.url,
+                location: formData.location,
+                tags: formData.tags,
                 articleType: formData.articleType,
                 facilities: formData.facilities,
                 staff: formData.staff,
@@ -1049,6 +1071,14 @@
         });
     }
 
+    function restoreCustomInstructions() {
+        const saved = localStorage.getItem('news_ai_custom_instructions');
+        const textarea = document.getElementById('ai-custom-instructions');
+        if (saved && textarea) {
+            textarea.value = saved;
+        }
+    }
+
     // Initialize on load
     function init() {
         loadFromLocalStorage();
@@ -1066,6 +1096,7 @@
         setupDatabaseSubmission();
         restoreFormState();
         restoreSavedValues();
+        restoreCustomInstructions();
         if (typeof initializeAutocompleteFields === 'function') {
             initializeAutocompleteFields();
         }

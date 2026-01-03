@@ -44,6 +44,7 @@ if (!$data) {
 $url = $data['url'] ?? '';
 $articleText = $data['articleText'] ?? '';
 $provider = $data['provider'] ?? 'ollama';
+$customInstructions = $data['customInstructions'] ?? '';
 
 if (empty($url) && empty($articleText)) {
     http_response_code(400);
@@ -78,31 +79,31 @@ try {
     $result = null;
     switch ($provider) {
         case 'ollama':
-            $result = processWithOllama($content, $url);
+            $result = processWithOllama($content, $url, $customInstructions);
             break;
         case 'groq':
             if (empty($apiKeys['groq'])) {
                 throw new Exception('Groq API key not configured. Add GROQ_API_KEY to your .env file');
             }
-            $result = processWithGroq($apiKeys['groq'], $content, $url);
+            $result = processWithGroq($apiKeys['groq'], $content, $url, $customInstructions);
             break;
         case 'gemini':
             if (empty($apiKeys['gemini'])) {
                 throw new Exception('Gemini API key not configured. Add GEMINI_API_KEY to your .env file');
             }
-            $result = processWithGemini($apiKeys['gemini'], $content, $url);
+            $result = processWithGemini($apiKeys['gemini'], $content, $url, $customInstructions);
             break;
         case 'huggingface':
             if (empty($apiKeys['huggingface'])) {
                 throw new Exception('Hugging Face API key not configured. Add HUGGINGFACE_API_KEY to your .env file');
             }
-            $result = processWithHuggingFace($apiKeys['huggingface'], $content, $url);
+            $result = processWithHuggingFace($apiKeys['huggingface'], $content, $url, $customInstructions);
             break;
         case 'claude':
             if (empty($apiKeys['claude'])) {
                 throw new Exception('Claude API key not configured. Add ANTHROPIC_API_KEY to your .env file');
             }
-            $result = processWithClaude($apiKeys['claude'], $content, $url);
+            $result = processWithClaude($apiKeys['claude'], $content, $url, $customInstructions);
             break;
         default:
             throw new Exception('Invalid AI provider selected');
@@ -174,40 +175,8 @@ function fetchArticleContent($url) {
 /**
  * Process article with Claude AI
  */
-function processWithClaude($apiKey, $content, $url = '') {
-    $prompt = "You are an expert at processing news articles about the Troubled Teen Industry with trauma-sensitive protocols.\n\n";
-
-    if (!empty($url)) {
-        $prompt .= "Article URL: $url\n\n";
-    }
-
-    $prompt .= "Article Content:\n$content\n\n";
-    $prompt .= "Please analyze this article and extract the following information in JSON format:\n\n";
-    $prompt .= "{\n";
-    $prompt .= "  \"title\": \"article title\",\n";
-    $prompt .= "  \"author\": \"author name\",\n";
-    $prompt .= "  \"publicationDate\": \"YYYY-MM-DD format\",\n";
-    $prompt .= "  \"publicationName\": \"publication name\",\n";
-    $prompt .= "  \"facilities\": [\"list of facilities/companies mentioned\"],\n";
-    $prompt .= "  \"staff\": [\"list of staff/owners mentioned\"],\n";
-    $prompt .= "  \"survivors\": [\"list of survivors mentioned (use initials or pseudonyms if provided)\"],\n";
-    $prompt .= "  \"summary\": \"2-3 sentence trauma-sensitive summary using factual, neutral language\",\n";
-    $prompt .= "  \"alternateTitle\": \"alternate title if original is sensationalist (or null)\",\n";
-    $prompt .= "  \"contentWarnings\": [\"relevant warnings from: Physical Restraint, Chemical Restraint, Seclusion, Humiliating Punishments, Child Sexual Abuse, Child-on-Child CSA, Graphic Descriptions of Assaults or Injuries, Peer Violence, Child Death, Suicide, Self-harm, Substance Abuse, Victim Blaming, Spiritual Abuse, Racism, Homophobia, Transphobia, Hate Crimes, Slurs, Autism-Specific Abuse, Food Restriction, Unsanitary Conditions, Medical Neglect, Eating Disorders, Conversion Therapy, Forced Labor, Involuntary Transport, Law Enforcement Abuse\"],\n";
-    $prompt .= "  \"articleType\": \"lawsuit|event|expose|arrest|closure|corporate|general\",\n";
-    $prompt .= "  \"typeSpecificData\": {\n";
-    $prompt .= "    \"for lawsuit\": {\"plaintiffs\": \"\", \"defendants\": \"\", \"legalRep\": \"\", \"dateFiled\": \"YYYY-MM-DD\", \"jurisdiction\": \"\", \"pressReleases\": \"\"},\n";
-    $prompt .= "    \"for arrest\": {\"staffMemberName\": \"\", \"arrestFacilityName\": \"\", \"misconductDates\": \"\", \"charges\": \"\", \"caseStatus\": \"\"},\n";
-    $prompt .= "    \"for closure\": {\"closureFacilityName\": \"\", \"closureLocation\": \"\", \"closureDate\": \"YYYY-MM-DD\", \"closureContext\": \"\"},\n";
-    $prompt .= "    \"for corporate\": {\"corporateFacilityNames\": \"\", \"corporateLocation\": \"\", \"keyPersonnel\": \"\", \"ownership\": \"\"}\n";
-    $prompt .= "  }\n";
-    $prompt .= "}\n\n";
-    $prompt .= "IMPORTANT:\n";
-    $prompt .= "- Use trauma-sensitive language in the summary\n";
-    $prompt .= "- Only include content warnings that are clearly present in the article\n";
-    $prompt .= "- Detect the article type based on the content\n";
-    $prompt .= "- Only fill typeSpecificData for the detected article type\n";
-    $prompt .= "- Return ONLY valid JSON, no additional text\n";
+function processWithClaude($apiKey, $content, $url = '', $customInstructions = '') {
+    $prompt = buildPrompt($content, $url, $customInstructions);
 
     $requestData = [
         'model' => 'claude-3-5-sonnet-20241022',
@@ -268,8 +237,8 @@ function processWithClaude($apiKey, $content, $url = '') {
 /**
  * Process article with Ollama (Local, Free)
  */
-function processWithOllama($content, $url = '') {
-    $prompt = buildPrompt($content, $url);
+function processWithOllama($content, $url = '', $customInstructions = '') {
+    $prompt = buildPrompt($content, $url, $customInstructions);
 
     $requestData = [
         'model' => 'llama3.2', // or 'mistral', 'gemma2' etc.
@@ -306,8 +275,8 @@ function processWithOllama($content, $url = '') {
 /**
  * Process article with Groq (Free Tier)
  */
-function processWithGroq($apiKey, $content, $url = '') {
-    $prompt = buildPrompt($content, $url);
+function processWithGroq($apiKey, $content, $url = '', $customInstructions = '') {
+    $prompt = buildPrompt($content, $url, $customInstructions);
 
     $requestData = [
         'model' => 'llama-3.3-70b-versatile', // Fast and free
@@ -351,8 +320,8 @@ function processWithGroq($apiKey, $content, $url = '') {
 /**
  * Process article with Google Gemini (Free Tier)
  */
-function processWithGemini($apiKey, $content, $url = '') {
-    $prompt = buildPrompt($content, $url);
+function processWithGemini($apiKey, $content, $url = '', $customInstructions = '') {
+    $prompt = buildPrompt($content, $url, $customInstructions);
 
     $requestData = [
         'contents' => [
@@ -400,8 +369,8 @@ function processWithGemini($apiKey, $content, $url = '') {
 /**
  * Process article with Hugging Face (Free Tier)
  */
-function processWithHuggingFace($apiKey, $content, $url = '') {
-    $prompt = buildPrompt($content, $url);
+function processWithHuggingFace($apiKey, $content, $url = '', $customInstructions = '') {
+    $prompt = buildPrompt($content, $url, $customInstructions);
 
     $requestData = [
         'model' => 'meta-llama/Llama-3.2-3B-Instruct',
@@ -451,8 +420,20 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
 /**
  * Build prompt for all AI providers
  */
-function buildPrompt($content, $url = '') {
+function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt = "You are an expert at processing news articles about the Troubled Teen Industry with trauma-sensitive protocols.\n\n";
+
+    $prompt .= "TRAUMA-SENSITIVE STYLE GUIDE (MANDATORY):\n";
+    $prompt .= "1. NEUTRALITY: Use strictly factual, journalistic language. Avoid sensationalist adjectives (e.g., 'horror', 'nightmare', 'shocking') unless directly quoting.\n";
+    $prompt .= "2. NO VICTIM BLAMING: Never imply the child's behavior justified the abuse. Focus on the facility's actions and policies.\n";
+    $prompt .= "3. SURVIVOR-CENTERED: Use 'survivor' for living individuals. Use 'victim' only for those who died or in legal contexts where it is the technical term.\n";
+    $prompt .= "4. GRAPHIC CONTENT: Do not minimize abuse, but do not gratuitously describe graphic details. Focus on the *types* of abuse (e.g., 'physical restraint', 'sexual misconduct') rather than anatomical or bloody details.\n";
+    $prompt .= "5. SUICIDE REPORTING (CRITICAL): If a suicide is mentioned, state that it was a 'death by suicide'. NEVER describe the specific method, mechanics, or location details of the act. This is a strict safety requirement.\n";
+    $prompt .= "6. SUMMARY: The summary must be a dry, factual recounting of the allegations or events. It should read like a legal brief or a database entry, not a tabloid story.\n\n";
+
+    if (!empty($customInstructions)) {
+        $prompt .= "ADDITIONAL USER INSTRUCTIONS (CRITICAL - PLEASE FOLLOW):\n$customInstructions\n\n";
+    }
 
     if (!empty($url)) {
         $prompt .= "Article URL: $url\n\n";
@@ -465,9 +446,11 @@ function buildPrompt($content, $url = '') {
     $prompt .= "  \"author\": \"author name\",\n";
     $prompt .= "  \"publicationDate\": \"YYYY-MM-DD format\",\n";
     $prompt .= "  \"publicationName\": \"publication name\",\n";
+    $prompt .= "  \"location\": \"City, State (or Country) where the main events took place\",\n";
+    $prompt .= "  \"tags\": [\"list of 3-5 keywords/themes e.g. 'Wilderness Therapy', 'Transport', 'Abuse', 'Lawsuit'\"],\n";
     $prompt .= "  \"facilities\": [\"list of facilities/companies mentioned\"],\n";
     $prompt .= "  \"staff\": [\"list of staff/owners mentioned\"],\n";
-    $prompt .= "  \"survivors\": [\"list of survivors mentioned (use initials or pseudonyms if provided)\"],\n";
+    $prompt .= "  \"survivors\": [\"list of survivors and victims mentioned (use initials or pseudonyms if provided)\"],\n";
     $prompt .= "  \"summary\": \"2-3 sentence trauma-sensitive summary using factual, neutral language\",\n";
     $prompt .= "  \"alternateTitle\": \"alternate title if original is sensationalist (or null)\",\n";
     $prompt .= "  \"contentWarnings\": [\"relevant warnings from: Physical Restraint, Chemical Restraint, Seclusion, Humiliating Punishments, Child Sexual Abuse, Child-on-Child CSA, Graphic Descriptions of Assaults or Injuries, Peer Violence, Child Death, Suicide, Self-harm, Substance Abuse, Victim Blaming, Spiritual Abuse, Racism, Homophobia, Transphobia, Hate Crimes, Slurs, Autism-Specific Abuse, Food Restriction, Unsanitary Conditions, Medical Neglect, Eating Disorders, Conversion Therapy, Forced Labor, Involuntary Transport, Law Enforcement Abuse\"],\n";

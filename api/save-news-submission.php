@@ -129,7 +129,14 @@ try {
     $publicationDate = $data['publicationDate'] ?? $data['publication_date'] ?? null;
     $articleUrl = $data['url'] ?? $data['article_url'] ?? '';
     $articleType = $data['articleType'] ?? $data['article_type'] ?? 'general';
+    $location = $data['location'] ?? $data['article_location'] ?? '';
     
+    // Handle arrays - could be string or array
+    $tags = $data['tags'] ?? [];
+    if (is_string($tags)) {
+        $tags = array_filter(array_map('trim', explode("\n", $tags)));
+    }
+
     // Handle arrays - could be string or array
     $facilities = $data['facilities'] ?? [];
     if (is_string($facilities)) {
@@ -192,6 +199,8 @@ try {
                     publication_date = ?,
                     article_url = ?,
                     article_type = ?,
+                    article_location = ?,
+                    tags = ?,
                     facilities_mentioned = ?,
                     staff_mentioned = ?,
                     survivors_mentioned = ?,
@@ -214,6 +223,8 @@ try {
             $publicationDate,
             $articleUrl,
             $articleType,
+            $location,
+            json_encode($tags, JSON_UNESCAPED_UNICODE),
             json_encode($facilities, JSON_UNESCAPED_UNICODE),
             json_encode($staff, JSON_UNESCAPED_UNICODE),
             json_encode($survivors, JSON_UNESCAPED_UNICODE),
@@ -242,10 +253,10 @@ try {
         // Create new submission
         $sql = "INSERT INTO news_submissions 
                     (article_title, alternate_title, author, publication_name, publication_date,
-                     article_url, article_type, facilities_mentioned, staff_mentioned,
+                     article_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
                      survivors_mentioned, content_warnings, summary, json_data, 
                      generated_output, status, submitted_by, submission_notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -256,6 +267,8 @@ try {
             $publicationDate,
             $articleUrl,
             $articleType,
+            $location,
+            json_encode($tags, JSON_UNESCAPED_UNICODE),
             json_encode($facilities, JSON_UNESCAPED_UNICODE),
             json_encode($staff, JSON_UNESCAPED_UNICODE),
             json_encode($survivors, JSON_UNESCAPED_UNICODE),

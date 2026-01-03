@@ -71,6 +71,12 @@ get_header();
                         <label>Or Paste Article Text (if URL doesn't work)</label>
                         <textarea id="ai-article-text" class="news-textarea" rows="4" placeholder="Paste full article text here..."></textarea>
                     </div>
+
+                    <div class="news-form-group">
+                        <label>Custom AI Instructions</label>
+                        <textarea id="ai-custom-instructions" class="news-textarea" rows="2" placeholder="e.g., 'Be extra careful with victim blaming language' or 'Focus on the financial connections'"></textarea>
+                    </div>
+
                     <button id="process-with-ai" class="news-btn news-btn-ai">🤖 Process with AI</button>
                     <div id="ai-status" class="news-ai-status"></div>
                 </div>
@@ -124,6 +130,17 @@ get_header();
                     </div>
 
                     <div class="news-form-group">
+                        <label>Location</label>
+                        <input type="text" name="location" class="news-input" data-autocomplete-category="location" placeholder="City, State (or Country)">
+                    </div>
+
+                    <div class="news-form-group">
+                        <label>Tags (Keywords)</label>
+                        <div id="tags-container" class="news-dynamic-fields"></div>
+                        <button type="button" class="news-btn news-btn-add" data-add-field="tags">+ Add Tag</button>
+                    </div>
+
+                    <div class="news-form-group">
                         <label>Facilities/Companies Mentioned</label>
                         <div id="facilities-container" class="news-dynamic-fields"></div>
                         <button type="button" class="news-btn news-btn-add" data-add-field="facilities">+ Add Facility</button>
@@ -136,9 +153,9 @@ get_header();
                             <button type="button" class="news-btn news-btn-add" data-add-field="staff">+ Add Staff</button>
                         </div>
                         <div class="news-form-group">
-                            <label>Survivors Mentioned</label>
+                            <label>Survivors & Victims Mentioned</label>
                             <div id="survivors-container" class="news-dynamic-fields"></div>
-                            <button type="button" class="news-btn news-btn-add" data-add-field="survivors">+ Add Survivor</button>
+                            <button type="button" class="news-btn news-btn-add" data-add-field="survivors">+ Add Survivor/Victim</button>
                         </div>
                     </div>
                 </div>
