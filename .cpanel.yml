@@ -1,29 +1,44 @@
 ---
 deployment:
   tasks:
-    # 1. Ensure the destination directory exists
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/
+    # Remove WordPress content snippet files that shouldn't be deployed
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/tti-program-index 2>/dev/null || true
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/data 2>/dev/null || true
 
-    # 2. Sync files using rsync (FASTER and SAFER than cp)
-    #    -a: archive mode (preserves permissions, times, recursive)
-    #    -v: verbose
-    #    --delete: remove files on destination that don't exist on source (optional, use with care)
-    #    --exclude: don't copy these files
-    - /usr/bin/rsync -av --exclude '.git' --exclude '.cpanel.yml' --exclude '.DS_Store' --exclude 'README.md' --exclude 'AGENTS.md' --exclude 'markdown_output' --exclude 'scripts' --exclude 'tests' ./ /home/kidsover/public_html/wp-content/themes/child/
+    # Remove any WordPress core files that shouldn't be in child theme
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/wp-*.php 2>/dev/null || true
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/index.php 2>/dev/null || true
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/xmlrpc.php 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-content 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-includes 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-admin 2>/dev/null || true
 
-    # 3. Post-sync Cleanup (optional, since rsync handles most)
-    #    These ensure we didn't accidentally sync core WP files if they were locally present
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/wp-config.php
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-admin
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-includes
+    # Copy specific directories
+    - /bin/cp -R api /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R inc /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R css /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R js /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R images /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R templates /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
 
-    # 4. Set Permissions
-    #    Find all PHP files and set to 644
-    - /usr/bin/find /home/kidsover/public_html/wp-content/themes/child/ -name "*.php" -type f -exec chmod 644 {} \;
-    #    Secure the environment file
+    # Copy child theme PHP files
+    - /bin/cp functions.php /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp page-*.php /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp style.css /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+
+    # Copy config and hidden files
+    - /bin/cp .htaccess /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp .gitignore /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp .env.example /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp config-loader.php /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+
+    # Set proper permissions
+    - /bin/chmod 644 /home/kidsover/public_html/wp-content/themes/child/*.php 2>/dev/null || true
     - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/.env 2>/dev/null || true
+    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/api/config.local.php 2>/dev/null || true
 
-    # 5. Ensure .env exists (copy from example if missing)
-    - if [ ! -f /home/kidsover/public_html/wp-content/themes/child/.env ]; then cp /home/kidsover/public_html/wp-content/themes/child/.env.example /home/kidsover/public_html/wp-content/themes/child/.env; fi
+    # Ensure .env exists on server (create from example if missing)
+    - test -f /home/kidsover/public_html/wp-content/themes/child/.env || /bin/cp /home/kidsover/public_html/wp-content/themes/child/.env.example /home/kidsover/public_html/wp-content/themes/child/.env
 
-    - echo "Deployment Complete via Rsync"
+    # Output deployment confirmation
+    - echo "Deployment complete to child theme directory"
