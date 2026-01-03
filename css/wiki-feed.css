@@ -1,10 +1,12 @@
 /* Wiki Feed Styles - Adapted from News Feed */
+/* Uses Kids Over Profits Color Palette (css/colors.css) */
 
 .wiki-feed-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--kop-text-primary, #000435);
 }
 
 .wiki-feed-header {
@@ -14,12 +16,12 @@
 
 .wiki-feed-header h1 {
     font-size: 2.5rem;
-    color: #1a202c;
+    color: var(--kop-text-primary, #000435);
     margin-bottom: 0.5rem;
 }
 
 .wiki-feed-header p {
-    color: #4a5568;
+    color: var(--kop-text-secondary, #000080);
     font-size: 1.1rem;
 }
 
@@ -32,19 +34,20 @@
 
 /* Wiki Card */
 .wiki-card {
-    background: #fff;
+    background: var(--kop-bg-secondary, #FFFFFF);
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
 }
 
 .wiki-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px rgba(0, 4, 53, 0.1), 0 4px 6px rgba(0, 4, 53, 0.05); /* Midnight blue shadow */
+    border-color: var(--kop-teal, #33A7B5);
 }
 
 /* Card Header & Type Badge */
@@ -58,25 +61,38 @@
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
-    background-color: #E2E8F0; 
-    color: #4A5568;
+    background-color: var(--kop-soft-pastel-yellow, #FFF5CB); 
+    color: var(--kop-text-primary, #000435);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Type specific colors can be added here if we map program types */
-.type-residential { background-color: #FED7D7; color: #C53030; }
-.type-wilderness { background-color: #C6F6D5; color: #276749; }
-.type-boarding { background-color: #FEEBC8; color: #9C4221; }
-.type-behavioral { background-color: #E9D8FD; color: #6B46C1; }
+/* Type specific colors - ensure high contrast text (Midnight Blue) */
+.type-residential { 
+    background-color: var(--kop-powder-blue, #AEE0ED); 
+    color: var(--kop-text-primary, #000435); 
+}
+.type-wilderness { 
+    background-color: var(--kop-mint-green, #B6E3D4); 
+    color: var(--kop-text-primary, #000435); 
+}
+.type-boarding { 
+    background-color: var(--kop-pale-spring-yellow, #ECF385); 
+    color: var(--kop-text-primary, #000435); 
+}
+.type-behavioral { 
+    background-color: var(--kop-bubblegum-pink, #FC8ED6); 
+    color: var(--kop-text-primary, #000435); 
+}
 
 .wiki-card-title {
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.4;
-    color: #2d3748;
+    color: var(--kop-text-primary, #000435);
     margin: 0;
     margin-bottom: 0.5rem;
 }
@@ -85,7 +101,7 @@
 .wiki-card-meta {
     padding: 0 1.5rem;
     font-size: 0.875rem;
-    color: #718096;
+    color: var(--kop-text-secondary, #000080);
     margin-bottom: 1rem;
     display: flex;
     flex-wrap: wrap;
@@ -98,7 +114,8 @@
 }
 
 .meta-separator {
-    color: #cbd5e0;
+    color: var(--kop-teal, #33A7B5);
+    opacity: 0.5;
 }
 
 /* Content */
@@ -108,18 +125,37 @@
 }
 
 .wiki-summary {
-    color: #4a5568;
+    color: var(--kop-text-primary, #000435);
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
 
+/* Markdown Button */
+.toggle-markdown-btn {
+    background-color: var(--kop-button-primary, #33A7B5) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.toggle-markdown-btn:hover {
+    background-color: var(--kop-button-primary-hover, #000080) !important;
+}
+
+.markdown-content {
+    background-color: var(--kop-bg-primary, #F2EEDF) !important; /* Sand background */
+    border: 1px solid var(--kop-border-secondary, #AEE0ED) !important;
+    color: var(--kop-text-primary, #000435);
+}
+
 /* Footer/Action */
 .wiki-card-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid #edf2f7;
-    background-color: #fff;
+    border-top: 1px solid var(--kop-border-secondary, #AEE0ED);
+    background-color: rgba(174, 224, 237, 0.1); /* Very faint powder blue */
     text-align: right;
     font-size: 0.85rem;
-    color: #a0aec0;
+    color: var(--kop-text-secondary, #000080);
 }
