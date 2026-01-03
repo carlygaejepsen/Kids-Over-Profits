@@ -64,7 +64,11 @@ get_header();
                     </div>
 
                     <div class="news-form-group">
-                        <label>Paste Article Text (optional - if URL doesn't work)</label>
+                        <label>Article URL</label>
+                        <input type="url" id="ai-article-url" class="news-input" placeholder="https://example.com/article...">
+                    </div>
+                    <div class="news-form-group">
+                        <label>Or Paste Article Text (if URL doesn't work)</label>
                         <textarea id="ai-article-text" class="news-textarea" rows="4" placeholder="Paste full article text here..."></textarea>
                     </div>
                     <button id="process-with-ai" class="news-btn news-btn-ai">🤖 Process with AI</button>

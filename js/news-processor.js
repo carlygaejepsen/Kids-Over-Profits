@@ -861,7 +861,8 @@
     }
 
     async function processWithAI() {
-        const url = formData.url;
+        const aiUrlInput = document.getElementById('ai-article-url');
+        const url = aiUrlInput ? aiUrlInput.value.trim() : '';
         const pastedText = document.getElementById('ai-article-text') && document.getElementById('ai-article-text').value || '';
         const statusEl = document.getElementById('ai-status');
         const processBtn = document.getElementById('process-with-ai');
@@ -894,6 +895,8 @@
                 // Populate form with AI results
                 const data = result.data;
 
+                // Copy URL to main form field
+                if (url) formData.url = url;
                 if (data.title) formData.title = data.title;
                 if (data.author) formData.author = data.author;
                 if (data.publicationDate) formData.publicationDate = data.publicationDate;
