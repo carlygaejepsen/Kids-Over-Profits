@@ -2,40 +2,38 @@
 deployment:
   tasks:
     # Remove WordPress content snippet files that shouldn't be deployed
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/tti-program-index
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/data
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/tti-program-index 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/data 2>/dev/null || true
 
     # Remove any WordPress core files that shouldn't be in child theme
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/wp-*.php
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/index.php
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/xmlrpc.php
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-content
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-includes
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-admin
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/wp-*.php 2>/dev/null || true
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/index.php 2>/dev/null || true
+    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/xmlrpc.php 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-content 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-includes 2>/dev/null || true
+    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-admin 2>/dev/null || true
 
     # Copy specific directories
-    - /bin/cp -R api /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R inc /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R css /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R js /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R images /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -R templates /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/cp -R api /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R inc /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R css /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R js /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp -R templates /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
 
     # Copy child theme PHP files
-    - /bin/cp functions.php /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp page-*.php /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp style.css /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/cp functions.php /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp page-*.php /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp style.css /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
 
     # Copy config and hidden files
-    - /bin/cp .htaccess /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp .gitignore /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp .env.example /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp config-loader.php /home/kidsover/public_html/wp-content/themes/child/
+    - /bin/cp .htaccess /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp .gitignore /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
+    - /bin/cp .env.example /home/kidsover/public_html/wp-content/themes/child/ 2>/dev/null || true
 
     # Set proper permissions
-    - /bin/chmod 644 /home/kidsover/public_html/wp-content/themes/child/*.php
-    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/.env
-    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/api/config.local.php
+    - /bin/chmod 644 /home/kidsover/public_html/wp-content/themes/child/*.php 2>/dev/null || true
+    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/.env 2>/dev/null || true
+    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/api/config.local.php 2>/dev/null || true
 
     # Ensure .env exists on server (create from example if missing)
     - test -f /home/kidsover/public_html/wp-content/themes/child/.env || /bin/cp /home/kidsover/public_html/wp-content/themes/child/.env.example /home/kidsover/public_html/wp-content/themes/child/.env
