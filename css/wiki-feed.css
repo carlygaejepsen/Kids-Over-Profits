@@ -157,100 +157,112 @@
 
 /* Rendered Markdown Styles (Reddit-like) */
 .rendered-markdown {
-    line-height: 1.6;
-    font-size: 0.95rem;
+    line-height: 1.6 !important;
+    font-size: 0.95rem !important;
+    color: var(--kop-text-primary, #000435) !important;
 }
 
 .rendered-markdown h1, 
 .rendered-markdown h2, 
-.rendered-markdown h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    color: var(--kop-text-primary, #000435);
-    border-bottom: 1px solid var(--kop-border-secondary, #AEE0ED);
-    padding-bottom: 0.3rem;
+.rendered-markdown h3,
+.rendered-markdown h4,
+.rendered-markdown h5,
+.rendered-markdown h6 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1rem !important;
+    color: var(--kop-text-primary, #000435) !important;
+    border-bottom: 1px solid var(--kop-border-secondary, #AEE0ED) !important;
+    padding-bottom: 0.3rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
 }
 
-.rendered-markdown h1 { font-size: 1.5rem; }
-.rendered-markdown h2 { font-size: 1.3rem; }
-.rendered-markdown h3 { font-size: 1.1rem; }
+.rendered-markdown h1 { font-size: 1.5rem !important; }
+.rendered-markdown h2 { font-size: 1.3rem !important; }
+.rendered-markdown h3 { font-size: 1.1rem !important; }
 
 .rendered-markdown p {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem !important;
 }
 
 .rendered-markdown ul, 
 .rendered-markdown ol {
-    margin-bottom: 1rem;
-    padding-left: 2rem;
+    margin-bottom: 1rem !important;
+    padding-left: 2rem !important;
+    list-style-position: outside !important;
 }
 
+.rendered-markdown ul { list-style-type: disc !important; }
+.rendered-markdown ol { list-style-type: decimal !important; }
+
 .rendered-markdown li {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.25rem !important;
 }
 
 .rendered-markdown blockquote {
-    border-left: 4px solid var(--kop-teal, #33A7B5);
-    margin: 0 0 1rem 0;
-    padding: 0.5rem 1rem;
-    background-color: rgba(51, 167, 181, 0.05);
-    font-style: italic;
+    border-left: 4px solid var(--kop-teal, #33A7B5) !important;
+    margin: 0 0 1rem 0 !important;
+    padding: 0.5rem 1rem !important;
+    background-color: rgba(51, 167, 181, 0.05) !important;
+    font-style: italic !important;
+    color: var(--kop-text-secondary, #000080) !important;
 }
 
 .rendered-markdown table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background-color: var(--kop-white, #FFFFFF);
-    font-size: 0.85rem;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 1rem !important;
+    background-color: var(--kop-white, #FFFFFF) !important;
+    font-size: 0.85rem !important;
 }
 
 .rendered-markdown th, 
 .rendered-markdown td {
-    border: 1px solid var(--kop-border-secondary, #AEE0ED);
-    padding: 0.75rem;
-    text-align: left;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED) !important;
+    padding: 0.75rem !important;
+    text-align: left !important;
 }
 
 .rendered-markdown th {
-    background-color: var(--kop-powder-blue, #AEE0ED);
-    color: var(--kop-text-primary, #000435);
-    font-weight: 700;
+    background-color: var(--kop-powder-blue, #AEE0ED) !important;
+    color: var(--kop-text-primary, #000435) !important;
+    font-weight: 700 !important;
 }
 
 .rendered-markdown tr:nth-child(even) {
-    background-color: rgba(174, 224, 237, 0.1);
+    background-color: rgba(174, 224, 237, 0.1) !important;
 }
 
 .rendered-markdown a {
-    color: var(--kop-teal, #33A7B5);
-    text-decoration: underline;
+    color: var(--kop-teal, #33A7B5) !important;
+    text-decoration: underline !important;
 }
 
 .rendered-markdown a:hover {
-    color: var(--kop-navy-blue, #000080);
+    color: var(--kop-navy-blue, #000080) !important;
 }
 
 .rendered-markdown code {
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 3px !important;
+    font-family: monospace !important;
+    color: #d63384 !important; /* Standard code pink/red color */
 }
 
 .rendered-markdown pre {
-    background-color: #1a202c;
-    color: #e2e8f0;
-    padding: 1rem;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin-bottom: 1rem;
+    background-color: #1a202c !important;
+    color: #e2e8f0 !important;
+    padding: 1rem !important;
+    border-radius: 6px !important;
+    overflow-x: auto !important;
+    margin-bottom: 1rem !important;
 }
 
 .rendered-markdown pre code {
-    background-color: transparent;
-    padding: 0;
-    color: inherit;
+    background-color: transparent !important;
+    padding: 0 !important;
+    color: inherit !important;
 }
 
 /* Footer/Action */
