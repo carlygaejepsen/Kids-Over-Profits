@@ -346,6 +346,12 @@ function processWithGemini($apiKey, $content, $url = '') {
         'generationConfig' => [
             'temperature' => 0.1,
             'maxOutputTokens' => 4096
+        ],
+        'safetySettings' => [
+            ['category' => 'HARM_CATEGORY_HARASSMENT', 'threshold' => 'BLOCK_NONE'],
+            ['category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_NONE'],
+            ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_NONE'],
+            ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_NONE']
         ]
     ];
 
@@ -392,7 +398,7 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct');
+    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
