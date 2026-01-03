@@ -1,16 +1,6 @@
 ---
 deployment:
   tasks:
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/api
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/inc
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/css
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/js
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/templates
-    - /bin/cp -R api/. /home/kidsover/public_html/wp-content/themes/child/api/
-    - /bin/cp -R inc/. /home/kidsover/public_html/wp-content/themes/child/inc/
-    - /bin/cp -R css/. /home/kidsover/public_html/wp-content/themes/child/css/
-    - /bin/cp -R js/. /home/kidsover/public_html/wp-content/themes/child/js/
-    - /bin/cp -R templates/. /home/kidsover/public_html/wp-content/themes/child/templates/
-    - /bin/cp -f functions.php /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -f style.css /home/kidsover/public_html/wp-content/themes/child/
-    - /bin/cp -f page-*.php /home/kidsover/public_html/wp-content/themes/child/
+    # Repository is already in the target directory (Direct Deployment).
+    # No copy tasks needed.
+    - /bin/echo "Deployed to current directory."
