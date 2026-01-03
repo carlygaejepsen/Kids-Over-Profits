@@ -248,7 +248,7 @@ function processWithOllama($content, $url = '', $customInstructions = '') {
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:11434/api/generate');
+    curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:11434/api/generate');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
