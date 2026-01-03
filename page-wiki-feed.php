@@ -9,8 +9,8 @@
 function kop_enqueue_wiki_feed_assets() {
     wp_enqueue_style('wiki-feed-css', get_stylesheet_directory_uri() . '/css/wiki-feed.css', array(), filemtime(get_stylesheet_directory() . '/css/wiki-feed.css'));
     
-    // Add marked.js for markdown rendering
-    wp_enqueue_script('marked-js', 'https://cdn.jsdelivr.net/npm/marked/marked.min.js', array(), '15.0.0', true);
+    // Add marked.js for markdown rendering (local file)
+    wp_enqueue_script('marked-js', get_stylesheet_directory_uri() . '/js/marked.min.js', array(), '15.0.0', true);
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_feed_assets');
 
