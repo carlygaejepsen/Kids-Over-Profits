@@ -71,6 +71,7 @@ try {
                 
                 $org = $item['organization'] ?: 'Independent / Unknown';
                 $years = $item['years_active'] ?: 'Unknown';
+                $markdown = $item['generated_markdown'] ?? '';
             ?>
                 <article class="wiki-card">
                     <div class="wiki-card-header">
@@ -96,6 +97,17 @@ try {
                         <div class="wiki-summary">
                             <strong>Organization:</strong> <?php echo esc_html($org); ?>
                         </div>
+                        
+                        <?php if (!empty($markdown)): ?>
+                            <div class="wiki-markdown-section" style="margin-top: 15px;">
+                                <button type="button" class="toggle-markdown-btn" onclick="toggleMarkdown(this)" style="background: #edf2f7; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                                    View Generated Markdown
+                                </button>
+                                <div class="markdown-content" style="display: none; margin-top: 10px; background: #f7fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto;">
+                                    <pre style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em; margin: 0;"><?php echo esc_html($markdown); ?></pre>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <div class="wiki-card-footer">
@@ -106,6 +118,19 @@ try {
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+function toggleMarkdown(btn) {
+    const content = btn.nextElementSibling;
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        btn.textContent = 'Hide Markdown';
+    } else {
+        content.style.display = 'none';
+        btn.textContent = 'View Generated Markdown';
+    }
+}
+</script>
 
 <?php
 get_footer();

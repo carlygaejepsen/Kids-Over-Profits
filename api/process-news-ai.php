@@ -131,14 +131,25 @@ function fetchArticleContent($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
     $html = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
 
-    if ($httpCode !== 200 || !$html) {
+    if ($curlError) {
+        error_log("CURL Error fetching $url: $curlError");
+    }
+
+    if ($httpCode !== 200) {
+        error_log("HTTP Error fetching $url: Status Code $httpCode");
+        return '';
+    }
+
+    if (!$html) {
+        error_log("Empty response body from $url");
         return '';
     }
 
@@ -152,6 +163,10 @@ function fetchArticleContent($url) {
     $text = strip_tags($html);
     $text = preg_replace('/\s+/', ' ', $text);
     $text = trim($text);
+
+    if (empty($text)) {
+        error_log("Content empty after stripping tags for $url. HTML length: " . strlen($html));
+    }
 
     return $text;
 }
@@ -398,7 +413,7 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct');
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
