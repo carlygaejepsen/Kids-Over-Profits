@@ -69,6 +69,11 @@ try {
         }
     }
 
+    // Truncate content to ~20,000 characters to avoid token limits (approx 5k tokens)
+    if (strlen($content) > 20000) {
+        $content = substr($content, 0, 20000) . "... [truncated]";
+    }
+
     // Process with selected AI provider
     $result = null;
     switch ($provider) {
@@ -136,6 +141,12 @@ function fetchArticleContent($url) {
     if ($httpCode !== 200 || !$html) {
         return '';
     }
+
+    // Remove scripts, styles, and other non-content elements
+    $html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $html);
+    $html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $html);
+    $html = preg_replace('/<iframe\b[^>]*>(.*?)<\/iframe>/is', "", $html);
+    $html = preg_replace('/<noscript\b[^>]*>(.*?)<\/noscript>/is', "", $html);
 
     // Basic HTML to text conversion
     $text = strip_tags($html);
