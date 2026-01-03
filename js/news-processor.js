@@ -799,7 +799,11 @@
 
     async function saveValueToDatabase(fieldName, value) {
         try {
-            await fetch('/wp-content/themes/child/api/saved-values.php', {
+            const endpoint = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.savedValuesUrl) 
+                ? window.KOP_NewsProcessor_Settings.savedValuesUrl 
+                : '/wp-content/themes/child/api/saved-values.php';
+
+            await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -877,7 +881,11 @@
         processBtn.disabled = true;
 
         try {
-            const response = await fetch('/wp-content/themes/child/api/process-news-ai.php', {
+            const endpoint = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.apiUrl)
+                ? window.KOP_NewsProcessor_Settings.apiUrl
+                : '/wp-content/themes/child/api/process-news-ai.php';
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1010,7 +1018,11 @@
             };
 
             try {
-                const response = await fetch('/wp-content/themes/child/api/save-news-submission.php', {
+                const endpoint = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.submissionUrl)
+                    ? window.KOP_NewsProcessor_Settings.submissionUrl
+                    : '/wp-content/themes/child/api/save-news-submission.php';
+
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -404,16 +404,16 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     $prompt = buildPrompt($content, $url);
 
     $requestData = [
-        'inputs' => $prompt,
-        'parameters' => [
-            'max_new_tokens' => 4096,
-            'temperature' => 0.1,
-            'return_full_text' => false
-        ]
+        'model' => 'meta-llama/Llama-3.2-3B-Instruct',
+        'messages' => [
+            ['role' => 'user', 'content' => $prompt]
+        ],
+        'max_tokens' => 4096,
+        'temperature' => 0.1
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct');
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/v1/chat/completions');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -430,7 +430,7 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error'] ?? 'API request failed';
+        $errorMsg = $errorData['error']['message'] ?? ($errorData['error'] ?? 'API request failed');
         
         // If the error message is generic, append the raw response for debugging
         if ($errorMsg === 'API request failed') {
@@ -441,11 +441,11 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     }
 
     $responseData = json_decode($response, true);
-    if (!isset($responseData[0]['generated_text'])) {
+    if (!isset($responseData['choices'][0]['message']['content'])) {
         throw new Exception('Invalid response from Hugging Face');
     }
 
-    return parseAIResponse($responseData[0]['generated_text']);
+    return parseAIResponse($responseData['choices'][0]['message']['content']);
 }
 
 /**

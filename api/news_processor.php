@@ -245,6 +245,13 @@ get_header();
 </div>
 
 <script>
+// Configure API endpoints for news processor
+window.KOP_NewsProcessor_Settings = {
+    apiUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/process-news-ai.php',
+    submissionUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/save-news-submission.php',
+    savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php'
+};
+
 // Configure autocomplete API endpoint for news processor
 window.KOP_FormLoader = window.KOP_FormLoader || {};
 window.KOP_FormLoader.API_ENDPOINTS = window.KOP_FormLoader.API_ENDPOINTS || {};
