@@ -385,7 +385,7 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct');
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
