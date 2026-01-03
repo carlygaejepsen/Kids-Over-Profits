@@ -71,7 +71,36 @@ try {
                 
                 $org = $item['organization'] ?: 'Independent / Unknown';
                 $years = $item['years_active'] ?: 'Unknown';
+                
+                // Try to get markdown from column, then fallback to JSON data
                 $markdown = $item['generated_markdown'] ?? '';
+                $isOriginal = false;
+
+                if (empty($markdown) && !empty($item['json_data'])) {
+                    $decoded = json_decode($item['json_data'], true);
+                    if (is_array($decoded)) {
+                        $markdown = $decoded['generatedMarkdown'] ?? $decoded['generated_markdown'] ?? '';
+                    }
+                }
+
+                // If still empty, try Original Markdown
+                if (empty($markdown)) {
+                    $markdown = $item['original_markdown'] ?? '';
+                    if (!empty($markdown)) {
+                        $isOriginal = true;
+                    } elseif (!empty($item['json_data'])) {
+                        $decoded = json_decode($item['json_data'], true);
+                        if (is_array($decoded)) {
+                            $markdown = $decoded['originalMarkdown'] ?? $decoded['original_markdown'] ?? '';
+                            if (!empty($markdown)) $isOriginal = true;
+                        }
+                    }
+                }
+
+                $btnLabel = 'No Markdown Available';
+                if (!empty($markdown)) {
+                    $btnLabel = $isOriginal ? 'View Original Markdown' : 'View Generated Markdown';
+                }
             ?>
                 <article class="wiki-card">
                     <div class="wiki-card-header">
@@ -98,16 +127,18 @@ try {
                             <strong>Organization:</strong> <?php echo esc_html($org); ?>
                         </div>
                         
-                        <?php if (!empty($markdown)): ?>
-                            <div class="wiki-markdown-section" style="margin-top: 15px;">
-                                <button type="button" class="toggle-markdown-btn" onclick="toggleMarkdown(this)" style="background: #edf2f7; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
-                                    View Generated Markdown
-                                </button>
-                                <div class="markdown-content" style="display: none; margin-top: 10px; background: #f7fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto;">
+                        <div class="wiki-markdown-section" style="margin-top: 15px;">
+                            <button type="button" class="toggle-markdown-btn" onclick="toggleMarkdown(this)" style="background: #edf2f7; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                                <?php echo esc_html($btnLabel); ?>
+                            </button>
+                            <div class="markdown-content" style="display: none; margin-top: 10px; background: #f7fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto;">
+                                <?php if (empty($markdown)): ?>
+                                    <em style="color: #666;">No markdown content found for this entry.</em>
+                                <?php else: ?>
                                     <pre style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em; margin: 0;"><?php echo esc_html($markdown); ?></pre>
-                                </div>
+                                <?php endif; ?>
                             </div>
-                        <?php endif; ?>
+                        </div>
                     </div>
 
                     <div class="wiki-card-footer">
