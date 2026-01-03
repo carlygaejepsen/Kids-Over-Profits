@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
+
 <div class="tti-program-index-wrapper">
     <div class="facility-report-container">
 
@@ -51,11 +53,6 @@ get_header();
                     <option value="recent-inspection">Recent Inspections</option>
                 </select>
 
-                <div style="display: flex; gap: 5px;">
-                    <button id="expandAllBtn" style="padding: 10px 15px; background-color: #00004d; color: white; border: none; border-radius: 4px; cursor: pointer;">Expand All</button>
-                    <button id="collapseAllBtn" style="padding: 10px 15px; background-color: #00004d; color: white; border: none; border-radius: 4px; cursor: pointer;">Collapse All</button>
-                </div>
-
                 <button
                     id="clearSearch"
                     onclick="clearSearch()"
@@ -82,13 +79,14 @@ get_header();
 <script>
 // Configure the JSON data source
 window.facilitiesConfig = {
-    jsonDataUrl: '<?php echo esc_url_raw(rest_url('kop/v1/facilities')); ?>',
+    jsonDataUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
     jsonFileUrls: [
-        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php',
-        '<?php echo get_stylesheet_directory_uri(); ?>/js/data/facilities_master.json'
+        '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
     ]
 };
 </script>
+
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tti-program-index.js?v=<?php echo time(); ?>"></script>
 
 <?php
 get_footer();
