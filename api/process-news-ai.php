@@ -51,23 +51,13 @@ if (empty($url) && empty($articleText)) {
 }
 
 try {
-    // Load API keys from config if available
-    $apiKeys = [];
-    $configFile = __DIR__ . '/ai-config.php';
-    if (file_exists($configFile)) {
-        require_once $configFile;
-        // Support multiple API key constants
-        if (defined('ANTHROPIC_API_KEY')) $apiKeys['claude'] = ANTHROPIC_API_KEY;
-        if (defined('GROQ_API_KEY')) $apiKeys['groq'] = GROQ_API_KEY;
-        if (defined('GEMINI_API_KEY')) $apiKeys['gemini'] = GEMINI_API_KEY;
-        if (defined('HUGGINGFACE_API_KEY')) $apiKeys['huggingface'] = HUGGINGFACE_API_KEY;
-    }
-
-    // Check environment variables as fallback
-    if (empty($apiKeys['claude'])) $apiKeys['claude'] = getenv('ANTHROPIC_API_KEY');
-    if (empty($apiKeys['groq'])) $apiKeys['groq'] = getenv('GROQ_API_KEY');
-    if (empty($apiKeys['gemini'])) $apiKeys['gemini'] = getenv('GEMINI_API_KEY');
-    if (empty($apiKeys['huggingface'])) $apiKeys['huggingface'] = getenv('HUGGINGFACE_API_KEY');
+    // Load API keys from environment variables (set via .env file loaded in config.php)
+    $apiKeys = [
+        'claude' => getenv('ANTHROPIC_API_KEY'),
+        'groq' => getenv('GROQ_API_KEY'),
+        'gemini' => getenv('GEMINI_API_KEY'),
+        'huggingface' => getenv('HUGGINGFACE_API_KEY')
+    ];
 
     // Fetch article content if URL is provided
     $content = $articleText;
@@ -86,25 +76,25 @@ try {
             break;
         case 'groq':
             if (empty($apiKeys['groq'])) {
-                throw new Exception('Groq API key not configured. Add GROQ_API_KEY to api/ai-config.php');
+                throw new Exception('Groq API key not configured. Add GROQ_API_KEY to your .env file');
             }
             $result = processWithGroq($apiKeys['groq'], $content, $url);
             break;
         case 'gemini':
             if (empty($apiKeys['gemini'])) {
-                throw new Exception('Gemini API key not configured. Add GEMINI_API_KEY to api/ai-config.php');
+                throw new Exception('Gemini API key not configured. Add GEMINI_API_KEY to your .env file');
             }
             $result = processWithGemini($apiKeys['gemini'], $content, $url);
             break;
         case 'huggingface':
             if (empty($apiKeys['huggingface'])) {
-                throw new Exception('Hugging Face API key not configured. Add HUGGINGFACE_API_KEY to api/ai-config.php');
+                throw new Exception('Hugging Face API key not configured. Add HUGGINGFACE_API_KEY to your .env file');
             }
             $result = processWithHuggingFace($apiKeys['huggingface'], $content, $url);
             break;
         case 'claude':
             if (empty($apiKeys['claude'])) {
-                throw new Exception('Claude API key not configured. Add ANTHROPIC_API_KEY to api/ai-config.php');
+                throw new Exception('Claude API key not configured. Add ANTHROPIC_API_KEY to your .env file');
             }
             $result = processWithClaude($apiKeys['claude'], $content, $url);
             break;

@@ -32,7 +32,8 @@
       "Bash(git merge:*)",
       "Bash(git ls-tree:*)",
       "WebFetch(domain:github.com)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []
