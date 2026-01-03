@@ -4,8 +4,8 @@
  */
 
 // Global configuration
-const facilitiesConfig = window.facilitiesConfig || {};
-const ttiIndexConfig = window.ttiIndexConfig || { isAdmin: false };
+const localFacilitiesConfig = window.facilitiesConfig || {};
+// const ttiIndexConfig = window.ttiIndexConfig || { isAdmin: false }; // Removed to avoid redeclaration error
 
 // --- Utility Functions ---
 
