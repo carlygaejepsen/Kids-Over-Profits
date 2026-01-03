@@ -5,11 +5,9 @@
 require_once 'config.php';
 
 // Create a PDO database connection
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Could not connect to the database: " . $e->getMessage());
+// Connection is already established in config.php as $pdo
+if (!$pdo) {
+    die("Could not connect to the database (pdo is null).");
 }
 
 // Fetch pending suggestions
