@@ -148,6 +148,109 @@
     background-color: var(--kop-bg-primary, #F2EEDF) !important; /* Sand background */
     border: 1px solid var(--kop-border-secondary, #AEE0ED) !important;
     color: var(--kop-text-primary, #000435);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Rendered Markdown Styles (Reddit-like) */
+.rendered-markdown {
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.rendered-markdown h1, 
+.rendered-markdown h2, 
+.rendered-markdown h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--kop-text-primary, #000435);
+    border-bottom: 1px solid var(--kop-border-secondary, #AEE0ED);
+    padding-bottom: 0.3rem;
+}
+
+.rendered-markdown h1 { font-size: 1.5rem; }
+.rendered-markdown h2 { font-size: 1.3rem; }
+.rendered-markdown h3 { font-size: 1.1rem; }
+
+.rendered-markdown p {
+    margin-bottom: 1rem;
+}
+
+.rendered-markdown ul, 
+.rendered-markdown ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.rendered-markdown li {
+    margin-bottom: 0.25rem;
+}
+
+.rendered-markdown blockquote {
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    margin: 0 0 1rem 0;
+    padding: 0.5rem 1rem;
+    background-color: rgba(51, 167, 181, 0.05);
+    font-style: italic;
+}
+
+.rendered-markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: var(--kop-white, #FFFFFF);
+    font-size: 0.85rem;
+}
+
+.rendered-markdown th, 
+.rendered-markdown td {
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.rendered-markdown th {
+    background-color: var(--kop-powder-blue, #AEE0ED);
+    color: var(--kop-text-primary, #000435);
+    font-weight: 700;
+}
+
+.rendered-markdown tr:nth-child(even) {
+    background-color: rgba(174, 224, 237, 0.1);
+}
+
+.rendered-markdown a {
+    color: var(--kop-teal, #33A7B5);
+    text-decoration: underline;
+}
+
+.rendered-markdown a:hover {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.rendered-markdown code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.rendered-markdown pre {
+    background-color: #1a202c;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.rendered-markdown pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
 }
 
 /* Footer/Action */

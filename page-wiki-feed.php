@@ -5,38 +5,16 @@
  * Displays a feed of approved wiki/program submissions.
  */
 
-// Enqueue styles
-function kop_enqueue_wiki_feed_styles() {
+// Enqueue styles and scripts
+function kop_enqueue_wiki_feed_assets() {
     wp_enqueue_style('wiki-feed-css', get_stylesheet_directory_uri() . '/css/wiki-feed.css', array(), filemtime(get_stylesheet_directory() . '/css/wiki-feed.css'));
+    
+    // Add marked.js for markdown rendering
+    wp_enqueue_script('marked-js', 'https://cdn.jsdelivr.net/npm/marked/marked.min.js', array(), '15.0.0', true);
 }
-add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_feed_styles');
+add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_feed_assets');
 
 get_header();
-
-// Database connection
-// Use the same config/PDO logic as the API for consistency
-require_once get_stylesheet_directory() . '/api/config.php';
-
-// Fetch approved/published submissions
-// "published" is the final status for wiki entries used in get-master-data.php
-$status_filter = ['published', 'approved'];
-$placeholders = implode(',', array_fill(0, count($status_filter), '?'));
-
-try {
-    $sql = "SELECT * FROM wiki_submissions 
-            WHERE status IN ($placeholders) 
-            ORDER BY created_at DESC 
-            LIMIT 50";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($status_filter);
-    $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-} catch (PDOException $e) {
-    $error_message = "Error fetching wiki entries: " . $e->getMessage();
-    $submissions = [];
-}
-
 ?>
 
 <div class="wiki-feed-container">
@@ -45,7 +23,29 @@ try {
         <p>Recently approved contributions to the TTI Program Database.</p>
     </div>
 
-    <?php if (isset($error_message)): ?>
+    <?php
+    // Database connection
+    require_once get_stylesheet_directory() . '/api/config.php';
+
+    $status_filter = ['published', 'approved'];
+    $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
+
+    try {
+        $sql = "SELECT * FROM wiki_submissions 
+                WHERE status IN ($placeholders) 
+                ORDER BY created_at DESC 
+                LIMIT 50";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($status_filter);
+        $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        $error_message = "Error fetching wiki entries: " . $e->getMessage();
+        $submissions = [];
+    }
+
+    if (isset($error_message)): ?>
         <div style="color: red; text-align: center; padding: 20px;">
             <?php echo esc_html($error_message); ?>
         </div>
@@ -72,7 +72,7 @@ try {
                 $org = $item['organization'] ?: 'Independent / Unknown';
                 $years = $item['years_active'] ?: 'Unknown';
                 
-                // Try to get markdown from column, then fallback to JSON data
+                // Markdown logic
                 $markdown = $item['generated_markdown'] ?? '';
                 $isOriginal = false;
 
@@ -83,7 +83,6 @@ try {
                     }
                 }
 
-                // If still empty, try Original Markdown
                 if (empty($markdown)) {
                     $markdown = $item['original_markdown'] ?? '';
                     if (!empty($markdown)) {
@@ -97,10 +96,8 @@ try {
                     }
                 }
 
-                $btnLabel = 'No Markdown Available';
-                if (!empty($markdown)) {
-                    $btnLabel = $isOriginal ? 'View Original Markdown' : 'View Generated Markdown';
-                }
+                $btnLabel = $isOriginal ? 'View Original Wiki Entry' : 'View Full Wiki Entry';
+                if (empty($markdown)) $btnLabel = 'No Entry Content Available';
             ?>
                 <article class="wiki-card">
                     <div class="wiki-card-header">
@@ -128,15 +125,18 @@ try {
                         </div>
                         
                         <div class="wiki-markdown-section" style="margin-top: 15px;">
-                            <button type="button" class="toggle-markdown-btn" onclick="toggleMarkdown(this)" style="background: #edf2f7; border: 1px solid #cbd5e0; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                            <button type="button" class="toggle-markdown-btn" 
+                                    data-id="<?php echo $item['id']; ?>"
+                                    data-label="<?php echo esc_attr($btnLabel); ?>"
+                                    onclick="toggleMarkdown(this)">
                                 <?php echo esc_html($btnLabel); ?>
                             </button>
-                            <div class="markdown-content" style="display: none; margin-top: 10px; background: #f7fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto;">
-                                <?php if (empty($markdown)): ?>
-                                    <em style="color: #666;">No markdown content found for this entry.</em>
-                                <?php else: ?>
-                                    <pre style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em; margin: 0;"><?php echo esc_html($markdown); ?></pre>
-                                <?php endif; ?>
+                            
+                            <div class="markdown-content" style="display: none;">
+                                <!-- Hidden raw content -->
+                                <script type="text/template" class="raw-markdown"><?php echo $markdown; ?></script>
+                                <!-- Rendered container -->
+                                <div class="rendered-markdown"></div>
                             </div>
                         </div>
                     </div>
@@ -152,13 +152,37 @@ try {
 
 <script>
 function toggleMarkdown(btn) {
-    const content = btn.nextElementSibling;
+    const section = btn.closest('.wiki-markdown-section');
+    const content = section.querySelector('.markdown-content');
+    const rendered = section.querySelector('.rendered-markdown');
+    const raw = section.querySelector('.raw-markdown').innerHTML;
+    const originalLabel = btn.getAttribute('data-label');
+
     if (content.style.display === 'none') {
+        // Render if not already done
+        if (!rendered.innerHTML && raw.trim()) {
+            if (typeof marked !== 'undefined') {
+                // Configure marked for safer rendering
+                marked.setOptions({
+                    headerIds: false,
+                    mangle: false,
+                    gfm: true,
+                    breaks: true
+                });
+                rendered.innerHTML = marked.parse(raw);
+            } else {
+                rendered.innerHTML = '<pre style="white-space:pre-wrap">' + raw + '</pre>';
+                console.warn('marked.js not loaded, showing raw text');
+            }
+        }
+        
         content.style.display = 'block';
-        btn.textContent = 'Hide Markdown';
+        btn.textContent = 'Hide Wiki Entry';
+        btn.classList.add('active');
     } else {
         content.style.display = 'none';
-        btn.textContent = 'View Generated Markdown';
+        btn.textContent = originalLabel;
+        btn.classList.remove('active');
     }
 }
 </script>

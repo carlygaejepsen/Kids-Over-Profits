@@ -431,6 +431,12 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
         $errorMsg = $errorData['error'] ?? 'API request failed';
+        
+        // If the error message is generic, append the raw response for debugging
+        if ($errorMsg === 'API request failed') {
+            $errorMsg .= " Raw response: " . substr($response, 0, 200);
+        }
+        
         throw new Exception("Hugging Face API error: $errorMsg");
     }
 
