@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Load config.php which handles .env and wp-config loading
+define('SKIP_DB_CONNECTION', true);
 require_once __DIR__ . '/config.php';
 
 // Get JSON input
@@ -54,7 +55,7 @@ try {
     // Load API keys from environment variables (set via .env file loaded in config.php)
     $apiKeys = [
         'claude' => getenv('ANTHROPIC_API_KEY'),
-        'groq' => getenv('GROQ_API_KEY'),
+        'groq' => getenv('GROQ_API_KEY') ?: getenv('GROK_API_KEY'),
         'gemini' => getenv('GEMINI_API_KEY'),
         'huggingface' => getenv('HUGGINGFACE_API_KEY')
     ];
@@ -123,6 +124,7 @@ function fetchArticleContent($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
@@ -195,6 +197,7 @@ function processWithClaude($apiKey, $content, $url = '') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://api.anthropic.com/v1/messages');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -252,6 +255,7 @@ function processWithOllama($content, $url = '') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'http://localhost:11434/api/generate');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -291,6 +295,7 @@ function processWithGroq($apiKey, $content, $url = '') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -336,6 +341,7 @@ function processWithGemini($apiKey, $content, $url = '') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -377,6 +383,7 @@ function processWithHuggingFace($apiKey, $content, $url = '') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
