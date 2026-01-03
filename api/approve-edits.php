@@ -99,17 +99,25 @@ function render_diff($diff) {
 </head>
 <body>
     <div class="container">
-        <h1>Approve Submissions</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Approve Submissions</h1>
+            <button onclick="approveAll('all')" style="background: #28a745; color: white; border: none; padding: 10px 20px; font-size: 1.1em; cursor: pointer; border-radius: 4px;">✅ Approve Everything</button>
+        </div>
 
         <!-- Section 1: Data Form Suggestions (Suggested Edits) -->
         <div class="section">
-            <h2>Data Form Updates <span class="badge badge-data"><?php echo count($suggestions); ?></span></h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Data Form Updates <span class="badge badge-data"><?php echo count($suggestions); ?></span></h2>
+                <?php if (!empty($suggestions)): ?>
+                    <button onclick="approveAll('suggestion')" style="cursor: pointer;">Approve All Data Updates</button>
+                <?php endif; ?>
+            </div>
             <div id="suggestions-container">
                 <?php if (empty($suggestions)): ?>
                     <p>No pending data suggestions.</p>
                 <?php else: ?>
                     <?php foreach ($suggestions as $suggestion): ?>
-                        <div class="suggestion" id="suggestion-<?php echo $suggestion['id']; ?>">
+                        <div class="suggestion item-suggestion" id="suggestion-<?php echo $suggestion['id']; ?>" data-id="<?php echo $suggestion['id']; ?>">
                             <?php
                             $new_data = json_decode($suggestion['edited_json_data'], true);
                             $master_id = $suggestion['master_id'];
@@ -171,13 +179,18 @@ function render_diff($diff) {
 
         <!-- Section 2: News Submissions -->
         <div class="section">
-            <h2>News Submissions <span class="badge badge-news"><?php echo count($news_submissions); ?></span></h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>News Submissions <span class="badge badge-news"><?php echo count($news_submissions); ?></span></h2>
+                <?php if (!empty($news_submissions)): ?>
+                    <button onclick="approveAll('news')" style="cursor: pointer;">Approve All News</button>
+                <?php endif; ?>
+            </div>
             <div id="news-container">
                 <?php if (empty($news_submissions)): ?>
                     <p>No pending news submissions.</p>
                 <?php else: ?>
                     <?php foreach ($news_submissions as $news): ?>
-                        <div class="suggestion" id="news-<?php echo $news['id']; ?>">
+                        <div class="suggestion item-news" id="news-<?php echo $news['id']; ?>" data-id="<?php echo $news['id']; ?>">
                             <h3><?php echo htmlspecialchars($news['article_title']); ?></h3>
                             <div class="meta-row">
                                 <span><strong>Publication:</strong> <?php echo htmlspecialchars($news['publication_name']); ?></span>
@@ -203,13 +216,18 @@ function render_diff($diff) {
 
         <!-- Section 3: Wiki Submissions -->
         <div class="section">
-            <h2>Wiki Submissions <span class="badge badge-wiki"><?php echo count($wiki_submissions); ?></span></h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Wiki Submissions <span class="badge badge-wiki"><?php echo count($wiki_submissions); ?></span></h2>
+                <?php if (!empty($wiki_submissions)): ?>
+                    <button onclick="approveAll('wiki')" style="cursor: pointer;">Approve All Wiki</button>
+                <?php endif; ?>
+            </div>
             <div id="wiki-container">
                 <?php if (empty($wiki_submissions)): ?>
                     <p>No pending wiki submissions.</p>
                 <?php else: ?>
                     <?php foreach ($wiki_submissions as $wiki): ?>
-                        <div class="suggestion" id="wiki-<?php echo $wiki['id']; ?>">
+                        <div class="suggestion item-wiki" id="wiki-<?php echo $wiki['id']; ?>" data-id="<?php echo $wiki['id']; ?>">
                             <h3><?php echo htmlspecialchars($wiki['program_name']); ?></h3>
                             <div class="meta-row">
                                 <span><strong>Location:</strong> <?php echo htmlspecialchars($wiki['city_state']); ?></span>
@@ -233,6 +251,78 @@ function render_diff($diff) {
     </div>
 
     <script>
+    async function approveAll(type) {
+        if (!confirm(`Are you sure you want to approve ALL ${type === 'all' ? 'pending submissions' : type + ' items'}?`)) {
+            return;
+        }
+
+        if (type === 'all') {
+            await approveAll('suggestion');
+            await approveAll('news');
+            await approveAll('wiki');
+            alert('All submissions processed.');
+            return;
+        }
+
+        const items = document.querySelectorAll(`.item-${type}`);
+        if (items.length === 0) return;
+
+        const ids = Array.from(items).map(item => item.getAttribute('data-id'));
+
+        if (type === 'news' || type === 'wiki') {
+            // Batch process for News and Wiki
+            fetch('manage-submissions.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'approve',
+                    type: type,
+                    ids: ids
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    items.forEach(item => item.remove());
+                    // Update header count if we wanted to be fancy, but removal is enough visual feedback
+                } else {
+                    console.error('Batch approval failed:', data);
+                    alert(`Failed to approve all ${type} items: ` + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during batch approval.');
+            });
+
+        } else if (type === 'suggestion') {
+            // Sequential process for Suggestions (due to complex merge logic in process-edit.php)
+            let successCount = 0;
+            for (const item of items) {
+                const id = item.getAttribute('data-id');
+                try {
+                    const response = await fetch('process-edit.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id, action: 'approve' })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        item.remove();
+                        successCount++;
+                    } else {
+                        console.error(`Failed to approve suggestion ${id}:`, data.error);
+                    }
+                } catch (error) {
+                    console.error(`Error approving suggestion ${id}:`, error);
+                }
+            }
+            if (successCount < items.length) {
+                alert(`Approved ${successCount} out of ${items.length} suggestions. Check console for errors.`);
+            }
+        }
+    }
+
     function processEdit(id, action, type) {
         if (!confirm(`Are you sure you want to ${action} this ${type}?`)) {
             return;

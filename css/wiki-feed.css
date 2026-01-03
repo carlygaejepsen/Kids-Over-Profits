@@ -1,0 +1,125 @@
+/* Wiki Feed Styles - Adapted from News Feed */
+
+.wiki-feed-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.wiki-feed-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.wiki-feed-header h1 {
+    font-size: 2.5rem;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+}
+
+.wiki-feed-header p {
+    color: #4a5568;
+    font-size: 1.1rem;
+}
+
+/* Grid Layout */
+.wiki-feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Wiki Card */
+.wiki-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.wiki-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Card Header & Type Badge */
+.wiki-card-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+    position: relative;
+}
+
+.wiki-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    background-color: #E2E8F0; 
+    color: #4A5568;
+}
+
+/* Type specific colors can be added here if we map program types */
+.type-residential { background-color: #FED7D7; color: #C53030; }
+.type-wilderness { background-color: #C6F6D5; color: #276749; }
+.type-boarding { background-color: #FEEBC8; color: #9C4221; }
+.type-behavioral { background-color: #E9D8FD; color: #6B46C1; }
+
+.wiki-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #2d3748;
+    margin: 0;
+    margin-bottom: 0.5rem;
+}
+
+/* Metadata */
+.wiki-card-meta {
+    padding: 0 1.5rem;
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+}
+
+.meta-separator {
+    color: #cbd5e0;
+}
+
+/* Content */
+.wiki-card-body {
+    padding: 0 1.5rem 1.5rem;
+    flex-grow: 1;
+}
+
+.wiki-summary {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Footer/Action */
+.wiki-card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #edf2f7;
+    background-color: #fff;
+    text-align: right;
+    font-size: 0.85rem;
+    color: #a0aec0;
+}
