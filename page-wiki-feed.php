@@ -180,7 +180,11 @@ function toggleMarkdown(btn) {
                     // Decode HTML entities in raw content before parsing (php echo escapes them)
                     const txt = document.createElement('textarea');
                     txt.innerHTML = raw;
-                    const decodedRaw = txt.value;
+                    let decodedRaw = txt.value;
+
+                    // Fix: Ensure headers have spaces after # (Reddit/legacy might be lenient, marked is strict)
+                    // Converts "#Header" to "# Header"
+                    decodedRaw = decodedRaw.replace(/(^|\n)(#{1,6})([^\s#])/g, '$1$2 $3');
 
                     rendered.innerHTML = parseFn(decodedRaw);
                 } else {
