@@ -456,7 +456,7 @@ function generateWikiMarkdown(formData) {
     }
 
     // --- Assemble Final Output ---
-    const headerLine = `#**${escapeMarkdown(programName)}** (${formData.yearsActive || '[Years Active]'}) ${formData.cityState || '[City, ST]'}`;
+    const headerLine = `# **${escapeMarkdown(programName)}** (${formData.yearsActive || '[Years Active]'}) ${formData.cityState || '[City, ST]'}`;
 
     const output = `
 ${headerLine}
@@ -464,7 +464,7 @@ ${headerLine}
 
 ***
 
-##**History and Background Information**
+## **History and Background Information**
 
 ${historySection}
 

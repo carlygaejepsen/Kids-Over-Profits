@@ -56,12 +56,60 @@ try {
             <p>No news articles found at this time.</p>
         </div>
     <?php else: ?>
+        <?php
+        // Collect all unique tags for the filter
+        $allTags = [];
+        $allTypes = [];
+        foreach ($submissions as $item) {
+            $itemTags = json_decode($item['tags'] ?? '[]', true) ?: [];
+            foreach ($itemTags as $tag) {
+                $allTags[$tag] = ($allTags[$tag] ?? 0) + 1;
+            }
+            if (!empty($item['article_type'])) {
+                $allTypes[$item['article_type']] = ($allTypes[$item['article_type']] ?? 0) + 1;
+            }
+        }
+        arsort($allTags); // Sort by frequency
+        ksort($allTypes);
+        ?>
+
+        <div class="news-filters">
+            <div class="filter-group">
+                <label class="filter-label">Filter by Type:</label>
+                <div class="filter-buttons" id="type-filters">
+                    <button class="filter-btn active" data-filter-type="all">All</button>
+                    <?php foreach ($allTypes as $type => $count): ?>
+                        <button class="filter-btn" data-filter-type="<?php echo esc_attr($type); ?>">
+                            <?php echo esc_html(ucfirst($type)); ?> (<?php echo $count; ?>)
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <?php if (!empty($allTags)): ?>
+            <div class="filter-group">
+                <label class="filter-label">Filter by Tag:</label>
+                <div class="filter-buttons" id="tag-filters">
+                    <button class="filter-btn active" data-filter-tag="all">All</button>
+                    <?php foreach (array_slice($allTags, 0, 15) as $tag => $count): ?>
+                        <button class="filter-btn" data-filter-tag="<?php echo esc_attr($tag); ?>">
+                            <?php echo esc_html($tag); ?> (<?php echo $count; ?>)
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <div class="filter-status" id="filter-status"></div>
+        </div>
+
         <div class="news-feed-grid">
-            <?php foreach ($submissions as $item): 
+            <?php foreach ($submissions as $item):
                 // Decode JSON fields
                 $facilities = json_decode($item['facilities_mentioned'], true) ?: [];
                 $staff = json_decode($item['staff_mentioned'], true) ?: [];
                 $warnings = json_decode($item['content_warnings'], true) ?: [];
+                $tags = json_decode($item['tags'] ?? '[]', true) ?: [];
                 
                 // Format Date
                 $pubDate = $item['publication_date'] ? date('M j, Y', strtotime($item['publication_date'])) : 'Unknown Date';
@@ -76,7 +124,7 @@ try {
                 // So yes, alternate_title is likely the preferred one for display if it exists.
                 $displayTitle = !empty($item['alternate_title']) ? $item['alternate_title'] : $item['article_title'];
             ?>
-                <article class="news-card">
+                <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode(',', $tags)); ?>">
                     <div class="news-card-header">
                         <span class="news-type-badge type-<?php echo esc_attr($item['article_type']); ?>">
                             <?php echo esc_html(ucfirst($item['article_type'])); ?>
@@ -110,11 +158,20 @@ try {
                         </div>
                     <?php endif; ?>
 
-                    <div class="news-card-body">
+                    <?php if (!empty($tags)): ?>
+                        <div class="news-tags">
+                            <?php foreach ($tags as $tag): ?>
+                                <span class="news-tag" data-tag="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <details class="news-card-body">
+                        <summary class="news-summary-toggle">Show Summary</summary>
                         <div class="news-summary">
                             <?php echo nl2br(esc_html($item['summary'])); ?>
                         </div>
-                    </div>
+                    </details>
 
                     <?php if (!empty($facilities) || !empty($staff)): ?>
                         <div class="news-entities">
@@ -147,6 +204,86 @@ try {
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.news-card');
+    const typeFilters = document.getElementById('type-filters');
+    const tagFilters = document.getElementById('tag-filters');
+    const filterStatus = document.getElementById('filter-status');
+
+    let activeType = 'all';
+    let activeTag = 'all';
+
+    function filterCards() {
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardType = card.dataset.type || '';
+            const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+
+            const typeMatch = activeType === 'all' || cardType === activeType;
+            const tagMatch = activeTag === 'all' || cardTags.includes(activeTag);
+
+            if (typeMatch && tagMatch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Update status
+        if (activeType === 'all' && activeTag === 'all') {
+            filterStatus.textContent = '';
+        } else {
+            filterStatus.textContent = `Showing ${visibleCount} of ${cards.length} articles`;
+        }
+    }
+
+    // Type filter clicks
+    if (typeFilters) {
+        typeFilters.addEventListener('click', function(e) {
+            if (e.target.classList.contains('filter-btn')) {
+                typeFilters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                activeType = e.target.dataset.filterType;
+                filterCards();
+            }
+        });
+    }
+
+    // Tag filter clicks
+    if (tagFilters) {
+        tagFilters.addEventListener('click', function(e) {
+            if (e.target.classList.contains('filter-btn')) {
+                tagFilters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                activeTag = e.target.dataset.filterTag;
+                filterCards();
+            }
+        });
+    }
+
+    // Clickable tags on cards
+    document.querySelectorAll('.news-tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+            const tagValue = this.dataset.tag;
+            if (tagFilters) {
+                const tagBtn = tagFilters.querySelector(`[data-filter-tag="${tagValue}"]`);
+                if (tagBtn) {
+                    tagFilters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    tagBtn.classList.add('active');
+                    activeTag = tagValue;
+                    filterCards();
+                    // Scroll to top of filters
+                    document.querySelector('.news-filters').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+});
+</script>
 
 <?php
 get_footer();
