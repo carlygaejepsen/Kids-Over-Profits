@@ -1454,3 +1454,78 @@
 .wiki-editor-page.organization-mode .organization-only-field {
     display: block;
 }
+
+/* Navigation Buttons */
+.nav-entry-btn {
+    background-color: #33A7B5;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-entry-btn:hover:not(:disabled) {
+    background-color: #2A8A97;
+    transform: translateY(-1px);
+}
+
+.nav-entry-btn:disabled {
+    background-color: #AEE0ED;
+    color: #FFF;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.toggle-browser-btn.loaded-flash {
+    background-color: #B2E102 !important; /* Chartreuse */
+    color: #000435 !important;
+    transition: background-color 0.5s ease;
+}
+
+
+/* New Tab Buttons */
+.new-tab-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #E8F5F7;
+    color: #33A7B5;
+    border: 1px solid #33A7B5;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+}
+
+.new-tab-btn:hover {
+    background-color: #33A7B5;
+    color: #FFFFFF;
+}
+
+.new-tab-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #E8F5F7;
+    color: #33A7B5;
+    border: 1px solid #33A7B5;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.new-tab-icon-btn:hover {
+    background-color: #33A7B5;
+    color: #FFFFFF;
+}
+

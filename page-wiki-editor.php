@@ -36,7 +36,11 @@ get_header();
 
         <!-- Entry Browser Section -->
         <div class="entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
-            <button type="button" id="toggleBrowserBtn" class="toggle-browser-btn">📂 Browse Saved Entries</button>
+            <div class="browser-main-controls" style="display:flex; gap:10px;">
+                <button type="button" id="prevEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
+                <button type="button" id="toggleBrowserBtn" class="toggle-browser-btn" style="flex:1;">📂 Browse Saved Entries</button>
+                <button type="button" id="nextEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
+            </div>
             <div id="browserPanel" class="browser-panel" style="display: none;">
                 <div class="browser-header">
                     <button type="button" id="backBtn" class="back-btn" style="display: none;">← Back</button>

@@ -601,11 +601,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
         if (browserPanel) browserPanel.style.display = 'none';
-        if (toggleBrowserBtn) toggleBrowserBtn.textContent = '📂 Browse Saved Entries';
-        if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
-        if (name) {
-            alert(`Loaded entry: ${name}`);
+        
+        if (toggleBrowserBtn) {
+            const originalText = '📂 Browse Saved Entries';
+            toggleBrowserBtn.textContent = `✓ Loaded: ${name || 'Entry'}`;
+            toggleBrowserBtn.classList.add('loaded-flash');
+            setTimeout(() => {
+                toggleBrowserBtn.textContent = originalText;
+                toggleBrowserBtn.classList.remove('loaded-flash');
+            }, 3000);
         }
+        
+        if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
     }
 
     // --- Helper: Get Placeholder Text ---
@@ -1979,6 +1986,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ENTRY BROWSER FUNCTIONALITY ---
     const toggleBrowserBtn = document.getElementById('toggleBrowserBtn');
+    const prevEntryBtn = document.getElementById('prevEntryBtn');
+    const nextEntryBtn = document.getElementById('nextEntryBtn');
+    
+    let currentNavList = [];
+    let currentNavIndex = -1;
+
+    const updateNavButtons = () => {
+        if (prevEntryBtn) {
+            prevEntryBtn.disabled = currentNavIndex <= 0 || currentNavList.length === 0;
+            prevEntryBtn.title = prevEntryBtn.disabled ? 'No previous entry in list' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
+        }
+        if (nextEntryBtn) {
+            nextEntryBtn.disabled = currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1 || currentNavList.length === 0;
+            nextEntryBtn.title = nextEntryBtn.disabled ? 'No next entry in list' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
+        }
+    };
+
+    const getEntryName = (entry) => {
+        if (!entry) return '';
+        return entry.program_name || entry.name || entry.normalizedName || 'Entry';
+    };
+
+    const navigateEntry = (direction) => {
+        const newIndex = currentNavIndex + direction;
+        if (newIndex >= 0 && newIndex < currentNavList.length) {
+            currentNavIndex = newIndex;
+            const entry = currentNavList[currentNavIndex];
+            updateNavButtons();
+            
+            // Determine type of entry (DB or Index)
+            if (entry.id && !entry.url && !entry.normalizedName) {
+                // It's a DB entry
+                loadEntryIntoForm(entry.id);
+            } else {
+                // It's an Index entry
+                if (selectedIndexState === 'CORPORATE') {
+                     // For corporate view, we might be navigating organizations
+                     // But loadOrganizationIndexEntry expects the button to be passed
+                     loadOrganizationIndexEntry(entry, null);
+                } else if (selectedIndexState === 'ORG_PROGRAMS') {
+                    // We are in organization programs list
+                    if (entry.source === 'database' && entry.id) {
+                         loadEntryIntoForm(entry.id);
+                    } else {
+                         // Markdown link
+                         // We can't easily "load" a markdown link if it's not in DB without parsing the page
+                         // But wait, loadOrgProgramsFromDatabase creates these entries.
+                         // If source is markdown, we probably need to check if it exists in DB first?
+                         // renderIndexEntries calls loadEntryFromReddit for these.
+                         loadEntryFromReddit(entry, null);
+                    }
+                } else {
+                    // Standard state index
+                    loadEntryFromReddit(entry, null);
+                }
+            }
+        }
+    };
+
+    if (prevEntryBtn) {
+        prevEntryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateEntry(-1);
+        });
+    }
+
+    if (nextEntryBtn) {
+        nextEntryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateEntry(1);
+        });
+    }
+
     const browserPanel = document.getElementById('browserPanel');
     const entriesList = document.getElementById('entriesList');
     const entrySearch = document.getElementById('entrySearch');
@@ -2249,7 +2329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         indexEntriesList.innerHTML = '';
-        matches.forEach(entry => {
+        matches.forEach((entry, index) => {
             const row = document.createElement('div');
             row.className = 'index-entry-row';
 
@@ -2306,6 +2386,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 editIndexBtn.className = 'edit-index-btn';
                 editIndexBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    currentNavList = matches;
+                    currentNavIndex = index;
+                    updateNavButtons();
                     loadOrganizationIndexEntry(entry, editIndexBtn);
                 });
                 actions.appendChild(editIndexBtn);
@@ -2316,9 +2399,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 editButton.className = 'edit-entry-btn';
                 editButton.addEventListener('click', (e) => {
                     e.preventDefault();
+                    currentNavList = matches;
+                    currentNavIndex = index;
+                    updateNavButtons();
                     loadEntryFromReddit(entry, editButton);
                 });
                 actions.appendChild(editButton);
+                
+                // Add New Tab Link
+                const newTabLink = document.createElement('a');
+                newTabLink.href = `?program_name=${encodeURIComponent(entryName)}`;
+                newTabLink.target = '_blank';
+                newTabLink.className = 'new-tab-icon-btn';
+                newTabLink.title = 'Open in New Tab';
+                newTabLink.textContent = '↗';
+                actions.appendChild(newTabLink);
             }
 
             if (slugFromUrl) {
@@ -2605,6 +2700,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td data-label="Created">${createdDate}</td>
                         <td data-label="Actions">
                         <button type="button" class="load-entry-btn" data-entry-id="${entry.id}">Load</button>
+                        <a href="?entry_id=${entry.id}" target="_blank" class="new-tab-btn" title="Open in New Tab">↗</a>
                         ${isAdminMode ? `<button type="button" class="delete-entry-btn" data-entry-id="${entry.id}">Delete</button>` : ''}
                     </td>
                 </tr>
@@ -2616,8 +2712,11 @@ document.addEventListener('DOMContentLoaded', () => {
             entriesList.innerHTML = html;
 
             // Attach event listeners to load buttons
-            entriesList.querySelectorAll('.load-entry-btn').forEach(btn => {
+            entriesList.querySelectorAll('.load-entry-btn').forEach((btn, index) => {
                 btn.addEventListener('click', () => {
+                    currentNavList = entries;
+                    currentNavIndex = index;
+                    updateNavButtons();
                     const entryId = btn.getAttribute('data-entry-id');
                     loadEntryIntoForm(entryId);
                 });
@@ -2694,6 +2793,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             importedMarkdown = entry.generated_markdown || '';
             finalizeEntryLoad(entry.program_name);
+
+            // Update URL for deep linking
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('entry_id', entryId);
+            window.history.pushState({ entryId: entryId }, '', newUrl);
+
         } catch (error) {
             console.error('Error loading entry:', error);
             alert(`Failed to load entry: ${error.message}`);
@@ -2744,5 +2849,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dbSection) {
         const initialViewMode = viewModeSelect ? viewModeSelect.value : 'operators';
         dbSection.style.display = initialViewMode === 'all' ? 'block' : 'none';
+    }
+
+    // Check URL params for auto-loading
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('entry_id')) {
+        loadEntryIntoForm(urlParams.get('entry_id'));
+    } else if (urlParams.has('program_name')) {
+        const name = urlParams.get('program_name');
+        // Try to look up the ID by name
+        fetchSubmissionByName(name).then(entry => {
+            if (entry && entry.id) {
+                loadEntryIntoForm(entry.id);
+            } else {
+                // If not in DB, is it an organization?
+                // We can't easily replicate loadOrganizationIndexEntry without the 'entry' object
+                // but we can try to infer it if it looks like an org.
+                console.warn('Program not found in database via URL param:', name);
+                // Optional: Show error or try to fuzzy match
+                alert(`Could not find saved entry for "${name}". It may not have been imported to the database yet.`);
+            }
+        });
     }
 });
