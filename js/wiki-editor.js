@@ -597,6 +597,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Helper: Check if in Iframe ---
+    const isInIframe = () => {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    };
+
+    // --- Helper: Send message to parent ---
+    const sendParentMessage = (msg) => {
+        if (isInIframe()) {
+            window.parent.postMessage(msg, '*');
+        }
+    };
+
     function finalizeEntryLoad(name) {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
@@ -613,6 +629,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
+
+        // Update URL for deep linking
+        const newUrl = new URL(window.location);
+        // Clean params first
+        // newUrl.searchParams.delete('entry_id'); // Don't delete, just set
+        // newUrl.searchParams.delete('program_name');
+        
+        // If we have an ID from the form or context, we use it.
+        // But finalizeEntryLoad doesn't get the ID directly.
+        // We rely on the fact that if we loaded it, we probably want to update the tab title.
+        
+        if (name) {
+            sendParentMessage({
+                action: 'update_title',
+                tabTitle: name
+            });
+        }
     }
 
     // --- Helper: Get Placeholder Text ---
@@ -2406,14 +2439,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 actions.appendChild(editButton);
                 
-                // Add New Tab Link
-                const newTabLink = document.createElement('a');
-                newTabLink.href = `?program_name=${encodeURIComponent(entryName)}`;
-                newTabLink.target = '_blank';
-                newTabLink.className = 'new-tab-icon-btn';
-                newTabLink.title = 'Open in New Tab';
-                newTabLink.textContent = '↗';
-                actions.appendChild(newTabLink);
+                // Add New Tab Button
+                const newTabBtn = document.createElement('button');
+                newTabBtn.type = 'button';
+                newTabBtn.className = 'new-tab-icon-btn';
+                newTabBtn.title = 'Open in New Tab';
+                newTabBtn.textContent = '↗';
+                newTabBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (isInIframe()) {
+                        sendParentMessage({ action: 'open_tab', programName: entryName });
+                    } else {
+                        window.open(`?framed=1&program_name=${encodeURIComponent(entryName)}`, '_blank');
+                    }
+                });
+                actions.appendChild(newTabBtn);
             }
 
             if (slugFromUrl) {
@@ -2700,7 +2740,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td data-label="Created">${createdDate}</td>
                         <td data-label="Actions">
                         <button type="button" class="load-entry-btn" data-entry-id="${entry.id}">Load</button>
-                        <a href="?entry_id=${entry.id}" target="_blank" class="new-tab-btn" title="Open in New Tab">↗</a>
+                        <button type="button" class="new-tab-btn" data-entry-id="${entry.id}" data-name="${escapeHtmlAttr(entry.program_name)}" title="Open in New Tab">↗</button>
                         ${isAdminMode ? `<button type="button" class="delete-entry-btn" data-entry-id="${entry.id}">Delete</button>` : ''}
                     </td>
                 </tr>
@@ -2719,6 +2759,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateNavButtons();
                     const entryId = btn.getAttribute('data-entry-id');
                     loadEntryIntoForm(entryId);
+                });
+            });
+
+            // Attach event listeners to NEW TAB buttons
+            entriesList.querySelectorAll('.new-tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const entryId = btn.getAttribute('data-entry-id');
+                    const name = btn.getAttribute('data-name');
+                    if (isInIframe()) {
+                        sendParentMessage({ action: 'open_tab', entryId: entryId, programName: name });
+                    } else {
+                        window.open(`?framed=1&entry_id=${entryId}`, '_blank');
+                    }
                 });
             });
 

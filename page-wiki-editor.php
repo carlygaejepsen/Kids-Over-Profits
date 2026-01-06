@@ -5,10 +5,30 @@
  * Provides a custom form interface so editors can assemble wiki entries.
  */
 
-get_header();
-?>
+// Check if we are in "Framed" mode (inside a tab)
+$is_framed = isset($_GET['framed']) && $_GET['framed'] == '1';
 
-<div class="wiki-editor-page">
+if ($is_framed) {
+    // --- FRAMED MODE: RENDER THE EDITOR CONTENT ---
+    // We still need the header for scripts/styles, but we'll hide the nav via CSS class
+    get_header();
+    ?>
+    <style>
+        /* Hide theme navigation and footer in framed mode */
+        body.framed-mode #site-header, 
+        body.framed-mode #site-footer, 
+        body.framed-mode .admin-bar { display: none !important; }
+        body.framed-mode { padding-top: 0 !important; background-color: #F2EEDF; }
+        html.framed-mode { margin-top: 0 !important; }
+        .wiki-editor-page { padding: 10px; max-width: 100%; }
+        .wiki-editor-container { border: none; box-shadow: none; max-width: 100%; padding: 10px; }
+    </style>
+    <script>
+        document.documentElement.classList.add('framed-mode');
+        document.body.classList.add('framed-mode');
+    </script>
+
+    <div class="wiki-editor-page">
     <div class="wiki-editor-container">
         <h1>TTI Wiki Entry Generator</h1>
         <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
@@ -773,4 +793,208 @@ get_header();
 </div>
 
 <?php
-get_footer();
+    get_footer();
+
+} else {
+    // --- SHELL MODE: RENDER THE TABBED INTERFACE ---
+    get_header();
+?>
+    <div class="wiki-editor-shell">
+        <div class="wiki-tab-bar" id="wikiTabBar">
+            <div class="wiki-tab active" data-tab-id="home" onclick="switchTab('home')">
+                <span class="tab-label">🏠 Home / Browser</span>
+            </div>
+            <!-- Dynamic tabs will be added here -->
+        </div>
+
+        <div class="wiki-tab-content-area" id="wikiTabContent">
+            <!-- Home/Browser iframe is persistent -->
+            <iframe id="frame-home" src="?framed=1" class="wiki-iframe active"></iframe>
+        </div>
+    </div>
+
+    <style>
+        .wiki-editor-shell {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 32px); /* Adjust for admin bar if present */
+            background-color: #E0E0E0;
+        }
+        .wiki-tab-bar {
+            display: flex;
+            background-color: #000435;
+            padding: 5px 5px 0 5px;
+            gap: 2px;
+            overflow-x: auto;
+        }
+        .wiki-tab {
+            background-color: #E0E0E0;
+            color: #555;
+            padding: 8px 15px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            max-width: 250px;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s;
+            user-select: none;
+        }
+        .wiki-tab:hover {
+            background-color: #F2F2F2;
+            color: #000;
+        }
+        .wiki-tab.active {
+            background-color: #F2EEDF; /* Match iframe body bg */
+            color: #000435;
+            border-bottom: 2px solid #F2EEDF;
+            margin-bottom: -2px; /* overlap border */
+            z-index: 10;
+        }
+        .wiki-tab .close-tab-btn {
+            font-size: 1.1rem;
+            line-height: 1;
+            color: #999;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+        }
+        .wiki-tab .close-tab-btn:hover {
+            background-color: #ffb3b3;
+            color: #cc0000;
+        }
+        .wiki-tab-content-area {
+            flex: 1;
+            background-color: #F2EEDF;
+            position: relative;
+            border-top: 5px solid #000435;
+        }
+        .wiki-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+        .wiki-iframe.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        let tabCount = 0;
+        const tabs = new Map(); // Store tab metadata: { id, title, url }
+
+        function createTab(title, url) {
+            tabCount++;
+            const tabId = 'tab-' + tabCount;
+            
+            // Create Tab Element
+            const tabBar = document.getElementById('wikiTabBar');
+            const tabEl = document.createElement('div');
+            tabEl.className = 'wiki-tab';
+            tabEl.dataset.tabId = tabId;
+            tabEl.innerHTML = `
+                <span class="tab-label">${title}</span>
+                <span class="close-tab-btn" onclick="closeTab('${tabId}', event)">×</span>
+            `;
+            tabEl.onclick = () => switchTab(tabId);
+            tabBar.appendChild(tabEl);
+
+            // Create Iframe
+            const contentArea = document.getElementById('wikiTabContent');
+            const iframe = document.createElement('iframe');
+            iframe.id = 'frame-' + tabId;
+            iframe.className = 'wiki-iframe';
+            iframe.src = url;
+            contentArea.appendChild(iframe);
+
+            tabs.set(tabId, { title, url });
+            switchTab(tabId);
+        }
+
+        function switchTab(tabId) {
+            // Update Tab Bar
+            document.querySelectorAll('.wiki-tab').forEach(el => {
+                if (el.dataset.tabId === tabId) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+
+            // Update Content Area
+            document.querySelectorAll('.wiki-iframe').forEach(el => {
+                if (el.id === 'frame-' + tabId) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+        }
+
+        function closeTab(tabId, event) {
+            if (event) event.stopPropagation(); // Prevent switching to tab while closing
+            
+            // Remove DOM elements
+            const tabEl = document.querySelector(`.wiki-tab[data-tab-id="${tabId}"]`);
+            const iframeEl = document.getElementById('frame-' + tabId);
+            
+            if (tabEl) tabEl.remove();
+            if (iframeEl) iframeEl.remove();
+            
+            tabs.delete(tabId);
+
+            // Switch to home if current tab was closed
+            if (!document.querySelector('.wiki-tab.active')) {
+                switchTab('home');
+            }
+        }
+
+        // Listen for messages from iframes
+        window.addEventListener('message', (event) => {
+            // Validate origin if necessary (same origin here)
+            const data = event.data;
+
+            if (data.action === 'open_tab') {
+                let url = '?framed=1';
+                let title = 'New Tab';
+
+                if (data.entryId) {
+                    url += `&entry_id=${encodeURIComponent(data.entryId)}`;
+                    title = data.programName || 'Loading...';
+                } else if (data.programName) {
+                    url += `&program_name=${encodeURIComponent(data.programName)}`;
+                    title = data.programName;
+                }
+
+                createTab(title, url);
+            }
+            
+            // Allow child tabs to update their own title once loaded
+            if (data.action === 'update_title' && data.tabTitle) {
+                // Find which iframe sent this
+                // In a real app we might pass a tab ID token, but here we can try to guess
+                // or have the iframe identify itself? 
+                // Actually, the simplest way is for the iframe to just say "I loaded X"
+                // but determining *which* tab corresponds to that source window is tricky with just postMessage.
+                // WE can iterate iframes to find source.
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(iframe => {
+                    if (iframe.contentWindow === event.source) {
+                        const frameId = iframe.id;
+                        const tabId = frameId.replace('frame-', '');
+                        const tabEl = document.querySelector(`.wiki-tab[data-tab-id="${tabId}"] .tab-label`);
+                        if (tabEl) {
+                            tabEl.textContent = data.tabTitle;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+<?php
+    get_footer();
+}
+?>

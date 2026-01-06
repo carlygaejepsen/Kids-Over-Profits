@@ -1331,7 +1331,7 @@ add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');
 function kop_enqueue_document_library_assets() {
     // Check if we are on a page with the document library shortcode or template
     global $post;
-    if (is_a($post, 'WP_Post') && (has_shortcode($post->post_content, 'kop_document_library') || is_page('document-library'))) {
+    if (is_a($post, 'WP_Post') && (has_shortcode($post->post_content, 'filebird_library') || has_shortcode($post->post_content, 'kop_document_library') || is_page('document-library'))) {
         
         $theme_uri = get_stylesheet_directory_uri();
         $theme_dir = get_stylesheet_directory();
