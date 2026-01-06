@@ -27,7 +27,7 @@ add_action('admin_menu', 'add_approval_page_to_menu');
  * Render approval page iframe
  */
 function render_approval_page_iframe() {
-    $url = home_url('/wp-content/themes/child/api/approve-edits.php');
+    $url = get_stylesheet_directory_uri() . '/api/approve-edits.php';
     ?>
     <div class="wrap">
         <iframe src="<?php echo esc_url($url); ?>" style="width: 100%; height: calc(100vh - 100px); border: none;"></iframe>
