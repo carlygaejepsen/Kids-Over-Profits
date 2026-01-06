@@ -335,8 +335,8 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
     ];
 
     $ch = curl_init();
-    // Use gemini-2.0-flash-lite (free tier, fast)
-    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey");
+    // Use gemini-1.5-flash (free tier, fast)
+    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -393,7 +393,7 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     $ch = curl_init();
     // Use the Inference API endpoint with Mistral (more reliable for structured output)
-    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3');
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.3');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
