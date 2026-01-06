@@ -438,7 +438,7 @@ function generateWikiMarkdown(formData) {
             const healLink = prog.healLink ? `[HEAL](${sanitizeUrl(prog.healLink)})` : (prog.healInfo || '-');
             return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
         });
-        relatedProgramsSection = `##**Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
+        relatedProgramsSection = `## **Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
     }
 
     // --- Build Related Media Section ---
@@ -470,43 +470,43 @@ ${historySection}
 
 ***
 
-##**Founders and Notable Staff**
+## **Founders and Notable Staff**
 
 ${staffSection}
 
 ***
 
-##**Program Structure**
+## **Program Structure**
 
 ${structureSection}
 
 ***
 
-##**Rules and Punishments**
+## **Rules and Punishments**
 
 ${rulesSection}
 
 ***
 
-##**Abuse/Neglect Allegations and Lawsuits**
+## **Abuse/Neglect Allegations and Lawsuits**
 
 ${abuseSection}
 
 ***
 
-##**In the Media**
+## **In the Media**
 
 ${mediaSection}
 
 ***
 
-##**Survivor Testimonies**
+## **Survivor Testimonies**
 
 ${testimoniesSection}
 
 ***
 
-${relatedProgramsSection}##**Related Media**
+${relatedProgramsSection}## **Related Media**
 
 ${relatedMediaSection}
     `;

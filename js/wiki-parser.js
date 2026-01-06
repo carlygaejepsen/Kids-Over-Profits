@@ -722,9 +722,11 @@ function parseWikiMarkdown(markdown) {
 
     const getSection = (source, sectionTitle) => {
         const escapedTitle = escapeRegex(sectionTitle);
+        // Handle both "## **Title**" and "##**Title**" (no space between # and *)
         const headerPattern = `#{1,6}\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
         const regex = new RegExp(
-            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}\\s|\\n\\*\\*\\*|$)',
+            // Updated lookahead to match ##** (no space) or ## (with space) or *** or end
+            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}(?:\\s|\\*)|\\n\\*\\*\\*|$)',
             'i'
         );
 
@@ -1893,7 +1895,8 @@ function parseWikiMarkdown(markdown) {
     ];
 
     // Split markdown into sections
-    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##\s|\n\*\*\*|$)/g;
+    // Updated lookahead to handle ##** (no space) format
+    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##(?:\s|\*)|\n\*\*\*|$)/g;
     const unparsedSections = [];
     let match;
 

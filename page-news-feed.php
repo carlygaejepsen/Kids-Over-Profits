@@ -57,14 +57,32 @@ try {
         </div>
     <?php else: ?>
         <?php
-        // Collect all unique tags for the filter
+        // Collect all unique tags for the filter (including auto-generated tags)
         $allTags = [];
         $allTypes = [];
         foreach ($submissions as $item) {
+            // Manual tags
             $itemTags = json_decode($item['tags'] ?? '[]', true) ?: [];
-            foreach ($itemTags as $tag) {
+
+            // Auto-generate tags from location
+            if (!empty($item['article_location'])) {
+                $locationParts = array_map('trim', explode(',', $item['article_location']));
+                if (count($locationParts) >= 2) {
+                    $itemTags[] = end($locationParts);
+                } elseif (count($locationParts) === 1) {
+                    $itemTags[] = $locationParts[0];
+                }
+            }
+
+            // Auto-generate tags from facilities
+            $itemFacilities = json_decode($item['facilities_mentioned'] ?? '[]', true) ?: [];
+            $itemTags = array_merge($itemTags, $itemFacilities);
+
+            // Count unique tags
+            foreach (array_unique($itemTags) as $tag) {
                 $allTags[$tag] = ($allTags[$tag] ?? 0) + 1;
             }
+
             if (!empty($item['article_type'])) {
                 $allTypes[$item['article_type']] = ($allTypes[$item['article_type']] ?? 0) + 1;
             }
@@ -110,6 +128,27 @@ try {
                 $staff = json_decode($item['staff_mentioned'], true) ?: [];
                 $warnings = json_decode($item['content_warnings'], true) ?: [];
                 $tags = json_decode($item['tags'] ?? '[]', true) ?: [];
+
+                // Auto-generate tags from other fields
+                $autoTags = [];
+
+                // Extract state from location (e.g., "Salt Lake City, Utah" -> "Utah")
+                if (!empty($item['article_location'])) {
+                    $locationParts = array_map('trim', explode(',', $item['article_location']));
+                    if (count($locationParts) >= 2) {
+                        $autoTags[] = end($locationParts); // Last part is usually state/country
+                    } elseif (count($locationParts) === 1) {
+                        $autoTags[] = $locationParts[0];
+                    }
+                }
+
+                // Add facilities as tags
+                foreach ($facilities as $facility) {
+                    $autoTags[] = $facility;
+                }
+
+                // Merge auto-tags with manual tags, remove duplicates
+                $tags = array_unique(array_merge($tags, $autoTags));
                 
                 // Format Date
                 $pubDate = $item['publication_date'] ? date('M j, Y', strtotime($item['publication_date'])) : 'Unknown Date';
@@ -166,12 +205,14 @@ try {
                         </div>
                     <?php endif; ?>
 
-                    <details class="news-card-body">
-                        <summary class="news-summary-toggle">Show Summary</summary>
-                        <div class="news-summary">
+                    <div class="news-card-body">
+                        <button type="button" class="news-summary-toggle" aria-expanded="false">
+                            <span class="toggle-arrow">▸</span> Show Summary
+                        </button>
+                        <div class="news-summary" style="display: none;">
                             <?php echo nl2br(esc_html($item['summary'])); ?>
                         </div>
-                    </details>
+                    </div>
 
                     <?php if (!empty($facilities) || !empty($staff)): ?>
                         <div class="news-entities">
@@ -207,6 +248,27 @@ try {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Summary toggle functionality
+    document.querySelectorAll('.news-summary-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const summary = this.nextElementSibling;
+            const arrow = this.querySelector('.toggle-arrow');
+            const isHidden = summary.style.display === 'none';
+
+            if (isHidden) {
+                summary.style.display = 'block';
+                arrow.textContent = '▾';
+                this.setAttribute('aria-expanded', 'true');
+                this.innerHTML = '<span class="toggle-arrow">▾</span> Hide Summary';
+            } else {
+                summary.style.display = 'none';
+                arrow.textContent = '▸';
+                this.setAttribute('aria-expanded', 'false');
+                this.innerHTML = '<span class="toggle-arrow">▸</span> Show Summary';
+            }
+        });
+    });
+
     const cards = document.querySelectorAll('.news-card');
     const typeFilters = document.getElementById('type-filters');
     const tagFilters = document.getElementById('tag-filters');
