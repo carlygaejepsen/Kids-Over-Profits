@@ -329,18 +329,14 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
         ],
         'generationConfig' => [
             'temperature' => 0.1,
-            'maxOutputTokens' => 4096
-        ],
-        'safetySettings' => [
-            ['category' => 'HARM_CATEGORY_HARASSMENT', 'threshold' => 'BLOCK_NONE'],
-            ['category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_NONE'],
-            ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_NONE'],
-            ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_NONE']
+            'maxOutputTokens' => 4096,
+            'responseMimeType' => 'application/json'
         ]
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey");
+    // Use gemini-2.0-flash-lite (free tier, fast)
+    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -350,17 +346,30 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
+
+    if ($curlError) {
+        throw new Exception("Gemini connection error: $curlError");
+    }
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error']['message'] ?? 'API request failed';
+        $errorMsg = $errorData['error']['message'] ?? "API request failed (HTTP $httpCode)";
+        error_log("Gemini API error response: " . substr($response, 0, 500));
         throw new Exception("Gemini API error: $errorMsg");
     }
 
     $responseData = json_decode($response, true);
+
+    // Check for blocked content
+    if (isset($responseData['promptFeedback']['blockReason'])) {
+        throw new Exception("Gemini blocked the request: " . $responseData['promptFeedback']['blockReason']);
+    }
+
     if (!isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
-        throw new Exception('Invalid response from Gemini');
+        error_log("Gemini unexpected response: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Gemini - no text in response');
     }
 
     return parseAIResponse($responseData['candidates'][0]['content']['parts'][0]['text']);
@@ -372,17 +381,19 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
 function processWithHuggingFace($apiKey, $content, $url = '', $customInstructions = '') {
     $prompt = buildPrompt($content, $url, $customInstructions);
 
+    // Use the Inference API with a text-generation model
     $requestData = [
-        'model' => 'meta-llama/Llama-3.2-3B-Instruct',
-        'messages' => [
-            ['role' => 'user', 'content' => $prompt]
-        ],
-        'max_tokens' => 4096,
-        'temperature' => 0.1
+        'inputs' => $prompt,
+        'parameters' => [
+            'max_new_tokens' => 4096,
+            'temperature' => 0.1,
+            'return_full_text' => false
+        ]
     ];
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/v1/chat/completions');
+    // Use the Inference API endpoint with Mistral (more reliable for structured output)
+    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -395,26 +406,41 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
+
+    if ($curlError) {
+        throw new Exception("Hugging Face connection error: $curlError");
+    }
+
+    // Handle 503 (model loading)
+    if ($httpCode === 503) {
+        $errorData = json_decode($response, true);
+        $estimatedTime = $errorData['estimated_time'] ?? 20;
+        throw new Exception("Hugging Face model is loading. Please try again in about {$estimatedTime} seconds.");
+    }
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error']['message'] ?? ($errorData['error'] ?? 'API request failed');
-        
-        // If the error message is generic, append the raw response for debugging
-        if ($errorMsg === 'API request failed') {
-            $errorMsg .= " Raw response: " . substr($response, 0, 200);
-        }
-        
+        $errorMsg = $errorData['error'] ?? "API request failed (HTTP $httpCode)";
+        error_log("Hugging Face API error response: " . substr($response, 0, 500));
         throw new Exception("Hugging Face API error: $errorMsg");
     }
 
     $responseData = json_decode($response, true);
-    if (!isset($responseData['choices'][0]['message']['content'])) {
-        throw new Exception('Invalid response from Hugging Face');
+
+    // The inference API returns an array with generated_text
+    if (isset($responseData[0]['generated_text'])) {
+        return parseAIResponse($responseData[0]['generated_text']);
     }
 
-    return parseAIResponse($responseData['choices'][0]['message']['content']);
+    // Fallback for different response formats
+    if (is_array($responseData) && isset($responseData['generated_text'])) {
+        return parseAIResponse($responseData['generated_text']);
+    }
+
+    error_log("Hugging Face unexpected response: " . substr($response, 0, 500));
+    throw new Exception('Invalid response from Hugging Face - unexpected format');
 }
 
 /**

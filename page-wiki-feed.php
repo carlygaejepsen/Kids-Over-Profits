@@ -161,18 +161,43 @@ function toggleMarkdown(btn) {
     if (content.style.display === 'none') {
         // Render if not already done
         if (!rendered.innerHTML && raw.trim()) {
-            if (typeof marked !== 'undefined') {
-                // Configure marked for safer rendering
-                marked.setOptions({
-                    headerIds: false,
-                    mangle: false,
-                    gfm: true,
-                    breaks: true
-                });
-                rendered.innerHTML = marked.parse(raw);
-            } else {
-                rendered.innerHTML = '<pre style="white-space:pre-wrap">' + raw + '</pre>';
-                console.warn('marked.js not loaded, showing raw text');
+            // Check if marked is available
+            console.log('Marked status:', typeof marked);
+            
+            try {
+                if (typeof marked !== 'undefined') {
+                    // Handle different marked versions (some use marked.parse, others just marked)
+                    const parseFn = typeof marked.parse === 'function' ? marked.parse : marked;
+                    
+                    // Simple configuration
+                    if (typeof marked.setOptions === 'function') {
+                        marked.setOptions({
+                            gfm: true,
+                            breaks: true
+                        });
+                    }
+                    
+                    // Decode HTML entities in raw content before parsing (php echo escapes them)
+                    const txt = document.createElement('textarea');
+                    txt.innerHTML = raw;
+                    const decodedRaw = txt.value;
+
+                    rendered.innerHTML = parseFn(decodedRaw);
+                } else {
+                    throw new Error('marked library not found');
+                }
+            } catch (e) {
+                console.error('Markdown rendering failed:', e);
+                // Fallback to raw text but formatted nicely
+                rendered.innerHTML = '<div style="white-space: pre-wrap; font-family: sans-serif; color: #333;">' + raw + '</div>';
+                
+                // Add a warning note
+                const warning = document.createElement('div');
+                warning.style.color = 'red';
+                warning.style.fontSize = '0.8em';
+                warning.style.marginBottom = '10px';
+                warning.textContent = 'Rendering failed (showing raw text): ' + e.message;
+                rendered.prepend(warning);
             }
         }
         
