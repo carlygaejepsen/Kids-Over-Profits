@@ -12,7 +12,7 @@ for ($i = 0; $i < 10; $i++) {
     $current = dirname($current);
 }
 
-require_once "config.php";
+require_once __DIR__ . "/config.php";
 echo "Resolved DB_HOST: " . $db_host . "\n";
 echo "Resolved DB_NAME: " . $db_name . "\n";
 echo "PDO initialized: " . (isset($pdo) ? "YES" : "NO") . "\n";

@@ -585,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (programName) {
                 setFieldValue('programName', programName);
             }
-            finalizeEntryLoad(programName || entry.url);
+            finalizeEntryLoad(programName || entry.url, { source: 'index' });
         } catch (error) {
             console.error('Wiki Editor: failed to load organization entry:', error);
             alert(`Failed to load ${entry.name || 'organization'} index page: ${error.message || 'Entry not found'}`);
@@ -616,30 +616,33 @@ document.addEventListener('DOMContentLoaded', () => {
     function finalizeEntryLoad(name) {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
-        if (browserPanel) browserPanel.style.display = 'none';
-        
-        if (toggleBrowserBtn) {
-            const originalText = '📂 Browse Saved Entries';
-            toggleBrowserBtn.textContent = `✓ Loaded: ${name || 'Entry'}`;
-            toggleBrowserBtn.classList.add('loaded-flash');
+
+        // Close both browser panels
+        const indexPanel = document.getElementById('indexBrowserPanel');
+        const facilitiesPanel = document.getElementById('facilitiesBrowserPanel');
+        if (indexPanel) indexPanel.style.display = 'none';
+        if (facilitiesPanel) facilitiesPanel.style.display = 'none';
+
+        // Reset toggle button text
+        const indexBtn = document.getElementById('toggleIndexBrowserBtn');
+        const facilitiesBtn = document.getElementById('toggleFacilitiesBrowserBtn');
+        if (indexBtn) indexBtn.textContent = '📄 Browse Index Pages';
+        if (facilitiesBtn) facilitiesBtn.textContent = '🏢 Browse Saved Facilities';
+
+        // Flash loaded status on the appropriate button
+        const flashBtn = options.source === 'index' ? indexBtn : facilitiesBtn;
+        if (flashBtn) {
+            const originalText = flashBtn.textContent;
+            flashBtn.textContent = `✓ Loaded: ${name || 'Entry'}`;
+            flashBtn.classList.add('loaded-flash');
             setTimeout(() => {
-                toggleBrowserBtn.textContent = originalText;
-                toggleBrowserBtn.classList.remove('loaded-flash');
+                flashBtn.textContent = originalText;
+                flashBtn.classList.remove('loaded-flash');
             }, 3000);
         }
-        
+
         if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
 
-        // Update URL for deep linking
-        const newUrl = new URL(window.location);
-        // Clean params first
-        // newUrl.searchParams.delete('entry_id'); // Don't delete, just set
-        // newUrl.searchParams.delete('program_name');
-        
-        // If we have an ID from the form or context, we use it.
-        // But finalizeEntryLoad doesn't get the ID directly.
-        // We rely on the fact that if we loaded it, we probably want to update the tab title.
-        
         if (name) {
             sendParentMessage({
                 action: 'update_title',
@@ -2018,21 +2021,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ENTRY BROWSER FUNCTIONALITY ---
-    const toggleBrowserBtn = document.getElementById('toggleBrowserBtn');
+    // Index browser elements
+    const toggleIndexBrowserBtn = document.getElementById('toggleIndexBrowserBtn');
+    const indexBrowserPanel = document.getElementById('indexBrowserPanel');
+    const prevIndexEntryBtn = document.getElementById('prevIndexEntryBtn');
+    const nextIndexEntryBtn = document.getElementById('nextIndexEntryBtn');
+
+    // Facilities browser elements
+    const toggleFacilitiesBrowserBtn = document.getElementById('toggleFacilitiesBrowserBtn');
+    const facilitiesBrowserPanel = document.getElementById('facilitiesBrowserPanel');
     const prevEntryBtn = document.getElementById('prevEntryBtn');
     const nextEntryBtn = document.getElementById('nextEntryBtn');
-    
+
+    // Navigation state
     let currentNavList = [];
     let currentNavIndex = -1;
+    let currentNavType = 'facilities'; // 'index' or 'facilities'
 
     const updateNavButtons = () => {
+        // Update facilities nav buttons
         if (prevEntryBtn) {
-            prevEntryBtn.disabled = currentNavIndex <= 0 || currentNavList.length === 0;
-            prevEntryBtn.title = prevEntryBtn.disabled ? 'No previous entry in list' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
+            const disabled = currentNavType !== 'facilities' || currentNavIndex <= 0 || currentNavList.length === 0;
+            prevEntryBtn.disabled = disabled;
+            prevEntryBtn.title = disabled ? 'No previous entry' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
         }
         if (nextEntryBtn) {
-            nextEntryBtn.disabled = currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1 || currentNavList.length === 0;
-            nextEntryBtn.title = nextEntryBtn.disabled ? 'No next entry in list' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
+            const disabled = currentNavType !== 'facilities' || currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1;
+            nextEntryBtn.disabled = disabled;
+            nextEntryBtn.title = disabled ? 'No next entry' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
+        }
+        // Update index nav buttons
+        if (prevIndexEntryBtn) {
+            const disabled = currentNavType !== 'index' || currentNavIndex <= 0 || currentNavList.length === 0;
+            prevIndexEntryBtn.disabled = disabled;
+            prevIndexEntryBtn.title = disabled ? 'No previous entry' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
+        }
+        if (nextIndexEntryBtn) {
+            const disabled = currentNavType !== 'index' || currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1;
+            nextIndexEntryBtn.disabled = disabled;
+            nextIndexEntryBtn.title = disabled ? 'No next entry' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
         }
     };
 
@@ -2078,21 +2105,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Facilities nav buttons
     if (prevEntryBtn) {
         prevEntryBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            navigateEntry(-1);
+            if (currentNavType === 'facilities') navigateEntry(-1);
         });
     }
 
     if (nextEntryBtn) {
         nextEntryBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            navigateEntry(1);
+            if (currentNavType === 'facilities') navigateEntry(1);
         });
     }
 
-    const browserPanel = document.getElementById('browserPanel');
+    // Index nav buttons
+    if (prevIndexEntryBtn) {
+        prevIndexEntryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentNavType === 'index') navigateEntry(-1);
+        });
+    }
+
+    if (nextIndexEntryBtn) {
+        nextIndexEntryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentNavType === 'index') navigateEntry(1);
+        });
+    }
+
     const entriesList = document.getElementById('entriesList');
     const entrySearch = document.getElementById('entrySearch');
     const refreshEntriesBtn = document.getElementById('refreshEntriesBtn');
@@ -2104,52 +2146,30 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalEntries = 0;
     const entriesPerPage = 20;
 
-    // Function to update view based on mode
-    function updateBrowserView(viewMode) {
-        const dbSection = document.querySelector('.database-entries-section');
-        const indexBrowser = document.getElementById('indexBrowser');
+    // Toggle Index Browser panel
+    if (toggleIndexBrowserBtn && indexBrowserPanel) {
+        toggleIndexBrowserBtn.addEventListener('click', () => {
+            const isHidden = indexBrowserPanel.style.display === 'none';
+            indexBrowserPanel.style.display = isHidden ? 'block' : 'none';
+            toggleIndexBrowserBtn.textContent = isHidden ? '✖️ Close Index Browser' : '📄 Browse Index Pages';
 
-        if (viewMode === 'operators') {
-            // Hide database entries section, show index browser
-            if (dbSection) dbSection.style.display = 'none';
-            if (indexBrowser) indexBrowser.style.display = 'block';
-            // Hide the dropdown selector since we're auto-loading CORPORATE
-            if (indexSelect) indexSelect.style.display = 'none';
-
-            // Automatically load CORPORATE organizations
-            loadProgramsForState('CORPORATE');
-        } else if (viewMode === 'all') {
-            // Show database entries section, hide index browser
-            if (dbSection) dbSection.style.display = 'block';
-            if (indexBrowser) indexBrowser.style.display = 'none';
-            // Hide the state dropdown when showing all database entries
-            if (indexSelect) indexSelect.style.display = 'none';
-        } else {
-            // Location mode: hide database section, show index browser with state dropdown
-            if (dbSection) dbSection.style.display = 'none';
-            if (indexBrowser) indexBrowser.style.display = 'block';
-            // Show the dropdown selector for state selection
-            if (indexSelect) indexSelect.style.display = 'block';
-
-            // Load the state options in dropdown
-            loadIndexList(viewMode);
-        }
+            // Load index list when opening
+            if (isHidden) {
+                loadIndexList();
+            }
+        });
     }
 
-    // Toggle browser panel
-    if (toggleBrowserBtn && browserPanel) {
-        toggleBrowserBtn.addEventListener('click', () => {
-            const isHidden = browserPanel.style.display === 'none';
-            browserPanel.style.display = isHidden ? 'block' : 'none';
-            toggleBrowserBtn.textContent = isHidden ? '✖️ Close Browser' : '📂 Browse Saved Entries';
+    // Toggle Facilities Browser panel
+    if (toggleFacilitiesBrowserBtn && facilitiesBrowserPanel) {
+        toggleFacilitiesBrowserBtn.addEventListener('click', () => {
+            const isHidden = facilitiesBrowserPanel.style.display === 'none';
+            facilitiesBrowserPanel.style.display = isHidden ? 'block' : 'none';
+            toggleFacilitiesBrowserBtn.textContent = isHidden ? '✖️ Close Facilities Browser' : '🏢 Browse Saved Facilities';
 
             // Load entries when opening
             if (isHidden) {
-                const currentViewMode = viewModeSelect ? viewModeSelect.value : 'operators';
-                if (currentViewMode === 'all') {
-                    loadEntries();
-                }
-                updateBrowserView(currentViewMode);
+                loadEntries();
             }
         });
     }
@@ -2200,7 +2220,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const indexSelect = document.getElementById('indexSelect');
     const indexSearch = document.getElementById('indexSearch');
     const indexEntriesList = document.getElementById('indexEntriesList');
-    const viewModeSelect = document.getElementById('viewModeSelect');
 
     let selectedIndexState = '';
     let currentIndexPrograms = [];
@@ -2217,27 +2236,6 @@ document.addEventListener('DOMContentLoaded', () => {
         indexEntriesList.innerHTML = `<p class="${className}">${escapeHtml(message)}</p>`;
     };
 
-    // Helper function to determine if a code is an operator/special category
-    const isOperatorCategory = (code) => {
-        return code === 'CORPORATE';
-    };
-
-    // Helper function to get filtered index entries based on view mode
-    const getFilteredIndexEntries = (states, viewMode) => {
-        if (!states) return [];
-        const entries = Object.entries(states);
-
-        if (viewMode === 'operators') {
-            // Show only operator categories (CORPORATE, NONUSA)
-            return entries.filter(([code]) => isOperatorCategory(code));
-        } else if (viewMode === 'all') {
-            // Show only states (exclude operator categories)
-            return entries.filter(([code]) => !isOperatorCategory(code));
-        }
-        // Default: show only states
-        return entries.filter(([code]) => !isOperatorCategory(code));
-    };
-
     function getSlugFromEntryUrl(url) {
         if (!url) return '';
         const cleaned = url.replace(/\/+$/, '');
@@ -2245,7 +2243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return match ? match[1] : '';
     }
 
-    async function loadIndexList(viewMode = 'operators') {
+    async function loadIndexList() {
         if (!indexSelect || !wikiIndexJsonUrl) {
             updateIndexEntriesMessage('Index metadata is unavailable.', 'error');
             return;
@@ -2268,16 +2266,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 allIndexData = await response.json();
             }
 
-            // Filter based on view mode
-            const filteredStates = getFilteredIndexEntries(allIndexData.states, viewMode);
-
-            filteredStates.sort((a, b) => {
+            // Get all states and sort them
+            const allStates = Object.entries(allIndexData.states || {});
+            allStates.sort((a, b) => {
                 const displayA = STATE_DISPLAY_NAMES[a[0]] || a[0];
                 const displayB = STATE_DISPLAY_NAMES[b[0]] || b[0];
                 return displayA.localeCompare(displayB);
             });
 
-            filteredStates.forEach(([code, count]) => {
+            allStates.forEach(([code, count]) => {
                 const option = document.createElement('option');
                 option.value = code;
                 option.textContent = `${STATE_DISPLAY_NAMES[code] || code} (${count || 0})`;
@@ -2419,6 +2416,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 editIndexBtn.className = 'edit-index-btn';
                 editIndexBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    currentNavType = 'index';
                     currentNavList = matches;
                     currentNavIndex = index;
                     updateNavButtons();
@@ -2432,6 +2430,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 editButton.className = 'edit-entry-btn';
                 editButton.addEventListener('click', (e) => {
                     e.preventDefault();
+                    currentNavType = 'index';
                     currentNavList = matches;
                     currentNavIndex = index;
                     updateNavButtons();
@@ -2486,7 +2485,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         importedMarkdown = '';
                         updateMarkdownFromForm();
                         // Hide browser but do not auto-scroll to the form; scroll banner into view instead
-                        finalizeEntryLoad(orgName, { noScroll: true });
+                        finalizeEntryLoad(orgName, { noScroll: true, source: 'index' });
                         document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         // Restore button state before returning
                         if (button) {
@@ -2602,7 +2601,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          clearFormToEmpty(orgName);
                          importedMarkdown = '';
                          updateMarkdownFromForm();
-                         finalizeEntryLoad(orgName, { noScroll: true });
+                         finalizeEntryLoad(orgName, { noScroll: true, source: 'index' });
                          document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                      } catch (e) {
                          console.error('Error preparing empty form for organization:', e);
@@ -2663,23 +2662,7 @@ document.addEventListener('DOMContentLoaded', () => {
     indexSelect?.addEventListener('change', event => loadProgramsForState(event.target.value));
     indexSearch?.addEventListener('input', () => renderIndexEntries());
 
-    // Add event listener for view mode selector
-    viewModeSelect?.addEventListener('change', (event) => {
-        const viewMode = event.target.value;
-        // Reset selection when changing view mode
-        selectedIndexState = '';
-        currentIndexPrograms = [];
-        if (indexSelect) indexSelect.value = '';
-        // Update view and reload the index list with the new filter
-        updateBrowserView(viewMode);
-        // Load database entries if switching to "all" mode
-        if (viewMode === 'all') {
-            loadEntries();
-        }
-    });
-
     setIndexSearchEnabled(false);
-    // Index list will be loaded when browser panel is opened
 
     // Load entries from API
     async function loadEntries() {
@@ -2754,6 +2737,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Attach event listeners to load buttons
             entriesList.querySelectorAll('.load-entry-btn').forEach((btn, index) => {
                 btn.addEventListener('click', () => {
+                    currentNavType = 'facilities';
                     currentNavList = entries;
                     currentNavIndex = index;
                     updateNavButtons();
@@ -2811,7 +2795,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearFormToEmpty(candidateName || '');
                     importedMarkdown = '';
                     updateMarkdownFromForm();
-                    finalizeEntryLoad(candidateName || entry.program_name);
+                    finalizeEntryLoad(candidateName || entry.program_name, { source: 'index' });
                     return;
                 }
             } catch (e) {
@@ -2846,7 +2830,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMarkdownFromForm();
 
             importedMarkdown = entry.generated_markdown || '';
-            finalizeEntryLoad(entry.program_name);
+            finalizeEntryLoad(entry.program_name, { source: 'facilities' });
 
             // Update URL for deep linking
             const newUrl = new URL(window.location);
@@ -2895,14 +2879,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error deleting entry:', error);
             alert(`Failed to delete entry: ${error.message}`);
         }
-    }
-
-    // Initialize database section visibility based on default view mode
-    // The database-entries-section should only be visible when view mode is 'all'
-    const dbSection = document.querySelector('.database-entries-section');
-    if (dbSection) {
-        const initialViewMode = viewModeSelect ? viewModeSelect.value : 'operators';
-        dbSection.style.display = initialViewMode === 'all' ? 'block' : 'none';
     }
 
     // Check URL params for auto-loading

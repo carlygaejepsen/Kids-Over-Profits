@@ -328,47 +328,56 @@ function kop_get_facilities_projects_from_database() {
  */
 function kop_get_filebird_folders() {
     global $wpdb;
-    
-    // FileBird stores folders in its own table
+
+    // FileBird stores folders in a custom table
     $table_name = $wpdb->prefix . 'fbv';
-    
-    // Check if table exists
-    $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
-    
-    if (!$table_exists) {
+
+    // Check if FileBird table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
         return array();
     }
-    
-    $folders = $wpdb->get_results("SELECT id, name, parent FROM $table_name ORDER BY name ASC", ARRAY_A);
-    
-    // Build hierarchy (simple flat list with indentation for now)
-    // For a robust implementation, you'd want a recursive function to build the tree
-    // But for a dropdown, a flat sorted list is often sufficient if names are unique
-    
+
+    $folders = $wpdb->get_results(
+        "SELECT id, name, parent FROM $table_name WHERE type = 0 ORDER BY name ASC"
+    );
+
     return $folders;
 }
 
 /**
- * Get attachment IDs for a specific FileBird folder
- * @param int $folder_id
- * @return array
+ * Get attachments from a FileBird folder
  */
 function kop_get_folder_attachments($folder_id) {
     global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'fbv_attachment_folder';
-    
-    // Check if table exists
-    $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
-    
-    if (!$table_exists) {
+
+    $attachment_table = $wpdb->prefix . 'fbv_attachment_folder';
+
+    // Check if FileBird attachment table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '$attachment_table'") != $attachment_table) {
         return array();
     }
-    
-    $attachment_ids = $wpdb->get_col($wpdb->prepare(
-        "SELECT attachment_id FROM $table_name WHERE folder_id = %d",
-        $folder_id
-    ));
-    
-    return $attachment_ids;
+
+    // Get attachment IDs from the folder
+    $attachment_ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT attachment_id FROM $attachment_table WHERE folder_id = %d",
+            $folder_id
+        )
+    );
+
+    if (empty($attachment_ids)) {
+        return array();
+    }
+
+    // Get attachment details
+    $args = array(
+        'post_type' => 'attachment',
+        'post_status' => 'inherit',
+        'posts_per_page' => -1,
+        'post__in' => $attachment_ids,
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    return get_posts($args);
 }

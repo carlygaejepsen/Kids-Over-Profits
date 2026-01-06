@@ -2,10 +2,9 @@
 // approve-edits.php
 
 // Include configuration
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
-// Create a PDO database connection
-// Connection is already established in config.php as $pdo
+// Fetch submissions from suggested_edits table
 if (!$pdo) {
     die("Could not connect to the database (pdo is null).");
 }

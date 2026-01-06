@@ -1,0 +1,41 @@
+/* Print styles for Facility Reports */
+@media print {
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        padding: 20px;
+    }
+    .header {
+        text-align: center;
+        border-bottom: 2px solid #33A7B5;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+    h1 { color: #33A7B5; margin-top: 0; }
+    .section {
+        margin-bottom: 30px;
+        page-break-inside: avoid;
+    }
+    .section-title {
+        background: #f4f4f4;
+        padding: 5px 10px;
+        font-weight: bold;
+        border-left: 5px solid #33A7B5;
+        margin-bottom: 10px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th { background-color: #f8f8f8; }
+    .btn-toolbar, .no-print {
+        display: none !important;
+    }
+}

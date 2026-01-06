@@ -18,7 +18,6 @@ function kop_is_headerless_layout() {
     // Check for page templates (multiple possible paths/names)
     return is_page_template('page-admin-data.php') 
         || is_page_template('page-data.php')
-        || is_page_template('page-data-test.php')
         || is_page_template('templates/data-form-public.php') 
         || is_page_template('templates/data-form-admin.php');
 }

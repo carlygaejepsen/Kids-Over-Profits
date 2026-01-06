@@ -56,26 +56,19 @@ if ($is_framed) {
 
         <!-- Entry Browser Section -->
         <div class="entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
-            <div class="browser-main-controls" style="display:flex; gap:10px;">
-                <button type="button" id="prevEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
-                <button type="button" id="toggleBrowserBtn" class="toggle-browser-btn" style="flex:1;">📂 Browse Saved Entries</button>
-                <button type="button" id="nextEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
-            </div>
-            <div id="browserPanel" class="browser-panel" style="display: none;">
-                <div class="browser-header">
-                    <button type="button" id="backBtn" class="back-btn" style="display: none;">← Back</button>
-                    <h3 id="browserTitle">Browse Entries</h3>
-                    <button type="button" id="refreshEntriesBtn" class="refresh-btn">🔄 Refresh</button>
-                </div>
-                <div class="browser-controls">
-                    <select id="viewModeSelect" class="view-mode-select">
-                        <option value="all">Location View</option>
-                        <option value="operators" selected>Organization View</option>
-                    </select>
-                </div>
 
-                <!-- Reddit Wiki Index Browser - TOP -->
-                <div id="indexBrowser" class="index-browser">
+            <!-- Index Pages Browser -->
+            <div class="browser-section index-section">
+                <div class="browser-main-controls" style="display:flex; gap:10px;">
+                    <button type="button" id="prevIndexEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
+                    <button type="button" id="toggleIndexBrowserBtn" class="toggle-browser-btn" style="flex:1;">📄 Browse Index Pages</button>
+                    <button type="button" id="nextIndexEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
+                </div>
+                <div id="indexBrowserPanel" class="browser-panel" style="display: none;">
+                    <div class="browser-header">
+                        <button type="button" id="backBtn" class="back-btn" style="display: none;">← Back</button>
+                        <h3 id="indexBrowserTitle">Index Pages</h3>
+                    </div>
                     <div class="index-browser-controls">
                         <select id="indexSelect" class="index-select">
                             <option value="">Select an index page</option>
@@ -83,20 +76,25 @@ if ($is_framed) {
                         <input type="text" id="indexSearch" class="index-search" placeholder="Filter entries..." disabled>
                     </div>
                     <div id="indexEntriesList" class="index-entries-list">
-                        <p class="loading">Loading...</p>
+                        <p class="loading">Select an index page above...</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Database Entries - BOTTOM -->
-                <div id="breadcrumb" class="breadcrumb" style="display: none;">
-                    <span class="breadcrumb-home">Home</span>
-                    <span class="breadcrumb-separator">›</span>
-                    <span id="breadcrumbCurrent"></span>
+            <!-- Facilities Browser -->
+            <div class="browser-section facilities-section">
+                <div class="browser-main-controls" style="display:flex; gap:10px;">
+                    <button type="button" id="prevEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
+                    <button type="button" id="toggleFacilitiesBrowserBtn" class="toggle-browser-btn" style="flex:1;">🏢 Browse Saved Facilities</button>
+                    <button type="button" id="nextEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
                 </div>
-                <div class="database-entries-section">
-                    <div class="browser-controls">
-                        <input type="text" id="entrySearch" class="entry-search" placeholder="Search...">
+                <div id="facilitiesBrowserPanel" class="browser-panel" style="display: none;">
+                    <div class="browser-header">
+                        <h3>Saved Facilities</h3>
                         <button type="button" id="refreshEntriesBtn" class="refresh-btn">🔄 Refresh</button>
+                    </div>
+                    <div class="browser-controls">
+                        <input type="text" id="entrySearch" class="entry-search" placeholder="Search facilities...">
                     </div>
                     <div id="entriesList" class="entries-list">
                         <p class="loading">Loading entries...</p>
