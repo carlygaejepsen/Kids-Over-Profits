@@ -315,13 +315,18 @@ function displayFacilities(facilitiesData, containerId) {
         let locationYearsLine = '';
         const locationLines = [];
 
-        const operatorLocation = getValueFromKeys(operator, ['location', 'headquarters', 'address', 'cityState']);
+        const operatorLocation = getValueFromKeys(operator, [
+            'location', 'headquarters', 'address', 'cityState', 
+            'city_state', 'hq_location'
+        ]);
         if (operatorLocation) {
             locationLines.push(`<div>${escapeHtml(operatorLocation)}</div>`);
         }
         
-        const operatorOperatingPeriod = getValueFromKeys(operator, ['operatingPeriod', 'yearsActive']);
-        const operatorFounded = getValueFromKeys(operator, ['founded', 'yearFounded']);
+        const operatorOperatingPeriod = getValueFromKeys(operator, [
+            'operatingPeriod', 'yearsActive', 'operating_period', 'years_active'
+        ]);
+        const operatorFounded = getValueFromKeys(operator, ['founded', 'yearFounded', 'year_founded']);
         
         if (operatorOperatingPeriod) {
             locationLines.push(`<div>${escapeHtml(operatorOperatingPeriod)}</div>`);
@@ -372,9 +377,10 @@ function displayFacilities(facilitiesData, containerId) {
             // Skip these keys - they're already shown in the operator header
             const skipFullKeys = [
                 'name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName',
-                'location', 'headquarters', 'address', 'cityState',
+                'location', 'headquarters', 'address', 'cityState', 'city_state', 'hq_location',
                 'status', 
-                'operatingPeriod', 'founded', 'yearFounded', 'yearsActive'
+                'operatingPeriod', 'founded', 'yearFounded', 'yearsActive',
+                'operating_period', 'year_founded', 'years_active'
             ];
 
             Object.keys(obj).forEach(key => {
@@ -487,13 +493,18 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
 
             // Data for display above the "cut"
-            const facilityLocationRaw = getValueFromKeys(facility, ['location', 'address', 'cityState', 'physicalAddress', 'fullAddress']);
+            const facilityLocationRaw = getValueFromKeys(facility, [
+                'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
+                'city_state', 'full_address'
+            ]);
             const facilityLocation = facilityLocationRaw ? escapeHtml(facilityLocationRaw) : '';
             
             let yearRange = '';
-            const startYear = getValueFromKeys(operatingPeriod, ['startYear']) || getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear']);
+            const startYear = getValueFromKeys(operatingPeriod, ['startYear', 'start_year']) || 
+                              getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year']);
+            
             if (startYear) {
-                const endYear = getValueFromKeys(operatingPeriod, ['endYear']) || 'Present';
+                const endYear = getValueFromKeys(operatingPeriod, ['endYear', 'end_year']) || 'Present';
                 yearRange = escapeHtml(`${startYear}-${endYear}`);
             }
 
@@ -541,9 +552,11 @@ function displayFacilities(facilitiesData, containerId) {
                     'name', 'programName', 'facilityName', 'title',
                     
                     'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
+                    'city_state', 'full_address',
                     
                     'operatingPeriod.startYear', 'operatingPeriod.endYear', 'operatingPeriod.status',
                     'founded', 'yearFounded', 'opened', 'startYear', 'yearsActive',
+                    'operating_period', 'year_founded', 'start_year', 'end_year', 'years_active',
                     
                     'resources', // Handled separately by dedicated Resources Available section
                     'fieldNotes' // Handled separately by field notes renderer
