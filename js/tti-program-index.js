@@ -257,6 +257,21 @@ function displayFacilities(facilitiesData, containerId) {
             if (!f) return false;
             // Enhanced name check for deduplication
             const name = getValueFromKeys(f, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
+            
+            // FILTER: exclude known corporate entities from being listed as facilities
+            // This prevents data errors where a parent company is listed as a facility of another
+            const corporateNames = [
+                'acadia healthcare', 'acadia health care',
+                'universal health services', 'uhs',
+                'family help & wellness', 'family help and wellness', 'fhw',
+                'sequel youth and family services', 'sequel',
+                'aspen education group', 'aspen',
+                'kids centers of america',
+                'innerchange'
+            ];
+            
+            if (name && corporateNames.includes(name.toLowerCase())) return false;
+
             if (!name || seenFacilityNames.has(name)) return false;
             seenFacilityNames.add(name);
             return true;
