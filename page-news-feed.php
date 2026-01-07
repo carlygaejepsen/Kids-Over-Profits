@@ -241,6 +241,62 @@ try {
                     $itemFacilities = json_decode($item['facilities_mentioned'] ?? '[]', true) ?: [];
                     $allFacilities = array_merge($allFacilities, $itemFacilities);
                 }
+
+                // Fetch from Master Database and Wiki Submissions
+                try {
+                    // 1. Facilities Master
+                    $stmtMaster = $pdo->prepare("SELECT json_data FROM facilities_master");
+                    $stmtMaster->execute();
+                    while ($row = $stmtMaster->fetch(PDO::FETCH_ASSOC)) {
+                        $data = json_decode($row['json_data'], true);
+                        if (!$data) continue;
+
+                        // Handle format (nested in 'data' or root)
+                        $innerData = $data['data'] ?? $data;
+
+                        // Operator Name
+                        if (!empty($innerData['operator']['name'])) {
+                            $allFacilities[] = $innerData['operator']['name'];
+                        }
+
+                        // Facility Names
+                        if (!empty($innerData['facilities']) && is_array($innerData['facilities'])) {
+                            foreach ($innerData['facilities'] as $fac) {
+                                if (!empty($fac['identification']['name'])) {
+                                    $allFacilities[] = $fac['identification']['name'];
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Published Wiki Submissions
+                    $stmtWiki = $pdo->prepare("SELECT program_name, organization, json_data FROM wiki_submissions WHERE status = 'published'");
+                    $stmtWiki->execute();
+                    while ($row = $stmtWiki->fetch(PDO::FETCH_ASSOC)) {
+                        if (!empty($row['program_name'])) $allFacilities[] = $row['program_name'];
+                        if (!empty($row['organization'])) $allFacilities[] = $row['organization'];
+
+                        $data = json_decode($row['json_data'], true);
+                        if (!empty($data['campuses']) && is_array($data['campuses'])) {
+                            foreach ($data['campuses'] as $campus) {
+                                if (!empty($campus['campusName'])) {
+                                    $allFacilities[] = $campus['campusName'];
+                                }
+                            }
+                        }
+                    }
+                } catch (PDOException $e) {
+                    // Fail silently if tables don't exist or error occurs
+                }
+
+                // Normalize all facilities to match the tag format
+                $allFacilities = array_map(function($f) use ($tagMappings) { // processTag requires excludedTags, but here we just want casing
+                    // We can just use normalizeTagCase, or better, reuse the processTag logic without exclusion/mapping if possible?
+                    // Actually, we want to match what the tags BECAME.
+                    // Tags were normalized using normalizeTagCase.
+                    return normalizeTagCase(trim($f));
+                }, $allFacilities);
+
                 $allFacilities = array_unique($allFacilities);
 
                 foreach ($allTags as $tag => $count) {
