@@ -88,7 +88,7 @@ class AnonymousDocPortal {
         // Create boundary for multipart/form-data
         $boundary = wp_generate_password(24, false);
         $body = "--{$boundary}\r\n";
-        $body .= "Content-Disposition: form-data; name=\"inputFile\"; filename=\\"{$filename}\"\r\n";
+        $body .= "Content-Disposition: form-data; name=\"inputFile\"; filename=\"{$filename}\"\r\n";
         $body .= "Content-Type: application/octet-stream\r\n\r\n";
         $body .= $file_data . "\r\n";
         $body .= "--{$boundary}--\r\n";
