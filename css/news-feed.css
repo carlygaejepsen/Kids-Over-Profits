@@ -372,6 +372,53 @@
     display: none;
 }
 
+/* Filter Tag Categories */
+.filter-tag-category {
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--kop-mint-green);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.filter-category-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, var(--kop-soft-pastel-yellow) 0%, var(--kop-mint-green) 100%);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--kop-midnight-blue);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.filter-category-header:hover {
+    background: var(--kop-mint-green);
+}
+
+.filter-category-header .category-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-category-header .category-arrow {
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+
+.filter-category-content {
+    padding: 0.75rem;
+    background: var(--kop-white);
+}
+
+.filter-category-content .filter-buttons {
+    margin-bottom: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .news-feed-grid {
