@@ -127,8 +127,8 @@ try {
             'accountability', 'justice', 'legal', 'crime', 'criminal',
             // Generic Location/Policy terms
             'usa', 'united states', 'america', 'national',
-            'child welfare', 'dhs', 'cps', 'foster care', 'system',
-            'policy', 'regulation', 'legislation', 'bill', 'law',
+            'child welfare', 'system',
+            'policy', 'regulation', 'bill', 'law',
             'safety', 'health', 'protection'
         ];
 
