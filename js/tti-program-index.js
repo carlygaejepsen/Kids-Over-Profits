@@ -738,6 +738,9 @@ function displayFacilities(facilitiesData, containerId) {
                 const normalize = s => s.replace(/[^\w\s]/g, '').trim();
                 const normFac = normalize(facName);
                 
+                // Debug matching for specific facilities (uncomment to debug globally)
+                // if (facName.includes('agape')) console.log(`Attempting match for: "${facName}" (norm: "${normFac}")`);
+
                 // 1. Try Exact Match
                 let matchingFolder = window.filebirdFolders.find(f => f.name.toLowerCase().trim() === facName);
                 
@@ -751,17 +754,20 @@ function displayFacilities(facilitiesData, containerId) {
                      // Check if folder name contains facility name (e.g. Folder: "Agape Boarding School Documents", Fac: "Agape Boarding School")
                      matchingFolder = window.filebirdFolders.find(f => {
                          const normFolder = normalize(f.name.toLowerCase());
-                         return normFolder.includes(normFac);
+                         const match = normFolder.includes(normFac);
+                         // if (match) console.log(`Match found via contains! Folder: "${f.name}"`);
+                         return match;
                      });
                 }
 
                 if (matchingFolder) {
+                    // console.log(`MATCHED! Facility: "${facName}" -> Folder: "${matchingFolder.name}" (ID: ${matchingFolder.id})`);
                     documentsHtml = `
                         <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
                             <span class="field-label">Documents</span>
                             <span class="field-value">
-                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#eee; border:1px solid #ccc; border-radius:4px;" onclick="loadFacilityDocuments(${matchingFolder.id}, 'documents-${matchingFolder.id}')">
-                                    📂 Load Documents from "${escapeHtml(matchingFolder.name)}"
+                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; font-weight:600;" onclick="loadFacilityDocuments(${matchingFolder.id}, 'documents-${matchingFolder.id}')">
+                                    📂 View Document Library
                                 </button>
                             </span>
                         </div>`;
