@@ -223,12 +223,17 @@ try {
                 // Categorize tags for the filter section
                 $stateTags = [];
                 $facilityTags = [];
+                $orgTags = [];
                 $otherTags = [];
 
                 // Tags to strictly force into "Facilities" category
                 $forcedFacilities = [
                     'Asheville Academy For Girls',
                     'MacLaren Youth Correctional Facility', 
+                ];
+
+                // Tags to strictly force into "Parent Organizations" category
+                $forcedOrgs = [
                     'WWASP'
                 ];
 
@@ -242,6 +247,9 @@ try {
                     $allFacilities = array_merge($allFacilities, $itemFacilities);
                 }
 
+                // Initialize Parent Orgs
+                $parentOrgs = [];
+
                 // Fetch from Master Database and Wiki Submissions
                 try {
                     // 1. Facilities Master
@@ -254,9 +262,9 @@ try {
                         // Handle format (nested in 'data' or root)
                         $innerData = $data['data'] ?? $data;
 
-                        // Operator Name
+                        // Operator Name -> Parent Org
                         if (!empty($innerData['operator']['name'])) {
-                            $allFacilities[] = $innerData['operator']['name'];
+                            $parentOrgs[] = $innerData['operator']['name'];
                         }
 
                         // Facility Names
@@ -274,7 +282,7 @@ try {
                     $stmtWiki->execute();
                     while ($row = $stmtWiki->fetch(PDO::FETCH_ASSOC)) {
                         if (!empty($row['program_name'])) $allFacilities[] = $row['program_name'];
-                        if (!empty($row['organization'])) $allFacilities[] = $row['organization'];
+                        if (!empty($row['organization'])) $parentOrgs[] = $row['organization'];
 
                         $data = json_decode($row['json_data'], true);
                         if (!empty($data['campuses']) && is_array($data['campuses'])) {
@@ -289,19 +297,23 @@ try {
                     // Fail silently if tables don't exist or error occurs
                 }
 
-                // Normalize all facilities to match the tag format
-                $allFacilities = array_map(function($f) use ($tagMappings) { // processTag requires excludedTags, but here we just want casing
-                    // We can just use normalizeTagCase, or better, reuse the processTag logic without exclusion/mapping if possible?
-                    // Actually, we want to match what the tags BECAME.
-                    // Tags were normalized using normalizeTagCase.
+                // Normalize facilities
+                $allFacilities = array_map(function($f) { 
                     return normalizeTagCase(trim($f));
                 }, $allFacilities);
-
                 $allFacilities = array_unique($allFacilities);
+
+                // Normalize parent orgs
+                $parentOrgs = array_map(function($o) { 
+                    return normalizeTagCase(trim($o));
+                }, $parentOrgs);
+                $parentOrgs = array_unique($parentOrgs);
 
                 foreach ($allTags as $tag => $count) {
                     if (in_array($tag, $usStates)) {
                         $stateTags[$tag] = $count;
+                    } elseif (in_array($tag, $parentOrgs) || in_array($tag, $forcedOrgs)) {
+                        $orgTags[$tag] = $count;
                     } elseif (in_array($tag, $allFacilities) || in_array($tag, $forcedFacilities)) {
                         $facilityTags[$tag] = $count;
                     } else {
@@ -312,6 +324,7 @@ try {
                 // Alphabetize tags within each category
                 ksort($stateTags);
                 ksort($facilityTags);
+                ksort($orgTags);
                 ksort($otherTags);
             ?>
             <div class="filter-group collapsible-filter">
@@ -345,10 +358,28 @@ try {
                     </div>
                     <?php endif; ?>
 
+                    <?php if (!empty($orgTags)): ?>
+                    <div class="filter-tag-category">
+                        <button class="filter-category-header" data-category="orgs">
+                            <span class="category-label">🏢 Parent Organizations (<?php echo count($orgTags); ?>)</span>
+                            <span class="category-arrow">▸</span>
+                        </button>
+                        <div class="filter-category-content" data-category-content="orgs" style="display: none;">
+                            <div class="filter-buttons">
+                                <?php foreach ($orgTags as $tag => $count): ?>
+                                    <button class="filter-btn" data-filter-tag="<?php echo esc_attr($tag); ?>">
+                                        <?php echo esc_html($tag); ?> (<?php echo $count; ?>)
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <?php if (!empty($facilityTags)): ?>
                     <div class="filter-tag-category">
                         <button class="filter-category-header" data-category="facilities">
-                            <span class="category-label">🏢 Facilities (<?php echo count($facilityTags); ?>)</span>
+                            <span class="category-label">🏫 Facilities (<?php echo count($facilityTags); ?>)</span>
                             <span class="category-arrow">▸</span>
                         </button>
                         <div class="filter-category-content" data-category-content="facilities" style="display: none;">
