@@ -208,12 +208,14 @@ function kop_register_facilities_rest_routes() {
                 $folder_id = $request->get_param('id');
                 if (!$folder_id) return new WP_Error('missing_id', 'ID required', array('status' => 400));
                 
-                // Render the FileBird shortcode
-                // Assuming [filebird id="123"] is the correct syntax based on common usage
-                // If the user has a specific gallery shortcode like [filebird_gallery], we might need to adjust.
-                // But "display the filebird libraries" usually means the folder view.
-                $shortcode = '[filebird id="' . intval($folder_id) . '"]';
+                // Render the FileBird shortcode using the project's custom wrapper
+                $shortcode = '[filebird_folder folder_id="' . intval($folder_id) . '"]';
                 $html = do_shortcode($shortcode);
+                
+                // If the shortcode wasn't processed, it returns the original string.
+                if ($html === $shortcode) {
+                    return rest_ensure_response(array('html' => ''));
+                }
                 
                 return rest_ensure_response(array('html' => $html));
             },
