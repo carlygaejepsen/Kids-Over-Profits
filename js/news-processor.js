@@ -42,19 +42,29 @@
 
     // Generic tags to exclude - these apply to almost every TTI article
     const EXCLUDED_TAGS = [
+        // Generic abuse terms (specific types belong in content warnings)
         'abuse', 'child abuse', 'teen abuse', 'youth abuse',
+        'physical abuse', 'sexual abuse', 'emotional abuse', 'psychological abuse',
+        'verbal abuse', 'mental abuse', 'spiritual abuse', 'medical abuse',
+        'neglect', 'medical neglect', 'educational neglect',
+        'restraint', 'seclusion', 'isolation',
+        'assault', 'sexual assault', 'physical assault',
+        'trauma', 'ptsd', 'mistreatment',
+        // Generic TTI/facility terms
         'boarding school', 'boarding schools',
         'troubled teen', 'troubled teens', 'troubled teen industry', 'tti',
         'residential treatment', 'residential treatment center', 'rtc',
         'therapeutic boarding school', 'treatment center', 'treatment facility',
         'behavioral health', 'mental health', 'mental health treatment',
-        'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
-        'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
-        'abuse allegations', 'allegations', 'misconduct',
         'reform', 'reform school', 'boot camp',
         'facility', 'program', 'institution',
-        'survivor', 'survivors', 'victim', 'victims',
-        'investigation', 'report', 'news', 'article'
+        // Generic people terms
+        'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
+        'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
+        'survivor', 'survivors', 'victim', 'victims', 'student', 'students',
+        // Generic news/legal terms
+        'abuse allegations', 'allegations', 'misconduct',
+        'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed'
     ];
 
     function filterGenericTags(tags) {
