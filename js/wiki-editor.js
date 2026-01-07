@@ -89,6 +89,47 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Empty-slug mapping (loaded from markdown_output) ---
     // Set of known-empty wiki slugs (derived from markdown_output/empty_files_updated.md)
     let emptySlugSet = null;
+
+    // --- Tab Switching Logic ---
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    const categoryContents = document.querySelectorAll('.category-content');
+
+    if (categoryTabs.length > 0) {
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Hide all content
+                categoryContents.forEach(content => content.classList.add('view-hidden'));
+
+                // Show target content
+                const targetId = tab.getAttribute('data-category') + '-content';
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.classList.remove('view-hidden');
+                    
+                    // Trigger data load if needed (lazy loading)
+                    if (targetId === 'index-pages-content') {
+                        loadIndexList();
+                    } else if (targetId === 'saved-facilities-content') {
+                        loadEntries();
+                    }
+                }
+            });
+        });
+
+        // Initialize first tab (Index Pages)
+        const firstTab = categoryTabs[0];
+        if (firstTab) {
+            // Trigger click to set initial state
+            // Use setTimeout to allow other init to finish
+            setTimeout(() => firstTab.click(), 50);
+        }
+    }
+
     async function loadEmptySlugMapping() {
         try {
             const resp = await fetch('/wp-content/themes/child/markdown_output/empty_files_updated.md', { cache: 'no-cache' });
@@ -597,21 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Helper: Check if in Iframe ---
-    const isInIframe = () => {
-        try {
-            return window.self !== window.top;
-        } catch (e) {
-            return true;
-        }
-    };
-
-    // --- Helper: Send message to parent ---
-    const sendParentMessage = (msg) => {
-        if (isInIframe()) {
-            window.parent.postMessage(msg, '*');
-        }
-    };
+    // --- ENTRY BROWSER FUNCTIONALITY ---
 
     function finalizeEntryLoad(name) {
         // Backwards-compatible: accept optional options object as second arg
@@ -642,16 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
-
-        if (name) {
-            sendParentMessage({
-                action: 'update_title',
-                tabTitle: name
-            });
-        }
     }
-
-    // --- Helper: Get Placeholder Text ---
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
         const lowerCategory = (category || '').toLowerCase();
@@ -2146,33 +2164,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalEntries = 0;
     const entriesPerPage = 20;
 
-    // Toggle Index Browser panel
-    if (toggleIndexBrowserBtn && indexBrowserPanel) {
-        toggleIndexBrowserBtn.addEventListener('click', () => {
-            const isHidden = indexBrowserPanel.style.display === 'none';
-            indexBrowserPanel.style.display = isHidden ? 'block' : 'none';
-            toggleIndexBrowserBtn.textContent = isHidden ? '✖️ Close Index Browser' : '📄 Browse Index Pages';
 
-            // Load index list when opening
-            if (isHidden) {
-                loadIndexList();
-            }
-        });
-    }
 
-    // Toggle Facilities Browser panel
-    if (toggleFacilitiesBrowserBtn && facilitiesBrowserPanel) {
-        toggleFacilitiesBrowserBtn.addEventListener('click', () => {
-            const isHidden = facilitiesBrowserPanel.style.display === 'none';
-            facilitiesBrowserPanel.style.display = isHidden ? 'block' : 'none';
-            toggleFacilitiesBrowserBtn.textContent = isHidden ? '✖️ Close Facilities Browser' : '🏢 Browse Saved Facilities';
 
-            // Load entries when opening
-            if (isHidden) {
-                loadEntries();
-            }
-        });
-    }
 
     // Refresh entries
     if (refreshEntriesBtn) {
@@ -2438,21 +2432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 actions.appendChild(editButton);
                 
-                // Add New Tab Button
-                const newTabBtn = document.createElement('button');
-                newTabBtn.type = 'button';
-                newTabBtn.className = 'new-tab-icon-btn';
-                newTabBtn.title = 'Open in New Tab';
-                newTabBtn.textContent = '↗';
-                newTabBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (isInIframe()) {
-                        sendParentMessage({ action: 'open_tab', programName: entryName });
-                    } else {
-                        window.open(`?framed=1&program_name=${encodeURIComponent(entryName)}`, '_blank');
-                    }
-                });
-                actions.appendChild(newTabBtn);
+
             }
 
             if (slugFromUrl) {
@@ -2723,7 +2703,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td data-label="Created">${createdDate}</td>
                         <td data-label="Actions">
                         <button type="button" class="load-entry-btn" data-entry-id="${entry.id}">Load</button>
-                        <button type="button" class="new-tab-btn" data-entry-id="${entry.id}" data-name="${escapeHtmlAttr(entry.program_name)}" title="Open in New Tab">↗</button>
+
                         ${isAdminMode ? `<button type="button" class="delete-entry-btn" data-entry-id="${entry.id}">Delete</button>` : ''}
                     </td>
                 </tr>
@@ -2746,19 +2726,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Attach event listeners to NEW TAB buttons
-            entriesList.querySelectorAll('.new-tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const entryId = btn.getAttribute('data-entry-id');
-                    const name = btn.getAttribute('data-name');
-                    if (isInIframe()) {
-                        sendParentMessage({ action: 'open_tab', entryId: entryId, programName: name });
-                    } else {
-                        window.open(`?framed=1&entry_id=${entryId}`, '_blank');
-                    }
-                });
-            });
+
 
             // Attach event listeners to delete buttons
             entriesList.querySelectorAll('.delete-entry-btn').forEach(btn => {

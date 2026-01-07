@@ -32,65 +32,61 @@ get_header();
             <button type="button" id="modeMarkdownBtn" class="mode-btn">💻 Markdown Editor</button>
         </div>
 
-        <!-- Wiki Entry Management (New Look) -->
-        <div class="project-management entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
-            <h2>Wiki Entry Management</h2>
-            <p class="info-text" style="margin-bottom: 15px;">Load existing entries from the index or your saved drafts.</p>
-            
-            <div class="form-row">
+        <!-- Wiki Entry Management (Tabbed View) -->
+        <div class="category-navigation entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="index-pages">📄 Index Pages</button>
+                <button class="category-tab" data-category="saved-facilities">🏢 Saved Facilities</button>
+            </div>
+
+            <div class="category-contents-wrapper">
                 <!-- Index Pages Browser -->
-                <div class="form-group" style="flex: 1;">
-                    <label>Index Pages</label>
-                    <button type="button" id="toggleIndexBrowserBtn" class="btn btn-secondary" style="width:100%; margin-bottom: 10px;">📄 Browse Index Pages</button>
+                <div id="index-pages-content" class="category-content">
+                    <div class="content-header">
+                        <h3>Index Pages</h3>
+                    </div>
                     
-                    <div id="indexBrowserPanel" style="display: none;">
+                    <div id="indexBrowserPanel">
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                            <h3 style="margin:0; font-size:16px;">Index Pages</h3>
                             <button type="button" id="backBtn" class="btn btn-sm" style="display: none;">← Back</button>
                         </div>
                         
-                        <select id="indexSelect" class="input-form" style="margin-bottom:10px;">
-                            <option value="">Select an index page</option>
-                        </select>
-                        <input type="text" id="indexSearch" class="input-form" placeholder="Filter entries..." disabled>
+                        <div class="form-group">
+                            <select id="indexSelect" class="input-form" style="margin-bottom:10px;">
+                                <option value="">Select an index page</option>
+                            </select>
+                            <input type="text" id="indexSearch" class="input-form" placeholder="Filter entries..." disabled>
+                        </div>
                         
                         <div id="indexEntriesList" class="index-entries-list">
                             <p class="loading">Select an index page above...</p>
                         </div>
                         
-                        <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
-                            <button type="button" id="prevIndexEntryBtn" class="btn btn-sm" disabled>← Prev</button>
-                            <button type="button" id="nextIndexEntryBtn" class="btn btn-sm" disabled>Next →</button>
-                        </div>
+                        <!-- Navigation for large lists if needed (currently managed by scroll) -->
+                        <!-- But standard index browser uses list replacement, not pagination -->
                     </div>
                 </div>
 
                 <!-- Facilities Browser -->
-                <div class="form-group" style="flex: 1;">
-                    <label>Saved Facilities</label>
-                    <button type="button" id="toggleFacilitiesBrowserBtn" class="btn btn-secondary" style="width:100%; margin-bottom: 10px;">🏢 Browse Saved Facilities</button>
+                <div id="saved-facilities-content" class="category-content view-hidden">
+                    <div class="content-header">
+                        <h3>Saved Facilities</h3>
+                        <button type="button" id="refreshEntriesBtn" class="btn btn-sm" style="float:right;">🔄 Refresh</button>
+                    </div>
                     
-                    <div id="facilitiesBrowserPanel" style="display: none;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                            <h3 style="margin:0; font-size:16px;">Saved Facilities</h3>
-                            <button type="button" id="refreshEntriesBtn" class="btn btn-sm">🔄 Refresh</button>
+                    <div id="facilitiesBrowserPanel">
+                        <div class="form-group">
+                            <input type="text" id="entrySearch" class="input-form project-search-input" placeholder="Search saved facilities...">
                         </div>
                         
-                        <input type="text" id="entrySearch" class="input-form project-search-input" placeholder="Search facilities...">
                         <div id="entriesList" class="entries-list">
                             <p class="loading">Loading entries...</p>
                         </div>
                         
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                             <button type="button" id="prevEntryBtn" class="btn btn-sm" disabled>←</button>
-                             
-                             <div class="browser-pagination" style="display:flex; gap:5px; align-items:center;">
-                                <button type="button" id="prevPageBtn" class="btn btn-sm" disabled>←</button>
-                                <span id="pageInfo" style="font-size:13px; font-weight:600;">Page 1</span>
-                                <button type="button" id="nextPageBtn" class="btn btn-sm">→</button>
-                            </div>
-
-                             <button type="button" id="nextEntryBtn" class="btn btn-sm" disabled>→</button>
+                             <button type="button" id="prevPageBtn" class="btn btn-sm" disabled>← Previous</button>
+                             <span id="pageInfo" style="font-size:13px; font-weight:600;">Page 1</span>
+                             <button type="button" id="nextPageBtn" class="btn btn-sm">Next →</button>
                         </div>
                     </div>
                 </div>

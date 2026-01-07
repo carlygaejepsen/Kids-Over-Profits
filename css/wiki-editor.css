@@ -154,6 +154,73 @@ body {
 }
 
 /* ============================================
+   TABS (Based on data-form.css)
+   ============================================ */
+.category-navigation {
+    margin-bottom: 20px;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 5px;
+    background: #FFF5CB; /* Soft Pastel Yellow */
+    padding: 5px;
+    border-radius: 8px;
+    justify-content: center;
+    border: 2px solid #B2E102; /* Chartreuse */
+    margin-bottom: 15px;
+}
+
+.category-tab {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 2px solid transparent;
+    background: transparent;
+    color: #000435;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.category-tab:hover {
+    background: #fff;
+    color: #000435;
+}
+
+.category-tab.active {
+    background: #000080; /* Navy Blue */
+    color: #FFFFFF;
+    box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
+    border: 2px solid #FE8088; /* Coral Pink */
+}
+
+.category-contents-wrapper {
+    position: relative;
+}
+
+.category-content {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    display: block; /* Default display */
+}
+
+.category-content.view-hidden {
+    display: none !important;
+}
+
+.content-header h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000435;
+    border-bottom: 2px solid #B2E102;
+    padding-bottom: 10px;
+}
+
+/* ============================================
    FORM ELEMENTS & SECTIONS
    ============================================ */
 fieldset {
