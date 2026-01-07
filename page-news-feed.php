@@ -130,6 +130,11 @@ try {
                         $otherTags[$tag] = $count;
                     }
                 }
+
+                // Alphabetize tags within each category
+                ksort($stateTags);
+                ksort($facilityTags);
+                ksort($otherTags);
             ?>
             <div class="filter-group collapsible-filter">
                 <div class="filter-header" id="tag-filter-header">
