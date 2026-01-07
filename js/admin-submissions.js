@@ -453,6 +453,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show modal
         submissionModal.style.display = 'flex';
+
+        // Scroll to make the modal visible (since it's position: static, not an overlay)
+        submissionModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     /**

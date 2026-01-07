@@ -532,7 +532,7 @@
     color: var(--kop-coral-pink);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 600px) {
     .markdown-side-by-side {
         grid-template-columns: 1fr;
     }
