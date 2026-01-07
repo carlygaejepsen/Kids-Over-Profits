@@ -189,11 +189,22 @@
 .facility-name {
     font-size: 1em;
     font-weight: 700;
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0; /* Reduced from 8px for subtext */
     color: #00004d;
     border-bottom: 2px solid #33A7B5;
     padding: 0 0 6px 0;
     line-height: 1.3;
+}
+
+.facility-header-subtext {
+    display: block;
+    font-size: 0.85em;
+    color: #444444 !important;
+    font-weight: 400;
+    margin-top: 2px;
+    margin-bottom: 8px; /* Added spacing */
+    font-style: italic;
+    line-height: 1.2;
 }
 
 .facility-details strong {
@@ -647,7 +658,7 @@ RESPONSIVE
     }
 
     .facility-name {
-        font-size: 0.95em;
+        font-size: 1.1em;
         padding-bottom: 5px;
         margin-bottom: 6px;
     }

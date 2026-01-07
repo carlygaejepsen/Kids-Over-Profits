@@ -4,7 +4,7 @@
 (function() {
 
 function displayFacilities(facilitiesData, containerId) {
-    const container = document.getElementById(containerId);    
+    const container = document.getElementById(containerId);
     if (!container) {
         console.warn('Facilities display skipped - container not found:', containerId);
         return;
@@ -15,8 +15,8 @@ function displayFacilities(facilitiesData, containerId) {
     const toArray = value => Array.isArray(value) ? value : [];
 
     const cleanText = value => {
-        if (typeof value === 'string') return value.trim();    
-        if (typeof value === 'number') return String(value);   
+        if (typeof value === 'string') return value.trim();
+        if (typeof value === 'number') return String(value);
         return '';
     };
 
@@ -33,7 +33,7 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Explicit placeholder list
             const placeholders = [
-                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a',      
+                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a',
                 'unknown', 'null', 'undefined', 'false', 'empty',
                 '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 
                 'not specified', 'not available', 'not applicable',
@@ -43,12 +43,12 @@ function displayFacilities(facilitiesData, containerId) {
             ];
 
             // Exact match check
-            if (placeholders.includes(lower)) return true;     
+            if (placeholders.includes(lower)) return true;
 
             // Check for placeholders with trailing punctuation
             // e.g. "None." or "No;"
             const stripped = lower.replace(/[.,;:\-–—]+$/, '');
-            if (placeholders.includes(stripped)) return true;  
+            if (placeholders.includes(stripped)) return true;
 
             return false;
         }
@@ -63,7 +63,7 @@ function displayFacilities(facilitiesData, containerId) {
             const keys = Object.keys(value);
             if (keys.length === 0) return true;
             // Recursively check values, but clean them first to ensure whitespace objects are caught
-            return keys.every(k => isValueEmpty(value[k]));    
+            return keys.every(k => isValueEmpty(value[k]));
         }
 
         return true;
@@ -79,10 +79,10 @@ function displayFacilities(facilitiesData, containerId) {
 
     const escapeHtml = value => {
         const text = cleanText(value);
-        return text ? text.replace(/[&<>'"']/g, char => htmlEscapeMap[char] || char) : '';
+        return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
 
-    const escapeAttribute = value => escapeHtml(value);        
+    const escapeAttribute = value => escapeHtml(value);
 
     const joinList = values => toArray(values)
         .filter(item => !isValueEmpty(item))
@@ -90,11 +90,11 @@ function displayFacilities(facilitiesData, containerId) {
         .filter(item => item); // Double check for empty strings
 
     const formatFieldLabel = (key) => {
-        if (!key || typeof key !== 'string') return 'Field';   
+        if (!key || typeof key !== 'string') return 'Field';
 
         // Strip common redundant prefixes
         let cleanKey = key
-            .replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '')       
+            .replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '')
             .replace(/\./g, ' ');
 
         return cleanKey
@@ -153,13 +153,13 @@ function displayFacilities(facilitiesData, containerId) {
 
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
-        
+
         const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
         if (loc) return loc;
 
         const city = getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
         const state = getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
-        
+
         if (city && state) return `${city}, ${state}`;
         return city || state || null;
     };
@@ -177,7 +177,7 @@ function displayFacilities(facilitiesData, containerId) {
         const items = [];
         Object.keys(fieldNotes).forEach(key => {
             if (usedKeys && usedKeys.has(key)) return;
-            const notes = getNotesForKey(fieldNotes, key);     
+            const notes = getNotesForKey(fieldNotes, key);
             if (!notes.length) return;
             const label = formatFieldLabel(key);
             notes.forEach(text => {
@@ -190,7 +190,7 @@ function displayFacilities(facilitiesData, containerId) {
         ).join('');
         return `
             <div class="facility-field-notes">
-                <p><strong>Additional Field Notes</strong></p> 
+                <p><strong>Additional Field Notes</strong></p>
                 <ul>${list}</ul>
             </div>
         `;
@@ -211,8 +211,8 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const isOperatorCategory = project => {
-        const category = normalizeProjectCategory(project);    
-        return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';     
+        const category = normalizeProjectCategory(project);
+        return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
     };
 
     // --- Main Rendering Logic ---
@@ -230,7 +230,7 @@ function displayFacilities(facilitiesData, containerId) {
                 return;
             }
 
-            const operator = project.data.operator || {};      
+            const operator = project.data.operator || {};
             const facilities = toArray(project.data.facilities);
 
             operatorGroups.push({
@@ -243,7 +243,7 @@ function displayFacilities(facilitiesData, containerId) {
         // Handle old structure (fallback)
         operatorGroups = facilitiesData;
     } else if (facilitiesData && typeof facilitiesData === 'object') {
-        operatorGroups = Object.values(facilitiesData);        
+        operatorGroups = Object.values(facilitiesData);
     }
 
     if (!Array.isArray(operatorGroups) || operatorGroups.length === 0) {
@@ -253,8 +253,8 @@ function displayFacilities(facilitiesData, containerId) {
 
     // Sort operators alphabetically by name (falling back to empty string)
     operatorGroups.sort((a, b) => {
-        const operatorA = a && a.operator ? a.operator : {};   
-        const operatorB = b && b.operator ? b.operator : {};   
+        const operatorA = a && a.operator ? a.operator : {};
+        const operatorB = b && b.operator ? b.operator : {};
         const nameA = cleanText(operatorA.name) || cleanText(operatorA.currentName) || cleanText(a && a.name) || '';
         const nameB = cleanText(operatorB.name) || cleanText(operatorB.currentName) || cleanText(b && b.name) || '';
         return nameA.localeCompare(nameB);
@@ -271,7 +271,7 @@ function displayFacilities(facilitiesData, containerId) {
             if (!f) return false;
             // Enhanced name check for deduplication
             const name = getValueFromKeys(f, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
-            
+
             // FILTER: exclude known corporate entities from being listed as facilities
             // This prevents data errors where a parent company is listed as a facility of another
             const corporateNames = [
@@ -284,7 +284,7 @@ function displayFacilities(facilitiesData, containerId) {
                 'innerchange',
                 'altior healthcare'
             ];
-            
+
             if (name) {
                 const lowerName = name.toLowerCase().trim();
                 // Check for exact match or name being just the corporate name
@@ -302,7 +302,7 @@ function displayFacilities(facilitiesData, containerId) {
         // Check if this is a privately owned facility (has isPrivatelyOwned flag set)
         const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
 
-        // Get the actual operator name (not the project name) 
+        // Get the actual operator name (not the project name)
         const actualOperatorName = getValueFromKeys(operator, [
             'name', 'currentName', 'operatorName', 'ownerName', 'companyName',
             'current_name', 'operator_name', 'owner_name', 'company_name',
@@ -319,8 +319,8 @@ function displayFacilities(facilitiesData, containerId) {
             operatorName = cleanText(operatorGroup && operatorGroup.name) || 'Unknown Parent Company';
         }
 
-        // Do not display operators with an unknown name.      
-        if (operatorName === 'Unknown Parent Company') {       
+        // Do not display operators with an unknown name.
+        if (operatorName === 'Unknown Parent Company') {
             return;
         }
 
@@ -335,9 +335,9 @@ function displayFacilities(facilitiesData, containerId) {
         const hasLongWord = operatorName.split(' ').some(word => word.length > 14);
         const isTooLong = operatorName.length > 25;
         const operatorNameClass = (hasLongWord || isTooLong) ? 'operator-name operator-name-long' : 'operator-name';
-        const operatorHeaderName = escapeHtml(operatorName);   
+        const operatorHeaderName = escapeHtml(operatorName);
         let operatorHeader = `<span class="${operatorNameClass}">${operatorHeaderName}</span>`;
-        // Build location and years - each on separate lines   
+        // Build location and years - each on separate lines
         let locationYearsLine = '';
         const locationLines = [];
 
@@ -345,7 +345,7 @@ function displayFacilities(facilitiesData, containerId) {
         if (operatorLocation) {
             locationLines.push(`<div>${escapeHtml(operatorLocation)}</div>`);
         }
-        
+
         let opYears = getValueFromKeys(operator, ['operatingPeriod', 'yearsActive', 'operating_period', 'years_active']);
         if (!opYears || typeof opYears === 'object') {
              const start = getValueFromKeys(operator, ['founded', 'yearFounded', 'year_founded', 'operatingPeriod.startYear', 'operating_period.start_year']);
@@ -354,7 +354,7 @@ function displayFacilities(facilitiesData, containerId) {
                  opYears = `${start}-${end}`;
              }
         }
-        
+
         if (opYears && typeof opYears === 'string') {
             locationLines.push(`<div>${escapeHtml(opYears)}</div>`);
         }
@@ -371,13 +371,13 @@ function displayFacilities(facilitiesData, containerId) {
             if (isValueEmpty(item)) return '';
             if (typeof item === 'boolean') return item ? 'Yes' : ''; // strict boolean check
             if (typeof item === 'string') {
-                // Double-check string isn't a placeholder     
+                // Double-check string isn't a placeholder
                 if (isValueEmpty(item)) return '';
                 return escapeHtml(item);
             }
             if (typeof item === 'number') return escapeHtml(String(item));
             if (typeof item === 'object' && !Array.isArray(item)) {
-                
+
                 // Handle clickable links in objects
                 if (item.url && typeof item.url === 'string' && (item.url.startsWith('http') || item.url.startsWith('/'))) {
                     const label = item.displayText || item.name || item.text || item.url;
@@ -408,13 +408,13 @@ function displayFacilities(facilitiesData, containerId) {
             const skipFullKeys = [
                 'name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName',
                 'current_name', 'operator_name', 'owner_name', 'company_name', 'project_name',
-                
+
                 'location', 'headquarters', 'address', 'cityState', 'city_state', 'hq_location',
                 'locationCity', 'locationState', 'headquartersCity', 'headquartersState',
                 'full_address', 'street_address', 'zip', 'zip_code',
-                
+
                 'status', 'status_label',
-                
+
                 'operatingPeriod', 'founded', 'yearFounded', 'yearsActive',
                 'operating_period', 'year_founded', 'years_active', 'founded_date', 'established', 'est'
             ];
@@ -432,7 +432,7 @@ function displayFacilities(facilitiesData, containerId) {
                 if (Array.isArray(value)) {
                     if (value.length > 0 && !value.every(isValueEmpty)) {
                         const label = formatFieldLabel(fullKey);
-                        const isUrl = value.some(v => typeof v === 'string' && (v.startsWith('http://') || v.startsWith('https://')));
+                        const isUrl = value.some(v => typeof v === 'string' && (v.startsWith('http://') || v.startsWith('https://'))); 
                         fields.push({ key: fullKey, label, value: value, isList: true, renderListAsLinks: isUrl });
                     }
                 } else if (typeof value === 'object' && Object.keys(value).length > 0) {
@@ -443,8 +443,8 @@ function displayFacilities(facilitiesData, containerId) {
                          fields.push({ key: fullKey, label, value: 'Yes' });
                     }
                 } else {
-                    const label = formatFieldLabel(fullKey);   
-                    const textValue = cleanText(value);        
+                    const label = formatFieldLabel(fullKey);
+                    const textValue = cleanText(value);
                     // Double-check: skip empty/placeholder values like "No", "None", etc.
                     if (textValue && !isValueEmpty(textValue)) {
                         fields.push({ key: fullKey, label, value: textValue });
@@ -481,15 +481,15 @@ function displayFacilities(facilitiesData, containerId) {
                     renderedValue = validItems.map(item => renderItemOp(item)).filter(Boolean).join(', ');
                 }
             } else {
-                renderedValue = escapeHtml(field.value);       
+                renderedValue = escapeHtml(field.value);
             }
 
             if (!renderedValue || isValueEmpty(renderedValue)) return;
 
             if (field.label) {
-                otherOperatorData += '<div class="field-row"><span class="field-label">' + escapeHtml(field.label) + '</span><span class="field-value">' + renderedValue + '</span></div>';  
+                otherOperatorData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;  
             } else {
-                otherOperatorData += '<div class="field-row"><span class="field-value">' + renderedValue + '</span></div>';   
+                otherOperatorData += `<div class="field-row"><span class="field-value">${renderedValue}</span></div>`;   
             }
         });
 
@@ -501,7 +501,7 @@ function displayFacilities(facilitiesData, containerId) {
                     operatorHeader +
                     locationYearsLine +
                 '</summary>' +
-                '<div class="operator-content-scrollable">' +  
+                '<div class="operator-content-scrollable">' +
                     operatorDetailsDiv;
 
         facilities.forEach(facility => {
@@ -519,7 +519,7 @@ function displayFacilities(facilitiesData, containerId) {
 
             const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
             const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            const statusLabel = escapeHtml(statusLabelRaw);    
+            const statusLabel = escapeHtml(statusLabelRaw);
 
             // Build facility header with Name - Enhanced lookup
             const facilityHeaderRaw = getValueFromKeys(facility, [
@@ -531,7 +531,7 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Data for display above the "cut"
             const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
-            
+
             let yearRange = '';
             let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
             if (facYears && typeof facYears === 'string') {
@@ -545,15 +545,34 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             }
 
-            // Subtext for Other Names
+            // Subtext for Other Names AND Current Operator
             const otherNames = getValueFromKeys(facility, ['identification.otherNames', 'otherNames', 'identification.pastNames', 'pastNames', 'formerNames']);
-            let otherNamesHtml = '';
+            const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
+            
+            let subtextParts = [];
+            
             if (otherNames) {
                 const names = Array.isArray(otherNames) ? otherNames : [otherNames];
                 const validNames = names.filter(n => !isValueEmpty(n));
                 if (validNames.length > 0) {
-                    otherNamesHtml = `<div class="facility-header-subtext">Formerly: ${escapeHtml(validNames.join(', '))}</div>`;
+                    subtextParts.push(`Formerly: ${escapeHtml(validNames.join(', '))}`);
                 }
+            }
+
+            if (currentOp && !isValueEmpty(currentOp)) {
+                // If transferred, show current operator prominently
+                if (statusClass === 'transferred' || statusClass === 'acquired') {
+                    subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);
+                } 
+                // If open but listed under a different parent (historical context), might still be useful
+                else if (statusClass === 'open' && cleanText(operatorName) !== cleanText(currentOp)) {
+                     subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
+                }
+            }
+
+            let otherNamesHtml = '';
+            if (subtextParts.length > 0) {
+                otherNamesHtml = `<div class="facility-header-subtext">${subtextParts.join('<br>')}</div>`;
             }
 
             // Build other facility data
@@ -605,20 +624,21 @@ function displayFacilities(facilitiesData, containerId) {
                     'identification.name', 'identification.currentName',
                     'name', 'programName', 'facilityName', 'title',
                     'program_name', 'facility_name', 'project_name',
-                    
+
                     'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
                     'city_state', 'full_address', 'street_address', 'addr',
                     'locationCity', 'locationState', 'city', 'state', 'zip', 'zip_code', 'postal_code',
-                    
+
                     'operatingPeriod.startYear', 'operatingPeriod.endYear', 'operatingPeriod.status',
                     'founded', 'yearFounded', 'opened', 'startYear', 'yearsActive',
                     'operating_period', 'year_founded', 'start_year', 'end_year', 'years_active',
                     'yearsOfOperation', 'founded_date', 'est', 'established',
-                    
+
                     'identification.otherNames', 'otherNames', 
                     'identification.pastNames', 'pastNames',
                     'formerNames', 'former_names', 'aliases', 'aka',
-                    
+                    'identification.currentOperator', 'currentOperator', 'current_operator',
+
                     'resources', // Handled separately by dedicated Resources Available section
                     'fieldNotes' // Handled separately by field notes renderer
                 ];
@@ -649,7 +669,7 @@ function displayFacilities(facilitiesData, containerId) {
                         }
                     } else {
                         const label = formatFieldLabel(fullKey);
-                        const textValue = cleanText(value);    
+                        const textValue = cleanText(value);
                         // Double-check: skip empty/placeholder values like "No", "None", etc.
                         if (textValue && !isValueEmpty(textValue)) {
                             fields.push({ key: fullKey, label, value: textValue });
@@ -705,7 +725,7 @@ function displayFacilities(facilitiesData, containerId) {
                          }
                     }
                 } else {
-                    renderedValue = escapeHtml(field.value);   
+                    renderedValue = escapeHtml(field.value);
                 }
 
                 if (!renderedValue || isValueEmpty(renderedValue)) return;
@@ -810,7 +830,7 @@ function filterFacilities() {
 
         facilityCards.forEach(card => {
             const facilityName = card.dataset.facility.toLowerCase();
-            const facilityStatus = card.dataset.status;        
+            const facilityStatus = card.dataset.status;
 
             const matchesSearch = operatorName.includes(searchTerm) || facilityName.includes(searchTerm);
             const matchesStatus = !statusFilter || facilityStatus === statusFilter;
