@@ -37,7 +37,9 @@ function displayFacilities(facilitiesData, containerId) {
                 'unknown', 'null', 'undefined', 'false', 'empty',
                 '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 
                 'not specified', 'not available', 'not applicable',
-                'no data', 'no info', 'no information'
+                'no data', 'no info', 'no information',
+                'pending', 'none reported', 'not reported', 'no report',
+                'nil', 'unspecified'
             ];
 
             // Exact match check
