@@ -284,15 +284,15 @@ try {
 
                 // Merge auto-tags with manual tags, remove duplicates
                 $tags = array_unique(array_merge($tags, $autoTags));
-and normalize to title case
+
+                // Filter out excluded tags and normalize to title case
                 $tags = array_filter(array_map(function($tag) use ($excludedTags) {
                     $tagLower = strtolower(trim($tag));
                     if (!empty($tagLower) && !in_array($tagLower, $excludedTags)) {
                         return normalizeTagCase(trim($tag));
                     }
                     return null;
-                }, $tags)   return !empty($tagLower) && !in_array($tagLower, $excludedTags);
-                });
+                }, $tags));
                 
                 // Format Date
                 $pubDate = $item['publication_date'] ? date('M j, Y', strtotime($item['publication_date'])) : 'Unknown Date';
