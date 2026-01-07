@@ -1,6 +1,6 @@
 # Admin Submissions
 
-The **Admin Submissions** module is a dashboard for reviewing, approving, and managing user-submitted content (primarily Wiki entries and News articles). It acts as the gatekeeper for the Kids Over Profits database.
+The **Admin Submissions** module is a dashboard for reviewing, approving, and managing user-submitted content (primarily Wiki entries, News articles, and Data Form suggestions). It acts as the gatekeeper for the Kids Over Profits database.
 
 ## Overview
 
@@ -27,6 +27,7 @@ Real-time counters for:
 ### 2. Submission Management
 - **List View:** Sortable list of submissions with key metadata (Program Name, Date, Submitter).
 - **Filtering:** Filter by status (Submitted, Approved, Published, Rejected) and search by keyword.
+- **Types:** Support for Wiki Entries, News Articles, and Data Form Suggestions.
 
 ### 3. Review Modal
 Clicking "View Details" opens a comprehensive modal featuring:
@@ -53,6 +54,8 @@ Clicking "View Details" opens a comprehensive modal featuring:
 
 **Endpoint:** `/api/manage-submissions.php`
 
-- **GET `?action=list&type=wiki`**: List submissions.
+- **GET `?action=list&type=wiki`**: List wiki submissions.
+- **GET `?action=list&type=news`**: List news submissions.
+- **GET `?action=list&type=data`**: List data form suggestions.
 - **GET `?action=get&id=123`**: Get single submission details.
 - **POST `{ "action": "approve", "ids": [123] }`**: Approve a submission.

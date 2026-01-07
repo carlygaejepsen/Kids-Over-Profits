@@ -1,6 +1,6 @@
 <?php
 /**
- * AI News Article Processor API
+ * AI News Article Processor API (Enhanced with Comprehensive Error Handling & Retry Logic)
  *
  * Endpoint to process news articles using AI (Ollama, Groq, Gemini, etc.)
  *
@@ -30,6 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Load config.php which handles .env and wp-config loading
 define('SKIP_DB_CONNECTION', true);
 require_once __DIR__ . '/config.php';
+
+// Enable detailed error logging (set to false in production if too verbose)
+define('AI_DEBUG_LOGGING', true);
 
 // Get JSON input
 $input = file_get_contents('php://input');
@@ -83,25 +86,25 @@ try {
             break;
         case 'groq':
             if (empty($apiKeys['groq'])) {
-                throw new Exception('Groq API key not configured. Add GROQ_API_KEY to your .env file');
+                throw new Exception('Groq API key not configured. Add GROQ_API_KEY or GROK_API_KEY to your .env file. Get a free key at: https://console.groq.com/keys');
             }
             $result = processWithGroq($apiKeys['groq'], $content, $url, $customInstructions);
             break;
         case 'gemini':
             if (empty($apiKeys['gemini'])) {
-                throw new Exception('Gemini API key not configured. Add GEMINI_API_KEY to your .env file');
+                throw new Exception('Gemini API key not configured. Add GEMINI_API_KEY to your .env file. Get a free key at: https://aistudio.google.com/app/apikey');
             }
             $result = processWithGemini($apiKeys['gemini'], $content, $url, $customInstructions);
             break;
         case 'huggingface':
             if (empty($apiKeys['huggingface'])) {
-                throw new Exception('Hugging Face API key not configured. Add HUGGINGFACE_API_KEY to your .env file');
+                throw new Exception('Hugging Face API key not configured. Add HUGGINGFACE_API_KEY to your .env file. Get a free key at: https://huggingface.co/settings/tokens');
             }
             $result = processWithHuggingFace($apiKeys['huggingface'], $content, $url, $customInstructions);
             break;
         case 'claude':
             if (empty($apiKeys['claude'])) {
-                throw new Exception('Claude API key not configured. Add ANTHROPIC_API_KEY to your .env file');
+                throw new Exception('Claude API key not configured. Add ANTHROPIC_API_KEY to your .env file. Get a key at: https://console.anthropic.com/');
             }
             $result = processWithClaude($apiKeys['claude'], $content, $url, $customInstructions);
             break;
@@ -115,7 +118,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    error_log("AI processing error: " . $e->getMessage());
+    error_log("AI processing error [$provider]: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
@@ -173,6 +176,95 @@ function fetchArticleContent($url) {
 }
 
 /**
+ * Shared CURL execution with comprehensive error handling
+ * 
+ * @param resource $ch CURL handle
+ * @param string $provider Provider name for logging
+ * @param int $maxRetries Number of retry attempts
+ * @return array ['response' => string, 'httpCode' => int]
+ * @throws Exception on failure
+ */
+function executeCurlRequest($ch, $provider, $maxRetries = 2) {
+    $attempt = 0;
+    $lastError = null;
+    
+    while ($attempt < $maxRetries) {
+        $attempt++;
+        
+        if (AI_DEBUG_LOGGING) {
+            error_log("[$provider] Attempt $attempt of $maxRetries");
+        }
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        $curlErrno = curl_errno($ch);
+        
+        // Check for CURL errors first (network issues)
+        if ($curlError || $curlErrno !== 0) {
+            $lastError = "Connection error: $curlError (errno: $curlErrno)";
+            error_log("[$provider] $lastError");
+            
+            // Retry on transient network errors
+            if ($attempt < $maxRetries && isTransientCurlError($curlErrno)) {
+                error_log("[$provider] Retrying after transient error...");
+                sleep(1); // Brief delay before retry
+                continue;
+            }
+            
+            throw new Exception("[$provider] $lastError");
+        }
+        
+        // Check for HTTP errors
+        if ($response === false) {
+            $lastError = "Empty response from API";
+            error_log("[$provider] $lastError (HTTP $httpCode)");
+            
+            if ($attempt < $maxRetries) {
+                error_log("[$provider] Retrying after empty response...");
+                sleep(1);
+                continue;
+            }
+            
+            throw new Exception("[$provider] $lastError");
+        }
+        
+        // Log response for debugging
+        if (AI_DEBUG_LOGGING) {
+            error_log("[$provider] HTTP $httpCode - Response length: " . strlen($response));
+            if ($httpCode !== 200) {
+                error_log("[$provider] Error response: " . substr($response, 0, 500));
+            }
+        }
+        
+        // Success - return response and HTTP code
+        return [
+            'response' => $response,
+            'httpCode' => $httpCode
+        ];
+    }
+    
+    // All retries exhausted
+    throw new Exception("[$provider] Request failed after $maxRetries attempts. Last error: $lastError");
+}
+
+/**
+ * Check if CURL error is transient and worth retrying
+ */
+function isTransientCurlError($errno) {
+    // See: https://curl.se/libcurl/c/libcurl-errors.html
+    $transientErrors = [
+        6,  // CURLE_COULDNT_RESOLVE_HOST
+        7,  // CURLE_COULDNT_CONNECT
+        28, // CURLE_OPERATION_TIMEDOUT
+        52, // CURLE_GOT_NOTHING
+        56, // CURLE_RECV_ERROR
+    ];
+    
+    return in_array($errno, $transientErrors);
+}
+
+/**
  * Process article with Claude AI
  */
 function processWithClaude($apiKey, $content, $url = '', $customInstructions = '') {
@@ -202,36 +294,28 @@ function processWithClaude($apiKey, $content, $url = '', $customInstructions = '
     ]);
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $result = executeCurlRequest($ch, 'Claude');
     curl_close($ch);
+    
+    $response = $result['response'];
+    $httpCode = $result['httpCode'];
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
         $errorMsg = $errorData['error']['message'] ?? 'API request failed';
-        throw new Exception("Claude API error: $errorMsg");
+        throw new Exception("Claude API error (HTTP $httpCode): $errorMsg");
     }
 
     $responseData = json_decode($response, true);
 
     if (!isset($responseData['content'][0]['text'])) {
-        throw new Exception('Invalid response from Claude API');
+        error_log("[Claude] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Claude API - missing content.text');
     }
 
     $aiResponse = $responseData['content'][0]['text'];
 
-    // Extract JSON from response (in case there's extra text)
-    if (preg_match('/\{.*\}/s', $aiResponse, $matches)) {
-        $aiResponse = $matches[0];
-    }
-
-    $extractedData = json_decode($aiResponse, true);
-
-    if (!$extractedData) {
-        throw new Exception('Could not parse AI response as JSON');
-    }
-
-    return $extractedData;
+    return parseAIResponse($aiResponse, 'Claude');
 }
 
 /**
@@ -256,20 +340,35 @@ function processWithOllama($content, $url = '', $customInstructions = '') {
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    try {
+        $result = executeCurlRequest($ch, 'Ollama', 1); // No retry for Ollama (local service)
+        curl_close($ch);
+        
+        $response = $result['response'];
+        $httpCode = $result['httpCode'];
+    } catch (Exception $e) {
+        curl_close($ch);
+        
+        // Provide helpful error message for Ollama connection failures
+        if (strpos($e->getMessage(), 'Connection error') !== false) {
+            throw new Exception('Ollama is not running or not accessible at http://127.0.0.1:11434. Please:\n1. Install Ollama from https://ollama.com/download\n2. Start Ollama (run "ollama serve" in terminal)\n3. Install a model (run "ollama pull llama3.2")');
+        }
+        
+        throw $e;
+    }
 
     if ($httpCode !== 200) {
-        throw new Exception('Ollama is not running. Please start Ollama (run "ollama serve" in terminal) and install a model (run "ollama pull llama3.2")');
+        error_log("[Ollama] HTTP $httpCode response: " . substr($response, 0, 500));
+        throw new Exception("Ollama error (HTTP $httpCode). Is Ollama running with a model installed?");
     }
 
     $responseData = json_decode($response, true);
     if (!isset($responseData['response'])) {
-        throw new Exception('Invalid response from Ollama');
+        error_log("[Ollama] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Ollama - missing "response" field');
     }
 
-    return parseAIResponse($responseData['response']);
+    return parseAIResponse($responseData['response'], 'Ollama');
 }
 
 /**
@@ -299,22 +398,33 @@ function processWithGroq($apiKey, $content, $url = '', $customInstructions = '')
     ]);
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $result = executeCurlRequest($ch, 'Groq');
     curl_close($ch);
+    
+    $response = $result['response'];
+    $httpCode = $result['httpCode'];
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
         $errorMsg = $errorData['error']['message'] ?? 'API request failed';
-        throw new Exception("Groq API error: $errorMsg");
+        
+        // Check for common Groq errors
+        if ($httpCode === 401) {
+            throw new Exception("Groq API key is invalid or expired. Please check your GROQ_API_KEY in .env file. Get a new key at: https://console.groq.com/keys");
+        } elseif ($httpCode === 429) {
+            throw new Exception("Groq rate limit exceeded. Please wait a moment and try again.");
+        }
+        
+        throw new Exception("Groq API error (HTTP $httpCode): $errorMsg");
     }
 
     $responseData = json_decode($response, true);
     if (!isset($responseData['choices'][0]['message']['content'])) {
-        throw new Exception('Invalid response from Groq');
+        error_log("[Groq] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Groq - missing choices.message.content');
     }
 
-    return parseAIResponse($responseData['choices'][0]['message']['content']);
+    return parseAIResponse($responseData['choices'][0]['message']['content'], 'Groq');
 }
 
 /**
@@ -331,6 +441,12 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
             'temperature' => 0.1,
             'maxOutputTokens' => 4096,
             'responseMimeType' => 'application/json'
+        ],
+        'safetySettings' => [
+            ['category' => 'HARM_CATEGORY_HARASSMENT', 'threshold' => 'BLOCK_ONLY_HIGH'],
+            ['category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_ONLY_HIGH'],
+            ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_ONLY_HIGH'],
+            ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_ONLY_HIGH'],
         ]
     ];
 
@@ -344,35 +460,47 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
+    $result = executeCurlRequest($ch, 'Gemini');
     curl_close($ch);
-
-    if ($curlError) {
-        throw new Exception("Gemini connection error: $curlError");
-    }
+    
+    $response = $result['response'];
+    $httpCode = $result['httpCode'];
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error']['message'] ?? "API request failed (HTTP $httpCode)";
-        error_log("Gemini API error response: " . substr($response, 0, 500));
-        throw new Exception("Gemini API error: $errorMsg");
+        $errorMsg = $errorData['error']['message'] ?? "API request failed";
+        
+        // Check for common Gemini errors
+        if ($httpCode === 400 && strpos($errorMsg, 'API_KEY_INVALID') !== false) {
+            throw new Exception("Gemini API key is invalid. Please check your GEMINI_API_KEY in .env file. Get a new key at: https://aistudio.google.com/app/apikey");
+        }
+        
+        error_log("[Gemini] HTTP $httpCode error response: " . substr($response, 0, 500));
+        throw new Exception("Gemini API error (HTTP $httpCode): $errorMsg");
     }
 
     $responseData = json_decode($response, true);
 
-    // Check for blocked content
+    // Check for blocked content (TTI articles may trigger safety filters)
     if (isset($responseData['promptFeedback']['blockReason'])) {
-        throw new Exception("Gemini blocked the request: " . $responseData['promptFeedback']['blockReason']);
+        $blockReason = $responseData['promptFeedback']['blockReason'];
+        error_log("[Gemini] Content blocked: $blockReason. Feedback: " . json_encode($responseData['promptFeedback']));
+        throw new Exception("Gemini blocked the request due to content safety: $blockReason. This article may contain sensitive content that Gemini won't process. Try a different AI provider.");
+    }
+
+    // Check for content filtering on response
+    if (isset($responseData['candidates'][0]['finishReason']) && 
+        $responseData['candidates'][0]['finishReason'] === 'SAFETY') {
+        error_log("[Gemini] Response blocked by safety filter: " . json_encode($responseData['candidates'][0]));
+        throw new Exception("Gemini blocked the response due to content safety filters. This article may contain sensitive content. Try a different AI provider.");
     }
 
     if (!isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
-        error_log("Gemini unexpected response: " . substr($response, 0, 500));
-        throw new Exception('Invalid response from Gemini - no text in response');
+        error_log("[Gemini] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Gemini - no text in response. The content may have been filtered.');
     }
 
-    return parseAIResponse($responseData['candidates'][0]['content']['parts'][0]['text']);
+    return parseAIResponse($responseData['candidates'][0]['content']['parts'][0]['text'], 'Gemini');
 }
 
 /**
@@ -404,43 +532,52 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
     ]);
     curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
+    $result = executeCurlRequest($ch, 'HuggingFace');
     curl_close($ch);
+    
+    $response = $result['response'];
+    $httpCode = $result['httpCode'];
 
-    if ($curlError) {
-        throw new Exception("Hugging Face connection error: $curlError");
-    }
-
-    // Handle 503 (model loading)
+    // Handle 503 (model loading/cold start)
     if ($httpCode === 503) {
         $errorData = json_decode($response, true);
         $estimatedTime = $errorData['estimated_time'] ?? 20;
-        throw new Exception("Hugging Face model is loading. Please try again in about {$estimatedTime} seconds.");
+        error_log("[HuggingFace] Model is loading. Estimated time: {$estimatedTime}s");
+        throw new Exception("Hugging Face model is loading (cold start). Please try again in about {$estimatedTime} seconds. Tip: Use Groq for faster results.");
     }
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error'] ?? "API request failed (HTTP $httpCode)";
-        error_log("Hugging Face API error response: " . substr($response, 0, 500));
-        throw new Exception("Hugging Face API error: $errorMsg");
+        $errorMsg = $errorData['error'] ?? "API request failed";
+        
+        // Check for common Hugging Face errors
+        if ($httpCode === 401) {
+            throw new Exception("Hugging Face API key is invalid or expired. Please check your HUGGINGFACE_API_KEY in .env file. Get a new key at: https://huggingface.co/settings/tokens");
+        }
+        
+        error_log("[HuggingFace] HTTP $httpCode error response: " . substr($response, 0, 500));
+        throw new Exception("Hugging Face API error (HTTP $httpCode): $errorMsg");
     }
 
     $responseData = json_decode($response, true);
 
-    // The inference API returns an array with generated_text
+    // The inference API can return different formats
+    $generatedText = null;
+    
     if (isset($responseData[0]['generated_text'])) {
-        return parseAIResponse($responseData[0]['generated_text']);
+        $generatedText = $responseData[0]['generated_text'];
+    } elseif (is_array($responseData) && isset($responseData['generated_text'])) {
+        $generatedText = $responseData['generated_text'];
+    } elseif (is_string($responseData)) {
+        $generatedText = $responseData;
+    }
+    
+    if ($generatedText === null) {
+        error_log("[HuggingFace] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Hugging Face - unexpected format. Response: ' . substr($response, 0, 200));
     }
 
-    // Fallback for different response formats
-    if (is_array($responseData) && isset($responseData['generated_text'])) {
-        return parseAIResponse($responseData['generated_text']);
-    }
-
-    error_log("Hugging Face unexpected response: " . substr($response, 0, 500));
-    throw new Exception('Invalid response from Hugging Face - unexpected format');
+    return parseAIResponse($generatedText, 'HuggingFace');
 }
 
 /**
@@ -493,25 +630,60 @@ function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt .= "- Only include content warnings that are clearly present in the article\n";
     $prompt .= "- Detect the article type based on the content\n";
     $prompt .= "- Only fill typeSpecificData for the detected article type\n";
-    $prompt .= "- Return ONLY valid JSON, no additional text\n";
+    $prompt .= "- Return ONLY valid JSON, no additional text or markdown formatting\n";
+    $prompt .= "- Do not wrap the JSON in code blocks (```json)\n";
 
     return $prompt;
 }
 
 /**
- * Parse AI response (extract JSON and decode)
+ * Parse AI response (extract JSON and decode) with improved error handling
+ * 
+ * @param string $aiResponse Raw AI response
+ * @param string $provider Provider name for logging
+ * @return array Parsed JSON data
+ * @throws Exception on parse failure
  */
-function parseAIResponse($aiResponse) {
-    // Extract JSON from response (in case there's extra text)
-    if (preg_match('/\{.*\}/s', $aiResponse, $matches)) {
-        $aiResponse = $matches[0];
+function parseAIResponse($aiResponse, $provider) {
+    // Log raw response for debugging
+    if (AI_DEBUG_LOGGING) {
+        error_log("[$provider] Raw response length: " . strlen($aiResponse));
+        error_log("[$provider] Response preview: " . substr($aiResponse, 0, 200));
     }
-
-    $extractedData = json_decode($aiResponse, true);
-
-    if (!$extractedData) {
-        throw new Exception('Could not parse AI response as JSON');
+    
+    // Remove markdown code fences if present
+    $aiResponse = preg_replace('/```json\s*/', '', $aiResponse);
+    $aiResponse = preg_replace('/```\s*$/', '', $aiResponse);
+    $aiResponse = trim($aiResponse);
+    
+    // Try to extract JSON from response (in case there's extra text)
+    // Use a more conservative regex that looks for complete JSON objects
+    if (preg_match('/(\{(?:[^{}]|(?1))*\})/s', $aiResponse, $matches)) {
+        $jsonString = $matches[0];
+    } else {
+        $jsonString = $aiResponse;
     }
-
+    
+    $extractedData = json_decode($jsonString, true);
+    $jsonError = json_last_error();
+    
+    if ($extractedData === null || $jsonError !== JSON_ERROR_NONE) {
+        $jsonErrorMsg = json_last_error_msg();
+        error_log("[$provider] JSON parse error: $jsonErrorMsg");
+        error_log("[$provider] Attempted to parse: " . substr($jsonString, 0, 500));
+        
+        throw new Exception("[$provider] Could not parse AI response as JSON. Error: $jsonErrorMsg. Response preview: " . substr($aiResponse, 0, 200));
+    }
+    
+    // Validate that we got the expected structure
+    if (!isset($extractedData['title']) && !isset($extractedData['summary'])) {
+        error_log("[$provider] Parsed JSON but missing expected fields: " . json_encode(array_keys($extractedData)));
+        throw new Exception("[$provider] AI returned JSON but it's missing expected fields (title, summary, etc.). The AI may not have understood the prompt.");
+    }
+    
+    if (AI_DEBUG_LOGGING) {
+        error_log("[$provider] Successfully parsed JSON with " . count($extractedData) . " fields");
+    }
+    
     return $extractedData;
 }
