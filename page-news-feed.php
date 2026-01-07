@@ -81,6 +81,22 @@ try {
             'detention center' => 'Juvenile Justice',
             'youth prison' => 'Juvenile Justice',
             'juvenile jail' => 'Juvenile Justice',
+            // Escapes
+            'escape' => 'Escape',
+            'escapes' => 'Escape',
+            'escaped' => 'Escape',
+            'runaway' => 'Escape',
+            'runaways' => 'Escape',
+            'absconded' => 'Escape',
+            'elopement' => 'Escape',
+            // Riots
+            'riot' => 'Riot',
+            'riots' => 'Riot',
+            'uprising' => 'Riot',
+            'uprisings' => 'Riot',
+            'disturbance' => 'Riot',
+            'disturbances' => 'Riot',
+            'melee' => 'Riot',
         ];
 
         // Tags to exclude - generic terms that apply to almost every TTI article
