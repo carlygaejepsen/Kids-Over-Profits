@@ -252,12 +252,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialize empty list output containers ---
     const initializeEmptyLists = () => {
-        const emptyHtml = '<p style="color:#999;">No items added yet</p>';
         const listIds = ['staffListOutput', 'punishmentListOutput', 'lawsuitListOutput', 'articleListOutput', 'testimonyListOutput', 'mediaListOutput', 'campusListOutput', 'ownerChangeListOutput', 'ruleListOutput', 'allegationListOutput', 'therapyListOutput', 'affiliationListOutput', 'relatedProgramsListOutput'];
         listIds.forEach(id => {
             const element = document.getElementById(id);
-            if (element && !element.innerHTML.trim()) {
-                element.innerHTML = emptyHtml;
+            if (element) {
+                element.style.display = 'none';
+                element.innerHTML = '';
             }
         });
     };
@@ -387,9 +387,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
         container.innerHTML = '';
         if (!staffMembers.length) {
-            container.innerHTML = '<p style="color:#999;">No items added yet</p>';
+            container.style.display = 'none';
             return;
         }
+        container.style.display = 'block';
 
         staffMembers.forEach((member, index) => {
             const item = document.createElement('div');
@@ -726,9 +727,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         outputDiv.innerHTML = '';
         if (!array || array.length === 0) {
-            outputDiv.innerHTML = '<p style="color:#999;">No items added yet</p>';
+            outputDiv.style.display = 'none';
             return;
         }
+        outputDiv.style.display = 'block';
         array.forEach((item, index) => {
             const el = document.createElement('div');
             el.className = 'list-preview-item';
@@ -2036,174 +2038,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ENTRY BROWSER FUNCTIONALITY ---
-    // Index browser elements
-    const toggleIndexBrowserBtn = document.getElementById('toggleIndexBrowserBtn');
-    const indexBrowserPanel = document.getElementById('indexBrowserPanel');
-    const prevIndexEntryBtn = document.getElementById('prevIndexEntryBtn');
-    const nextIndexEntryBtn = document.getElementById('nextIndexEntryBtn');
-
-    // Facilities browser elements
-    const toggleFacilitiesBrowserBtn = document.getElementById('toggleFacilitiesBrowserBtn');
-    const facilitiesBrowserPanel = document.getElementById('facilitiesBrowserPanel');
-    const prevEntryBtn = document.getElementById('prevEntryBtn');
-    const nextEntryBtn = document.getElementById('nextEntryBtn');
-
-    // Navigation state
-    let currentNavList = [];
-    let currentNavIndex = -1;
-    let currentNavType = 'facilities'; // 'index' or 'facilities'
-
-    const updateNavButtons = () => {
-        // Update facilities nav buttons
-        if (prevEntryBtn) {
-            const disabled = currentNavType !== 'facilities' || currentNavIndex <= 0 || currentNavList.length === 0;
-            prevEntryBtn.disabled = disabled;
-            prevEntryBtn.title = disabled ? 'No previous entry' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
-        }
-        if (nextEntryBtn) {
-            const disabled = currentNavType !== 'facilities' || currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1;
-            nextEntryBtn.disabled = disabled;
-            nextEntryBtn.title = disabled ? 'No next entry' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
-        }
-        // Update index nav buttons
-        if (prevIndexEntryBtn) {
-            const disabled = currentNavType !== 'index' || currentNavIndex <= 0 || currentNavList.length === 0;
-            prevIndexEntryBtn.disabled = disabled;
-            prevIndexEntryBtn.title = disabled ? 'No previous entry' : `Previous: ${getEntryName(currentNavList[currentNavIndex - 1])}`;
-        }
-        if (nextIndexEntryBtn) {
-            const disabled = currentNavType !== 'index' || currentNavIndex < 0 || currentNavIndex >= currentNavList.length - 1;
-            nextIndexEntryBtn.disabled = disabled;
-            nextIndexEntryBtn.title = disabled ? 'No next entry' : `Next: ${getEntryName(currentNavList[currentNavIndex + 1])}`;
-        }
-    };
-
-    const getEntryName = (entry) => {
-        if (!entry) return '';
-        return entry.program_name || entry.name || entry.normalizedName || 'Entry';
-    };
-
-    const navigateEntry = (direction) => {
-        const newIndex = currentNavIndex + direction;
-        if (newIndex >= 0 && newIndex < currentNavList.length) {
-            currentNavIndex = newIndex;
-            const entry = currentNavList[currentNavIndex];
-            updateNavButtons();
-            
-            // Determine type of entry (DB or Index)
-            if (entry.id && !entry.url && !entry.normalizedName) {
-                // It's a DB entry
-                loadEntryIntoForm(entry.id);
-            } else {
-                // It's an Index entry
-                if (selectedIndexState === 'CORPORATE') {
-                     // For corporate view, we might be navigating organizations
-                     // But loadOrganizationIndexEntry expects the button to be passed
-                     loadOrganizationIndexEntry(entry, null);
-                } else if (selectedIndexState === 'ORG_PROGRAMS') {
-                    // We are in organization programs list
-                    if (entry.source === 'database' && entry.id) {
-                         loadEntryIntoForm(entry.id);
-                    } else {
-                         // Markdown link
-                         // We can't easily "load" a markdown link if it's not in DB without parsing the page
-                         // But wait, loadOrgProgramsFromDatabase creates these entries.
-                         // If source is markdown, we probably need to check if it exists in DB first?
-                         // renderIndexEntries calls loadEntryFromReddit for these.
-                         loadEntryFromReddit(entry, null);
-                    }
-                } else {
-                    // Standard state index
-                    loadEntryFromReddit(entry, null);
-                }
-            }
-        }
-    };
-
-    // Facilities nav buttons
-    if (prevEntryBtn) {
-        prevEntryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentNavType === 'facilities') navigateEntry(-1);
-        });
-    }
-
-    if (nextEntryBtn) {
-        nextEntryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentNavType === 'facilities') navigateEntry(1);
-        });
-    }
-
-    // Index nav buttons
-    if (prevIndexEntryBtn) {
-        prevIndexEntryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentNavType === 'index') navigateEntry(-1);
-        });
-    }
-
-    if (nextIndexEntryBtn) {
-        nextIndexEntryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentNavType === 'index') navigateEntry(1);
-        });
-    }
-
-    const entriesList = document.getElementById('entriesList');
-    const entrySearch = document.getElementById('entrySearch');
-    const refreshEntriesBtn = document.getElementById('refreshEntriesBtn');
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
-    const pageInfo = document.getElementById('pageInfo');
-
-    let currentPage = 1;
-    let totalEntries = 0;
-    const entriesPerPage = 20;
-
-
-
-
-
-    // Refresh entries
-    if (refreshEntriesBtn) {
-        refreshEntriesBtn.addEventListener('click', () => {
-            currentPage = 1;
-            loadEntries();
-        });
-    }
-
-    // Search entries
-    if (entrySearch) {
-        let searchTimeout;
-        entrySearch.addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentPage = 1;
-                loadEntries();
-            }, 500);
-        });
-    }
-
-    // Pagination
-    if (prevPageBtn) {
-        prevPageBtn.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                loadEntries();
-            }
-        });
-    }
-
-    if (nextPageBtn) {
-        nextPageBtn.addEventListener('click', () => {
-            const totalPages = Math.ceil(totalEntries / entriesPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                loadEntries();
-            }
-        });
-    }
 
     const entryBrowserSection = document.querySelector('.entry-browser-section');
     const wikiIndexJsonUrl = entryBrowserSection?.dataset?.wikiIndexJson;

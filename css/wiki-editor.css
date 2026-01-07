@@ -384,6 +384,53 @@ select {
     display: none !important;
 }
 
+/* List Previews */
+.list-preview {
+    margin-top: 15px;
+    background: #AEE0ED;
+    border: 2px dashed #33A7B5;
+    border-radius: 5px;
+    padding: 10px;
+    display: none; /* Hidden by default, JS toggles display:block */
+}
+
+.list-preview-item {
+    font-size: 0.9rem;
+    padding: 8px;
+    border-bottom: 1px solid #B6E3D4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFFFFF;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.list-preview-item:last-child {
+    border-bottom: none;
+}
+
+.list-preview-item button {
+    background: #FE8088;
+    color: #FFFFFF;
+    border: 2px solid #FE8088;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.staff-preview-item {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.staff-actions {
+    margin-top: 5px;
+    display: flex;
+    gap: 5px;
+}
+
 /* Output */
 #outputCode {
     width: 100%;
