@@ -141,13 +141,27 @@ function displayFacilities(facilitiesData, containerId) {
                 let val = obj;
                 for (const part of parts) {
                     val = val && val[part];
+                    if (val === undefined || val === null) break;
                 }
-                if (!isValueEmpty(val)) return cleanText(val);
+                if (!isValueEmpty(val)) return typeof val === 'string' ? cleanText(val) : val;
             } else {
-                if (!isValueEmpty(obj[key])) return cleanText(obj[key]);
+                if (!isValueEmpty(obj[key])) return typeof obj[key] === 'string' ? cleanText(obj[key]) : obj[key];
             }
         }
         return null;
+    };
+
+    const getMergedLocation = (obj) => {
+        if (!obj || typeof obj !== 'object') return null;
+        
+        const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        if (loc) return loc;
+
+        const city = getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
+        const state = getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
+        
+        if (city && state) return `${city}, ${state}`;
+        return city || state || null;
     };
 
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
@@ -265,12 +279,20 @@ function displayFacilities(facilitiesData, containerId) {
                 'universal health services', 'uhs',
                 'family help & wellness', 'family help and wellness', 'fhw',
                 'sequel youth and family services', 'sequel',
-                'aspen education group', 'aspen',
+                'aspen education group', 'aspen education',
                 'kids centers of america',
-                'innerchange'
+                'innerchange',
+                'altior healthcare'
             ];
             
-            if (name && corporateNames.includes(name.toLowerCase())) return false;
+            if (name) {
+                const lowerName = name.toLowerCase().trim();
+                // Check for exact match or name being just the corporate name
+                if (corporateNames.includes(lowerName)) return false;
+                // Check if name is exactly one of the corporate names but maybe with "Inc" etc.
+                const strippedName = lowerName.replace(/\s+(inc|llc|ltd|corp|corporation)\.?$/g, '');
+                if (corporateNames.includes(strippedName)) return false;
+            }
 
             if (!name || seenFacilityNames.has(name)) return false;
             seenFacilityNames.add(name);
@@ -281,7 +303,11 @@ function displayFacilities(facilitiesData, containerId) {
         const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
 
         // Get the actual operator name (not the project name) 
-        const actualOperatorName = getValueFromKeys(operator, ['name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName']);
+        const actualOperatorName = getValueFromKeys(operator, [
+            'name', 'currentName', 'operatorName', 'ownerName', 'companyName',
+            'current_name', 'operator_name', 'owner_name', 'company_name',
+            'title'
+        ]);
 
         // Determine display name: if privately owned, show that; otherwise use operator name or project name
         let operatorName;
@@ -315,25 +341,22 @@ function displayFacilities(facilitiesData, containerId) {
         let locationYearsLine = '';
         const locationLines = [];
 
-        const operatorLocation = getValueFromKeys(operator, [
-            'location', 'headquarters', 'address', 'cityState', 
-            'city_state', 'hq_location'
-        ]);
+        const operatorLocation = getMergedLocation(operator);
         if (operatorLocation) {
             locationLines.push(`<div>${escapeHtml(operatorLocation)}</div>`);
         }
         
-        const operatorOperatingPeriod = getValueFromKeys(operator, [
-            'operatingPeriod', 'yearsActive', 'operating_period', 'years_active'
-        ]);
-        const operatorFounded = getValueFromKeys(operator, ['founded', 'yearFounded', 'year_founded']);
+        let opYears = getValueFromKeys(operator, ['operatingPeriod', 'yearsActive', 'operating_period', 'years_active']);
+        if (!opYears || typeof opYears === 'object') {
+             const start = getValueFromKeys(operator, ['founded', 'yearFounded', 'year_founded', 'operatingPeriod.startYear', 'operating_period.start_year']);
+             if (start) {
+                 const end = getValueFromKeys(operator, ['operatingPeriod.endYear', 'operating_period.end_year']) || 'Present';
+                 opYears = `${start}-${end}`;
+             }
+        }
         
-        if (operatorOperatingPeriod) {
-            locationLines.push(`<div>${escapeHtml(operatorOperatingPeriod)}</div>`);
-        } else if (operatorFounded) {
-            const status = getValueFromKeys(operator, ['status']);
-            const endYear = isValueEmpty(status) || status === 'Defunct' ? 'Defunct' : 'Present';
-            locationLines.push(`<div>${escapeHtml(`${operatorFounded}-${endYear}`)}</div>`);
+        if (opYears && typeof opYears === 'string') {
+            locationLines.push(`<div>${escapeHtml(opYears)}</div>`);
         }
 
         if (locationLines.length > 0) {
@@ -354,6 +377,13 @@ function displayFacilities(facilitiesData, containerId) {
             }
             if (typeof item === 'number') return escapeHtml(String(item));
             if (typeof item === 'object' && !Array.isArray(item)) {
+                
+                // Handle clickable links in objects
+                if (item.url && typeof item.url === 'string' && (item.url.startsWith('http') || item.url.startsWith('/'))) {
+                    const label = item.displayText || item.name || item.text || item.url;
+                    return `<a href="${escapeAttribute(item.url)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+                }
+
                 const parts = [];
                 Object.entries(item).forEach(([k, v]) => {     
                     if (!isValueEmpty(v)) {
@@ -377,10 +407,16 @@ function displayFacilities(facilitiesData, containerId) {
             // Skip these keys - they're already shown in the operator header
             const skipFullKeys = [
                 'name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName',
+                'current_name', 'operator_name', 'owner_name', 'company_name', 'project_name',
+                
                 'location', 'headquarters', 'address', 'cityState', 'city_state', 'hq_location',
-                'status', 
+                'locationCity', 'locationState', 'headquartersCity', 'headquartersState',
+                'full_address', 'street_address', 'zip', 'zip_code',
+                
+                'status', 'status_label',
+                
                 'operatingPeriod', 'founded', 'yearFounded', 'yearsActive',
-                'operating_period', 'year_founded', 'years_active'
+                'operating_period', 'year_founded', 'years_active', 'founded_date', 'established', 'est'
             ];
 
             Object.keys(obj).forEach(key => {
@@ -488,24 +524,36 @@ function displayFacilities(facilitiesData, containerId) {
             // Build facility header with Name - Enhanced lookup
             const facilityHeaderRaw = getValueFromKeys(facility, [
                 'identification.name', 'identification.currentName', 
-                'name', 'programName', 'facilityName', 'title'
+                'name', 'programName', 'facilityName', 'title',
+                'program_name', 'facility_name'
             ]);
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
 
             // Data for display above the "cut"
-            const facilityLocationRaw = getValueFromKeys(facility, [
-                'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
-                'city_state', 'full_address'
-            ]);
-            const facilityLocation = facilityLocationRaw ? escapeHtml(facilityLocationRaw) : '';
+            const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
             
             let yearRange = '';
-            const startYear = getValueFromKeys(operatingPeriod, ['startYear', 'start_year']) || 
-                              getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year']);
-            
-            if (startYear) {
-                const endYear = getValueFromKeys(operatingPeriod, ['endYear', 'end_year']) || 'Present';
-                yearRange = escapeHtml(`${startYear}-${endYear}`);
+            let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
+            if (facYears && typeof facYears === 'string') {
+                yearRange = escapeHtml(facYears);
+            } else {
+                const startYear = getValueFromKeys(operatingPeriod, ['startYear', 'start_year']) || 
+                                  getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year', 'operatingPeriod.startYear']);
+                if (startYear) {
+                    const endYear = getValueFromKeys(operatingPeriod, ['endYear', 'end_year']) || 'Present';
+                    yearRange = escapeHtml(`${startYear}-${endYear}`);
+                }
+            }
+
+            // Subtext for Other Names
+            const otherNames = getValueFromKeys(facility, ['identification.otherNames', 'otherNames', 'identification.pastNames', 'pastNames', 'formerNames']);
+            let otherNamesHtml = '';
+            if (otherNames) {
+                const names = Array.isArray(otherNames) ? otherNames : [otherNames];
+                const validNames = names.filter(n => !isValueEmpty(n));
+                if (validNames.length > 0) {
+                    otherNamesHtml = `<div class="facility-header-subtext">Formerly: ${escapeHtml(validNames.join(', '))}</div>`;
+                }
             }
 
             // Build other facility data
@@ -522,6 +570,12 @@ function displayFacilities(facilitiesData, containerId) {
                 }
                 if (typeof item === 'number') return escapeHtml(String(item));
                 if (typeof item === 'object' && !Array.isArray(item)) {
+                    // Handle clickable links in objects
+                    if (item.url && typeof item.url === 'string' && (item.url.startsWith('http') || item.url.startsWith('/'))) {
+                        const label = item.displayText || item.name || item.text || item.url;
+                        return `<a href="${escapeAttribute(item.url)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+                    }
+
                     // For objects like {role: "", name: "Scott Hess"}, extract meaningful values
                     const parts = [];
                     Object.entries(item).forEach(([k, v]) => { 
@@ -550,13 +604,20 @@ function displayFacilities(facilitiesData, containerId) {
                 const skipFullKeys = [
                     'identification.name', 'identification.currentName',
                     'name', 'programName', 'facilityName', 'title',
+                    'program_name', 'facility_name', 'project_name',
                     
                     'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
-                    'city_state', 'full_address',
+                    'city_state', 'full_address', 'street_address', 'addr',
+                    'locationCity', 'locationState', 'city', 'state', 'zip', 'zip_code', 'postal_code',
                     
                     'operatingPeriod.startYear', 'operatingPeriod.endYear', 'operatingPeriod.status',
                     'founded', 'yearFounded', 'opened', 'startYear', 'yearsActive',
                     'operating_period', 'year_founded', 'start_year', 'end_year', 'years_active',
+                    'yearsOfOperation', 'founded_date', 'est', 'established',
+                    
+                    'identification.otherNames', 'otherNames', 
+                    'identification.pastNames', 'pastNames',
+                    'formerNames', 'former_names', 'aliases', 'aka',
                     
                     'resources', // Handled separately by dedicated Resources Available section
                     'fieldNotes' // Handled separately by field notes renderer
@@ -616,7 +677,7 @@ function displayFacilities(facilitiesData, containerId) {
 
                     // Mark lists (like Staff, Accreditations) as multi-column eligible
                     // if they have more than 1 item or are complex objects
-                    if (validItems.length > 1 || typeof validItems[0] === 'object') {
+                    if (validItems.length > 1 || typeof validItems[0] === 'object' || ['certifications', 'licensing', 'memberships'].some(k => field.key.toLowerCase().includes(k))) {
                         isMultiColumn = true;
                     }
 
@@ -701,6 +762,7 @@ function displayFacilities(facilitiesData, containerId) {
             html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
+                        ${otherNamesHtml}
                         ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
                         ${yearRange ? `<p class="facility-years">${yearRange}</p>` : ''}
                         <p class="facility-status">
