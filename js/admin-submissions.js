@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSubmission = null;
     let allSubmissions = [];
     let currentOriginalMarkdown = '';
+    let duplicateUrlMap = new Map(); // Map of normalized URLs to array of submission IDs
 
     // API endpoints
     // Use localized config if available, otherwise fallback to default (though default might be wrong if theme folder differs)
@@ -134,6 +135,78 @@ document.addEventListener('DOMContentLoaded', () => {
     // Functions
 
     /**
+     * Normalize URL for duplicate detection
+     */
+    function normalizeUrl(url) {
+        if (!url) return null;
+        try {
+            // Remove protocol, trailing slashes, and convert to lowercase
+            return url.toLowerCase()
+                .replace(/^https?:\/\//, '')
+                .replace(/\/+$/, '')
+                .replace(/www\./, '');
+        } catch (e) {
+            return url.toLowerCase().trim();
+        }
+    }
+
+    /**
+     * Build duplicate URL map from submissions
+     */
+    function buildDuplicateMap(submissions) {
+        duplicateUrlMap.clear();
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        
+        submissions.forEach(submission => {
+            let url = null;
+            
+            // Extract URL based on submission type
+            if (currentType === 'news') {
+                url = submission.article_url;
+            } else {
+                // For wiki/data submissions, check if there's a URL in json_data
+                try {
+                    const jsonData = typeof submission.json_data === 'string' 
+                        ? JSON.parse(submission.json_data) 
+                        : submission.json_data;
+                    url = jsonData?.url || jsonData?.website || null;
+                } catch (e) {
+                    url = null;
+                }
+            }
+            
+            if (url) {
+                const normalized = normalizeUrl(url);
+                if (normalized) {
+                    if (!duplicateUrlMap.has(normalized)) {
+                        duplicateUrlMap.set(normalized, []);
+                    }
+                    duplicateUrlMap.get(normalized).push({
+                        id: submission.id,
+                        title: currentType === 'news' ? submission.article_title : submission.program_name,
+                        status: submission.status,
+                        created_at: submission.created_at,
+                        submitted_by: submission.submitted_by,
+                        url: url
+                    });
+                }
+            }
+        });
+        
+        console.log('Duplicate URL map built:', duplicateUrlMap);
+    }
+
+    /**
+     * Get duplicates for a specific URL
+     */
+    function getDuplicatesForUrl(url) {
+        if (!url) return [];
+        const normalized = normalizeUrl(url);
+        const duplicates = duplicateUrlMap.get(normalized) || [];
+        return duplicates.filter(d => d.id !== currentSubmission?.id); // Exclude current submission
+    }
+
+    /**
      * Load submission statistics
      */
     async function loadStats() {
@@ -200,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success && result.data && result.data.length > 0) {
                 console.log('Found submissions:', result.data.length);
                 allSubmissions = result.data;
+                buildDuplicateMap(result.data);
                 renderSubmissions(result.data);
             } else {
                 console.log('No submissions found or result structure unexpected:', {
@@ -237,9 +311,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const source = submission.publication_name || 'Unknown Source';
                 const author = submission.author || 'Unknown Author';
                 
+                // Check for duplicates
+                const url = submission.article_url;
+                const normalized = normalizeUrl(url);
+                const hasDuplicates = normalized && duplicateUrlMap.has(normalized) && duplicateUrlMap.get(normalized).length > 1;
+                
+                if (hasDuplicates) {
+                    card.classList.add('has-duplicate');
+                }
+                
+                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">⚠ Duplicate</span>' : '';
+                
                 card.innerHTML = `
                     <div class="submission-header">
-                        <h3>${escapeHtml(title)}</h3>
+                        <h3>${escapeHtml(title)}${duplicateBadge}</h3>
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
@@ -367,6 +452,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `<a href="${submission.article_url}" target="_blank" rel="noopener noreferrer">${submission.article_url}</a>`
                 : '-';
 
+            // Check for duplicate URLs
+            const duplicates = getDuplicatesForUrl(submission.article_url);
+            displayDuplicateWarning(duplicates, 'news');
+
             // Hide markdown editor section for news (they have summaries, not markdown)
             if (markdownEditorSection) markdownEditorSection.style.display = 'none';
 
@@ -399,6 +488,11 @@ document.addEventListener('DOMContentLoaded', () => {
             modalLocation.textContent = submission.city_state || '-';
             modalProgramType.textContent = submission.program_type || '-';
             modalYearsActive.textContent = submission.years_active || '-';
+
+            // Check for duplicate URLs
+            const wikiUrl = jsonData?.url || jsonData?.website;
+            const duplicates = getDuplicatesForUrl(wikiUrl);
+            displayDuplicateWarning(duplicates, 'wiki');
 
             // Show markdown editor section
             if (markdownEditorSection) markdownEditorSection.style.display = 'block';
@@ -475,6 +569,50 @@ document.addEventListener('DOMContentLoaded', () => {
             rejectBtn.disabled = true;
         } else if (status === 'published') {
             publishBtn.disabled = true;
+        }
+    }
+
+    /**
+     * Display duplicate warning section
+     */
+    function displayDuplicateWarning(duplicates, type) {
+        const duplicateWarningSection = document.getElementById('duplicateWarningSection');
+        const duplicateWarningMessage = document.getElementById('duplicateWarningMessage');
+        const duplicateSubmissionsList = document.getElementById('duplicateSubmissionsList');
+        
+        if (!duplicateWarningSection) return;
+        
+        if (duplicates && duplicates.length > 0) {
+            duplicateWarningSection.style.display = 'block';
+            
+            const count = duplicates.length;
+            duplicateWarningMessage.textContent = `This URL has been submitted ${count} other time${count > 1 ? 's' : ''}.`;
+            
+            // Build duplicate submission cards
+            duplicateSubmissionsList.innerHTML = duplicates.map(dup => {
+                const statusClass = `status-${dup.status}`;
+                const submittedDate = formatDate(dup.created_at);
+                
+                return `
+                    <div class="duplicate-submission-card">
+                        <div class="duplicate-submission-header">
+                            <div class="duplicate-submission-title">${escapeHtml(dup.title)}</div>
+                            <span class="duplicate-submission-status ${statusClass}">${dup.status}</span>
+                        </div>
+                        <div class="duplicate-submission-meta">
+                            <strong>Submitted:</strong> ${submittedDate}
+                            ${dup.submitted_by ? ` | <strong>By:</strong> ${escapeHtml(dup.submitted_by)}` : ''}
+                        </div>
+                        <div class="duplicate-submission-link">
+                            <a href="javascript:void(0)" onclick="document.querySelector('[data-id=\"${dup.id}\"] .btn-view').click()">
+                                View Submission #${dup.id} →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            duplicateWarningSection.style.display = 'none';
         }
     }
 

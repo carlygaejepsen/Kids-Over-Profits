@@ -116,6 +116,15 @@ get_header();
                         <div id="submitterNotes" class="notes-content"></div>
                     </div>
 
+                    <!-- Duplicate URL Warning -->
+                    <div class="duplicate-warning-section" id="duplicateWarningSection" style="display: none;">
+                        <div class="duplicate-warning-box">
+                            <h3>⚠️ Duplicate URL Detected</h3>
+                            <p id="duplicateWarningMessage">This URL has been submitted multiple times.</p>
+                            <div id="duplicateSubmissionsList" class="duplicate-submissions-list"></div>
+                        </div>
+                    </div>
+
                     <!-- Side-by-Side Markdown Editor -->
                     <div id="markdownEditorSection" class="markdown-editor-section">
                         <div class="markdown-editor-header">
