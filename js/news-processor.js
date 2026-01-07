@@ -40,6 +40,33 @@
         { value: 'general', label: 'General News Article' }
     ];
 
+    // Generic tags to exclude - these apply to almost every TTI article
+    const EXCLUDED_TAGS = [
+        'abuse', 'child abuse', 'teen abuse', 'youth abuse',
+        'boarding school', 'boarding schools',
+        'troubled teen', 'troubled teens', 'troubled teen industry', 'tti',
+        'residential treatment', 'residential treatment center', 'rtc',
+        'therapeutic boarding school', 'treatment center', 'treatment facility',
+        'behavioral health', 'mental health', 'mental health treatment',
+        'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
+        'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
+        'abuse allegations', 'allegations', 'misconduct',
+        'reform', 'reform school', 'boot camp',
+        'facility', 'program', 'institution',
+        'survivor', 'survivors', 'victim', 'victims',
+        'investigation', 'report', 'news', 'article'
+    ];
+
+    function filterGenericTags(tags) {
+        if (!Array.isArray(tags)) {
+            tags = typeof tags === 'string' ? tags.split('\n').filter(t => t.trim()) : [];
+        }
+        return tags.filter(tag => {
+            const normalized = tag.toLowerCase().trim();
+            return normalized.length > 0 && !EXCLUDED_TAGS.includes(normalized);
+        });
+    }
+
     // LocalStorage functions
     function saveToLocalStorage() {
         try {
@@ -482,7 +509,7 @@
                 publicationName: formData.publicationName,
                 url: formData.url,
                 location: formData.location,
-                tags: formData.tags.split('\n').filter(t => t.trim()),
+                tags: filterGenericTags((formData.tags || '').split('\n').filter(t => t.trim())),
                 facilities: formData.facilities.split('\n').filter(f => f.trim()),
                 staff: formData.staff.split('\n').filter(s => s.trim()),
                 survivors: formData.survivors.split('\n').filter(s => s.trim())
@@ -928,7 +955,10 @@
                 if (data.publicationDate) formData.publicationDate = data.publicationDate;
                 if (data.publicationName) formData.publicationName = data.publicationName;
                 if (data.location) formData.location = data.location;
-                if (data.tags) formData.tags = Array.isArray(data.tags) ? data.tags.join('\n') : data.tags;
+                if (data.tags) {
+                    const filteredTags = filterGenericTags(data.tags);
+                    formData.tags = filteredTags.join('\n');
+                }
                 if (data.facilities) formData.facilities = data.facilities.join('\n');
                 if (data.staff) formData.staff = data.staff.join('\n');
                 if (data.survivors) formData.survivors = data.survivors.join('\n');
@@ -1005,7 +1035,7 @@
                 publicationDate: formData.publicationDate,
                 url: formData.url,
                 location: formData.location,
-                tags: formData.tags,
+                tags: filterGenericTags((formData.tags || '').split('\n')).join('\n'),
                 articleType: formData.articleType,
                 facilities: formData.facilities,
                 staff: formData.staff,

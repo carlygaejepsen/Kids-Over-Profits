@@ -197,11 +197,78 @@ try {
                         </div>
                     <?php endif; ?>
 
-                    <?php if (!empty($tags)): ?>
+                    <?php if (!empty($tags)):
+                        // Categorize tags
+                        $stateTags = [];
+                        $facilityTags = [];
+                        $otherTags = [];
+
+                        // US states list for matching
+                        $usStates = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+
+                        foreach ($tags as $tag) {
+                            if (in_array($tag, $usStates)) {
+                                $stateTags[] = $tag;
+                            } elseif (in_array($tag, $facilities)) {
+                                $facilityTags[] = $tag;
+                            } else {
+                                $otherTags[] = $tag;
+                            }
+                        }
+                    ?>
                         <div class="news-tags">
-                            <?php foreach ($tags as $tag): ?>
-                                <span class="news-tag" data-tag="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></span>
-                            <?php endforeach; ?>
+                            <div class="tag-categories">
+                                <?php if (!empty($stateTags)): ?>
+                                <div class="tag-category category-state">
+                                    <div class="tag-category-header">
+                                        <span>
+                                            <span class="tag-category-label">Location</span>
+                                            <span class="tag-category-count"><?php echo count($stateTags); ?></span>
+                                        </span>
+                                        <span class="tag-category-toggle">▸</span>
+                                    </div>
+                                    <div class="tag-category-content">
+                                        <?php foreach ($stateTags as $tag): ?>
+                                            <span class="news-tag" data-tag="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($facilityTags)): ?>
+                                <div class="tag-category category-facility">
+                                    <div class="tag-category-header">
+                                        <span>
+                                            <span class="tag-category-label">Facilities</span>
+                                            <span class="tag-category-count"><?php echo count($facilityTags); ?></span>
+                                        </span>
+                                        <span class="tag-category-toggle">▸</span>
+                                    </div>
+                                    <div class="tag-category-content">
+                                        <?php foreach ($facilityTags as $tag): ?>
+                                            <span class="news-tag" data-tag="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($otherTags)): ?>
+                                <div class="tag-category category-other">
+                                    <div class="tag-category-header">
+                                        <span>
+                                            <span class="tag-category-label">Topics</span>
+                                            <span class="tag-category-count"><?php echo count($otherTags); ?></span>
+                                        </span>
+                                        <span class="tag-category-toggle">▸</span>
+                                    </div>
+                                    <div class="tag-category-content">
+                                        <?php foreach ($otherTags as $tag): ?>
+                                            <span class="news-tag" data-tag="<?php echo esc_attr($tag); ?>"><?php echo esc_html($tag); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -341,6 +408,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Scroll to top of filters
                     document.querySelector('.news-filters').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+            }
+        });
+    });
+
+    // Tag category accordion - only one expanded at a time per card
+    document.querySelectorAll('.tag-category-header').forEach(header => {
+        header.addEventListener('click', function() {
+            const category = this.parentElement;
+            const card = category.closest('.news-card');
+            const allCategories = card.querySelectorAll('.tag-category');
+            const isExpanded = category.classList.contains('expanded');
+
+            // Collapse all categories in this card
+            allCategories.forEach(cat => {
+                cat.classList.remove('expanded');
+                cat.querySelector('.tag-category-toggle').textContent = '▸';
+            });
+
+            // If it wasn't expanded, expand it
+            if (!isExpanded) {
+                category.classList.add('expanded');
+                category.querySelector('.tag-category-toggle').textContent = '▾';
             }
         });
     });
