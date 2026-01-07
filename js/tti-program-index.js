@@ -729,6 +729,45 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             });
 
+            // FileBird Document Matching (New)
+            let documentsHtml = '';
+            if (window.filebirdFolders && Array.isArray(window.filebirdFolders)) {
+                const facName = cleanText(facilityHeaderRaw).toLowerCase().trim();
+                
+                // Normalize: remove punctuation, extra spaces
+                const normalize = s => s.replace(/[^\w\s]/g, '').trim();
+                const normFac = normalize(facName);
+                
+                // 1. Try Exact Match
+                let matchingFolder = window.filebirdFolders.find(f => f.name.toLowerCase().trim() === facName);
+                
+                // 2. Try Normalized Match
+                if (!matchingFolder) {
+                    matchingFolder = window.filebirdFolders.find(f => normalize(f.name.toLowerCase()) === normFac);
+                }
+
+                // 3. Try "Contains" for specific distinctive names (length > 6 to avoid 'Hope', 'New', etc.)
+                if (!matchingFolder && normFac.length > 6) {
+                     // Check if folder name contains facility name (e.g. Folder: "Agape Boarding School Documents", Fac: "Agape Boarding School")
+                     matchingFolder = window.filebirdFolders.find(f => {
+                         const normFolder = normalize(f.name.toLowerCase());
+                         return normFolder.includes(normFac);
+                     });
+                }
+
+                if (matchingFolder) {
+                    documentsHtml = `
+                        <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
+                            <span class="field-label">Documents</span>
+                            <span class="field-value">
+                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#eee; border:1px solid #ccc; border-radius:4px;" onclick="loadFacilityDocuments(${matchingFolder.id}, 'documents-${matchingFolder.id}')">
+                                    📂 Load Documents from "${escapeHtml(matchingFolder.name)}"
+                                </button>
+                            </span>
+                        </div>`;
+                }
+            }
+
             // Build resources available section
             let resourcesAvailable = '';
             if (facility.resources) {
@@ -783,6 +822,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
                             <div class="facility-extra-content">
                                 ${otherFacilityData}
+                                ${documentsHtml}
                                 ${resourcesAvailable}
                                 ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                             </div>
@@ -860,6 +900,66 @@ function clearSearch() {
 
 // Expose to global scope for inline onclick handlers
 window.clearSearch = clearSearch;
+
+window.loadFacilityDocuments = async function(folderId, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Keep the label, show loading in value
+    const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+    container.innerHTML = `${labelSpan}<span class="field-value">Loading Document Library...</span>`;
+    
+    try {
+        // Use the shortcode renderer to get the full FileBird library display
+        const response = await fetch(`/wp-json/kop/v1/render-folder-shortcode?id=${folderId}`);
+        if (!response.ok) throw new Error('Failed to load library');
+        const data = await response.json();
+        
+        if (!data.html || data.html.trim() === '') {
+             // Fallback to simple list if shortcode returns nothing
+             await loadFacilityDocumentsFallback(folderId, container);
+             return;
+        }
+        
+        container.innerHTML = `<div class="filebird-library-container" style="grid-column: 1 / -1; margin-top: 10px;">${data.html}</div>`;
+        
+    } catch (e) {
+        console.warn('Shortcode render failed, trying fallback list...', e);
+        await loadFacilityDocumentsFallback(folderId, container);
+    }
+};
+
+async function loadFacilityDocumentsFallback(folderId, container) {
+    try {
+        const response = await fetch(`/wp-json/kop/v1/folder-content?id=${folderId}`);
+        if (!response.ok) throw new Error('Failed to load content');
+        const files = await response.json();
+        
+        const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+
+        if (Array.isArray(files) && files.length === 0) {
+            container.innerHTML = `${labelSpan}<span class="field-value">No documents found.</span>`;
+            return;
+        }
+        
+        const fileLinks = files.map(f => {
+            const date = f.date ? new Date(f.date).toLocaleDateString() : '';
+            let icon = '📄';
+            if (f.mime_type && f.mime_type.includes('image')) icon = '🖼️';
+            if (f.mime_type && f.mime_type.includes('pdf')) icon = '📕';
+            
+            return `<div class="document-link" style="margin-bottom:4px;">
+                ${icon} <a href="${f.url}" target="_blank" rel="noopener"><strong>${f.title}</strong></a> 
+                <span style="color:#777; font-size:0.85em;">(${date})</span>
+            </div>`;
+        }).join('');
+        
+        container.innerHTML = `${labelSpan}<span class="field-value">${fileLinks}</span>`;
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = `<span class="field-value" style="color:#d45500">Error loading documents.</span>`;
+    }
+}
 
 function setupAlphabetFilter() {
     const alphabetFilter = document.getElementById('alphabet-filter');
@@ -1019,6 +1119,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await decodeResponseAsJson(response);
                 console.log('Facilities script: data loaded successfully from', candidateUrl);
+
+                // NEW: Load FileBird folders for document matching
+                try {
+                    const foldersResponse = await fetch('/wp-json/kop/v1/folders');
+                    if (foldersResponse.ok) {
+                        window.filebirdFolders = await foldersResponse.json();
+                        console.log('Facilities script: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
+                    }
+                } catch (e) {
+                    console.warn('Facilities script: failed to load FileBird folders', e);
+                }
+
                 displayFacilities(data, 'facilities-container');
 
                 // Re-setup event listeners after data is loaded to ensure they work

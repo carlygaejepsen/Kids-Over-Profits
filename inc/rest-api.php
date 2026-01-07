@@ -145,6 +145,88 @@ function kop_register_facilities_rest_routes() {
             ),
         )
     );
+
+    // Register FileBird folders endpoint (public)
+    register_rest_route(
+        'kop/v1',
+        '/folders',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function () {
+                $folders = kop_get_filebird_folders();
+                return rest_ensure_response($folders);
+            },
+            'permission_callback' => '__return_true',
+        )
+    );
+
+    // Register FileBird folder content endpoint (public)
+    register_rest_route(
+        'kop/v1',
+        '/folder-content',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function ($request) {
+                $folder_id = $request->get_param('id');
+                if (!$folder_id) {
+                    return new WP_Error('missing_id', 'Folder ID is required', array('status' => 400));
+                }
+                
+                $attachments = kop_get_folder_attachments($folder_id);
+                
+                // Format attachments for frontend
+                $formatted = array_map(function($post) {
+                    return array(
+                        'id' => $post->ID,
+                        'title' => $post->post_title,
+                        'url' => wp_get_attachment_url($post->ID),
+                        'mime_type' => $post->post_mime_type,
+                        'date' => $post->post_date
+                    );
+                }, $attachments);
+
+                return rest_ensure_response($formatted);
+            },
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'id' => array(
+                    'required' => true,
+                    'type' => 'integer',
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        )
+    );
+
+    // Register FileBird Shortcode Renderer (public)
+    register_rest_route(
+        'kop/v1',
+        '/render-folder-shortcode',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function ($request) {
+                $folder_id = $request->get_param('id');
+                if (!$folder_id) return new WP_Error('missing_id', 'ID required', array('status' => 400));
+                
+                // Render the FileBird shortcode
+                // Assuming [filebird id="123"] is the correct syntax based on common usage
+                // If the user has a specific gallery shortcode like [filebird_gallery], we might need to adjust.
+                // But "display the filebird libraries" usually means the folder view.
+                $shortcode = '[filebird id="' . intval($folder_id) . '"]';
+                $html = do_shortcode($shortcode);
+                
+                return rest_ensure_response(array('html' => $html));
+            },
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'id' => array(
+                    'required' => true,
+                    'type' => 'integer',
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 
