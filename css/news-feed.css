@@ -384,6 +384,42 @@
     margin-bottom: 0;
 }
 
+.filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.filter-toggle-btn {
+    background: var(--kop-mint-green);
+    border: 1px solid var(--kop-teal);
+    color: var(--kop-midnight-blue);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.filter-toggle-btn:hover {
+    background: var(--kop-teal);
+    color: var(--kop-white);
+}
+
+.filter-toggle-btn .toggle-arrow {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.collapsible-filter .filter-label {
+    margin-bottom: 0;
+}
+
 .filter-label {
     display: block;
     font-weight: 600;

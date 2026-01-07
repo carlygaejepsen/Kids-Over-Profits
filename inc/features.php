@@ -498,3 +498,103 @@ function kop_filebird_folder_shortcode($atts) {
 }
 add_shortcode('filebird_folder', 'kop_filebird_folder_shortcode');
 add_shortcode('kop_folder', 'kop_filebird_folder_shortcode'); // Alias
+
+/**
+ * Shortcode: Display a single document
+ * Usage: [kop_document id="123"]
+ * 
+ * Simplified shortcode for embedding just one document as a download link or card
+ */
+function kop_document_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'id' => '',
+        'style' => 'card', // 'card', 'link', or 'button'
+        'title' => '', // Optional custom title
+        'show_size' => 'yes',
+        'show_icon' => 'yes',
+    ), $atts);
+
+    if (empty($atts['id'])) {
+        return '<p>Please specify a document ID. Example: [kop_document id="123"]</p>';
+    }
+
+    $attachment = get_post($atts['id']);
+    
+    if (!$attachment || $attachment->post_type !== 'attachment') {
+        return '<p>Document not found (ID: ' . esc_html($atts['id']) . ')</p>';
+    }
+
+    $file_url = wp_get_attachment_url($attachment->ID);
+    $file_type = wp_check_filetype($file_url);
+    $file_ext = strtoupper($file_type['ext']);
+    $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+    $mime_type = get_post_mime_type($attachment->ID);
+    $is_image = strpos($mime_type, 'image') !== false;
+    $title = !empty($atts['title']) ? $atts['title'] : $attachment->post_title;
+
+    ob_start();
+    
+    if ($atts['style'] === 'link') {
+        // Simple text link
+        ?>
+        <a href="<?php echo esc_url($file_url); ?>" 
+           class="kop-doc-link-simple" 
+           target="_blank" 
+           rel="noopener">
+            <?php if ($atts['show_icon'] === 'yes'): ?>
+                <span class="doc-icon-inline"><?php echo esc_html($file_ext); ?></span>
+            <?php endif; ?>
+            <?php echo esc_html($title); ?>
+            <?php if ($atts['show_size'] === 'yes'): ?>
+                <span class="doc-size-inline">(<?php echo esc_html($file_size); ?>)</span>
+            <?php endif; ?>
+        </a>
+        <?php
+    } elseif ($atts['style'] === 'button') {
+        // Button style
+        ?>
+        <a href="<?php echo esc_url($file_url); ?>" 
+           class="kop-doc-button" 
+           target="_blank" 
+           rel="noopener">
+            <?php if ($atts['show_icon'] === 'yes'): ?>
+                <span class="doc-icon-inline"><?php echo esc_html($file_ext); ?></span>
+            <?php endif; ?>
+            <?php echo esc_html($title); ?>
+            <?php if ($atts['show_size'] === 'yes'): ?>
+                <span class="doc-size-inline">(<?php echo esc_html($file_size); ?>)</span>
+            <?php endif; ?>
+        </a>
+        <?php
+    } else {
+        // Default card style
+        ?>
+        <div class="kop-document-single">
+            <a href="<?php echo esc_url($file_url); ?>" 
+               class="doc-link" 
+               target="_blank" 
+               rel="noopener">
+                <div class="doc-thumbnail">
+                    <?php if ($is_image): ?>
+                        <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
+                             alt="<?php echo esc_attr($title); ?>">
+                    <?php else: ?>
+                        <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
+                            <?php echo esc_html($file_ext); ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+                <div class="doc-info">
+                    <span class="doc-title"><?php echo esc_html($title); ?></span>
+                    <?php if ($atts['show_size'] === 'yes'): ?>
+                        <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
+                    <?php endif; ?>
+                </div>
+            </a>
+        </div>
+        <?php
+    }
+    
+    return ob_get_clean();
+}
+add_shortcode('kop_document', 'kop_document_shortcode');

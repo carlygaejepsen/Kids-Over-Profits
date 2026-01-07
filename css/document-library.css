@@ -360,11 +360,107 @@
     font-size: 14px;
 }
 
+/* Single document display styles */
+.kop-document-single {
+    max-width: 400px;
+    margin: 20px 0;
+}
+
+.kop-document-single .doc-link {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    gap: 15px;
+    background: var(--kop-white);
+    border: 2px solid var(--kop-border-secondary);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.kop-document-single .doc-link:hover {
+    border-color: var(--kop-focus-color);
+    box-shadow: 0 4px 12px var(--kop-shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Simple link style */
+.kop-doc-link-simple {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--kop-link-color);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.kop-doc-link-simple:hover {
+    color: var(--kop-link-hover);
+    background: var(--kop-bg-hover);
+}
+
+.doc-icon-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--kop-bg-secondary);
+    color: var(--kop-text-secondary);
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.doc-size-inline {
+    font-size: 0.9em;
+    color: var(--kop-text-muted);
+}
+
+/* Button style */
+.kop-doc-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--kop-teal);
+    color: var(--kop-white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.kop-doc-button:hover {
+    background: var(--kop-navy-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
+}
+
+.kop-doc-button .doc-icon-inline {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--kop-white);
+}
+
+.kop-doc-button .doc-size-inline {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85em;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .kop-document-library,
     .kop-document-folder {
         padding: 15px;
+    }
+    
+    .kop-document-single {
+        max-width: 100%;
     }
 
     .doc-folder-header {

@@ -105,11 +105,19 @@ try {
             </div>
 
             <?php if (!empty($allTags)): ?>
-            <div class="filter-group">
-                <label class="filter-label">Filter by Tag:</label>
-                <div class="filter-buttons" id="tag-filters">
+            <div class="filter-group collapsible-filter">
+                <div class="filter-header" id="tag-filter-header">
+                    <label class="filter-label">Filter by Tag:</label>
+                    <button class="filter-toggle-btn" aria-expanded="false">
+                        <span class="toggle-text">Show Tags</span>
+                        <span class="toggle-arrow">▸</span>
+                    </button>
+                </div>
+                <div class="filter-buttons" id="tag-filters" style="display: none;">
                     <button class="filter-btn active" data-filter-tag="all">All</button>
-                    <?php foreach (array_slice($allTags, 0, 15) as $tag => $count): ?>
+                    <?php 
+                    // Show more tags since it's now collapsible
+                    foreach (array_slice($allTags, 0, 40) as $tag => $count): ?>
                         <button class="filter-btn" data-filter-tag="<?php echo esc_attr($tag); ?>">
                             <?php echo esc_html($tag); ?> (<?php echo $count; ?>)
                         </button>
@@ -219,13 +227,13 @@ try {
                         <div class="news-tags">
                             <div class="tag-categories">
                                 <?php if (!empty($stateTags)): ?>
-                                <div class="tag-category category-state">
+                                <div class="tag-category category-state expanded">
                                     <div class="tag-category-header">
                                         <span>
                                             <span class="tag-category-label">Location</span>
                                             <span class="tag-category-count"><?php echo count($stateTags); ?></span>
                                         </span>
-                                        <span class="tag-category-toggle">▸</span>
+                                        <span class="tag-category-toggle">▾</span>
                                     </div>
                                     <div class="tag-category-content">
                                         <?php foreach ($stateTags as $tag): ?>
@@ -236,13 +244,13 @@ try {
                                 <?php endif; ?>
 
                                 <?php if (!empty($facilityTags)): ?>
-                                <div class="tag-category category-facility">
+                                <div class="tag-category category-facility expanded">
                                     <div class="tag-category-header">
                                         <span>
                                             <span class="tag-category-label">Facilities</span>
                                             <span class="tag-category-count"><?php echo count($facilityTags); ?></span>
                                         </span>
-                                        <span class="tag-category-toggle">▸</span>
+                                        <span class="tag-category-toggle">▾</span>
                                     </div>
                                     <div class="tag-category-content">
                                         <?php foreach ($facilityTags as $tag): ?>
@@ -253,13 +261,13 @@ try {
                                 <?php endif; ?>
 
                                 <?php if (!empty($otherTags)): ?>
-                                <div class="tag-category category-other">
+                                <div class="tag-category category-other expanded">
                                     <div class="tag-category-header">
                                         <span>
                                             <span class="tag-category-label">Topics</span>
                                             <span class="tag-category-count"><?php echo count($otherTags); ?></span>
                                         </span>
-                                        <span class="tag-category-toggle">▸</span>
+                                        <span class="tag-category-toggle">▾</span>
                                     </div>
                                     <div class="tag-category-content">
                                         <?php foreach ($otherTags as $tag): ?>
@@ -336,6 +344,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Tag filter toggle logic
+    const tagFilterToggle = document.querySelector('.filter-toggle-btn');
+    const tagFilterButtons = document.getElementById('tag-filters');
+    if (tagFilterToggle && tagFilterButtons) {
+        tagFilterToggle.addEventListener('click', function() {
+            const isHidden = tagFilterButtons.style.display === 'none';
+            if (isHidden) {
+                tagFilterButtons.style.display = 'flex';
+                this.setAttribute('aria-expanded', 'true');
+                this.querySelector('.toggle-text').textContent = 'Hide Tags';
+                this.querySelector('.toggle-arrow').textContent = '▾';
+            } else {
+                tagFilterButtons.style.display = 'none';
+                this.setAttribute('aria-expanded', 'false');
+                this.querySelector('.toggle-text').textContent = 'Show Tags';
+                this.querySelector('.toggle-arrow').textContent = '▸';
+            }
+        });
+    }
+
     const cards = document.querySelectorAll('.news-card');
     const typeFilters = document.getElementById('type-filters');
     const tagFilters = document.getElementById('tag-filters');
@@ -399,6 +427,11 @@ document.addEventListener('DOMContentLoaded', function() {
         tag.addEventListener('click', function() {
             const tagValue = this.dataset.tag;
             if (tagFilters) {
+                // If tags are hidden, show them when a tag is clicked
+                if (tagFilterButtons.style.display === 'none') {
+                    tagFilterToggle.click();
+                }
+
                 const tagBtn = tagFilters.querySelector(`[data-filter-tag="${tagValue}"]`);
                 if (tagBtn) {
                     tagFilters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -416,18 +449,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.tag-category-header').forEach(header => {
         header.addEventListener('click', function() {
             const category = this.parentElement;
-            const card = category.closest('.news-card');
-            const allCategories = card.querySelectorAll('.tag-category');
             const isExpanded = category.classList.contains('expanded');
 
-            // Collapse all categories in this card
-            allCategories.forEach(cat => {
-                cat.classList.remove('expanded');
-                cat.querySelector('.tag-category-toggle').textContent = '▸';
-            });
-
-            // If it wasn't expanded, expand it
-            if (!isExpanded) {
+            // If it was expanded, collapse it. If not, expand it.
+            // We removed the "collapse all others" behavior to make it more natural if they start expanded.
+            if (isExpanded) {
+                category.classList.remove('expanded');
+                category.querySelector('.tag-category-toggle').textContent = '▸';
+            } else {
                 category.classList.add('expanded');
                 category.querySelector('.tag-category-toggle').textContent = '▾';
             }
