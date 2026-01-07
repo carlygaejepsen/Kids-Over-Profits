@@ -73,6 +73,16 @@ try {
             return implode(' ', $normalized);
         }
 
+        // Tag Mappings - Normalizing synonyms to canonical tags
+        $tagMappings = [
+            'juvenile detention' => 'Juvenile Justice',
+            'youth detention' => 'Juvenile Justice',
+            'juvenile hall' => 'Juvenile Justice',
+            'detention center' => 'Juvenile Justice',
+            'youth prison' => 'Juvenile Justice',
+            'juvenile jail' => 'Juvenile Justice',
+        ];
+
         // Tags to exclude - generic terms that apply to almost every TTI article
         $excludedTags = [
             // Generic abuse terms (specific types belong in content warnings)
@@ -100,6 +110,28 @@ try {
             'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed'
         ];
 
+        // Helper to process a tag: map, check exclusion, normalize
+        function processTag($tag, $excludedTags, $tagMappings) {
+            $tagTrimmed = trim($tag);
+            $tagLower = strtolower($tagTrimmed);
+            
+            if (empty($tagLower)) return null;
+
+            // Apply mappings
+            if (isset($tagMappings[$tagLower])) {
+                $tagTrimmed = $tagMappings[$tagLower];
+                $tagLower = strtolower($tagTrimmed); // Update lower for exclude check
+            }
+
+            // Check exclusions
+            if (in_array($tagLower, $excludedTags)) {
+                return null;
+            }
+
+            // Normalize Case
+            return normalizeTagCase($tagTrimmed);
+        }
+
         // Collect all unique tags for the filter (including auto-generated tags)
         $allTags = [];
         $allTypes = [];
@@ -123,9 +155,8 @@ try {
 
             // Filter out excluded tags and normalize to title case
             foreach (array_unique($itemTags) as $tag) {
-                $tagLower = strtolower(trim($tag));
-                if (!empty($tagLower) && !in_array($tagLower, $excludedTags)) {
-                    $normalizedTag = normalizeTagCase(trim($tag));
+                $normalizedTag = processTag($tag, $excludedTags, $tagMappings);
+                if ($normalizedTag) {
                     $allTags[$normalizedTag] = ($allTags[$normalizedTag] ?? 0) + 1;
                 }
             }
@@ -286,12 +317,8 @@ try {
                 $tags = array_unique(array_merge($tags, $autoTags));
 
                 // Filter out excluded tags and normalize to title case
-                $tags = array_filter(array_map(function($tag) use ($excludedTags) {
-                    $tagLower = strtolower(trim($tag));
-                    if (!empty($tagLower) && !in_array($tagLower, $excludedTags)) {
-                        return normalizeTagCase(trim($tag));
-                    }
-                    return null;
+                $tags = array_filter(array_map(function($tag) use ($excludedTags, $tagMappings) {
+                    return processTag($tag, $excludedTags, $tagMappings);
                 }, $tags));
                 
                 // Format Date
