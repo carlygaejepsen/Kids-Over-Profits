@@ -2149,22 +2149,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    locationIndexSelect?.addEventListener('change', (e) => {
-        loadProgramsForState(e.target.value);
-        // Clear org select
-        if(orgIndexSelect) orgIndexSelect.value = '';
-    });
+    if (locationIndexSelect) {
+        locationIndexSelect.addEventListener('change', (e) => {
+            // Reset other dropdown
+            if (orgIndexSelect) orgIndexSelect.value = '';
+            
+            // Clear current view
+            currentIndexPrograms = [];
+            selectedIndexState = ''; 
+            updateIndexEntriesMessage('Loading...');
+            
+            // Clear search filter
+            if (indexSearch) indexSearch.value = '';
 
-    orgIndexSelect?.addEventListener('change', (e) => {
-        const orgName = e.target.value;
-        if (orgName) {
-            loadOrgProgramsFromDatabase(orgName, null);
-        } else {
-            updateIndexEntriesMessage('Select an organization to load facilities.');
-        }
-        // Clear location select
-        if(locationIndexSelect) locationIndexSelect.value = '';
-    });
+            loadProgramsForState(e.target.value);
+        });
+    }
+
+    if (orgIndexSelect) {
+        orgIndexSelect.addEventListener('change', (e) => {
+            // Reset other dropdown
+            if (locationIndexSelect) locationIndexSelect.value = '';
+            
+            // Clear current view
+            currentIndexPrograms = [];
+            selectedIndexState = '';
+            updateIndexEntriesMessage('Loading...');
+
+            // Clear search filter
+            if (indexSearch) indexSearch.value = '';
+
+            const orgName = e.target.value;
+            if (orgName) {
+                loadOrgProgramsFromDatabase(orgName, null);
+            } else {
+                updateIndexEntriesMessage('Select an organization to load facilities.');
+            }
+        });
+    }
 
     async function loadProgramsForState(stateCode) {
         selectedIndexState = stateCode || '';

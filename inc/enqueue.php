@@ -1272,7 +1272,7 @@ function kop_enqueue_wiki_editor_assets() {
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
         array('kop-colors'),
-        (file_exists($style_path) ? filemtime($style_path) : time()) . '&v=FIXED7'
+        (file_exists($style_path) ? filemtime($style_path) : time()) . '&v=FIXED8'
     );
 
     // Enqueue auto-linker first (wiki-editor depends on it)
@@ -1314,7 +1314,7 @@ function kop_enqueue_wiki_editor_assets() {
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
         array('kop-auto-linker-script', 'kop-wiki-parser-script', 'kop-wiki-generation-script', 'autocomplete-module-script'),
-        (file_exists($script_path) ? filemtime($script_path) : time()) . '&v=FIXED7',
+        (file_exists($script_path) ? filemtime($script_path) : time()) . '&v=FIXED8',
         true
     );
     wp_localize_script(
