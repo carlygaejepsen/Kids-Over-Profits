@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rejectBtn = document.getElementById('rejectBtn');
     const publishBtn = document.getElementById('publishBtn');
     const deleteBtn = document.getElementById('deleteBtn');
+    const rejectAllBtn = document.getElementById('rejectAllBtn');
 
     // Stats elements
     const statPending = document.getElementById('statPending');
@@ -99,6 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
             performAction('delete');
         }
     });
+
+    if (rejectAllBtn) {
+        rejectAllBtn.addEventListener('click', rejectAllPending);
+    }
 
     if (modalMarkdown) {
         modalMarkdown.addEventListener('input', () => {
@@ -576,6 +581,69 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Action failed:', error);
             actionStatus.innerHTML = '<span class="error">✗ Network error</span>';
             updateButtonStates(currentSubmission.status);
+        }
+    }
+
+    /**
+     * Reject all pending submissions currently displayed
+     */
+    async function rejectAllPending() {
+        // Get all pending submissions from the current list
+        const pendingSubmissions = allSubmissions.filter(s => s.status === 'submitted');
+
+        if (pendingSubmissions.length === 0) {
+            alert('No pending submissions to reject.');
+            return;
+        }
+
+        const confirmMessage = `Are you sure you want to reject all ${pendingSubmissions.length} pending submission(s)?\n\nThis will mark them all as rejected.`;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        // Get reviewer email
+        const email = localStorage.getItem('adminEmail') || prompt('Enter your email/name for the review record:');
+        if (!email) {
+            alert('Reviewer email/name is required.');
+            return;
+        }
+        localStorage.setItem('adminEmail', email);
+
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const ids = pendingSubmissions.map(s => s.id);
+
+        // Disable the button during processing
+        rejectAllBtn.disabled = true;
+        rejectAllBtn.textContent = 'Rejecting...';
+
+        try {
+            const response = await fetch(MANAGE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'reject',
+                    type: currentType,
+                    ids: ids,
+                    reviewerNotes: 'Bulk rejection',
+                    reviewedBy: email
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(`Successfully rejected ${ids.length} submission(s).`);
+                loadStats();
+                loadSubmissions();
+            } else {
+                alert(`Failed to reject submissions: ${result.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Reject all failed:', error);
+            alert('Network error while rejecting submissions.');
+        } finally {
+            rejectAllBtn.disabled = false;
+            rejectAllBtn.textContent = '✗ Reject All Pending';
         }
     }
 

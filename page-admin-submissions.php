@@ -60,6 +60,9 @@ get_header();
 
                 <button type="button" id="refreshBtn" class="btn-secondary">🔄 Refresh</button>
             </div>
+            <div class="bulk-actions">
+                <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions">✗ Reject All Pending</button>
+            </div>
         </div>
 
         <div class="submissions-list-container">

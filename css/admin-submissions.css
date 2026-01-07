@@ -576,6 +576,39 @@
     font-weight: 700;
 }
 
+/* Bulk Actions */
+.bulk-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--kop-border-secondary);
+    display: flex;
+    gap: 12px;
+}
+
+.btn-reject-all {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: linear-gradient(135deg, var(--kop-coral-pink), #e05060);
+    color: var(--kop-white);
+    box-shadow: 0 4px 12px rgba(254, 128, 136, 0.3);
+}
+
+.btn-reject-all:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(254, 128, 136, 0.4);
+}
+
+.btn-reject-all:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
 @media (max-width: 768px) {
     .admin-submissions-page {
         padding: 24px 12px 36px;
