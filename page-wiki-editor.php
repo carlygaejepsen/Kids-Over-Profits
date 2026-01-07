@@ -5,48 +5,26 @@
  * Provides a custom form interface so editors can assemble wiki entries.
  */
 
-// Check if we are in "Framed" mode (inside a tab)
-$is_framed = isset($_GET['framed']) && $_GET['framed'] == '1';
+get_header();
+?>
 
-if ($is_framed) {
-    // --- FRAMED MODE: RENDER THE EDITOR CONTENT ---
-    // We still need the header for scripts/styles, but we'll hide the nav via CSS class
-    get_header();
-    ?>
-    <style>
-        /* Hide theme navigation and footer in framed mode */
-        body.framed-mode #site-header, 
-        body.framed-mode #site-footer, 
-        body.framed-mode .admin-bar { display: none !important; }
-        body.framed-mode { padding-top: 0 !important; background-color: #F2EEDF; }
-        html.framed-mode { margin-top: 0 !important; }
-        .wiki-editor-page { padding: 10px; max-width: 100%; }
-        .wiki-editor-container { border: none; box-shadow: none; max-width: 100%; padding: 10px; }
-    </style>
-    <script>
-        document.documentElement.classList.add('framed-mode');
-        document.body.classList.add('framed-mode');
-    </script>
+<div class="container">
+    <div class="admin-header">
+        <h1>TTI Wiki Entry Generator</h1>
+        <p>Create and edit Reddit wiki entries</p>
+    </div>
 
     <div class="wiki-editor-page">
-    <div class="wiki-editor-container">
-        <h1>TTI Wiki Entry Generator</h1>
-        <p>Fill in the fields below. For list sections, fill in the small boxes and click "Add" for each item. When finished, click the "Generate" button at the very bottom.</p>
-
+        
         <!-- Empty-entry banner (hidden by default) -->
-        <div id="emptyEntryBanner" class="empty-entry-banner" style="display:none; border:1px solid #e0b4b4; background:#fff4f4; padding:10px; margin:8px 0;">
+        <div id="emptyEntryBanner" class="admin-warning" style="display:none; background:#fff4f4; border-color:#e0b4b4;">
             <strong>Reddit Wiki Entry Page has not yet been created.</strong>
             <p style="margin:6px 0 0 0;">This wiki entry appears to be empty on the Reddit wiki. You can create a new entry by filling the form below.</p>
             <div style="margin-top:8px;">
-                <button type="button" id="emptyBannerCreateBtn" class="button">Create New Entry</button>
-                <button type="button" id="emptyBannerCloseBtn" class="button">Dismiss</button>
+                <button type="button" id="emptyBannerCreateBtn" class="btn btn-primary">Create New Entry</button>
+                <button type="button" id="emptyBannerCloseBtn" class="btn btn-secondary">Dismiss</button>
             </div>
         </div>
-        <style>
-            /* Indicator for empty index entries */
-            .index-empty-flag { color: #b44; font-weight: 700; margin-left:6px; }
-            .empty-entry-banner .button { margin-right:8px; }
-        </style>
 
         <!-- Editor Mode Toggle -->
         <div class="editor-mode-toggle">
@@ -54,91 +32,107 @@ if ($is_framed) {
             <button type="button" id="modeMarkdownBtn" class="mode-btn">💻 Markdown Editor</button>
         </div>
 
-        <!-- Entry Browser Section -->
-        <div class="entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
-
-            <!-- Index Pages Browser -->
-            <div class="browser-section index-section">
-                <div class="browser-main-controls" style="display:flex; gap:10px;">
-                    <button type="button" id="prevIndexEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
-                    <button type="button" id="toggleIndexBrowserBtn" class="toggle-browser-btn" style="flex:1;">📄 Browse Index Pages</button>
-                    <button type="button" id="nextIndexEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
-                </div>
-                <div id="indexBrowserPanel" class="browser-panel" style="display: none;">
-                    <div class="browser-header">
-                        <button type="button" id="backBtn" class="back-btn" style="display: none;">← Back</button>
-                        <h3 id="indexBrowserTitle">Index Pages</h3>
-                    </div>
-                    <div class="index-browser-controls">
-                        <select id="indexSelect" class="index-select">
+        <!-- Wiki Entry Management (New Look) -->
+        <div class="project-management entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
+            <h2>Wiki Entry Management</h2>
+            <p class="info-text" style="margin-bottom: 15px;">Load existing entries from the index or your saved drafts.</p>
+            
+            <div class="form-row">
+                <!-- Index Pages Browser -->
+                <div class="form-group" style="flex: 1;">
+                    <label>Index Pages</label>
+                    <button type="button" id="toggleIndexBrowserBtn" class="btn btn-secondary" style="width:100%; margin-bottom: 10px;">📄 Browse Index Pages</button>
+                    
+                    <div id="indexBrowserPanel" style="display: none;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                            <h3 style="margin:0; font-size:16px;">Index Pages</h3>
+                            <button type="button" id="backBtn" class="btn btn-sm" style="display: none;">← Back</button>
+                        </div>
+                        
+                        <select id="indexSelect" class="input-form" style="margin-bottom:10px;">
                             <option value="">Select an index page</option>
                         </select>
-                        <input type="text" id="indexSearch" class="index-search" placeholder="Filter entries..." disabled>
-                    </div>
-                    <div id="indexEntriesList" class="index-entries-list">
-                        <p class="loading">Select an index page above...</p>
+                        <input type="text" id="indexSearch" class="input-form" placeholder="Filter entries..." disabled>
+                        
+                        <div id="indexEntriesList" class="index-entries-list">
+                            <p class="loading">Select an index page above...</p>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
+                            <button type="button" id="prevIndexEntryBtn" class="btn btn-sm" disabled>← Prev</button>
+                            <button type="button" id="nextIndexEntryBtn" class="btn btn-sm" disabled>Next →</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Facilities Browser -->
-            <div class="browser-section facilities-section">
-                <div class="browser-main-controls" style="display:flex; gap:10px;">
-                    <button type="button" id="prevEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">←</button>
-                    <button type="button" id="toggleFacilitiesBrowserBtn" class="toggle-browser-btn" style="flex:1;">🏢 Browse Saved Facilities</button>
-                    <button type="button" id="nextEntryBtn" class="nav-entry-btn" disabled style="width: auto; padding: 0 20px;">→</button>
-                </div>
-                <div id="facilitiesBrowserPanel" class="browser-panel" style="display: none;">
-                    <div class="browser-header">
-                        <h3>Saved Facilities</h3>
-                        <button type="button" id="refreshEntriesBtn" class="refresh-btn">🔄 Refresh</button>
-                    </div>
-                    <div class="browser-controls">
-                        <input type="text" id="entrySearch" class="entry-search" placeholder="Search facilities...">
-                    </div>
-                    <div id="entriesList" class="entries-list">
-                        <p class="loading">Loading entries...</p>
-                    </div>
-                    <div class="browser-pagination">
-                        <button type="button" id="prevPageBtn" disabled>← Previous</button>
-                        <span id="pageInfo">Page 1</span>
-                        <button type="button" id="nextPageBtn">Next →</button>
+                <!-- Facilities Browser -->
+                <div class="form-group" style="flex: 1;">
+                    <label>Saved Facilities</label>
+                    <button type="button" id="toggleFacilitiesBrowserBtn" class="btn btn-secondary" style="width:100%; margin-bottom: 10px;">🏢 Browse Saved Facilities</button>
+                    
+                    <div id="facilitiesBrowserPanel" style="display: none;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                            <h3 style="margin:0; font-size:16px;">Saved Facilities</h3>
+                            <button type="button" id="refreshEntriesBtn" class="btn btn-sm">🔄 Refresh</button>
+                        </div>
+                        
+                        <input type="text" id="entrySearch" class="input-form project-search-input" placeholder="Search facilities...">
+                        <div id="entriesList" class="entries-list">
+                            <p class="loading">Loading entries...</p>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                             <button type="button" id="prevEntryBtn" class="btn btn-sm" disabled>←</button>
+                             
+                             <div class="browser-pagination" style="display:flex; gap:5px; align-items:center;">
+                                <button type="button" id="prevPageBtn" class="btn btn-sm" disabled>←</button>
+                                <span id="pageInfo" style="font-size:13px; font-weight:600;">Page 1</span>
+                                <button type="button" id="nextPageBtn" class="btn btn-sm">→</button>
+                            </div>
+
+                             <button type="button" id="nextEntryBtn" class="btn btn-sm" disabled>→</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Bulk Upload Section -->
-        <div class="bulk-upload-section">
-            <button type="button" id="toggleBulkUploadBtn" class="toggle-bulk-upload-btn">📤 Bulk Upload Markdown Files</button>
+        <div class="project-management bulk-upload-section">
+            <h2>Bulk Actions</h2>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" id="toggleBulkUploadBtn" class="btn btn-secondary">📤 Bulk Upload Markdown Files</button>
+                <button type="button" id="toggleImportBtn" class="btn btn-secondary">📥 Import from Clipboard</button>
+            </div>
+            
+            <!-- Bulk Upload Panel -->
             <div id="bulkUploadPanel" class="bulk-upload-panel" style="display: none;">
                 <h3>Upload Multiple Markdown Files</h3>
-                <p>Select multiple .md files or a folder containing wiki entry markdown files. Each file will be parsed and saved to the database.</p>
-                <div class="upload-controls">
-                    <input type="file" id="bulkFileInput" accept=".md,.txt" multiple>
-                    <button type="button" id="uploadFilesBtn" class="upload-btn">Upload Files</button>
-                    <button type="button" id="cancelBulkUploadBtn" class="cancel-btn">Cancel</button>
+                <p>Select multiple .md files or a folder containing wiki entry markdown files.</p>
+                <div class="upload-controls" style="margin-bottom:15px;">
+                    <input type="file" id="bulkFileInput" accept=".md,.txt" multiple class="input-form">
                 </div>
-                <div id="uploadProgress" class="upload-progress" style="display: none;">
-                    <div class="progress-bar">
-                        <div id="progressBarFill" class="progress-bar-fill"></div>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" id="uploadFilesBtn" class="btn btn-primary">Upload Files</button>
+                    <button type="button" id="cancelBulkUploadBtn" class="btn btn-danger">Close</button>
+                </div>
+                <div id="uploadProgress" class="upload-progress" style="display: none; margin-top:15px;">
+                    <div class="progress-bar" style="height:100%; background:#eee; border-radius:5px; overflow:hidden;">
+                        <div id="progressBarFill" class="progress-bar-fill" style="height:100%; background:#33A7B5; width:0%;"></div>
                     </div>
-                    <p id="uploadStatus" class="upload-status"></p>
+                    <p id="uploadStatus" class="upload-status" style="text-align:center; margin-top:5px; font-weight:600;"></p>
                 </div>
-                <div id="uploadResults" class="upload-results"></div>
+                <div id="uploadResults" class="upload-results" style="margin-top:15px;"></div>
             </div>
-        </div>
 
-        <!-- Import Section -->
-        <div class="import-section">
-            <button type="button" id="toggleImportBtn" class="toggle-import-btn">📥 Import from Reddit Markdown</button>
+            <!-- Import Panel -->
             <div id="importPanel" class="import-panel" style="display: none;">
-                <h3>Paste Reddit Markdown to Import</h3>
-                <p>Paste an existing Reddit wiki entry below and click "Import" to automatically populate the form fields.</p>
+                <h3>Paste Reddit Markdown</h3>
+                <p>Paste an existing Reddit wiki entry below to import it.</p>
                 <textarea id="importTextarea" class="import-textarea" rows="10" placeholder="Paste your Reddit markdown here..."></textarea>
-                <div class="import-controls">
-                    <button type="button" id="importBtn" class="import-btn">Import & Fill Form</button>
-                    <button type="button" id="cancelImportBtn" class="cancel-btn">Cancel</button>
+                <div class="import-controls" style="margin-top:15px; display:flex; gap:10px;">
+                    <button type="button" id="importBtn" class="btn btn-primary">Import & Fill Form</button>
+                    <button type="button" id="cancelImportBtn" class="btn btn-danger">Close</button>
                 </div>
             </div>
         </div>
@@ -159,7 +153,7 @@ if ($is_framed) {
                 <input type="text" id="programType" name="programType" data-autocomplete-category="type" placeholder="e.g., Residential Treatment Center">
             </fieldset>
 
-            <!-- Organization-Specific Fields (only shown for organizations) -->
+            <!-- Organization-Specific Fields -->
             <fieldset class="organization-only-field">
                 <legend>Organization Information</legend>
                 <div class="field-row">
@@ -694,45 +688,6 @@ if ($is_framed) {
             </fieldset>
 
             <fieldset>
-                <legend>Related Programs</legend>
-                <p style="color: #004435; font-size: 0.9rem;">Add related or affiliated programs here to generate a table.</p>
-                <div class="form-adder">
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="relProgName">Program Name:</label>
-                            <input type="text" id="relProgName" data-autocomplete-category="facility">
-                        </div>
-                        <div class="field-group">
-                            <label for="relProgLink">Link:</label>
-                            <input type="text" id="relProgLink">
-                        </div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="relProgYears">Years Active:</label>
-                            <input type="text" id="relProgYears">
-                        </div>
-                        <div class="field-group">
-                            <label for="relProgLocation">Location:</label>
-                            <input type="text" id="relProgLocation" data-autocomplete-category="location">
-                        </div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-group">
-                            <label for="relProgHeal">HEAL Link:</label>
-                            <input type="text" id="relProgHeal">
-                        </div>
-                        <div class="field-group">
-                            <label for="relProgReopened">Reopened/Status:</label>
-                            <input type="text" id="relProgReopened">
-                        </div>
-                    </div>
-                    <button type="button" class="add-btn" id="addRelatedProgBtn">Add Program</button>
-                </div>
-                <div class="list-preview" id="relatedProgramsListOutput"></div>
-            </fieldset>
-
-            <fieldset>
                 <legend>Related Media (Links)</legend>
                 <div class="form-adder">
                     <label for="mediaTitle">Link Title:</label>
@@ -791,208 +746,5 @@ if ($is_framed) {
 </div>
 
 <?php
-    get_footer();
-
-} else {
-    // --- SHELL MODE: RENDER THE TABBED INTERFACE ---
-    get_header();
-?>
-    <div class="wiki-editor-shell">
-        <div class="wiki-tab-bar" id="wikiTabBar">
-            <div class="wiki-tab active" data-tab-id="home" onclick="switchTab('home')">
-                <span class="tab-label">🏠 Home / Browser</span>
-            </div>
-            <!-- Dynamic tabs will be added here -->
-        </div>
-
-        <div class="wiki-tab-content-area" id="wikiTabContent">
-            <!-- Home/Browser iframe is persistent -->
-            <iframe id="frame-home" src="?framed=1" class="wiki-iframe active"></iframe>
-        </div>
-    </div>
-
-    <style>
-        .wiki-editor-shell {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 32px); /* Adjust for admin bar if present */
-            background-color: #E0E0E0;
-        }
-        .wiki-tab-bar {
-            display: flex;
-            background-color: #000435;
-            padding: 5px 5px 0 5px;
-            gap: 2px;
-            overflow-x: auto;
-        }
-        .wiki-tab {
-            background-color: #E0E0E0;
-            color: #555;
-            padding: 8px 15px;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            max-width: 250px;
-            white-space: nowrap;
-            transition: background 0.2s, color 0.2s;
-            user-select: none;
-        }
-        .wiki-tab:hover {
-            background-color: #F2F2F2;
-            color: #000;
-        }
-        .wiki-tab.active {
-            background-color: #F2EEDF; /* Match iframe body bg */
-            color: #000435;
-            border-bottom: 2px solid #F2EEDF;
-            margin-bottom: -2px; /* overlap border */
-            z-index: 10;
-        }
-        .wiki-tab .close-tab-btn {
-            font-size: 1.1rem;
-            line-height: 1;
-            color: #999;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-        }
-        .wiki-tab .close-tab-btn:hover {
-            background-color: #ffb3b3;
-            color: #cc0000;
-        }
-        .wiki-tab-content-area {
-            flex: 1;
-            background-color: #F2EEDF;
-            position: relative;
-            border-top: 5px solid #000435;
-        }
-        .wiki-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-        }
-        .wiki-iframe.active {
-            display: block;
-        }
-    </style>
-
-    <script>
-        let tabCount = 0;
-        const tabs = new Map(); // Store tab metadata: { id, title, url }
-
-        function createTab(title, url) {
-            tabCount++;
-            const tabId = 'tab-' + tabCount;
-            
-            // Create Tab Element
-            const tabBar = document.getElementById('wikiTabBar');
-            const tabEl = document.createElement('div');
-            tabEl.className = 'wiki-tab';
-            tabEl.dataset.tabId = tabId;
-            tabEl.innerHTML = `
-                <span class="tab-label">${title}</span>
-                <span class="close-tab-btn" onclick="closeTab('${tabId}', event)">×</span>
-            `;
-            tabEl.onclick = () => switchTab(tabId);
-            tabBar.appendChild(tabEl);
-
-            // Create Iframe
-            const contentArea = document.getElementById('wikiTabContent');
-            const iframe = document.createElement('iframe');
-            iframe.id = 'frame-' + tabId;
-            iframe.className = 'wiki-iframe';
-            iframe.src = url;
-            contentArea.appendChild(iframe);
-
-            tabs.set(tabId, { title, url });
-            switchTab(tabId);
-        }
-
-        function switchTab(tabId) {
-            // Update Tab Bar
-            document.querySelectorAll('.wiki-tab').forEach(el => {
-                if (el.dataset.tabId === tabId) el.classList.add('active');
-                else el.classList.remove('active');
-            });
-
-            // Update Content Area
-            document.querySelectorAll('.wiki-iframe').forEach(el => {
-                if (el.id === 'frame-' + tabId) el.classList.add('active');
-                else el.classList.remove('active');
-            });
-        }
-
-        function closeTab(tabId, event) {
-            if (event) event.stopPropagation(); // Prevent switching to tab while closing
-            
-            // Remove DOM elements
-            const tabEl = document.querySelector(`.wiki-tab[data-tab-id="${tabId}"]`);
-            const iframeEl = document.getElementById('frame-' + tabId);
-            
-            if (tabEl) tabEl.remove();
-            if (iframeEl) iframeEl.remove();
-            
-            tabs.delete(tabId);
-
-            // Switch to home if current tab was closed
-            if (!document.querySelector('.wiki-tab.active')) {
-                switchTab('home');
-            }
-        }
-
-        // Listen for messages from iframes
-        window.addEventListener('message', (event) => {
-            // Validate origin if necessary (same origin here)
-            const data = event.data;
-
-            if (data.action === 'open_tab') {
-                let url = '?framed=1';
-                let title = 'New Tab';
-
-                if (data.entryId) {
-                    url += `&entry_id=${encodeURIComponent(data.entryId)}`;
-                    title = data.programName || 'Loading...';
-                } else if (data.programName) {
-                    url += `&program_name=${encodeURIComponent(data.programName)}`;
-                    title = data.programName;
-                }
-
-                createTab(title, url);
-            }
-            
-            // Allow child tabs to update their own title once loaded
-            if (data.action === 'update_title' && data.tabTitle) {
-                // Find which iframe sent this
-                // In a real app we might pass a tab ID token, but here we can try to guess
-                // or have the iframe identify itself? 
-                // Actually, the simplest way is for the iframe to just say "I loaded X"
-                // but determining *which* tab corresponds to that source window is tricky with just postMessage.
-                // WE can iterate iframes to find source.
-                const iframes = document.querySelectorAll('iframe');
-                iframes.forEach(iframe => {
-                    if (iframe.contentWindow === event.source) {
-                        const frameId = iframe.id;
-                        const tabId = frameId.replace('frame-', '');
-                        const tabEl = document.querySelector(`.wiki-tab[data-tab-id="${tabId}"] .tab-label`);
-                        if (tabEl) {
-                            tabEl.textContent = data.tabTitle;
-                        }
-                    }
-                });
-            }
-        });
-    </script>
-<?php
-    get_footer();
-}
+get_footer();
 ?>

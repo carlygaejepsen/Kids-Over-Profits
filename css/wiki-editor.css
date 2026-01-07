@@ -1,46 +1,245 @@
-.wiki-editor-page {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #F2EEDF; /* Sand / Warm Ivory */
-    color: #000435; /* Midnight Blue */
+/* ============================================
+   WIKI EDITOR STYLESHEET
+   Based on Data Form Styles
+   ============================================ */
+
+/* ============================================
+   BASE & LAYOUT (From Data Form)
+   ============================================ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
+    color: #000435;
+    background: #F2EEDF;
+    margin: 0;
     padding: 20px;
 }
 
-.wiki-editor-page .wiki-editor-container {
+.wiki-editor-page {
+    /* Main wrapper to work with JS organization mode detection */
+    width: 100%;
+}
+
+/* Base container */
+.container {
     max-width: 900px;
     margin: 0 auto;
-    background-color: #FFFFFF; /* White */
+    background: #AEE0ED;
+    border: 2px solid #33A7B5;
     padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(252, 142, 214, 0.15), 0 8px 24px rgba(178, 225, 2, 0.1);
+    position: relative;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(135deg, #FC8ED6, #B2E102, #33A7B5, #EF9034);
+    border-radius: 12px;
+    z-index: -1;
+}
+
+/* Headers */
+.admin-header {
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    text-align: center;
+    border: 3px solid #FE8088;
+}
+
+.admin-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 28px;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+.admin-header p {
+    margin: 0;
+    opacity: 0.95;
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+.admin-warning {
+    background: #FFF5CB;
+    border: 2px solid #EF9034;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    color: #000435;
+    font-weight: 600;
+}
+
+/* ============================================
+   PROJECT MANAGEMENT / LOADING SYSTEM
+   ============================================ */
+.project-management {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.project-management h2 {
+    text-align: left;
+    color: #000435;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 5px 0 12px 0;
+}
+
+.project-management .form-group {
+    margin-bottom: 15px;
+}
+
+.project-management label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #000435;
+    font-size: 14px;
+}
+
+.input-form,
+.project-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.input-form:focus,
+.project-search-input:focus {
+    border-color: #33A7B5;
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
+    outline: none;
+}
+
+.saved-projects-list,
+.entries-list,
+.index-entries-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 2px solid #33A7B5;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 68, 53, 0.1);
-    border: 2px solid #B6E3D4; /* Mint Green */
+    padding: 12px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(51, 167, 181, 0.2);
+    margin-top: 5px;
 }
 
-.wiki-editor-page h1,
-.wiki-editor-page h2 {
-    color: #000080; /* Navy Blue */
-    border-bottom: 3px solid #33A7B5; /* Teal */
-    padding-bottom: 10px;
-}
-
-.wiki-editor-page h1 {
+.saved-projects-list p.loading,
+.entries-list p.loading {
+    color: #6b7280;
+    font-style: italic;
     text-align: center;
 }
 
-.wiki-editor-page h4 {
-    margin-top: 15px;
-    margin-bottom: 5px;
-    color: #000080; /* Navy Blue */
+/* ============================================
+   FORM ELEMENTS & SECTIONS
+   ============================================ */
+fieldset {
+    background: #FFF5CB;
+    border: 2px solid #B2E102;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(178, 225, 2, 0.15);
 }
 
-.wiki-editor-page .editor-mode-toggle {
+legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #33A7B5;
+    padding: 0 10px;
+    background: #FFFFFF;
+    border: 2px solid #B2E102;
+    border-radius: 5px;
+}
+
+label {
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: block;
+    color: #000435;
+}
+
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #000435;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #33A7B5;
+    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
+}
+
+.field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.field-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.field-group.flex-2 {
+    flex: 2;
+    min-width: 250px;
+}
+
+.field-group label {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   WIKI EDITOR SPECIFIC
+   ============================================ */
+.editor-mode-toggle {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-bottom: 25px;
 }
 
-.wiki-editor-page .mode-btn {
+.mode-btn {
     background-color: #FFFFFF;
     color: #000435;
     border: 2px solid #33A7B5;
@@ -52,188 +251,69 @@
     transition: all 0.2s ease;
 }
 
-.wiki-editor-page .mode-btn:hover {
+.mode-btn:hover {
     background-color: #E8F5F7;
     transform: translateY(-1px);
 }
 
-.wiki-editor-page .mode-btn.active {
+.mode-btn.active {
     background-color: #33A7B5;
     color: #FFFFFF;
     box-shadow: 0 2px 5px rgba(51, 167, 181, 0.3);
 }
 
-.wiki-editor-page .hidden-section {
+.hidden-section {
     display: none !important;
 }
 
-.wiki-editor-page .markdown-mode-active {
+.markdown-mode-active {
     height: 70vh !important;
     font-size: 1rem !important;
     border: 3px solid #000080 !important;
     background-color: #FFFFFF !important;
 }
 
-.wiki-editor-page form {
-    display: flex;
-    flex-direction: column;
-}
-
-.wiki-editor-page fieldset {
-    border: 2px solid #AEE0ED; /* Powder Blue */
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: #FFF5CB; /* Soft Pastel Yellow */
-}
-
-.wiki-editor-page legend {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #33A7B5; /* Teal */
-    padding: 0 10px;
-}
-
-.wiki-editor-page label {
-    font-weight: 600;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    display: block;
-    color: #000435; /* Midnight Blue */
-}
-
-.wiki-editor-page input[type="text"],
-.wiki-editor-page textarea,
-.wiki-editor-page select {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #B6E3D4; /* Mint Green */
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 1rem;
-    background-color: #FFFFFF;
-    transition: border-color 0.2s ease;
-}
-
-.wiki-editor-page input[type="text"]:focus,
-.wiki-editor-page textarea:focus,
-.wiki-editor-page select:focus {
-    outline: none;
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
-}
-
-.wiki-editor-page textarea {
-    resize: vertical;
-}
-
-/* Field Row Layouts for Short Inputs */
-.wiki-editor-page .field-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 10px;
-}
-
-.wiki-editor-page .field-group {
-    flex: 1;
-    min-width: 150px;
-}
-
-.wiki-editor-page .field-group.flex-2 {
-    flex: 2;
-    min-width: 250px;
-}
-
-.wiki-editor-page .field-group label {
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
-
-.wiki-editor-page .field-group input[type="text"],
-.wiki-editor-page .field-group select {
-    padding: 10px;
-}
-
-@media (max-width: 600px) {
-    .wiki-editor-page .field-row {
-        flex-direction: column;
-    }
-    .wiki-editor-page .field-group {
-        min-width: 100%;
-    }
-}
-
-.wiki-editor-page hr {
-    border: 0;
-    border-top: 2px solid #AEE0ED; /* Powder Blue */
-    margin: 20px 0;
-}
-
-.wiki-editor-page button#generateBtn {
-    background-color: #33A7B5; /* Teal */
-    color: #FFFFFF;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 14px 20px;
-    border: 2px solid #33A7B5;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 25px;
-    transition: all 0.2s ease;
-}
-
-.wiki-editor-page button#generateBtn:hover {
-    background-color: #000080; /* Navy Blue */
-    border-color: #000080;
-    box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
-}
-
-.wiki-editor-page .add-btn {
-    background-color: #B6E3D4; /* Mint Green */
-    color: #000435; /* Midnight Blue */
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 10px 15px;
-    border: 2px solid #33A7B5; /* Teal border */
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: all 0.2s ease;
-}
-
-.wiki-editor-page .add-btn:hover {
-    background-color: #33A7B5; /* Teal */
-    color: #FFFFFF;
-    border-color: #000080; /* Navy Blue */
-}
-
-.wiki-editor-page .form-adder {
+/* Form Adder / List Preview */
+.form-adder {
     background: #FFFFFF;
-    border: 2px solid #B2E102; /* Chartreuse accent border */
+    border: 2px solid #B2E102;
     border-radius: 5px;
     padding: 15px;
-}
-
-.wiki-editor-page .form-adder label {
     margin-top: 10px;
 }
 
-.wiki-editor-page .list-preview {
+.add-btn {
+    background-color: #B6E3D4;
+    color: #000435;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: 2px solid #33A7B5;
+    border-radius: 5px;
+    cursor: pointer;
     margin-top: 15px;
-    background: #AEE0ED; /* Powder Blue */
-    border: 2px dashed #33A7B5; /* Teal */
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+    background-color: #33A7B5;
+    color: #FFFFFF;
+    border-color: #000080;
+}
+
+.list-preview {
+    margin-top: 15px;
+    background: #AEE0ED;
+    border: 2px dashed #33A7B5;
     border-radius: 5px;
     padding: 10px;
     min-height: 40px;
 }
 
-.wiki-editor-page .list-preview-item {
+.list-preview-item {
     font-size: 0.9rem;
     padding: 8px;
-    border-bottom: 1px solid #B6E3D4; /* Mint Green */
+    border-bottom: 1px solid #B6E3D4;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -242,338 +322,89 @@
     border-radius: 3px;
 }
 
-.wiki-editor-page .list-preview-item:last-child {
-    border-bottom: none;
-}
-
-.wiki-editor-page .list-preview-item button {
-    background: #FE8088; /* Coral Pink */
+.list-preview-item button {
+    background: #FE8088;
     color: #FFFFFF;
     border: 2px solid #FE8088;
     font-size: 0.8rem;
     padding: 4px 8px;
     border-radius: 3px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-  .wiki-editor-page .list-preview-item button:hover {
-      background: #FC8ED6; /* Bubblegum Pink */
-      border-color: #FC8ED6;
-  }
-
-  .wiki-editor-page .checkbox-inline {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0.5rem 0;
-      font-size: 0.95rem;
-      color: #000435;
-  }
-
-  .wiki-editor-page .checkbox-inline input[type="checkbox"] {
-      width: auto;
-      margin: 0;
-  }
-
-  .wiki-editor-page .staff-preview-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-  }
-
-  .wiki-editor-page .staff-summary {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-  }
-
-  .wiki-editor-page .staff-status {
-      font-size: 0.8rem;
-      background-color: #F2EEDF;
-      color: #000435;
-      padding: 0.1rem 0.5rem;
-      border-radius: 999px;
-      border: 1px solid #EF9034;
-  }
-
-  .wiki-editor-page .staff-prev,
-  .wiki-editor-page .staff-bio {
-      font-size: 0.9rem;
-      color: #1f2937;
-  }
-
-  .wiki-editor-page .staff-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-  }
-
-  .wiki-editor-page .staff-actions button {
-      background-color: #B6E3D4;
-      border: 2px solid #33A7B5;
-      color: #000435;
-  }
-
-  .wiki-editor-page .staff-actions .remove-btn {
-      background: #FE8088;
-      border-color: #FE8088;
-      color: #FFFFFF;
-  }
-
-/* Previous Roles Section within Staff Form */
-.wiki-editor-page .previous-roles-section {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
-    background: #F2EEDF; /* Sand/Warm Ivory */
-    border: 1px dashed #B6E3D4; /* Mint Green */
-    border-radius: 5px;
-}
-
-.wiki-editor-page .previous-roles-section > label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #000435;
-}
-
-.wiki-editor-page #previousRolesContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.wiki-editor-page .previous-role-entry {
-    background: #FFFFFF;
-    border-radius: 4px;
-    padding: 0.5rem;
-}
-
-.wiki-editor-page .previous-role-entry .field-row {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.wiki-editor-page .previous-role-entry .field-group {
-    flex: 1;
-}
-
-.wiki-editor-page .previous-role-entry input {
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.9rem;
-}
-
-.wiki-editor-page .remove-prev-role-btn {
-    background: #FE8088;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s ease;
-}
-
-.wiki-editor-page .remove-prev-role-btn:hover {
+.list-preview-item button:hover {
     background: #FC8ED6;
+    border-color: #FC8ED6;
 }
 
-.wiki-editor-page .add-prev-role-btn {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
-}
-
-.wiki-editor-page #outputCode {
-    width: 100%;
-    height: 400px;
-    background-color: #ECF385; /* Pale Spring Yellow */
-    border: 2px solid #33A7B5; /* Teal */
-    border-radius: 5px;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.9rem;
-    margin-top: 10px;
-    padding: 12px;
-    color: #000435; /* Midnight Blue */
-}
-
-.wiki-editor-page .output-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.wiki-editor-page #convertPastBtn {
-    background-color: #33A7B5; /* Teal */
+/* Generate Button */
+button#generateBtn {
+    background-color: #33A7B5;
     color: #FFFFFF;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.wiki-editor-page #convertPastBtn:hover {
-    background-color: #000080;
-    box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
-}
-
-.wiki-editor-page #copyBtn {
-    background-color: #EF9034; /* Orange */
-    color: #FFFFFF;
-    font-weight: 600;
-    padding: 12px 20px;
-    border: 2px solid #EF9034;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: all 0.2s ease;
-}
-
-.wiki-editor-page #copyBtn:hover {
-    background-color: #000080; /* Navy Blue */
-    border-color: #000080;
-    box-shadow: 0 4px 8px rgba(0, 0, 128, 0.2);
-}
-
-/* Import Section Styles */
-.wiki-editor-page .import-section {
-    margin-bottom: 30px;
-}
-
-.wiki-editor-page .toggle-import-btn {
-    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
-    color: #FFFFFF;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 14px 20px;
     border: 2px solid #33A7B5;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 25px;
+    width: 100%;
     transition: all 0.2s ease;
+}
+
+button#generateBtn:hover {
+    background-color: #000080;
+    border-color: #000080;
+}
+
+/* Output Area */
+#outputCode {
     width: 100%;
-    max-width: 300px;
-    display: block;
-    margin: 0 auto;
-}
-
-.wiki-editor-page .toggle-import-btn:hover {
-    box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
-    transform: translateY(-1px);
-}
-
-.wiki-editor-page .import-panel {
-    margin-top: 20px;
-    background-color: #FFF5CB; /* Soft Pastel Yellow */
-    border: 2px solid #B2E102; /* Chartreuse */
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.wiki-editor-page .import-panel h3 {
-    color: #000080; /* Navy Blue */
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.wiki-editor-page .import-panel p {
-    color: #000435; /* Midnight Blue */
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .import-textarea {
-    width: 100%;
-    min-height: 200px;
-    padding: 12px;
-    border: 2px solid #B6E3D4; /* Mint Green */
+    height: 400px;
+    background-color: #ECF385;
+    border: 2px solid #33A7B5;
     border-radius: 5px;
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9rem;
-    background-color: #FFFFFF;
-    resize: vertical;
+    margin-top: 10px;
+    padding: 12px;
+    color: #000435;
 }
 
-.wiki-editor-page .import-textarea:focus {
-    outline: none;
-    border-color: #33A7B5; /* Teal */
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
-}
-
-.wiki-editor-page .import-controls {
+.output-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 10px;
 }
 
-.wiki-editor-page .import-btn {
-    background-color: #B2E102; /* Chartreuse */
-    color: #000435; /* Midnight Blue */
-    font-size: 1rem;
-    font-weight: 600;
+.output-actions button {
     padding: 10px 20px;
-    border: 2px solid #B2E102;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.wiki-editor-page .import-btn:hover {
-    background-color: #33A7B5; /* Teal */
-    border-color: #33A7B5;
-    color: #FFFFFF;
-}
-
-.wiki-editor-page .cancel-btn {
-    background-color: #FFFFFF;
-    color: #000435; /* Midnight Blue */
-    font-size: 1rem;
     font-weight: 600;
-    padding: 10px 20px;
-    border: 2px solid #AEE0ED; /* Powder Blue */
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.wiki-editor-page .cancel-btn:hover {
-    background-color: #FE8088; /* Coral Pink */
-    border-color: #FE8088;
+#convertPastBtn {
+    background-color: #33A7B5;
     color: #FFFFFF;
+    border: none;
 }
 
-/* Submit to Database Button */
-.wiki-editor-page .submit-db-btn {
-    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+#copyBtn {
+    background-color: #EF9034;
     color: #FFFFFF;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 10px 20px;
+    border: 2px solid #EF9034;
+}
+
+.submit-db-btn {
+    background: linear-gradient(to right, #33A7B5, #000080);
+    color: #FFFFFF;
     border: 2px solid #000080;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.wiki-editor-page .submit-db-btn:hover {
-    background: linear-gradient(to right, #000080, #33A7B5);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 68, 53, 0.2);
-}
-
-/* Submission Modal */
-.wiki-editor-page .submit-modal {
+/* Modals */
+.submit-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -586,7 +417,7 @@
     align-items: center;
 }
 
-.wiki-editor-page .submit-modal-content {
+.submit-modal-content {
     background: #FFFFFF;
     padding: 30px;
     border-radius: 10px;
@@ -596,936 +427,108 @@
     border: 2px solid #B6E3D4;
 }
 
-.wiki-editor-page .submit-modal-content h3 {
-    color: #000080;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #33A7B5;
-    padding-bottom: 10px;
-}
-
-.wiki-editor-page .submit-form-group {
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .submit-form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #000435;
-    font-weight: 600;
-}
-
-.wiki-editor-page .submit-form-group input,
-.wiki-editor-page .submit-form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-.wiki-editor-page .submit-form-group input:focus,
-.wiki-editor-page .submit-form-group textarea:focus {
-    outline: none;
-    border-color: #33A7B5;
-}
-
-.wiki-editor-page .submit-modal-actions {
+.submit-modal-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     margin-top: 20px;
 }
 
-.wiki-editor-page .submit-btn {
+.submit-btn {
     background: linear-gradient(to right, #B2E102, #33A7B5);
     color: #000435;
-    font-size: 1rem;
     font-weight: 600;
     padding: 10px 25px;
     border: 2px solid #B2E102;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.wiki-editor-page .submit-btn:hover {
-    background: linear-gradient(to right, #33A7B5, #B2E102);
-    color: #FFFFFF;
-}
-
-.wiki-editor-page .submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.wiki-editor-page .submit-status {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.wiki-editor-page .submit-status .success {
-    color: #004435;
-    background: #B6E3D4;
-    padding: 10px;
-    border-radius: 5px;
-    display: block;
-}
-
-.wiki-editor-page .submit-status .error {
-    color: #FFFFFF;
-    background: #FE8088;
-    padding: 10px;
-    border-radius: 5px;
-    display: block;
-}
-
-.wiki-editor-page .submit-status .loading {
-    color: #000080;
-    background: #FFF5CB;
-    padding: 10px;
-    border-radius: 5px;
-    display: block;
-}
-
-/* Auto-linking Options */
-.wiki-editor-page .auto-linking-options {
-    background-color: #E8F5F7;
-    border: 2px solid #33A7B5;
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin: 20px 0;
-}
-
-.wiki-editor-page .auto-linking-options label.checkbox-inline {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #000080;
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.wiki-editor-page .auto-linking-options input[type="checkbox"] {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-.wiki-editor-page .auto-linking-help {
-    font-size: 0.9rem;
-    color: #004435;
-    margin: 5px 0 0 28px;
-    font-style: italic;
-}
-
-/* ========================================
-   Entry Browser Section
-   ======================================== */
-
-.wiki-editor-page .entry-browser-section {
-    margin-bottom: 25px;
-}
-
-.wiki-editor-page .toggle-browser-btn {
-    background-color: #33A7B5; /* Teal */
-    color: #FFFFFF;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-
-.wiki-editor-page .toggle-browser-btn:hover {
-    background-color: #2A8A97;
-}
-
-.wiki-editor-page .browser-panel {
-    background-color: #E8F5F7;
-    border: 2px solid #33A7B5;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 15px;
-}
-
-.wiki-editor-page .browser-panel h3 {
-    color: #000080;
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .browser-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .entry-search {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    font-size: 0.95rem;
-}
-
-.wiki-editor-page .refresh-btn {
-    background-color: #B6E3D4;
-    color: #004435;
-    padding: 10px 20px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.wiki-editor-page .refresh-btn:hover {
-    background-color: #9ED4C4;
-}
-
-.wiki-editor-page .entries-list {
+.cancel-btn {
     background-color: #FFFFFF;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.wiki-editor-page .entries-list .loading,
-.wiki-editor-page .entries-list .no-entries,
-.wiki-editor-page .entries-list .error {
-    text-align: center;
-    padding: 20px;
-    color: #004435;
-}
-
-.wiki-editor-page .entries-list .error {
-    color: #FE8088;
-}
-
-.wiki-editor-page .entries-table table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.wiki-editor-page .entries-table thead {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-}
-
-.wiki-editor-page .entries-table th {
-    padding: 12px 8px;
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid #2A8A97;
-}
-
-.wiki-editor-page .entries-table td {
-    padding: 10px 8px;
-    border-bottom: 1px solid #E8F5F7;
-}
-
-.wiki-editor-page .entries-table tr:hover {
-    background-color: #F0F9FA;
-}
-
-.wiki-editor-page .entry-name {
-    font-weight: 600;
-    color: #000080;
-}
-
-.wiki-editor-page .load-entry-btn,
-.wiki-editor-page .delete-entry-btn {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.wiki-editor-page .load-entry-btn {
-    background-color: #B6E3D4;
-    color: #004435;
-}
-
-.wiki-editor-page .load-entry-btn:hover {
-    background-color: #9ED4C4;
-}
-
-.wiki-editor-page .delete-entry-btn {
-    background-color: #FE8088;
-    color: #FFFFFF;
-}
-
-.wiki-editor-page .delete-entry-btn:hover {
-    background-color: #E66D75;
-}
-
-.wiki-editor-page .browser-pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #FFFFFF;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-}
-
-.wiki-editor-page .browser-pagination button {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #33A7B5;
-    color: #FFFFFF;
-    transition: background-color 0.3s ease;
-}
-
-.wiki-editor-page .browser-pagination button:hover:not(:disabled) {
-    background-color: #2A8A97;
-}
-
-.wiki-editor-page .browser-pagination button:disabled {
-    background-color: #AEE0ED;
-    color: #999;
-    cursor: not-allowed;
-}
-
-.wiki-editor-page .browser-pagination span {
-    font-weight: 600;
-    color: #004435;
-}
-
-/* ========================================
-   Bulk Upload Section
-   ======================================== */
-
-.wiki-editor-page .bulk-upload-section {
-    margin-bottom: 25px;
-}
-
-.wiki-editor-page .toggle-bulk-upload-btn {
-    background-color: #FFB3FF; /* Mauve */
     color: #000435;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border: 2px solid #AEE0ED;
+    border-radius: 5px;
     cursor: pointer;
+}
+
+/* Checkboxes */
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #000435;
+}
+
+/* Organization Mode Fields */
+.organization-mode .facility-only-field {
+    display: none;
+}
+
+.organization-only-field {
+    display: none;
+}
+
+.organization-mode .organization-only-field {
+    display: block;
+}
+
+/* List Entry Styling (for browser) */
+.entry-row-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #fff;
+}
+.entry-row-item:hover {
+    background-color: #f9fafb;
+}
+.entry-name {
+    font-weight: 600;
+    color: #000435;
+}
+.entry-actions button {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+.load-entry-btn {
+    background-color: #33A7B5;
+    color: white;
+}
+.delete-entry-btn {
+    background-color: #FE8088;
+    color: white;
+}
+
+/* Bulk Upload */
+.bulk-upload-section, .import-section {
+    margin-bottom: 20px;
+}
+
+.toggle-bulk-upload-btn, .toggle-import-btn {
     width: 100%;
-    transition: background-color 0.3s ease;
+    padding: 12px;
+    background: #33A7B5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-.wiki-editor-page .toggle-bulk-upload-btn:hover {
-    background-color: #E699E6;
-}
-
-.wiki-editor-page .bulk-upload-panel {
-    background-color: #FFF0FF;
-    border: 2px solid #FFB3FF;
+.bulk-upload-panel, .import-panel {
+    background: #FFF5CB;
+    border: 2px solid #B2E102;
     border-radius: 8px;
     padding: 20px;
     margin-top: 15px;
 }
-
-.wiki-editor-page .bulk-upload-panel h3 {
-    color: #000080;
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .bulk-upload-panel p {
-    margin-bottom: 15px;
-    color: #004435;
-}
-
-.wiki-editor-page .upload-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    align-items: center;
-}
-
-.wiki-editor-page .upload-controls input[type="file"] {
-    flex: 1;
-    padding: 8px;
-    border: 2px solid #FFB3FF;
-    border-radius: 5px;
-    background-color: #FFFFFF;
-}
-
-.wiki-editor-page .upload-btn {
-    background-color: #B6E3D4;
-    color: #004435;
-    padding: 10px 20px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.wiki-editor-page .upload-btn:hover {
-    background-color: #9ED4C4;
-}
-
-.wiki-editor-page .upload-btn:disabled {
-    background-color: #AEE0ED;
-    color: #999;
-    cursor: not-allowed;
-}
-
-.wiki-editor-page .upload-progress {
-    background-color: #FFFFFF;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .progress-bar {
-    width: 100%;
-    height: 24px;
-    background-color: #E8F5F7;
-    border: 2px solid #33A7B5;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.wiki-editor-page .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #33A7B5, #B6E3D4);
-    transition: width 0.3s ease;
-    border-radius: 10px;
-}
-
-.wiki-editor-page .upload-status {
-    text-align: center;
-    font-weight: 600;
-    color: #004435;
-}
-
-.wiki-editor-page .upload-results {
-    background-color: #FFFFFF;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    padding: 15px;
-}
-
-.wiki-editor-page .upload-results h4 {
-    color: #000080;
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.wiki-editor-page .upload-results h5 {
-    margin: 10px 0;
-    font-size: 1rem;
-}
-
-.wiki-editor-page .upload-results ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.wiki-editor-page .upload-results li {
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 5px;
-}
-
-.wiki-editor-page .upload-success li {
-    background-color: #E8F9F3;
-    border-left: 4px solid #B6E3D4;
-}
-
-.wiki-editor-page .upload-failed li {
-    background-color: #FFE8EA;
-    border-left: 4px solid #FE8088;
-}
-/* Reddit index browser */
-.wiki-editor-page .index-browser {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #a2c0cc;
-}
-.wiki-editor-page .index-browser h4 {
-    margin: 0 0 12px;
-    color: #0f4c5c;
-    font-size: 1rem;
-}
-.wiki-editor-page .index-browser-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.wiki-editor-page .index-select,
-.wiki-editor-page .index-search {
-    flex: 1;
-    min-width: 200px;
-    padding: 8px 12px;
-    border: 1px solid #c0d4dc;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-.wiki-editor-page .index-entries-list {
-    margin-top: 15px;
-    max-height: 260px;
-    overflow-y: auto;
-    background: #fff;
-    border: 1px solid #cfdde5;
-    border-radius: 6px;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.03);
-}
-.wiki-editor-page .index-entries-list .loading {
-    padding: 12px;
-    margin: 0;
-    color: #547591;
-}
-.wiki-editor-page .index-entry-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    border-bottom: 1px solid #e4ecf2;
-}
-.wiki-editor-page .index-entry-row:last-child {
-    border-bottom: none;
-}
-.wiki-editor-page .index-entry-name {
-    font-weight: 600;
-    color: #0f3f4b;
-}
-.wiki-editor-page .entry-not-found-flag {
-    display: inline-block;
-    background-color: #FFF5CB;
-    color: #d32f2f;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid #ffb74d;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-.wiki-editor-page .index-entry-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.wiki-editor-page .index-entry-actions button,
-.wiki-editor-page .index-entry-actions a {
-    font-size: 0.85rem;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    background: #33a7b5;
-    color: #fff;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s ease;
-}
-.wiki-editor-page .index-entry-actions button:hover,
-.wiki-editor-page .index-entry-actions a:hover {
-    background: #248392;
-}
-.wiki-editor-page .index-entry-actions a {
-    background: #fff;
-    color: #188aa5;
-    border-color: #c0d4dc;
-}
-.wiki-editor-page .index-entry-actions a:hover {
-    background: #eef6fb;
-}
-
-/* ========================================
-   Mobile & Tablet Responsive Styles
-   ======================================== */
-
-/* Tablet styles (768px and below) */
-@media (max-width: 768px) {
-    .wiki-editor-page {
-        padding: 10px;
-        overflow-x: hidden;
-    }
-
-    .wiki-editor-page .wiki-editor-container {
-        padding: 15px;
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-
-    /* Prevent any element from causing horizontal scroll */
-    .wiki-editor-page * {
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Ensure browser panel doesn't overflow */
-    .wiki-editor-page .browser-panel {
-        overflow-x: hidden;
-        max-width: 100%;
-    }
-
-    /* Ensure entries list doesn't overflow */
-    .wiki-editor-page .entries-list {
-        overflow-x: hidden;
-        max-width: 100%;
-    }
-
-    /* Ensure index browser doesn't overflow */
-    .wiki-editor-page .index-browser {
-        overflow-x: hidden;
-        max-width: 100%;
-    }
-
-    .wiki-editor-page h1 {
-        font-size: 1.5rem;
-    }
-
-    .wiki-editor-page h2 {
-        font-size: 1.3rem;
-    }
-
-    /* Browser controls stack on tablet */
-    .wiki-editor-page .browser-controls {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .entry-search,
-    .wiki-editor-page .refresh-btn {
-        width: 100%;
-    }
-
-    /* Index browser controls stack */
-    .wiki-editor-page .index-browser-controls {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .index-select,
-    .wiki-editor-page .index-search {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .wiki-editor-page .view-mode-select {
-        width: 100%;
-    }
-
-    /* Make table responsive with card layout */
-    .wiki-editor-page .entries-table {
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .wiki-editor-page .entries-table table {
-        min-width: 100%;
-        font-size: 0.9rem;
-    }
-
-    .wiki-editor-page .entries-table th,
-    .wiki-editor-page .entries-table td {
-        padding: 8px 4px;
-        font-size: 0.85rem;
-    }
-
-    /* Stack index entry actions on smaller screens */
-    .wiki-editor-page .index-entry-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .wiki-editor-page .index-entry-actions {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    /* Output actions stack */
-    .wiki-editor-page .output-actions {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .output-actions button {
-        width: 100%;
-    }
-
-    /* Upload controls stack */
-    .wiki-editor-page .upload-controls {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .upload-controls input[type="file"],
-    .wiki-editor-page .upload-btn,
-    .wiki-editor-page .cancel-btn {
-        width: 100%;
-    }
-}
-
-/* Mobile styles (480px and below) */
-@media (max-width: 480px) {
-    .wiki-editor-page {
-        padding: 5px;
-    }
-
-    .wiki-editor-page .wiki-editor-container {
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .wiki-editor-page h1 {
-        font-size: 1.3rem;
-    }
-
-    .wiki-editor-page h2 {
-        font-size: 1.1rem;
-    }
-
-    .wiki-editor-page fieldset {
-        padding: 10px;
-    }
-
-    .wiki-editor-page legend {
-        font-size: 1rem;
-    }
-
-    /* Compact buttons */
-    .wiki-editor-page button {
-        font-size: 0.9rem;
-        padding: 10px 12px;
-    }
-
-    .wiki-editor-page .toggle-browser-btn,
-    .wiki-editor-page .toggle-import-btn,
-    .wiki-editor-page .toggle-bulk-upload-btn {
-        font-size: 0.9rem;
-        padding: 10px 16px;
-    }
-
-    /* Smaller inputs */
-    .wiki-editor-page input[type="text"],
-    .wiki-editor-page textarea,
-    .wiki-editor-page select {
-        font-size: 0.9rem;
-        padding: 8px;
-    }
-
-    /* Make table completely card-based on mobile */
-    .wiki-editor-page .entries-table thead {
-        display: none;
-    }
-
-    .wiki-editor-page .entries-table table,
-    .wiki-editor-page .entries-table tbody,
-    .wiki-editor-page .entries-table tr {
-        display: block;
-        width: 100%;
-    }
-
-    .wiki-editor-page .entries-table tr {
-        margin-bottom: 15px;
-        border: 2px solid #AEE0ED;
-        border-radius: 8px;
-        padding: 10px;
-        background-color: #FFFFFF;
-    }
-
-    .wiki-editor-page .entries-table td {
-        display: block;
-        text-align: left;
-        padding: 8px 0;
-        border: none;
-        position: relative;
-        padding-left: 50%;
-    }
-
-    .wiki-editor-page .entries-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 10px;
-        font-weight: 600;
-        color: #000080;
-    }
-
-    /* Compact action buttons */
-    .wiki-editor-page .load-entry-btn,
-    .wiki-editor-page .delete-entry-btn {
-        font-size: 0.8rem;
-        padding: 5px 10px;
-        display: block;
-        width: 100%;
-        margin-bottom: 5px;
-        margin-right: 0;
-    }
-
-    /* Compact pagination */
-    .wiki-editor-page .browser-pagination {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .wiki-editor-page .browser-pagination button {
-        width: 100%;
-    }
-
-    /* Index entry for mobile */
-    .wiki-editor-page .index-entry-row {
-        padding: 12px 8px;
-    }
-
-    .wiki-editor-page .index-entry-name {
-        font-size: 0.9rem;
-        margin-bottom: 8px;
-    }
-
-    .wiki-editor-page .index-entry-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .wiki-editor-page .index-entry-actions button,
-    .wiki-editor-page .index-entry-actions a {
-        width: 100%;
-        text-align: center;
-        padding: 8px 12px;
-    }
-
-    /* Import controls stack */
-    .wiki-editor-page .import-controls {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .import-controls button {
-        width: 100%;
-    }
-
-    /* Modal adjustments */
-    .wiki-editor-page .submit-modal-content {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .wiki-editor-page .submit-modal-actions {
-        flex-direction: column;
-    }
-
-    .wiki-editor-page .submit-modal-actions button {
-        width: 100%;
-    }
-}
-
-/* ========================================
-   Organization Mode
-   ======================================== */
-
-/* Hide facility-only fields when the form is in organization mode */
-.wiki-editor-page.organization-mode .facility-only-field {
-    display: none;
-}
-
-/* Hide organization-only fields by default (show only in organization mode) */
-.wiki-editor-page .organization-only-field {
-    display: none;
-}
-
-/* Show organization-only fields when in organization mode */
-.wiki-editor-page.organization-mode .organization-only-field {
-    display: block;
-}
-
-/* Navigation Buttons */
-.nav-entry-btn {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-entry-btn:hover:not(:disabled) {
-    background-color: #2A8A97;
-    transform: translateY(-1px);
-}
-
-.nav-entry-btn:disabled {
-    background-color: #AEE0ED;
-    color: #FFF;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.toggle-browser-btn.loaded-flash {
-    background-color: #B2E102 !important; /* Chartreuse */
-    color: #000435 !important;
-    transition: background-color 0.5s ease;
-}
-
-
-/* New Tab Buttons */
-.new-tab-btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background-color: #E8F5F7;
-    color: #33A7B5;
-    border: 1px solid #33A7B5;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-right: 5px;
-    transition: all 0.2s ease;
-}
-
-.new-tab-btn:hover {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-}
-
-.new-tab-icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    background-color: #E8F5F7;
-    color: #33A7B5;
-    border: 1px solid #33A7B5;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.2s ease;
-    margin-left: 4px;
-}
-
-.new-tab-icon-btn:hover {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-}
-
