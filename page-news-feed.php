@@ -57,6 +57,49 @@ try {
         </div>
     <?php else: ?>
         <?php
+        // Function to normalize tags to title case
+        function normalizeTagCase($tag) {
+            // Convert to title case but preserve all-caps acronyms
+            $words = explode(' ', $tag);
+            $normalized = [];
+            foreach ($words as $word) {
+                // Keep all-caps acronyms as-is (e.g., "TTI", "PTSD", "USA")
+                if (strlen($word) <= 4 && strtoupper($word) === $word) {
+                    $normalized[] = $word;
+                } else {
+                    $normalized[] = ucwords(strtolower($word));
+                }
+            }
+            return implode(' ', $normalized);
+        }
+
+        // Tags to exclude - generic terms that apply to almost every TTI article
+        $excludedTags = [
+            // Generic abuse terms (specific types belong in content warnings)
+            'abuse', 'child abuse', 'teen abuse', 'youth abuse',
+            'physical abuse', 'sexual abuse', 'emotional abuse', 'psychological abuse',
+            'verbal abuse', 'mental abuse', 'spiritual abuse', 'medical abuse',
+            'neglect', 'medical neglect', 'educational neglect',
+            'restraint', 'seclusion', 'isolation',
+            'assault', 'sexual assault', 'physical assault',
+            'trauma', 'ptsd', 'mistreatment',
+            // Generic TTI/facility terms
+            'boarding school', 'boarding schools',
+            'troubled teen', 'troubled teens', 'troubled teen industry', 'tti',
+            'residential treatment', 'residential treatment center', 'rtc',
+            'therapeutic boarding school', 'treatment center', 'treatment facility',
+            'behavioral health', 'mental health', 'mental health treatment',
+            'reform', 'reform school', 'boot camp',
+            'facility', 'program', 'institution',
+            // Generic people terms
+            'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
+            'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
+            'survivor', 'survivors', 'victim', 'victims', 'student', 'students',
+            // Generic news/legal terms
+            'abuse allegations', 'allegations', 'misconduct',
+            'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed'
+        ];
+
         // Collect all unique tags for the filter (including auto-generated tags)
         $allTags = [];
         $allTypes = [];
@@ -78,9 +121,13 @@ try {
             $itemFacilities = json_decode($item['facilities_mentioned'] ?? '[]', true) ?: [];
             $itemTags = array_merge($itemTags, $itemFacilities);
 
-            // Count unique tags
+            // Filter out excluded tags and normalize to title case
             foreach (array_unique($itemTags) as $tag) {
-                $allTags[$tag] = ($allTags[$tag] ?? 0) + 1;
+                $tagLower = strtolower(trim($tag));
+                if (!empty($tagLower) && !in_array($tagLower, $excludedTags)) {
+                    $normalizedTag = normalizeTagCase(trim($tag));
+                    $allTags[$normalizedTag] = ($allTags[$normalizedTag] ?? 0) + 1;
+                }
             }
 
             if (!empty($item['article_type'])) {
@@ -237,6 +284,15 @@ try {
 
                 // Merge auto-tags with manual tags, remove duplicates
                 $tags = array_unique(array_merge($tags, $autoTags));
+and normalize to title case
+                $tags = array_filter(array_map(function($tag) use ($excludedTags) {
+                    $tagLower = strtolower(trim($tag));
+                    if (!empty($tagLower) && !in_array($tagLower, $excludedTags)) {
+                        return normalizeTagCase(trim($tag));
+                    }
+                    return null;
+                }, $tags)   return !empty($tagLower) && !in_array($tagLower, $excludedTags);
+                });
                 
                 // Format Date
                 $pubDate = $item['publication_date'] ? date('M j, Y', strtotime($item['publication_date'])) : 'Unknown Date';
