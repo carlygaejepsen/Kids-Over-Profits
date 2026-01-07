@@ -106,26 +106,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryContents.forEach(content => content.classList.add('view-hidden'));
 
                 // Show target content
-                const targetId = tab.getAttribute('data-category') + '-content';
+                const category = tab.getAttribute('data-category');
+                const targetId = category + '-content';
                 const targetContent = document.getElementById(targetId);
                 if (targetContent) {
                     targetContent.classList.remove('view-hidden');
-                    
-                    // Trigger data load if needed (lazy loading)
-                    if (targetId === 'index-pages-content') {
-                        loadIndexList();
-                    } else if (targetId === 'saved-facilities-content') {
-                        loadEntries();
-                    }
                 }
+
+                // Update the state or reset results message if switching
+                // Clear the list if switching between types, to avoid confusion
+                // But only if no selection is made yet? 
+                // Let's just keep the facilities pane as is until a new selection is made.
             });
         });
 
-        // Initialize first tab (Index Pages)
+        // Initialize first tab
         const firstTab = categoryTabs[0];
         if (firstTab) {
-            // Trigger click to set initial state
-            // Use setTimeout to allow other init to finish
             setTimeout(() => firstTab.click(), 50);
         }
     }
@@ -2211,8 +2208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const entryBrowserSection = document.querySelector('.entry-browser-section');
     const wikiIndexJsonUrl = entryBrowserSection?.dataset?.wikiIndexJson;
     const wikiProgramsBase = entryBrowserSection?.dataset?.wikiProgramsBase;
-    const indexSelect = document.getElementById('indexSelect');
-    const indexSearch = document.getElementById('indexSearch');
+    const locationIndexSelect = document.getElementById('locationIndexSelect');
+    const orgIndexSelect = document.getElementById('orgIndexSelect');
+    const indexSearch = document.getElementById('locationSearch'); // Reusing existing search logic ID if possible, or new one
     const indexEntriesList = document.getElementById('indexEntriesList');
 
     let selectedIndexState = '';
@@ -2237,51 +2235,102 @@ document.addEventListener('DOMContentLoaded', () => {
         return match ? match[1] : '';
     }
 
-    async function loadIndexList() {
-        if (!indexSelect || !wikiIndexJsonUrl) {
+    async function initializeIndexes() {
+        if (!wikiIndexJsonUrl) {
             updateIndexEntriesMessage('Index metadata is unavailable.', 'error');
             return;
         }
 
-        indexSelect.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Select an index page';
-        indexSelect.appendChild(defaultOption);
-
         updateIndexEntriesMessage('Loading index data...');
+        
         try {
-            // Load index data if not already loaded
+            // 1. Load Master Index (States/Counts)
             if (!allIndexData) {
                 const response = await fetch(wikiIndexJsonUrl, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 allIndexData = await response.json();
             }
 
-            // Get all states and sort them
-            const allStates = Object.entries(allIndexData.states || {});
-            allStates.sort((a, b) => {
-                const displayA = STATE_DISPLAY_NAMES[a[0]] || a[0];
-                const displayB = STATE_DISPLAY_NAMES[b[0]] || b[0];
-                return displayA.localeCompare(displayB);
-            });
+            // 2. Populate Locations
+            if (locationIndexSelect) {
+                locationIndexSelect.innerHTML = '<option value="">Select a location</option>';
+                const allStates = Object.entries(allIndexData.states || {});
+                allStates.sort((a, b) => {
+                    const displayA = STATE_DISPLAY_NAMES[a[0]] || a[0];
+                    const displayB = STATE_DISPLAY_NAMES[b[0]] || b[0];
+                    return displayA.localeCompare(displayB);
+                });
 
-            allStates.forEach(([code, count]) => {
-                const option = document.createElement('option');
-                option.value = code;
-                option.textContent = `${STATE_DISPLAY_NAMES[code] || code} (${count || 0})`;
-                indexSelect.appendChild(option);
-            });
-            updateIndexEntriesMessage('Choose an index page above to see its entries.');
+                allStates.forEach(([code, count]) => {
+                    if (code === 'CORPORATE') return; // Skip corporate in location list
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = `${STATE_DISPLAY_NAMES[code] || code} (${count || 0})`;
+                    locationIndexSelect.appendChild(option);
+                });
+            }
+
+            // 3. Populate Organizations (from CORPORATE index)
+            if (orgIndexSelect && wikiProgramsBase) {
+                orgIndexSelect.innerHTML = '<option value="">Loading organizations...</option>';
+                try {
+                    const corpResponse = await fetch(`${wikiProgramsBase}programs-CORPORATE.json`, { cache: 'no-cache' });
+                    if (corpResponse.ok) {
+                        const corpData = await corpResponse.json();
+                        const orgs = Array.isArray(corpData.programs) ? corpData.programs : [];
+                        orgs.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                        
+                        orgIndexSelect.innerHTML = '<option value="">Select an organization</option>';
+                        orgs.forEach(org => {
+                            const option = document.createElement('option');
+                            option.value = org.name; // Use name for lookup
+                            option.textContent = org.name;
+                            orgIndexSelect.appendChild(option);
+                        });
+                    } else {
+                        orgIndexSelect.innerHTML = '<option value="">Failed to load organizations</option>';
+                    }
+                } catch (e) {
+                    console.error('Error loading corporate index:', e);
+                    orgIndexSelect.innerHTML = '<option value="">Error loading organizations</option>';
+                }
+            }
+
+            updateIndexEntriesMessage('Select a location or organization above to load facilities.');
+
         } catch (error) {
             updateIndexEntriesMessage(
-                `Failed to load Reddit index metadata: ${error.message || 'Unknown error'}`,
+                `Failed to load index metadata: ${error.message || 'Unknown error'}`,
                 'error'
             );
         }
     }
+
+    // Call init on load
+    if (document.querySelector('.category-tab.active')?.dataset?.category === 'location-indexes') {
+        initializeIndexes();
+    } else {
+        // Or just always init if tabs exist
+        if (locationIndexSelect || orgIndexSelect) initializeIndexes();
+    }
+
+    // Event Listeners
+    locationIndexSelect?.addEventListener('change', (e) => {
+        loadProgramsForState(e.target.value);
+        // Clear org select
+        if(orgIndexSelect) orgIndexSelect.value = '';
+    });
+
+    orgIndexSelect?.addEventListener('change', (e) => {
+        const orgName = e.target.value;
+        if (orgName) {
+            loadOrgProgramsFromDatabase(orgName, null);
+        } else {
+            updateIndexEntriesMessage('Select an organization to load facilities.');
+        }
+        // Clear location select
+        if(locationIndexSelect) locationIndexSelect.value = '';
+    });
 
     async function loadProgramsForState(stateCode) {
         selectedIndexState = stateCode || '';

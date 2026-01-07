@@ -32,63 +32,53 @@ get_header();
             <button type="button" id="modeMarkdownBtn" class="mode-btn">💻 Markdown Editor</button>
         </div>
 
-        <!-- Wiki Entry Management (Tabbed View) -->
-        <div class="category-navigation entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
-            <div class="category-tabs">
-                <button class="category-tab active" data-category="index-pages">📄 Index Pages</button>
-                <button class="category-tab" data-category="saved-facilities">🏢 Saved Facilities</button>
-            </div>
-
-            <div class="category-contents-wrapper">
-                <!-- Index Pages Browser -->
-                <div id="index-pages-content" class="category-content">
-                    <div class="content-header">
-                        <h3>Index Pages</h3>
-                    </div>
-                    
-                    <div id="indexBrowserPanel">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                            <button type="button" id="backBtn" class="btn btn-sm" style="display: none;">← Back</button>
-                        </div>
-                        
-                        <div class="form-group">
-                            <select id="indexSelect" class="input-form" style="margin-bottom:10px;">
-                                <option value="">Select an index page</option>
-                            </select>
-                            <input type="text" id="indexSearch" class="input-form" placeholder="Filter entries..." disabled>
-                        </div>
-                        
-                        <div id="indexEntriesList" class="index-entries-list">
-                            <p class="loading">Select an index page above...</p>
-                        </div>
-                        
-                        <!-- Navigation for large lists if needed (currently managed by scroll) -->
-                        <!-- But standard index browser uses list replacement, not pagination -->
-                    </div>
+        <!-- Wiki Entry Management (Refactored Split-Pane View) -->
+        <div class="wiki-management-grid entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
+            
+            <!-- LEFT PANE: Index Selection -->
+            <div class="index-selection-pane project-management">
+                <h2>Browse Indexes</h2>
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="location-indexes">📍 Locations</button>
+                    <button class="category-tab" data-category="organization-indexes">🏢 Organizations</button>
                 </div>
 
-                <!-- Facilities Browser -->
-                <div id="saved-facilities-content" class="category-content view-hidden">
-                    <div class="content-header">
-                        <h3>Saved Facilities</h3>
-                        <button type="button" id="refreshEntriesBtn" class="btn btn-sm" style="float:right;">🔄 Refresh</button>
-                    </div>
-                    
-                    <div id="facilitiesBrowserPanel">
+                <div class="category-contents-wrapper">
+                    <!-- Location Index Selector -->
+                    <div id="location-indexes-content" class="category-content">
                         <div class="form-group">
-                            <input type="text" id="entrySearch" class="input-form project-search-input" placeholder="Search saved facilities...">
-                        </div>
-                        
-                        <div id="entriesList" class="entries-list">
-                            <p class="loading">Loading entries...</p>
-                        </div>
-                        
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                             <button type="button" id="prevPageBtn" class="btn btn-sm" disabled>← Previous</button>
-                             <span id="pageInfo" style="font-size:13px; font-weight:600;">Page 1</span>
-                             <button type="button" id="nextPageBtn" class="btn btn-sm">Next →</button>
+                            <label>Select State/Location</label>
+                            <select id="locationIndexSelect" class="input-form">
+                                <option value="">Loading locations...</option>
+                            </select>
                         </div>
                     </div>
+
+                    <!-- Organization Index Selector -->
+                    <div id="organization-indexes-content" class="category-content view-hidden">
+                        <div class="form-group">
+                            <label>Select Parent Company</label>
+                            <select id="orgIndexSelect" class="input-form">
+                                <option value="">Loading organizations...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANE: Facilities List -->
+            <div class="facilities-list-pane project-management" id="indexBrowserPanel">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <h2 style="margin:0;">Facilities</h2>
+                    <button type="button" id="backBtn" class="btn btn-sm" style="display: none;">← Back</button>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="locationSearch" class="input-form" placeholder="Filter facilities list...">
+                </div>
+                
+                <div id="indexEntriesList" class="index-entries-list">
+                    <p class="loading">Select an index on the left to see facilities...</p>
                 </div>
             </div>
         </div>
@@ -113,7 +103,7 @@ get_header();
                     <button type="button" id="cancelBulkUploadBtn" class="btn btn-danger">Close</button>
                 </div>
                 <div id="uploadProgress" class="upload-progress" style="display: none; margin-top:15px;">
-                    <div class="progress-bar" style="height:100%; background:#eee; border-radius:5px; overflow:hidden;">
+                    <div class="progress-bar" style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
                         <div id="progressBarFill" class="progress-bar-fill" style="height:100%; background:#33A7B5; width:0%;"></div>
                     </div>
                     <p id="uploadStatus" class="upload-status" style="text-align:center; margin-top:5px; font-weight:600;"></p>
@@ -170,9 +160,6 @@ get_header();
                 </div>
 
                 <h4>Facilities Operated</h4>
-                <p style="color: #004435; font-size: 0.95rem; margin-bottom: 10px;">
-                    This list is automatically generated from the organization's wiki page. To add or remove facilities, edit the markdown in the "Generated Output" tab.
-                </p>
                 <div class="organization-facilities-list" id="organizationFacilitiesList" style="background-color: #F0F9FA; border: 2px solid #AEE0ED; border-radius: 5px; padding: 15px; min-height: 100px;">
                     <p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>
                 </div>

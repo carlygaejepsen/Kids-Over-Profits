@@ -4,7 +4,7 @@
    ============================================ */
 
 /* ============================================
-   BASE & LAYOUT (From Data Form)
+   BASE & LAYOUT
    ============================================ */
 * {
     box-sizing: border-box;
@@ -20,13 +20,11 @@ body {
 }
 
 .wiki-editor-page {
-    /* Main wrapper to work with JS organization mode detection */
     width: 100%;
 }
 
-/* Base container */
 .container {
-    max-width: 900px;
+    max-width: 1100px; /* Widened to accommodate side-by-side management */
     margin: 0 auto;
     background: #AEE0ED;
     border: 2px solid #33A7B5;
@@ -86,6 +84,23 @@ body {
 }
 
 /* ============================================
+   VERTICAL LAYOUT FOR MANAGEMENT
+   ============================================ */
+.wiki-management-grid {
+    display: block; /* Remove flex */
+    margin-bottom: 30px;
+}
+
+.index-selection-pane {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.facilities-list-pane {
+    width: 100%;
+}
+
+/* ============================================
    PROJECT MANAGEMENT / LOADING SYSTEM
    ============================================ */
 .project-management {
@@ -93,7 +108,6 @@ body {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 20px;
-    margin-bottom: 20px;
 }
 
 .project-management h2 {
@@ -102,10 +116,6 @@ body {
     font-size: 18px;
     font-weight: 700;
     margin: 5px 0 12px 0;
-}
-
-.project-management .form-group {
-    margin-bottom: 15px;
 }
 
 .project-management label {
@@ -136,7 +146,7 @@ body {
 .saved-projects-list,
 .entries-list,
 .index-entries-list {
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
     border: 2px solid #33A7B5;
     border-radius: 10px;
@@ -147,33 +157,31 @@ body {
 }
 
 .saved-projects-list p.loading,
-.entries-list p.loading {
+.entries-list p.loading,
+.index-entries-list p.loading {
     color: #6b7280;
     font-style: italic;
     text-align: center;
+    padding: 20px;
 }
 
 /* ============================================
-   TABS (Based on data-form.css)
+   TABS
    ============================================ */
-.category-navigation {
-    margin-bottom: 20px;
-}
-
 .category-tabs {
     display: flex;
     gap: 5px;
-    background: #FFF5CB; /* Soft Pastel Yellow */
+    background: #FFF5CB;
     padding: 5px;
     border-radius: 8px;
-    justify-content: center;
-    border: 2px solid #B2E102; /* Chartreuse */
+    justify-content: flex-start;
+    border: 2px solid #B2E102;
     margin-bottom: 15px;
 }
 
 .category-tab {
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: 10px 15px;
+    font-size: 14px;
     font-weight: 600;
     border: 2px solid transparent;
     background: transparent;
@@ -181,30 +189,24 @@ body {
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .category-tab:hover {
     background: #fff;
-    color: #000435;
 }
 
 .category-tab.active {
-    background: #000080; /* Navy Blue */
+    background: #000080;
     color: #FFFFFF;
-    box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
-    border: 2px solid #FE8088; /* Coral Pink */
-}
-
-.category-contents-wrapper {
-    position: relative;
+    border: 2px solid #FE8088;
 }
 
 .category-content {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
-    padding: 20px;
-    display: block; /* Default display */
+    padding: 15px;
 }
 
 .category-content.view-hidden {
@@ -212,16 +214,63 @@ body {
 }
 
 .content-header h3 {
-    margin: 0 0 15px 0;
-    font-size: 18px;
+    margin: 0 0 10px 0;
+    font-size: 16px;
     font-weight: 700;
     color: #000435;
-    border-bottom: 2px solid #B2E102;
-    padding-bottom: 10px;
 }
 
 /* ============================================
-   FORM ELEMENTS & SECTIONS
+   INDEX ROW STYLING
+   ============================================ */
+.index-entry-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.index-entry-row:hover {
+    background: #f0f9fa;
+}
+
+.index-entry-name {
+    font-weight: 600;
+    color: #000435;
+    font-size: 14px;
+}
+
+.index-entry-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.index-entry-actions button, .index-entry-actions a {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid #33A7B5;
+    background: #fff;
+    color: #33A7B5;
+    cursor: pointer;
+}
+
+.index-entry-actions button:hover {
+    background: #33A7B5;
+    color: #fff;
+}
+
+.index-empty-flag {
+    color: #FE8088;
+    font-weight: 800;
+    font-size: 10px;
+}
+
+/* ============================================
+   FORM ELEMENTS
    ============================================ */
 fieldset {
     background: #FFF5CB;
@@ -265,19 +314,10 @@ select {
     transition: border-color 0.2s ease;
 }
 
-input[type="text"]:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: #33A7B5;
-    box-shadow: 0 0 0 3px rgba(51, 167, 181, 0.1);
-}
-
 .field-row {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
-    margin-bottom: 10px;
 }
 
 .field-group {
@@ -285,20 +325,39 @@ select:focus {
     min-width: 150px;
 }
 
-.field-group.flex-2 {
-    flex: 2;
-    min-width: 250px;
+/* Buttons */
+.btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 2px solid #FE8088;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.field-group label {
-    margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
+.btn:hover {
+    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    transform: translateY(-1px);
 }
 
-/* ============================================
-   WIKI EDITOR SPECIFIC
-   ============================================ */
+.btn-secondary {
+    background: #B6E3D4;
+    color: #000435;
+    border-color: #33A7B5;
+}
+
+.btn-danger {
+    background: #FE8088;
+    border-color: #000435;
+}
+
+/* Mode Toggle */
 .editor-mode-toggle {
     display: flex;
     justify-content: center;
@@ -312,172 +371,41 @@ select:focus {
     border: 2px solid #33A7B5;
     padding: 10px 20px;
     border-radius: 20px;
-    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.mode-btn:hover {
-    background-color: #E8F5F7;
-    transform: translateY(-1px);
 }
 
 .mode-btn.active {
     background-color: #33A7B5;
     color: #FFFFFF;
-    box-shadow: 0 2px 5px rgba(51, 167, 181, 0.3);
 }
 
 .hidden-section {
     display: none !important;
 }
 
-.markdown-mode-active {
-    height: 70vh !important;
-    font-size: 1rem !important;
-    border: 3px solid #000080 !important;
-    background-color: #FFFFFF !important;
-}
-
-/* Form Adder / List Preview */
-.form-adder {
-    background: #FFFFFF;
-    border: 2px solid #B2E102;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 10px;
-}
-
-.add-btn {
-    background-color: #B6E3D4;
-    color: #000435;
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 10px 15px;
-    border: 2px solid #33A7B5;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: all 0.2s ease;
-}
-
-.add-btn:hover {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-    border-color: #000080;
-}
-
-.list-preview {
-    margin-top: 15px;
-    background: #AEE0ED;
-    border: 2px dashed #33A7B5;
-    border-radius: 5px;
-    padding: 10px;
-    min-height: 40px;
-}
-
-.list-preview-item {
-    font-size: 0.9rem;
-    padding: 8px;
-    border-bottom: 1px solid #B6E3D4;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #FFFFFF;
-    margin-bottom: 5px;
-    border-radius: 3px;
-}
-
-.list-preview-item button {
-    background: #FE8088;
-    color: #FFFFFF;
-    border: 2px solid #FE8088;
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.list-preview-item button:hover {
-    background: #FC8ED6;
-    border-color: #FC8ED6;
-}
-
-/* Generate Button */
-button#generateBtn {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 14px 20px;
-    border: 2px solid #33A7B5;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 25px;
-    width: 100%;
-    transition: all 0.2s ease;
-}
-
-button#generateBtn:hover {
-    background-color: #000080;
-    border-color: #000080;
-}
-
-/* Output Area */
+/* Output */
 #outputCode {
     width: 100%;
     height: 400px;
     background-color: #ECF385;
     border: 2px solid #33A7B5;
     border-radius: 5px;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.9rem;
-    margin-top: 10px;
+    font-family: monospace;
     padding: 12px;
-    color: #000435;
 }
 
 .output-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 10px;
     margin-top: 10px;
 }
 
-.output-actions button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-#convertPastBtn {
-    background-color: #33A7B5;
-    color: #FFFFFF;
-    border: none;
-}
-
-#copyBtn {
-    background-color: #EF9034;
-    color: #FFFFFF;
-    border: 2px solid #EF9034;
-}
-
-.submit-db-btn {
-    background: linear-gradient(to right, #33A7B5, #000080);
-    color: #FFFFFF;
-    border: 2px solid #000080;
-}
-
-/* Modals */
+/* Modal */
 .submit-modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 4, 53, 0.7);
     z-index: 9999;
     justify-content: center;
@@ -485,117 +413,9 @@ button#generateBtn:hover {
 }
 
 .submit-modal-content {
-    background: #FFFFFF;
+    background: #fff;
     padding: 30px;
     border-radius: 10px;
     max-width: 500px;
     width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 68, 53, 0.3);
-    border: 2px solid #B6E3D4;
-}
-
-.submit-modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-.submit-btn {
-    background: linear-gradient(to right, #B2E102, #33A7B5);
-    color: #000435;
-    font-weight: 600;
-    padding: 10px 25px;
-    border: 2px solid #B2E102;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.cancel-btn {
-    background-color: #FFFFFF;
-    color: #000435;
-    padding: 10px 20px;
-    border: 2px solid #AEE0ED;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Checkboxes */
-.checkbox-inline {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
-    font-size: 0.95rem;
-    color: #000435;
-}
-
-/* Organization Mode Fields */
-.organization-mode .facility-only-field {
-    display: none;
-}
-
-.organization-only-field {
-    display: none;
-}
-
-.organization-mode .organization-only-field {
-    display: block;
-}
-
-/* List Entry Styling (for browser) */
-.entry-row-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #fff;
-}
-.entry-row-item:hover {
-    background-color: #f9fafb;
-}
-.entry-name {
-    font-weight: 600;
-    color: #000435;
-}
-.entry-actions button {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    margin-left: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-}
-.load-entry-btn {
-    background-color: #33A7B5;
-    color: white;
-}
-.delete-entry-btn {
-    background-color: #FE8088;
-    color: white;
-}
-
-/* Bulk Upload */
-.bulk-upload-section, .import-section {
-    margin-bottom: 20px;
-}
-
-.toggle-bulk-upload-btn, .toggle-import-btn {
-    width: 100%;
-    padding: 12px;
-    background: #33A7B5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.bulk-upload-panel, .import-panel {
-    background: #FFF5CB;
-    border: 2px solid #B2E102;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 15px;
 }
