@@ -123,7 +123,13 @@ try {
             'survivor', 'survivors', 'victim', 'victims', 'student', 'students',
             // Generic news/legal terms
             'abuse allegations', 'allegations', 'misconduct',
-            'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed'
+            'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed',
+            'accountability', 'justice', 'legal', 'crime', 'criminal',
+            // Generic Location/Policy terms
+            'usa', 'united states', 'america', 'national',
+            'child welfare', 'dhs', 'cps', 'foster care', 'system',
+            'policy', 'regulation', 'legislation', 'bill', 'law',
+            'safety', 'health', 'protection'
         ];
 
         // Helper to process a tag: map, check exclusion, normalize
