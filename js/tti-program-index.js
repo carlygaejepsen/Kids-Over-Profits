@@ -165,9 +165,21 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
-        const notes = getNotesForKey(fieldNotes, key);
+        // Try full key
+        let notes = getNotesForKey(fieldNotes, key);
+        let matchedKey = key;
+        
+        // Try leaf key (e.g. 'startYear' from 'operatingPeriod.startYear')
+        if (!notes.length && key.includes('.')) {
+            const leafKey = key.split('.').pop();
+            notes = getNotesForKey(fieldNotes, leafKey);
+            if (notes.length) matchedKey = leafKey;
+        }
+        
         if (!notes.length) return '';
-        if (usedKeys && key) usedKeys.add(key);
+        
+        if (usedKeys && matchedKey) usedKeys.add(matchedKey);
+        
         const noteText = notes.map(n => escapeHtml(n)).join('; ');
         return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
     };
@@ -404,22 +416,12 @@ function displayFacilities(facilitiesData, containerId) {
             if (!obj || typeof obj !== 'object' || depth > 3) return [];
             const fields = [];
 
-            // Skip these keys - they're already shown in the operator header
-            const skipFullKeys = [
-                'name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName',
-                'current_name', 'operator_name', 'owner_name', 'company_name', 'project_name',
-
-                'location', 'headquarters', 'address', 'cityState', 'city_state', 'hq_location',
-                'locationCity', 'locationState', 'headquartersCity', 'headquartersState',
-                'full_address', 'street_address', 'zip', 'zip_code',
-
-                'status', 'status_label',
-
-                'operatingPeriod', 'founded', 'yearFounded', 'yearsActive',
-                'operating_period', 'year_founded', 'years_active', 'founded_date', 'established', 'est'
-            ];
-
-            Object.keys(obj).forEach(key => {
+                                    // Skip ONLY special handling keys. 
+                                    // We want everything else to show in details, even if it repeats header info (completeness > aesthetics)
+                                    const skipFullKeys = [
+                                        'resources', // Handled separately
+                                        'fieldNotes' // Handled separately
+                                    ];            Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
                 const value = obj[key];
 
@@ -618,30 +620,17 @@ function displayFacilities(facilitiesData, containerId) {
                 if (!obj || typeof obj !== 'object' || depth > 3) return [];
                 const fields = [];
 
-                // Skip these keys - they're already shown in the card header
-                // Note: keys can be partial matches in this list if they are top-level or fully qualified paths
-                const skipFullKeys = [
-                    'identification.name', 'identification.currentName',
-                    'name', 'programName', 'facilityName', 'title',
-                    'program_name', 'facility_name', 'project_name',
+                                                // Skip ONLY special handling keys.
 
-                    'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
-                    'city_state', 'full_address', 'street_address', 'addr',
-                    'locationCity', 'locationState', 'city', 'state', 'zip', 'zip_code', 'postal_code',
+                                                // We want everything else to show in details, even if it repeats header info (completeness > aesthetics)
 
-                    'operatingPeriod.startYear', 'operatingPeriod.endYear', 'operatingPeriod.status',
-                    'founded', 'yearFounded', 'opened', 'startYear', 'yearsActive',
-                    'operating_period', 'year_founded', 'start_year', 'end_year', 'years_active',
-                    'yearsOfOperation', 'founded_date', 'est', 'established',
+                                                const skipFullKeys = [
 
-                    'identification.otherNames', 'otherNames', 
-                    'identification.pastNames', 'pastNames',
-                    'formerNames', 'former_names', 'aliases', 'aka',
-                    'identification.currentOperator', 'currentOperator', 'current_operator',
+                                                    'resources', // Handled separately
 
-                    'resources', // Handled separately by dedicated Resources Available section
-                    'fieldNotes' // Handled separately by field notes renderer
-                ];
+                                                    'fieldNotes' // Handled separately
+
+                                                ];
 
                 Object.keys(obj).forEach(key => {
                     const fullKey = prefix ? `${prefix}.${key}` : key;

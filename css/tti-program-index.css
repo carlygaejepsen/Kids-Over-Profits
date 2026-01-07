@@ -327,6 +327,17 @@ details[open] > summary.operator-header::after {
     color: #004499 !important;
 }
 
+.field-note-inline {
+    grid-column: 1 / -1;
+    font-size: 0.85em;
+    color: #555;
+    font-style: italic;
+    margin-top: -4px;
+    margin-bottom: 8px;
+    padding-left: 8px;
+    border-left: 2px solid #ccc;
+}
+
 /* Facility summary info (location, years, status) */
 .facility-summary {
     margin-bottom: 8px;
