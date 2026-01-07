@@ -235,84 +235,15 @@
     height: 16px;
 }
 
-/* Tags on cards - Collapsible Categories */
+/* Tags on cards - Simple Flat Display */
 .news-tags {
     padding: 0 1.5rem 1rem;
 }
 
-.tag-categories {
+.news-tags-list {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.tag-category {
-    border: 1px solid var(--kop-mint-green);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--kop-sand);
-}
-
-.tag-category-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    background: var(--kop-mint-green);
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s;
-}
-
-.tag-category-header:hover {
-    background: var(--kop-teal);
-}
-
-.tag-category-header:hover .tag-category-label {
-    color: var(--kop-white);
-}
-
-.tag-category-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--kop-midnight-blue);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    transition: color 0.2s;
-}
-
-.tag-category-count {
-    font-size: 0.7rem;
-    color: var(--kop-navy-blue);
-    background: var(--kop-white);
-    padding: 2px 6px;
-    border-radius: 9999px;
-    margin-left: 0.5rem;
-}
-
-.tag-category-toggle {
-    font-size: 0.75rem;
-    color: var(--kop-midnight-blue);
-    transition: transform 0.2s, color 0.2s;
-}
-
-.tag-category-header:hover .tag-category-toggle {
-    color: var(--kop-white);
-}
-
-.tag-category.expanded .tag-category-toggle {
-    transform: rotate(90deg);
-}
-
-.tag-category-content {
-    display: none;
-    padding: 0.5rem 0.75rem;
     flex-wrap: wrap;
-    gap: 0.35rem;
-}
-
-.tag-category.expanded .tag-category-content {
-    display: flex;
+    gap: 0.4rem;
 }
 
 .news-tag {
@@ -323,45 +254,10 @@
     border: 1px solid var(--kop-orange);
     padding: 3px 10px;
     border-radius: 9999px;
-    cursor: pointer;
     transition: all 0.2s;
 }
 
 .news-tag:hover {
-    background-color: var(--kop-orange);
-    color: var(--kop-white);
-}
-
-/* Category-specific tag colors */
-.tag-category.category-state .news-tag {
-    background-color: #E0F2FE;
-    border-color: #0EA5E9;
-    color: #0369A1;
-}
-
-.tag-category.category-state .news-tag:hover {
-    background-color: #0EA5E9;
-    color: var(--kop-white);
-}
-
-.tag-category.category-facility .news-tag {
-    background-color: #FCE7F3;
-    border-color: #EC4899;
-    color: #9D174D;
-}
-
-.tag-category.category-facility .news-tag:hover {
-    background-color: #EC4899;
-    color: var(--kop-white);
-}
-
-.tag-category.category-other .news-tag {
-    background-color: var(--kop-soft-pastel-yellow);
-    border-color: var(--kop-orange);
-    color: var(--kop-midnight-blue);
-}
-
-.tag-category.category-other .news-tag:hover {
     background-color: var(--kop-orange);
     color: var(--kop-white);
 }
