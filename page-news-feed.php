@@ -111,12 +111,13 @@ try {
             'trauma', 'ptsd', 'mistreatment',
             // Generic TTI/facility terms
             'boarding school', 'boarding schools',
-            'troubled teen', 'troubled teens', 'troubled teen industry', 'tti',
+            'troubled teen', 'troubled teens', 'troubled teen industry', 'tti', 'troubled-teen industry',
             'residential treatment', 'residential treatment center', 'rtc',
             'therapeutic boarding school', 'treatment center', 'treatment facility',
             'behavioral health', 'mental health', 'mental health treatment',
             'reform', 'reform school', 'boot camp',
             'facility', 'program', 'institution',
+            'baltimore city facilities', 'city facilities',
             // Generic people terms
             'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
             'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
@@ -129,7 +130,9 @@ try {
             'usa', 'united states', 'america', 'national',
             'child welfare', 'system',
             'policy', 'regulation', 'bill', 'law',
-            'safety', 'health', 'protection'
+            'safety', 'health', 'protection', 'security',
+            // Specific topics better suited for content warnings
+            'psychotropic medication', 'unsanitary conditions'
         ];
 
         // Helper to process a tag: map, check exclusion, normalize
