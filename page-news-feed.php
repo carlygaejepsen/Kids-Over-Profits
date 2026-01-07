@@ -59,15 +59,27 @@ try {
         <?php
         // Function to normalize tags to title case
         function normalizeTagCase($tag) {
+            // Specific word overrides (lowercase => desired)
+            $wordOverrides = [
+                'wwasp' => 'WWASP',
+                'maclaren' => 'MacLaren',
+            ];
+
             // Convert to title case but preserve all-caps acronyms
             $words = explode(' ', $tag);
             $normalized = [];
             foreach ($words as $word) {
+                $lowerWord = strtolower($word);
+                if (isset($wordOverrides[$lowerWord])) {
+                    $normalized[] = $wordOverrides[$lowerWord];
+                    continue;
+                }
+
                 // Keep all-caps acronyms as-is (e.g., "TTI", "PTSD", "USA")
                 if (strlen($word) <= 4 && strtoupper($word) === $word) {
                     $normalized[] = $word;
                 } else {
-                    $normalized[] = ucwords(strtolower($word));
+                    $normalized[] = ucwords($lowerWord);
                 }
             }
             return implode(' ', $normalized);
@@ -213,6 +225,13 @@ try {
                 $facilityTags = [];
                 $otherTags = [];
 
+                // Tags to strictly force into "Facilities" category
+                $forcedFacilities = [
+                    'Asheville Academy For Girls',
+                    'MacLaren Youth Correctional Facility', 
+                    'WWASP'
+                ];
+
                 // US states list for matching
                 $usStates = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
 
@@ -227,7 +246,7 @@ try {
                 foreach ($allTags as $tag => $count) {
                     if (in_array($tag, $usStates)) {
                         $stateTags[$tag] = $count;
-                    } elseif (in_array($tag, $allFacilities)) {
+                    } elseif (in_array($tag, $allFacilities) || in_array($tag, $forcedFacilities)) {
                         $facilityTags[$tag] = $count;
                     } else {
                         $otherTags[$tag] = $count;
