@@ -266,7 +266,8 @@ get_header();
 window.KOP_NewsProcessor_Settings = {
     apiUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/process-news-ai.php',
     submissionUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/save-news-submission.php',
-    savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php'
+    savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php',
+    duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-news-duplicate.php'
 };
 
 // Configure autocomplete API endpoint for news processor
