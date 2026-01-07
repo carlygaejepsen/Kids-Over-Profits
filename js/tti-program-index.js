@@ -129,6 +129,25 @@ function displayFacilities(facilitiesData, containerId) {
         return collected;
     };
 
+    // Helper to find first non-empty value from a list of keys in an object
+    const getValueFromKeys = (obj, keys) => {
+        if (!obj || typeof obj !== 'object') return null;
+        for (const key of keys) {
+            // Support nested keys like 'identification.name'
+            if (key.includes('.')) {
+                const parts = key.split('.');
+                let val = obj;
+                for (const part of parts) {
+                    val = val && val[part];
+                }
+                if (!isValueEmpty(val)) return cleanText(val);
+            } else {
+                if (!isValueEmpty(obj[key])) return cleanText(obj[key]);
+            }
+        }
+        return null;
+    };
+
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
         const notes = getNotesForKey(fieldNotes, key);
         if (!notes.length) return '';
@@ -234,8 +253,8 @@ function displayFacilities(facilitiesData, containerId) {
         const seenFacilityNames = new Set();
         const facilities = rawFacilities.filter(f => {
             if (!f) return false;
-            const id = f.identification || {};
-            const name = cleanText(id.name) || cleanText(id.currentName) || '';
+            // Enhanced name check for deduplication
+            const name = getValueFromKeys(f, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
             if (!name || seenFacilityNames.has(name)) return false;
             seenFacilityNames.add(name);
             return true;
@@ -245,7 +264,7 @@ function displayFacilities(facilitiesData, containerId) {
         const hasPrivateOwner = facilities.some(f => f && f.isPrivatelyOwned === true);
 
         // Get the actual operator name (not the project name) 
-        const actualOperatorName = cleanText(operator.name) || cleanText(operator.currentName);
+        const actualOperatorName = getValueFromKeys(operator, ['name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName']);
 
         // Determine display name: if privately owned, show that; otherwise use operator name or project name
         let operatorName;
@@ -264,10 +283,8 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
-            const facilityA = a && a.identification ? a.identification : {};
-            const facilityB = b && b.identification ? b.identification : {};
-            const nameA = facilityA.name || facilityA.currentName || '';
-            const nameB = facilityB.name || facilityB.currentName || '';
+            const nameA = getValueFromKeys(a, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
+            const nameB = getValueFromKeys(b, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
             return nameA.localeCompare(nameB);
         });
 
@@ -281,20 +298,20 @@ function displayFacilities(facilitiesData, containerId) {
         let locationYearsLine = '';
         const locationLines = [];
 
-        const operatorLocation = cleanText(operator.location); 
-        if (!isValueEmpty(operatorLocation)) {
+        const operatorLocation = getValueFromKeys(operator, ['location', 'headquarters', 'address', 'cityState']);
+        if (operatorLocation) {
             locationLines.push(`<div>${escapeHtml(operatorLocation)}</div>`);
         }
-        const operatorHQ = cleanText(operator.headquarters);   
-        if (!isValueEmpty(operatorHQ)) {
-            locationLines.push(`<div>${escapeHtml(operatorHQ)}</div>`);
-        }
-        const operatorOperatingPeriod = cleanText(operator.operatingPeriod);
-        if (!isValueEmpty(operatorOperatingPeriod)) {
+        
+        const operatorOperatingPeriod = getValueFromKeys(operator, ['operatingPeriod', 'yearsActive']);
+        const operatorFounded = getValueFromKeys(operator, ['founded', 'yearFounded']);
+        
+        if (operatorOperatingPeriod) {
             locationLines.push(`<div>${escapeHtml(operatorOperatingPeriod)}</div>`);
-        } else if (!isValueEmpty(operator.founded)) {
-            const endYear = isValueEmpty(operator.status) || operator.status === 'Defunct' ? 'Defunct' : 'Present';
-            locationLines.push(`<div>${escapeHtml(`${cleanText(operator.founded)}-${endYear}`)}</div>`);
+        } else if (operatorFounded) {
+            const status = getValueFromKeys(operator, ['status']);
+            const endYear = isValueEmpty(status) || status === 'Defunct' ? 'Defunct' : 'Present';
+            locationLines.push(`<div>${escapeHtml(`${operatorFounded}-${endYear}`)}</div>`);
         }
 
         if (locationLines.length > 0) {
@@ -336,7 +353,12 @@ function displayFacilities(facilitiesData, containerId) {
             const fields = [];
 
             // Skip these keys - they're already shown in the operator header
-            const skipFullKeys = ['name', 'location', 'headquarters', 'status', 'operatingPeriod', 'founded'];
+            const skipFullKeys = [
+                'name', 'currentName', 'companyName', 'title', 'operatorName', 'ownerName',
+                'location', 'headquarters', 'address', 'cityState',
+                'status', 
+                'operatingPeriod', 'founded', 'yearFounded', 'yearsActive'
+            ];
 
             Object.keys(obj).forEach(key => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
@@ -440,15 +462,23 @@ function displayFacilities(facilitiesData, containerId) {
             const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             const statusLabel = escapeHtml(statusLabelRaw);    
 
-            // Build facility header with Name
-            let facilityHeaderRaw = cleanText(identification.name) || cleanText(identification.currentName);
+            // Build facility header with Name - Enhanced lookup
+            const facilityHeaderRaw = getValueFromKeys(facility, [
+                'identification.name', 'identification.currentName', 
+                'name', 'programName', 'facilityName', 'title'
+            ]);
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
 
             // Data for display above the "cut"
-            const facilityLocationRaw = cleanText(facility && facility.location);
-            const facilityLocation = isValueEmpty(facilityLocationRaw) ? '' : escapeHtml(facilityLocationRaw);
-            const yearRangeRaw = !isValueEmpty(operatingPeriod.startYear) ? `${operatingPeriod.startYear}-${operatingPeriod.endYear || 'Present'}` : null;
-            const yearRange = isValueEmpty(yearRangeRaw) ? '' : escapeHtml(yearRangeRaw);
+            const facilityLocationRaw = getValueFromKeys(facility, ['location', 'address', 'cityState', 'physicalAddress', 'fullAddress']);
+            const facilityLocation = facilityLocationRaw ? escapeHtml(facilityLocationRaw) : '';
+            
+            let yearRange = '';
+            const startYear = getValueFromKeys(operatingPeriod, ['startYear']) || getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear']);
+            if (startYear) {
+                const endYear = getValueFromKeys(operatingPeriod, ['endYear']) || 'Present';
+                yearRange = escapeHtml(`${startYear}-${endYear}`);
+            }
 
             // Build other facility data
             let otherFacilityData = '';
@@ -488,10 +518,16 @@ function displayFacilities(facilitiesData, containerId) {
                 const fields = [];
 
                 // Skip these keys - they're already shown in the card header
+                // Note: keys can be partial matches in this list if they are top-level or fully qualified paths
                 const skipFullKeys = [
-                    'identification.name',
-                    'location', 'operatingPeriod.startYear', 'operatingPeriod.endYear',
-                    'operatingPeriod.status',
+                    'identification.name', 'identification.currentName',
+                    'name', 'programName', 'facilityName', 'title',
+                    
+                    'location', 'address', 'cityState', 'physicalAddress', 'fullAddress',
+                    
+                    'operatingPeriod.startYear', 'operatingPeriod.endYear', 'operatingPeriod.status',
+                    'founded', 'yearFounded', 'opened', 'startYear', 'yearsActive',
+                    
                     'resources', // Handled separately by dedicated Resources Available section
                     'fieldNotes' // Handled separately by field notes renderer
                 ];
