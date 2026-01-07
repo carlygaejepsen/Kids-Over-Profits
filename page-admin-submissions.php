@@ -116,29 +116,48 @@ get_header();
                         <div id="submitterNotes" class="notes-content"></div>
                     </div>
 
-                    <!-- Generated Markdown -->
-                    <div class="markdown-preview">
-                        <div class="markdown-header">
-                            <h3>Generated Wiki Markdown</h3>
-                            <button type="button" id="copyMarkdownBtn" class="btn-secondary">📋 Copy Markdown</button>
+                    <!-- Side-by-Side Markdown Editor -->
+                    <div id="markdownEditorSection" class="markdown-editor-section">
+                        <div class="markdown-editor-header">
+                            <h3>Review & Edit Markdown</h3>
+                            <p>Compare the original submission with the generated output. Edit the right panel before approving.</p>
+                            <div class="markdown-editor-actions">
+                                <button type="button" id="copyMarkdownBtn" class="btn-secondary">📋 Copy</button>
+                                <button type="button" id="saveEditsBtn" class="btn-save-edits">💾 Save Edits</button>
+                                <label class="diff-toggle">
+                                    <input type="checkbox" id="showDiffHighlights" checked>
+                                    <span>Highlight differences</span>
+                                </label>
+                            </div>
                         </div>
-                        <textarea id="modalMarkdown"></textarea>
-                    </div>
 
-                    <div id="modalDiffSection" class="modal-diff-section">
-                        <div class="modal-diff-header">
-                            <h3>Uploaded Markdown vs. Generated Output</h3>
-                            <p>Lines highlighted in coral show where the original submission diverged from the generated version.</p>
-                        </div>
-                        <div id="modalDiff" class="modal-diff-grid"></div>
-                    </div>
+                        <div class="markdown-side-by-side">
+                            <div class="markdown-panel original-panel">
+                                <div class="panel-header">
+                                    <span class="panel-label">Original / Uploaded</span>
+                                    <span class="panel-badge readonly-badge">Read Only</span>
+                                </div>
+                                <div class="markdown-content-wrapper">
+                                    <div id="originalLineNumbers" class="line-numbers"></div>
+                                    <textarea id="modalOriginalMarkdown" readonly placeholder="No original markdown provided"></textarea>
+                                </div>
+                            </div>
 
-                    <div class="markdown-preview original-markdown-preview">
-                        <div class="markdown-header">
-                            <h3>Uploaded Markdown (Read Only)</h3>
-                            <span class="markdown-note">Full, unedited content that was uploaded or imported.</span>
+                            <div class="markdown-panel generated-panel">
+                                <div class="panel-header">
+                                    <span class="panel-label">Generated / Editable</span>
+                                    <span class="panel-badge editable-badge">Editable</span>
+                                </div>
+                                <div class="markdown-content-wrapper">
+                                    <div id="generatedLineNumbers" class="line-numbers"></div>
+                                    <textarea id="modalMarkdown" placeholder="No markdown generated"></textarea>
+                                </div>
+                            </div>
                         </div>
-                        <textarea id="modalOriginalMarkdown" rows="8" readonly placeholder="No uploaded markdown was provided for this submission."></textarea>
+
+                        <div id="diffSummary" class="diff-summary">
+                            <span id="diffCount">0 differences</span>
+                        </div>
                     </div>
 
                     <!-- Form Data Preview -->

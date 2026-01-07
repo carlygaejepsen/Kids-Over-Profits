@@ -30,9 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitterNotes = document.getElementById('submitterNotes');
     const modalMarkdown = document.getElementById('modalMarkdown');
     const modalOriginalMarkdown = document.getElementById('modalOriginalMarkdown');
-    const modalDiff = document.getElementById('modalDiff');
     const modalFormData = document.getElementById('modalFormData');
     const copyMarkdownBtn = document.getElementById('copyMarkdownBtn');
+    const saveEditsBtn = document.getElementById('saveEditsBtn');
+    const showDiffHighlights = document.getElementById('showDiffHighlights');
+    const diffSummary = document.getElementById('diffSummary');
+    const diffCount = document.getElementById('diffCount');
+    const markdownEditorSection = document.getElementById('markdownEditorSection');
+    const originalLineNumbers = document.getElementById('originalLineNumbers');
+    const generatedLineNumbers = document.getElementById('generatedLineNumbers');
     const reviewerNotes = document.getElementById('reviewerNotes');
     const reviewerEmail = document.getElementById('reviewerEmail');
     const existingReviewSection = document.getElementById('existingReviewSection');
@@ -105,10 +111,24 @@ document.addEventListener('DOMContentLoaded', () => {
         rejectAllBtn.addEventListener('click', rejectAllPending);
     }
 
+    if (saveEditsBtn) {
+        saveEditsBtn.addEventListener('click', saveMarkdownEdits);
+    }
+
+    if (showDiffHighlights) {
+        showDiffHighlights.addEventListener('change', updateDiffHighlighting);
+    }
+
     if (modalMarkdown) {
         modalMarkdown.addEventListener('input', () => {
-            renderDiff(currentOriginalMarkdown, modalMarkdown.value);
+            updateDiffHighlighting();
+            updateLineNumbers();
         });
+        modalMarkdown.addEventListener('scroll', syncScroll);
+    }
+
+    if (modalOriginalMarkdown) {
+        modalOriginalMarkdown.addEventListener('scroll', syncScroll);
     }
 
     // Functions
@@ -273,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * View submission details
      */
     async function viewSubmission(id) {
+        console.log('viewSubmission called with id:', id);
         try {
             const currentType = typeFilter ? typeFilter.value : 'wiki';
             const detailParams = new URLSearchParams({
@@ -280,18 +301,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: currentType,
                 id: id
             });
-            const response = await fetch(`${MANAGE_API}?${detailParams.toString()}`);
+            const url = `${MANAGE_API}?${detailParams.toString()}`;
+            console.log('Fetching submission from:', url);
+
+            const response = await fetch(url);
+            console.log('Response status:', response.status);
+
             const result = await response.json();
+            console.log('API Result:', result);
 
             if (result.success && result.data) {
                 currentSubmission = result.data;
                 showModal(result.data);
             } else {
-                alert('Failed to load submission details');
+                console.error('API returned failure:', result);
+                alert('Failed to load submission details: ' + (result.error || 'Unknown error'));
             }
         } catch (error) {
             console.error('Failed to load submission:', error);
-            alert('Failed to load submission details');
+            alert('Failed to load submission details: ' + error.message);
         }
     }
 
@@ -299,12 +327,23 @@ document.addEventListener('DOMContentLoaded', () => {
      * Show submission modal
      */
     function showModal(submission) {
+        console.log('showModal called with submission:', submission);
         const currentType = typeFilter ? typeFilter.value : 'wiki';
-        
-        // Parse JSON data
-        const jsonData = typeof submission.json_data === 'string'
-            ? JSON.parse(submission.json_data)
-            : submission.json_data;
+        console.log('Current type:', currentType);
+
+        // Parse JSON data safely
+        let jsonData = {};
+        try {
+            if (typeof submission.json_data === 'string' && submission.json_data) {
+                jsonData = JSON.parse(submission.json_data);
+            } else if (submission.json_data && typeof submission.json_data === 'object') {
+                jsonData = submission.json_data;
+            }
+        } catch (e) {
+            console.warn('Failed to parse json_data:', e);
+            jsonData = {};
+        }
+        console.log('Parsed jsonData:', jsonData);
 
         // Basic info
         modalStatus.textContent = submission.status;
@@ -314,79 +353,71 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (currentType === 'news') {
             modalProgramName.textContent = submission.article_title || 'News Article';
-            
+
             // Re-purpose existing fields for news info
-            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Author:';
+            const infoRows = document.querySelectorAll('.submission-info .info-row');
+            if (infoRows[3]) infoRows[3].querySelector('.info-label').textContent = 'Author:';
             modalLocation.textContent = submission.author || '-';
-            
-            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Publication:';
+
+            if (infoRows[4]) infoRows[4].querySelector('.info-label').textContent = 'Publication:';
             modalProgramType.textContent = submission.publication_name || '-';
-            
-            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'URL:';
-            modalYearsActive.innerHTML = submission.article_url 
+
+            if (infoRows[5]) infoRows[5].querySelector('.info-label').textContent = 'URL:';
+            modalYearsActive.innerHTML = submission.article_url
                 ? `<a href="${submission.article_url}" target="_blank" rel="noopener noreferrer">${submission.article_url}</a>`
                 : '-';
-            
-            // Show summary instead of markdown
-            if (modalMarkdown) {
-                modalMarkdown.closest('.markdown-preview').querySelector('h3').textContent = 'Trauma-Sensitive Summary';
-                modalMarkdown.value = submission.summary || 'No summary provided';
-                modalMarkdown.readOnly = true;
-            }
-            
-            // Hide other markdown sections
-            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
-            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
-            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
+
+            // Hide markdown editor section for news (they have summaries, not markdown)
+            if (markdownEditorSection) markdownEditorSection.style.display = 'none';
 
         } else if (currentType === 'data') {
             modalProgramName.textContent = submission.program_name;
-            
-            // Restore labels
-            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Location:';
-            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Type:';
-            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'Years Active:';
 
-            modalLocation.textContent = jsonData.cityState || jsonData.location || '-'; 
+            // Restore labels
+            const dataInfoRows = document.querySelectorAll('.submission-info .info-row');
+            if (dataInfoRows[3]) dataInfoRows[3].querySelector('.info-label').textContent = 'Location:';
+            if (dataInfoRows[4]) dataInfoRows[4].querySelector('.info-label').textContent = 'Type:';
+            if (dataInfoRows[5]) dataInfoRows[5].querySelector('.info-label').textContent = 'Years Active:';
+
+            modalLocation.textContent = jsonData?.cityState || jsonData?.location || '-';
             modalProgramType.textContent = 'Data Update';
             modalYearsActive.textContent = '-';
-             
-            // Hide markdown specific sections
-            if (modalMarkdown) modalMarkdown.closest('.markdown-preview').style.display = 'none';
-            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'none';
-            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'none';
-            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'none';
+
+            // Hide markdown editor section
+            if (markdownEditorSection) markdownEditorSection.style.display = 'none';
 
         } else {
+            // Wiki submissions
             modalProgramName.textContent = submission.program_name;
 
             // Restore labels
-            document.querySelector('.info-row:nth-child(4) .info-label').textContent = 'Location:';
-            document.querySelector('.info-row:nth-child(5) .info-label').textContent = 'Type:';
-            document.querySelector('.info-row:nth-child(6) .info-label').textContent = 'Years Active:';
+            const wikiInfoRows = document.querySelectorAll('.submission-info .info-row');
+            if (wikiInfoRows[3]) wikiInfoRows[3].querySelector('.info-label').textContent = 'Location:';
+            if (wikiInfoRows[4]) wikiInfoRows[4].querySelector('.info-label').textContent = 'Type:';
+            if (wikiInfoRows[5]) wikiInfoRows[5].querySelector('.info-label').textContent = 'Years Active:';
 
             modalLocation.textContent = submission.city_state || '-';
             modalProgramType.textContent = submission.program_type || '-';
             modalYearsActive.textContent = submission.years_active || '-';
-            
-            // Show markdown sections
-            if (modalMarkdown) {
-                modalMarkdown.closest('.markdown-preview').querySelector('h3').textContent = 'Generated Wiki Markdown';
-                modalMarkdown.closest('.markdown-preview').style.display = 'block';
-                modalMarkdown.readOnly = false;
-                modalMarkdown.value = submission.generated_markdown || 'No markdown generated';
-            }
-            if (modalOriginalMarkdown) modalOriginalMarkdown.closest('.markdown-preview').style.display = 'block';
-            if (modalDiff) modalDiff.closest('.modal-diff-section').style.display = 'block';
-            if (copyMarkdownBtn) copyMarkdownBtn.style.display = 'inline-block';
-             
-            // Markdown
+
+            // Show markdown editor section
+            if (markdownEditorSection) markdownEditorSection.style.display = 'block';
+
+            // Populate markdown textareas
             const originalMarkdown = submission.original_markdown || '';
+            const generatedMarkdown = submission.generated_markdown || '';
             currentOriginalMarkdown = originalMarkdown;
+
             if (modalOriginalMarkdown) {
                 modalOriginalMarkdown.value = originalMarkdown;
             }
-            renderDiff(originalMarkdown, modalMarkdown.value);
+            if (modalMarkdown) {
+                modalMarkdown.value = generatedMarkdown;
+            }
+
+            // Update line numbers and diff highlighting
+            updateLineNumbers();
+            updateDiffHighlighting();
         }
 
         // Submitter notes
@@ -460,59 +491,158 @@ document.addEventListener('DOMContentLoaded', () => {
             await navigator.clipboard.writeText(modalMarkdown.value);
             copyMarkdownBtn.textContent = '✓ Copied!';
             setTimeout(() => {
-                copyMarkdownBtn.textContent = '📋 Copy Markdown';
+                copyMarkdownBtn.textContent = '📋 Copy';
             }, 2000);
         } catch (error) {
             alert('Failed to copy to clipboard');
         }
     }
 
-    function renderDiff(original, generated) {
-        if (!modalDiff) return;
-        const sourceOriginal = original || '';
-        const sourceGenerated = generated || '';
-        modalDiff.innerHTML = '';
+    /**
+     * Update line numbers for both textareas
+     */
+    function updateLineNumbers() {
+        if (!modalOriginalMarkdown || !modalMarkdown) return;
 
-        const headerRow = document.createElement('div');
-        headerRow.className = 'diff-row diff-row--header';
-        headerRow.innerHTML = `
-            <div>Uploaded Markdown</div>
-            <div>Generated Markdown</div>
-        `;
-        modalDiff.appendChild(headerRow);
+        const originalLines = (modalOriginalMarkdown.value || '').split('\n');
+        const generatedLines = (modalMarkdown.value || '').split('\n');
 
-        if (!sourceOriginal.trim()) {
-            const emptyRow = document.createElement('div');
-            emptyRow.className = 'diff-row diff-row--empty';
-            emptyRow.innerHTML = '<div class="diff-empty-message">No uploaded markdown was provided for this submission.</div>';
-            modalDiff.appendChild(emptyRow);
-            return;
+        if (originalLineNumbers) {
+            originalLineNumbers.innerHTML = originalLines.map((_, i) =>
+                `<div class="line-num">${i + 1}</div>`
+            ).join('');
         }
 
-        const originalLines = sourceOriginal.split(/\r?\n/);
-        const generatedLines = sourceGenerated.split(/\r?\n/);
-        const maxLines = Math.max(originalLines.length, generatedLines.length, 1);
-        const formatLine = (line) => line ? escapeHtml(line) : '<span class="diff-line-empty">—</span>';
+        if (generatedLineNumbers) {
+            generatedLineNumbers.innerHTML = generatedLines.map((_, i) =>
+                `<div class="line-num">${i + 1}</div>`
+            ).join('');
+        }
+    }
 
-        for (let i = 0; i < maxLines; i += 1) {
+    /**
+     * Update diff highlighting between original and generated markdown
+     */
+    function updateDiffHighlighting() {
+        if (!modalOriginalMarkdown || !modalMarkdown) return;
+
+        const showHighlights = showDiffHighlights ? showDiffHighlights.checked : true;
+        const originalLines = (modalOriginalMarkdown.value || '').split('\n');
+        const generatedLines = (modalMarkdown.value || '').split('\n');
+        const maxLines = Math.max(originalLines.length, generatedLines.length);
+
+        let diffCountNum = 0;
+        const originalDiffLines = [];
+        const generatedDiffLines = [];
+
+        for (let i = 0; i < maxLines; i++) {
             const origLine = originalLines[i] ?? '';
             const genLine = generatedLines[i] ?? '';
-            const changed = origLine.trim() !== genLine.trim();
-            const row = document.createElement('div');
-            row.className = 'diff-row';
-            if (changed) row.classList.add('diff-row--changed');
+            const isDifferent = origLine.trim() !== genLine.trim();
 
-            row.innerHTML = `
-                <div class="diff-cell">
-                    <span class="diff-line-number">#${i + 1}</span>
-                    <span class="diff-line-text">${formatLine(origLine)}</span>
-                </div>
-                <div class="diff-cell">
-                    <span class="diff-line-number">#${i + 1}</span>
-                    <span class="diff-line-text">${formatLine(genLine)}</span>
-                </div>
-            `;
-            modalDiff.appendChild(row);
+            if (isDifferent) {
+                diffCountNum++;
+                originalDiffLines.push(i + 1);
+                generatedDiffLines.push(i + 1);
+            }
+        }
+
+        // Update diff count display
+        if (diffCount) {
+            diffCount.textContent = `${diffCountNum} difference${diffCountNum !== 1 ? 's' : ''}`;
+            if (diffSummary) {
+                diffSummary.className = 'diff-summary' + (diffCountNum > 0 ? ' has-diffs' : '');
+            }
+        }
+
+        // Update line number highlighting
+        if (showHighlights && originalLineNumbers) {
+            const lineNums = originalLineNumbers.querySelectorAll('.line-num');
+            lineNums.forEach((el, i) => {
+                el.classList.toggle('diff-highlight', originalDiffLines.includes(i + 1));
+            });
+        } else if (originalLineNumbers) {
+            originalLineNumbers.querySelectorAll('.line-num').forEach(el => {
+                el.classList.remove('diff-highlight');
+            });
+        }
+
+        if (showHighlights && generatedLineNumbers) {
+            const lineNums = generatedLineNumbers.querySelectorAll('.line-num');
+            lineNums.forEach((el, i) => {
+                el.classList.toggle('diff-highlight', generatedDiffLines.includes(i + 1));
+            });
+        } else if (generatedLineNumbers) {
+            generatedLineNumbers.querySelectorAll('.line-num').forEach(el => {
+                el.classList.remove('diff-highlight');
+            });
+        }
+    }
+
+    /**
+     * Sync scroll position between the two textareas
+     */
+    function syncScroll(e) {
+        const source = e.target;
+        const target = source === modalOriginalMarkdown ? modalMarkdown : modalOriginalMarkdown;
+        const sourceLineNumbers = source === modalOriginalMarkdown ? originalLineNumbers : generatedLineNumbers;
+        const targetLineNumbers = source === modalOriginalMarkdown ? generatedLineNumbers : originalLineNumbers;
+
+        if (target) {
+            target.scrollTop = source.scrollTop;
+        }
+        if (sourceLineNumbers) {
+            sourceLineNumbers.scrollTop = source.scrollTop;
+        }
+        if (targetLineNumbers) {
+            targetLineNumbers.scrollTop = source.scrollTop;
+        }
+    }
+
+    /**
+     * Save markdown edits to the database
+     */
+    async function saveMarkdownEdits() {
+        if (!currentSubmission || !modalMarkdown) return;
+
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const editedMarkdown = modalMarkdown.value;
+
+        saveEditsBtn.disabled = true;
+        saveEditsBtn.textContent = 'Saving...';
+
+        try {
+            const response = await fetch(MANAGE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'update_markdown',
+                    type: currentType,
+                    id: currentSubmission.id,
+                    generated_markdown: editedMarkdown
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                saveEditsBtn.textContent = '✓ Saved!';
+                currentSubmission.generated_markdown = editedMarkdown;
+                setTimeout(() => {
+                    saveEditsBtn.textContent = '💾 Save Edits';
+                    saveEditsBtn.disabled = false;
+                }, 2000);
+            } else {
+                throw new Error(result.error || 'Save failed');
+            }
+        } catch (error) {
+            console.error('Save failed:', error);
+            saveEditsBtn.textContent = '✗ Error';
+            setTimeout(() => {
+                saveEditsBtn.textContent = '💾 Save Edits';
+                saveEditsBtn.disabled = false;
+            }, 2000);
+            alert(`Failed to save edits: ${error.message}`);
         }
     }
 

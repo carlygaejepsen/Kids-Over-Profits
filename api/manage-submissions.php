@@ -273,23 +273,23 @@ try {
         case 'stats':
             // Get submission statistics
             $wikiStats = $pdo->query("
-                SELECT status, COUNT(*) as count 
-                FROM wiki_submissions 
+                SELECT status, COUNT(*) as count
+                FROM wiki_submissions
                 GROUP BY status
             ")->fetchAll(PDO::FETCH_KEY_PAIR);
-            
+
             $newsStats = $pdo->query("
-                SELECT status, COUNT(*) as count 
-                FROM news_submissions 
+                SELECT status, COUNT(*) as count
+                FROM news_submissions
                 GROUP BY status
             ")->fetchAll(PDO::FETCH_KEY_PAIR);
-            
+
             $newsTypeStats = $pdo->query("
-                SELECT article_type, COUNT(*) as count 
-                FROM news_submissions 
+                SELECT article_type, COUNT(*) as count
+                FROM news_submissions
                 GROUP BY article_type
             ")->fetchAll(PDO::FETCH_KEY_PAIR);
-            
+
             echo json_encode([
                 'success' => true,
                 'wiki' => [
@@ -303,13 +303,56 @@ try {
                 ]
             ]);
             break;
-            
+
+        case 'update_markdown':
+            // Update the generated markdown for a wiki submission
+            if ($type !== 'wiki') {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Markdown updates only supported for wiki submissions']);
+                exit;
+            }
+
+            $id = $data['id'] ?? null;
+            $generatedMarkdown = $data['generated_markdown'] ?? null;
+
+            if (!$id) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Submission ID is required']);
+                exit;
+            }
+
+            if ($generatedMarkdown === null) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Generated markdown is required']);
+                exit;
+            }
+
+            $sql = "UPDATE wiki_submissions SET
+                        generated_markdown = ?,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$generatedMarkdown, $id]);
+
+            if ($stmt->rowCount() > 0) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Markdown updated successfully'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'No submission found with that ID or no changes made'
+                ]);
+            }
+            break;
+
         default:
             http_response_code(400);
             echo json_encode([
                 'success' => false,
                 'error' => 'Invalid action',
-                'valid_actions' => ['approve', 'reject', 'publish', 'delete', 'update_status', 'stats']
+                'valid_actions' => ['approve', 'reject', 'publish', 'delete', 'update_status', 'update_markdown', 'stats']
             ]);
     }
     
