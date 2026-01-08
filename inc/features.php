@@ -339,13 +339,13 @@ function kop_filebird_library_shortcode($atts) {
                 ?>
                 <div class="doc-folder" data-folder-id="<?php echo esc_attr($folder->id); ?>" data-folder-name="<?php echo esc_attr($folder->name); ?>">
                     <div class="doc-folder-header">
-                        <h3 class="doc-folder-title">
+                        <div class="doc-folder-title" style="font-size: 1.1em; font-weight: 700;">
                             <span class="folder-icon">📁</span>
                             <?php echo esc_html($folder->name); ?>
                             <?php if ($atts['show_count'] === 'yes'): ?>
                             <span class="doc-count">(<?php echo $file_count; ?>)</span>
                             <?php endif; ?>
-                        </h3>
+                        </div>
                         <button class="doc-folder-toggle" aria-expanded="false">
                             <span class="toggle-icon">▼</span>
                         </button>
@@ -448,12 +448,12 @@ function kop_filebird_folder_shortcode($atts) {
     ob_start();
     ?>
     <div class="kop-document-folder">
-        <h3 class="doc-folder-title-single">
+        <div class="doc-folder-title-single" style="font-size: 1.2em; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #33A7B5; padding-bottom: 5px;">
             <?php echo esc_html($atts['title']); ?>
             <?php if ($atts['show_count'] === 'yes'): ?>
             <span class="doc-count">(<?php echo count($attachments); ?>)</span>
             <?php endif; ?>
-        </h3>
+        </div>
 
         <?php if (!empty($attachments)): ?>
         <ul class="doc-list doc-layout-<?php echo esc_attr($atts['layout']); ?>">

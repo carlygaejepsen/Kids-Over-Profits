@@ -146,13 +146,49 @@ function kop_register_facilities_rest_routes() {
         )
     );
 
-    // Register FileBird folders endpoint (public)
+    // Register FileBird folders endpoint (public) - Proxies FileBird native API
     register_rest_route(
         'kop/v1',
         '/folders',
         array(
             'methods' => WP_REST_Server::READABLE,
             'callback' => function () {
+                // Get API key from environment
+                $api_key = getenv('FILEBIRD_API_KEY');
+                if (!$api_key && defined('FILEBIRD_API_KEY')) {
+                    $api_key = FILEBIRD_API_KEY;
+                }
+                
+                // If API key is available, use FileBird's native API
+                if ($api_key) {
+                    $response = wp_remote_get(home_url('/wp-json/filebird/public/v1/folders'), array(
+                        'headers' => array(
+                            'X-Api-Key' => $api_key
+                        ),
+                        'timeout' => 15
+                    ));
+                    
+                    if (!is_wp_error($response)) {
+                        $body = wp_remote_retrieve_body($response);
+                        $data = json_decode($body, true);
+                        
+                        // FileBird API returns {success: true, data: {folders: [...]}}
+                        if (isset($data['success']) && $data['success'] && isset($data['data']['folders'])) {
+                            // Transform to match our expected format
+                            $folders = array_map(function($folder) {
+                                return array(
+                                    'id' => $folder['id'],
+                                    'name' => $folder['text'],
+                                    'parent' => $folder['li_attr']['data-parent'] ?? '0'
+                                );
+                            }, $data['data']['folders']);
+                            
+                            return rest_ensure_response($folders);
+                        }
+                    }
+                }
+                
+                // Fallback to direct database query if API fails or no key
                 $folders = kop_get_filebird_folders();
                 return rest_ensure_response($folders);
             },
@@ -160,7 +196,7 @@ function kop_register_facilities_rest_routes() {
         )
     );
 
-    // Register FileBird folder content endpoint (public)
+    // Register FileBird folder content endpoint (public) - Proxies FileBird native API
     register_rest_route(
         'kop/v1',
         '/folder-content',
@@ -172,6 +208,64 @@ function kop_register_facilities_rest_routes() {
                     return new WP_Error('missing_id', 'Folder ID is required', array('status' => 400));
                 }
                 
+                // Get API key from environment
+                $api_key = getenv('FILEBIRD_API_KEY');
+                if (!$api_key && defined('FILEBIRD_API_KEY')) {
+                    $api_key = FILEBIRD_API_KEY;
+                }
+                
+                // If API key is available, use FileBird's native API
+                if ($api_key) {
+                    $response = wp_remote_get(
+                        home_url("/wp-json/filebird/public/v1/attachment-id/?folder_id={$folder_id}"),
+                        array(
+                            'headers' => array(
+                                'X-Api-Key' => $api_key
+                            ),
+                            'timeout' => 15
+                        )
+                    );
+                    
+                    if (!is_wp_error($response)) {
+                        $body = wp_remote_retrieve_body($response);
+                        $data = json_decode($body, true);
+                        
+                        // FileBird API returns {success: true, data: {attachment_ids: [...]}}
+                        if (isset($data['success']) && $data['success'] && isset($data['data']['attachment_ids'])) {
+                            $attachment_ids = $data['data']['attachment_ids'];
+                            
+                            // Get full attachment details
+                            if (!empty($attachment_ids)) {
+                                $args = array(
+                                    'post_type' => 'attachment',
+                                    'post_status' => 'inherit',
+                                    'posts_per_page' => -1,
+                                    'post__in' => $attachment_ids,
+                                    'orderby' => 'title',
+                                    'order' => 'ASC'
+                                );
+                                
+                                $attachments = get_posts($args);
+                                
+                                $formatted = array_map(function($post) {
+                                    return array(
+                                        'id' => $post->ID,
+                                        'title' => $post->post_title,
+                                        'url' => wp_get_attachment_url($post->ID),
+                                        'mime_type' => $post->post_mime_type,
+                                        'date' => $post->post_date
+                                    );
+                                }, $attachments);
+                                
+                                return rest_ensure_response($formatted);
+                            }
+                            
+                            return rest_ensure_response(array());
+                        }
+                    }
+                }
+                
+                // Fallback to direct database query if API fails or no key
                 $attachments = kop_get_folder_attachments($folder_id);
                 
                 // Format attachments for frontend
@@ -208,14 +302,24 @@ function kop_register_facilities_rest_routes() {
                 $folder_id = $request->get_param('id');
                 if (!$folder_id) return new WP_Error('missing_id', 'ID required', array('status' => 400));
                 
-                // Render the FileBird shortcode using the project's custom wrapper
-                $shortcode = '[filebird_folder folder_id="' . intval($folder_id) . '"]';
-                $html = do_shortcode($shortcode);
+                $html = '';
                 
-                // If the shortcode wasn't processed, it returns the original string.
-                if ($html === $shortcode) {
+                // Call the function directly to bypass shortcode registration issues in REST context
+                if (function_exists('kop_filebird_folder_shortcode')) {
+                    $html = kop_filebird_folder_shortcode(array(
+                        'folder_id' => intval($folder_id),
+                        'show_count' => 'yes',
+                        'layout' => 'grid'
+                    ));
+                }
+                
+                if (empty($html)) {
                     return rest_ensure_response(array('html' => ''));
                 }
+
+                // SANITATION: Strip repetitive TOC plugin URLs if they were injected
+                // This targets the specific issue where the plugin repeats its own URL
+                $html = preg_replace('/https?:\/\/kidsoverprofits\.org\/wp-content\/plugins\/easy-table-of-content[^\s<]*/i', '', $html);
                 
                 return rest_ensure_response(array('html' => $html));
             },
