@@ -57,6 +57,7 @@ $prefix = '';
 $facilities_table = $prefix . 'facilities_master';
 $referrers_table = $prefix . 'referrers_master';
 $locations_table = $prefix . 'locations_master';
+$wiki_table = $prefix . 'wiki_master';
 
 // Set defaults for all expected variables to prevent undefined errors
 // These are defined AFTER config.php to prevent WordPress from overwriting them
@@ -908,27 +909,59 @@ if ($action === 'save') {
         $tableName = 'locations_master';
     } elseif ($category === 'referrers') {
         $tableName = 'referrers_master';
+    } elseif ($category === 'wiki') {
+        $tableName = 'wiki_master';
     } else {
         $tableName = 'facilities_master';
     }
 
-    // SQL to insert or update the project data based on projectName
-    // Use separate placeholders for INSERT and UPDATE values
-    $sql = "INSERT INTO {$tableName} (unique_name, json_data, updated_at)
-            VALUES (:unique_name, :json_data_insert, NOW())
-            ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
-
     try {
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':unique_name', $projectName);
-        $stmt->bindValue(':json_data_insert', $jsonData);
-        $stmt->bindValue(':json_data_update', $jsonData);
+        if ($category === 'wiki') {
+            // Specialized logic for wiki_master
+            $wikiData = is_string($data) ? json_decode($data, true) : $data;
+            $slug = $wikiData['slug'] ?? strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $projectName)));
+            
+            $sql = "INSERT INTO wiki_master 
+                        (slug, program_name, city_state, organization, program_type, years_active, json_data, markdown, last_updated_by, updated_at)
+                    VALUES (:slug, :program_name, :city_state, :organization, :program_type, :years_active, :json_data, :markdown, :last_updated_by, NOW())
+                    ON DUPLICATE KEY UPDATE 
+                        program_name = VALUES(program_name),
+                        city_state = VALUES(city_state),
+                        organization = VALUES(organization),
+                        program_type = VALUES(program_type),
+                        years_active = VALUES(years_active),
+                        json_data = VALUES(json_data),
+                        markdown = VALUES(markdown),
+                        last_updated_by = VALUES(last_updated_by),
+                        updated_at = NOW()";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':slug', $slug);
+            $stmt->bindValue(':program_name', $projectName);
+            $stmt->bindValue(':city_state', $wikiData['cityState'] ?? null);
+            $stmt->bindValue(':organization', $wikiData['ownerName'] ?? $wikiData['organization'] ?? null);
+            $stmt->bindValue(':program_type', $wikiData['programType'] ?? null);
+            $stmt->bindValue(':years_active', $wikiData['yearsActive'] ?? null);
+            $stmt->bindValue(':json_data', json_encode($wikiData));
+            $stmt->bindValue(':markdown', $wikiData['markdown'] ?? null);
+            $stmt->bindValue(':last_updated_by', 'admin');
+            $stmt->execute();
+        } else {
+            // Standard logic for facilities, referrers, locations
+            $sql = "INSERT INTO {$tableName} (unique_name, json_data, updated_at)
+                    VALUES (:unique_name, :json_data_insert, NOW())
+                    ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()";
 
-        $stmt->execute();
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':unique_name', $projectName);
+            $stmt->bindValue(':json_data_insert', $jsonData);
+            $stmt->bindValue(':json_data_update', $jsonData);
+            $stmt->execute();
+        }
         
         // Auto-duplicate to location projects if this is a companies/referrers project
         $locationUpdates = [];
-        if ($category !== 'locations') {
+        if ($category !== 'locations' && $category !== 'wiki') {
             $locationUpdates = updateLocationProjectsFromSave($pdo, $projectName, $data, $category);
         }
         

@@ -204,6 +204,56 @@ try {
             $stmt->execute($params);
             
             $affected = $stmt->rowCount();
+
+            // NEW: If wiki submissions were approved/published, update wiki_master table
+            if ($type === 'wiki' && ($status === 'approved' || $status === 'published')) {
+                foreach ($ids as $id) {
+                    try {
+                        // Fetch the submission data
+                        $fetchStmt = $pdo->prepare("SELECT program_name, city_state, organization, program_type, years_active, json_data, generated_markdown FROM wiki_submissions WHERE id = ?");
+                        $fetchStmt->execute([$id]);
+                        $sub = $fetchStmt->fetch(PDO::FETCH_ASSOC);
+                        
+                        if ($sub) {
+                            // Generate a simple slug if none exists in JSON data
+                            $jsonData = json_decode($sub['json_data'], true);
+                            $slug = $jsonData['slug'] ?? strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $sub['program_name'])));
+                            
+                            // Upsert into wiki_master
+                            $masterSql = "INSERT INTO wiki_master 
+                                            (slug, program_name, city_state, organization, program_type, years_active, json_data, markdown, last_updated_by, updated_at)
+                                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                                          ON DUPLICATE KEY UPDATE 
+                                            program_name = VALUES(program_name),
+                                            city_state = VALUES(city_state),
+                                            organization = VALUES(organization),
+                                            program_type = VALUES(program_type),
+                                            years_active = VALUES(years_active),
+                                            json_data = VALUES(json_data),
+                                            markdown = VALUES(markdown),
+                                            last_updated_by = VALUES(last_updated_by),
+                                            updated_at = CURRENT_TIMESTAMP";
+                            
+                            $masterStmt = $pdo->prepare($masterSql);
+                            $masterStmt->execute([
+                                $slug,
+                                $sub['program_name'],
+                                $sub['city_state'],
+                                $sub['organization'],
+                                $sub['program_type'],
+                                $sub['years_active'],
+                                $sub['json_data'],
+                                $sub['generated_markdown'],
+                                $reviewedBy ?: 'admin'
+                            ]);
+                        }
+                    } catch (PDOException $e) {
+                        error_log("Failed to update wiki_master for ID $id: " . $e->getMessage());
+                        // We don't fail the whole request, but we log it
+                    }
+                }
+            }
+
             echo json_encode([
                 'success' => true,
                 'message' => "$affected submission(s) marked as $status",

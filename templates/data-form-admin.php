@@ -1151,51 +1151,52 @@ get_header();
             </div>
         </div>
         
-        <!-- Advanced User Mode Section -->
-        <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
-            <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
-                <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
-                <span class="section-toggle">🔎</span>
-            </div>
-            <div class="section-content" style="display: none;">
-                 <div class="form-group">
-                        <label for="file-upload">Import Data Files</label>
-                        <input type="file" id="file-upload" accept=".json,.csv,.txt">
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Upload JSON or CSV files. JSON files will load directly into the form.
-                        </p>
-                    </div>
+    </div>
 
-                    <div class="form-group">
-                        <label for="json-paste">Or Paste JSON Data</label>
-                        <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button class="btn" id="import-json-btn">Import JSON</button>
-                            <button class="btn" id="clear-all-btn">Clear Form</button>
-                        </div>
-                    </div>
-
-                <div class="form-group" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                    <label style="color: #1f2937; font-weight: 600; margin-bottom: 10px;">Export All Projects</label>
-                    <p style="margin-bottom: 10px; color: #6b7280; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button type="button" class="btn" id="export-all-btn">Export All Companies</button>
-                        <button type="button" class="btn" id="export-all-locations-btn">Export All Locations</button>
-                        <button type="button" class="btn" id="export-referrer-projects-btn">Export All Referrers</button>
-                    </div>
-                </div>
-                <div class="json-output">
-                    <div class="output-header">
-                        <h3>Generated JSON</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
-                            <button class="copy-btn" id="download-json-btn">Download JSON</button>
-                        </div>
-                    </div>
-                    <pre id="json-display">{}</pre>
+    <!-- Advanced User Mode Section -->
+    <div class="section" id="advanced-mode-section" data-section-views="companies,locations,referrers" style="border: 2px solid #6b7280; background: #f9fafb;">
+        <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
+            <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
+            <span class="section-toggle">🔎</span>
+        </div>
+        <div class="section-content" style="display: none;">
+                <div class="form-group">
+                    <label for="file-upload">Import Data Files</label>
+                    <input type="file" id="file-upload" accept=".json,.csv,.txt">
+                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                        Upload JSON or CSV files. JSON files will load directly into the form.
+                    </p>
                 </div>
 
+                <div class="form-group">
+                    <label for="json-paste">Or Paste JSON Data</label>
+                    <textarea id="json-paste" rows="4" placeholder="Paste any JSON here..."></textarea>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn" id="import-json-btn">Import JSON</button>
+                        <button class="btn" id="clear-all-btn">Clear Form</button>
+                    </div>
+                </div>
+
+            <div class="form-group" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <label style="color: #1f2937; font-weight: 600; margin-bottom: 10px;">Export All Projects</label>
+                <p style="margin-bottom: 10px; color: #6b7280; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn" id="export-all-btn">Export All Companies</button>
+                    <button type="button" class="btn" id="export-all-locations-btn">Export All Locations</button>
+                    <button type="button" class="btn" id="export-referrer-projects-btn">Export All Referrers</button>
+                </div>
             </div>
+            <div class="json-output">
+                <div class="output-header">
+                    <h3>Generated JSON</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="copy-btn" id="copy-json-btn">Copy to Clipboard</button>
+                        <button class="copy-btn" id="download-json-btn">Download JSON</button>
+                    </div>
+                </div>
+                <pre id="json-display">{}</pre>
+            </div>
+
         </div>
     </div>
     

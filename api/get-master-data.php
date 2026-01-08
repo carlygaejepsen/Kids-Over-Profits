@@ -90,22 +90,34 @@ try {
             // Ignore error
         }
     }
+
+    // NEW: wiki_master canonical table
+    $wikiMasterResults = [];
+    try {
+        $stmt4 = $pdo->prepare("SELECT slug, program_name, json_data, updated_at FROM wiki_master");
+        $stmt4->execute();
+        $wikiMasterResults = $stmt4->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Table doesn't exist yet
+    }
     
-    // Mark location results with their source table
+    // Mark source tables for proper categorization
     foreach ($locationsResults as &$row) {
         $row['_source_table'] = 'locations';
     }
-
-    // Mark source tables for proper categorization
     foreach ($facilitiesResults as &$row) {
         $row['_source_table'] = 'facilities';
     }
     foreach ($referrersResults as &$row) {
         $row['_source_table'] = 'referrers';
     }
+    foreach ($wikiMasterResults as &$row) {
+        $row['_source_table'] = 'wiki';
+        $row['unique_name'] = 'wiki_master_' . $row['slug'];
+    }
 
     // Merge all result sets
-    $results = array_merge($facilitiesResults, $referrersResults, $locationsResults);
+    $results = array_merge($facilitiesResults, $referrersResults, $locationsResults, $wikiMasterResults);
 
     $projects = [];
     foreach ($results as $row) {

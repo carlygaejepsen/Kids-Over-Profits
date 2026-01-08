@@ -1,0 +1,64 @@
+/* Referrer Index Styles */
+
+/* Import base TTI styles */
+@import url("tti-program-index.css");
+
+/* Overrides for Referrer Cards */
+.referrer-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #E6F0FA 100%); /* Light blue tint */
+    border-color: #4a90e2;
+}
+
+.referrer-card .card-header h3 {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.referrer-card .agency-name {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.referrer-card .card-body p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    display: flex;
+    align-items: flex-start;
+}
+
+.referrer-card .card-body .icon {
+    margin-right: 8px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.referrer-card a {
+    color: #0066cc;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.referrer-card a:hover {
+    text-decoration: underline;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #666;
+    grid-column: 1 / -1;
+}
+
+/* Adjust grid for referrers if needed */
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}

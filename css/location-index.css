@@ -1,0 +1,153 @@
+/* Location Index Styles */
+
+@import url("tti-program-index.css");
+
+.location-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.location-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-top: 4px solid #00004d;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.location-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.location-card.type-state { border-color: #0056b3; }
+.location-card.type-country { border-color: #28a745; }
+
+.card-header {
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+}
+
+.badge.state { background: #0056b3; }
+.badge.country { background: #28a745; }
+
+.card-stats {
+    display: flex;
+    border-bottom: 1px solid #eee;
+}
+
+.card-stats .stat {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #eee;
+}
+
+.card-stats .stat:last-child {
+    border-right: none;
+}
+
+.card-stats .count {
+    display: block;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #333;
+}
+
+.card-stats .label {
+    font-size: 0.8em;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.card-body {
+    padding: 15px;
+    flex: 1;
+    background: #fff;
+}
+
+.facility-preview {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.facility-preview li {
+    padding: 4px 0;
+    border-bottom: 1px dashed #eee;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.facility-preview li.more-count {
+    font-style: italic;
+    color: #888;
+    border-bottom: none;
+    padding-top: 8px;
+}
+
+.empty-state {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.card-footer {
+    padding: 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.view-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #00004d;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.view-btn:hover {
+    background: #000080;
+    text-decoration: none;
+    color: white;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.2em;
+}
