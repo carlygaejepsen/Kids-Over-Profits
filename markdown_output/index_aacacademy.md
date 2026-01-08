@@ -1,35 +1,42 @@
-# **The Academy**() West Palm Beach, FL
+# **AAC Academy**
 
 ---
 
-## ** History and Background Information**
+## **History and Background Information**
+
+No information is known.
 
 ---
 
-## ** Founders and Notable Staff**
+## **Founders and Notable Staff**
+
+No information is known.
 
 ---
 
-## ** Program Structure**
+## **Program Structure**
+
+No information is known.
 
 ---
 
-## ** Abuse Allegations and Lawsuits**
+## **Abuse Allegations**
+
+No information is known.
 
 ---
 
-## ** Survivor/Parent Testimonies**
+## **Survivor/Parent Testimonials**
+
+No information is known.
 
 ---
 
-## ** Related Media**
+## **Related Media**
 
-[The Academy Website Homepage](https://web.archive.org/web/20151109070941/http://www.theacademytreatment.com/) (archived, 2015)
+No information is known.
 
 ---
 
-Last revised by 
+Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
-
-
-

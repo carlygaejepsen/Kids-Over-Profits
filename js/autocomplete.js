@@ -1164,7 +1164,7 @@ function getCategoryFunctions() {
 function initializeAutocompleteFields() {
     const categoryFunctions = getCategoryFunctions();
 
-    document.querySelectorAll('input[type="text"][data-autocomplete-category]:not(.array-input)').forEach(field => {
+    document.querySelectorAll('input[type="text"][data-autocomplete-category]').forEach(field => {
         if (field.dataset.autocompleteInit === 'true') {
             return;
         }

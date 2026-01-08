@@ -1,35 +1,42 @@
-# **Galena Ridge Wilderness Program**(-2009) Trout Creek, MT
+# **Galena Ridge Program**
 
 ---
 
-## ** History and Background Information**
+## **History and Background Information**
+
+No information is known.
 
 ---
 
-## ** Founders and Notable Staff**
+## **Founders and Notable Staff**
+
+No information is known.
 
 ---
 
-## ** Program Structure**
+## **Program Structure**
+
+No information is known.
 
 ---
 
-## ** Abuse Allegations and Lawsuits**
+## **Abuse Allegations**
+
+No information is known.
 
 ---
 
-## ** Survivor/Parent Testimonies**
+## **Survivor/Parent Testimonials**
+
+No information is known.
 
 ---
 
-## ** Related Media**
+## **Related Media**
 
-[Galena Ridge Website Homepage](https://web.archive.org/web/20050306235525/https://www.galenaridge.com/)
+No information is known.
 
 ---
 
-Last revised by 
+Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
-
-
-

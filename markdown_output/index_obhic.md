@@ -1,73 +1,42 @@
-# **Outdoor Behavioral Healthcare Industry Council (OBHIC)**(1996-present)
+# **Outdoor Behavioral Healthcare Industry Council**
 
 ---
 
-## ** History and Background Information**
+## **History and Background Information**
+
+No information is known.
 
 ---
 
-## ** Founders and Notable Employees**
+## **Founders and Notable Staff**
 
-** Mike Merchant** is the Founder of the OBHIC.
-
----
-
-## ** Open OBHIC Programs**
+No information is known.
 
 ---
 
-***Below is a list of active OBHIC programs.***
+## **Program Structure**
+
+No information is known.
 
 ---
 
-|** Program Name**|** Year Opened**|** Location(s)**|** HEAL Information**|
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
----
+## **Abuse Allegations**
 
-## ** Closed OBHIC Programs**
+No information is known.
 
 ---
 
-***Below is a list of now closed OBHIC Programs***
+## **Survivor/Parent Testimonials**
+
+No information is known.
 
 ---
 
-|** Program Name**|** Years Active**|** Location(s)**|** HEAL Information**|
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
-| - | - | - | - |
+## **Related Media**
+
+No information is known.
+
 ---
 
-Last revised by 
+Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
-
-
-

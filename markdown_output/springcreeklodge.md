@@ -1,196 +1,42 @@
-# **Spring Creek Lodge**(1997-2008) Thompson Falls, MT
-
-*Specialty Boarding School*
+# **Spring Creek Lodge Academy**
 
 ---
 
 ## **History and Background Information**
 
-Spring Creek Lodge (also called "Spring Creek Lodge Academy") was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) behavior-modification program that opened in 1997. It was originally founded as "Spring Creek Community" by Nancy and Steve Cawdrey in the 1970's. In 1996, it was purchased by Cameron Pullan, Chaffin Pullan, and Dan Peart (in association with [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) ) and reopened as Spring Creek Lodge in 1997. It was marketed as a "boarding school designed to provide a highly structured and scheduled environment for adolescents who have chosen to stray from acceptable family standards into one of drugs, alcohol, negative peer interaction and low self-esteem." It initially operated as an all-male program, but around 1999 it began also enrolling females. However, the male and female residents were kept completely separate.
-
-Spring Creek Lodge was located at [75 Spring Creek Road, Thompson Falls, Montana 59873](https://www.google.com/maps/place/Spring+Creek+Lodge+Academy/@47.7711645,-115.4577184,310m/data=!3m1!1e3!4m12!1m6!3m5!1s0x5360d86c77724ccf:0x1b7253275b88bd71!2s75+Spring+Creek+Rd,+Thompson+Falls,+MT+59873!8m2!3d47.7713412!4d-115.4581763!3m4!1s0x5360d86c8362aaa7:0xa8606148021ea827!8m2!3d47.771751!4d-115.4544492?hl=en) . At the time of its operation, the State of Montana had zero regulations or licensing requirements for this type of school. The program had a maximum capacity of 421 students, and enrolled teenagers aged 14-18. Some reports allege that at its peak, the school had over 500 students enrolled and over 200 employees, making it the largest employer in all of Sanders County. The tuition was reportedly nearly $3,500 per month, grossing an estimated $20 million annually (as of 2006). This type of wealth meant that Spring Creek Lodge had a huge economic and political influence on the small, primarily working-class town. SCL was reportedly endorsed by the local Police Department, the local newspaper, various local businesses, the Sanders County Sheriff's Department, and even the Mayor. According to reports, SCL even made hefty donations to the local police department. SCL employees also reported that the school sent roughly 40% of its revenue to WWASP.
-
-It was accredited by the [Northwest Association of Accredited Schools (NAAS)](https://www.reddit.com/r/troubledteens/wiki/index/naas) , but it is important to note that neither the United States Department of Education nor the Council for Higher Education Accreditation recognizes the Northwest Association of Accredited Schools as an accrediting agency for institutions of higher education.
-
-In 2006, SCL reportedly withdrew its affiliation with WWASP, in an attempt to distance their school from the negative publicity that WWASP was receiving due to countless allegations of abuse in its programs and the 2006 [Turley joint-action lawsuit](http://wwaspsurvivors.com/turley-joint-action-lawsuit-wood-v-wwasp-et-al/) , which named SCL as one of the defendants in the suit. Chaffin Pullan, Assistant Director of SCLA, referred to the school’s association with WWASPS as “a positive relationship that initially provided us with a very supportive network.” However, Pullan explained that SCLA has evolved into a unique and independent program. He does not foresee any significant changes in the school’s day-to-day operations as a result of the split. It is reported that SCL did not change any aspects of their program or any staff members, so this action to distance themselves from WWASP was entirely superficial.
-
-It is reported that when other WWASP programs were shut down by authorities (such as [Morava Academy](https://www.reddit.com/r/troubledteens/wiki/index/morava) in 1998 and the [Academy at Dundee Ranch](https://www.reddit.com/r/troubledteens/wiki/index/dundee) in 2003), many of the remaining residents were transferred to Spring Creek Lodge. It has also been reported that students at SCL were sometimes punished by being sent to other WWASP programs, such as [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) in Jamaica, [Morava Academy](https://www.reddit.com/r/troubledteens/wiki/index/morava) in the Czech Republic (before its closure), and [Casa by the Sea](https://www.reddit.com/r/troubledteens/wiki/index/casabythesea) and [High Impact](https://www.reddit.com/r/troubledteens/wiki/index/highimpact) in Mexico.
-
-Spring Creek Lodge Academy closed abruptly in January 2009 due to a dramatic drop in enrollment, several lawsuits, licensing issues, and oversight controversy.
+No information is known.
 
 ---
 
-## ** Founders and Notable Staff**
+## **Founders and Notable Staff**
 
-** Cameron Pullan** was the co-founder and an adminastrator at SCL. He first worked for WWASP at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992.
-
-** Chaffin Pullan** was the co-founder and assistant director of SCL. He is the brother of Cameron Pullan. Like his brother, Chaffin also first worked for WWASP at [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) in 1991 and 1992. Follow SCL's closure, he is reported to have worked as a supervisor at [Reflections Academy](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) nearby, which was started by another former SCL employee. In 2018, three lawsuits against Reflections Academy in Thompson Falls were filed following allegations of sexual abuse and grooming by Chaffin Pullan, as well as professional negligence related, in part, to inadequate therapy and education.
-
-** Dan Peart** was the co-founder and Vice President of SCL. He is Robert B. Lichfield's brother-in-law. He appears to have begun working for WWASP at [Majestic Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/majesticranch) .
-
-** Michele "Mickey" Manning** was the Principal of SCL. They reportedly began working there around 2004. After SCL closed, they opened [Riverview Academy](https://www.reddit.com/r/troubledteens/wiki/index/riverviewacademy) close to SCL's campus in Thompson Falls with another former SCL staff, Lorne Ridell. After Riverview, they went on to open another school in Thompson Falls called [Reflections Academy](https://www.reddit.com/r/troubledteens/wiki/index/reflectionsmt) in 2016, and employed Chaffin Pullan there. In 2018, three lawsuits against Reflections Academy in Thompson Falls were filed following allegations of sexual abuse and grooming by Chaffin Pullan, as well as professional negligence related, in part, to inadequate therapy and education.
-
-** Lorne Ridell** worked in an unnamed position at SCL. After the school's closure, she and Mickey Manning left to open [Riverview Academy](https://www.reddit.com/r/troubledteens/wiki/index/riverviewacademy) close to SCL's campus in Thompson Falls.
-
-** Duane Smotherman** is reported to have worked as a Staff member at SCL. He is reported to have also worked at [Tranquility Bay](https://www.reddit.com/r/troubledteens/wiki/index/tranquilitybay) and [Midwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/midwestacademy) , which were two other [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) programs. He is also reported to have worked as a faciliator at [Lifespring](https://en.wikipedia.org/wiki/Lifespring) .
+No information is known.
 
 ---
 
-## ** Program Structure**
+## **Program Structure**
 
-Like other WWASP programs, Spring Creek Lodge used a level system consisting of six levels. In order to progress through the levels, the residents needed to earn points for good behaviors while avoiding demerits for rule violations, which resulted in the loss of points or sometimes levels.
-
-Teenager on lower levels were given little to no privileges and had very limited communication with their parents. Upper-level residents (levels 4-6) were expected to act as "junior staff" and give demerits to lower-level residents in order to prove their "trustworthiness" and commitment to the program.
-
-Spring Creek Lodge divided residents into groups called "families." Some of the reported names of these families are Integrity, Wisdom, Eternity, Serenity, Charity, Courage, Unity, Legend, Genesis, Destiny, Respect, Excel, Summer, Aspire, etc.
-
-Spring Creek Lodge, like many other WWASP programs, forced the teenagers to participate in highly-intense multi-day seminars (see [LGAT](https://en.wikipedia.org/wiki/Large-group_awareness_training) ) called "TASKS" (** T** een** A** ccountability,** S** elf-Esteem and** K** eys to** S** uccess). These were marketed as "a series of highly motivational emotional growth seminars & workshops" These seminars largely consisted of various forms of [attack therapy](https://en.wikipedia.org/wiki/Attack_therapy) and were used in order to indoctrinate the teenagers into the school's beliefs and force them to submit to the program.
-
-According to one [survivor's testimony](http://tales-from-the-black-school.blogspot.com/2014/03/a-stay-at-spring-creek-lodge-academy.html) , "The seminars were horrible. They would make you tell you’re deepest and darkest secrets only to have them rubbed in your face the rest of the time you were there. “My dad molested me when we were younger, my moms boyfriend raped me and she knew about it and didn’t do anything” stuff like this and they wouldn’t let it go. If you didn’t tell them things about you, they would kick you out of the seminars and you couldn’t go back until the next month. You need the seminars to advance in the program to go home. One seminar in particular, called Accountability would have kids walking around and using all of the knowledge of kids problems, try to tear them down. This pushed a lot of kids to the edge. They would have Jr. Staff standing against the walls as security, so if anyone went out of control, they would restrain them."
-
-Parents were also made to attend special parent seminars, which were used to brainwash and indoctrinate the parents as their children were experiencing the same. In addition, there are reports of parents recruiting other parents to send their children to SCL, and in return they had part of their tuition fees waived.
-
-Students graduated the program when they had either completed all six levels or turned 18. If the resident turned 18 before completing all six levels, they the youth could choose an** Exit Plan**. The Exit Plan was a method of control used by many WWASP and another behavior-modification programs to force residents who turn 18 before they graduate the program to voluntarily continue in the program or another 18+ program. The alternative to continuing in treatment would be total excommunication by the family. This is because the family of the young adult legally had no obligations to take the resident back, but the Exit Plan was ultimately up to the parent to decide. If the youth were not prepared to cut any connection with his or her family, a stay at Camas Ranch (for male young adults) and Canyon View Park (for female young adults) were offered as an alternative to the Exit Plan.
-
-Another process that was required to complete the program was called the "trail of lights." According to one [survivor's testimony](http://tales-from-the-black-school.blogspot.com/2014/03/a-stay-at-spring-creek-lodge-academy.html) , "Towards the end of ones program you must go through a process called trail of lights. It starts off with a big meal and then goes into a strenuous workout. Pushups, jumping jacks, sit-ups, running, and what ever else they can think of. After a long day of jumping jacks, they blindfolded us and started leading us through the woods. They would walk us through creek beds and into trees. The staff was laughing the whole time at our discomfort. They had us climb up a very steep rockslide still blindfolded; several students fell down and rolled all the way down to the bottom. At the end of the night every one had cuts and gashes all over their body from running in to trees and walking through thorn patches, and rolling down rocky hills. It was one of the most pointless processes I have ever been through."
+No information is known.
 
 ---
 
-## ** Rules and Punishments**
+## **Abuse Allegations**
 
-The teenagers at SCL were forced to comply with a strict set of rules at all times. Some of these rules include not being allowed to interact with residents on lower levels, having to travel around campus in a straight line, maintaining good posture, etc.
-
-Any moving up and down in the system was done via a point (or "merit") system which was controlled by good or bad behavior and the ability to observe the rules. Negative points ("demerits") would be given to a student that disobeyed any rules of the program. These demerits also had levels ("categories"), which were decided by the severity of the rule violation. These** demerits** were categorized as:
-
-*
-*Category 1*: these demerits would cost a resident 5 points. They could be given for things such as bad posture, being even one second late to line up, or anything the staff or other residents felt was unsatisfactory.
-
-*
-*Category 2*: these demerits would cost a resident 25 points. They could be given for things such as leaving their water bottle somewhere, talking to someone without permission, not following directions precisely, or even just making a noise without permission.
-
-*
-*Category 3*: these demerits would cost a resident 50 points. They could be given for things such as sharing/borrowing items, having a negative attitude, or any blatant rule violation.
-
-*
-*Category 4*: these demerits would cost a resident 2 of their levels and**all** of their points. This could be given for something as small as*glancing*out the window.
-
-*
-*Category 5*: these demerits would cause a resident to lose*all*of their levels and*all*of their points, in effect starting the program over. This could be given for things like self-harm/self-infliction, or use drugs or alcohol. However, even minor things like popping pimples or throwing up from overeating were considered "self-infliction" and could result in a Category 5 demerit.
-
-If the student blatantly did not follow or showed a blatant disrespect for the rules, they could be put in a isolation room (called the "Hobbit Hole", "Hobbit" or "Dog Pound") and placed on what was called "intervention." Intervention was a form of solitary confinement, which has been shown to be extremely unethical to minors (and in general). These isolation rooms were approximately 5x7 feet, and were unheated and reportedly covered in urine, feces, and blood. Students on intervention were forced to sleep on a block of wood with no mattress. There was no access to water in rooms, and the windows were barred shut. ([Link](https://lh3.ggpht.com/-zueEs7wJH-k/UXXbmCyE24I/AAAAAAAAA34/QCYN07yFI8M/s1600/hobbitl.jpg) to an image of one of SCL's isolation rooms, taken by Montana PBS in 2006).
-
-John France, an Educational and Forensic Psychologist, testified during the WWASP trial about his son’s stay at Spring Creek Lodge and stated his son spent nearly nine months in “The Hobbit”, a small structure that was no more than two shelves on top of one another, his body barely able to fit. It was hot in the summer and cold in the winter. So cold, his orange he stored away at night was frozen by morning. He was forced to sleep on a small shelf and to urinate in his drinking cup during the night. He etched the words “Let Freedom Ring” on one of the shelves.
-
-Other punishments that SCL reportedly used were duct-taping residents' mouths shut, violent physical restraints, and physical abuse (such as hitting, punching, and kicking residents). There was also a punishment called the "gravel pit" (which they reportedly stopped using around the year 2000) in which residents would be forced to perform extreme excercises and tasks in a a deep gravel pit, such as running up and down the pit's steep sides for hours at a time.
+No information is known.
 
 ---
 
-## **Abuse, Deaths, and Closure**
+## **Survivor/Parent Testimonials**
 
-Spring Creek Lodge has been widely recognized as a confirmedly abusive program. Both the program and its staff have been accused of sexual abuse, physical violence and psychological duress.
-
-On October 8, 2004, a 16-year-old female resident, Karlye Newman, successfully committed suicide at SCL, just before her 17th birthday. It is reported that she hanged herself in one of the bathrooms at the facility using a sweatshirt. It is reported that she was put into isolation nearly 30 times during her six-month stay. She had apparently only been a mere five weeks away from leaving the program and going home when she died. SCL was investigated by The Montana Department of Public Health and Human Services (DPHHS) following her death. Her parents also filed a wrongful death lawsuit alleging negligence, breach of contract, fraud, and deceit. SCL reportedly settled with Newman's parents out of court. In 2012, the Newmans requested a new trial, as retired Justice John Warner, who was brought in to hear the case, wrongly barred the jury from hearing evidence that other WWASP-affiliated schools were shut down and investigated for abuses. A new trial was granted in the district court.
-
-In 2006, Montana PBS produced a televised segment called ["Who's Watching the Kids?"](https://youtu.be/XZcUqK07Z7I) which focused on Spring Creek Lodge, and particularly, the abuses that occurred there. This exposée stirred up much interest in the local community about the nature of Spring Creek Lodge's program.
-
-Spring Creek Lodge closed abruptly in January 2009 due to a dramatic drop in enrollment, several lawsuits, licensing issues, and oversight controversy. It is [reported](http://america.aljazeera.com/articles/2014/10/31/missing-records-wwaspreformschools.html) that even years after the campus was abandoned, the buildings were still filled with fragments of past students’ lives — journals, progress notes, letters and medical and mental health records.
-
-Shortly before its closure, there was an attempt made by SCL's owners to open two branches of SCL. The first was an 18+ all-boys program called [Camas Ranch](https://www.fornits.com/WWASP/camas_ranch.pdf) , located at [145 Fitchett Road, Plains, MT 59859](https://www.google.com/maps/place/145+Fitchett+Rd,+Plains,+MT+59859/@47.4626461,-114.5823071,250m/data=!3m1!1e3!4m5!3m4!1s0x53675a9761555d87:0x1f315580b570b374!8m2!3d47.4626478!4d-114.5811871) , only about 1.5 hours away from SCL. Camas Ranch was opened around 2008. In addition, there was also [Canyon View Park](https://www.fornits.com/WWASP/cvp_enrollment_12.pdf) , which was an analogous program but for 18+ females, also [located nearby in Thompson Falls](https://www.google.com/maps/@47.6020834,-115.2206196,152m/data=!3m1!1e3) . However, these programs closed shortly after the closure of SCL.
-
-In addition, there are reports that many other spin-off programs were opened in the Thompson Falls area by former SCL staff members following the schools closure, including a program with the same name as one of the Pullans' programs in Utah, [Riverview Academy](https://www.reddit.com/r/troubledteens/wiki/index/riverviewacademy) , which was opened in 2010 by Michelle "Mickey" Manning, and a program called [Clearview Horizon](https://www.reddit.com/r/troubledteens/wiki/index/clearviewhorizon) in 2015.
+No information is known.
 
 ---
 
-## ** Survivor/Parent Testimonials**
+## **Related Media**
 
-**4/4/2020: (SURVIVOR)** [Link to Infinity's Survivor Testimony](https://www.youtube.com/watch?v=zzYeeUbF3aU&ab_channel=Troubled)
-
-**10/10/2019: (SURVIVOR)** [Link to Cadilina's Survivor Testimony](https://www.youtube.com/watch?v=65FXeS7F4Ko&ab_channel=cadilinadeville)
-
-**8/1/2019: (SURVIVOR)** [Link to Jenna's Survivor Testimony](https://youtu.be/zaJRfzSKEFU)
-
-**6/24/2019: (SURVIVOR)** [Link to Melissa's Survivor Testimony](https://www.youtube.com/watch?v=3q2Wc3BUe6Y&ab_channel=Suburbia%27sDirtyLittleSecret)
-
-**2/22/2015: (SURVIVOR)** [Link to Rebecca's Survivor Testimony](http://tales-from-the-black-school.blogspot.com/2015/02/rebecca-at-spring-creek-lodge-from.html)
-
-**3/23/2014: (SURVIVOR)** [Link to Anonymous Survivor Testimony](http://tales-from-the-black-school.blogspot.com/2014/03/a-stay-at-spring-creek-lodge-academy.html)
-
-** Unknown Date: (SURVIVOR)** [Link to Anonymous Survivor Testimony](https://www.helpsavetroubledteens.com/anon---scl.html)
-
-** Unknown Date: (SURVIVOR)** [Link to Eric's Survivor Testimony](https://www.helpsavetroubledteens.com/eric---scl--tb.html)
-
-** Unknown Date: (SURVIVOR)** [Link to Anonymous Survivor Testimony](https://www.helpsavetroubledteens.com/anon--scl.html)
-
-** Unknown Date: (SURVIVOR)** [Link to Sean's Survivor Testimony](https://www.helpsavetroubledteens.com/sean---scl.html)
-
-** Unknown Date: (SURVIVOR)** [Link to Ashely's Survivor Testimony](https://www.helpsavetroubledteens.com/ashley---scl.html)
-
-** Unknown Date: (SURVIVOR)**"1999- mid 2001: An anonymous survivor of Spring Creek alleges that he witnessed the following during his time there: - a teen named Chris was being noisy after shutdown [lights out]. He was knocked to the floor and restrained. When other kids tried to interfere-- Chris was complaining of not being able to breathe-- they were also face-down restrained by staff. A group of kids were transported to the Hobbit. They did not receive breakfast or lunch on the following day. - a teen named Gabe was bear hug restrained by staff. He [Gabe] had asked another student to quit flicking the back of his [Gabe's] ear. Staff slammed Gabe face down on the asphalt. This caused the cracking of several of Gabe's front teeth. - a twelve year old boy was in the Hobbit and spat all over. Staff informed him that they would use his [the boy's] body to wipe up the spit. After the next spit, they did so. - a teen by the name of Jeff had cut himself on purpose several times from elbow to wrist. He then used his blood to write the words "Free me" on the wall next to his bunk. Another teen was forced to scrub the blood off of the wall. - Cameron Pullan told a group of teens that a teen there named Daniel had paranoid schizophrenia. When Daniel became verbally disruptive, a group of teens ["junior staffers" perhaps, level 4 and up kids were required to assist with discipline of lower level kids] were ordered to take him to the Hobbit. This did not go well. They were not trained to do this sort of thing. As a result, Daniel was made to minimally comply through a bit of violent physical contact. The kids did not know what else to do. - A kid in the Hobbit was let out to use the portable toilet which was [very often] overflowing and filthy. When the kid refused to exit the portable toilet, staff dumped its' contents causing the teen to be covered with feces and urinary waste. - The Anonymous survivor went on to complain about the "Trail of Lights" and the trust walk which the kids were forced to go through during the seminars. [The "Trail of Lights" and the trust walk were both touted as wonderful in the Fontaine book Coming Back]." - [Anonymous (Blog)](http://radicalsapphoq.blogspot.com/2013/04/wwasps-focus-on-spring-creek-lodge.html)
-
-**5/2/2013: (SURVIVOR)**"I was in Spring Creek from 2001-2004 was the only person I am aware of to be kicked out of PC3, as a level 6- for being honest about my home contract. I was also the youngest on the facility, for I was a fresh 13 year old. After “choosing out” of PC3- I was pulled four months later (age 15-almost 16). My parents then sent me to a southern baptist program in Kentucky for my junior year. After that, I was sent back to scl for my last year (17-18). That place did way more harm than good. There was absolutely no one qualified to look after us. The reinforcement system was not logical- it mainly made us believe we’d never get out. My parents spent over $100,000 to keep me at Scl when they never even went to visit the place to begin with. Another side note- my reason for being there was because I did not like my step dad and argued with my parents constantly. I didn’t do drugs or break any laws, cut myself, or even have sex. So happy that place was shut down. No one deserved that treatment and lies." - [Chelsea (WWASP Survivors)](http://wwaspsurvivors.com/wwasp-programs/spring-creek-lodge/)
-
-**3/24/2013: (SURVIVOR)**"My name is Gabe and I was in a WWASP program from January 1997 to December 1997. I was 15 years old. They had just opened Spring Creek Lodge in Montana. I was led to believe that I was going on a vacation with my Mom to Park Cities, Utah. We flew into Las Vegas and next day drove to what I thought was Park Cities. I was excited the whole way… I couldn’t wait to go snowboarding. I remember her pulling over at what I thought was a Motel 6 to ask for directions. She went in while I stayed in the car. After about 15 minutes, I went in to see what was taking her so long. I couldn’t see through the mirror tint on the front door so went in. I saw her at the desk and heard the door auto lock behind me and two staff members grabbed me. I knew I was fucked. I had arrived at Brightway! I stayed at Brightway for about 2 weeks before being flown to Montana. I was still in denial about the whole situation waiting for my Mom to show up and say “just kidding” but she never came. Cameron became my new guardian and made that perfectly clear when I got there. There were only about 20 boys at Spring Creek when I arrived… we were the first and opened that damn hell hole like prisoners opening up a new yard. No one knew what to expect. The youngest of our group was Cliff, he was only 11 or 12 years old. The oldest was Jay at 17. One by one, we all watched new kids come in. It was winter time and the most snow I’ve ever seen. When enough boys had arrived, they split us into 3 groups and told us to come up with “family names” and we would get our own cabins. I actually came up with our family name “Wisdom.” The other 2 groups chose “Unity” and “Legend.” Slowly we started to realize something wasn’t right with these people. They were all Mormons and tried to push that religion on us. They beat us, starved us, humiliated us and made us walk through 10 degree weather in our boxers and flip flops. Kids trying to commit suicide was a weekly issue. Jr. staff starting arriving from Samoa to work at Spring Creek, and after seeing me and other kids getting mangled by grown adults, two kids Jake and Eugene, made a run for it. Jake was really a quite person and Eugene was just the opposite. I was Jake’s closest friend there and I tried to convince him not to run because I knew he wouldn’t make it… we all felt the same about busting out of there. I kept my mouth shut and the next night they were gone. They were found and brought back a few days later, and were beaten within an inch of their lives. And of course, because I was Jake’s closest friend, I caught the most shit over their escape for withholding information… I denied the truth to staff. I was there for one year and witnessed everything including kids trying to kill themselves. I was wild myself, but after being dropped on my face in the gravel and getting my lip and teeth busted by staff (an ex Marine named Randy), I kept a low key. I witnessed a staff member force a 13 year old boy to give him oral sex in the bathroom late one night when everyone was asleep… WTF! Staff worked us like slave labor chopping down trees. They made us build fort style fences around the staff cabins and lay rock gravel pits. We were thrown in freezing ponds infested with who knows what just for fun. A few times a week I would help in the kitchen making food and washing dishes. I stole a sharp kitchen knife for protection. I kept it on me at all times. I was 15 years old and literally in survival mode ready to kill any jr. staff or staff member that fucked with me or discovered I was concealing a weapon. I never even made it to level 3… I didn’t want it. I just wanted to survive and not stand out. The more attention I created, the more chances that my knife would be discovered. I was never the same after leaving the program. The young, free spirited, charismatic kid that came there never got to go back home. He was replaced with a paranoid, confused kid who was obsessed with protecting himself. I could no longer socialize with kids in my normal high school, and it destroyed any chance of a normal high school experience. I secretly carried my stepdad’s handgun to school every day and kept to myself. I lived life through my headphones and skateboard. Looking back… we were just kids and the most important time of a young man’s life… his adolescence. While most kids our age were learning about respect from their fathers, how to flirt with girls and going to proms, we missed all of that. Honestly I’ve never really been the same… anxiety and paranoia surround my life, which all the Xanax in the world won’t take away… I’ve tried. It is now 2013 and I have been incarcerated in federal prison since early 2007, ironically for felony possession of a fire arm. I will be released at the end of this year. I’ve been in prison most of my adult life and I’ve never been as scared and helpless as I was the year I spent at Spring Creek Lodge. I am writing this from a prison cell and it is being submitted on my behalf by another party who told me about this site. Oh yeah, and every time I hear the song “time after time” I want to throw up until every blood vessel in my eyes have exploded!" - [Gabe (WWASP Survivors)](http://wwaspsurvivors.com/wwasp-programs/spring-creek-lodge/)
-
-**2/22/2013: (SURVIVOR)**"I was in spring creek in 1998. Kids got raped, beaten, thrown in the ‘hobbit’ constantly with a large male staff always handy to kick their ass and ensure that they stayed on silence. My parents grew wary of them after a few phone calls and a letter I sent to my father using codes and I was pulled after about 7 months of intense madness of a true American teenie gulag. I made the mistake of crossing the jr. Staff at a facility meeting for abuse and was relegated to level 3 status no matter how much time I spent as family leader and asst. fam leader. I had it relatively good. Friends of mine like little Doug, John H., Eugene, and countless others endured unspeakable abuse at the hands of Lichfield led psychopathic, Mormon, disciplinarian sadists like Chaffin Pullan, his brother Cameron, Duane Smotherman, not to mention the lower level rapist night watchmen and junior staff. It was insane, and when I left as a confused very immature 16 year old boy, I felt guilty for not figuring out a way to rescue my brothers who’s parents had not been quick in catching up to the scam. Evil people…it was the first time I encountered truly evil adults who practiced trickery and manipulation to maintain a yoke of control upon their wayward little piggy banks. I heard it improved as time went on, but even those who spent time there in the last days, after it had been exposed as a torture facility have my pity for having to experience such things as went on. For every story that made it out of there…every injustice exposed that the children experienced, there are a hundred more that were never told. Those of us that spent time in Wisdom, Courage, Unity, legend, serenity, eternity etc. know this. Most who praise these places are shills who profited off of it. I could have done this as my family married into the Lichfield mafia in Utah… I no longer speak to them. It never goes away no matter how long in the rear view the experience was. The feelings of hopelessness, mental rape, and imprisonment for whatever offense perpetrated at home, and dealt with by uniform aggression and abuse always remain. I was a lucky one considering the time I was there few were spared from atrocious violence. I hate to say I inflicted violence on other kids to remain in good standing with family fathers etc. but it’s true. I’m sure a couple men still think of me with enmity as I do for those who were above me. It’s a mind fuck. For those of you relatively fresh out, young and confused, don’t try to rationalize what happened there because you never will. Simply try to forgive, forget, and move on. If you fail in life because you can’t shake the memories, they win. Once you feel detached enough to fight the bastards and spread your own testimony of their treachery, do so. People should know what went on and what still goes on in remote corners of the country and abroad to children whose parents have been duped into this stuff. It was a nightmare, but wear your survival with pride. You are better because you made it out and can turn the pain into strength if you make yourself do so. Hell is hot and Thompson Falls was cold…yet they were hard to tell apart at times. To those of you who bled and cried with us through gravel pits and focus seminars (lifeboat process 😉 ) I love you and if we unite against these bastards in a mature and orderly fashion, we can give them the coups de grace that they need. Admin of this site, thank you! Your friend, Myles- Wisdomfamily1998" - [Myles (WWASP Survivors)](http://wwaspsurvivors.com/wwasp-programs/spring-creek-lodge/)
-
-** Unknown Date: (SURVIVOR)**"Much like a war, or a tragic event, I look back at Spring Creek Lodge Academy. Like a bad dream or chill of fear down my spine, I remember. No matter how hard I try, forgetting that two years of my life is not possible. I was fourteen and I, one of few, gave my consent to go to Spring Creek Lodge. At the time, I just wanted to leave home; I could not imagine a place that could have been worse. I was wrong, and I soon learned that. My dad told me three months; he was wrong, and I soon learned that. I was one of the youngest ones there, and got picked on, of course. Being picked on at Spring Creek equated into a loss of points, which led to more time there. Soon I got into some trouble, and was sitting in my small booth staring at the wall, when my family representative told me that my parents had already signed a twelve-month contract. Having been the day after my fifteenth birthday, I felt hopeless. A year later I would find that it was a lie; however, I would not leave until I graduated from Spring Creek Lodge. I went crazy, I wanted out. Helpless, hopeless, and alone I decided to wait until I was eighteen. I went to “the hobbit.” It was a small building with urine and feces on the walls, floors, and bunks. It smelled of bleach in a sad attempt to clean the repulsive mess. The other two rooms were full of other kids that were being unruly. I sat quietly until about four of them came into my room. They brought pillowcase that had knots tied in the ends of them, there was no hesitation to hit me with them. I heard the staff in the background “ hey guys knock it off,” when they finally did, everything hurt; I was bruised and weak. Next time just one of them came in. He told me to get on my knees in front of him. I said “no,” at seventeen he easily over powered me. He pulled me off of the top bunk, and hit me until I was on my knees in front of him, then he unzipped his pants called me many names and punched me in the face. It happened again with another guy. I left the next morning bruised dirty, and beaten. I would be made fun of for that night the rest of my program, mostly by the staff. My parents were never told, until I had to eight months later. It was just a sign as to what was to come. I soon realized I would rather die than stay at Spring Creek. Of course, they stopped me; however a year later, one girl would succeed and hang herself by her own belt. We were encouraged to share about our life and problems. They said it was safe and confidential. I did share, and was criticized by the staff that ran the place. I shared about having been molested when I was younger. I had been molested physically; now, Spring Creek was molesting me mentally. The only way-out, it seemed was to turn eighteen, or to be sent away to Tranquility Bay, Jamaica. They told me that they would beat me, and I would never get out, I will never know. It was time to try “working the program.” To do this, you had to turn on the same people that were in the same boat as you. I did. Being assaulted became a daily occurrence. I tried to find balance. It was up and down for many more months, the hardships got harder, and the day came when I was seventeen years old, that I would leave Spring Creek Lodge. It left me in pain. While I was there, I developed the most alone and helpless feeling. After twenty-five months, I would go home to very much, the same household. I missed much of the maturing stages of my life, I left afraid and unsure. Having grown up in Spring Creek Lodge, I could not picture life without it. I knew nothing about the outside world anymore, I had not talked to a girl in over a year, and I did not even know whom the president was. Now I think of how I was used, manipulated, and hurt. The pain I felt, even wanting to die, if it meant leaving that place. Spring Creek, and some events, I would regret my whole life. After getting out and seeing how little had changed, even in other graduates, I felt even more lost. Institutionalized, all I knew, I hated. Now, almost a year later, I am still afraid and alone. Still running, and still hiding. That fourteen-year-old boy is a distant memory, but his pain will forever be a part of me. That pain, every person at Spring Creek felt, in all W.W.A.S.P programs. Not only does it not work; it destroys lives, hopes, and dreams. Being home, nothing has changed, but compared to Spring Creek, things are great. Every day, I feel different than everyone else. Like I had a lobotomy, something is missing. The worst pain, came from what was “fixing,” me." - [Josh (Help Save Troubled Teens)](https://www.helpsavetroubledteens.com/j-akramoff---scl.html)
+No information is known.
 
 ---
 
-## ** Related Media**
-
-[Spring Creek Lodge Website Homepage](https://web.archive.org/web/20040605171119/http://springcreeklodge.com/index.html) (archived, 2004)
-
-[Another Spring Creek Lodge Website Homepage](https://web.archive.org/web/20041001093318/http://www.blueslide.com/main/index.php) (archived, 2004)
-
-[WWASP Survivors - Spring Creek Lodge](http://wwaspsurvivors.com/wwasp-programs/spring-creek-lodge/)
-
-[Wikipedia - Spring Creek Lodge Academy](https://en.wikipedia.org/wiki/Spring_Creek_Lodge_Academy)
-
-[Spring Creek Lodge - Marketing Material](https://web.archive.org/web/20010604105413/http://www.vpp.com/teenhelp/scl.html) (archived, 2001)
-
-[Spring Creek Lodge Enrollment Agreement](https://drive.google.com/file/d/11VoX1E8kh3hv7BSYbVHfyC_MFu5Ta4Ta/view?usp=sharing)
-
-### ** News Articles**
-
-[Program to Help Youths Has Troubles of Its Own](https://www.nytimes.com/2003/09/06/us/program-to-help-youths-has-troubles-of-its-own.html) (New York Times, 0/6/2003)
-
-[Jury hearing lawsuit over girl's suicide at Thompson Falls boarding school](https://missoulian.com/news/local/jury-hearing-lawsuit-over-girls-suicide-at-thompson-falls-boarding-school/article_e774dff2-dbff-11df-88e4-001cc4c002e0.html) (Missoulian, 10/20/2010)
-
-[Supco orders new trial in boarding school suicide](https://www.deseret.com/2012/3/9/20398756/supco-orders-new-trial-in-boarding-school-suicide) (Deseret News, 5/9/2012)
-
-[Knee deep: Lawsuits mount against Spring Creek Lodge](http://wwaspsurvivors.com/knee-deep-lawsuits-mount-against-spring-creek-lodge/) (WWASP Survivors, 5/24/2012)
-
-[WWASPS: focus on Spring Creek Lodge, Montana](http://radicalsapphoq.blogspot.com/2013/04/wwasps-focus-on-spring-creek-lodge.html) (Radical Sapphoq, 4/23/2013)
-
-[Reform school survivors allege abuse of their personal files too](http://america.aljazeera.com/articles/2014/10/31/missing-records-wwaspreformschools.html) (Aljazeera America, 10/31/2014)
-
-['Fox guards henhouse' in Montana programs for troubled teens](https://missoulian.com/news/state-and-regional/fox-guards-henhouse-in-montana-programs-for-troubled-teens/article_86736f9b-eb6e-59f9-b312-3a9388361075.html) (Missoulian, 1/21/2019)
-
-[Reflections Academy school for girls sued 3 times in 3 months; claims of grooming, abuse](https://missoulian.com/news/state-and-regional/reflections-academy-school-for-girls-sued-3-times-in-3-months-claims-of-grooming-abuse/article_1fd62a4b-861e-510b-89c3-c67dbc082850.html) (Missoulian, 1/21/2019)
-
-[12 years, 58 complaints, no sanctions at Montana residential programs](https://missoulian.com/news/state-and-regional/12-years-58-complaints-no-sanctions-at-montana-residential-programs/article_7c8a1677-8e10-522c-bb28-c8b6d258be50.html) (Missoulian, 1/23/2019)
-
-### ** Films/Videos**
-
-["Who's Watching the Kids?" - PBS Special Report](https://youtu.be/XZcUqK07Z7I) (Montana PBS, 2006)
-
-[Short YouTube Video with Photos from SCL in 2008](https://youtu.be/jDlx9Vlb7SQ) (YouTube, 12/9/2008)
-
-[Interview with SCL Survivor on the Troubled Podcast - "EP10: Introducing Infinity Metanoia (Spring Creek Lodge / WWASP Survivor)"](https://youtu.be/zzYeeUbF3aU) (YouTube, 4/10/2020)
-
-### ** Photos**
-
-* [SCLA's Campus](http://wwaspsurvivors.com/wp-content/uploads/2012/04/Spring-Creek-Lodge.jpg) (*date unknown*)
-* ["The Hobbit" - Isolation Room at SCLA](https://lh3.ggpht.com/-zueEs7wJH-k/UXXbmCyE24I/AAAAAAAAA34/QCYN07yFI8M/s1600/hobbitl.jpg) (*date unknown*)
-* [Teens at SCLA](https://alchetron.com/cdn/spring-creek-lodge-academy-9a2a6e56-e3a1-45b6-b4b1-0af44d62de6-resize-750.jpeg) (*date unknown*)
-
----
-
----
-
-Last revised by 
+Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
-
-
-

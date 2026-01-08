@@ -1,35 +1,42 @@
-# **Premier Educational Services**()
-
-## ** History and Background Information**
+# **Premiere Educational Consulting**
 
 ---
 
-## ** Founders and Notable Staff**
+## **History and Background Information**
+
+No information is known.
 
 ---
 
-## ** Seminar Structure**
+## **Founders and Notable Staff**
+
+No information is known.
 
 ---
 
-## ** Abuse Allegations and Lawsuits**
+## **Program Structure**
+
+No information is known.
 
 ---
 
-## ** Survivor/Parent Testimonies**
+## **Abuse Allegations**
+
+No information is known.
 
 ---
 
-## ** Related Media**
+## **Survivor/Parent Testimonials**
 
-[Premier Educational Services Website Homepage](https://web.archive.org/web/20100317044128/http://www.premier-ed.com/Home_Page.html) (archived, 2010)
-
----
+No information is known.
 
 ---
 
-Last revised by 
+## **Related Media**
+
+No information is known.
+
+---
+
+Last revised by [Signal-Strain9810](/user/Signal-Strain9810/)
 ## Page title
-
-
-

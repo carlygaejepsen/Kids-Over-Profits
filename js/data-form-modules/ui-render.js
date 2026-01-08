@@ -421,6 +421,16 @@
             const isStaffRoleName = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
             const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
 
+            // Determine autocomplete category based on path
+            let defaultCategory = null;
+            if (path.includes('parentCompanies') || path === 'otherOperators') defaultCategory = 'operator';
+            else if (path.includes('Owners') || path.includes('founders') || path.includes('keyExecutives') || path.includes('investors')) defaultCategory = 'human';
+            else if (path.includes('Referrers')) defaultCategory = 'referrer';
+            else if (path.includes('accreditations')) defaultCategory = 'accreditation';
+            else if (path === 'memberships') defaultCategory = 'membership';
+            else if (path === 'certifications') defaultCategory = 'certification';
+            else if (path === 'licensing') defaultCategory = 'licensing';
+
             if (data.length === 0) {
                 if (isPastTTIJobs) {
                     data.push({ role: '', employer: '', organization: '' });
@@ -448,6 +458,7 @@
                     roleInp.type = 'text';
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
+                    roleInp.setAttribute('data-autocomplete-category', 'role');
                     roleInp.value = normalized.role || '';
                     roleInp.oninput = (e) => {
                         if (typeof window.updateArrayObjectItemValue === 'function') {
@@ -462,6 +473,7 @@
                     employerInp.type = 'text';
                     employerInp.className = 'array-input array-input-name';
                     employerInp.placeholder = 'Employer';
+                    employerInp.setAttribute('data-autocomplete-category', 'operator');
                     employerInp.value = normalized.employer || normalized.organization || '';
                     employerInp.oninput = (e) => {
                         if (typeof window.updateArrayObjectItemValue === 'function') {
@@ -500,6 +512,7 @@
                     roleInp.type = 'text';
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
+                    roleInp.setAttribute('data-autocomplete-category', 'role');
                     roleInp.value = normalized.role || '';
                     roleInp.oninput = (e) => {
                         if (typeof window.updateArrayObjectItemValue === 'function') {
@@ -514,6 +527,7 @@
                     nameInp.type = 'text';
                     nameInp.className = 'array-input array-input-name';
                     nameInp.placeholder = 'Name';
+                    nameInp.setAttribute('data-autocomplete-category', 'human');
                     nameInp.value = normalized.name || '';
                     nameInp.oninput = (e) => {
                         if (typeof window.updateArrayObjectItemValue === 'function') {
@@ -657,6 +671,7 @@
                     roleInp.type = 'text';
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
+                    roleInp.setAttribute('data-autocomplete-category', 'role');
                     roleInp.value = item.role || '';
                     roleInp.oninput = (e) => {
                         item.role = e.target.value;
@@ -667,6 +682,7 @@
                     nameInp.type = 'text';
                     nameInp.className = 'array-input array-input-name';
                     nameInp.placeholder = 'Name';
+                    if (defaultCategory) nameInp.setAttribute('data-autocomplete-category', defaultCategory);
                     nameInp.value = item.name || item.organization || item.employer || '';
                     nameInp.oninput = (e) => {
                         item.name = e.target.value;
@@ -679,6 +695,7 @@
                     const inp = document.createElement('input');
                     inp.type = 'text';
                     inp.className = 'array-input';
+                    if (defaultCategory) inp.setAttribute('data-autocomplete-category', defaultCategory);
                     inp.value = item || '';
                     inp.oninput = (e) => {
                         if (typeof window.updateArrayItemValue === 'function') {
@@ -721,6 +738,16 @@
                 this.renderArray(container, path, data);
             };
             container.appendChild(addBtn);
+
+            // Re-attach field note buttons to the newly rendered items
+            if (window.NotesModule && typeof window.NotesModule.addNoteButtonsToArrayItems === 'function') {
+                window.NotesModule.addNoteButtonsToArrayItems(container);
+            }
+
+            // Manually re-initialize autocomplete for the newly added fields
+            if (typeof window.initializeAutocompleteFields === 'function') {
+                window.initializeAutocompleteFields();
+            }
         },
 
         generateReportHTML: function(data, skipHeader) {

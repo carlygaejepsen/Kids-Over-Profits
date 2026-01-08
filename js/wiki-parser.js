@@ -143,6 +143,12 @@ function parseWikiMarkdown(markdown) {
     // Normalize newlines so regex parsing works with Windows CRLF input
     let normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
+    // Check for placeholder text indicating empty/uncreated page
+    if (normalizedMarkdown.trim() === 'Reddit Wiki Entry Page has not yet been created.' || 
+        normalizedMarkdown.includes('Reddit Wiki Entry Page has not yet been created.')) {
+        parsedData.isEmpty = true;
+    }
+
     // Remove specific boilerplate text as requested by user
     normalizedMarkdown = normalizedMarkdown.replace(/\nthis text should always be removed\s*/g, '');
     normalizedMarkdown = normalizedMarkdown.replace(/SaveCancelLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page titleSaveCancel/g, '');

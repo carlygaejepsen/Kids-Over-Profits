@@ -345,6 +345,9 @@ get_header();
                         </div>
                     </div>
                     <div class="toolbar-group">
+                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍<span class="toolbar-label">Search</span></button>
+                    </div>
+                    <div class="toolbar-group">
                         <button type="button" class="btn-toolbar btn-success" id="clone-facility-btn-toolbar" title="Clone current facility">📋<span class="toolbar-label">Clone</span></button>
                         <button type="button" class="btn-toolbar btn-danger" id="remove-facility-btn-toolbar" title="Delete current facility">🗑️<span class="toolbar-label">Delete</span></button>
                     </div>
@@ -352,7 +355,70 @@ get_header();
             </div>
         </div>
 
+        <!-- Facility Loader Panel -->
+        <div class="facility-loader-panel">
+            <h2 id="quick-loader-heading">🏢 Jump to Facility</h2>
+            <div class="form-group">
+                <label id="quick-loader-label">All Facilities in Current Project</label>
+                <div id="quick-facilities-list" class="quick-facilities-list">
+                    <div class="quick-facilities-empty">No facilities yet...</div>
+                </div>
+            </div>
+        </div>
+
         <div id="facility-main-wrapper" data-section-views="companies,locations">
+            <div class="section" id="data-organizer-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">📊 Data Organizer</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <div class="bg-light content-box">
+                    <p class="info-text" style="margin: 0;">
+                        <strong>🔍 Find all facilities by a specific data point:</strong> 
+                        Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
+                    </p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="organize-by">Organize by:</label>
+                        <select id="organize-by" class="input-secondary">
+                            <option value="">Select data point...</option>
+                            <option value="keyword">General Keyword Search</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="operator">Operator/Company</option>
+                            <option value="location">Location</option>
+                            <option value="programType">Program Type</option>
+                            <option value="status">Operating Status</option>
+                            <option value="year">Opening Year</option>
+                            <option value="accreditation">Accreditation</option>
+                            <option value="certification">Certification</option>
+                        </select>
+                    </div>
+                    <div class="form-group d-none" id="organize-value-group">
+                        <label for="organize-value">Search for:</label>
+                        <input type="text" id="organize-value" class="input-secondary" placeholder="Type to search...">
+                    </div>
+                </div>
+                
+                <div class="mb-15">
+                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
+                </div>
+                
+                <div id="organize-results" class="d-none">
+                    <div class="info-box">
+                        <div id="organize-results-title" class="info-title"></div>
+                        <div id="organize-results-count" class="info-text"></div>
+                    </div>
+                    
+                    <div id="organize-matches" class="scroll-container">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Facility Table of Contents (Companies only - Locations has its own in #states-content) -->
         <div class="facility-toc" id="facility-toc" data-section-views="companies">
             <div class="toc-header">
@@ -1109,13 +1175,15 @@ get_header();
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Export Projects</label>
-                        <button class="btn" id="export-all-btn">Export All Projects</button>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Export all saved projects as a JSON file for backup or transfer.
-                        </p>
+                <div class="form-group" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <label style="color: #1f2937; font-weight: 600; margin-bottom: 10px;">Export All Projects</label>
+                    <p style="margin-bottom: 10px; color: #6b7280; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" class="btn" id="export-all-btn">Export All Companies</button>
+                        <button type="button" class="btn" id="export-all-locations-btn">Export All Locations</button>
+                        <button type="button" class="btn" id="export-referrer-projects-btn">Export All Referrers</button>
                     </div>
+                </div>
                 <div class="json-output">
                     <div class="output-header">
                         <h3>Generated JSON</h3>
@@ -1181,6 +1249,50 @@ get_header();
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-secondary" id="clone-modal-cancel">Cancel</button>
                 <button class="modal-btn modal-btn-primary" id="clone-modal-confirm">Clone Facility</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Organizer Modal -->
+    <div id="data-organizer-modal" class="organizer-modal">
+        <div class="organizer-modal-content">
+            <div class="organizer-modal-header" style="padding: 12px 20px;">
+                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
+                <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
+            </div>
+            <div class="organizer-modal-body" style="padding: 15px 20px;">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label for="organize-by-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Organize by:</label>
+                        <select id="organize-by-modal" class="input-secondary" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                            <option value="keyword" selected>General Keyword</option>
+                            <option value="staff">Staff Member</option>
+                            <option value="location">Location</option>
+                            <option value="programType">Program Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="organize-value-modal" style="color: #1f2937; font-weight: 600; display: block; margin-bottom: 8px;">Search for:</label>
+                        <input type="text" id="organize-value-modal" class="input-secondary" placeholder="Type to search..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <button class="btn" id="organize-search-btn-modal" onclick="if(window.performOrganizedSearchModal) { window.performOrganizedSearchModal(); } else { console.error('performOrganizedSearchModal not found'); alert('Search function not loaded. Please refresh the page.'); }" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
+                    <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" onclick="if(window.clearOrganizerResultsModal) { window.clearOrganizerResultsModal(); }" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
+                </div>
+
+                <div id="organize-results-modal" class="d-none">
+                    <div class="info-box" style="background: #B6E3D4; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #33A7B5;">
+                        <div id="organize-results-title-modal" class="info-title" style="font-weight: 600; color: #000435; margin-bottom: 5px;"></div>
+                        <div id="organize-results-count-modal" class="info-text" style="color: #000080;"></div>
+                    </div>
+
+                    <div id="organize-matches-modal" style="max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>

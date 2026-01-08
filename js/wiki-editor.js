@@ -1923,6 +1923,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const parsedData = parseWikiMarkdown(content);
 
+                    // Handle empty files
+                    if (parsedData.isEmpty) {
+                        results.failed.push({
+                            file: file.name,
+                            error: 'Skipped: Reddit Wiki Entry Page has not yet been created.'
+                        });
+                        continue;
+                    }
+
                     // Check if we got a program name
                     if (!parsedData.programName || !parsedData.programName.trim()) {
                         throw new Error('Could not extract program name from markdown');
