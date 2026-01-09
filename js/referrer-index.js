@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const agencyMap = new Map();
 
         Object.values(projects).forEach(project => {
+            // Debug: Log entries with category 'referrers'
+            if (project.category === 'referrers') {
+                console.log('Processing referrer entry:', project.name, project);
+            }
             let category = project.category || (project.data && project.data.category) || 'companies';
             const pData = project.data || {};
             
@@ -127,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (c.city && c.state) cLoc = `${c.city}, ${c.state}`;
                         else cLoc = c.location || c.state || c.city || agency.location || agency.state || '';
 
-                        group.consultants.push({
+                        const consultantEntry = {
                             name: (cName || 'Unknown Consultant').trim(),
                             title: c.title || c.role || c.credentials || c.status || 'Consultant',
                             location: cLoc,
@@ -143,14 +147,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             schoolDistricts: c.schoolDistricts,
                             pastTTIJobs: c.pastTTIJobs,
                             lawsuits: c.lawsuits
-                        });
+                        };
+                        console.log('Adding consultant:', consultantEntry.name, 'to agency:', agencyName, consultantEntry);
+                        group.consultants.push(consultantEntry);
                     });
                 }
             }
         });
 
         allGroups = Array.from(agencyMap.values());
-        
+
+        console.log('Total referrer groups:', allGroups.length, allGroups.map(g => g.name));
+
         // Sort agencies A-Z
         allGroups.sort((a, b) => a.name.localeCompare(b.name));
 
