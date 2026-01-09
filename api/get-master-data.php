@@ -59,6 +59,17 @@ try {
         // Table might not exist
     }
 
+    // TEMP DEBUG: If ?debug_referrers is in URL, output raw referrer data and exit
+    if (isset($_GET['debug_referrers'])) {
+        $debugNames = array_map(function($r) { return $r['unique_name']; }, $referrersResults);
+        echo json_encode([
+            'debug' => true,
+            'referrers_count' => count($referrersResults),
+            'referrer_names' => $debugNames
+        ]);
+        exit;
+    }
+
     // locations_master is optional - may not exist yet
     $locationsResults = [];
     try {
