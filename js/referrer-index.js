@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function processData(projects) {
         const agencyMap = new Map();
 
+        // Debug: log all projects and their _sourceTable values
+        console.log('All projects:', Object.entries(projects).map(([k, v]) => ({ key: k, name: v.name, _sourceTable: v._sourceTable, category: v.category })));
+
         Object.values(projects).forEach(project => {
             const pData = project.data || {};
 
