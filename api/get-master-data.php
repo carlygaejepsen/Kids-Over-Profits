@@ -52,22 +52,11 @@ try {
 
     $referrersResults = [];
     try {
-        $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}referrers_master");
+        $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
         $stmt2->execute();
         $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         // Table might not exist
-    }
-    
-    // Fallback for referrers
-    if (empty($referrersResults)) {
-        try {
-            $stmt2b = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
-            $stmt2b->execute();
-            $referrersResults = $stmt2b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Ignore error
-        }
     }
 
     // locations_master is optional - may not exist yet
@@ -101,12 +90,6 @@ try {
         // Table doesn't exist yet
     }
     
-    // DEBUG: Log referrers count
-    error_log("REFERRERS DEBUG: Found " . count($referrersResults) . " rows from referrers_master");
-    foreach ($referrersResults as $r) {
-        error_log("REFERRERS DEBUG: Row unique_name = " . $r['unique_name']);
-    }
-
     // Mark source tables for proper categorization
     foreach ($locationsResults as &$row) {
         $row['_source_table'] = 'locations';
@@ -262,9 +245,7 @@ try {
         error_log("Wiki submissions fetch error: " . $e->getMessage());
     }
 
-    // DEBUG: Include referrer row names in output
-    $debugReferrerNames = array_map(function($r) { return $r['unique_name']; }, $referrersResults);
-    echo json_encode(['success' => true, 'projects' => $projects, '_debug_referrers' => $debugReferrerNames, '_debug_referrers_count' => count($referrersResults)]);
+    echo json_encode(['success' => true, 'projects' => $projects]);
 
 } catch (PDOException $e) {
     http_response_code(500);
