@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/location-index.css">
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
 
 <div class="tti-program-index-wrapper">
     <div class="facility-report-container">

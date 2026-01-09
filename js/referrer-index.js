@@ -1,34 +1,22 @@
-
 // Referrer Database Display
-// Based on tti-program-index.js
+// Styled to match TTI Program Index (Groups by Agency)
 
 document.addEventListener('DOMContentLoaded', function() {
     const containerId = 'referrers-container';
     const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter'); // Actually location filter
+    const statusFilter = document.getElementById('statusFilter'); // Location filter
     const sortBy = document.getElementById('sortBy');
     const clearSearchBtn = document.getElementById('clearSearch');
     const alphabetFilter = document.getElementById('alphabet-filter');
 
-    let allData = [];
-    let filteredData = [];
+    let allGroups = []; // Array of { agencyName, consultants: [] }
+    let filteredGroups = [];
 
     // --- Helper Functions ---
     const cleanText = value => {
         if (typeof value === 'string') return value.trim();
         if (typeof value === 'number') return String(value);
         return '';
-    };
-
-    const isValueEmpty = (value) => {
-        if (value === null || value === undefined) return true;
-        if (typeof value === 'string') {
-            const lower = value.trim().toLowerCase();
-            const placeholders = ['none', 'no', 'n/a', 'na', 'unknown', 'null', '-', '--', 'tbd', ''];
-            return placeholders.includes(lower);
-        }
-        if (Array.isArray(value)) return value.length === 0;
-        return false;
     };
 
     // --- Fetch Data ---
@@ -42,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success && data.projects) {
                     processData(data.projects);
                 } else {
-                    console.error('Invalid data format', data);
                     document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
                 }
             })
@@ -53,43 +40,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processData(projects) {
-        allData = [];
-        
-        // Filter for 'referrers' category
+        const agencyMap = new Map();
+
         Object.values(projects).forEach(project => {
-            let category = 'companies';
-            if (project.category) category = project.category;
-            else if (project.data && project.data.category) category = project.data.category;
+            let category = project.category || (project.data && project.data.category) || 'companies';
             
             if (category === 'referrers') {
                 const pData = project.data || project;
-                
-                // Agency Info
                 const agency = pData.referrerAgency || {};
-                const agencyName = agency.name || project.name || 'Unknown Agency';
+                // Use project name as fallback for agency name
+                const agencyName = cleanText(agency.name || project.name || 'Independent Consultants');
                 
-                // Consultants
-                const consultants = pData.referrerConsultants || [];
-                
-                // If no consultants listed, create a placeholder one for the agency itself
-                if (consultants.length === 0) {
-                    allData.push({
+                if (!agencyMap.has(agencyName)) {
+                    agencyMap.set(agencyName, {
                         name: agencyName,
-                        agencyName: agencyName,
+                        location: agency.location || agency.state || '', // Agency location
+                        consultants: []
+                    });
+                }
+
+                const group = agencyMap.get(agencyName);
+                const consultants = pData.referrerConsultants || [];
+
+                // If no individual consultants, list the agency itself as a "consultant" card
+                if (consultants.length === 0) {
+                    group.consultants.push({
+                        name: agencyName,
                         type: 'Agency',
                         location: agency.location || agency.state || '',
                         website: agency.website || '',
                         email: agency.email || '',
                         phone: agency.phone || '',
-                        notes: 'No individual consultants listed.'
+                        notes: 'Agency listing'
                     });
                 } else {
                     consultants.forEach(c => {
-                        const name = (c.firstName || '') + ' ' + (c.lastName || '');
-                        allData.push({
-                            name: name.trim() || 'Unknown Consultant',
-                            agencyName: agencyName,
-                            type: 'Consultant',
+                        group.consultants.push({
+                            name: (c.firstName || '') + ' ' + (c.lastName || ''),
+                            title: c.title || 'Consultant',
                             location: c.location || c.state || agency.location || '',
                             website: c.website || agency.website || '',
                             email: c.email || agency.email || '',
@@ -101,36 +89,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Populate Location Filter
+        allGroups = Array.from(agencyMap.values());
+        
+        // Sort agencies A-Z
+        allGroups.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Populate Location Filter (based on Consultants)
         const locations = new Set();
-        allData.forEach(item => {
-            if (item.location) locations.add(item.location);
+        allGroups.forEach(g => {
+            g.consultants.forEach(c => {
+                if (c.location) {
+                    const parts = c.location.split(',');
+                    const state = parts[parts.length-1].trim();
+                    if(state) locations.add(state);
+                }
+            });
         });
         
-        // Simple state extraction for filter
-        const states = new Set();
-        locations.forEach(loc => {
-            // Extract state abbreviation or name if possible, else use full string
-            // This is a simple heuristic
-            const parts = loc.split(',');
-            if (parts.length > 1) states.add(parts[parts.length-1].trim());
-            else states.add(loc);
-        });
-
-        const sortedStates = Array.from(states).sort();
+        const sortedLocs = Array.from(locations).sort();
         statusFilter.innerHTML = '<option value="">All Locations</option>';
-        sortedStates.forEach(state => {
-            if(!state) return;
+        sortedLocs.forEach(loc => {
             const option = document.createElement('option');
-            option.value = state;
-            option.textContent = state;
+            option.value = loc;
+            option.textContent = loc;
             statusFilter.appendChild(option);
         });
 
-        // Populate Alphabet Filter
         renderAlphabetFilter();
-
-        // Initial Render
         filterAndRender();
     }
 
@@ -138,27 +123,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!alphabetFilter) return;
         const alphabet = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         let html = '';
-        
-        // Active letter tracking could go here
-        
         alphabet.forEach(char => {
             html += `<button class="alpha-btn" onclick="filterByChar('${char}')">${char}</button>`;
         });
         html += `<button class="alpha-btn" onclick="filterByChar('')">All</button>`;
         alphabetFilter.innerHTML = html;
         
-        // Expose filter function globally so inline onclick works
         window.filterByChar = (char) => {
-            // Update UI state
             document.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
-            // Perform filter
-            if (char === '' || char === 'All') {
-                currentAlphaFilter = '';
-            } else {
-                currentAlphaFilter = char;
-            }
+            currentAlphaFilter = char;
             filterAndRender();
         };
     }
@@ -168,36 +142,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function filterAndRender() {
         const query = searchInput.value.toLowerCase();
         const locationQuery = statusFilter.value.toLowerCase();
-        
-        filteredData = allData.filter(item => {
-            const matchesSearch = item.name.toLowerCase().includes(query) || 
-                                  item.agencyName.toLowerCase().includes(query);
-            
-            const matchesLocation = !locationQuery || (item.location && item.location.toLowerCase().includes(locationQuery));
-            
-            let matchesAlpha = true;
-            if (currentAlphaFilter) {
-                if (currentAlphaFilter === '#') {
-                    matchesAlpha = /^[0-9]/.test(item.name); // or agencyName
-                } else {
-                    // Check either consultant name or agency name
-                    matchesAlpha = item.name.toUpperCase().startsWith(currentAlphaFilter) || 
-                                   item.agencyName.toUpperCase().startsWith(currentAlphaFilter);
-                }
-            }
 
-            return matchesSearch && matchesLocation && matchesAlpha;
-        });
+        // Filter Groups
+        filteredGroups = allGroups.map(group => {
+            // Check if Agency matches
+            const agencyMatch = group.name.toLowerCase().includes(query);
+            
+            // Filter consultants within the group
+            const matchingConsultants = group.consultants.filter(c => {
+                const nameMatch = c.name.toLowerCase().includes(query);
+                const locMatch = !locationQuery || (c.location && c.location.toLowerCase().includes(locationQuery));
+                return (agencyMatch || nameMatch) && locMatch;
+            });
 
-        // Sort
-        const sortVal = sortBy.value;
-        filteredData.sort((a, b) => {
-            if (sortVal === 'name') {
-                // Sort by last name if consultant? For now, simple name sort
-                return a.name.localeCompare(b.name);
+            if (matchingConsultants.length > 0) {
+                // Return a new group object with only matching consultants
+                return { ...group, consultants: matchingConsultants };
             }
-            return 0;
-        });
+            return null;
+        }).filter(g => g !== null);
+
+        // Apply Alphabet Filter (on Agency Name)
+        if (currentAlphaFilter) {
+            filteredGroups = filteredGroups.filter(g => {
+                if (currentAlphaFilter === '#') return /^[0-9]/.test(g.name);
+                return g.name.toUpperCase().startsWith(currentAlphaFilter);
+            });
+        }
 
         renderList();
     }
@@ -206,75 +177,71 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
 
-        if (filteredData.length === 0) {
-            container.innerHTML = '<div class="no-results">No consultants found matching your criteria.</div>';
+        if (filteredGroups.length === 0) {
+            container.innerHTML = '<div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 20px;">No agencies or consultants found.</div>';
             return;
         }
 
+        // Use the same grid class as TTI index
         const grid = document.createElement('div');
-        grid.className = 'facilities-grid'; // Reuse CSS class for grid layout
+        grid.className = 'facilities-database'; 
 
-        filteredData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'facility-card referrer-card';
-            
-            let html = `
-                <div class="card-header">
-                    <h3>${item.name}</h3>
-                    <div class="agency-name">${item.agencyName !== item.name ? item.agencyName : ''}</div>
-                </div>
-                <div class="card-body">
+        filteredGroups.forEach(group => {
+            const details = document.createElement('details');
+            details.className = 'operator-section'; // Reuse TTI class for styling
+
+            // -- Agency Header (Summary) --
+            let headerHtml = `
+                <summary class="operator-header">
+                    <span class="operator-name" title="${group.name}">${group.name}</span>
+                    <span class="operator-location">${group.location || group.consultants.length + ' Consultants'}</span>
+                </summary>
             `;
 
-            if (item.location) {
-                html += `<p class="location-row"><span class="icon">📍</span> ${item.location}</p>`;
-            }
-            if (item.phone) {
-                html += `<p class="contact-row"><span class="icon">📞</span> <a href="tel:${item.phone}">${item.phone}</a></p>`;
-            }
-            if (item.email) {
-                html += `<p class="contact-row"><span class="icon">✉️</span> <a href="mailto:${item.email}">${item.email}</a></p>`;
-            }
-            if (item.website) {
-                let displayUrl = item.website.replace(/^https?:\/\//, '').replace(/\/$/, '');
-                html += `<p class="website-row"><span class="icon">🌐</span> <a href="${item.website}" target="_blank">${displayUrl}</a></p>`;
-            }
+            // -- Agency Content (Consultant Cards) --
+            let contentHtml = `<div class="operator-content-scrollable">`;
             
-            // Add notes if present (truncated)
-            if (item.notes && item.notes.length > 0) {
-                 html += `<div class="card-notes text-sm text-gray-500 mt-2">${item.notes}</div>`;
-            }
+            group.consultants.forEach(c => {
+                contentHtml += `
+                    <div class="facility-card status-open"> <!-- Reuse facility-card -->
+                        <div class="facility-name">${c.name}</div>
+                        <div class="facility-header-subtext">${c.title}</div>
+                        
+                        <div class="facility-summary">
+                            ${c.location ? `<p class="facility-location">📍 ${c.location}</p>` : ''}
+                        </div>
 
-            html += `</div>`; // End card-body
-            card.innerHTML = html;
-            grid.appendChild(card);
+                        <div class="facility-extra-content">
+                            ${c.phone ? `<div class="field-row"><span class="field-label">Phone</span><span class="field-value"><a href="tel:${c.phone}">${c.phone}</a></span></div>` : ''}
+                            ${c.email ? `<div class="field-row"><span class="field-label">Email</span><span class="field-value"><a href="mailto:${c.email}">${c.email}</a></span></div>` : ''}
+                            ${c.website ? `<div class="field-row full-width"><span class="field-label">Web</span><span class="field-value"><a href="${c.website}" target="_blank">${c.website.replace(/^https?:\/\//,'')}</a></span></div>` : ''}
+                        </div>
+                        
+                        ${c.notes ? `<div class="facility-expanded-info"><summary>Notes</summary><p style="padding:10px; font-size:0.9em;">${c.notes}</p></div>` : ''}
+                    </div>
+                `;
+            });
+            contentHtml += `</div>`;
+
+            details.innerHTML = headerHtml + contentHtml;
+            grid.appendChild(details);
         });
 
         container.appendChild(grid);
     }
 
-    // --- Event Listeners ---
+    // Events
     searchInput.addEventListener('input', filterAndRender);
     statusFilter.addEventListener('change', filterAndRender);
-    sortBy.addEventListener('change', filterAndRender);
-    clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        statusFilter.value = '';
-        currentAlphaFilter = '';
-        document.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
+    sortBy.addEventListener('change', () => {
+        // Re-sort logic if needed
+        const sort = sortBy.value;
+        if (sort === 'name') {
+            allGroups.sort((a, b) => a.name.localeCompare(b.name));
+        }
         filterAndRender();
     });
+    clearSearchBtn.addEventListener('click', window.clearSearch);
 
-    // Initialize
     fetchData();
 });
-
-// Global clear function for the button
-window.clearSearch = function() {
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    if (searchInput) searchInput.value = '';
-    if (statusFilter) statusFilter.value = '';
-    // Trigger event manually to update
-    if (searchInput) searchInput.dispatchEvent(new Event('input'));
-};

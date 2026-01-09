@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/referrer-index.css">
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
 <!-- We reuse the TTI styles as they are generic enough -->
 
 <div class="tti-program-index-wrapper">
