@@ -62,14 +62,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const isIndependent = project.isIndependentConsultant === true || 
                                       pData.isIndependentConsultant === true || 
                                       agency.isIndependent === true ||
-                                      (project.referrerType === 'individual') ||
-                                      (pData.referrerType === 'individual');
+                                      project.referrerType === 'individual' ||
+                                      pData.referrerType === 'individual' ||
+                                      (consultants.length === 1 && !agency.name);
 
                 // Determine agency name
                 let agencyName;
                 if (isIndependent) {
                     agencyName = 'Independent Consultants';
                 } else {
+                    // Use project name as fallback for agency name
                     agencyName = cleanText(agency.name || project.name || 'Unknown Agency');
                 }
                 
@@ -96,8 +98,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 } else {
                     consultants.forEach(c => {
+                        let cName;
+                        if (isIndependent) {
+                            // For an individual, just make the name match the project name
+                            cName = project.name;
+                        } else {
+                            cName = (c.firstName || '') + ' ' + (c.lastName || '');
+                            if (!cName.trim()) cName = c.fullName || '';
+                            if (!cName.trim() && consultants.length === 1) cName = project.name;
+                        }
+                        
                         group.consultants.push({
-                            name: (c.firstName || '') + ' ' + (c.lastName || ''),
+                            name: (cName || 'Unknown Consultant').trim(),
                             title: c.title || 'Consultant',
                             location: c.location || c.state || agency.location || '',
                             website: c.website || agency.website || '',
