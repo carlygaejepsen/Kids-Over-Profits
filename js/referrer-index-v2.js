@@ -49,13 +49,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function processData(projects) {
+        // EMERGENCY DEBUG - AT TOP OF BODY
+        const emergencyDiv = document.createElement('div');
+        emergencyDiv.innerHTML = `<div style="background: red; color: white; padding: 20px; font-size: 20px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 99999;">JS EXECUTION VERIFIED - FOUND ${Object.keys(projects).length} PROJECTS</div>`;
+        document.body.prepend(emergencyDiv);
+
         const agencyMap = new Map();
 
         Object.values(projects).forEach(project => {
             const pData = project.data || {};
+            
+            // Log every project to console
+            console.log("Processing Project:", project.name, "Source:", project._sourceTable, "Category:", project.category);
 
-            // Only include entries from referrers_master table
-            if (project._sourceTable !== 'referrers') {
+            // Looser filter: check sourceTable OR category
+            if (project._sourceTable !== 'referrers' && project.category !== 'referrers') {
                 return;
             }
 
