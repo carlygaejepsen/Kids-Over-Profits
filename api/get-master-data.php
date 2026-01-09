@@ -6,6 +6,9 @@ require_once __DIR__ . '/config.php';
 
 // This script fetches all records from the master data table
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
 try {
     // Get WordPress table prefix from wp-config.php
@@ -39,71 +42,50 @@ try {
         if (isset($row['data'])) return $row['data'];
         if (isset($row['json'])) return $row['json'];
         if (isset($row['project_data'])) return $row['project_data'];
-        return '{}';
+        return null; // Return null if not found
     }
 
-    // Query all three master tables: facilities, referrers, and locations
-    // Use SELECT * to be robust against column name changes
-    
+    // Query facilities (Use prefix if available, fallback to non-prefixed)
     $facilitiesResults = [];
     try {
         $stmt1 = $pdo->prepare("SELECT * FROM {$prefix}facilities_master");
         $stmt1->execute();
         $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        // Table might not exist, ignore and try fallback
-    }
+    } catch (PDOException $e) {}
     
-    // Fallback: If prefixed table is empty or failed, try non-prefixed table
     if (empty($facilitiesResults)) {
         try {
             $stmt1b = $pdo->prepare("SELECT * FROM facilities_master");
             $stmt1b->execute();
             $facilitiesResults = $stmt1b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Ignore error if fallback table doesn't exist
-        }
+        } catch (PDOException $e) {}
     }
 
+    // Query referrers - STRICTLY 'referrers_master' as per user instruction
     $referrersResults = [];
     try {
-        $stmt2 = $pdo->prepare("SELECT * FROM {$prefix}referrers_master");
+        // Use non-prefixed table name explicitly
+        $stmt2 = $pdo->prepare("SELECT * FROM referrers_master");
         $stmt2->execute();
         $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // Table might not exist
+        error_log("Referrers Query Failed: " . $e->getMessage());
     }
 
-    // Fallback for referrers
-    if (empty($referrersResults)) {
-        try {
-            $stmt2b = $pdo->prepare("SELECT * FROM referrers_master");
-            $stmt2b->execute();
-            $referrersResults = $stmt2b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Ignore error
-        }
-    }
-
-    // locations_master is optional - may not exist yet
+    // Query locations
     $locationsResults = [];
     try {
         $stmt3 = $pdo->prepare("SELECT * FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        // Table doesn't exist yet
-    }
+    } catch (PDOException $e) {}
     
-    // Fallback for locations
     if (empty($locationsResults)) {
         try {
             $stmt3b = $pdo->prepare("SELECT * FROM locations_master");
             $stmt3b->execute();
             $locationsResults = $stmt3b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Ignore error
-        }
+        } catch (PDOException $e) {}
     }
 
     // NEW: wiki_master canonical table
@@ -112,9 +94,7 @@ try {
         $stmt4 = $pdo->prepare("SELECT slug, program_name, json_data, updated_at FROM wiki_master");
         $stmt4->execute();
         $wikiMasterResults = $stmt4->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        // Table doesn't exist yet
-    }
+    } catch (PDOException $e) {}
     
     // Mark source tables for proper categorization
     foreach ($locationsResults as &$row) {
@@ -138,11 +118,43 @@ try {
     foreach ($results as $row) {
         // Decode the stored JSON
         $jsonString = extractJsonFromRow($row);
-        $stored = json_decode($jsonString, true);
+        $stored = null;
         
-        // Skip invalid JSON
+        if ($jsonString !== null && $jsonString !== '') {
+            $stored = json_decode($jsonString, true);
+        }
+        
+        // Recover from invalid/empty JSON by creating a minimal valid object
+        // This ensures the record is visible even if the JSON payload is missing/corrupt
         if (!$stored) {
-            continue;
+            $uniqueName = $row['unique_name'] ?? 'Unknown Project';
+            $defaultCat = 'companies';
+            if (isset($row['_source_table']) && $row['_source_table'] === 'referrers') {
+                $defaultCat = 'referrers';
+            } elseif (isset($row['_source_table']) && $row['_source_table'] === 'locations') {
+                $defaultCat = 'locations';
+            }
+            
+            $stored = [
+                'name' => $uniqueName,
+                'category' => $defaultCat,
+                'data' => [
+                    // Minimal data structure to prevent JS errors
+                    'facilities' => [],
+                    'operator' => ['name' => $uniqueName],
+                    'referrerConsultants' => [],
+                    'referrerIndividual' => [
+                        'name' => $uniqueName,
+                        'notes' => 'Record exists but data is incomplete.'
+                    ]
+                ],
+                'timestamp' => $row['updated_at'] ?? $row['created_at'] ?? date('c'),
+                'is_recovered' => true
+            ];
+            
+            if (isset($row['_source_table'])) {
+                $stored['_sourceTable'] = $row['_source_table'];
+            }
         }
 
         // Detect format by checking where facilities/operator live:

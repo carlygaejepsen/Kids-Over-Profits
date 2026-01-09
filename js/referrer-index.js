@@ -29,7 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Fetch Data ---
     function fetchData() {
         const config = window.referrerConfig || {};
-        const url = config.jsonFileUrls ? config.jsonFileUrls[0] : '/wp-content/themes/child/api/get-master-data.php';
+        const baseUrl = config.jsonFileUrls ? config.jsonFileUrls[0] : '/wp-content/themes/child/api/get-master-data.php';
+        // Append timestamp to prevent caching
+        const url = baseUrl + (baseUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
 
         fetch(url)
             .then(response => response.json())
@@ -48,14 +50,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function processData(projects) {
         const agencyMap = new Map();
+        const projectList = Object.values(projects);
+        
+        // DEBUG: Output count
+        const debugDiv = document.createElement('div');
+        debugDiv.style.background = '#ffe';
+        debugDiv.style.padding = '10px';
+        debugDiv.style.border = '1px solid #ccc';
+        debugDiv.style.marginBottom = '10px';
+        debugDiv.innerHTML = `<strong>Debug Info:</strong> Found ${projectList.length} total projects.<br>`;
+        document.getElementById(containerId).prepend(debugDiv);
 
-        Object.values(projects).forEach(project => {
+        let referrersCount = 0;
+
+        projectList.forEach(project => {
             const pData = project.data || {};
 
             // Only include entries from referrers_master table
             if (project._sourceTable !== 'referrers') {
                 return;
             }
+            referrersCount++;
+            
+            // Log specific projects we are looking for
+            if (project.name && (project.name.includes('Mary') || project.name.includes('Upwell'))) {
+                debugDiv.innerHTML += `Processing: ${project.name} (Source: ${project._sourceTable})<br>`;
+            }
+
+            // Robustly find referrer data: check root first, then data object
 
             // Robustly find referrer data: check root first, then data object
             const agency = project.referrerAgency || pData.referrerAgency || {};
