@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${c.phone ? `
                             <div class="referrer-detail-row">
                                 <span class="detail-icon">📞</span>
-                                <span class="detail-value"><a href="tel:${c.phone}">${escapeHtml(c.phone}</a></span>
+                                <span class="detail-value"><a href="tel:${c.phone}">${escapeHtml(c.phone)}</a></span>
                             </div>` : ''}
 
                         ${c.website || agency.website ? `
