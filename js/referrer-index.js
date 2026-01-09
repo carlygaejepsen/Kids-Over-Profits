@@ -51,9 +51,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Object.values(projects).forEach(project => {
             let category = project.category || (project.data && project.data.category) || 'companies';
+            const pData = project.data || {};
             
-            if (category === 'referrers') {
-                const pData = project.data || {};
+            // Check for referrer data content
+            const hasReferrerData = (project.referrerConsultants && project.referrerConsultants.length > 0) || 
+                                    (pData.referrerConsultants && pData.referrerConsultants.length > 0) ||
+                                    (project.referrerAgency && project.referrerAgency.name) ||
+                                    (pData.referrerAgency && pData.referrerAgency.name);
+
+            if (category === 'referrers' || hasReferrerData) {
                 
                 // Robustly find referrer data: check root first, then data object
                 const agency = project.referrerAgency || pData.referrerAgency || {};
