@@ -114,7 +114,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             website: c.website || agency.website || '',
                             email: c.email || agency.email || '',
                             phone: c.phone || agency.phone || '',
-                            notes: c.notes || ''
+                            notes: c.notes || '',
+                            // Pass through extra fields for rendering
+                            credentials: c.credentials,
+                            education: c.education,
+                            affiliations: c.affiliations,
+                            knownReferrals: c.knownReferrals,
+                            schoolDistricts: c.schoolDistricts,
+                            pastTTIJobs: c.pastTTIJobs,
+                            lawsuits: c.lawsuits
                         });
                     });
                 }
