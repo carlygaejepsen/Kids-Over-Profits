@@ -1,40 +1,20 @@
-// Referrer Database Display
-// Styled to match TTI Program Index (Groups by Agency)
-
+// Referrer Database Display - Simple Table-to-Tile Renderer
 document.addEventListener('DOMContentLoaded', function() {
     const containerId = 'referrers-container';
     const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter'); // Location filter
-    const sortBy = document.getElementById('sortBy');
-    const clearSearchBtn = document.getElementById('clearSearch');
+    const statusFilter = document.getElementById('statusFilter');
     const alphabetFilter = document.getElementById('alphabet-filter');
 
-    let allGroups = []; // Array of { agencyName, consultants: [] }
-    let filteredGroups = [];
+    let allEntries = []; 
+    let filteredEntries = [];
 
-    // --- Helper Functions ---
-    const cleanText = value => {
-        if (typeof value === 'string') return value.trim();
-        if (typeof value === 'number') return String(value);
-        return '';
-    };
+    const cleanText = v => (typeof v === 'string' ? v.trim() : (v ? String(v) : ''));
+    const escapeHtml = v => cleanText(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c));
 
-    const htmlEscapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-    const escapeHtml = value => {
-        const text = cleanText(value);
-        return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
-    };
-    const escapeAttribute = value => escapeHtml(value);
-
-    // --- Fetch Data ---
     function fetchData() {
-        const config = window.referrerConfig || {};
-        const baseUrl = config.jsonFileUrls ? config.jsonFileUrls[0] : '/wp-content/themes/child/api/get-master-data.php';
-        // Append timestamp to prevent caching
-        const url = baseUrl + (baseUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-
-        fetch(url)
-            .then(response => response.json())
+        const baseUrl = '/wp-content/themes/child/api/get-master-data.php';
+        fetch(baseUrl + '?t=' + Date.now())
+            .then(res => res.json())
             .then(data => {
                 if (data.success && data.projects) {
                     processData(data.projects);
@@ -44,192 +24,57 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(err => {
                 console.error('Fetch error:', err);
-                document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
+                document.getElementById(containerId).innerHTML = '<p>Connection error.</p>';
             });
     }
 
     function processData(projects) {
-        // EMERGENCY DEBUG - AT TOP OF BODY
-        const emergencyDiv = document.createElement('div');
-        emergencyDiv.innerHTML = `<div style="background: red; color: white; padding: 20px; font-size: 20px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 99999;">JS EXECUTION VERIFIED - FOUND ${Object.keys(projects).length} PROJECTS</div>`;
-        document.body.prepend(emergencyDiv);
+        allEntries = Object.values(projects).filter(p => p._sourceTable === 'referrers');
 
-        const agencyMap = new Map();
-
-        Object.values(projects).forEach(project => {
-            const pData = project.data || {};
-            
-            // Log every project to console
-            console.log("Processing Project:", project.name, "Source:", project._sourceTable, "Category:", project.category);
-
-            // Looser filter: check sourceTable OR category
-            if (project._sourceTable !== 'referrers' && project.category !== 'referrers') {
-                return;
-            }
-
-            // Robustly find referrer data: check root first, then data object
-            const agency = project.referrerAgency || pData.referrerAgency || {};
-            let consultants = project.referrerConsultants || pData.referrerConsultants || [];
-
-            // Fallback to referrerIndividual if array is empty
-            if (!consultants.length) {
-                const ind = project.referrerIndividual || pData.referrerIndividual;
-                if (ind) consultants = [ind];
-            }
-
-            // Check if independent
-            const isIndependent = project.isIndependentConsultant === true ||
-                                  pData.isIndependentConsultant === true ||
-                                  agency.isIndependent === true ||
-                                  project.referrerType === 'individual' ||
-                                  pData.referrerType === 'individual' ||
-                                  (consultants.length === 1 && !agency.name);
-
-            // Determine agency name
-            let agencyName = cleanText(agency.name);
-
-            // If no agency name, use project name (effectively treating as independent/solo)
-            if (!agencyName) {
-                agencyName = cleanText(project.name || 'Unknown Agency');
-            }
-
-            if (!agencyMap.has(agencyName)) {
-                agencyMap.set(agencyName, {
-                    name: agencyName,
-                    location: agency.location || agency.state || '',
-                    consultants: [],
-                    isIndependent: isIndependent // Track this for rendering if needed
-                });
-            }
-
-            const group = agencyMap.get(agencyName);
-
-            // If no individual consultants, list the agency itself as a "consultant" card
-            if (consultants.length === 0) {
-                group.consultants.push({
-                    name: agencyName,
-                    type: 'Agency',
-                    location: agency.location || agency.state || '',
-                    website: agency.website || '',
-                    email: agency.email || '',
-                    phone: agency.phone || '',
-                    notes: 'Agency listing'
-                });
-            } else {
-                consultants.forEach(c => {
-                    if (!c) return; // Skip invalid entries
-
-                    // UNIFIED NAME LOGIC: Always prefer specific name fields
-                    let cName = (c.firstName || '') + ' ' + (c.lastName || '');
-                    if (!cName.trim()) cName = c.fullName || '';
-                    if (!cName.trim()) cName = project.name; // Final fallback
-
-                    // Construct better location string
-                    let cLoc = '';
-                    if (c.city && c.state) cLoc = `${c.city}, ${c.state}`;
-                    else cLoc = c.location || c.state || c.city || agency.location || agency.state || '';
-
-                    group.consultants.push({
-                        name: (cName || 'Unknown Consultant').trim(),
-                        title: c.title || c.role || c.credentials || c.status || 'Consultant',
-                        location: cLoc,
-                        website: c.website || agency.website || '',
-                        email: c.email || agency.email || '',
-                        phone: c.phone || agency.phone || '',
-                        notes: c.notes || '',
-                        // Pass through extra fields for rendering
-                        credentials: c.credentials,
-                        education: c.education,
-                        affiliations: c.affiliations,
-                        knownReferrals: c.knownReferrals || c.facilitiesReferred,
-                        schoolDistricts: c.schoolDistricts,
-                        pastTTIJobs: c.pastTTIJobs,
-                        lawsuits: c.lawsuits
-                    });
-                });
-            }
-        });
-
-        allGroups = Array.from(agencyMap.values());
-
-        // Sort agencies A-Z
-        allGroups.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Populate Location Filter (based on Consultants)
-        const locations = new Set();
-        allGroups.forEach(g => {
-            g.consultants.forEach(c => {
-                if (c.location) {
-                    const parts = c.location.split(',');
-                    const state = parts[parts.length-1].trim();
-                    if(state) locations.add(state);
-                }
+        // Populate Location Filter
+        const locs = new Set();
+        allEntries.forEach(p => {
+            const data = p.data || {};
+            const consultants = data.referrerConsultants || (data.referrerIndividual ? [data.referrerIndividual] : []);
+            consultants.forEach(c => {
+                if (c && c.state) locs.add(c.state.trim());
+                else if (c && c.location && c.location.includes(',')) locs.add(c.location.split(',').pop().trim());
             });
         });
         
-        const sortedLocs = Array.from(locations).sort();
-        statusFilter.innerHTML = '<option value="">All Locations</option>';
-        sortedLocs.forEach(loc => {
-            const option = document.createElement('option');
-            option.value = loc;
-            option.textContent = loc;
-            statusFilter.appendChild(option);
-        });
+        statusFilter.innerHTML = '<option value="">All Locations</option>' + 
+            Array.from(locs).sort().map(l => `<option value="${l}">${l}</option>`).join('');
 
         renderAlphabetFilter();
         filterAndRender();
     }
 
     function renderAlphabetFilter() {
-        if (!alphabetFilter) return;
-        const alphabet = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-        let html = '';
-        alphabet.forEach(char => {
-            html += `<button class="alpha-btn" onclick="filterByChar('${char}')">${char}</button>`;
-        });
-        html += `<button class="alpha-btn" onclick="filterByChar('')">All</button>`;
-        alphabetFilter.innerHTML = html;
-        
-        window.filterByChar = (char) => {
-            document.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            currentAlphaFilter = char;
+        const alpha = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alphabetFilter.innerHTML = alpha.map(c => `<button class="alpha-btn" onclick="window.filterByChar('${c}')">${c}</button>`).join('') + 
+            `<button class="alpha-btn" onclick="window.filterByChar('')">All</button>`;
+        window.filterByChar = (c) => {
+            document.querySelectorAll('.alpha-btn').forEach(b => b.classList.toggle('active', b.innerText === (c||'All')));
+            window.currentAlphaFilter = c;
             filterAndRender();
         };
     }
 
-    let currentAlphaFilter = '';
-
     function filterAndRender() {
         const query = searchInput.value.toLowerCase();
-        const locationQuery = statusFilter.value.toLowerCase();
+        const locQuery = statusFilter.value.toLowerCase();
+        const alpha = window.currentAlphaFilter || '';
 
-        // Filter Groups
-        filteredGroups = allGroups.map(group => {
-            // Check if Agency matches
-            const agencyMatch = group.name.toLowerCase().includes(query);
+        filteredEntries = allEntries.filter(p => {
+            const name = (p.name || '').toLowerCase();
+            if (alpha && alpha !== '#' && !name.startsWith(alpha.toLowerCase())) return false;
+            if (alpha === '#' && !/^[0-9]/.test(name)) return false;
             
-            // Filter consultants within the group
-            const matchingConsultants = group.consultants.filter(c => {
-                const nameMatch = c.name.toLowerCase().includes(query);
-                const locMatch = !locationQuery || (c.location && c.location.toLowerCase().includes(locationQuery));
-                return (agencyMatch || nameMatch) && locMatch;
-            });
-
-            if (matchingConsultants.length > 0) {
-                // Return a new group object with only matching consultants
-                return { ...group, consultants: matchingConsultants };
-            }
-            return null;
-        }).filter(g => g !== null);
-
-        // Apply Alphabet Filter (on Agency Name)
-        if (currentAlphaFilter) {
-            filteredGroups = filteredGroups.filter(g => {
-                if (currentAlphaFilter === '#') return /^[0-9]/.test(g.name);
-                return g.name.toUpperCase().startsWith(currentAlphaFilter);
-            });
-        }
+            const matchesQuery = name.includes(query);
+            const matchesLoc = !locQuery || JSON.stringify(p).toLowerCase().includes(locQuery);
+            
+            return matchesQuery && matchesLoc;
+        });
 
         renderList();
     }
@@ -238,107 +83,62 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
 
-        if (filteredGroups.length === 0) {
-            container.innerHTML = '<div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 20px;">No agencies or consultants found.</div>';
+        if (!filteredEntries.length) {
+            container.innerHTML = '<div class="no-results">No referrers found.</div>';
             return;
         }
 
-        // Use the same grid class as TTI index
         const grid = document.createElement('div');
-        grid.className = 'facilities-database'; 
+        grid.className = 'facilities-database';
 
-        filteredGroups.forEach(group => {
+        filteredEntries.forEach(p => {
+            const pData = p.data || {};
+            // Gather all consultants listed in this record
+            let consultants = pData.referrerConsultants || [];
+            if (!consultants.length && pData.referrerIndividual) consultants = [pData.referrerIndividual];
+            if (!consultants.length) consultants = [{ fullName: p.name }]; // Final fallback
+
             const details = document.createElement('details');
-            details.className = 'operator-section'; // Reuse TTI class for styling
-
-            // -- Agency Header (Summary) --
-            let headerHtml = `
-                <summary class="operator-header">
-                    <span class="operator-name" title="${group.name}">${group.name}</span>
-                    <span class="operator-location">${group.location || group.consultants.length + ' Consultants'}</span>
-                </summary>
-            `;
-
-            // -- Agency Content (Consultant Cards) --
-            let contentHtml = `<div class="operator-content-scrollable">`;
+            details.className = 'operator-section';
             
-            group.consultants.forEach(c => {
-                // Helper to render array/list fields
-                const renderListField = (label, items) => {
-                    if (!items || items.length === 0) return '';
-                    const listHtml = items.map(i => {
-                        if (typeof i === 'object') {
-                            // Handle job/role objects
-                            const parts = [];
-                            if (i.role) parts.push(i.role);
-                            if (i.organization || i.employer) parts.push(i.organization || i.employer);
-                            return parts.join(' at ');
-                        }
-                        return escapeHtml(i);
-                    }).filter(Boolean).join(', ');
-                    
-                    if (!listHtml) return '';
-                    return `<div class="field-row full-width"><span class="field-label">${label}</span><span class="field-value">${listHtml}</span></div>`;
-                };
-
-                let extraDetails = '';
-                extraDetails += renderListField('Credentials', c.credentials ? [c.credentials] : []);
-                extraDetails += renderListField('Education', c.education ? [c.education] : []);
-                extraDetails += renderListField('Affiliations', c.affiliations);
-                extraDetails += renderListField('Known Referrals', c.knownReferrals);
-                extraDetails += renderListField('School Districts', c.schoolDistricts);
-                extraDetails += renderListField('Past TTI Jobs', c.pastTTIJobs);
-                if (c.lawsuits) extraDetails += `<div class="field-row full-width"><span class="field-label">Lawsuits</span><span class="field-value">${escapeHtml(c.lawsuits)}</span></div>`;
-                if (c.notes) extraDetails += `<div class="field-row full-width"><span class="field-label">Notes</span><span class="field-value">${escapeHtml(c.notes)}</span></div>`;
-
-                contentHtml += `
-                    <div class="facility-card status-open"> <!-- Reuse facility-card -->
-                        <div class="facility-name">${c.name}</div>
-                        <div class="facility-header-subtext">${c.title}</div>
-                        
-                        <div class="facility-summary">
-                            ${c.location ? `<p class="facility-location">📍 ${c.location}</p>` : ''}
-                        </div>
-
-                        <div class="facility-extra-content">
-                            ${c.phone ? `<div class="field-row"><span class="field-label">Phone</span><span class="field-value"><a href="tel:${c.phone}">${c.phone}</a></span></div>` : ''}
-                            ${c.email ? `<div class="field-row"><span class="field-label">Email</span><span class="field-value"><a href="mailto:${c.email}">${c.email}</a></span></div>` : ''}
-                            ${c.website ? `<div class="field-row full-width"><span class="field-label">Web</span><span class="field-value"><a href="${c.website}" target="_blank">${c.website.replace(/^https?:\/\//,'')}</a></span></div>` : ''}
-                        </div>
-                        
-                        ${extraDetails ? `
-                        <div class="facility-details">
-                            <details class="facility-expanded-info">
-                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                                <div class="facility-extra-content">
-                                    ${extraDetails}
-                                </div>
-                            </details>
-                        </div>` : ''}
-                    </div>
-                `;
-            });
-            contentHtml += `</div>`;
-
-            details.innerHTML = headerHtml + contentHtml;
+            // Tile Header
+            details.innerHTML = `
+                <summary class="operator-header">
+                    <span class="operator-name">${escapeHtml(p.name)}</span>
+                    <span class="operator-location">${consultants.length} Listing(s)</span>
+                </summary>
+                <div class="operator-content-scrollable">
+                    ${consultants.map(c => {
+                        const cName = cleanText(c.firstName + ' ' + c.lastName) || cleanText(c.fullName) || escapeHtml(p.name);
+                        return `
+                        <div class="facility-card status-open">
+                            <div class="facility-name">${escapeHtml(cName)}</div>
+                            <div class="facility-header-subtext">${escapeHtml(c.role || c.title || 'Consultant')}</div>
+                            <div class="facility-summary">
+                                ${c.location ? `<p>📍 ${escapeHtml(c.location)}</p>` : ''}
+                                ${c.city || c.state ? `<p>📍 ${escapeHtml(cleanText(c.city + ', ' + c.state))}</p>` : ''}
+                            </div>
+                            <div class="facility-extra-content">
+                                ${c.phone ? `<div><strong>Phone:</strong> ${escapeHtml(c.phone)}</div>` : ''}
+                                ${c.email ? `<div><strong>Email:</strong> ${escapeHtml(c.email)}</div>` : ''}
+                                ${c.website ? `<div class="full-width"><strong>Web:</strong> <a href="${c.website}" target="_blank">${c.website}</a></div>` : ''}
+                            </div>
+                            ${(c.pastTTIJobs && c.pastTTIJobs.length) ? `
+                                <details class="facility-expanded-info">
+                                    <summary>+ Past TTI Jobs</summary>
+                                    <div class="facility-extra-content">
+                                        ${c.pastTTIJobs.map(j => `<div class="full-width">• ${escapeHtml(j.role)} at ${escapeHtml(j.employer || j.organization)}</div>`).join('')}
+                                    </div>
+                                </details>
+                            ` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
             grid.appendChild(details);
         });
-
         container.appendChild(grid);
     }
-
-    // Events
-    searchInput.addEventListener('input', filterAndRender);
-    statusFilter.addEventListener('change', filterAndRender);
-    sortBy.addEventListener('change', () => {
-        // Re-sort logic if needed
-        const sort = sortBy.value;
-        if (sort === 'name') {
-            allGroups.sort((a, b) => a.name.localeCompare(b.name));
-        }
-        filterAndRender();
-    });
-    clearSearchBtn.addEventListener('click', window.clearSearch);
 
     fetchData();
 });
