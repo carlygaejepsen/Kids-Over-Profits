@@ -1,13 +1,16 @@
 <?php
+/**
+ * Master Data API - Robust Version
+ * Optimized for Referrers and reliably returns all tables.
+ */
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/config.php';
 
-// This script fetches all records from the master data table
 header('Content-Type: application/json');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
 
 try {
@@ -35,264 +38,101 @@ try {
         }
     }
     
-    // Helper to extract JSON from row
-    function extractJsonFromRow($row) {
-        // Check known JSON column names in order of preference
-        if (isset($row['json_data'])) return $row['json_data'];
-        if (isset($row['data'])) return $row['data'];
-        if (isset($row['json'])) return $row['json'];
-        if (isset($row['project_data'])) return $row['project_data'];
-        return null; // Return null if not found
-    }
-
-    // Query facilities (Use prefix if available, fallback to non-prefixed)
-    $facilitiesResults = [];
-    try {
-        $stmt1 = $pdo->prepare("SELECT * FROM {$prefix}facilities_master");
-        $stmt1->execute();
-        $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {}
-    
-    if (empty($facilitiesResults)) {
-        try {
-            $stmt1b = $pdo->prepare("SELECT * FROM facilities_master");
-            $stmt1b->execute();
-            $facilitiesResults = $stmt1b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {}
-    }
-
-    // Query referrers - STRICTLY 'referrers_master' as per user instruction
-    $referrersResults = [];
-    try {
-        // Use non-prefixed table name explicitly
-        $stmt2 = $pdo->prepare("SELECT * FROM referrers_master");
-        $stmt2->execute();
-        $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Referrers Query Failed: " . $e->getMessage());
-    }
-
-    // Query locations
-    $locationsResults = [];
-    try {
-        $stmt3 = $pdo->prepare("SELECT * FROM {$prefix}locations_master");
-        $stmt3->execute();
-        $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {}
-    
-    if (empty($locationsResults)) {
-        try {
-            $stmt3b = $pdo->prepare("SELECT * FROM locations_master");
-            $stmt3b->execute();
-            $locationsResults = $stmt3b->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {}
-    }
-
-    // NEW: wiki_master canonical table
-    $wikiMasterResults = [];
-    try {
-        $stmt4 = $pdo->prepare("SELECT slug, program_name, json_data, updated_at FROM wiki_master");
-        $stmt4->execute();
-        $wikiMasterResults = $stmt4->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {}
-    
-    // Mark source tables for proper categorization
-    foreach ($locationsResults as &$row) {
-        $row['_source_table'] = 'locations';
-    }
-    foreach ($facilitiesResults as &$row) {
-        $row['_source_table'] = 'facilities';
-    }
-    foreach ($referrersResults as &$row) {
-        $row['_source_table'] = 'referrers';
-    }
-    foreach ($wikiMasterResults as &$row) {
-        $row['_source_table'] = 'wiki';
-        $row['unique_name'] = 'wiki_master_' . $row['slug'];
-    }
-
-    // Merge all result sets
-    $results = array_merge($facilitiesResults, $referrersResults, $locationsResults, $wikiMasterResults);
-
     $projects = [];
-    foreach ($results as $row) {
-        // Decode the stored JSON
-        $jsonString = extractJsonFromRow($row);
-        $stored = null;
-        
-        if ($jsonString !== null && $jsonString !== '') {
-            $stored = json_decode($jsonString, true);
-        }
-        
-        // Recover from invalid/empty JSON by creating a minimal valid object
-        // This ensures the record is visible even if the JSON payload is missing/corrupt
-        if (!$stored) {
-            $uniqueName = $row['unique_name'] ?? 'Unknown Project';
-            $defaultCat = 'companies';
-            if (isset($row['_source_table']) && $row['_source_table'] === 'referrers') {
-                $defaultCat = 'referrers';
-            } elseif (isset($row['_source_table']) && $row['_source_table'] === 'locations') {
-                $defaultCat = 'locations';
-            }
-            
-            $stored = [
-                'name' => $uniqueName,
-                'category' => $defaultCat,
-                'data' => [
-                    // Minimal data structure to prevent JS errors
-                    'facilities' => [],
-                    'operator' => ['name' => $uniqueName],
-                    'referrerConsultants' => [],
-                    'referrerIndividual' => [
-                        'name' => $uniqueName,
-                        'notes' => 'Record exists but data is incomplete.'
-                    ]
-                ],
-                'timestamp' => $row['updated_at'] ?? $row['created_at'] ?? date('c'),
-                'is_recovered' => true
-            ];
-            
-            if (isset($row['_source_table'])) {
-                $stored['_sourceTable'] = $row['_source_table'];
-            }
-        }
 
-        // Detect format by checking where facilities/operator live:
-        // NEW format: { name, data: { operator, facilities }, category?, timestamp? }
-        // OLD format: { operator, facilities, ... } (at root level)
-        
-        $hasNestedFacilities = isset($stored['data']['facilities']) && is_array($stored['data']['facilities']);
-        $hasNestedOperator = isset($stored['data']['operator']) && is_array($stored['data']['operator']);
-        $hasRootFacilities = isset($stored['facilities']) && is_array($stored['facilities']);
-        $hasRootOperator = isset($stored['operator']) && is_array($stored['operator']);
-        
-        // It's NEW format if data contains facilities OR operator
-        $isNewFormat = $hasNestedFacilities || $hasNestedOperator;
-        
-        // Determine category based on source table if not explicitly set
-        $defaultCategory = 'companies';
-        if (isset($row['_source_table'])) {
-            if ($row['_source_table'] === 'locations') {
-                $defaultCategory = 'locations';
-            } elseif ($row['_source_table'] === 'referrers') {
-                $defaultCategory = 'referrers';
-            }
-        }
+    /**
+     * Internal helper to fetch and process rows from a table
+     */
+    $processTable = function($tableName, $sourceLabel) use ($pdo, &$projects) {
+        try {
+            $stmt = $pdo->query("SELECT * FROM `$tableName` LIMIT 1000");
+            if (!$stmt) return;
+            
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $uniqueName = $row['unique_name'] ?? $row['slug'] ?? 'unknown_' . ($row['id'] ?? uniqid());
+                
+                // Extract JSON payload
+                $rawJson = $row['json_data'] ?? $row['data'] ?? $row['json'] ?? $row['project_data'] ?? null;
+                if (!$rawJson) continue;
+                
+                $data = json_decode($rawJson, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log("JSON Parse Error for $uniqueName: " . json_last_error_msg());
+                    continue;
+                }
 
-        if ($isNewFormat) {
-            // New format: data is already nested correctly, just pass through
-            $stored['name'] = $stored['name'] ?? $row['unique_name'];
-            $stored['category'] = $stored['category'] ?? $defaultCategory;
-            $stored['currentFacilityIndex'] = $stored['currentFacilityIndex'] ?? 0;
-            $stored['timestamp'] = $stored['timestamp'] ?? date('c');
-            $stored['_sourceTable'] = $row['_source_table'] ?? 'facilities';
-            $projects[$row['unique_name']] = $stored;
-        } else {
-            // Old format: facilities/operator at root, need to wrap in 'data'
-            $projects[$row['unique_name']] = [
-                'name' => $row['unique_name'],
-                'data' => $stored,
-                'timestamp' => $stored['timestamp'] ?? date('c'),
-                'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => $stored['category'] ?? $defaultCategory,
-                '_sourceTable' => $row['_source_table'] ?? 'facilities'
-            ];
+                // Standardize the project object
+                $project = $data;
+                
+                // Ensure name and category are set
+                $project['name'] = $project['name'] ?? $uniqueName;
+                if ($sourceLabel === 'referrers') {
+                    $project['category'] = $project['category'] ?? 'referrers';
+                }
+                
+                // Add source metadata
+                $project['_sourceTable'] = $sourceLabel;
+                $project['_dbId'] = $row['id'] ?? null;
+                $project['_uniqueName'] = $uniqueName;
+
+                // Use a unique key to prevent any overwriting
+                $projects[$sourceLabel . '_' . $uniqueName] = $project;
+            }
+        } catch (Exception $e) {
+            // Silently skip if table doesn't exist
         }
+    };
+
+    // 1. Process Referrers (High Priority)
+    $processTable('referrers_master', 'referrers');
+    if (!empty($prefix)) {
+        $processTable($prefix . 'referrers_master', 'referrers');
     }
 
-    // Fetch published wiki submissions
+    // 2. Process Facilities
+    $processTable('facilities_master', 'facilities');
+    if (!empty($prefix)) {
+        $processTable($prefix . 'facilities_master', 'facilities');
+    }
+
+    // 3. Process Locations
+    $processTable('locations_master', 'locations');
+    if (!empty($prefix)) {
+        $processTable($prefix . 'locations_master', 'locations');
+    }
+
+    // 4. Process Wiki Master
+    $processTable('wiki_master', 'wiki');
+
+    // 5. Add Wiki Submissions (Published)
     try {
-        // wiki_submissions table (no prefix based on check-tables.php)
-        $stmtWiki = $pdo->prepare("SELECT id, program_name, json_data, updated_at FROM wiki_submissions WHERE status = 'published'");
-        $stmtWiki->execute();
-        $wikiResults = $stmtWiki->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($wikiResults as $wRow) {
-            $wData = json_decode($wRow['json_data'], true);
-            if (!$wData) continue;
-
-            $opName = !empty($wData['ownerName']) ? $wData['ownerName'] : (!empty($wData['programName']) ? $wData['programName'] : 'Unknown Operator');
-            $progName = !empty($wData['programName']) ? $wData['programName'] : 'Unnamed Facility';
-
-            $facList = [];
-
-            // Derive status from yearsActive
-            $yearsActive = $wData['yearsActive'] ?? '';
-            $status = 'Unknown';
-            if (stripos($yearsActive, 'present') !== false || stripos($yearsActive, 'current') !== false || substr(trim($yearsActive), -1) === '-') {
-                $status = 'Open';
-            } elseif (preg_match('/[0-9]{4}/', $yearsActive)) {
-                // If it has a year and isn't "present", assume closed if it looks like a range ending
-                // Simple heuristic: if it has 2 years "1990-2000", likely closed.
-                // If just "2000", unclear.
-                // Wiki format is often "1990-2005"
-                if (preg_match('/[0-9]{4}\s*-\s*[0-9]{4}/', $yearsActive)) {
-                    $status = 'Closed';
-                }
+        $stmt = $pdo->query("SELECT * FROM wiki_submissions WHERE status = 'published'");
+        if ($stmt) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $data = json_decode($row['json_data'], true);
+                if (!$data) continue;
+                
+                $projects['wiki_sub_' . $row['id']] = [
+                    'name' => $data['programName'] ?? $row['program_name'],
+                    'category' => 'companies',
+                    'data' => $data,
+                    '_sourceTable' => 'wiki_submission',
+                    '_dbId' => $row['id']
+                ];
             }
-
-            // Primary facility (the one described in the main form)
-            $facList[] = [
-                'identification' => [
-                    'name' => $progName,
-                    'currentOperator' => $opName
-                ],
-                'location' => $wData['cityState'] ?? '',
-                'address' => $wData['mainAddress'] ?? '',
-                'facilityDetails' => [
-                    'type' => $wData['programType'] ?? '',
-                    'capacity' => $wData['capacity'] ?? '',
-                    'ageRange' => [
-                        'text' => $wData['ageRange'] ?? ''
-                    ]
-                ],
-                'operatingPeriod' => [
-                    'startYear' => $wData['yearFounded'] ?? '',
-                    'text' => $yearsActive,
-                    'status' => $status
-                ]
-            ];
-
-            // Additional campuses
-            if (!empty($wData['campuses']) && is_array($wData['campuses'])) {
-                foreach ($wData['campuses'] as $campus) {
-                    if (empty($campus['campusName'])) continue;
-                    $facList[] = [
-                        'identification' => [
-                            'name' => $campus['campusName'],
-                            'currentOperator' => $opName
-                        ],
-                        'location' => $campus['campusLocation'] ?? ''
-                    ];
-                }
-            }
-
-            $project = [
-                'name' => $opName, // Group by Operator Name
-                'category' => 'companies',
-                'timestamp' => $wRow['updated_at'] ?? date('c'),
-                'data' => [
-                    'operator' => [
-                        'name' => $opName,
-                        'location' => '', 
-                    ],
-                    'facilities' => $facList
-                ]
-            ];
-
-            // Use a unique key for the project to avoid collision with master data
-            // Prefixing with 'wiki_'
-            $projects['wiki_' . $wRow['id']] = $project;
         }
-    } catch (PDOException $e) {
-        // If wiki_submissions table doesn't exist or errors, just ignore and continue with master data
-        error_log("Wiki submissions fetch error: " . $e->getMessage());
-    }
+    } catch (Exception $e) {}
 
-    echo json_encode(['success' => true, 'projects' => $projects]);
+    echo json_encode([
+        'success' => true, 
+        'projects' => $projects,
+        'count' => count($projects)
+    ]);
 
-} catch (PDOException $e) {
+} catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Server Error: ' . $e->getMessage()
+    ]);
 }
-?>
