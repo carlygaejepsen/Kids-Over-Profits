@@ -16,12 +16,13 @@ echo "   wp-config.php at ABSPATH: " . (file_exists($calculated_abspath . 'wp-co
 
 echo "3. Trying referrers_master query...\n";
 try {
-    $stmt = $pdo->prepare("SELECT unique_name FROM referrers_master LIMIT 5");
+    $stmt = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master LIMIT 5");
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo "   SUCCESS! Found " . count($results) . " rows:\n";
     foreach ($results as $row) {
-        echo "   - " . $row['unique_name'] . "\n";
+        $jsonLen = isset($row['json_data']) ? strlen($row['json_data']) : 'MISSING';
+        echo "   - " . $row['unique_name'] . " (JSON len: $jsonLen)\n";
     }
 } catch (Exception $e) {
     echo "   ERROR: " . $e->getMessage() . "\n";

@@ -32,10 +32,22 @@ try {
         }
     }
     
+    // Helper to extract JSON from row
+    function extractJsonFromRow($row) {
+        // Check known JSON column names in order of preference
+        if (isset($row['json_data'])) return $row['json_data'];
+        if (isset($row['data'])) return $row['data'];
+        if (isset($row['json'])) return $row['json'];
+        if (isset($row['project_data'])) return $row['project_data'];
+        return '{}';
+    }
+
     // Query all three master tables: facilities, referrers, and locations
+    // Use SELECT * to be robust against column name changes
+    
     $facilitiesResults = [];
     try {
-        $stmt1 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}facilities_master");
+        $stmt1 = $pdo->prepare("SELECT * FROM {$prefix}facilities_master");
         $stmt1->execute();
         $facilitiesResults = $stmt1->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -45,7 +57,7 @@ try {
     // Fallback: If prefixed table is empty or failed, try non-prefixed table
     if (empty($facilitiesResults)) {
         try {
-            $stmt1b = $pdo->prepare("SELECT unique_name, json_data FROM facilities_master");
+            $stmt1b = $pdo->prepare("SELECT * FROM facilities_master");
             $stmt1b->execute();
             $facilitiesResults = $stmt1b->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -55,17 +67,28 @@ try {
 
     $referrersResults = [];
     try {
-        $stmt2 = $pdo->prepare("SELECT unique_name, json_data FROM referrers_master");
+        $stmt2 = $pdo->prepare("SELECT * FROM {$prefix}referrers_master");
         $stmt2->execute();
         $referrersResults = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         // Table might not exist
     }
 
+    // Fallback for referrers
+    if (empty($referrersResults)) {
+        try {
+            $stmt2b = $pdo->prepare("SELECT * FROM referrers_master");
+            $stmt2b->execute();
+            $referrersResults = $stmt2b->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ignore error
+        }
+    }
+
     // locations_master is optional - may not exist yet
     $locationsResults = [];
     try {
-        $stmt3 = $pdo->prepare("SELECT unique_name, json_data FROM {$prefix}locations_master");
+        $stmt3 = $pdo->prepare("SELECT * FROM {$prefix}locations_master");
         $stmt3->execute();
         $locationsResults = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -75,7 +98,7 @@ try {
     // Fallback for locations
     if (empty($locationsResults)) {
         try {
-            $stmt3b = $pdo->prepare("SELECT unique_name, json_data FROM locations_master");
+            $stmt3b = $pdo->prepare("SELECT * FROM locations_master");
             $stmt3b->execute();
             $locationsResults = $stmt3b->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -114,7 +137,13 @@ try {
     $projects = [];
     foreach ($results as $row) {
         // Decode the stored JSON
-        $stored = json_decode($row['json_data'], true);
+        $jsonString = extractJsonFromRow($row);
+        $stored = json_decode($jsonString, true);
+        
+        // Skip invalid JSON
+        if (!$stored) {
+            continue;
+        }
 
         // Detect format by checking where facilities/operator live:
         // NEW format: { name, data: { operator, facilities }, category?, timestamp? }
