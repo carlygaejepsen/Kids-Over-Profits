@@ -67,12 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                       (consultants.length === 1 && !agency.name);
 
                 // Determine agency name
-                let agencyName;
-                if (isIndependent) {
-                    agencyName = 'Independent Consultants';
-                } else {
-                    // Use project name as fallback for agency name
-                    agencyName = cleanText(agency.name || project.name || 'Unknown Agency');
+                let agencyName = cleanText(agency.name);
+                
+                // If no agency name, use project name (effectively treating as independent/solo)
+                if (!agencyName) {
+                    agencyName = cleanText(project.name || 'Unknown Agency');
                 }
                 
                 if (!agencyMap.has(agencyName)) {
