@@ -20,7 +20,7 @@ get_header();
 
         <!-- Page Header -->
         <div class="page-header" style="margin-bottom: 2em;">
-            <h1 style="color: #00004d; font-size: 2.5em; margin-bottom: 0.5em;">Educational Consultant Directory</h1>
+            <h1 style="color: #00004d; font-size: 2.5em; margin-bottom: 0.5em;">Educational Consultant Directory (DEBUG MODE ACTIVE)</h1>
             <p style="font-size: 1.1em; color: #666;">Searchable database of Educational Consultants, Ed Cons, and Referral Agencies</p>
         </div>
 
@@ -72,7 +72,7 @@ window.referrerConfig = {
 };
 </script>
 
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/referrer-index.js?v=<?php echo time(); ?>"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/referrer-index.js?v=FORCE_REFRESH_V1"></script>
 
 <?php
 get_footer();
