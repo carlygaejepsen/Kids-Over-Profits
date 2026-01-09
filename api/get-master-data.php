@@ -152,6 +152,7 @@ try {
             $stored['category'] = $stored['category'] ?? $defaultCategory;
             $stored['currentFacilityIndex'] = $stored['currentFacilityIndex'] ?? 0;
             $stored['timestamp'] = $stored['timestamp'] ?? date('c');
+            $stored['_sourceTable'] = $row['_source_table'] ?? 'facilities';
             $projects[$row['unique_name']] = $stored;
         } else {
             // Old format: facilities/operator at root, need to wrap in 'data'
@@ -160,7 +161,8 @@ try {
                 'data' => $stored,
                 'timestamp' => $stored['timestamp'] ?? date('c'),
                 'currentFacilityIndex' => $stored['currentFacilityIndex'] ?? 0,
-                'category' => $stored['category'] ?? $defaultCategory
+                'category' => $stored['category'] ?? $defaultCategory,
+                '_sourceTable' => $row['_source_table'] ?? 'facilities'
             ];
         }
     }

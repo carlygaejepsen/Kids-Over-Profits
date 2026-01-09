@@ -50,106 +50,97 @@ document.addEventListener('DOMContentLoaded', function() {
         const agencyMap = new Map();
 
         Object.values(projects).forEach(project => {
-            let category = project.category || (project.data && project.data.category) || 'companies';
             const pData = project.data || {};
 
-            // Check for referrer data content
-            const hasReferrerData = (project.referrerConsultants && project.referrerConsultants.length > 0) ||
-                                    (pData.referrerConsultants && pData.referrerConsultants.length > 0) ||
-                                    (project.referrerAgency && project.referrerAgency.name) ||
-                                    (pData.referrerAgency && pData.referrerAgency.name);
+            // Only include entries from referrers_master table
+            if (project._sourceTable !== 'referrers') {
+                return;
+            }
 
-            // Include if: category is 'referrers' OR has referrer data but NOT a location project
-            const isReferrerEntry = category === 'referrers' ||
-                                    (hasReferrerData && category !== 'locations');
+            // Robustly find referrer data: check root first, then data object
+            const agency = project.referrerAgency || pData.referrerAgency || {};
+            let consultants = project.referrerConsultants || pData.referrerConsultants || [];
 
-            if (isReferrerEntry) {
-                
-                // Robustly find referrer data: check root first, then data object
-                const agency = project.referrerAgency || pData.referrerAgency || {};
-                let consultants = project.referrerConsultants || pData.referrerConsultants || [];
-                
-                // Fallback to referrerIndividual if array is empty
-                if (!consultants.length) {
-                    const ind = project.referrerIndividual || pData.referrerIndividual;
-                    if (ind) consultants = [ind];
-                }
-                
-                // Check if independent
-                const isIndependent = project.isIndependentConsultant === true || 
-                                      pData.isIndependentConsultant === true || 
-                                      agency.isIndependent === true ||
-                                      project.referrerType === 'individual' ||
-                                      pData.referrerType === 'individual' ||
-                                      (consultants.length === 1 && !agency.name);
+            // Fallback to referrerIndividual if array is empty
+            if (!consultants.length) {
+                const ind = project.referrerIndividual || pData.referrerIndividual;
+                if (ind) consultants = [ind];
+            }
 
-                // Determine agency name
-                let agencyName = cleanText(agency.name);
-                
-                // If no agency name, use project name (effectively treating as independent/solo)
-                if (!agencyName) {
-                    agencyName = cleanText(project.name || 'Unknown Agency');
-                }
-                
-                if (!agencyMap.has(agencyName)) {
-                    agencyMap.set(agencyName, {
-                        name: agencyName,
-                        location: agency.location || agency.state || '', // Agency location
-                        consultants: []
-                    });
-                }
+            // Check if independent
+            const isIndependent = project.isIndependentConsultant === true ||
+                                  pData.isIndependentConsultant === true ||
+                                  agency.isIndependent === true ||
+                                  project.referrerType === 'individual' ||
+                                  pData.referrerType === 'individual' ||
+                                  (consultants.length === 1 && !agency.name);
 
-                const group = agencyMap.get(agencyName);
+            // Determine agency name
+            let agencyName = cleanText(agency.name);
 
-                // If no individual consultants, list the agency itself as a "consultant" card
-                if (consultants.length === 0) {
+            // If no agency name, use project name (effectively treating as independent/solo)
+            if (!agencyName) {
+                agencyName = cleanText(project.name || 'Unknown Agency');
+            }
+
+            if (!agencyMap.has(agencyName)) {
+                agencyMap.set(agencyName, {
+                    name: agencyName,
+                    location: agency.location || agency.state || '',
+                    consultants: []
+                });
+            }
+
+            const group = agencyMap.get(agencyName);
+
+            // If no individual consultants, list the agency itself as a "consultant" card
+            if (consultants.length === 0) {
+                group.consultants.push({
+                    name: agencyName,
+                    type: 'Agency',
+                    location: agency.location || agency.state || '',
+                    website: agency.website || '',
+                    email: agency.email || '',
+                    phone: agency.phone || '',
+                    notes: 'Agency listing'
+                });
+            } else {
+                consultants.forEach(c => {
+                    if (!c) return; // Skip invalid entries
+
+                    let cName;
+                    if (isIndependent) {
+                        // For an individual, just make the name match the project name
+                        cName = project.name;
+                    } else {
+                        cName = (c.firstName || '') + ' ' + (c.lastName || '');
+                        if (!cName.trim()) cName = c.fullName || '';
+                        if (!cName.trim() && consultants.length === 1) cName = project.name;
+                    }
+
+                    // Construct better location string
+                    let cLoc = '';
+                    if (c.city && c.state) cLoc = `${c.city}, ${c.state}`;
+                    else cLoc = c.location || c.state || c.city || agency.location || agency.state || '';
+
                     group.consultants.push({
-                        name: agencyName,
-                        type: 'Agency',
-                        location: agency.location || agency.state || '',
-                        website: agency.website || '',
-                        email: agency.email || '',
-                        phone: agency.phone || '',
-                        notes: 'Agency listing'
+                        name: (cName || 'Unknown Consultant').trim(),
+                        title: c.title || c.role || c.credentials || c.status || 'Consultant',
+                        location: cLoc,
+                        website: c.website || agency.website || '',
+                        email: c.email || agency.email || '',
+                        phone: c.phone || agency.phone || '',
+                        notes: c.notes || '',
+                        // Pass through extra fields for rendering
+                        credentials: c.credentials,
+                        education: c.education,
+                        affiliations: c.affiliations,
+                        knownReferrals: c.knownReferrals || c.facilitiesReferred,
+                        schoolDistricts: c.schoolDistricts,
+                        pastTTIJobs: c.pastTTIJobs,
+                        lawsuits: c.lawsuits
                     });
-                } else {
-                    consultants.forEach(c => {
-                        if (!c) return; // Skip invalid entries
-                        
-                        let cName;
-                        if (isIndependent) {
-                            // For an individual, just make the name match the project name
-                            cName = project.name;
-                        } else {
-                            cName = (c.firstName || '') + ' ' + (c.lastName || '');
-                            if (!cName.trim()) cName = c.fullName || '';
-                            if (!cName.trim() && consultants.length === 1) cName = project.name;
-                        }
-                        
-                        // Construct better location string
-                        let cLoc = '';
-                        if (c.city && c.state) cLoc = `${c.city}, ${c.state}`;
-                        else cLoc = c.location || c.state || c.city || agency.location || agency.state || '';
-
-                        group.consultants.push({
-                            name: (cName || 'Unknown Consultant').trim(),
-                            title: c.title || c.role || c.credentials || c.status || 'Consultant',
-                            location: cLoc,
-                            website: c.website || agency.website || '',
-                            email: c.email || agency.email || '',
-                            phone: c.phone || agency.phone || '',
-                            notes: c.notes || '',
-                            // Pass through extra fields for rendering
-                            credentials: c.credentials,
-                            education: c.education,
-                            affiliations: c.affiliations,
-                            knownReferrals: c.knownReferrals || c.facilitiesReferred,
-                            schoolDistricts: c.schoolDistricts,
-                            pastTTIJobs: c.pastTTIJobs,
-                            lawsuits: c.lawsuits
-                        });
-                    });
-                }
+                });
             }
         });
 
