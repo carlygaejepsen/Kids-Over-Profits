@@ -1,0 +1,229 @@
+/* =================================================================
+   REFERRER DIRECTORY - Fresh Dedicated Styles
+   ================================================================= */
+
+.referrer-directory-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* --- Alphabet Filter --- */
+.referrer-alpha-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.alpha-btn {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #00004d;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.alpha-btn:hover {
+    background: #eef2ff;
+}
+
+.alpha-btn.active {
+    background: #00004d;
+    color: white;
+    border-color: #00004d;
+}
+
+/* --- Grid Layout --- */
+.referrer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    padding: 10px;
+}
+
+/* --- Referrer Card --- */
+.referrer-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.referrer-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.referrer-card-header {
+    background: #00004d;
+    color: white;
+    padding: 20px;
+}
+
+.referrer-main-name {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.referrer-sub-label {
+    display: block;
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.referrer-card-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* --- Consultant Profile --- */
+.consultant-profile {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.consultant-profile:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.consultant-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #00004d;
+    margin-bottom: 2px;
+}
+
+.consultant-title {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* --- Detail Fields --- */
+.referrer-detail-row {
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 0.92em;
+}
+
+.detail-icon {
+    width: 20px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.detail-label {
+    font-weight: 700;
+    margin-right: 6px;
+    color: #555;
+}
+
+.detail-value {
+    color: #333;
+    word-break: break-word;
+}
+
+.detail-value a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.detail-value a:hover {
+    text-decoration: underline;
+}
+
+/* --- Expandable Sections --- */
+.referrer-expandable {
+    margin-top: 15px;
+}
+
+.referrer-expandable summary {
+    padding: 8px 12px;
+    background: #f1f3f5;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #495057;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.referrer-expandable summary::-webkit-details-marker {
+    display: none;
+}
+
+.referrer-expandable summary::after {
+    content: '▼';
+    font-size: 0.8em;
+}
+
+.referrer-expandable[open] summary::after {
+    content: '▲';
+}
+
+.expandable-content {
+    padding: 12px;
+    background: #fafbfc;
+    border: 1px solid #eee;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+}
+
+/* --- Lists --- */
+.data-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.data-list-item {
+    padding: 6px 0;
+    border-bottom: 1px dashed #e9ecef;
+    font-size: 0.88em;
+}
+
+.data-list-item:last-child {
+    border-bottom: none;
+}
+
+.job-role {
+    font-weight: 700;
+    display: block;
+    color: #333;
+}
+
+.job-employer {
+    color: #666;
+    font-size: 0.95em;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .referrer-grid {
+        grid-template-columns: 1fr;
+    }
+}
