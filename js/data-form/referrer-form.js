@@ -216,6 +216,12 @@ function ensureReferrerDataStructures() {
                 merged.firstName = parts.shift() || '';
                 merged.lastName = parts.join(' ');
             }
+        } else if (window.currentProjectName && window.formData.referrerConsultants.length === 1) {
+            // Fallback to project name if no consultant name is found and it's a single-consultant project
+            merged.fullName = window.currentProjectName;
+            const parts = window.currentProjectName.split(/\s+/);
+            merged.firstName = parts.shift() || '';
+            merged.lastName = parts.join(' ');
         }
         if (!merged.education && merged.credentials) {
             merged.education = merged.credentials;
