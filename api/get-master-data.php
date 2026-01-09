@@ -101,6 +101,12 @@ try {
         // Table doesn't exist yet
     }
     
+    // DEBUG: Log referrers count
+    error_log("REFERRERS DEBUG: Found " . count($referrersResults) . " rows from referrers_master");
+    foreach ($referrersResults as $r) {
+        error_log("REFERRERS DEBUG: Row unique_name = " . $r['unique_name']);
+    }
+
     // Mark source tables for proper categorization
     foreach ($locationsResults as &$row) {
         $row['_source_table'] = 'locations';
@@ -256,7 +262,9 @@ try {
         error_log("Wiki submissions fetch error: " . $e->getMessage());
     }
 
-    echo json_encode(['success' => true, 'projects' => $projects]);
+    // DEBUG: Include referrer row names in output
+    $debugReferrerNames = array_map(function($r) { return $r['unique_name']; }, $referrersResults);
+    echo json_encode(['success' => true, 'projects' => $projects, '_debug_referrers' => $debugReferrerNames, '_debug_referrers_count' => count($referrersResults)]);
 
 } catch (PDOException $e) {
     http_response_code(500);
