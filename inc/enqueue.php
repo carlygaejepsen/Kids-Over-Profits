@@ -1133,6 +1133,12 @@ function enqueue_data_form_script() {
                 'api' => array(
                     'root' => esc_url_raw(rest_url('kop/v1/')),
                     'nonce' => wp_create_nonce('wp_rest')
+                ),
+                'endpoints' => array(
+                    'SAVE_PROJECT' => get_stylesheet_directory_uri() . '/api/save-master.php',
+                    'SAVE_SUGGESTION' => get_stylesheet_directory_uri() . '/api/save-suggestion.php',
+                    'LOAD_PROJECTS' => get_stylesheet_directory_uri() . '/api/get-master-data.php',
+                    'AUTOCOMPLETE' => get_stylesheet_directory_uri() . '/api/get-autocomplete.php'
                 )
             );
 
@@ -1189,10 +1195,12 @@ function enqueue_news_processor_scripts() {
         // Localize script with API details
         wp_localize_script(
             'news-processor-script',
-            'newsProcessorConfig',
+            'KOP_NewsProcessor_Settings',
             array(
-                'apiEndpoint' => $theme_uri . '/api/process-news-ai.php',
-                'submissionEndpoint' => $theme_uri . '/api/save-news-submission.php',
+                'apiUrl' => $theme_uri . '/api/process-news-ai.php',
+                'submissionUrl' => $theme_uri . '/api/save-news-submission.php',
+                'savedValuesUrl' => $theme_uri . '/api/saved-values.php',
+                'duplicateCheckUrl' => $theme_uri . '/api/check-news-duplicate.php',
                 'nonce' => wp_create_nonce('news_processor_nonce')
             )
         );
@@ -1285,6 +1293,13 @@ function kop_enqueue_wiki_editor_assets() {
         file_exists($autolinker_path) ? filemtime($autolinker_path) : time(),
         true
     );
+    wp_localize_script(
+        'kop-auto-linker-script',
+        'autoLinkerSettings',
+        array(
+            'basePath' => get_stylesheet_directory_uri() . '/js/data/reddit-wiki'
+        )
+    );
 
     // Enqueue wiki-parser (wiki-editor depends on it)
     $parser_relative = '/js/wiki-parser.js';
@@ -1322,7 +1337,8 @@ function kop_enqueue_wiki_editor_assets() {
         'wikiEditorSettings',
         array(
             'isAdmin' => current_user_can('manage_options'),
-            'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php'
+            'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php',
+            'markdownBaseUrl' => get_stylesheet_directory_uri() . '/markdown_output/'
         )
     );
 }

@@ -34,7 +34,8 @@ class TTIProgramAutoLinker {
      */
     async loadFromComponents() {
         try {
-            const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+                        const settings = window.autoLinkerSettings || {};
+            const basePath = settings.basePath || '/wp-content/themes/child/js/data/reddit-wiki';
 
             // Load programs array
             const programsResponse = await fetch(`${basePath}/programs-array.json`);
@@ -64,7 +65,10 @@ class TTIProgramAutoLinker {
      */
     async loadFromMonolithic() {
         try {
-            const response = await fetch('/wp-content/themes/child/js/data/tti-program-links.json');
+            const settings = window.autoLinkerSettings || {};
+            const basePath = settings.basePath || '/wp-content/themes/child/js/data/reddit-wiki';
+            const monoPath = basePath.replace(/\/reddit-wiki\/?$/, '/tti-program-links.json');
+            const response = await fetch(monoPath);
             if (!response.ok) {
                 console.warn('TTI program links database not found. Auto-linking disabled.');
                 return false;
@@ -91,7 +95,8 @@ class TTIProgramAutoLinker {
      * @returns {Promise<object[]>} Array of programs from specified states
      */
     async loadStateFiles(states) {
-        const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+                    const settings = window.autoLinkerSettings || {};
+            const basePath = settings.basePath || '/wp-content/themes/child/js/data/reddit-wiki';
         const allPrograms = [];
 
         for (const state of states) {
@@ -118,7 +123,8 @@ class TTIProgramAutoLinker {
      */
     async getAvailableStates() {
         try {
-            const basePath = '/wp-content/themes/child/js/data/reddit-wiki';
+                        const settings = window.autoLinkerSettings || {};
+            const basePath = settings.basePath || '/wp-content/themes/child/js/data/reddit-wiki';
             const response = await fetch(`${basePath}/index.json`);
             if (!response.ok) return null;
 

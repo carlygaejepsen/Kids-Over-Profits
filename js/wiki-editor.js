@@ -129,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadEmptySlugMapping() {
         try {
-            const resp = await fetch('/wp-content/themes/child/markdown_output/empty_files_updated.md', { cache: 'no-cache' });
+            const baseUrl = editorSettings.markdownBaseUrl || '/wp-content/themes/child/markdown_output/';
+            const resp = await fetch(`${baseUrl}empty_files_updated.md`, { cache: 'no-cache' });
                 if (resp.ok && resp.status === 200) {
                 const text = await resp.text();
                 emptySlugSet = new Set();
@@ -559,7 +560,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchSubmissionByName = async (programName) => {
         if (!programName) return null;
         try {
-            const response = await fetch(`/wp-content/themes/child/api/save-wiki-submission.php?search=${encodeURIComponent(programName)}`);
+            const apiBase = editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php';
+            const response = await fetch(`${apiBase}?search=${encodeURIComponent(programName)}`);
             if (!response.ok) return null;
             const result = await response.json();
             if (result.success && Array.isArray(result.data) && result.data.length > 0) {
@@ -573,9 +575,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadLocalIndexMarkdown = async (slug) => {
         if (!slug) return '';
+        const baseUrl = editorSettings.markdownBaseUrl || '/wp-content/themes/child/markdown_output/';
         const candidates = [
-            `/wp-content/themes/child/markdown_output/index_${slug}.md`,
-            `/wp-content/themes/child/markdown_output/index_${slug}_.md`
+            `${baseUrl}index_${slug}.md`,
+            `${baseUrl}index_${slug}_.md`
         ];
         for (const path of candidates) {
             try {

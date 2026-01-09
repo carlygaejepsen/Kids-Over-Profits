@@ -339,7 +339,7 @@
             });
 
             try {
-                const response = await fetch('/wp-content/themes/child/api/save-suggestion.php', {
+                const response = await fetch(window.KOP_FormConfig.API_ENDPOINTS.SAVE_SUGGESTION, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
