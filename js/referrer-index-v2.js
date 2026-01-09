@@ -1,6 +1,6 @@
 /**
- * REFERRER DIRECTORY JS - Final Robust Version
- * Merges all possible consultant data paths. Strictly referrers_master.
+ * REFERRER DIRECTORY JS - Ultra-Permissive Version
+ * Every row in referrers_master renders a card. Period.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => res.json())
         .then(res => {
             if (res.success && res.projects) {
-                // Filter strictly for referrers source table
+                // STRICT FILTER: Only entries from referrers_master table
                 allReferrers = Object.values(res.projects).filter(p => p._sourceTable === 'referrers');
                 allReferrers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
                 
@@ -45,11 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const locs = new Set();
         data.forEach(p => {
             const d = p.data || {};
-            const items = [];
-            if (d.referrerIndividual) items.push(d.referrerIndividual);
-            if (Array.isArray(d.referrerConsultants)) d.referrerConsultants.forEach(i => items.push(i));
-            
-            items.forEach(c => {
+            const list = [];
+            if (d.referrerIndividual) list.push(d.referrerIndividual);
+            if (Array.isArray(d.referrerConsultants)) d.referrerConsultants.forEach(c => list.push(c));
+            list.forEach(c => {
                 if (!c) return;
                 const s = clean(c.state) || (c.location && c.location.includes(',') ? c.location.split(',').pop().trim() : null);
                 if (s) locs.add(s.toUpperCase());
@@ -105,45 +104,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
         filteredReferrers.forEach(p => {
             const pData = p.data || {};
-            const agency = pData.referrerAgency || pData.referrerGroup || {};
+            const agency = pData.referrerAgency || pData.referrerGroup || pData.referrerAgencyInfo || {};
             
-            // AGGREGATE ALL POSSIBLE CONSULTANT ENTRIES
-            let rawList = [];
-            if (pData.referrerIndividual) rawList.push(pData.referrerIndividual);
-            if (Array.isArray(pData.referrerConsultants)) rawList = rawList.concat(pData.referrerConsultants);
-            
-            // Filter out entries that are completely empty
-            rawList = rawList.filter(c => c && (c.firstName || c.lastName || c.fullName || c.role || c.email || c.phone || (c.pastTTIJobs && c.pastTTIJobs.length)));
+            // Gather all consultant-like objects in the record
+            let consultants = [];
+            if (pData.referrerIndividual) consultants.push(pData.referrerIndividual);
+            if (Array.isArray(pData.referrerConsultants)) {
+                pData.referrerConsultants.forEach(c => { if(c) consultants.push(c); });
+            }
 
-            // Deduplicate by Name to prevent doubles (especially for individuals like Mary Jo)
-            const consultants = [];
+            // DEDUPLICATE AND RESOLVE NAMES
+            const resolvedList = [];
             const seenNames = new Set();
-            rawList.forEach(c => {
+
+            consultants.forEach(c => {
                 const cName = clean([c.firstName, c.lastName].join(' ')) || clean(c.fullName) || p.name;
                 const nameKey = cName.toLowerCase();
                 if (!seenNames.has(nameKey)) {
                     seenNames.add(nameKey);
-                    consultants.push({ ...c, resolvedName: cName });
+                    resolvedList.push({ ...c, resolvedName: cName });
                 }
             });
 
-            // Absolute Fallback
-            if (consultants.length === 0) consultants.push({ resolvedName: p.name, role: 'Consultant' });
+            // GUARANTEE: If no specific consultants found, render the project itself as a consultant
+            if (resolvedList.length === 0) {
+                resolvedList.push({ resolvedName: p.name, role: 'Educational Consultant' });
+            }
 
             const card = document.createElement('div');
             card.className = 'referrer-card';
-            
-            const isAgency = !!(clean(agency.name) || clean(pData.referrerAgency?.name));
+            const isAgency = !!(clean(agency.name) || (pData.referrerType === 'group'));
 
             card.innerHTML = `
                 <div class="referrer-card-header">
                     <h3 class="referrer-main-name">${esc(p.name)}</h3>
-                    <span class="referrer-sub-label">${isAgency ? 'Referral Agency' : 'Educational Consultant'}</span>
+                    <span class="referrer-sub-label">${isAgency ? 'Referral Agency' : 'Independent Consultant'}</span>
                 </div>
                 <div class="referrer-card-body">
-                    ${consultants.map(c => {
+                    ${resolvedList.map(c => {
                         const cTitle = clean(c.role || c.title || (isAgency ? 'Consultant' : 'Educational Consultant'));
-                        const cLoc = clean([c.city, c.state].filter(Boolean).join(', ')) || c.location || agency.location || '';
+                        const cLoc = clean([c.city, c.state].filter(Boolean).join(', ')) || c.location || agency.location || agency.state || '';
 
                         return `
                         <div class="consultant-profile">
