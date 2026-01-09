@@ -235,6 +235,34 @@ document.addEventListener('DOMContentLoaded', function() {
             let contentHtml = `<div class="operator-content-scrollable">`;
             
             group.consultants.forEach(c => {
+                // Helper to render array/list fields
+                const renderListField = (label, items) => {
+                    if (!items || items.length === 0) return '';
+                    const listHtml = items.map(i => {
+                        if (typeof i === 'object') {
+                            // Handle job/role objects
+                            const parts = [];
+                            if (i.role) parts.push(i.role);
+                            if (i.organization || i.employer) parts.push(i.organization || i.employer);
+                            return parts.join(' at ');
+                        }
+                        return escapeHtml(i);
+                    }).filter(Boolean).join(', ');
+                    
+                    if (!listHtml) return '';
+                    return `<div class="field-row full-width"><span class="field-label">${label}</span><span class="field-value">${listHtml}</span></div>`;
+                };
+
+                let extraDetails = '';
+                extraDetails += renderListField('Credentials', c.credentials ? [c.credentials] : []);
+                extraDetails += renderListField('Education', c.education ? [c.education] : []);
+                extraDetails += renderListField('Affiliations', c.affiliations);
+                extraDetails += renderListField('Known Referrals', c.knownReferrals);
+                extraDetails += renderListField('School Districts', c.schoolDistricts);
+                extraDetails += renderListField('Past TTI Jobs', c.pastTTIJobs);
+                if (c.lawsuits) extraDetails += `<div class="field-row full-width"><span class="field-label">Lawsuits</span><span class="field-value">${escapeHtml(c.lawsuits)}</span></div>`;
+                if (c.notes) extraDetails += `<div class="field-row full-width"><span class="field-label">Notes</span><span class="field-value">${escapeHtml(c.notes)}</span></div>`;
+
                 contentHtml += `
                     <div class="facility-card status-open"> <!-- Reuse facility-card -->
                         <div class="facility-name">${c.name}</div>
@@ -250,7 +278,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${c.website ? `<div class="field-row full-width"><span class="field-label">Web</span><span class="field-value"><a href="${c.website}" target="_blank">${c.website.replace(/^https?:\/\//,'')}</a></span></div>` : ''}
                         </div>
                         
-                        ${c.notes ? `<div class="facility-expanded-info"><summary>Notes</summary><p style="padding:10px; font-size:0.9em;">${c.notes}</p></div>` : ''}
+                        ${extraDetails ? `
+                        <div class="facility-details">
+                            <details class="facility-expanded-info">
+                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                                <div class="facility-extra-content">
+                                    ${extraDetails}
+                                </div>
+                            </details>
+                        </div>` : ''}
                     </div>
                 `;
             });
