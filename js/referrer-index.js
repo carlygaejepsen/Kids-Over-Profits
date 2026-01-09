@@ -50,10 +50,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Robustly find referrer data: check root first, then data object
                 const agency = project.referrerAgency || pData.referrerAgency || {};
-                const consultants = project.referrerConsultants || pData.referrerConsultants || [];
+                let consultants = project.referrerConsultants || pData.referrerConsultants || [];
                 
-                // Use project name as fallback for agency name
-                const agencyName = cleanText(agency.name || project.name || 'Independent Consultants');
+                // Fallback to referrerIndividual if array is empty
+                if (!consultants.length) {
+                    const ind = project.referrerIndividual || pData.referrerIndividual;
+                    if (ind) consultants = [ind];
+                }
+                
+                // Check if independent
+                const isIndependent = project.isIndependentConsultant === true || 
+                                      pData.isIndependentConsultant === true || 
+                                      agency.isIndependent === true ||
+                                      (project.referrerType === 'individual') ||
+                                      (pData.referrerType === 'individual');
+
+                // Determine agency name
+                let agencyName;
+                if (isIndependent) {
+                    agencyName = 'Independent Consultants';
+                } else {
+                    agencyName = cleanText(agency.name || project.name || 'Unknown Agency');
+                }
                 
                 if (!agencyMap.has(agencyName)) {
                     agencyMap.set(agencyName, {
