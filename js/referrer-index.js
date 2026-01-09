@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Fetch Data ---
     function fetchData() {
         const config = window.referrerConfig || {};
-        const url = config.jsonFileUrls ? config.jsonFileUrls[0] : '/api/get-master-data.php';
+        const url = config.jsonFileUrls ? config.jsonFileUrls[0] : '/wp-content/themes/child/api/get-master-data.php';
 
         fetch(url)
             .then(response => response.json())
@@ -48,9 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function processData(projects) {
         const agencyMap = new Map();
-
-        // Debug: log all projects and their _sourceTable values
-        console.log('All projects:', Object.entries(projects).map(([k, v]) => ({ key: k, name: v.name, _sourceTable: v._sourceTable, category: v.category })));
 
         Object.values(projects).forEach(project => {
             const pData = project.data || {};
