@@ -53,14 +53,17 @@ document.addEventListener('DOMContentLoaded', function() {
             let category = project.category || (project.data && project.data.category) || 'companies';
             const pData = project.data || {};
 
-            // Debug: find Mary Jo
-            if (project.name && project.name.toLowerCase().includes('mary')) {
-                console.log('Found Mary Jo entry:', { name: project.name, category, projectCategory: project.category, dataCategory: pData.category, project });
-            }
+            // Check for referrer data content
+            const hasReferrerData = (project.referrerConsultants && project.referrerConsultants.length > 0) ||
+                                    (pData.referrerConsultants && pData.referrerConsultants.length > 0) ||
+                                    (project.referrerAgency && project.referrerAgency.name) ||
+                                    (pData.referrerAgency && pData.referrerAgency.name);
 
-            // Only process entries explicitly categorized as referrers
-            // (Skip locations/facilities that happen to have embedded referrer data)
-            if (category === 'referrers') {
+            // Include if: category is 'referrers' OR has referrer data but NOT a location project
+            const isReferrerEntry = category === 'referrers' ||
+                                    (hasReferrerData && category !== 'locations');
+
+            if (isReferrerEntry) {
                 
                 // Robustly find referrer data: check root first, then data object
                 const agency = project.referrerAgency || pData.referrerAgency || {};
