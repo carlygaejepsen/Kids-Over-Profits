@@ -46,8 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
             let category = project.category || (project.data && project.data.category) || 'companies';
             
             if (category === 'referrers') {
-                const pData = project.data || project;
-                const agency = pData.referrerAgency || {};
+                const pData = project.data || {};
+                
+                // Robustly find referrer data: check root first, then data object
+                const agency = project.referrerAgency || pData.referrerAgency || {};
+                const consultants = project.referrerConsultants || pData.referrerConsultants || [];
+                
                 // Use project name as fallback for agency name
                 const agencyName = cleanText(agency.name || project.name || 'Independent Consultants');
                 
@@ -60,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const group = agencyMap.get(agencyName);
-                const consultants = pData.referrerConsultants || [];
 
                 // If no individual consultants, list the agency itself as a "consultant" card
                 if (consultants.length === 0) {
