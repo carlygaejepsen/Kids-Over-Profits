@@ -10,7 +10,7 @@ require_once __DIR__ . '/config.php';
 echo "   Config loaded. PDO exists: " . ($pdo ? 'YES' : 'NO') . "\n\n";
 
 echo "2. Checking ABSPATH...\n";
-$calculated_abspath = dirname(dirname(dirname(__DIR__))) . '/';
+$calculated_abspath = dirname(dirname(dirname(dirname(__DIR__)))) . '/';
 echo "   Calculated ABSPATH: $calculated_abspath\n";
 echo "   wp-config.php at ABSPATH: " . (file_exists($calculated_abspath . 'wp-config.php') ? 'EXISTS' : 'NOT FOUND') . "\n\n";
 

@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 try {
     // Get WordPress table prefix from wp-config.php
     if (!defined('ABSPATH')) {
-        define('ABSPATH', dirname(dirname(dirname(__DIR__))) . '/');
+        define('ABSPATH', dirname(dirname(dirname(dirname(__DIR__)))) . '/');
     }
     
     $wp_config_path = ABSPATH . 'wp-config.php';

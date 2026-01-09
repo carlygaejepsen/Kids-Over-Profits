@@ -23,6 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 
+// Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(dirname(dirname(dirname(__DIR__)))) . '/');
+    if (file_exists(ABSPATH . 'wp-config.php')) {
+        require_once ABSPATH . 'wp-config.php';
+    }
+}
+
 try {
     // GET request - retrieve submissions
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
