@@ -1,6 +1,7 @@
 /**
- * REFERRER DIRECTORY JS - Absolute Data Renderer
- * Renders LITERALLY every field available in the record without icons.
+ * REFERRER DIRECTORY JS - Ultimate Data Integrity Version
+ * Ensures every consultant within an agency gets a card-style view.
+ * Renders LITERALLY every field available.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -71,14 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function renderField(label, value) {
         const val = clean(value);
-        if (!val || val === 'null') return '';
-        
-        // Handle Links
+        if (!val || val === 'null' || val === 'undefined') return '';
         if (val.startsWith('http')) {
-            return `<div class="kv-pair"><span class="kv-key">${label}</span><span class="kv-val"><a href="${val}" target="_blank">Link</a></span></div>`;
+            return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value"><a href="${val}" target="_blank">Website Link</a></span></div>`;
         }
-        
-        return `<div class="kv-pair"><span class="kv-key">${label}</span><span class="kv-val">${esc(val)}</span></div>`;
+        return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
     function renderList(list) {
@@ -91,18 +89,19 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'referrer-card';
             
             const pData = p.data || {};
-            // Type Detection
-            const type = pData.referrerType || (pData.isIndependentConsultant === false ? 'group' : 'individual');
-            const label = type === 'group' ? 'Referral Agency / Group' : 'Independent Consultant';
+            const agency = pData.referrerAgency || pData.referrerGroup || {};
             
-            // Collect Profiles
+            // Labels
+            const isIndy = pData.isIndependentConsultant === true || pData.referrerType === 'individual';
+            const label = isIndy ? 'Independent Consultant' : 'Referral Agency / Group';
+            
+            // Profiles Collection
             const profileMap = new Map();
             const raw = [];
             if (pData.referrerIndividual) raw.push(pData.referrerIndividual);
-            if (Array.isArray(pData.referrerConsultants)) pData.referrerConsultants.forEach(c => raw.push(c));
+            if (Array.isArray(pData.referrerConsultants)) pData.referrerConsultants.forEach(c => { if(c) raw.push(c); });
             
             raw.forEach(c => {
-                if (!c) return;
                 const name = clean([c.firstName, c.lastName].join(' ')) || clean(c.fullName) || p.name;
                 const key = name.toLowerCase();
                 if (!profileMap.has(key)) profileMap.set(key, { ...c, resolvedName: name });
@@ -112,85 +111,92 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.name }];
+            const profiles = Array.from(profileMap.values());
+            if (profiles.length === 0) profiles.push({ resolvedName: p.name });
 
-            // Header
-            card.innerHTML = `
+            // Card Header
+            let html = `
                 <div class="referrer-card-header">
                     <h3 class="referrer-main-name">${esc(p.name)}</h3>
                     <span class="referrer-sub-label">${label}</span>
                 </div>
-                <div class="referrer-card-body">
-                    ${profiles.map(c => {
-                        const cTitle = clean(c.role || c.title || 'Educational Consultant');
-                        const cLoc = clean([c.city, c.state].filter(Boolean).join(', ')) || c.location || pData.referrerAgency?.location || '';
+                <div class="referrer-card-body">`;
+
+            // Agency Details (If it's a group or has specific agency data)
+            if (!isIndy || clean(agency.name)) {
+                html += `
+                    <div class="agency-info-section">
+                        <div class="section-label">Organization Details</div>
+                        ${renderField('Organization', agency.name || p.name)}
+                        ${renderField('Address', agency.address)}
+                        ${renderField('City', agency.city)}
+                        ${renderField('State', agency.state)}
+                        ${renderField('Website', agency.website)}
+                        ${renderField('Notes', agency.notes)}
+                    </div>`;
+            }
+
+            // Consultant Sub-Cards
+            profiles.forEach(c => {
+                const cTitle = clean(c.role || c.title || 'Consultant');
+                const cLoc = clean([c.city, c.state].filter(Boolean).join(', ')) || c.location || '';
+                const pastJobs = Array.isArray(c.pastTTIJobs) ? c.pastTTIJobs : [];
+                const known = Array.isArray(c.knownReferrals) ? c.knownReferrals : (Array.isArray(c.facilitiesReferred) ? c.facilitiesReferred : []);
+                const affiliations = Array.isArray(c.affiliations) ? c.affiliations : [];
+                const districts = Array.isArray(c.schoolDistricts) ? c.schoolDistricts : [];
+
+                html += `
+                    <div class="consultant-sub-card">
+                        <div class="consultant-name-header">${esc(c.resolvedName)}</div>
                         
-                        // Lists
-                        const pastJobs = Array.isArray(c.pastTTIJobs) ? c.pastTTIJobs : [];
-                        const known = Array.isArray(c.knownReferrals) ? c.knownReferrals : (Array.isArray(c.facilitiesReferred) ? c.facilitiesReferred : []);
-                        const affs = Array.isArray(c.affiliations) ? c.affiliations : [];
-                        const dists = Array.isArray(c.schoolDistricts) ? c.schoolDistricts : [];
+                        ${renderField('Role', cTitle)}
+                        ${renderField('Status', c.status)}
+                        ${renderField('Location', cLoc)}
+                        ${renderField('Phone', c.phone)}
+                        ${renderField('Email', c.email)}
+                        ${renderField('Website', c.website)}
+                        ${renderField('Education', c.education)}
+                        ${renderField('Credentials', c.credentials)}
+                        ${renderField('Lawsuits', c.lawsuits)}
 
-                        return `
-                        <div class="profile-section">
-                            <div class="profile-header">${esc(c.resolvedName)}</div>
-                            <div class="data-block">
-                                ${renderField('Role', cTitle)}
-                                ${renderField('Status', c.status)}
-                                ${renderField('Location', cLoc)}
-                                ${renderField('Phone', c.phone)}
-                                ${renderField('Email', c.email)}
-                                ${renderField('Website', c.website)}
-                                ${renderField('Credentials', c.credentials)}
-                                ${renderField('Education', c.education)}
-                                ${renderField('Lawsuits', c.lawsuits)}
-                                
-                                ${pastJobs.length ? `
-                                    <details class="details-group">
-                                        <summary>Career History (${pastJobs.length})</summary>
-                                        <div class="details-content">
-                                            <ul class="nested-list">
-                                                ${pastJobs.map(j => `<li class="nested-item"><strong>${esc(j.role)}</strong> at ${esc(j.employer || j.organization)}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </details>` : ''}
+                        ${pastJobs.length ? `
+                            <div class="list-section">
+                                <div class="section-label">Career History</div>
+                                <ul class="data-list">
+                                    ${pastJobs.map(j => `<li class="data-list-item"><span class="job-role">${esc(j.role)}</span><span class="job-meta">at ${esc(j.employer || j.organization)}</span></li>`).join('')}
+                                </ul>
+                            </div>` : ''}
 
-                                ${known.length && clean(known[0]) ? `
-                                    <details class="details-group">
-                                        <summary>Known Facility Referrals</summary>
-                                        <div class="details-content">
-                                            <ul class="nested-list">
-                                                ${known.filter(clean).map(r => `<li class="nested-item">${esc(r)}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </details>` : ''}
+                        ${known.length && clean(known[0]) ? `
+                            <div class="list-section">
+                                <div class="section-label">Facility Referrals</div>
+                                <ul class="data-list">
+                                    ${known.filter(clean).map(r => `<li class="data-list-item"><span class="item-primary">${esc(r)}</span></li>`).join('')}
+                                </ul>
+                            </div>` : ''}
 
-                                ${affs.length && clean(affs[0]) ? `
-                                    <details class="details-group">
-                                        <summary>Professional Affiliations</summary>
-                                        <div class="details-content">
-                                            <ul class="nested-list">
-                                                ${affs.filter(clean).map(a => `<li class="nested-item">${esc(a)}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </details>` : ''}
+                        ${affiliations.length && clean(affiliations[0]) ? `
+                            <div class="list-section">
+                                <div class="section-label">Affiliations</div>
+                                <ul class="data-list">
+                                    ${affiliations.filter(clean).map(a => `<li class="data-list-item"><span class="item-primary">${esc(a)}</span></li>`).join('')}
+                                </ul>
+                            </div>` : ''}
 
-                                ${dists.length && clean(dists[0]) ? `
-                                    <details class="details-group">
-                                        <summary>School Districts</summary>
-                                        <div class="details-content">
-                                            <ul class="nested-list">
-                                                ${dists.filter(clean).map(d => `<li class="nested-item">${esc(d)}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </details>` : ''}
+                        ${districts.length && clean(districts[0]) ? `
+                            <div class="list-section">
+                                <div class="section-label">School Districts</div>
+                                <ul class="data-list">
+                                    ${districts.filter(clean).map(d => `<li class="data-list-item">${esc(d)}</li>`).join('')}
+                                </ul>
+                            </div>` : ''}
 
-                                ${c.notes ? `<div style="margin-top:10px; font-size:0.9rem;"><strong>Notes:</strong><br>${esc(c.notes)}</div>` : ''}
-                            </div>
-                        </div>`;
-                    }).join('')}
-                </div>
-            `;
+                        ${c.notes ? `<div class="list-section"><div class="section-label">Notes</div><div class="data-value">${esc(c.notes)}</div></div>` : ''}
+                    </div>`;
+            });
+
+            html += `</div>`;
+            card.innerHTML = html;
             grid.appendChild(card);
         });
         container.appendChild(grid);

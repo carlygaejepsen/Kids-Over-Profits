@@ -1,7 +1,6 @@
 <?php
 /**
- * SPECIFIC REFERRERS API
- * Bypasses all complex logic to return ONLY referrers_master data.
+ * SPECIFIC REFERRERS API - standardized
  */
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -14,34 +13,27 @@ header('Pragma: no-cache');
 
 try {
     $results = [];
-    // We query the table directly. No prefixes, no fallback loops.
     $stmt = $pdo->query("SELECT * FROM referrers_master");
     
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $data = json_decode($row['json_data'], true);
         
-        // If JSON is broken, we still return the row with basic info
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $data = [
-                'name' => $row['unique_name'],
-                'is_corrupt' => true
-            ];
+        // Flatten if double-wrapped
+        if (isset($data['data']) && (isset($data['data']['referrerConsultants']) || isset($data['data']['referrerIndividual']))) {
+            $inner = $data['data'];
+            unset($data['data']);
+            $data = array_merge($data, $inner);
         }
 
         $results[] = [
             'id' => $row['id'],
-            'name' => $row['unique_name'],
-            'data' => $data,
+            'unique_name' => $row['unique_name'],
+            'raw_data' => $data, // Flattened data
             '_sourceTable' => 'referrers'
         ];
     }
 
-    echo json_encode([
-        'success' => true,
-        'count' => count($results),
-        'projects' => $results // Keeping key name for compatibility
-    ]);
-
+    echo json_encode(['success' => true, 'projects' => $results]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
