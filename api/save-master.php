@@ -961,7 +961,7 @@ if ($action === 'save') {
         
         // Auto-duplicate to location projects if this is a companies/referrers project
         $locationUpdates = [];
-        if ($category !== 'locations' && $category !== 'wiki') {
+        if ($category === 'companies' || $category === 'referrers') {
             $locationUpdates = updateLocationProjectsFromSave($pdo, $projectName, $data, $category);
         }
         

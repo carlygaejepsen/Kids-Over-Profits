@@ -1613,6 +1613,10 @@ function attachButtonListeners() {
         saveReferrerBtn.onclick = () => {
             const projectName = document.getElementById('referrer-project-name')?.value?.trim();
             if (projectName) {
+                // Ensure category is set correctly
+                if (window.formData) {
+                    window.formData.category = 'referrers';
+                }
                 window.KOP_API?.saveProjectToCloud?.(projectName);
             } else {
                 customAlert('Please enter a project name', 'Project Name Required').then(() => {
