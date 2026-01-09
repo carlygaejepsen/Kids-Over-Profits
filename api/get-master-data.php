@@ -181,6 +181,21 @@ try {
 
             $facList = [];
 
+            // Derive status from yearsActive
+            $yearsActive = $wData['yearsActive'] ?? '';
+            $status = 'Unknown';
+            if (stripos($yearsActive, 'present') !== false || stripos($yearsActive, 'current') !== false || substr(trim($yearsActive), -1) === '-') {
+                $status = 'Open';
+            } elseif (preg_match('/[0-9]{4}/', $yearsActive)) {
+                // If it has a year and isn't "present", assume closed if it looks like a range ending
+                // Simple heuristic: if it has 2 years "1990-2000", likely closed.
+                // If just "2000", unclear.
+                // Wiki format is often "1990-2005"
+                if (preg_match('/[0-9]{4}\s*-\s*[0-9]{4}/', $yearsActive)) {
+                    $status = 'Closed';
+                }
+            }
+
             // Primary facility (the one described in the main form)
             $facList[] = [
                 'identification' => [
@@ -198,7 +213,8 @@ try {
                 ],
                 'operatingPeriod' => [
                     'startYear' => $wData['yearFounded'] ?? '',
-                    'text' => $wData['yearsActive'] ?? ''
+                    'text' => $yearsActive,
+                    'status' => $status
                 ]
             ];
 

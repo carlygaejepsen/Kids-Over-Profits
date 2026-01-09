@@ -1,5 +1,8 @@
+
 // Location Index Display
 // Styled to match TTI Program Index (Grouped by State/Country)
+
+(function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     const containerId = 'locations-container';
@@ -23,7 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
         'WISCONSIN', 'WYOMING'
     ]);
 
-    // --- Helper Functions ---
+    // --- Helper Functions (Copied from tti-program-index.js) ---
+
+    const toArray = value => Array.isArray(value) ? value : [];
+
     const cleanText = value => {
         if (typeof value === 'string') return value.trim();
         if (typeof value === 'number') return String(value);
@@ -32,13 +38,104 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const isValueEmpty = (value) => {
         if (value === null || value === undefined) return true;
+        if (typeof value === 'boolean') return !value; 
         if (typeof value === 'string') {
             const lower = value.trim().toLowerCase();
-            const placeholders = ['none', 'no', 'n/a', 'na', 'unknown', 'null', '-', '--', 'tbd', ''];
-            return placeholders.includes(lower);
+            const placeholders = ['none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 'unknown', 'null', 'undefined', 'false', 'empty', '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 'not specified', 'not available', 'not applicable', 'no data', 'no info', 'no information', 'pending', 'none reported', 'not reported', 'no report', 'nil', 'unspecified'];
+            if (placeholders.includes(lower)) return true;
+            const stripped = lower.replace(/[.,;:\-–—]+$/, '');
+            if (placeholders.includes(stripped)) return true;
+            return false;
         }
-        if (Array.isArray(value)) return value.length === 0;
-        return false;
+        if (typeof value === 'number') return false; 
+        if (Array.isArray(value)) return value.length === 0 || value.every(item => isValueEmpty(item));
+        if (typeof value === 'object') {
+            const keys = Object.keys(value);
+            if (keys.length === 0) return true;
+            return keys.every(k => isValueEmpty(value[k]));
+        }
+        return true;
+    };
+
+    const htmlEscapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    const escapeHtml = value => {
+        const text = cleanText(value);
+        return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
+    };
+    const escapeAttribute = value => escapeHtml(value);
+
+    const joinList = values => toArray(values).filter(item => !isValueEmpty(item)).map(item => cleanText(item)).filter(item => item);
+
+    const formatFieldLabel = (key) => {
+        if (!key || typeof key !== 'string') return 'Field';
+        let cleanKey = key.replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '').replace(/\./g, ' ');
+        return cleanKey.replace(/([A-Z])/g, ' $1').replace(/has\s*/gi, '').replace(/\s+/g, ' ').trim().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') || 'Field';
+    };
+
+    const getNotesForKey = (fieldNotes, key) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object' || !key) return [];
+        const notes = fieldNotes[key];
+        if (!notes) return [];
+        const collected = [];
+        const addNote = (text) => { if (text && text.trim()) collected.push(text.trim()); };
+        if (Array.isArray(notes)) { notes.forEach(note => { if (typeof note === 'string') addNote(note); else if (note && typeof note === 'object' && note.text) addNote(note.text); }); } 
+        else if (typeof notes === 'string') addNote(notes); 
+        else if (notes && typeof notes === 'object' && notes.text) addNote(notes.text);
+        return collected;
+    };
+
+    const getValueFromKeys = (obj, keys) => {
+        if (!obj || typeof obj !== 'object') return null;
+        for (const key of keys) {
+            if (key.includes('.')) {
+                const parts = key.split('.');
+                let val = obj;
+                for (const part of parts) { val = val && val[part]; if (val === undefined || val === null) break; }
+                if (!isValueEmpty(val)) return typeof val === 'string' ? cleanText(val) : val;
+            } else {
+                if (!isValueEmpty(obj[key])) return typeof obj[key] === 'string' ? cleanText(obj[key]) : obj[key];
+            }
+        }
+        return null;
+    };
+
+    const getMergedLocation = (obj) => {
+        if (!obj || typeof obj !== 'object') return null;
+        const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        if (loc) return loc;
+        const city = getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
+        const state = getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
+        if (city && state) return `${city}, ${state}`;
+        return city || state || null;
+    };
+
+    const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
+        let notes = getNotesForKey(fieldNotes, key);
+        let matchedKey = key;
+        if (!notes.length && key.includes('.')) {
+            const leafKey = key.split('.').pop();
+            notes = getNotesForKey(fieldNotes, leafKey);
+            if (notes.length) matchedKey = leafKey;
+        }
+        if (!notes.length) return '';
+        if (usedKeys && matchedKey) usedKeys.add(matchedKey);
+        const noteText = notes.map(n => escapeHtml(n)).join('; ');
+        return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
+    };
+
+    const renderRemainingFieldNotes = (fieldNotes, usedKeys) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object') return '';
+        const items = [];
+        Object.keys(fieldNotes).forEach(key => {
+            if (usedKeys && usedKeys.has(key)) return;
+            const notes = getNotesForKey(fieldNotes, key);
+            if (!notes.length) return;
+            const label = formatFieldLabel(key);
+            notes.forEach(text => { items.push({ label, text }); });
+        });
+        if (!items.length) return '';
+        const list = items.map(({ label, text }) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`).join('');
+        return `<div class="facility-field-notes"><p><strong>Additional Field Notes</strong></p><ul>${list}</ul></div>`;
     };
 
     // --- Fetch Data ---
@@ -75,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pData = project.data || project;
                 const facilities = pData.facilities || [];
                 
-                // Only showing facilities for now (referrers could be added if desired)
                 if (facilities.length > 0) {
                     allLocations.push({
                         name: project.name,
@@ -86,9 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Sort A-Z
         allLocations.sort((a, b) => a.name.localeCompare(b.name));
-
         renderAlphabetFilter();
         filterAndRender();
     }
@@ -123,14 +217,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const matchesAlpha = !currentAlphaFilter || loc.name.toUpperCase().startsWith(currentAlphaFilter);
             
             if (matchesName && matchesType && matchesAlpha) {
-                // Return original location object (includes all facilities)
-                // Could filter facilities inside if we wanted deep search
                 return loc;
             }
             return null;
         }).filter(l => l !== null);
 
-        // Sort
         const sortVal = sortBy.value;
         filteredLocations.sort((a, b) => {
             if (sortVal === 'name') return a.name.localeCompare(b.name);
@@ -155,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         filteredLocations.forEach(loc => {
             const details = document.createElement('details');
-            details.className = 'operator-section'; // Reuse TTI styling
+            details.className = 'operator-section'; 
 
             // -- Location Header --
             let headerHtml = `
@@ -168,25 +259,121 @@ document.addEventListener('DOMContentLoaded', function() {
             // -- Location Content (Facilities) --
             let contentHtml = `<div class="operator-content-scrollable">`;
             
-            loc.facilities.forEach(f => {
-                const name = f.identification?.name || f.name || 'Unknown';
-                const type = f.facilityDetails?.type || f.type || '';
-                const years = f.operatingPeriod?.text || f.years_active || '';
-                const location = f.location || f.city || '';
-                const operator = f.identification?.currentOperator || f.operator || '';
+            loc.facilities.forEach(facility => {
+                // Full Facility Card Logic adapted from TTI index
+                const identification = facility && facility.identification ? facility.identification : {};
+                const facilityDetails = facility && facility.facilityDetails ? facility.facilityDetails : {};
+                const operatingPeriod = facility && facility.operatingPeriod ? facility.operatingPeriod : {};
+                const fieldNotes = (facility && facility.fieldNotes) || {};
+                const usedFieldNoteKeys = new Set();
+
+                const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
+                const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const statusLabel = escapeHtml(statusLabelRaw);
+
+                const facilityHeaderRaw = getValueFromKeys(facility, [
+                    'identification.name', 'identification.currentName', 
+                    'name', 'programName', 'facilityName', 'title'
+                ]);
+                const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
+                const facilityDatasetName = escapeAttribute(facilityHeaderRaw || 'Unnamed Facility');
+
+                const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
+
+                let yearRange = '';
+                let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active']);
+                if (facYears && typeof facYears === 'string') {
+                    yearRange = escapeHtml(facYears);
+                } else {
+                    const startYear = getValueFromKeys(operatingPeriod, ['startYear']) || getValueFromKeys(facility, ['founded', 'yearFounded']);
+                    if (startYear) {
+                        const endYear = getValueFromKeys(operatingPeriod, ['endYear']) || 'Present';
+                        yearRange = escapeHtml(`${startYear}-${endYear}`);
+                    }
+                }
+
+                // Subtext for Other Names AND Current Operator
+                const otherNames = getValueFromKeys(facility, ['identification.otherNames', 'otherNames', 'pastNames']);
+                const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'sourceOperator.name']);
+                
+                let subtextParts = [];
+                if (otherNames) {
+                    const names = Array.isArray(otherNames) ? otherNames : [otherNames];
+                    const validNames = names.filter(n => !isValueEmpty(n));
+                    if (validNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(validNames.join(', '))}`);
+                }
+                if (currentOp && !isValueEmpty(currentOp)) {
+                    subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
+                }
+                let otherNamesHtml = subtextParts.length > 0 ? `<div class="facility-header-subtext">${subtextParts.join('<br>')}</div>` : '';
+
+                // Build other facility data
+                let otherFacilityData = '';
+                const renderItemFac = (item) => {
+                    if (isValueEmpty(item)) return '';
+                    if (typeof item === 'string') return escapeHtml(item);
+                    if (typeof item === 'object' && !Array.isArray(item)) {
+                        if (item.url) return `<a href="${escapeAttribute(item.url)}" target="_blank">${escapeHtml(item.name || item.text || item.url)}</a>`;
+                        const parts = [];
+                        Object.entries(item).forEach(([k, v]) => { 
+                            if (!isValueEmpty(v) && (k === 'name' || k === 'value' || (k !== 'role' || v.trim()))) parts.push(escapeHtml(v)); 
+                        });
+                        return parts.join(' - ');
+                    }
+                    return escapeHtml(String(item));
+                };
+
+                const renderAllObjectFieldsFac = (obj, prefix = '', depth = 0) => {
+                    if (!obj || typeof obj !== 'object' || depth > 3) return [];
+                    const fields = [];
+                    const skipFullKeys = ['resources', 'fieldNotes'];
+                    Object.keys(obj).forEach(key => {
+                        const fullKey = prefix ? `${prefix}.${key}` : key;
+                        const value = obj[key];
+                        if (skipFullKeys.includes(fullKey)) return;
+                        if (isValueEmpty(value)) return;
+                        if (Array.isArray(value)) {
+                            if (value.length > 0 && !value.every(isValueEmpty)) fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: value, isList: true });
+                        } else if (typeof value === 'object') fields.push(...renderAllObjectFieldsFac(value, fullKey, depth + 1));
+                        else fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: cleanText(value) });
+                    });
+                    return fields;
+                };
+
+                const facilityFields = renderAllObjectFieldsFac(facility);
+                facilityFields.forEach(field => {
+                    if (isValueEmpty(field.value)) return;
+                    let renderedValue = '';
+                    if (field.isList) {
+                        const items = Array.isArray(field.value) ? field.value : [field.value];
+                        renderedValue = items.map(item => renderItemFac(item)).filter(Boolean).join(', ');
+                    } else {
+                        renderedValue = escapeHtml(field.value);
+                    }
+                    if (!renderedValue) return;
+                    otherFacilityData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
+                    otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
+                });
 
                 contentHtml += `
-                    <div class="facility-card status-open">
-                        <div class="facility-name">${name}</div>
-                        
+                    <div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
                         <div class="facility-summary">
-                            ${type ? `<p class="facility-type" style="font-style:italic;">${type}</p>` : ''}
-                            ${location ? `<p class="facility-location">📍 ${location}</p>` : ''}
-                            ${years ? `<p class="facility-years">📅 ${years}</p>` : ''}
+                            <h3 class="facility-name">${facilityHeader}</h3>
+                            ${otherNamesHtml}
+                            ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
+                            ${yearRange ? `<p class="facility-years">${yearRange}</p>` : ''}
+                            <p class="facility-status">
+                                <span class="status-badge status-${statusClass}">${statusLabel}</span>
+                            </p>
                         </div>
-
-                        <div class="facility-extra-content">
-                            ${operator ? `<div class="field-row full-width"><span class="field-label">Operator</span><span class="field-value">${operator}</span></div>` : ''}
+                        <div class="facility-details">
+                            <details class="facility-expanded-info">
+                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                                <div class="facility-extra-content">
+                                    ${otherFacilityData}
+                                    ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
+                                </div>
+                            </details>
                         </div>
                     </div>
                 `;
@@ -216,3 +403,5 @@ window.clearSearch = function() {
     if (typeFilter) typeFilter.value = '';
     if (searchInput) searchInput.dispatchEvent(new Event('input'));
 };
+
+})();
