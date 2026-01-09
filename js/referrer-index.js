@@ -89,13 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ind) consultants = [ind];
             }
 
-            // Check if independent
-            const isIndependent = project.isIndependentConsultant === true ||
+            // Check if independent - FORCE FALSE TO DEBUG/FIX RENDERING
+            const isIndependent = false; 
+            /* 
+            project.isIndependentConsultant === true ||
                                   pData.isIndependentConsultant === true ||
                                   agency.isIndependent === true ||
                                   project.referrerType === 'individual' ||
                                   pData.referrerType === 'individual' ||
                                   (consultants.length === 1 && !agency.name);
+            */
 
             // Determine agency name
             let agencyName = cleanText(agency.name);
