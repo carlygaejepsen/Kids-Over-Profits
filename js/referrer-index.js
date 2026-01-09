@@ -53,6 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
             let category = project.category || (project.data && project.data.category) || 'companies';
             const pData = project.data || {};
 
+            // Debug: find Mary Jo
+            if (project.name && project.name.toLowerCase().includes('mary')) {
+                console.log('Found Mary Jo entry:', { name: project.name, category, projectCategory: project.category, dataCategory: pData.category, project });
+            }
+
             // Only process entries explicitly categorized as referrers
             // (Skip locations/facilities that happen to have embedded referrer data)
             if (category === 'referrers') {
