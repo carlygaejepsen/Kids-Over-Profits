@@ -1,12 +1,12 @@
 /* =================================================================
-   REFERRER DIRECTORY - Fresh Dedicated Styles
+   REFERRER DIRECTORY - Strict Palette & High Contrast
    ================================================================= */
 
 .referrer-directory-container {
     max-width: 1200px;
     margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--kop-midnight-blue);
 }
 
 /* --- Alphabet Filter --- */
@@ -14,216 +14,185 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 5px;
+    gap: 8px;
     margin-bottom: 30px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    padding: 20px;
+    background: var(--kop-sand);
+    border-radius: 12px;
+    border: 2px solid var(--kop-border-secondary);
 }
 
 .alpha-btn {
-    padding: 6px 12px;
-    border: 1px solid #dee2e6;
-    background: white;
-    color: #00004d;
+    padding: 10px 16px;
+    border: 2px solid var(--kop-navy-blue);
+    background: var(--kop-white);
+    color: var(--kop-navy-blue);
     cursor: pointer;
-    border-radius: 4px;
-    font-weight: 600;
-    transition: all 0.2s;
+    border-radius: 6px;
+    font-weight: 800;
+    transition: all 0.2s ease;
 }
 
 .alpha-btn:hover {
-    background: #eef2ff;
+    background: var(--kop-navy-blue);
+    color: var(--kop-white);
 }
 
 .alpha-btn.active {
-    background: #00004d;
-    color: white;
-    border-color: #00004d;
+    background: var(--kop-navy-blue);
+    color: var(--kop-white);
+    box-shadow: 0 0 0 3px var(--kop-powder-blue);
 }
 
-/* --- Grid Layout --- */
+/* --- Grid --- */
 .referrer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 25px;
-    padding: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+    padding: 10px 0;
 }
 
-/* --- Referrer Card --- */
+/* --- Card Header --- */
 .referrer-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    background: var(--kop-white);
+    border-radius: 16px;
+    border: 3px solid var(--kop-navy-blue);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.referrer-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 15px rgba(0,4,53,0.1);
 }
 
 .referrer-card-header {
-    background: #00004d;
-    color: white;
-    padding: 20px;
+    background: var(--kop-navy-blue);
+    color: var(--kop-white) !important;
+    padding: 24px;
+    border-bottom: 6px solid var(--kop-orange);
 }
 
 .referrer-main-name {
     margin: 0;
-    font-size: 1.4em;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--kop-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .referrer-sub-label {
     display: block;
-    font-size: 0.9em;
-    opacity: 0.9;
-    margin-top: 4px;
-    font-style: italic;
+    font-size: 1rem;
+    color: var(--kop-soft-pastel-yellow) !important; /* High contrast on Navy */
+    margin-top: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
+/* --- Card Body --- */
 .referrer-card-body {
-    padding: 20px;
-    flex-grow: 1;
-}
-
-/* --- Consultant Profile --- */
-.consultant-profile {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.consultant-profile:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    padding: 24px;
+    background: var(--kop-white);
 }
 
 .consultant-name {
-    font-size: 1.1em;
-    font-weight: 700;
-    color: #00004d;
-    margin-bottom: 2px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--kop-midnight-blue);
+    margin-bottom: 4px;
 }
 
 .consultant-title {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue);
+    font-weight: 700;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--kop-orange);
+    display: inline-block;
+    padding-bottom: 4px;
 }
 
-/* --- Detail Fields --- */
-.referrer-detail-row {
+/* --- Detail Rows --- */
+.detail-item {
     display: flex;
-    margin-bottom: 8px;
-    font-size: 0.92em;
-}
-
-.detail-icon {
-    width: 20px;
-    margin-right: 8px;
-    flex-shrink: 0;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--kop-midnight-blue);
 }
 
 .detail-label {
-    font-weight: 700;
-    margin-right: 6px;
-    color: #555;
-}
-
-.detail-value {
-    color: #333;
-    word-break: break-word;
+    font-size: 1.3rem;
 }
 
 .detail-value a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.detail-value a:hover {
+    color: var(--kop-teal);
     text-decoration: underline;
+    font-weight: 800;
 }
 
-/* --- Expandable Sections --- */
+/* --- Expandables --- */
 .referrer-expandable {
     margin-top: 15px;
+    border: 3px solid var(--kop-navy-blue);
+    border-radius: 8px;
 }
 
 .referrer-expandable summary {
-    padding: 8px 12px;
-    background: #f1f3f5;
-    border-radius: 6px;
+    padding: 12px 16px;
+    background: var(--kop-soft-pastel-yellow);
+    color: var(--kop-midnight-blue);
+    font-weight: 800;
     cursor: pointer;
-    font-size: 0.85em;
-    font-weight: 700;
-    color: #495057;
     list-style: none;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-}
-
-.referrer-expandable summary::-webkit-details-marker {
-    display: none;
 }
 
 .referrer-expandable summary::after {
     content: '▼';
-    font-size: 0.8em;
+}
+
+.referrer-expandable[open] summary {
+    background: var(--kop-navy-blue);
+    color: var(--kop-white);
+    border-bottom: 3px solid var(--kop-navy-blue);
 }
 
 .referrer-expandable[open] summary::after {
     content: '▲';
 }
 
-.expandable-content {
+/* --- Career List --- */
+.info-item {
     padding: 12px;
-    background: #fafbfc;
-    border: 1px solid #eee;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
+    border-bottom: 1px solid var(--kop-sand);
 }
 
-/* --- Lists --- */
-.data-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.data-list-item {
-    padding: 6px 0;
-    border-bottom: 1px dashed #e9ecef;
-    font-size: 0.88em;
-}
-
-.data-list-item:last-child {
-    border-bottom: none;
-}
-
-.job-role {
-    font-weight: 700;
+.item-primary {
     display: block;
-    color: #333;
+    font-weight: 800;
+    color: var(--kop-midnight-blue);
+    margin-bottom: 2px;
 }
 
-.job-employer {
-    color: #666;
-    font-size: 0.95em;
+.item-secondary {
+    display: block;
+    font-weight: 700;
+    color: var(--kop-teal); /* Dark teal on white is accessible */
 }
 
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .referrer-grid {
-        grid-template-columns: 1fr;
-    }
+/* Force all text in cards to be dark/high contrast */
+.referrer-card-body, 
+.referrer-card-body *, 
+.expandable-content, 
+.expandable-content * {
+    color: var(--kop-midnight-blue);
+}
+
+/* Specific exceptions for links and secondary info */
+.detail-value a, 
+.item-secondary {
+    color: var(--kop-teal) !important;
 }
