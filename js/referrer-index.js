@@ -19,6 +19,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return '';
     };
 
+    const htmlEscapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    const escapeHtml = value => {
+        const text = cleanText(value);
+        return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
+    };
+    const escapeAttribute = value => escapeHtml(value);
+
     // --- Fetch Data ---
     function fetchData() {
         const config = window.referrerConfig || {};
