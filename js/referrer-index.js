@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 } else {
                     consultants.forEach(c => {
+                        if (!c) return; // Skip invalid entries
+                        
                         let cName;
                         if (isIndependent) {
                             // For an individual, just make the name match the project name
@@ -120,10 +122,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (!cName.trim() && consultants.length === 1) cName = project.name;
                         }
                         
+                        // Construct better location string
+                        let cLoc = '';
+                        if (c.city && c.state) cLoc = `${c.city}, ${c.state}`;
+                        else cLoc = c.location || c.state || c.city || agency.location || agency.state || '';
+
                         group.consultants.push({
                             name: (cName || 'Unknown Consultant').trim(),
-                            title: c.title || 'Consultant',
-                            location: c.location || c.state || agency.location || '',
+                            title: c.title || c.role || c.credentials || c.status || 'Consultant',
+                            location: cLoc,
                             website: c.website || agency.website || '',
                             email: c.email || agency.email || '',
                             phone: c.phone || agency.phone || '',
@@ -132,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             credentials: c.credentials,
                             education: c.education,
                             affiliations: c.affiliations,
-                            knownReferrals: c.knownReferrals,
+                            knownReferrals: c.knownReferrals || c.facilitiesReferred,
                             schoolDistricts: c.schoolDistricts,
                             pastTTIJobs: c.pastTTIJobs,
                             lawsuits: c.lawsuits
