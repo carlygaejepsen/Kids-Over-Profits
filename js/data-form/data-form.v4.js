@@ -1610,14 +1610,33 @@ function attachButtonListeners() {
 
     const saveReferrerBtn = document.getElementById('save-referrer-project-btn');
     if (saveReferrerBtn && !saveReferrerBtn.dataset.listenerAttached) {
-        saveReferrerBtn.onclick = () => {
+        saveReferrerBtn.onclick = async () => {
             const projectName = document.getElementById('referrer-project-name')?.value?.trim();
             if (projectName) {
-                // Ensure category is set correctly
+                // Ensure category is set correctly in both formData and projects cache
                 if (window.formData) {
                     window.formData.category = 'referrers';
                 }
-                window.KOP_API?.saveProjectToCloud?.(projectName);
+                // Also set in projects cache so saveProjectToCloud picks it up
+                if (!window.projects) window.projects = {};
+                if (!window.projects[projectName]) {
+                    window.projects[projectName] = { category: 'referrers' };
+                } else {
+                    window.projects[projectName].category = 'referrers';
+                }
+
+                // Call save with proper error handling
+                if (window.KOP_API && typeof window.KOP_API.saveProjectToCloud === 'function') {
+                    try {
+                        await window.KOP_API.saveProjectToCloud(projectName);
+                    } catch (err) {
+                        console.error('Failed to save referrer project:', err);
+                        showUploadStatus('Failed to save: ' + (err.message || 'Unknown error'), 'error');
+                    }
+                } else {
+                    console.error('KOP_API.saveProjectToCloud not available');
+                    showUploadStatus('Save function not available. Please refresh the page.', 'error');
+                }
             } else {
                 customAlert('Please enter a project name', 'Project Name Required').then(() => {
                     const projectNameInput = document.getElementById('referrer-project-name');

@@ -415,7 +415,28 @@
         renderArray: function(container, path, items) {
             if (!container) return;
             container.innerHTML = '';
-            const data = Array.isArray(items) ? items : [];
+
+            // If items is not an array, try to get/create it from formData via path resolution
+            let data;
+            if (Array.isArray(items)) {
+                data = items;
+            } else {
+                // Resolve the path to get/create the array in formData
+                if (typeof window.resolvePathTarget === 'function' && typeof window.getNestedValue === 'function' && typeof window.setNestedValue === 'function') {
+                    const { target, normalizedPath } = window.resolvePathTarget(path);
+                    if (target) {
+                        data = window.getNestedValue(target, normalizedPath);
+                        if (!Array.isArray(data)) {
+                            data = [];
+                            window.setNestedValue(target, normalizedPath, data);
+                        }
+                    } else {
+                        data = [];
+                    }
+                } else {
+                    data = [];
+                }
+            }
 
             const isPastTTIJobs = /pastTTIJobs$/.test(path);
             const isStaffRoleName = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
