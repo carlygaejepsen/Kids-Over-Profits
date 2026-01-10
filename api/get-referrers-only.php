@@ -1,6 +1,7 @@
 <?php
 /**
- * SPECIFIC REFERRERS API - standardized
+ * SPECIFIC REFERRERS API - Pure Passthrough
+ * Returns database rows exactly as they are, no "smart" restructuring.
  */
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -16,19 +17,14 @@ try {
     $stmt = $pdo->query("SELECT * FROM referrers_master");
     
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $data = json_decode($row['json_data'], true);
+        $json = $row['json_data'];
+        $decoded = json_decode($json, true);
         
-        // Flatten if double-wrapped
-        if (isset($data['data']) && (isset($data['data']['referrerConsultants']) || isset($data['data']['referrerIndividual']))) {
-            $inner = $data['data'];
-            unset($data['data']);
-            $data = array_merge($data, $inner);
-        }
-
+        // Return exactly what is in the DB, plus ID and Name for convenience
         $results[] = [
             'id' => $row['id'],
-            'unique_name' => $row['unique_name'],
-            'raw_data' => $data, // Flattened data
+            'db_name' => $row['unique_name'], // The name column in SQL
+            'payload' => $decoded,            // The JSON column content
             '_sourceTable' => 'referrers'
         ];
     }
