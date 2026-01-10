@@ -1,5 +1,5 @@
 /**
- * REFERRER DIRECTORY JS - Collapsible Cards & Smart Labels
+ * REFERRER DIRECTORY JS - Collapsible Tiles (TTI Style)
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -99,14 +99,13 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.className = 'referrer-grid';
 
         list.forEach(p => {
-            // Use details for collapsible card
+            // Collapsible Card Container
             const card = document.createElement('details');
             card.className = 'referrer-card';
             
             const rawProfiles = findConsultantData(p);
             const agency = findAgencyInfo(p);
             
-            // Deduplicate
             const profileMap = new Map();
             rawProfiles.forEach(c => {
                 if (!c) return;
@@ -120,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.db_name }];
 
-            // Label Logic
             let label = 'Referral Agency / Group';
             const jsonStr = JSON.stringify(p.payload || {});
             const explicitIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
@@ -131,11 +129,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 label = 'Independent Consultant';
             }
 
+            // SUMMARY: The "Tile" View
             let html = `
                 <summary class="referrer-card-summary">
                     <h3 class="referrer-main-name">${esc(p.db_name)}</h3>
                     <span class="referrer-sub-label">${label}</span>
                 </summary>
+                
+                <!-- BODY: The Expanded View -->
                 <div class="referrer-card-body">`;
 
             if (label !== 'Independent Consultant' && agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase()) {

@@ -1,5 +1,5 @@
 /* =================================================================
-   REFERRER DIRECTORY - Collapsible & Muted Palette
+   REFERRER DIRECTORY - Collapsible & Muted (Responsive TTI Style)
    ================================================================= */
 
 .referrer-directory-container {
@@ -15,14 +15,38 @@
     background: var(--kop-white);
     border: 2px solid var(--kop-teal);
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 8px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 
-.referrer-directory-container input, 
-.referrer-directory-container select {
+.referrer-directory-container input[type="text"] {
+    flex: 1;
+    min-width: 280px;
+    padding: 12px;
     border: 1px solid var(--kop-border-secondary);
+    border-radius: 6px;
+}
+
+.referrer-directory-container select {
+    padding: 12px;
+    min-width: 180px;
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 6px;
+}
+
+.referrer-directory-container button {
+    padding: 12px 24px;
+    background: var(--kop-navy-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* --- Alphabet Filter --- */
@@ -52,91 +76,122 @@
     color: var(--kop-white);
 }
 
-/* --- Grid --- */
+/* --- Grid (Matching TTI Layout) --- */
 .referrer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, 220px);
+    justify-content: center;
+    gap: 20px;
+    align-items: start;
 }
 
 /* --- Collapsible Card (Details Element) --- */
 .referrer-card {
+    width: 220px;
+    min-height: 220px;
     background: var(--kop-white);
-    border-radius: 12px;
+    border-radius: 8px;
     border: 2px solid var(--kop-navy-blue);
-    box-shadow: 0 4px 10px rgba(0,4,53,0.1);
-    overflow: hidden;
-    transition: box-shadow 0.2s;
+    box-shadow: 0 3px 8px rgba(0,4,53,0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
 }
 
-.referrer-card:hover {
-    box-shadow: 0 8px 20px rgba(0,4,53,0.15);
-}
-
-/* Summary is the Header */
+/* Summary is the Header - Collapsed State */
 .referrer-card-summary {
     background: var(--kop-navy-blue);
-    padding: 20px;
+    width: 100%;
+    height: 100%;
+    min-height: 216px;
+    padding: 15px;
     cursor: pointer;
     list-style: none;
     position: relative;
-    border-bottom: 4px solid var(--kop-orange);
-    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .referrer-card-summary:hover {
-    background: #000060; /* Slightly lighter navy */
+    background: #000060;
+}
+
+/* Expanded State */
+.referrer-card[open] {
+    width: 100%;
+    max-width: none;
+    grid-column: 1 / -1;
+    min-height: auto;
+    height: auto;
+}
+
+.referrer-card[open] .referrer-card-summary {
+    min-height: auto;
+    height: auto;
+    padding: 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 4px solid var(--kop-orange);
 }
 
 /* Hide default marker */
-.referrer-card-summary::-webkit-details-marker {
-    display: none;
-}
+.referrer-card-summary::-webkit-details-marker { display: none; }
+.referrer-card-summary::marker { display: none; }
 
-/* Toggle Indicator */
-.referrer-card-summary::after {
-    content: '+';
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.5rem;
-    color: var(--kop-white);
-    font-weight: 900;
-}
-
-.referrer-card[open] .referrer-card-summary::after {
-    content: '−';
-}
-
+/* Content Container */
 .referrer-main-name {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 900;
     color: var(--kop-white) !important;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     line-height: 1.2;
-    padding-right: 30px; /* Space for toggle icon */
 }
 
 .referrer-sub-label {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--kop-soft-pastel-yellow) !important;
-    margin-top: 6px;
     font-weight: 700;
     text-transform: uppercase;
+    margin-top: 5px;
+}
+
+/* Open/Close Text instead of absolute icon for better accessibility/context */
+.referrer-card-summary::after {
+    content: '+ View Details';
+    display: block;
+    font-size: 0.75rem;
+    color: var(--kop-white);
+    margin-top: 15px;
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.9;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.referrer-card[open] .referrer-card-summary::after {
+    content: '- Collapse';
+    margin-top: 0;
 }
 
 /* Card Body */
 .referrer-card-body {
     padding: 20px;
-    background: var(--kop-white);
+    background: #fdfdfd;
 }
 
 /* --- Agency Info --- */
 .agency-info-section {
-    background: var(--kop-sand); /* Muted Sand */
+    background: var(--kop-sand); 
     border: 1px solid var(--kop-border-secondary);
     border-radius: 8px;
     padding: 15px;
@@ -145,35 +200,23 @@
 
 /* --- Consultant Sub-Card --- */
 .consultant-sub-card {
-    background: #fafbfc; /* Very light neutral */
+    background: var(--kop-white);
     border: 1px solid var(--kop-border-secondary);
     border-radius: 8px;
     margin-top: 20px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     position: relative;
-}
-
-.consultant-sub-card::before {
-    content: "CONSULTANT PROFILE";
-    position: absolute;
-    top: -10px;
-    right: 15px;
-    background: var(--kop-teal);
-    color: var(--kop-white);
-    font-size: 0.7rem;
-    font-weight: 800;
-    padding: 2px 8px;
-    border-radius: 4px;
+    border-left: 6px solid var(--kop-teal);
 }
 
 .consultant-name-header {
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-size: 1.25rem;
+    font-weight: 900;
     color: var(--kop-midnight-blue);
     margin-bottom: 12px;
-    border-bottom: 2px solid var(--kop-border-secondary);
     padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
 }
 
 /* --- Data Rows --- */
@@ -190,22 +233,21 @@
 .data-label {
     font-weight: 700;
     color: var(--kop-navy-blue);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    opacity: 0.9;
 }
 
 .data-value {
     color: var(--kop-text-primary);
+    word-break: break-word;
 }
 
 .data-value a {
     color: var(--kop-teal) !important;
     text-decoration: underline;
-    font-weight: 700;
 }
 
-/* --- Expandable Lists --- */
+/* --- List Sections --- */
 .list-section {
     margin-top: 15px;
     padding-top: 10px;
@@ -215,7 +257,7 @@
 .section-label {
     font-weight: 800;
     color: var(--kop-orange);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin-bottom: 8px;
     text-transform: uppercase;
 }
@@ -224,22 +266,102 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
 }
 
 .data-list-item {
-    background: var(--kop-white);
+    background: #f9f9f9;
     border: 1px solid #eee;
-    padding: 8px;
-    margin-bottom: 6px;
+    padding: 10px;
     border-radius: 4px;
     border-left: 3px solid var(--kop-teal);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
-.job-role { font-weight: 700; display: block; }
-.job-meta { color: #666; font-size: 0.85rem; }
+.job-role { font-weight: 700; display: block; color: var(--kop-midnight-blue); }
+.job-meta { color: #666; font-size: 0.8rem; font-style: italic; }
 
-@media (max-width: 600px) {
-    .referrer-grid { grid-template-columns: 1fr; }
-    .data-row { grid-template-columns: 1fr; gap: 2px; }
+/* =================================================================
+   RESPONSIVE STYLES
+   ================================================================= */
+
+@media (max-width: 768px) {
+    .referrer-directory-container {
+        padding: 10px;
+    }
+
+    .referrer-directory-container .controls {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .referrer-directory-container input[type="text"],
+    .referrer-directory-container select,
+    .referrer-directory-container button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .referrer-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .referrer-card, 
+    details.referrer-card:not([open]) {
+        width: 100%;
+        min-height: 100px;
+    }
+
+    .referrer-card-summary {
+        min-height: 100px;
+        padding: 15px;
+    }
+
+    .referrer-card[open] .referrer-card-summary {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .referrer-card-summary::after {
+        margin-top: 10px;
+    }
+
+    .data-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+        margin-bottom: 12px;
+    }
+
+    .data-label {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .consultant-sub-card {
+        padding: 15px;
+    }
+
+    .data-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .referrer-alpha-filter {
+        gap: 4px;
+        padding: 10px;
+    }
+
+    .alpha-btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    .referrer-main-name {
+        font-size: 1.1rem;
+    }
 }
