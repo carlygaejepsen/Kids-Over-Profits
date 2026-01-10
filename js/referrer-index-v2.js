@@ -1,5 +1,5 @@
 /**
- * REFERRER DIRECTORY JS - Precise Labeling Fix
+ * REFERRER DIRECTORY JS - Forced Label Correction
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -118,21 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.db_name }];
 
-            // --- SMART LABEL LOGIC V2 ---
+            // --- FORCED LABEL LOGIC ---
             let label = 'Referral Agency / Group';
             
-            // 1. Explicit Flags
-            const jsonStr = JSON.stringify(p.payload || {});
-            const explicitIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
-            
-            // 2. Name Matching Heuristic
-            // If Agency Name === Consultant Name, it's an Individual
-            const agencyName = clean(agency.name);
-            const consultantName = profiles[0].resolvedName;
-            const namesMatch = agencyName && consultantName && agencyName.toLowerCase() === consultantName.toLowerCase();
-            const projectMatchesConsultant = p.db_name.toLowerCase() === consultantName.toLowerCase();
-
-            if (explicitIndy || (profiles.length === 1 && (namesMatch || projectMatchesConsultant))) {
+            // If there is ONLY ONE consultant, and their name matches the Project Name, it IS an individual.
+            // This overrides any other flags.
+            if (profiles.length === 1 && profiles[0].resolvedName.toLowerCase() === p.db_name.toLowerCase()) {
                 label = 'Independent Consultant';
             }
 
@@ -143,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="referrer-card-body">`;
 
-            // Only show Agency Info if it's NOT an individual, or if the agency name is DIFFERENT from the main name
-            if (label !== 'Independent Consultant' && agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase()) {
+            // Suppress agency block if it's an individual
+            if (label !== 'Independent Consultant' && clean(agency.name)) {
                 html += `
                     <div class="agency-info-section">
                         <div class="section-label">Organization Details</div>
