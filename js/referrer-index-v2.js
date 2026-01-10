@@ -1,6 +1,5 @@
 /**
- * REFERRER DIRECTORY JS - Deep Search Version
- * Locates consultant data regardless of nesting depth.
+ * REFERRER DIRECTORY JS - Deep Search & Smart Labeling
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 allReferrers = Object.values(res.projects);
                 allReferrers.sort((a, b) => (a.db_name || '').localeCompare(b.db_name || ''));
                 
-                // Build Location List
                 const locs = new Set();
                 allReferrers.forEach(p => {
                     const str = JSON.stringify(p).toUpperCase();
@@ -66,36 +64,22 @@ document.addEventListener('DOMContentLoaded', function() {
         renderList(filtered);
     }
 
-    /**
-     * Helper to find consultant arrays/objects anywhere in the payload
-     */
     function findConsultantData(root) {
         const candidates = [];
         const stack = [root];
         let depth = 0;
-
-        while (stack.length > 0 && depth < 5) { // Prevent infinite loops
+        while (stack.length > 0 && depth < 5) {
             const current = stack.pop();
             if (!current || typeof current !== 'object') continue;
-
-            // Check for direct keys
             if (current.referrerIndividual) candidates.push(current.referrerIndividual);
-            if (Array.isArray(current.referrerConsultants)) {
-                current.referrerConsultants.forEach(c => candidates.push(c));
-            }
-
-            // Drill down into likely containers
+            if (Array.isArray(current.referrerConsultants)) current.referrerConsultants.forEach(c => candidates.push(c));
             if (current.data) stack.push(current.data);
             if (current.payload) stack.push(current.payload);
-            
             depth++;
         }
         return candidates;
     }
 
-    /**
-     * Helper to find Agency Info
-     */
     function findAgencyInfo(root) {
         if (root?.payload?.referrerAgency) return root.payload.referrerAgency;
         if (root?.payload?.data?.referrerAgency) return root.payload.data.referrerAgency;
@@ -118,38 +102,40 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'referrer-card';
             
-            // 1. Find Data
             const rawProfiles = findConsultantData(p);
             const agency = findAgencyInfo(p);
             
-            // 2. Resolve Label
-            // Check flags deep in the object tree
-            const jsonStr = JSON.stringify(p.payload || {});
-            const isIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
-            const label = isIndy ? 'Independent Consultant' : 'Referral Agency / Group';
-
-            // 3. Deduplicate Profiles
+            // Deduplicate
             const profileMap = new Map();
             rawProfiles.forEach(c => {
                 if (!c) return;
                 const name = clean([c.firstName, c.lastName].join(' ')) || clean(c.fullName) || p.db_name;
                 const key = name.toLowerCase();
-                
-                if (!profileMap.has(key)) {
-                    profileMap.set(key, { ...c, resolvedName: name });
-                } else {
-                    // Merge fields
+                if (!profileMap.has(key)) profileMap.set(key, { ...c, resolvedName: name });
+                else {
                     const existing = profileMap.get(key);
-                    for (let k in c) {
-                        if (!existing[k] || (Array.isArray(existing[k]) && existing[k].length === 0)) existing[k] = c[k];
-                    }
+                    for (let k in c) if (!existing[k] || (Array.isArray(existing[k]) && existing[k].length === 0)) existing[k] = c[k];
                 }
             });
-
-            // Fallback if no consultants found
             const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.db_name }];
 
-            // 4. Render
+            // SMART LABEL LOGIC
+            let label = 'Referral Agency / Group';
+            
+            // Check Explicit Flags
+            const jsonStr = JSON.stringify(p.payload || {});
+            const explicitIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
+            const explicitGroup = jsonStr.includes('"referrerType":"group"') || jsonStr.includes('"referrerType":"agency"');
+
+            if (explicitIndy) {
+                label = 'Independent Consultant';
+            } else if (!explicitGroup) {
+                // Heuristic: If 1 profile and name matches project name -> Individual
+                if (profiles.length === 1 && profiles[0].resolvedName.toLowerCase() === p.db_name.toLowerCase()) {
+                    label = 'Independent Consultant';
+                }
+            }
+
             let html = `
                 <div class="referrer-card-header">
                     <h3 class="referrer-main-name">${esc(p.db_name)}</h3>
@@ -157,8 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="referrer-card-body">`;
 
-            // Agency Block (only if not independent OR explicitly named)
-            if (!isIndy && clean(agency.name)) {
+            if (label !== 'Independent Consultant' && clean(agency.name)) {
                 html += `
                     <div class="agency-info-section">
                         <div class="section-label">Organization Details</div>
@@ -168,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
             }
 
-            // Consultant Profiles
             profiles.forEach(c => {
                 const cTitle = clean(c.role || c.title || 'Educational Consultant');
                 const cLoc = clean([c.city, c.state].filter(Boolean).join(', ')) || c.location || agency.location || '';
@@ -211,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="list-section">
                                 <div class="section-label">Affiliations</div>
                                 <ul class="data-list">
-                                    ${affs.filter(clean).map(a => `<li class="data-list-item">${esc(a)}</li>`).join('')}
+                                    ${affs.filter(clean).map(a => `<li class="data-list-item"><span class="job-role">${esc(a)}</span></li>`).join('')}
                                 </ul>
                             </div>` : ''}
 
@@ -219,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="list-section">
                                 <div class="section-label">School Districts</div>
                                 <ul class="data-list">
-                                    ${dists.filter(clean).map(d => `<li class="data-list-item">${esc(d)}</li>`).join('')}
+                                    ${dists.filter(clean).map(d => `<li class="data-list-item"><span class="job-role">${esc(d)}</span></li>`).join('')}
                                 </ul>
                             </div>` : ''}
 
