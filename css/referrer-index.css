@@ -1,5 +1,5 @@
 /* =================================================================
-   REFERRER DIRECTORY - Collapsible & Muted
+   REFERRER DIRECTORY - Collapsible & Muted Palette
    ================================================================= */
 
 .referrer-directory-container {
@@ -10,7 +10,7 @@
     padding: 20px;
 }
 
-/* --- Search Controls --- */
+/* --- Controls --- */
 .referrer-directory-container .controls {
     background: var(--kop-white);
     border: 2px solid var(--kop-teal);
@@ -20,6 +20,38 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
+.referrer-directory-container input, 
+.referrer-directory-container select {
+    border: 1px solid var(--kop-border-secondary);
+}
+
+/* --- Alphabet Filter --- */
+.referrer-alpha-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background: var(--kop-sand);
+    border-radius: 10px;
+}
+
+.alpha-btn {
+    padding: 8px 14px;
+    border: 1px solid var(--kop-navy-blue);
+    background: var(--kop-white);
+    color: var(--kop-navy-blue);
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.alpha-btn.active {
+    background: var(--kop-navy-blue);
+    color: var(--kop-white);
+}
+
 /* --- Grid --- */
 .referrer-grid {
     display: grid;
@@ -27,16 +59,21 @@
     gap: 30px;
 }
 
-/* --- Collapsible Card --- */
+/* --- Collapsible Card (Details Element) --- */
 .referrer-card {
     background: var(--kop-white);
     border-radius: 12px;
     border: 2px solid var(--kop-navy-blue);
     box-shadow: 0 4px 10px rgba(0,4,53,0.1);
     overflow: hidden;
+    transition: box-shadow 0.2s;
 }
 
-/* Summary acts as the Header */
+.referrer-card:hover {
+    box-shadow: 0 8px 20px rgba(0,4,53,0.15);
+}
+
+/* Summary is the Header */
 .referrer-card-summary {
     background: var(--kop-navy-blue);
     padding: 20px;
@@ -48,7 +85,7 @@
 }
 
 .referrer-card-summary:hover {
-    background: #000066; /* Slightly lighter navy */
+    background: #000060; /* Slightly lighter navy */
 }
 
 /* Hide default marker */
@@ -56,26 +93,7 @@
     display: none;
 }
 
-.referrer-main-name {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--kop-white) !important;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    line-height: 1.2;
-}
-
-.referrer-sub-label {
-    display: block;
-    font-size: 0.9rem;
-    color: var(--kop-soft-pastel-yellow) !important;
-    margin-top: 6px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-/* Open/Close Indicator */
+/* Toggle Indicator */
 .referrer-card-summary::after {
     content: '+';
     position: absolute;
@@ -90,14 +108,35 @@
     content: '−';
 }
 
+.referrer-main-name {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--kop-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    padding-right: 30px; /* Space for toggle icon */
+}
+
+.referrer-sub-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--kop-soft-pastel-yellow) !important;
+    margin-top: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Card Body */
 .referrer-card-body {
     padding: 20px;
     background: var(--kop-white);
 }
 
-/* --- Agency Details Section --- */
+/* --- Agency Info --- */
 .agency-info-section {
-    background: var(--kop-sand); /* Muted Sand instead of Yellow */
+    background: var(--kop-sand); /* Muted Sand */
     border: 1px solid var(--kop-border-secondary);
     border-radius: 8px;
     padding: 15px;
@@ -106,7 +145,7 @@
 
 /* --- Consultant Sub-Card --- */
 .consultant-sub-card {
-    background: #fafbfc; /* Very light gray/white instead of yellow */
+    background: #fafbfc; /* Very light neutral */
     border: 1px solid var(--kop-border-secondary);
     border-radius: 8px;
     margin-top: 20px;
@@ -145,6 +184,7 @@
     margin-bottom: 8px;
     font-size: 0.95rem;
     line-height: 1.4;
+    align-items: baseline;
 }
 
 .data-label {
@@ -165,7 +205,7 @@
     font-weight: 700;
 }
 
-/* --- List Sections --- */
+/* --- Expandable Lists --- */
 .list-section {
     margin-top: 15px;
     padding-top: 10px;
@@ -198,33 +238,6 @@
 
 .job-role { font-weight: 700; display: block; }
 .job-meta { color: #666; font-size: 0.85rem; }
-
-/* Alphabet Filter */
-.referrer-alpha-filter {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: var(--kop-sand);
-    border-radius: 8px;
-}
-
-.alpha-btn {
-    padding: 8px 12px;
-    border: 1px solid var(--kop-navy-blue);
-    background: var(--kop-white);
-    color: var(--kop-navy-blue);
-    cursor: pointer;
-    border-radius: 4px;
-    font-weight: 700;
-}
-
-.alpha-btn.active {
-    background: var(--kop-navy-blue);
-    color: var(--kop-white);
-}
 
 @media (max-width: 600px) {
     .referrer-grid { grid-template-columns: 1fr; }

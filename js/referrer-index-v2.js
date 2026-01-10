@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.className = 'referrer-grid';
 
         list.forEach(p => {
-            // CHANGE: Use <details> for the card to make it collapsible
+            // Use details for collapsible card
             const card = document.createElement('details');
             card.className = 'referrer-card';
             
