@@ -1,5 +1,5 @@
 /**
- * REFERRER DIRECTORY JS - Forced Label Correction
+ * REFERRER DIRECTORY JS - Collapsible Cards & Smart Labels
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const clean = v => (typeof v === 'string' ? v.trim() : (v ? String(v) : ''));
     const esc = v => clean(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c));
 
+    // Load Data
     fetch('/wp-content/themes/child/api/get-referrers-only.php?t=' + Date.now())
         .then(res => res.json())
         .then(res => {
@@ -98,7 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.className = 'referrer-grid';
 
         list.forEach(p => {
-            const card = document.createElement('div');
+            // CHANGE: Use <details> for the card to make it collapsible
+            const card = document.createElement('details');
             card.className = 'referrer-card';
             
             const rawProfiles = findConsultantData(p);
@@ -118,24 +120,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.db_name }];
 
-            // --- FORCED LABEL LOGIC ---
+            // Label Logic
             let label = 'Referral Agency / Group';
+            const jsonStr = JSON.stringify(p.payload || {});
+            const explicitIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
+            const agencyName = clean(agency.name);
+            const consultantName = profiles[0].resolvedName;
             
-            // If there is ONLY ONE consultant, and their name matches the Project Name, it IS an individual.
-            // This overrides any other flags.
-            if (profiles.length === 1 && profiles[0].resolvedName.toLowerCase() === p.db_name.toLowerCase()) {
+            if (explicitIndy || (profiles.length === 1 && (agencyName === consultantName || p.db_name.toLowerCase() === consultantName.toLowerCase()))) {
                 label = 'Independent Consultant';
             }
 
             let html = `
-                <div class="referrer-card-header">
+                <summary class="referrer-card-summary">
                     <h3 class="referrer-main-name">${esc(p.db_name)}</h3>
                     <span class="referrer-sub-label">${label}</span>
-                </div>
+                </summary>
                 <div class="referrer-card-body">`;
 
-            // Suppress agency block if it's an individual
-            if (label !== 'Independent Consultant' && clean(agency.name)) {
+            if (label !== 'Independent Consultant' && agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase()) {
                 html += `
                     <div class="agency-info-section">
                         <div class="section-label">Organization Details</div>
