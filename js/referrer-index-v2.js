@@ -1,5 +1,5 @@
 /**
- * REFERRER DIRECTORY JS - Deep Search & Smart Labeling
+ * REFERRER DIRECTORY JS - Precise Labeling Fix
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const clean = v => (typeof v === 'string' ? v.trim() : (v ? String(v) : ''));
     const esc = v => clean(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c));
 
-    // Load Data
     fetch('/wp-content/themes/child/api/get-referrers-only.php?t=' + Date.now())
         .then(res => res.json())
         .then(res => {
@@ -119,21 +118,22 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const profiles = profileMap.size > 0 ? Array.from(profileMap.values()) : [{ resolvedName: p.db_name }];
 
-            // SMART LABEL LOGIC
+            // --- SMART LABEL LOGIC V2 ---
             let label = 'Referral Agency / Group';
             
-            // Check Explicit Flags
+            // 1. Explicit Flags
             const jsonStr = JSON.stringify(p.payload || {});
             const explicitIndy = jsonStr.includes('"isIndependentConsultant":true') || jsonStr.includes('"referrerType":"individual"');
-            const explicitGroup = jsonStr.includes('"referrerType":"group"') || jsonStr.includes('"referrerType":"agency"');
+            
+            // 2. Name Matching Heuristic
+            // If Agency Name === Consultant Name, it's an Individual
+            const agencyName = clean(agency.name);
+            const consultantName = profiles[0].resolvedName;
+            const namesMatch = agencyName && consultantName && agencyName.toLowerCase() === consultantName.toLowerCase();
+            const projectMatchesConsultant = p.db_name.toLowerCase() === consultantName.toLowerCase();
 
-            if (explicitIndy) {
+            if (explicitIndy || (profiles.length === 1 && (namesMatch || projectMatchesConsultant))) {
                 label = 'Independent Consultant';
-            } else if (!explicitGroup) {
-                // Heuristic: If 1 profile and name matches project name -> Individual
-                if (profiles.length === 1 && profiles[0].resolvedName.toLowerCase() === p.db_name.toLowerCase()) {
-                    label = 'Independent Consultant';
-                }
             }
 
             let html = `
@@ -143,7 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="referrer-card-body">`;
 
-            if (label !== 'Independent Consultant' && clean(agency.name)) {
+            // Only show Agency Info if it's NOT an individual, or if the agency name is DIFFERENT from the main name
+            if (label !== 'Independent Consultant' && agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase()) {
                 html += `
                     <div class="agency-info-section">
                         <div class="section-label">Organization Details</div>
