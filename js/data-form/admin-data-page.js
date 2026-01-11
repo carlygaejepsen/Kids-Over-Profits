@@ -220,12 +220,6 @@ function loadProjectAndSync(projectName) {
 // AGENCY/INDEPENDENT CONSULTANT TOGGLE
 // ============================================
 
-const independentToggle = document.getElementById('referrer-independent-toggle');
-const independentStatus = document.getElementById('referrer-independent-status');
-const independentEditBtn = document.getElementById('referrer-independent-edit-btn');
-const agencySection = document.getElementById('referrer-agency-section');
-const consultantModal = document.getElementById('consultant-modal');
-
 function isReferrersViewActive() {
     const activeTab = document.querySelector('.category-tab.active');
     const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
@@ -239,6 +233,11 @@ function isReferrersViewActive() {
 }
 
 function updateAgencySliderAppearance() {
+    // Look up elements dynamically to ensure they exist
+    const independentToggle = document.getElementById('referrer-independent-toggle');
+    const independentStatus = document.getElementById('referrer-independent-status');
+    const agencySection = document.getElementById('referrer-agency-section');
+
     if (!independentToggle) return;
     if (!isReferrersViewActive()) return;
 
@@ -259,6 +258,7 @@ function updateAgencySliderAppearance() {
  * @param {boolean} isIndependent - true for independent consultant, false for agency
  */
 function applyReferrerToggleState(isIndependent) {
+    const independentToggle = document.getElementById('referrer-independent-toggle');
     if (!independentToggle) return;
 
     // Update toggle UI
@@ -275,64 +275,86 @@ function applyReferrerToggleState(isIndependent) {
 }
 
 window.applyReferrerToggleState = applyReferrerToggleState;
-
-if (independentToggle && !independentToggle.dataset.listenerAttached) {
-    independentToggle.addEventListener('change', () => {
-        // Save to formData when toggle changes
-        if (window.formData) {
-            window.formData.isIndependentConsultant = !!independentToggle.checked;
-            window.formData.referrerType = independentToggle.checked ? 'individual' : 'group';
-        }
-        updateAgencySliderAppearance();
-        // Trigger autosave
-        if (typeof autoSave === 'function') autoSave();
-        if (typeof updateJSON === 'function') updateJSON();
-    }, { passive: true });
-    independentToggle.dataset.listenerAttached = 'true';
-}
-
-if (independentEditBtn && independentToggle && !independentEditBtn.dataset.listenerAttached) {
-    independentEditBtn.addEventListener('click', () => {
-        if (!consultantModal) {
-            const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
-            independentToggle.checked = choice;
-            independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
-            return;
-        }
-
-        consultantModal.style.display = 'flex';
-        consultantModal.setAttribute('aria-hidden', 'false');
-    });
-    independentEditBtn.dataset.listenerAttached = 'true';
-}
-
-if (consultantModal && !consultantModal.dataset.bound) {
-    const yesBtn = consultantModal.querySelector('[data-action="consultant-yes"]');
-    const noBtn = consultantModal.querySelector('[data-action="consultant-no"]');
-    const closeBtn = consultantModal.querySelector('[data-action="consultant-close"]');
-    const hideModal = () => {
-        consultantModal.style.display = 'none';
-        consultantModal.setAttribute('aria-hidden', 'true');
-    };
-
-    const applyChoice = (isIndependent) => {
-        if (!independentToggle) return;
-        independentToggle.checked = isIndependent;
-        independentToggle.dispatchEvent(new Event('change', { bubbles: true }));
-        hideModal();
-    };
-
-    if (yesBtn) yesBtn.addEventListener('click', () => applyChoice(true), { passive: true });
-    if (noBtn) noBtn.addEventListener('click', () => applyChoice(false), { passive: true });
-    if (closeBtn) closeBtn.addEventListener('click', hideModal, { passive: true });
-    consultantModal.addEventListener('click', (e) => {
-        if (e.target === consultantModal) hideModal();
-    });
-
-    consultantModal.dataset.bound = 'true';
-}
-
 window.updateAgencySliderAppearance = updateAgencySliderAppearance;
+
+/**
+ * Initialize the independent consultant toggle and related UI
+ * Called after DOM is ready
+ */
+function initializeIndependentToggle() {
+    const independentToggle = document.getElementById('referrer-independent-toggle');
+    const independentEditBtn = document.getElementById('referrer-independent-edit-btn');
+    const consultantModal = document.getElementById('consultant-modal');
+
+    if (independentToggle && !independentToggle.dataset.listenerAttached) {
+        independentToggle.addEventListener('change', () => {
+            // Save to formData when toggle changes
+            if (window.formData) {
+                window.formData.isIndependentConsultant = !!independentToggle.checked;
+                window.formData.referrerType = independentToggle.checked ? 'individual' : 'group';
+            }
+            updateAgencySliderAppearance();
+            // Trigger autosave
+            if (typeof autoSave === 'function') autoSave();
+            if (typeof updateJSON === 'function') updateJSON();
+        }, { passive: true });
+        independentToggle.dataset.listenerAttached = 'true';
+    }
+
+    if (independentEditBtn && !independentEditBtn.dataset.listenerAttached) {
+        independentEditBtn.addEventListener('click', () => {
+            const toggle = document.getElementById('referrer-independent-toggle');
+            const modal = document.getElementById('consultant-modal');
+
+            if (!modal) {
+                const choice = confirm('Is this an independent consultant (not part of an agency)?\n\nOK = Independent consultant\nCancel = Part of an agency/group');
+                if (toggle) {
+                    toggle.checked = choice;
+                    toggle.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                return;
+            }
+
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-hidden', 'false');
+        });
+        independentEditBtn.dataset.listenerAttached = 'true';
+    }
+
+    if (consultantModal && !consultantModal.dataset.bound) {
+        const yesBtn = consultantModal.querySelector('[data-action="consultant-yes"]');
+        const noBtn = consultantModal.querySelector('[data-action="consultant-no"]');
+        const closeBtn = consultantModal.querySelector('[data-action="consultant-close"]');
+
+        const hideModal = () => {
+            const modal = document.getElementById('consultant-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        };
+
+        const applyChoice = (isIndependent) => {
+            const toggle = document.getElementById('referrer-independent-toggle');
+            if (!toggle) return;
+            toggle.checked = isIndependent;
+            toggle.dispatchEvent(new Event('change', { bubbles: true }));
+            hideModal();
+        };
+
+        if (yesBtn) yesBtn.addEventListener('click', () => applyChoice(true), { passive: true });
+        if (noBtn) noBtn.addEventListener('click', () => applyChoice(false), { passive: true });
+        if (closeBtn) closeBtn.addEventListener('click', hideModal, { passive: true });
+        consultantModal.addEventListener('click', (e) => {
+            if (e.target === consultantModal) hideModal();
+        });
+
+        consultantModal.dataset.bound = 'true';
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initializeIndependentToggle);
 
 // ============================================
 // PRIVATE OWNERSHIP (popup-controlled)

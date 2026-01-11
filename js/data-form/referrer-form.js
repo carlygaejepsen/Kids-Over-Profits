@@ -203,23 +203,24 @@ function ensureReferrerDataStructures() {
         if (!Array.isArray(merged.pastTTIJobs)) {
             merged.pastTTIJobs = [];
         }
-        const mergedNameCandidates = [
-            (merged.fullName || '').trim(),
-            (merged.name || '').trim(),
-            [merged.firstName, merged.lastName].filter(Boolean).join(' ').trim()
-        ].filter(Boolean);
-        if (mergedNameCandidates.length) {
-            const bestName = mergedNameCandidates.reduce((winner, candidate) => candidate.length > winner.length ? candidate : winner, '');
-            merged.fullName = bestName;
-            if (!merged.firstName && !merged.lastName) {
-                const parts = bestName.split(/\s+/);
-                merged.firstName = parts.shift() || '';
-                merged.lastName = parts.join(' ');
-            }
-        } else if (window.currentProjectName && window.formData.referrerConsultants.length === 1) {
-            // Fallback to project name if no consultant name is found and it's a single-consultant project
+        // Build fullName from firstName + lastName if both exist (user input takes priority)
+        // Only fall back to existing fullName or legacy name if firstName/lastName are empty
+        const firstLastName = [merged.firstName, merged.lastName].filter(Boolean).join(' ').trim();
+
+        if (firstLastName) {
+            // User has set firstName/lastName - use that for fullName
+            merged.fullName = firstLastName;
+        } else if (!merged.fullName && merged.name) {
+            // No firstName/lastName, no fullName - use legacy name field
+            merged.fullName = merged.name.trim();
+        } else if (!merged.fullName && window.currentProjectName && window.formData.referrerConsultants.length === 1) {
+            // Fallback to project name if no name is found and it's a single-consultant project
             merged.fullName = window.currentProjectName;
-            const parts = window.currentProjectName.split(/\s+/);
+        }
+
+        // Parse firstName/lastName from fullName only if they're not already set
+        if (merged.fullName && !merged.firstName && !merged.lastName) {
+            const parts = merged.fullName.split(/\s+/);
             merged.firstName = parts.shift() || '';
             merged.lastName = parts.join(' ');
         }
@@ -524,26 +525,32 @@ function getConsultantDisplayName(consultant, index) {
     const nameField = (consultant.name || '').trim();
     const firstLast = [consultant.firstName, consultant.lastName].map(part => (part || '').trim()).filter(Boolean).join(' ').trim();
 
-    // Prefer the longest available string so a 1-letter fullName doesn't win
-    const candidates = [fullName, nameField, firstLast].filter(Boolean);
-    const best = candidates.reduce((winner, candidate) => {
-        if (!winner) return candidate;
-        return candidate.length > winner.length ? candidate : winner;
-    }, '');
-
-    const displayName = best || `Consultant ${index + 1}`;
-
-    // Backfill missing name parts to keep downstream code consistent
-    if (!consultant.fullName && best) {
-        consultant.fullName = best;
+    // Priority: firstName+lastName > fullName > legacy name field
+    // This ensures user-entered firstName/lastName takes precedence
+    let displayName;
+    if (firstLast) {
+        displayName = firstLast;
+    } else if (fullName) {
+        displayName = fullName;
+    } else if (nameField) {
+        displayName = nameField;
+    } else {
+        displayName = `Consultant ${index + 1}`;
     }
-    if (!consultant.firstName && !consultant.lastName && best) {
-        const parts = best.split(/\s+/);
+
+    // Backfill fullName if it's not set and we have a display name
+    if (!consultant.fullName && displayName && !displayName.startsWith('Consultant ')) {
+        consultant.fullName = displayName;
+    }
+
+    // Parse firstName/lastName from display name only if they're not already set
+    if (!consultant.firstName && !consultant.lastName && displayName && !displayName.startsWith('Consultant ')) {
+        const parts = displayName.split(/\s+/);
         if (parts.length > 1) {
             consultant.firstName = parts.shift();
             consultant.lastName = parts.join(' ');
         } else {
-            consultant.firstName = best;
+            consultant.firstName = displayName;
         }
     }
 
