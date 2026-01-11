@@ -587,6 +587,11 @@
             if (!independentToggle) return;
             if (!isReferrersViewActive()) return;
 
+            // Sync toggle state from formData if available
+            if (window.formData && typeof window.formData.isIndependentConsultant === 'boolean') {
+                independentToggle.checked = window.formData.isIndependentConsultant;
+            }
+
             const isIndependent = !!independentToggle.checked;
             if (independentStatus) {
                 independentStatus.textContent = isIndependent ? 'Independent consultant' : 'Agency/Group consultant';
@@ -594,9 +599,39 @@
             if (agencySection) agencySection.style.display = isIndependent ? 'none' : 'block';
         }
 
+        /**
+         * Apply referrer toggle state - called by referrer-form.js
+         * @param {boolean} isIndependent - true for independent consultant, false for agency
+         */
+        function applyReferrerToggleState(isIndependent) {
+            if (!independentToggle) return;
+
+            // Update toggle UI
+            independentToggle.checked = !!isIndependent;
+
+            // Save to formData
+            if (window.formData) {
+                window.formData.isIndependentConsultant = !!isIndependent;
+                window.formData.referrerType = isIndependent ? 'individual' : 'group';
+            }
+
+            // Update UI appearance
+            updateAgencySliderAppearance();
+        }
+
+        window.applyReferrerToggleState = applyReferrerToggleState;
+
         if (independentToggle && !independentToggle.dataset.listenerAttached) {
             independentToggle.addEventListener('change', () => {
+                // Save to formData when toggle changes
+                if (window.formData) {
+                    window.formData.isIndependentConsultant = !!independentToggle.checked;
+                    window.formData.referrerType = independentToggle.checked ? 'individual' : 'group';
+                }
                 updateAgencySliderAppearance();
+                // Trigger autosave
+                if (typeof autoSave === 'function') autoSave();
+                if (typeof updateJSON === 'function') updateJSON();
             }, { passive: true });
             independentToggle.dataset.listenerAttached = 'true';
         }

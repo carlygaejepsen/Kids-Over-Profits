@@ -924,7 +924,12 @@ function initializeConsultantsTocToggle() {
 function attachReferrerFieldListeners() {
     // Referrer agency fields
     const updateReferrerAgency = (mutator) => {
-        ensureReferrerDataStructures();
+        // Don't call ensureReferrerDataStructures() on every input - it can reset values
+        // Just ensure the basic structures exist
+        if (!window.formData) window.formData = {};
+        if (!window.formData.referrerAgency || typeof window.formData.referrerAgency !== 'object') {
+            window.formData.referrerAgency = createDefaultReferrerGroup();
+        }
         const agency = window.formData.referrerAgency;
         mutator(agency);
         window.formData.referrerGroup = agency;
@@ -957,11 +962,13 @@ function attachReferrerFieldListeners() {
     });
 
     const updateReferrerConsultant = (mutator) => {
-        ensureReferrerDataStructures();
-        const index = window.currentConsultantIndex || 0;
+        // Don't call ensureReferrerDataStructures() on every input - it resets names
+        // Just ensure the basic structures exist
+        if (!window.formData) window.formData = {};
         if (!Array.isArray(window.formData.referrerConsultants)) {
             window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
         }
+        const index = window.currentConsultantIndex || 0;
         const consultant = window.formData.referrerConsultants[index] || createDefaultReferrerIndividual();
         mutator(consultant);
         window.formData.referrerConsultants[index] = consultant;
@@ -1015,7 +1022,13 @@ function attachReferrerFieldListeners() {
     consultantFields.forEach(field => {
         if (!field.dataset.listenerAttached) {
             field.addEventListener('input', (e) => {
-                ensureReferrerDataStructures();
+                // Don't call ensureReferrerDataStructures() on every keystroke - it resets names
+                // Just ensure formData and consultants array exist
+                if (!window.formData) window.formData = {};
+                if (!Array.isArray(window.formData.referrerConsultants)) {
+                    window.formData.referrerConsultants = [createDefaultReferrerIndividual()];
+                }
+
                 const fieldName = e.target.dataset.field;
                 const consultantIndex = window.currentConsultantIndex || 0;
                 if (!window.formData.referrerConsultants[consultantIndex]) {
@@ -1027,6 +1040,10 @@ function attachReferrerFieldListeners() {
                 if (fieldName === 'firstName' || fieldName === 'lastName') {
                     const consultant = window.formData.referrerConsultants[consultantIndex];
                     consultant.fullName = [consultant.firstName, consultant.lastName].filter(Boolean).join(' ').trim();
+                    // Also update the referrerIndividual alias
+                    if (window.formData.referrerIndividual === consultant || consultantIndex === window.currentConsultantIndex) {
+                        window.formData.referrerIndividual = consultant;
+                    }
                 }
 
                 if (typeof updateJSON === 'function') updateJSON();
@@ -1037,20 +1054,9 @@ function attachReferrerFieldListeners() {
         }
     });
 
-    // Independent consultant toggle
-    const independentToggle = document.getElementById('referrer-independent-toggle');
-    if (independentToggle && !independentToggle.dataset.listenerAttached) {
-        independentToggle.addEventListener('change', (e) => {
-            ensureReferrerDataStructures();
-            window.formData.isIndependentConsultant = e.target.checked;
-            if (typeof window.updateAgencySliderAppearance === 'function') {
-                window.updateAgencySliderAppearance();
-            }
-            if (typeof updateJSON === 'function') updateJSON();
-            if (typeof autoSave === 'function') autoSave();
-        }, { passive: true });
-        independentToggle.dataset.listenerAttached = 'true';
-    }
+    // Independent consultant toggle - handled by admin-data-page.js
+    // The handler in admin-data-page.js properly saves isIndependentConsultant and referrerType
+    // to formData and triggers autosave, so we don't need a duplicate handler here.
 }
 
 /**
