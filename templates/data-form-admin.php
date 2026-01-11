@@ -1312,8 +1312,8 @@ get_header();
                 if (!container || typeof renderArray !== 'function') {
                     return;
                 }
-                const data = Array.isArray(value) ? value : [];
-                renderArray(container, path, data);
+                // Pass actual array or undefined - let renderArray create proper reference in formData
+                renderArray(container, path, Array.isArray(value) ? value : undefined);
             };
 
             const consultant = getActiveConsultant();
