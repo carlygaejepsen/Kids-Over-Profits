@@ -135,7 +135,7 @@
         // Profit Status Badge Toggle Logic
         const profitBadge = document.getElementById('profit-status-badge');
         const profitInput = document.getElementById('profit-status-input');
-        
+
         if (profitBadge && profitInput) {
             const updateProfitUI = (status) => {
                 if (status === 'non-profit') {
@@ -150,7 +150,7 @@
             profitBadge.addEventListener('click', () => {
                 const currentStatus = profitInput.value;
                 const newStatus = currentStatus === 'for-profit' ? 'non-profit' : 'for-profit';
-                
+
                 profitInput.value = newStatus;
                 updateProfitUI(newStatus);
 
@@ -160,16 +160,65 @@
                     if (typeof window.updateJSON === 'function') window.updateJSON();
                     if (typeof window.autoSave === 'function') window.autoSave();
                 }
-                
+
                 // Trigger label update if needed
                 if (window.KOP_UI_State && typeof window.KOP_UI_State.updateLabelsForProjectType === 'function') {
                     window.KOP_UI_State.updateLabelsForProjectType();
                 }
             });
-            
+
             // Initialize display from input value
             updateProfitUI(profitInput.value);
         }
+
+        // Referrer field listeners - delegate to referrer-form.js module
+        if (typeof window.attachReferrerFieldListeners === 'function') {
+            window.attachReferrerFieldListeners();
+        }
+
+        // Consultant navigation - delegate to referrer-form.js module
+        if (typeof window.initializeConsultantNavigation === 'function') {
+            window.initializeConsultantNavigation();
+        }
+
+        // Consultants TOC toggle - delegate to referrer-form.js module
+        if (typeof window.initializeConsultantsTocToggle === 'function') {
+            window.initializeConsultantsTocToggle();
+        }
+
+        // Facility field listeners
+        document.querySelectorAll('.facility-field').forEach(field => {
+            if (!field.dataset.listenerAttached) {
+                field.addEventListener('input', () => {
+                    const path = field.dataset.field;
+                    let value = field.type === 'number' ? (field.value === '' ? null : parseInt(field.value)) : field.value;
+
+                    if (path && window.formData) {
+                        const facilityIndex = window.currentFacilityIndex || 0;
+                        if (!window.formData.facilities) window.formData.facilities = [];
+                        if (!window.formData.facilities[facilityIndex]) window.formData.facilities[facilityIndex] = {};
+
+                        // Use setNestedValue if available, otherwise direct assignment
+                        if (typeof window.setNestedValue === 'function') {
+                            window.setNestedValue(window.formData, `facilities.${facilityIndex}.${path}`, value);
+                        } else {
+                            // Fallback for simple paths
+                            const parts = path.split('.');
+                            let target = window.formData.facilities[facilityIndex];
+                            for (let i = 0; i < parts.length - 1; i++) {
+                                if (!target[parts[i]]) target[parts[i]] = {};
+                                target = target[parts[i]];
+                            }
+                            target[parts[parts.length - 1]] = value;
+                        }
+
+                        if (typeof window.updateJSON === 'function') window.updateJSON();
+                        if (typeof window.autoSave === 'function') window.autoSave();
+                    }
+                }, { passive: true });
+                field.dataset.listenerAttached = 'true';
+            }
+        });
     }
 
     function attachButtonListeners() {
