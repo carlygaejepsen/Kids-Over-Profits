@@ -1,28 +1,17 @@
 ---
 deployment:
   tasks:
-    # 1. Ensure the destination directory exists
-    - /bin/mkdir -p /home/kidsover/public_html/wp-content/themes/child/
-
-    # 2. Sync files using rsync (FASTER than cp)
-    - /usr/bin/rsync -av --exclude '.git' --exclude '.cpanel.yml' --exclude '.DS_Store' --exclude 'README.md' --exclude 'AGENTS.md' --exclude 'CLAUDE.md' --exclude 'markdown_output' --exclude 'scripts' --exclude 'tests' ./ /home/kidsover/public_html/wp-content/themes/child/
-
-    # 3. Post-sync Cleanup - remove WP core files if accidentally synced
-    - /bin/rm -f /home/kidsover/public_html/wp-content/themes/child/wp-config.php 2>/dev/null || true
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-admin 2>/dev/null || true
-    - /bin/rm -rf /home/kidsover/public_html/wp-content/themes/child/wp-includes 2>/dev/null || true
-
-    # 4. Fix directory permissions (755 for web access)
-    - /usr/bin/find /home/kidsover/public_html/wp-content/themes/child -type d -exec chmod 755 {} \;
-
-    # 5. Fix file permissions (644 for web access)
-    - /usr/bin/find /home/kidsover/public_html/wp-content/themes/child -type f -exec chmod 644 {} \;
-
-    # 6. Secure sensitive files
-    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/.env 2>/dev/null || true
-    - /bin/chmod 600 /home/kidsover/public_html/wp-content/themes/child/api/config.local.php 2>/dev/null || true
-
-    # 7. Ensure .env exists (copy from example if missing)
-    - if [ ! -f /home/kidsover/public_html/wp-content/themes/child/.env ]; then cp /home/kidsover/public_html/wp-content/themes/child/.env.example /home/kidsover/public_html/wp-content/themes/child/.env 2>/dev/null || true; fi
-
-    - echo "Deployment Complete"
+    - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R * $DEPLOYPATH/
+    - /bin/rm -f $DEPLOYPATH/.cpanel.yml
+    - /bin/rm -rf $DEPLOYPATH/.git
+    - /bin/rm -rf $DEPLOYPATH/README.md
+    - /bin/rm -rf $DEPLOYPATH/AGENTS.md
+    - /bin/rm -rf $DEPLOYPATH/CLAUDE.md
+    - /bin/rm -rf $DEPLOYPATH/markdown_output
+    - /bin/rm -rf $DEPLOYPATH/scripts
+    - /bin/rm -rf $DEPLOYPATH/tests
+    - /usr/bin/find $DEPLOYPATH -type d -exec /bin/chmod 755 {} +
+    - /usr/bin/find $DEPLOYPATH -type f -exec /bin/chmod 644 {} +
+    - /bin/echo "Deployment completed successfully"
