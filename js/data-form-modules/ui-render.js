@@ -445,10 +445,11 @@
             // Determine autocomplete category based on path
             let defaultCategory = null;
             if (path.includes('parentCompanies') || path === 'otherOperators') defaultCategory = 'operator';
-            else if (path.includes('Owners') || path.includes('founders') || path.includes('keyExecutives') || path.includes('investors')) defaultCategory = 'human';
-            else if (path.includes('Referrers')) defaultCategory = 'referrer';
+            else if (path.includes('Owners') || path.includes('founders') || path.includes('keyExecutives') || path.includes('investors') || path.includes('keyPersonnel')) defaultCategory = 'human';
+            else if (path.includes('Referrers') || path.includes('knownReferrers')) defaultCategory = 'referrer';
+            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred')) defaultCategory = 'facility';
             else if (path.includes('accreditations')) defaultCategory = 'accreditation';
-            else if (path === 'memberships') defaultCategory = 'membership';
+            else if (path === 'memberships' || path.includes('affiliations')) defaultCategory = 'membership';
             else if (path === 'certifications') defaultCategory = 'certification';
             else if (path === 'licensing') defaultCategory = 'licensing';
 
