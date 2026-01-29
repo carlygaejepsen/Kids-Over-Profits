@@ -96,6 +96,7 @@ try {
         }
         
         $validation['format'] = $format;
+        $validation['category_value'] = isset($decoded['category']) ? $decoded['category'] : 'NOT SET';
         $validation['structure'] = [
             'has_data_property' => $hasDataProperty,
             'has_name_property' => $hasNameProperty,
