@@ -3,12 +3,13 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child
     - /bin/rm -rf $DEPLOYPATH/.git
-    - /bin/cp -R api $DEPLOYPATH
-    - /bin/cp -R inc $DEPLOYPATH
-    - /bin/cp -R css $DEPLOYPATH
-    - /bin/cp -R js $DEPLOYPATH
-    - /bin/cp -R templates $DEPLOYPATH
-    - /bin/cp functions.php $DEPLOYPATH
-    - /bin/cp style.css $DEPLOYPATH
-    - /bin/cp page-*.php $DEPLOYPATH
-    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R api $DEPLOYPATH/
+    - /bin/cp -R inc $DEPLOYPATH/
+    - /bin/cp -R css $DEPLOYPATH/
+    - /bin/cp -R js $DEPLOYPATH/
+    - /bin/cp -R templates $DEPLOYPATH/
+    - /bin/cp functions.php $DEPLOYPATH/
+    - /bin/cp style.css $DEPLOYPATH/
+    - /bin/cp .htaccess $DEPLOYPATH/
+    - /usr/bin/find . -maxdepth 1 -name 'page-*.php' -exec /bin/cp {} $DEPLOYPATH/ \;
