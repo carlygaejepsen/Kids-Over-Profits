@@ -3,15 +3,17 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child
     - /bin/mkdir -p $DEPLOYPATH
-    - /bin/cp -R * $DEPLOYPATH/
+    - /bin/cp -R api $DEPLOYPATH/
+    - /bin/cp -R css $DEPLOYPATH/
+    - /bin/cp -R inc $DEPLOYPATH/
+    - /bin/cp -R js $DEPLOYPATH/
+    - /bin/cp -R templates $DEPLOYPATH/
+    - /bin/cp -R docs $DEPLOYPATH/
+    - /bin/cp *.php $DEPLOYPATH/
+    - /bin/cp *.css $DEPLOYPATH/
+    - /bin/cp *.js $DEPLOYPATH/ 2>/dev/null || true
+    - /bin/cp *.sql $DEPLOYPATH/ 2>/dev/null || true
     - /bin/rm -f $DEPLOYPATH/.cpanel.yml
-    - /bin/rm -rf $DEPLOYPATH/.git
-    - /bin/rm -rf $DEPLOYPATH/README.md
-    - /bin/rm -rf $DEPLOYPATH/AGENTS.md
-    - /bin/rm -rf $DEPLOYPATH/CLAUDE.md
-    - /bin/rm -rf $DEPLOYPATH/markdown_output
-    - /bin/rm -rf $DEPLOYPATH/scripts
-    - /bin/rm -rf $DEPLOYPATH/tests
-    - /usr/bin/find $DEPLOYPATH -type d -exec /bin/chmod 755 {} +
-    - /usr/bin/find $DEPLOYPATH -type f -exec /bin/chmod 644 {} +
+    - /usr/bin/find $DEPLOYPATH -type d -exec /bin/chmod 755 {} \;
+    - /usr/bin/find $DEPLOYPATH -type f -exec /bin/chmod 644 {} \;
     - /bin/echo "Deployment completed successfully"
