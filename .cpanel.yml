@@ -2,6 +2,7 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child
+    - /bin/rm -rf $DEPLOYPATH/.git
     - /bin/cp -R api $DEPLOYPATH
     - /bin/cp -R inc $DEPLOYPATH
     - /bin/cp -R css $DEPLOYPATH
