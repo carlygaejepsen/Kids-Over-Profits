@@ -212,14 +212,29 @@ function displayFacilities(facilitiesData, containerId) {
         if (!project || typeof project !== 'object') {
             return 'companies';
         }
+
+        const projectData = (project.data && typeof project.data === 'object') ? project.data : project;
+        const operatorLike = projectData && typeof projectData === 'object'
+            && (projectData.operator || projectData.facilities);
+
         let rawCategory = '';
         if (typeof project.category === 'string' && project.category) {
             rawCategory = project.category;
         } else if (project.data && typeof project.data === 'object' && typeof project.data.category === 'string' && project.data.category) {
             rawCategory = project.data.category;
         }
-        if (!rawCategory) return 'companies';
-        return rawCategory.toLowerCase();
+
+        if (!rawCategory) {
+            return operatorLike ? 'companies' : 'companies';
+        }
+
+        const normalized = rawCategory.toLowerCase();
+        const operatorCategories = ['operators', 'operator', 'companies', 'company'];
+        if (operatorLike && !operatorCategories.includes(normalized)) {
+            return 'companies';
+        }
+
+        return normalized;
     };
 
     const isOperatorCategory = project => {

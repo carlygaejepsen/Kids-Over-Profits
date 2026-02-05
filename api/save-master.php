@@ -52,12 +52,36 @@ if (!$request) {
 // Load this BEFORE extracting variables to avoid WordPress variable conflicts
 require_once __DIR__ . '/config.php';
 
-// Tables are stored without WordPress prefix in this database
+// Prefer the WordPress table prefix when available, but fall back to unprefixed tables.
 $prefix = '';
-$facilities_table = $prefix . 'facilities_master';
-$referrers_table = $prefix . 'referrers_master';
-$locations_table = $prefix . 'locations_master';
-$wiki_table = $prefix . 'wiki_master';
+if (isset($table_prefix) && is_string($table_prefix)) {
+    $prefix = $table_prefix;
+}
+
+if (!function_exists('kop_resolve_table_name')) {
+    function kop_resolve_table_name(PDO $pdo, $base, $prefix = '') {
+        $candidates = [];
+        if ($prefix) {
+            $candidates[] = $prefix . $base;
+        }
+        $candidates[] = $base;
+
+        foreach ($candidates as $candidate) {
+            $stmt = $pdo->prepare('SHOW TABLES LIKE :table');
+            $stmt->execute([':table' => $candidate]);
+            if ($stmt->fetchColumn()) {
+                return $candidate;
+            }
+        }
+
+        return $candidates[0];
+    }
+}
+
+$facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $prefix);
+$referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $prefix);
+$locations_table = kop_resolve_table_name($pdo, 'locations_master', $prefix);
+$wiki_table = kop_resolve_table_name($pdo, 'wiki_master', $prefix);
 
 // Set defaults for all expected variables to prevent undefined errors
 // These are defined AFTER config.php to prevent WordPress from overwriting them
@@ -147,6 +171,14 @@ if ($projectName) {
         if ($requestedCategory !== 'locations') {
             error_log("Category override: '$projectName' is a state/country name - forcing category from '$requestedCategory' to 'locations'");
         }
+    }
+}
+
+// If the payload looks like an operator project, force it to companies unless it's a location.
+if ($category !== 'locations' && is_array($data)) {
+    $has_operator_data = isset($data['operator']) || isset($data['facilities']);
+    if ($has_operator_data && $category !== 'companies' && $category !== 'company') {
+        $category = 'companies';
     }
 }
 
@@ -936,13 +968,13 @@ if ($action === 'save') {
 
     // Determine which table to use based on category
     if ($category === 'locations') {
-        $tableName = 'locations_master';
+        $tableName = $locations_table;
     } elseif ($category === 'referrers') {
-        $tableName = 'referrers_master';
+        $tableName = $referrers_table;
     } elseif ($category === 'wiki') {
-        $tableName = 'wiki_master';
+        $tableName = $wiki_table;
     } else {
-        $tableName = 'facilities_master';
+        $tableName = $facilities_table;
     }
 
     try {

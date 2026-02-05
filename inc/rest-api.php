@@ -375,6 +375,14 @@ function kop_save_project_rest_callback($request) {
         $unwrap_guard += 1;
     }
 
+    // If payload contains operator/facility data, force companies unless it's clearly a location.
+    if (is_array($data)) {
+        $has_operator_data = isset($data['operator']) || isset($data['facilities']);
+        if ($has_operator_data && $category !== 'companies' && $category !== 'company') {
+            $category = 'companies';
+        }
+    }
+
     if (empty($project_name)) {
         return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
     }
