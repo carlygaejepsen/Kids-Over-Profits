@@ -3,6 +3,14 @@
 
 (function() {
 
+const getRestBase = () => {
+    const configured = (window.ttiIndexConfig && typeof window.ttiIndexConfig.restUrl === 'string')
+        ? window.ttiIndexConfig.restUrl.trim()
+        : '';
+    if (configured) return configured.endsWith('/') ? configured : configured + '/';
+    return '/wp-json/kop/v1/';
+};
+
 function displayFacilities(facilitiesData, containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -208,14 +216,34 @@ function displayFacilities(facilitiesData, containerId) {
         `;
     };
 
+    const getProjectData = project => {
+        let projectData = (project && project.data && typeof project.data === 'object') ? project.data : project;
+        let unwrapGuard = 0;
+        while (projectData
+            && typeof projectData === 'object'
+            && !projectData.operator
+            && !projectData.facilities
+            && projectData.data
+            && typeof projectData.data === 'object'
+            && unwrapGuard < 2
+        ) {
+            projectData = projectData.data;
+            unwrapGuard += 1;
+        }
+        return projectData;
+    };
+
+    const isOperatorLike = project => {
+        const projectData = getProjectData(project);
+        return !!(projectData && typeof projectData === 'object' && (projectData.operator || projectData.facilities));
+    };
+
     const normalizeProjectCategory = project => {
         if (!project || typeof project !== 'object') {
-            return 'companies';
+            return 'unknown';
         }
 
-        const projectData = (project.data && typeof project.data === 'object') ? project.data : project;
-        const operatorLike = projectData && typeof projectData === 'object'
-            && (projectData.operator || projectData.facilities);
+        const operatorLike = isOperatorLike(project);
 
         let rawCategory = '';
         if (typeof project.category === 'string' && project.category) {
@@ -225,19 +253,14 @@ function displayFacilities(facilitiesData, containerId) {
         }
 
         if (!rawCategory) {
-            return operatorLike ? 'companies' : 'companies';
+            return operatorLike ? 'companies' : 'unknown';
         }
 
-        const normalized = rawCategory.toLowerCase();
-        const operatorCategories = ['operators', 'operator', 'companies', 'company'];
-        if (operatorLike && !operatorCategories.includes(normalized)) {
-            return 'companies';
-        }
-
-        return normalized;
+        return rawCategory.toLowerCase();
     };
 
     const isOperatorCategory = project => {
+        if (!isOperatorLike(project)) return false;
         const category = normalizeProjectCategory(project);
         return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
     };
@@ -252,7 +275,9 @@ function displayFacilities(facilitiesData, containerId) {
         // Handle new JSON structure
         const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
 
-        operatorProjects.forEach(project => {
+        const seenOperatorKeys = new Set();
+
+                operatorProjects.forEach(project => {
             if (!project || typeof project !== 'object') {
                 return;
             }
@@ -272,6 +297,15 @@ function displayFacilities(facilitiesData, containerId) {
             }
             const operator = projectData.operator || {};
             const facilities = toArray(projectData.facilities);
+
+            const operatorNameKeySource = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(project.name);
+            const operatorKey = operatorNameKeySource ? operatorNameKeySource.toLowerCase() : '';
+            if (operatorKey) {
+                if (seenOperatorKeys.has(operatorKey)) {
+                    return;
+                }
+                seenOperatorKeys.add(operatorKey);
+            }
 
             operatorGroups.push({
                 operator,
@@ -794,7 +828,7 @@ function displayFacilities(facilitiesData, containerId) {
                         <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
                             <span class="field-label">Documents</span>
                             <span class="field-value">
-                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; font-weight:600;" onclick="loadFacilityDocuments(${matchingFolder.id}, 'documents-${matchingFolder.id}')">
+                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; font-weight:600;" class="doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
                                     📂 View Document Library
                                 </button>
                             </span>
@@ -869,11 +903,11 @@ function displayFacilities(facilitiesData, containerId) {
             '</details>';
     });
 
-    html += '</div>';
+    html += '</div>';        container.innerHTML = html;
 
-    container.innerHTML = html;
+        attachDocumentButtons(container);
 
-    // Store data globally for filtering
+        // Store data globally for filtering
     window.facilitiesData = facilitiesData;
 }
 
@@ -938,34 +972,62 @@ window.clearSearch = clearSearch;
 window.loadFacilityDocuments = async function(folderId, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
+    const parsedId = parseInt(folderId, 10);
+    if (!Number.isFinite(parsedId)) {
+        console.warn('Facilities script: invalid folder id', folderId);
+        return;
+    }
+
+    const restBase = getRestBase();
+
     // Keep the label, show loading in value
     const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
     container.innerHTML = `${labelSpan}<span class="field-value">Loading Document Library...</span>`;
-    
+
     try {
         // Use the shortcode renderer to get the full FileBird library display
-        const response = await fetch(`/wp-json/kop/v1/render-folder-shortcode?id=${folderId}`);
+        const response = await fetch(`${restBase}render-folder-shortcode?id=${parsedId}`);
         if (!response.ok) throw new Error('Failed to load library');
         const data = await response.json();
-        
+
         if (!data.html || data.html.trim() === '') {
              // Fallback to simple list if shortcode returns nothing
-             await loadFacilityDocumentsFallback(folderId, container);
+             await loadFacilityDocumentsFallback(parsedId, container);
              return;
         }
-        
+
         container.innerHTML = `<div class="filebird-library-container" style="grid-column: 1 / -1; margin-top: 10px;">${data.html}</div>`;
-        
+
     } catch (e) {
         console.warn('Shortcode render failed, trying fallback list...', e);
-        await loadFacilityDocumentsFallback(folderId, container);
+        await loadFacilityDocumentsFallback(parsedId, container);
     }
 };
 
+function attachDocumentButtons(scope) {
+    const root = scope && scope.querySelectorAll ? scope : document;
+    const buttons = root.querySelectorAll('.doc-library-button');
+    buttons.forEach(button => {
+        if (button.dataset && button.dataset.kopBound === 'true') return;
+        if (button.dataset) button.dataset.kopBound = 'true';
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            const folderId = button.dataset ? button.dataset.folderId : '';
+            const containerId = button.dataset ? button.dataset.containerId : '';
+            if (typeof window.loadFacilityDocuments === 'function') {
+                window.loadFacilityDocuments(folderId, containerId);
+            } else {
+                console.warn('Facilities script: loadFacilityDocuments is not available');
+            }
+        });
+    });
+}
+
 async function loadFacilityDocumentsFallback(folderId, container) {
     try {
-        const response = await fetch(`/wp-json/kop/v1/folder-content?id=${folderId}`);
+        const restBase = getRestBase();
+        const response = await fetch(`${restBase}folder-content?id=${folderId}`);
         if (!response.ok) throw new Error('Failed to load content');
         const files = await response.json();
         
@@ -1156,7 +1218,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // NEW: Load FileBird folders for document matching
                 try {
-                    const foldersResponse = await fetch('/wp-json/kop/v1/folders');
+                    const restBase = getRestBase();
+                    const foldersResponse = await fetch(`${restBase}folders`);
                     if (foldersResponse.ok) {
                         window.filebirdFolders = await foldersResponse.json();
                         console.log('Facilities script: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
