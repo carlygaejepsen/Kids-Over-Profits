@@ -69,6 +69,36 @@ $requestedCategory = isset($request['category']) ? $request['category'] : 'compa
 $currentFacilityIndex = isset($request['currentFacilityIndex']) ? intval($request['currentFacilityIndex']) : 0;
 $timestamp = isset($request['timestamp']) ? $request['timestamp'] : date('c');
 
+// Normalize incoming payloads that may include a full project wrapper or double-wrapped data.
+if (is_array($data) && isset($data['data']) && is_array($data['data'])) {
+    // If a full project object was passed inside `data`, unwrap it.
+    if (empty($projectName) && !empty($data['name']) && is_string($data['name'])) {
+        $projectName = $data['name'];
+    }
+    if ((!isset($request['category']) || $request['category'] === '') && !empty($data['category']) && is_string($data['category'])) {
+        $requestedCategory = $data['category'];
+    }
+    if ($currentFacilityIndex === 0 && isset($data['currentFacilityIndex'])) {
+        $currentFacilityIndex = intval($data['currentFacilityIndex']);
+    }
+    if ((!isset($request['timestamp']) || $request['timestamp'] === '') && !empty($data['timestamp']) && is_string($data['timestamp'])) {
+        $timestamp = $data['timestamp'];
+    }
+    $data = $data['data'];
+}
+
+$unwrap_guard = 0;
+while (is_array($data)
+    && !isset($data['operator'])
+    && !isset($data['facilities'])
+    && isset($data['data'])
+    && is_array($data['data'])
+    && $unwrap_guard < 2
+) {
+    $data = $data['data'];
+    $unwrap_guard += 1;
+}
+
 // US State names for location project matching (used by multiple functions)
 $US_STATE_NAMES = [
     'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',

@@ -351,6 +351,30 @@ function kop_save_project_rest_callback($request) {
     $data = isset($params['data']) ? $params['data'] : null;
     $category = isset($params['category']) ? sanitize_text_field($params['category']) : 'company';
 
+    // Normalize if a full project wrapper was sent in `data` (avoid double-wrapping).
+    if (is_array($data) && isset($data['data']) && is_array($data['data'])) {
+        if ($project_name === '' && !empty($data['name']) && is_string($data['name'])) {
+            $project_name = sanitize_text_field($data['name']);
+        }
+        if (empty($params['category']) && !empty($data['category']) && is_string($data['category'])) {
+            $category = sanitize_text_field($data['category']);
+        }
+        $data = $data['data'];
+    }
+
+    // Unwrap nested `data.data` when operator/facilities live one level deeper.
+    $unwrap_guard = 0;
+    while (is_array($data)
+        && !isset($data['operator'])
+        && !isset($data['facilities'])
+        && isset($data['data'])
+        && is_array($data['data'])
+        && $unwrap_guard < 2
+    ) {
+        $data = $data['data'];
+        $unwrap_guard += 1;
+    }
+
     if (empty($project_name)) {
         return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
     }

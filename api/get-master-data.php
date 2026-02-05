@@ -40,10 +40,34 @@ try {
     
     $projects = [];
 
+    $normalizePayload = function ($payload) {
+        if (!is_array($payload)) {
+            return $payload;
+        }
+
+        if (isset($payload['data']) && is_array($payload['data'])) {
+            $inner = $payload['data'];
+            $guard = 0;
+            while (is_array($inner)
+                && !isset($inner['operator'])
+                && !isset($inner['facilities'])
+                && isset($inner['data'])
+                && is_array($inner['data'])
+                && $guard < 2
+            ) {
+                $inner = $inner['data'];
+                $guard += 1;
+            }
+            $payload['data'] = $inner;
+        }
+
+        return $payload;
+    };
+
     /**
      * Internal helper to fetch and process rows from a table
      */
-    $processTable = function($tableName, $sourceLabel) use ($pdo, &$projects) {
+    $processTable = function($tableName, $sourceLabel) use ($pdo, &$projects, $normalizePayload) {
         try {
             $stmt = $pdo->query("SELECT * FROM `$tableName` LIMIT 1000");
             if (!$stmt) return;
@@ -60,6 +84,8 @@ try {
                     error_log("JSON Parse Error for $uniqueName: " . json_last_error_msg());
                     continue;
                 }
+
+                $data = $normalizePayload($data);
 
                 // Standardize the project object (normalize old-format records)
                 $has_data_wrapper = isset($data['data']) && is_array($data['data']);

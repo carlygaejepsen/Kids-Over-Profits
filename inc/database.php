@@ -7,6 +7,40 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!function_exists('kop_unwrap_project_payload')) {
+    /**
+     * Normalize project payloads that may be double-wrapped in `data`.
+     *
+     * @param mixed $payload Decoded JSON payload from the database.
+     * @return mixed Normalized payload.
+     */
+    function kop_unwrap_project_payload($payload) {
+        if (!is_array($payload)) {
+            return $payload;
+        }
+
+        if (isset($payload['data']) && is_array($payload['data'])) {
+            $inner = $payload['data'];
+            $guard = 0;
+
+            while (is_array($inner)
+                && !isset($inner['operator'])
+                && !isset($inner['facilities'])
+                && isset($inner['data'])
+                && is_array($inner['data'])
+                && $guard < 2
+            ) {
+                $inner = $inner['data'];
+                $guard += 1;
+            }
+
+            $payload['data'] = $inner;
+        }
+
+        return $payload;
+    }
+}
+
 /**
  * Locate available facility projects export datasets.
  *
@@ -275,6 +309,8 @@ function kop_get_facilities_projects_from_database() {
                 error_log(sprintf('KOP: invalid JSON for project "%s" in %s', $unique_name, $table_name));
                 continue;
             }
+
+            $decoded = kop_unwrap_project_payload($decoded);
 
             // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
             $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||

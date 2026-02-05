@@ -242,7 +242,19 @@ function displayFacilities(facilitiesData, containerId) {
                 return;
             }
 
-            const projectData = (project.data && typeof project.data === 'object') ? project.data : project;
+            let projectData = (project.data && typeof project.data === 'object') ? project.data : project;
+            let unwrapGuard = 0;
+            while (projectData
+                && typeof projectData === 'object'
+                && !projectData.operator
+                && !projectData.facilities
+                && projectData.data
+                && typeof projectData.data === 'object'
+                && unwrapGuard < 2
+            ) {
+                projectData = projectData.data;
+                unwrapGuard += 1;
+            }
             const operator = projectData.operator || {};
             const facilities = toArray(projectData.facilities);
 
