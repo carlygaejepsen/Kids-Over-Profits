@@ -333,6 +333,146 @@ function kop_register_facilities_rest_routes() {
             ),
         )
     );
+
+
+    // Register Link Preview endpoint (public)
+    register_rest_route(
+        'kop/v1',
+        '/link-preview',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => function ($request) {
+                $url = $request->get_param('url');
+                $url = is_string($url) ? trim($url) : '';
+                if ($url === '') {
+                    return new WP_Error('missing_url', 'URL is required', array('status' => 400));
+                }
+
+                $url = esc_url_raw($url);
+                if (!$url || !wp_http_validate_url($url)) {
+                    return new WP_Error('invalid_url', 'Invalid URL', array('status' => 400));
+                }
+
+                $cache_key = 'kop_link_preview_' . md5($url);
+                $cached = get_transient($cache_key);
+                if (is_array($cached)) {
+                    return rest_ensure_response($cached);
+                }
+
+                $response = wp_remote_get($url, array(
+                    'timeout' => 10,
+                    'redirection' => 5,
+                    'headers' => array(
+                        'User-Agent' => 'Mozilla/5.0 (compatible; KOP-LinkPreview/1.0; +https://kidsoverprofits.org)',
+                        'Accept' => 'text/html,application/xhtml+xml'
+                    ),
+                ));
+
+                if (is_wp_error($response)) {
+                    return new WP_Error('fetch_failed', 'Unable to fetch URL', array('status' => 502));
+                }
+
+                $body = wp_remote_retrieve_body($response);
+                if (!is_string($body) || $body === '') {
+                    $data = array('url' => $url);
+                    set_transient($cache_key, $data, 6 * HOUR_IN_SECONDS);
+                    return rest_ensure_response($data);
+                }
+
+                libxml_use_internal_errors(true);
+                $doc = new DOMDocument();
+                @$doc->loadHTML($body);
+                $xpath = new DOMXPath($doc);
+
+                $get_meta = function ($key, $attr = 'property') use ($xpath) {
+                    $query = sprintf("//meta[@%s='%s']", $attr, $key);
+                    $nodes = $xpath->query($query);
+                    if ($nodes && $nodes->length > 0) {
+                        $node = $nodes->item(0);
+                        if ($node && $node->hasAttribute('content')) {
+                            return trim($node->getAttribute('content'));
+                        }
+                    }
+                    return '';
+                };
+
+                $title = $get_meta('og:title');
+                if ($title === '') {
+                    $title = $get_meta('twitter:title', 'name');
+                }
+                if ($title === '') {
+                    $title_nodes = $xpath->query('//title');
+                    if ($title_nodes && $title_nodes->length > 0) {
+                        $title = trim($title_nodes->item(0)->textContent);
+                    }
+                }
+
+                $description = $get_meta('og:description');
+                if ($description === '') {
+                    $description = $get_meta('description', 'name');
+                }
+
+                $site_name = $get_meta('og:site_name');
+                if ($site_name === '') {
+                    $parsed = wp_parse_url($url);
+                    $site_name = isset($parsed['host']) ? $parsed['host'] : '';
+                }
+
+                $image = $get_meta('og:image');
+                if ($image === '') {
+                    $image = $get_meta('twitter:image', 'name');
+                }
+
+                $normalize_url = function ($candidate, $base_url) {
+                    $candidate = is_string($candidate) ? trim($candidate) : '';
+                    if ($candidate === '') return '';
+                    if (strpos($candidate, '//') === 0) {
+                        $scheme = wp_parse_url($base_url, PHP_URL_SCHEME);
+                        $scheme = $scheme ? $scheme : 'https';
+                        return $scheme . ':' . $candidate;
+                    }
+                    if (preg_match('#^https?://#i', $candidate)) {
+                        return $candidate;
+                    }
+                    $base_parts = wp_parse_url($base_url);
+                    if (!is_array($base_parts) || empty($base_parts['host'])) {
+                        return $candidate;
+                    }
+                    $scheme = isset($base_parts['scheme']) ? $base_parts['scheme'] : 'https';
+                    $host = $base_parts['host'];
+                    $port = isset($base_parts['port']) ? ':' . $base_parts['port'] : '';
+                    if (strpos($candidate, '/') === 0) {
+                        return $scheme . '://' . $host . $port . $candidate;
+                    }
+                    $path = isset($base_parts['path']) ? $base_parts['path'] : '/';
+                    $dir = rtrim(dirname($path), '/');
+                    if ($dir === '') $dir = '';
+                    return $scheme . '://' . $host . $port . $dir . '/' . $candidate;
+                };
+
+                $image = $normalize_url($image, $url);
+
+                $data = array(
+                    'url' => $url,
+                    'title' => sanitize_text_field($title),
+                    'description' => sanitize_text_field($description),
+                    'site_name' => sanitize_text_field($site_name),
+                    'image' => $image,
+                );
+
+                set_transient($cache_key, $data, 12 * HOUR_IN_SECONDS);
+                return rest_ensure_response($data);
+            },
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'url' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'sanitize_callback' => 'esc_url_raw',
+                ),
+            ),
+        )
+    );
 }
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 

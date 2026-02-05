@@ -1227,6 +1227,17 @@ function enqueue_tti_processor_scripts() {
         file_exists($theme_dir . '/css/tti-program-index.css') ? filemtime($theme_dir . '/css/tti-program-index.css') : time()
     );
 
+    // Document library styles (used by FileBird folder render in TTI index)
+    $doc_style_path = '/css/document-library.css';
+    if (file_exists($theme_dir . $doc_style_path)) {
+        wp_enqueue_style(
+            'kop-document-library-style',
+            $theme_uri . $doc_style_path,
+            array('kop-colors', 'tti-program-index-styles'),
+            filemtime($theme_dir . $doc_style_path)
+        );
+    }
+
     // Unified display script (shows all database fields) - standalone, no dependencies
     wp_enqueue_script(
         'tti-program-index-script',

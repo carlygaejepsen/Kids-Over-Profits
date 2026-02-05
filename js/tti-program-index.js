@@ -11,6 +11,53 @@ const getRestBase = () => {
     return '/wp-json/kop/v1/';
 };
 
+const escapeHtmlValue = value => {
+    if (value === null || value === undefined) return '';
+    const text = typeof value === 'string' ? value : String(value);
+    if (!text) return '';
+    return text.replace(/[&<>\"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '\"': '&quot;',
+        "'": '&#39;'
+    }[char] || char));
+};
+
+
+const linkPreviewCache = new Map();
+const linkPreviewInflight = new Map();
+const urlRegex = /\bhttps?:\/\/[^\s<]+/gi;
+
+const trimTrailingUrlPunct = url => url.replace(/[),.;!?]+$/g, '');
+
+const extractUrlsFromText = text => {
+    if (typeof text !== 'string') return [];
+    const matches = text.match(urlRegex);
+    if (!matches) return [];
+    const unique = new Set();
+    matches.forEach(match => {
+        const cleaned = trimTrailingUrlPunct(match);
+        if (cleaned) unique.add(cleaned);
+    });
+    return Array.from(unique);
+};
+
+const renderLinkPreviewCard = url => {
+    const safeUrl = escapeHtmlValue(url);
+    const domain = url.replace(/^https?:\/\//i, '').split('/')[0];
+    const safeDomain = escapeHtmlValue(domain || url);
+    return `
+        <a class="field-note-link-card" data-url="${safeUrl}" href="${safeUrl}" target="_blank" rel="noopener">
+            <span class="field-note-link-thumb"><span class="field-note-link-placeholder">Loading...</span></span>
+            <span class="field-note-link-body">
+                <span class="field-note-link-title">${safeDomain}</span>
+                <span class="field-note-link-domain">${safeDomain}</span>
+            </span>
+        </a>
+    `;
+};
+
 function displayFacilities(facilitiesData, containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -91,6 +138,8 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const escapeAttribute = value => escapeHtml(value);
+
+
 
     const joinList = values => toArray(values)
         .filter(item => !isValueEmpty(item))
@@ -205,9 +254,23 @@ function displayFacilities(facilitiesData, containerId) {
             });
         });
         if (!items.length) return '';
-        const list = items.map(({ label, text }) =>
-            `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`
-        ).join('');
+        const list = items.map(({ label, text }) => {
+            const rawText = typeof text === 'string' ? text : String(text ?? '');
+            const urls = extractUrlsFromText(rawText);
+            if (!urls.length) {
+                return `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(rawText)}</li>`;
+            }
+
+            let cleanedText = rawText;
+            urls.forEach(url => {
+                cleanedText = cleanedText.replace(url, '').trim();
+            });
+
+            const textHtml = cleanedText ? `<div class="field-note-text">${escapeHtml(cleanedText)}</div>` : '';
+            const previews = urls.map(url => renderLinkPreviewCard(url)).join('');
+
+            return `<li><strong>${escapeHtml(label)}:</strong> ${textHtml}${previews}</li>`;
+        }).join('');
         return `
             <div class="facility-field-notes">
                 <p><strong>Additional Field Notes</strong></p>
@@ -907,6 +970,8 @@ function displayFacilities(facilitiesData, containerId) {
 
         attachDocumentButtons(container);
 
+        loadLinkPreviews(container);
+
         // Store data globally for filtering
     window.facilitiesData = facilitiesData;
 }
@@ -1005,6 +1070,70 @@ window.loadFacilityDocuments = async function(folderId, containerId) {
     }
 };
 
+
+
+const fetchLinkPreview = async url => {
+    if (!url) return null;
+    if (linkPreviewCache.has(url)) return linkPreviewCache.get(url);
+    if (linkPreviewInflight.has(url)) return linkPreviewInflight.get(url);
+
+    const restBase = getRestBase();
+    const requestUrl = `${restBase}link-preview?url=${encodeURIComponent(url)}`;
+    const promise = fetch(requestUrl, { credentials: 'same-origin' })
+        .then(response => response.ok ? response.json() : null)
+        .catch(() => null);
+
+    linkPreviewInflight.set(url, promise);
+    const data = await promise;
+    linkPreviewInflight.delete(url);
+
+    if (data && typeof data === 'object') {
+        linkPreviewCache.set(url, data);
+        return data;
+    }
+
+    return null;
+};
+
+const updateLinkPreviewCard = (card, preview, url) => {
+    if (!card) return;
+    const titleEl = card.querySelector('.field-note-link-title');
+    const domainEl = card.querySelector('.field-note-link-domain');
+    const thumbEl = card.querySelector('.field-note-link-thumb');
+
+    const fallbackDomain = url.replace(/^https?:\/\//i, '').split('/')[0];
+    const title = (preview && preview.title) ? preview.title : (fallbackDomain || url);
+    const site = (preview && preview.site_name) ? preview.site_name : (fallbackDomain || '');
+
+    if (titleEl) titleEl.textContent = title;
+    if (domainEl) domainEl.textContent = site || fallbackDomain || '';
+
+    if (thumbEl) {
+        if (preview && preview.image) {
+            const safeImage = escapeHtmlValue(preview.image);
+            const safeAlt = escapeHtmlValue(title);
+            thumbEl.innerHTML = `<img src="${safeImage}" alt="${safeAlt}">`;
+        } else {
+            const placeholderText = escapeHtmlValue(site || fallbackDomain || 'Link');
+            thumbEl.innerHTML = `<span class="field-note-link-placeholder">${placeholderText}</span>`;
+        }
+    }
+};
+
+function loadLinkPreviews(scope) {
+    const root = scope && scope.querySelectorAll ? scope : document;
+    const cards = root.querySelectorAll('.field-note-link-card[data-url]');
+    cards.forEach(card => {
+        if (card.dataset && card.dataset.previewLoaded === 'true') return;
+        if (card.dataset) card.dataset.previewLoaded = 'true';
+        const url = card.dataset ? card.dataset.url : '';
+        if (!url) return;
+        fetchLinkPreview(url).then(preview => {
+            updateLinkPreviewCard(card, preview, url);
+        });
+    });
+}
+
 function attachDocumentButtons(scope) {
     const root = scope && scope.querySelectorAll ? scope : document;
     const buttons = root.querySelectorAll('.doc-library-button');
@@ -1030,27 +1159,46 @@ async function loadFacilityDocumentsFallback(folderId, container) {
         const response = await fetch(`${restBase}folder-content?id=${folderId}`);
         if (!response.ok) throw new Error('Failed to load content');
         const files = await response.json();
-        
+
         const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
 
         if (Array.isArray(files) && files.length === 0) {
             container.innerHTML = `${labelSpan}<span class="field-value">No documents found.</span>`;
             return;
         }
-        
-        const fileLinks = files.map(f => {
-            const date = f.date ? new Date(f.date).toLocaleDateString() : '';
-            let icon = '📄';
-            if (f.mime_type && f.mime_type.includes('image')) icon = '🖼️';
-            if (f.mime_type && f.mime_type.includes('pdf')) icon = '📕';
-            
-            return `<div class="document-link" style="margin-bottom:4px;">
-                ${icon} <a href="${f.url}" target="_blank" rel="noopener"><strong>${f.title}</strong></a> 
-                <span style="color:#777; font-size:0.85em;">(${date})</span>
-            </div>`;
-        }).join('');
-        
-        container.innerHTML = `${labelSpan}<span class="field-value">${fileLinks}</span>`;
+
+        const safeFiles = Array.isArray(files) ? files : [];
+        const fileItems = safeFiles.map(file => {
+            if (!file || typeof file !== 'object') return '';
+
+            const title = escapeHtmlValue(file.title || 'Document');
+            const url = escapeHtmlValue(file.url || '');
+            const mime = typeof file.mime_type === 'string' ? file.mime_type : '';
+            const isImage = mime.includes('image');
+            const extRaw = url.split('.').pop() ? url.split('.').pop().split('?')[0].split('#')[0] : '';
+            const extText = escapeHtmlValue(extRaw ? extRaw.toUpperCase() : 'FILE');
+            const extClass = extRaw ? extRaw.toLowerCase().replace(/[^a-z0-9]/g, '') : 'file';
+            const date = file.date ? new Date(file.date).toLocaleDateString() : '';
+            const dateHtml = date ? `<span class="doc-meta">${escapeHtmlValue(date)}</span>` : '';
+            const thumbHtml = isImage
+                ? `<img src="${url}" alt="${title}">`
+                : `<span class="doc-icon doc-icon-${extClass}">${extText}</span>`;
+
+            return `
+                <li class="doc-item" data-title="${title}">
+                    <a href="${url}" class="doc-link" target="_blank" rel="noopener">
+                        <div class="doc-thumbnail">${thumbHtml}</div>
+                        <div class="doc-info">
+                            <span class="doc-title">${title}</span>
+                            ${dateHtml}
+                        </div>
+                    </a>
+                </li>
+            `;
+        }).filter(Boolean).join('');
+
+        const listHtml = `<ul class="doc-list doc-layout-grid">${fileItems}</ul>`;
+        container.innerHTML = `${labelSpan}<span class="field-value">${listHtml}</span>`;
     } catch (e) {
         console.error(e);
         container.innerHTML = `<span class="field-value" style="color:#d45500">Error loading documents.</span>`;

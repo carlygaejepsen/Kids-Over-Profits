@@ -761,3 +761,88 @@ RESPONSIVE
         font-size: 1em;
     }
 }
+
+/* =================================================================
+   FIELD NOTE LINK PREVIEWS
+   ================================================================= */
+
+.tti-program-index-wrapper .facility-field-notes ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tti-program-index-wrapper .facility-field-notes li {
+    margin-bottom: 12px;
+}
+
+.tti-program-index-wrapper .field-note-text {
+    margin: 6px 0 8px;
+    color: #222222;
+}
+
+.tti-program-index-wrapper .field-note-link-card {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    text-decoration: none;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tti-program-index-wrapper .field-note-link-card:hover {
+    border-color: #33A7B5;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.tti-program-index-wrapper .field-note-link-thumb {
+    width: 72px;
+    height: 72px;
+    background: #f2f2f2;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tti-program-index-wrapper .field-note-link-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.tti-program-index-wrapper .field-note-link-placeholder {
+    font-size: 0.7em;
+    color: #666666;
+    text-align: center;
+    padding: 6px;
+}
+
+.tti-program-index-wrapper .field-note-link-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.tti-program-index-wrapper .field-note-link-title {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #000000;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tti-program-index-wrapper .field-note-link-domain {
+    font-size: 0.75em;
+    color: #555555;
+}
+
