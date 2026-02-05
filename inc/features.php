@@ -360,13 +360,9 @@ function kop_filebird_library_shortcode($atts) {
                                 $file_type = wp_check_filetype($file_url);
                                 $file_ext = strtoupper($file_type['ext']);
                                 $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-                                $mime_type = get_post_mime_type($attachment->ID);
-                                $is_image = strpos($mime_type, 'image') !== false;
-                                $is_pdf = $file_type['ext'] === 'pdf';
-
-                                // Check for PDF thumbnail (WordPress generates these automatically)
-                                $pdf_thumbnail_id = get_post_meta($attachment->ID, '_thumbnail_id', true);
-                                $pdf_thumbnail_url = $pdf_thumbnail_id ? wp_get_attachment_image_url($pdf_thumbnail_id, 'medium') : false;
+                                $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+                                $has_preview = !empty($preview_url);
+                                $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
                                 ?>
                                 <li class="doc-item" data-title="<?php echo esc_attr($attachment->post_title); ?>">
                                     <a href="<?php echo esc_url($file_url); ?>"
@@ -374,13 +370,10 @@ function kop_filebird_library_shortcode($atts) {
                                        target="_blank"
                                        rel="noopener">
                                         <div class="doc-thumbnail">
-                                            <?php if ($is_image): ?>
-                                                <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
-                                                     alt="<?php echo esc_attr($attachment->post_title); ?>">
-                                            <?php elseif ($is_pdf && $pdf_thumbnail_url): ?>
-                                                <img src="<?php echo esc_url($pdf_thumbnail_url); ?>"
+                                            <?php if ($has_preview): ?>
+                                                <img src="<?php echo esc_url($preview_url); ?>"
                                                      alt="<?php echo esc_attr($attachment->post_title); ?>"
-                                                     class="pdf-preview">
+                                                     class="<?php echo esc_attr($preview_class); ?>">
                                             <?php else: ?>
                                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                                                     <?php echo esc_html($file_ext); ?>
@@ -463,8 +456,9 @@ function kop_filebird_folder_shortcode($atts) {
                 $file_type = wp_check_filetype($file_url);
                 $file_ext = strtoupper($file_type['ext']);
                 $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-                $mime_type = get_post_mime_type($attachment->ID);
-                $is_image = strpos($mime_type, 'image') !== false;
+                $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+                $has_preview = !empty($preview_url);
+                $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
                 ?>
                 <li class="doc-item">
                     <a href="<?php echo esc_url($file_url); ?>"
@@ -472,9 +466,10 @@ function kop_filebird_folder_shortcode($atts) {
                        target="_blank"
                        rel="noopener">
                         <div class="doc-thumbnail">
-                            <?php if ($is_image): ?>
-                                <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
-                                     alt="<?php echo esc_attr($attachment->post_title); ?>">
+                            <?php if ($has_preview): ?>
+                                <img src="<?php echo esc_url($preview_url); ?>"
+                                     alt="<?php echo esc_attr($attachment->post_title); ?>"
+                                     class="<?php echo esc_attr($preview_class); ?>">
                             <?php else: ?>
                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                                     <?php echo esc_html($file_ext); ?>
@@ -528,8 +523,9 @@ function kop_document_shortcode($atts) {
     $file_type = wp_check_filetype($file_url);
     $file_ext = strtoupper($file_type['ext']);
     $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-    $mime_type = get_post_mime_type($attachment->ID);
-    $is_image = strpos($mime_type, 'image') !== false;
+    $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+    $has_preview = !empty($preview_url);
+    $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
     $title = !empty($atts['title']) ? $atts['title'] : $attachment->post_title;
 
     ob_start();
@@ -575,9 +571,10 @@ function kop_document_shortcode($atts) {
                target="_blank" 
                rel="noopener">
                 <div class="doc-thumbnail">
-                    <?php if ($is_image): ?>
-                        <img src="<?php echo esc_url(wp_get_attachment_image_url($attachment->ID, 'medium')); ?>"
-                             alt="<?php echo esc_attr($title); ?>">
+                    <?php if ($has_preview): ?>
+                        <img src="<?php echo esc_url($preview_url); ?>"
+                             alt="<?php echo esc_attr($title); ?>"
+                             class="<?php echo esc_attr($preview_class); ?>">
                     <?php else: ?>
                         <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                             <?php echo esc_html($file_ext); ?>

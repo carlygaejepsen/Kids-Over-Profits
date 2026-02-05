@@ -1172,16 +1172,20 @@ async function loadFacilityDocumentsFallback(folderId, container) {
             if (!file || typeof file !== 'object') return '';
 
             const title = escapeHtmlValue(file.title || 'Document');
-            const url = escapeHtmlValue(file.url || '');
+            const rawUrl = typeof file.url === 'string' ? file.url : '';
+            const url = escapeHtmlValue(rawUrl || '');
             const mime = typeof file.mime_type === 'string' ? file.mime_type : '';
             const isImage = mime.includes('image');
-            const extRaw = url.split('.').pop() ? url.split('.').pop().split('?')[0].split('#')[0] : '';
+            const extRaw = rawUrl.split('.').pop() ? rawUrl.split('.').pop().split('?')[0].split('#')[0] : '';
             const extText = escapeHtmlValue(extRaw ? extRaw.toUpperCase() : 'FILE');
             const extClass = extRaw ? extRaw.toLowerCase().replace(/[^a-z0-9]/g, '') : 'file';
             const date = file.date ? new Date(file.date).toLocaleDateString() : '';
             const dateHtml = date ? `<span class="doc-meta">${escapeHtmlValue(date)}</span>` : '';
-            const thumbHtml = isImage
-                ? `<img src="${url}" alt="${title}">`
+            const thumbUrlRaw = file.thumb_url || file.thumbnail_url || (isImage ? rawUrl : '');
+            const thumbUrl = escapeHtmlValue(thumbUrlRaw || '');
+            const hasThumb = thumbUrl.length > 0;
+            const thumbHtml = hasThumb
+                ? `<img src="${thumbUrl}" alt="${title}">`
                 : `<span class="doc-icon doc-icon-${extClass}">${extText}</span>`;
 
             return `
