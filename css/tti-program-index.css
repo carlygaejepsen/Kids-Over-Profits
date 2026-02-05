@@ -846,3 +846,41 @@ RESPONSIVE
     color: #555555;
 }
 
+/* =================================================================
+   DOCUMENT LIBRARY OVERRIDES (TTI index only)
+   ================================================================= */
+
+.tti-program-index-wrapper .doc-layout-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.tti-program-index-wrapper .doc-layout-grid .doc-link {
+    border-radius: 10px;
+}
+
+.tti-program-index-wrapper .doc-layout-grid .doc-thumbnail {
+    height: 96px;
+}
+
+.tti-program-index-wrapper .doc-layout-grid .doc-info {
+    padding: 8px;
+    gap: 3px;
+}
+
+.tti-program-index-wrapper .doc-title {
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+.tti-program-index-wrapper .doc-meta {
+    font-size: 11px;
+}
+
+.tti-program-index-wrapper .doc-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 10px;
+    border-radius: 8px;
+}
+
