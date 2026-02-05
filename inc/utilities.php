@@ -66,3 +66,46 @@ function kop_is_tti_program_index_context() {
 
     return false;
 }
+
+/**
+ * Resolve a preview image URL for an attachment, allowing manual overrides.
+ *
+ * Supports:
+ * - kop_cover_image_id (attachment ID of a cover image)
+ * - kop_cover_image_url (direct URL)
+ * - _thumbnail_id (attachment's featured image)
+ *
+ * @param int $attachment_id
+ * @param string $size
+ * @return string
+ */
+function kop_get_attachment_preview_url($attachment_id, $size = 'medium') {
+    $attachment_id = absint($attachment_id);
+    if (!$attachment_id) {
+        return '';
+    }
+
+    $override_id = absint(get_post_meta($attachment_id, 'kop_cover_image_id', true));
+    if ($override_id) {
+        $override_url = wp_get_attachment_image_url($override_id, $size);
+        if ($override_url) {
+            return $override_url;
+        }
+    }
+
+    $override_url = get_post_meta($attachment_id, 'kop_cover_image_url', true);
+    if (is_string($override_url) && $override_url !== '') {
+        return esc_url_raw($override_url);
+    }
+
+    $thumb_id = absint(get_post_meta($attachment_id, '_thumbnail_id', true));
+    if ($thumb_id) {
+        $thumb_url = wp_get_attachment_image_url($thumb_id, $size);
+        if ($thumb_url) {
+            return $thumb_url;
+        }
+    }
+
+    $url = wp_get_attachment_image_url($attachment_id, $size);
+    return $url ? $url : '';
+}

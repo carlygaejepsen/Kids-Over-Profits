@@ -252,7 +252,9 @@ function kop_register_facilities_rest_routes() {
                                         'id' => $post->ID,
                                         'title' => $post->post_title,
                                         'url' => wp_get_attachment_url($post->ID),
-                                        'thumb_url' => wp_get_attachment_image_url($post->ID, 'medium'),
+                                        'thumb_url' => function_exists('kop_get_attachment_preview_url')
+                                            ? kop_get_attachment_preview_url($post->ID, 'medium')
+                                            : wp_get_attachment_image_url($post->ID, 'medium'),
                                         'mime_type' => $post->post_mime_type,
                                         'date' => $post->post_date
                                     );
@@ -275,7 +277,9 @@ function kop_register_facilities_rest_routes() {
                         'id' => $post->ID,
                         'title' => $post->post_title,
                         'url' => wp_get_attachment_url($post->ID),
-                        'thumb_url' => wp_get_attachment_image_url($post->ID, 'medium'),
+                        'thumb_url' => function_exists('kop_get_attachment_preview_url')
+                            ? kop_get_attachment_preview_url($post->ID, 'medium')
+                            : wp_get_attachment_image_url($post->ID, 'medium'),
                         'mime_type' => $post->post_mime_type,
                         'date' => $post->post_date
                     );

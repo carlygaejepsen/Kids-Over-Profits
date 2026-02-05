@@ -360,7 +360,9 @@ function kop_filebird_library_shortcode($atts) {
                                 $file_type = wp_check_filetype($file_url);
                                 $file_ext = strtoupper($file_type['ext']);
                                 $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-                                $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+                                $preview_url = function_exists('kop_get_attachment_preview_url')
+                                    ? kop_get_attachment_preview_url($attachment->ID, 'medium')
+                                    : wp_get_attachment_image_url($attachment->ID, 'medium');
                                 $has_preview = !empty($preview_url);
                                 $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
                                 ?>
@@ -456,7 +458,9 @@ function kop_filebird_folder_shortcode($atts) {
                 $file_type = wp_check_filetype($file_url);
                 $file_ext = strtoupper($file_type['ext']);
                 $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-                $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+                $preview_url = function_exists('kop_get_attachment_preview_url')
+                    ? kop_get_attachment_preview_url($attachment->ID, 'medium')
+                    : wp_get_attachment_image_url($attachment->ID, 'medium');
                 $has_preview = !empty($preview_url);
                 $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
                 ?>
@@ -523,7 +527,9 @@ function kop_document_shortcode($atts) {
     $file_type = wp_check_filetype($file_url);
     $file_ext = strtoupper($file_type['ext']);
     $file_size = size_format(filesize(get_attached_file($attachment->ID)));
-    $preview_url = wp_get_attachment_image_url($attachment->ID, 'medium');
+    $preview_url = function_exists('kop_get_attachment_preview_url')
+        ? kop_get_attachment_preview_url($attachment->ID, 'medium')
+        : wp_get_attachment_image_url($attachment->ID, 'medium');
     $has_preview = !empty($preview_url);
     $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
     $title = !empty($atts['title']) ? $atts['title'] : $attachment->post_title;
