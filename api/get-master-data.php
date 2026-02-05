@@ -61,13 +61,39 @@ try {
                     continue;
                 }
 
-                // Standardize the project object
-                $project = $data;
-                
+                // Standardize the project object (normalize old-format records)
+                $has_data_wrapper = isset($data['data']) && is_array($data['data']);
+                if ($has_data_wrapper) {
+                    $project = $data;
+                } else {
+                    // Old format stores operator/facilities at the root.
+                    // Wrap it so consumers can rely on project.data.
+                    $project = array(
+                        'data' => $data,
+                    );
+
+                    if (isset($data['name']) && is_string($data['name']) && $data['name'] !== '') {
+                        $project['name'] = $data['name'];
+                    }
+                    if (isset($data['category']) && is_string($data['category']) && $data['category'] !== '') {
+                        $project['category'] = $data['category'];
+                    }
+                }
+
                 // Ensure name and category are set
                 $project['name'] = $project['name'] ?? $uniqueName;
+                $default_category = null;
                 if ($sourceLabel === 'referrers') {
-                    $project['category'] = $project['category'] ?? 'referrers';
+                    $default_category = 'referrers';
+                } elseif ($sourceLabel === 'locations') {
+                    $default_category = 'locations';
+                } elseif ($sourceLabel === 'facilities') {
+                    $default_category = 'companies';
+                } elseif ($sourceLabel === 'wiki') {
+                    $default_category = 'companies';
+                }
+                if ($default_category && (!isset($project['category']) || !is_string($project['category']) || $project['category'] === '')) {
+                    $project['category'] = $default_category;
                 }
                 
                 // Add source metadata

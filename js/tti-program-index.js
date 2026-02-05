@@ -238,12 +238,13 @@ function displayFacilities(facilitiesData, containerId) {
         const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
 
         operatorProjects.forEach(project => {
-            if (!project || !project.data) {
+            if (!project || typeof project !== 'object') {
                 return;
             }
 
-            const operator = project.data.operator || {};
-            const facilities = toArray(project.data.facilities);
+            const projectData = (project.data && typeof project.data === 'object') ? project.data : project;
+            const operator = projectData.operator || {};
+            const facilities = toArray(projectData.facilities);
 
             operatorGroups.push({
                 operator,
