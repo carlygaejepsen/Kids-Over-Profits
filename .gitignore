@@ -29,3 +29,9 @@ api/ai-config.php
 .claude/settings.local.json
 .claude/settings.local.json
 .claude/settings.local.json
+
+# SQL reference files (not for deployment)
+facilities_master.sql
+wiki_master.sql
+submissions_database.sql
+update_organizations.sql
