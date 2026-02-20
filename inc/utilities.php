@@ -109,3 +109,47 @@ function kop_get_attachment_preview_url($attachment_id, $size = 'medium') {
     $url = wp_get_attachment_image_url($attachment_id, $size);
     return $url ? $url : '';
 }
+
+/**
+ * Normalize a label into Title Case while preserving all-caps acronyms.
+ *
+ * @param string $text
+ * @return string
+ */
+function kop_title_case($text) {
+    if (!is_string($text)) {
+        return $text;
+    }
+
+    $text = trim($text);
+    if ($text == '') {
+        return $text;
+    }
+
+    $parts = preg_split('/(\s+)/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+    $output = '';
+
+    foreach ($parts as $part) {
+        if ($part == '') {
+            continue;
+        }
+
+        if (preg_match('/^\s+$/u', $part)) {
+            $output .= $part;
+            continue;
+        }
+
+        if (preg_match('/^[A-Z0-9]{2,}$/', $part)) {
+            $output .= $part;
+            continue;
+        }
+
+        if (function_exists('mb_convert_case') && defined('MB_CASE_TITLE')) {
+            $output .= mb_convert_case($part, MB_CASE_TITLE, 'UTF-8');
+        } else {
+            $output .= ucwords(strtolower($part));
+        }
+    }
+
+    return $output;
+}

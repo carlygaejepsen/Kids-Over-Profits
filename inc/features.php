@@ -365,16 +365,22 @@ function kop_filebird_library_shortcode($atts) {
                                     : wp_get_attachment_image_url($attachment->ID, 'medium');
                                 $has_preview = !empty($preview_url);
                                 $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
+                                $display_title = function_exists('kop_title_case')
+                                    ? kop_title_case($attachment->post_title)
+                                    : $attachment->post_title;
                                 ?>
-                                <li class="doc-item" data-title="<?php echo esc_attr($attachment->post_title); ?>">
+                                <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
                                     <a href="<?php echo esc_url($file_url); ?>"
                                        class="doc-link"
                                        target="_blank"
-                                       rel="noopener">
+                                       rel="noopener"
+                                       data-title="<?php echo esc_attr($display_title); ?>"
+                                       data-mime="<?php echo esc_attr($attachment->post_mime_type); ?>"
+                                       data-thumb="<?php echo esc_url($preview_url); ?>">
                                         <div class="doc-thumbnail">
                                             <?php if ($has_preview): ?>
                                                 <img src="<?php echo esc_url($preview_url); ?>"
-                                                     alt="<?php echo esc_attr($attachment->post_title); ?>"
+                                                     alt="<?php echo esc_attr($display_title); ?>"
                                                      class="<?php echo esc_attr($preview_class); ?>">
                                             <?php else: ?>
                                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
@@ -383,7 +389,7 @@ function kop_filebird_library_shortcode($atts) {
                                             <?php endif; ?>
                                         </div>
                                         <div class="doc-info">
-                                            <span class="doc-title"><?php echo esc_html($attachment->post_title); ?></span>
+                                            <span class="doc-title"><?php echo esc_html($display_title); ?></span>
                                             <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
                                         </div>
                                     </a>
@@ -463,16 +469,22 @@ function kop_filebird_folder_shortcode($atts) {
                     : wp_get_attachment_image_url($attachment->ID, 'medium');
                 $has_preview = !empty($preview_url);
                 $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
+                $display_title = function_exists('kop_title_case')
+                    ? kop_title_case($attachment->post_title)
+                    : $attachment->post_title;
                 ?>
                 <li class="doc-item">
                     <a href="<?php echo esc_url($file_url); ?>"
                        class="doc-link"
                        target="_blank"
-                       rel="noopener">
+                       rel="noopener"
+                       data-title="<?php echo esc_attr($display_title); ?>"
+                       data-mime="<?php echo esc_attr($attachment->post_mime_type); ?>"
+                       data-thumb="<?php echo esc_url($preview_url); ?>">
                         <div class="doc-thumbnail">
                             <?php if ($has_preview): ?>
                                 <img src="<?php echo esc_url($preview_url); ?>"
-                                     alt="<?php echo esc_attr($attachment->post_title); ?>"
+                                     alt="<?php echo esc_attr($display_title); ?>"
                                      class="<?php echo esc_attr($preview_class); ?>">
                             <?php else: ?>
                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
@@ -481,7 +493,7 @@ function kop_filebird_folder_shortcode($atts) {
                             <?php endif; ?>
                         </div>
                         <div class="doc-info">
-                            <span class="doc-title"><?php echo esc_html($attachment->post_title); ?></span>
+                            <span class="doc-title"><?php echo esc_html($display_title); ?></span>
                             <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
                         </div>
                     </a>
@@ -533,6 +545,9 @@ function kop_document_shortcode($atts) {
     $has_preview = !empty($preview_url);
     $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
     $title = !empty($atts['title']) ? $atts['title'] : $attachment->post_title;
+    $display_title = function_exists('kop_title_case')
+        ? kop_title_case($title)
+        : $title;
 
     ob_start();
     
@@ -546,7 +561,7 @@ function kop_document_shortcode($atts) {
             <?php if ($atts['show_icon'] === 'yes'): ?>
                 <span class="doc-icon-inline"><?php echo esc_html($file_ext); ?></span>
             <?php endif; ?>
-            <?php echo esc_html($title); ?>
+            <?php echo esc_html($display_title); ?>
             <?php if ($atts['show_size'] === 'yes'): ?>
                 <span class="doc-size-inline">(<?php echo esc_html($file_size); ?>)</span>
             <?php endif; ?>
@@ -562,7 +577,7 @@ function kop_document_shortcode($atts) {
             <?php if ($atts['show_icon'] === 'yes'): ?>
                 <span class="doc-icon-inline"><?php echo esc_html($file_ext); ?></span>
             <?php endif; ?>
-            <?php echo esc_html($title); ?>
+            <?php echo esc_html($display_title); ?>
             <?php if ($atts['show_size'] === 'yes'): ?>
                 <span class="doc-size-inline">(<?php echo esc_html($file_size); ?>)</span>
             <?php endif; ?>
@@ -575,11 +590,14 @@ function kop_document_shortcode($atts) {
             <a href="<?php echo esc_url($file_url); ?>" 
                class="doc-link" 
                target="_blank" 
-               rel="noopener">
+               rel="noopener"
+               data-title="<?php echo esc_attr($display_title); ?>"
+               data-mime="<?php echo esc_attr($attachment->post_mime_type); ?>"
+               data-thumb="<?php echo esc_url($preview_url); ?>">
                 <div class="doc-thumbnail">
                     <?php if ($has_preview): ?>
                         <img src="<?php echo esc_url($preview_url); ?>"
-                             alt="<?php echo esc_attr($title); ?>"
+                             alt="<?php echo esc_attr($display_title); ?>"
                              class="<?php echo esc_attr($preview_class); ?>">
                     <?php else: ?>
                         <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
@@ -588,7 +606,7 @@ function kop_document_shortcode($atts) {
                     <?php endif; ?>
                 </div>
                 <div class="doc-info">
-                    <span class="doc-title"><?php echo esc_html($title); ?></span>
+                    <span class="doc-title"><?php echo esc_html($display_title); ?></span>
                     <?php if ($atts['show_size'] === 'yes'): ?>
                         <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
                     <?php endif; ?>

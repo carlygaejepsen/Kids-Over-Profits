@@ -24,6 +24,18 @@ const escapeHtmlValue = value => {
     }[char] || char));
 };
 
+const toTitleCase = value => {
+    if (value === null || value === undefined) return '';
+    const text = typeof value === 'string' ? value : String(value);
+    if (!text) return '';
+    return text.split(/\s+/).map(word => {
+        if (!word) return word;
+        if (/^[A-Z0-9]{2,}$/.test(word)) return word;
+        const lower = word.toLowerCase();
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }).join(' ');
+};
+
 
 const linkPreviewCache = new Map();
 const linkPreviewInflight = new Map();
@@ -1120,6 +1132,157 @@ const updateLinkPreviewCard = (card, preview, url) => {
     }
 };
 
+
+let docModalHandlersBound = false;
+
+function ensureDocumentModal() {
+    let modal = document.getElementById('kop-doc-modal');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'kop-doc-modal';
+    modal.className = 'kop-doc-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML = `
+        <div class="kop-doc-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="kop-doc-modal-title">
+            <div class="kop-doc-modal__header">
+                <h3 class="kop-doc-modal__title" id="kop-doc-modal-title">Document</h3>
+                <button type="button" class="kop-doc-modal__close" aria-label="Close">&times;</button>
+            </div>
+            <div class="kop-doc-modal__body"></div>
+            <div class="kop-doc-modal__footer">
+                <a class="kop-doc-modal__btn kop-doc-modal__open" href="#" target="_blank" rel="noopener">Open in new tab</a>
+                <a class="kop-doc-modal__btn kop-doc-modal__download" href="#" download>Download</a>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const close = () => closeDocumentModal(modal);
+    const closeBtn = modal.querySelector('.kop-doc-modal__close');
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', event => {
+        if (event.target === modal) close();
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            close();
+        }
+    });
+
+    return modal;
+}
+
+function closeDocumentModal(modal) {
+    const target = modal || document.getElementById('kop-doc-modal');
+    if (!target) return;
+    target.classList.remove('is-open');
+    target.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('kop-doc-modal-open');
+}
+
+function getFileExtension(url) {
+    if (!url || typeof url !== 'string') return '';
+    const cleaned = url.split('#')[0].split('?')[0];
+    const parts = cleaned.split('.');
+    if (parts.length < 2) return '';
+    return parts.pop().toLowerCase();
+}
+
+function openDocumentModalFromLink(link) {
+    if (!link) return;
+
+    const url = link.getAttribute('href') || '';
+    if (!url) return;
+
+    const title = (link.dataset && link.dataset.title)
+        ? link.dataset.title
+        : (link.querySelector('.doc-title') ? link.querySelector('.doc-title').textContent.trim() : 'Document');
+
+    const mime = (link.dataset && link.dataset.mime) ? link.dataset.mime : '';
+    const ext = getFileExtension(url);
+    const thumb = (link.dataset && link.dataset.thumb)
+        ? link.dataset.thumb
+        : (link.querySelector('.doc-thumbnail img') ? link.querySelector('.doc-thumbnail img').getAttribute('src') : '');
+
+    const isPdf = ext === 'pdf' || mime === 'application/pdf';
+    const isImage = (mime && mime.indexOf('image/') === 0) || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(ext);
+    const isVideo = (mime && mime.indexOf('video/') === 0) || ['mp4', 'webm', 'mov', 'm4v', 'avi'].includes(ext);
+    const isAudio = (mime && mime.indexOf('audio/') === 0) || ['mp3', 'wav', 'ogg', 'm4a'].includes(ext);
+
+    const modal = ensureDocumentModal();
+    const titleEl = modal.querySelector('.kop-doc-modal__title');
+    const bodyEl = modal.querySelector('.kop-doc-modal__body');
+    const openLink = modal.querySelector('.kop-doc-modal__open');
+    const downloadLink = modal.querySelector('.kop-doc-modal__download');
+
+    if (titleEl) titleEl.textContent = title || 'Document';
+    if (openLink) openLink.href = url;
+    if (downloadLink) downloadLink.href = url;
+
+    if (bodyEl) {
+        bodyEl.innerHTML = '';
+        const viewer = document.createElement('div');
+        viewer.className = 'kop-doc-modal__viewer';
+
+        if (isPdf) {
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.setAttribute('title', title || 'PDF preview');
+            iframe.setAttribute('loading', 'lazy');
+            viewer.appendChild(iframe);
+        } else if (isImage) {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = title || 'Image preview';
+            viewer.appendChild(img);
+        } else if (isVideo) {
+            const video = document.createElement('video');
+            video.controls = true;
+            video.src = url;
+            viewer.appendChild(video);
+        } else if (isAudio) {
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.src = url;
+            viewer.appendChild(audio);
+        } else if (thumb) {
+            const img = document.createElement('img');
+            img.src = thumb;
+            img.alt = title || 'Document preview';
+            viewer.appendChild(img);
+        } else {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'kop-doc-modal__placeholder';
+            placeholder.textContent = 'Preview not available.';
+            viewer.appendChild(placeholder);
+        }
+
+        bodyEl.appendChild(viewer);
+    }
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('kop-doc-modal-open');
+}
+
+function attachDocumentModalHandlers() {
+    if (docModalHandlersBound) return;
+    docModalHandlersBound = true;
+
+    document.addEventListener('click', event => {
+        const link = event.target && event.target.closest ? event.target.closest('.tti-program-index-wrapper .doc-link') : null;
+        if (!link) return;
+        if (link.dataset && link.dataset.kopNoModal === 'true') return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1) return;
+
+        event.preventDefault();
+        openDocumentModalFromLink(link);
+    });
+}
+
 function loadLinkPreviews(scope) {
     const root = scope && scope.querySelectorAll ? scope : document;
     const cards = root.querySelectorAll('.field-note-link-card[data-url]');
@@ -1171,7 +1334,7 @@ async function loadFacilityDocumentsFallback(folderId, container) {
         const fileItems = safeFiles.map(file => {
             if (!file || typeof file !== 'object') return '';
 
-            const title = escapeHtmlValue(file.title || 'Document');
+            const title = escapeHtmlValue(toTitleCase(file.title || 'Document'));
             const rawUrl = typeof file.url === 'string' ? file.url : '';
             const url = escapeHtmlValue(rawUrl || '');
             const mime = typeof file.mime_type === 'string' ? file.mime_type : '';
@@ -1190,7 +1353,7 @@ async function loadFacilityDocumentsFallback(folderId, container) {
 
             return `
                 <li class="doc-item" data-title="${title}">
-                    <a href="${url}" class="doc-link" target="_blank" rel="noopener">
+                    <a href="${url}" class="doc-link" target="_blank" rel="noopener" data-title="${title}" data-mime="${escapeHtmlValue(mime)}" data-thumb="${thumbUrl}">
                         <div class="doc-thumbnail">${thumbHtml}</div>
                         <div class="doc-info">
                             <span class="doc-title">${title}</span>
@@ -1235,6 +1398,7 @@ function filterByLetter(letter) {
 window.filterByLetter = filterByLetter;
 
 function setupEventListeners() {
+    attachDocumentModalHandlers();
     // Setup search input
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
