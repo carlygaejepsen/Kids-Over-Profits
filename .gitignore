@@ -1,6 +1,13 @@
 # Environment files
 .env
 
+# Never track Git metadata directories/files from nested repos
+.git
+**/.git
+**/.git/
+**/.git/**
+**/.gitmodules
+
 # System files
 .DS_Store
 Thumbs.db
@@ -25,9 +32,6 @@ wp-config-local.php
 # KOP API configuration
 api/config.local.php
 api/ai-config.php
-.claude/settings.local.json
-.claude/settings.local.json
-.claude/settings.local.json
 .claude/settings.local.json
 
 # SQL reference files (not for deployment)

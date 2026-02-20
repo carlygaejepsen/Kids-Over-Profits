@@ -2,6 +2,7 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
+    - '[ "$(pwd -P)" = "$(cd "$DEPLOYPATH" 2>/dev/null && pwd -P)" ] || /bin/rm -rf "$DEPLOYPATH/.git"'
     - /bin/cp -R api $DEPLOYPATH
     - /bin/cp -R inc $DEPLOYPATH
     - /bin/cp -R css $DEPLOYPATH
@@ -13,4 +14,3 @@ deployment:
     - /bin/cp page-*.php $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp *.sql $DEPLOYPATH
-
