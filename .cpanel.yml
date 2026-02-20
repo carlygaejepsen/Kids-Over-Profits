@@ -2,29 +2,17 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
-    - /bin/mkdir -p "$DEPLOYPATH"
-    - export SRCPATH="$(pwd -P)"
-    - export DESTPATH="$(cd "$DEPLOYPATH" 2>/dev/null && pwd -P)"
-    - '[ "$SRCPATH" = "$DESTPATH" ] && /bin/echo "Repo path equals deploy path; skipping copy tasks." || /bin/rm -rf "$DEPLOYPATH/.git"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R api "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R inc "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R css "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R js "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R templates "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp -R docs "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp functions.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp style.css "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp .htaccess "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-admin-data.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-admin-submissions.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-data.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-location-index.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-news-feed.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-news-processor.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-referrer-index.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-tti-program-index.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-wiki-editor.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp page-wiki-feed.php "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp submissions_database.sql "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp update_organizations.sql "$DEPLOYPATH"'
-    - '[ "$SRCPATH" = "$DESTPATH" ] || /bin/cp wiki_master.sql "$DEPLOYPATH"'
+    - /bin/rm -rf $DEPLOYPATH/.git
+    - /bin/rm -rf $DEPLOYPATH/.gitattributes
+    - /bin/cp -R api $DEPLOYPATH
+    - /bin/cp -R inc $DEPLOYPATH
+    - /bin/cp -R css $DEPLOYPATH
+    - /bin/cp -R js $DEPLOYPATH
+    - /bin/cp -R templates $DEPLOYPATH
+    - /bin/cp -R docs $DEPLOYPATH
+    - /bin/cp functions.php $DEPLOYPATH
+    - /bin/cp style.css $DEPLOYPATH
+    - /bin/cp page-*.php $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/cp *.sql $DEPLOYPATH
+    - /bin/rm -rf $DEPLOYPATH/.git
