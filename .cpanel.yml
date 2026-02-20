@@ -2,15 +2,27 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
+    - /bin/mkdir -p "$DEPLOYPATH"
     - '[ "$(pwd -P)" = "$(cd "$DEPLOYPATH" 2>/dev/null && pwd -P)" ] || /bin/rm -rf "$DEPLOYPATH/.git"'
-    - /bin/cp -R api $DEPLOYPATH
-    - /bin/cp -R inc $DEPLOYPATH
-    - /bin/cp -R css $DEPLOYPATH
-    - /bin/cp -R js $DEPLOYPATH
-    - /bin/cp -R templates $DEPLOYPATH
-    - /bin/cp -R docs $DEPLOYPATH
-    - /bin/cp functions.php $DEPLOYPATH
-    - /bin/cp style.css $DEPLOYPATH
-    - /bin/cp page-*.php $DEPLOYPATH
-    - /bin/cp .htaccess $DEPLOYPATH
-    - /bin/cp *.sql $DEPLOYPATH
+    - /bin/cp -R api "$DEPLOYPATH"
+    - /bin/cp -R inc "$DEPLOYPATH"
+    - /bin/cp -R css "$DEPLOYPATH"
+    - /bin/cp -R js "$DEPLOYPATH"
+    - /bin/cp -R templates "$DEPLOYPATH"
+    - /bin/cp -R docs "$DEPLOYPATH"
+    - /bin/cp functions.php "$DEPLOYPATH"
+    - /bin/cp style.css "$DEPLOYPATH"
+    - /bin/cp .htaccess "$DEPLOYPATH"
+    - /bin/cp page-admin-data.php "$DEPLOYPATH"
+    - /bin/cp page-admin-submissions.php "$DEPLOYPATH"
+    - /bin/cp page-data.php "$DEPLOYPATH"
+    - /bin/cp page-location-index.php "$DEPLOYPATH"
+    - /bin/cp page-news-feed.php "$DEPLOYPATH"
+    - /bin/cp page-news-processor.php "$DEPLOYPATH"
+    - /bin/cp page-referrer-index.php "$DEPLOYPATH"
+    - /bin/cp page-tti-program-index.php "$DEPLOYPATH"
+    - /bin/cp page-wiki-editor.php "$DEPLOYPATH"
+    - /bin/cp page-wiki-feed.php "$DEPLOYPATH"
+    - /bin/cp submissions_database.sql "$DEPLOYPATH"
+    - /bin/cp update_organizations.sql "$DEPLOYPATH"
+    - /bin/cp wiki_master.sql "$DEPLOYPATH"
