@@ -1,49 +1,24 @@
 ---
 deployment:
   tasks:
-    # Deploy all files to the WordPress LIVE child theme directory
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
-
-    # Remove WordPress content snippet files that shouldn't be deployed
-    - /bin/rm -f $DEPLOYPATH/tti-program-index 2>/dev/null || true
-    - /bin/rm -f $DEPLOYPATH/data 2>/dev/null || true
-
-    # Remove any WordPress core files that shouldn't be in child theme
-    - /bin/rm -f $DEPLOYPATH/wp-*.php 2>/dev/null || true      
-    - /bin/rm -f $DEPLOYPATH/index.php 2>/dev/null || true     
-    - /bin/rm -f $DEPLOYPATH/xmlrpc.php 2>/dev/null || true    
-    - /bin/rm -rf $DEPLOYPATH/wp-content 2>/dev/null || true   
-    - /bin/rm -rf $DEPLOYPATH/wp-includes 2>/dev/null || true  
-    - /bin/rm -rf $DEPLOYPATH/wp-admin 2>/dev/null || true     
-
-    # Copy specific directories and files (avoid copying WordPress content snippets)
-    - /bin/cp -R api $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp -R inc $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp -R css $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp -R js $DEPLOYPATH 2>/dev/null || true
-    - /bin/cp -R images $DEPLOYPATH 2>/dev/null || true        
-    - /bin/cp -R templates $DEPLOYPATH 2>/dev/null || true     
-
-    # Copy only child theme PHP files (exclude WordPress core files)
-    - /bin/cp functions.php $DEPLOYPATH 2>/dev/null || true    
-    - /bin/cp page-*.php $DEPLOYPATH 2>/dev/null || true       
-    - /bin/cp style.css $DEPLOYPATH 2>/dev/null || true        
-
-    # Copy hidden files (except .env which should stay on server only)
-    - /bin/cp .htaccess $DEPLOYPATH 2>/dev/null || true        
-    - /bin/cp .gitignore $DEPLOYPATH 2>/dev/null || true       
-    - /bin/cp .env.example $DEPLOYPATH 2>/dev/null || true     
-
-    # Ensure config-loader.php is executable and in the right place
-    - /bin/cp config-loader.php $DEPLOYPATH 2>/dev/null || true
-
-    # Set proper permissions
-    - /bin/chmod 644 $DEPLOYPATH/*.php 2>/dev/null || true     
-    - /bin/chmod 600 $DEPLOYPATH/.env 2>/dev/null || true      
-    - /bin/chmod 600 $DEPLOYPATH/api/config.local.php 2>/dev/null || true
-
-    # Ensure .env exists on server (create from example if missing)
-    - test -f $DEPLOYPATH/.env || /bin/cp $DEPLOYPATH/.env.example $DEPLOYPATH/.env
-
-    # Output deployment confirmation
-    - echo "Deployment complete. Remember to configure .env with your database credentials if this is first deployment."
+    - /bin/cp -R api $DEPLOYPATH
+    - /bin/cp -R inc $DEPLOYPATH
+    - /bin/cp -R css $DEPLOYPATH
+    - /bin/cp -R js $DEPLOYPATH
+    - /bin/cp -R docs $DEPLOYPATH
+    - /bin/cp -R templates $DEPLOYPATH
+    - /bin/cp functions.php $DEPLOYPATH
+    - /bin/cp style.css $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/cp .env.example $DEPLOYPATH
+    - /bin/cp page-admin-data.php $DEPLOYPATH
+    - /bin/cp page-admin-submissions.php $DEPLOYPATH
+    - /bin/cp page-data.php $DEPLOYPATH
+    - /bin/cp page-location-index.php $DEPLOYPATH
+    - /bin/cp page-news-feed.php $DEPLOYPATH
+    - /bin/cp page-news-processor.php $DEPLOYPATH
+    - /bin/cp page-referrer-index.php $DEPLOYPATH
+    - /bin/cp page-tti-program-index.php $DEPLOYPATH
+    - /bin/cp page-wiki-editor.php $DEPLOYPATH
+    - /bin/cp page-wiki-feed.php $DEPLOYPATH
