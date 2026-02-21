@@ -39,3 +39,6 @@ facilities_master.sql
 wiki_master.sql
 submissions_database.sql
 update_organizations.sql
+
+# Claude Code temp files
+tmpclaude-*
