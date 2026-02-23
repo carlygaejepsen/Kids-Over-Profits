@@ -433,7 +433,7 @@
     gap: 10px;
     padding: 12px 24px;
     background: var(--kop-teal);
-    color: var(--kop-white);
+    color: var(--kop-white) !important;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;

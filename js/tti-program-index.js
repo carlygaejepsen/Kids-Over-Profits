@@ -887,47 +887,54 @@ function displayFacilities(facilitiesData, containerId) {
                 // Debug matching for specific facilities (uncomment to debug globally)
                 // if (facName.includes('agape')) console.log(`Attempting match for: "${facName}" (norm: "${normFac}")`);
 
-                // 1. Try Exact Match
-                let matchingFolder = window.filebirdFolders.find(f => f.name.toLowerCase().trim() === facName);
-                
-                // 2. Try Normalized Match
-                if (!matchingFolder) {
-                    matchingFolder = window.filebirdFolders.find(f => normalize(f.name.toLowerCase()) === normFac);
-                }
+                let matchingFolder = null;
+                try {
+                    // 1. Try Exact Match
+                    matchingFolder = window.filebirdFolders.find(f => f.name && f.name.toLowerCase().trim() === facName);
 
-                // 3. Try "Contains" for specific distinctive names (length > 6 to avoid 'Hope', 'New', etc.)
-                if (!matchingFolder && normFac.length > 6) {
-                     // Check if folder name contains facility name (e.g. Folder: "Agape Boarding School Documents", Fac: "Agape Boarding School")
-                     matchingFolder = window.filebirdFolders.find(f => {
-                         const normFolder = normalize(f.name.toLowerCase());
-                         const match = normFolder.includes(normFac);
-                         // if (match) console.log(`Match found via contains! Folder: "${f.name}"`);
-                         return match;
-                     });
-                }
+                    // 2. Try Normalized Match
+                    if (!matchingFolder) {
+                        matchingFolder = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()) === normFac);
+                    }
 
-                // 4. Try reverse contains — facility name contains folder name (e.g. Folder: "Teen Challenge", Fac: "Teen Challenge of the Carolinas")
-                if (!matchingFolder) {
-                    matchingFolder = window.filebirdFolders.find(f => {
-                        const normFolder = normalize(f.name.toLowerCase());
-                        return normFolder.length > 6 && normFac.includes(normFolder);
-                    });
-                }
+                    // 3. Try "Contains" — folder name contains facility name
+                    // e.g. Folder: "Agape Boarding School Documents", Fac: "Agape Boarding School"
+                    if (!matchingFolder && normFac.length > 6) {
+                        matchingFolder = window.filebirdFolders.find(f => {
+                            if (!f.name) return false;
+                            const normFolder = normalize(f.name.toLowerCase());
+                            return normFolder.includes(normFac);
+                        });
+                    }
 
-                // 5. Try full path match for subfolders — all words in "parent + child" name appear in facility name
-                // e.g. Parent: "Teen Challenge", Child: "Montana" → matches "Teen Challenge of Montana"
-                if (!matchingFolder && window.filebirdFolderMap) {
-                    matchingFolder = window.filebirdFolders.find(f => {
-                        const parentId = String(f.parent || '0');
-                        if (parentId === '0') return false;
-                        const parent = window.filebirdFolderMap[parentId];
-                        if (!parent) return false;
-                        const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
-                            .split(/\s+/)
-                            .filter(w => w.length > 2);
-                        if (pathWords.length < 2) return false;
-                        return pathWords.every(word => normFac.includes(word));
-                    });
+                    // 4. Try reverse contains — facility name contains folder name
+                    // e.g. Folder: "Teen Challenge", Fac: "Teen Challenge of the Carolinas"
+                    if (!matchingFolder) {
+                        matchingFolder = window.filebirdFolders.find(f => {
+                            if (!f.name) return false;
+                            const normFolder = normalize(f.name.toLowerCase());
+                            return normFolder.length > 6 && normFac.includes(normFolder);
+                        });
+                    }
+
+                    // 5. Try full path match for subfolders — all words in "parent + child" name appear in facility name
+                    // e.g. Parent: "Teen Challenge", Child: "Montana" → matches "Teen Challenge of Montana"
+                    if (!matchingFolder && window.filebirdFolderMap) {
+                        matchingFolder = window.filebirdFolders.find(f => {
+                            if (!f.name) return false;
+                            const parentId = String(f.parent || '0');
+                            if (parentId === '0') return false;
+                            const parent = window.filebirdFolderMap[parentId];
+                            if (!parent || !parent.name) return false;
+                            const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
+                                .split(/\s+/)
+                                .filter(w => w.length > 2);
+                            if (pathWords.length < 2) return false;
+                            return pathWords.every(word => normFac.includes(word));
+                        });
+                    }
+                } catch (e) {
+                    console.warn('[KOP] Folder matching error for facility "' + facName + '":', e);
                 }
 
                 if (matchingFolder) {

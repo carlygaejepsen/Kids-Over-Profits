@@ -381,7 +381,8 @@ function kop_filebird_library_shortcode($atts) {
                                             <?php if ($has_preview): ?>
                                                 <img src="<?php echo esc_url($preview_url); ?>"
                                                      alt="<?php echo esc_attr($display_title); ?>"
-                                                     class="<?php echo esc_attr($preview_class); ?>">
+                                                     class="<?php echo esc_attr($preview_class); ?>"
+                                                     onerror="this.style.display='none'">
                                             <?php else: ?>
                                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                                                     <?php echo esc_html($file_ext); ?>
@@ -485,7 +486,8 @@ function kop_filebird_folder_shortcode($atts) {
                             <?php if ($has_preview): ?>
                                 <img src="<?php echo esc_url($preview_url); ?>"
                                      alt="<?php echo esc_attr($display_title); ?>"
-                                     class="<?php echo esc_attr($preview_class); ?>">
+                                     class="<?php echo esc_attr($preview_class); ?>"
+                                     onerror="this.style.display='none'">
                             <?php else: ?>
                                 <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                                     <?php echo esc_html($file_ext); ?>
@@ -598,7 +600,8 @@ function kop_document_shortcode($atts) {
                     <?php if ($has_preview): ?>
                         <img src="<?php echo esc_url($preview_url); ?>"
                              alt="<?php echo esc_attr($display_title); ?>"
-                             class="<?php echo esc_attr($preview_class); ?>">
+                             class="<?php echo esc_attr($preview_class); ?>"
+                             onerror="this.style.display='none'">
                     <?php else: ?>
                         <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
                             <?php echo esc_html($file_ext); ?>
