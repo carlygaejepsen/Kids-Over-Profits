@@ -420,6 +420,12 @@
     color: var(--kop-text-muted);
 }
 
+/* Document library button wrapper — centers the button in its field row */
+.doc-library-btn-wrap {
+    display: flex !important;
+    justify-content: center;
+}
+
 /* Button style */
 .kop-doc-button {
     display: inline-flex;
@@ -500,6 +506,12 @@
 
     .doc-layout-grid {
         grid-template-columns: 1fr;
+    }
+
+    .doc-layout-grid .doc-item {
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
     }
 }
 

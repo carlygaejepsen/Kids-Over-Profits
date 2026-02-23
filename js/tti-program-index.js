@@ -98,14 +98,14 @@ function displayFacilities(facilitiesData, containerId) {
             // Standard empty strings
             if (!lower) return true;
 
-            // Explicit placeholder list
+            // Explicit placeholder list — only suppress values that are truly meaningless
+            // NOTE: "no", "pending", "none reported", "not reported" removed — these are informative
             const placeholders = [
-                'none', 'no', 'n/a', 'na', 'n.a.', 'n.a',
+                'none', 'n/a', 'na', 'n.a.', 'n.a',
                 'unknown', 'null', 'undefined', 'false', 'empty',
-                '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 
+                '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}',
                 'not specified', 'not available', 'not applicable',
                 'no data', 'no info', 'no information',
-                'pending', 'none reported', 'not reported', 'no report',
                 'nil', 'unspecified'
             ];
 
@@ -777,7 +777,10 @@ function displayFacilities(facilitiesData, containerId) {
                     if (skipFullKeys.includes(fullKey)) return;
 
                     // Skip empty values (would show "None" or be blank)
-                    if (isValueEmpty(value)) return;
+                    if (isValueEmpty(value)) {
+                        if (window.kopDebugFields) console.log('[KOP] Suppressed field:', fullKey, '=', JSON.stringify(value));
+                        return;
+                    }
 
                     if (Array.isArray(value)) {
                         if (value.length > 0 && !value.every(isValueEmpty)) {
@@ -869,8 +872,14 @@ function displayFacilities(facilitiesData, containerId) {
             // FileBird Document Matching (New)
             let documentsHtml = '';
             if (window.filebirdFolders && Array.isArray(window.filebirdFolders)) {
+                // Build parent lookup map lazily (once across all facilities)
+                if (!window.filebirdFolderMap) {
+                    window.filebirdFolderMap = {};
+                    window.filebirdFolders.forEach(f => { window.filebirdFolderMap[String(f.id)] = f; });
+                }
+
                 const facName = cleanText(facilityHeaderRaw).toLowerCase().trim();
-                
+
                 // Normalize: remove punctuation, extra spaces
                 const normalize = s => s.replace(/[^\w\s]/g, '').trim();
                 const normFac = normalize(facName);
@@ -897,13 +906,37 @@ function displayFacilities(facilitiesData, containerId) {
                      });
                 }
 
+                // 4. Try reverse contains — facility name contains folder name (e.g. Folder: "Teen Challenge", Fac: "Teen Challenge of the Carolinas")
+                if (!matchingFolder) {
+                    matchingFolder = window.filebirdFolders.find(f => {
+                        const normFolder = normalize(f.name.toLowerCase());
+                        return normFolder.length > 6 && normFac.includes(normFolder);
+                    });
+                }
+
+                // 5. Try full path match for subfolders — all words in "parent + child" name appear in facility name
+                // e.g. Parent: "Teen Challenge", Child: "Montana" → matches "Teen Challenge of Montana"
+                if (!matchingFolder && window.filebirdFolderMap) {
+                    matchingFolder = window.filebirdFolders.find(f => {
+                        const parentId = String(f.parent || '0');
+                        if (parentId === '0') return false;
+                        const parent = window.filebirdFolderMap[parentId];
+                        if (!parent) return false;
+                        const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
+                            .split(/\s+/)
+                            .filter(w => w.length > 2);
+                        if (pathWords.length < 2) return false;
+                        return pathWords.every(word => normFac.includes(word));
+                    });
+                }
+
                 if (matchingFolder) {
                     // console.log(`MATCHED! Facility: "${facName}" -> Folder: "${matchingFolder.name}" (ID: ${matchingFolder.id})`);
                     documentsHtml = `
                         <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
                             <span class="field-label">Documents</span>
-                            <span class="field-value">
-                                <button type="button" style="padding:5px 10px; cursor:pointer; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; font-weight:600;" class="doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
+                            <span class="field-value doc-library-btn-wrap">
+                                <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
                                     📂 View Document Library
                                 </button>
                             </span>
@@ -1530,7 +1563,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const data = await decodeResponseAsJson(response);
-                console.log('Facilities script: data loaded successfully from', candidateUrl);
+                const facilityCount = data && data.projects ? Object.keys(data.projects).length : '?';
+                console.log('[KOP] Data source:', candidateUrl, '| projects:', facilityCount);
 
                 // NEW: Load FileBird folders for document matching
                 try {
