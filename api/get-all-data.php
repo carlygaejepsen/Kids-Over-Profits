@@ -17,6 +17,19 @@
 require_once __DIR__ . '/config.php';
 
 $is_cli = php_sapi_name() === 'cli';
+
+// Auth check — CLI is always allowed; HTTP requests require a valid API key
+if (!$is_cli) {
+    $provided_key = $_GET['key'] ?? $_SERVER['HTTP_X_API_KEY'] ?? '';
+    $expected_key = defined('KOP_DATA_API_KEY') ? KOP_DATA_API_KEY
+                  : (getenv('KOP_DATA_API_KEY') ?: null);
+    if (!$expected_key || !hash_equals($expected_key, $provided_key)) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit;
+    }
+}
 $table_name = $_GET['table'] ?? null;
 $show_all = $_GET['show'] ?? null;
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : null;
