@@ -1251,7 +1251,8 @@ function enqueue_tti_processor_scripts() {
     $rest_endpoint = esc_url_raw(rest_url('kop/v1/facilities'));
     $api_endpoint = $theme_uri . '/api/get-master-data.php';
 
-    $json_sources = array($rest_endpoint, $api_endpoint);
+    $static_json = $theme_uri . '/js/data/facilities_master.json';
+    $json_sources = array($rest_endpoint, $api_endpoint, $static_json);
 
     // Localize facilitiesConfig for the script
     wp_localize_script(

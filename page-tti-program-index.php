@@ -76,7 +76,6 @@ window.facilitiesConfig = {
 };
 </script>
 
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/tti-program-index.js?v=<?php echo time(); ?>"></script>
 
 <?php
 get_footer();
