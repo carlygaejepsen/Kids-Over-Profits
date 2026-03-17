@@ -560,8 +560,8 @@
 }
 
 .kop-doc-modal__dialog {
-    width: min(960px, 95vw);
-    max-height: 90vh;
+    width: min(720px, 92vw);
+    height: min(82vh, 860px);
     background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
