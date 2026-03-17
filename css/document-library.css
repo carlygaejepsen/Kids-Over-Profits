@@ -426,9 +426,11 @@
     justify-content: center;
 }
 
-/* Override facility-card .field-value color (specificity 0,2,0 beats 0,1,0) */
-.facility-card .kop-doc-button,
-.operator-section .kop-doc-button {
+/* Override facility-card .field-value color — 3-class specificity (0,3,0) beats any 2-class rule */
+.facility-card .field-value .kop-doc-button,
+.facility-card .doc-library-btn-wrap .kop-doc-button,
+.operator-section .field-value .kop-doc-button,
+.operator-section .doc-library-btn-wrap .kop-doc-button {
     color: #ffffff !important;
 }
 
