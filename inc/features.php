@@ -359,7 +359,8 @@ function kop_filebird_library_shortcode($atts) {
                                 $file_url = wp_get_attachment_url($attachment->ID);
                                 $file_type = wp_check_filetype($file_url);
                                 $file_ext = strtoupper($file_type['ext']);
-                                $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+                                $file_path = get_attached_file($attachment->ID);
+                                $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
                                 $preview_url = function_exists('kop_get_attachment_preview_url')
                                     ? kop_get_attachment_preview_url($attachment->ID, 'large')
                                     : wp_get_attachment_image_url($attachment->ID, 'medium');
@@ -464,7 +465,8 @@ function kop_filebird_folder_shortcode($atts) {
                 $file_url = wp_get_attachment_url($attachment->ID);
                 $file_type = wp_check_filetype($file_url);
                 $file_ext = strtoupper($file_type['ext']);
-                $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+                $file_path = get_attached_file($attachment->ID);
+                $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
                 $preview_url = function_exists('kop_get_attachment_preview_url')
                     ? kop_get_attachment_preview_url($attachment->ID, 'large')
                     : wp_get_attachment_image_url($attachment->ID, 'medium');
@@ -540,7 +542,8 @@ function kop_document_shortcode($atts) {
     $file_url = wp_get_attachment_url($attachment->ID);
     $file_type = wp_check_filetype($file_url);
     $file_ext = strtoupper($file_type['ext']);
-    $file_size = size_format(filesize(get_attached_file($attachment->ID)));
+    $file_path = get_attached_file($attachment->ID);
+    $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
     $preview_url = function_exists('kop_get_attachment_preview_url')
         ? kop_get_attachment_preview_url($attachment->ID, 'large')
         : wp_get_attachment_image_url($attachment->ID, 'medium');
