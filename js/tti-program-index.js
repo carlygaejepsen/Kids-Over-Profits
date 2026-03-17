@@ -1086,8 +1086,10 @@ function clearSearch() {
 // Expose to global scope for inline onclick handlers
 window.clearSearch = clearSearch;
 
-window.loadFacilityDocuments = async function(folderId, containerId) {
-    const container = document.getElementById(containerId);
+window.loadFacilityDocuments = async function(folderId, containerOrId) {
+    const container = (containerOrId instanceof Element)
+        ? containerOrId
+        : document.getElementById(containerOrId);
     if (!container) return;
 
     const parsedId = parseInt(folderId, 10);
@@ -1346,9 +1348,9 @@ function attachDocumentButtons(scope) {
         button.addEventListener('click', event => {
             event.preventDefault();
             const folderId = button.dataset ? button.dataset.folderId : '';
-            const containerId = button.dataset ? button.dataset.containerId : '';
+            const container = button.closest('.field-row');
             if (typeof window.loadFacilityDocuments === 'function') {
-                window.loadFacilityDocuments(folderId, containerId);
+                window.loadFacilityDocuments(folderId, container);
             } else {
                 console.warn('Facilities script: loadFacilityDocuments is not available');
             }
