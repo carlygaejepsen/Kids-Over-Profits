@@ -71,7 +71,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     width: 320px;
     max-width: 90vw;
-    z-index: 200010; /* Above the highlighted target */
+    z-index: 200030; /* Above the highlighted target */
     transition: top 0.1s linear, left 0.1s linear; /* Smooth follow */
     border-left: 5px solid #33A7B5;
     display: none; /* Hidden by default, shown when tutorial active */

@@ -1234,7 +1234,7 @@ function enqueue_tti_processor_scripts() {
             'kop-document-library-style',
             $theme_uri . $doc_style_path,
             array('kop-colors', 'tti-program-index-styles'),
-            filemtime($theme_dir . $doc_style_path) . '-5'
+            filemtime($theme_dir . $doc_style_path) . '-6'
         );
     }
 

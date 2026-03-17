@@ -797,7 +797,7 @@ if (window.TutorialOverlay) {
         }
 
         positionCard(targetEl, position) {
-            this.card.style.position = 'absolute';
+            this.card.style.position = 'fixed';
             this.card.style.width = '320px';
 
             const targetRect = targetEl.getBoundingClientRect();
@@ -813,44 +813,87 @@ if (window.TutorialOverlay) {
                     top = targetRect.bottom + margin;
                     left = targetRect.left + (targetRect.width / 2) - (cardRect.width / 2);
 
-                    // If card would go off bottom of viewport, position it above instead
-                    if (targetRect.bottom + cardRect.height + margin > viewportHeight) {
+                    // If card would go off bottom, place above instead
+                    if (top + cardRect.height > viewportHeight - 10) {
                         top = targetRect.top - cardRect.height - margin;
                     }
+                    // Final vertical clamp (card is above/below target, so this won't cause overlap)
+                    if (top < 10) top = 10;
                     break;
                 case 'top':
                     top = targetRect.top - cardRect.height - margin;
                     left = targetRect.left + (targetRect.width / 2) - (cardRect.width / 2);
 
-                    // If card would go off top of viewport, position it below instead
+                    // If card would go off top, place below instead
                     if (top < 10) {
                         top = targetRect.bottom + margin;
                     }
+                    // Final vertical clamp
+                    if (top + cardRect.height > viewportHeight - 10) top = viewportHeight - cardRect.height - 10;
                     break;
-                case 'right':
+                case 'right': {
                     top = targetRect.top + (targetRect.height / 2) - (cardRect.height / 2);
                     left = targetRect.right + margin;
 
-                    // Keep card in viewport vertically
-                    const maxTop = viewportHeight - cardRect.height - 20;
-                    if (top > maxTop) top = maxTop;
+                    // If card doesn't fit to the right, flip to the left side
+                    if (left + cardRect.width > viewportWidth - 10) {
+                        left = targetRect.left - cardRect.width - margin;
+                    }
+                    // If left side also doesn't fit, fall back to below/above the target
+                    if (left < 10) {
+                        left = targetRect.left + (targetRect.width / 2) - (cardRect.width / 2);
+                        top = targetRect.bottom + margin;
+                        if (top + cardRect.height > viewportHeight - 10) {
+                            top = targetRect.top - cardRect.height - margin;
+                        }
+                    }
+
+                    // Final clamp on both axes — last resort to keep card on-screen
                     if (top < 10) top = 10;
-                    break;
-                case 'left':
+                    if (top + cardRect.height > viewportHeight - 10) top = viewportHeight - cardRect.height - 10;
+                    if (left < 10) left = 10;
+                    if (left + cardRect.width > viewportWidth - 10) left = viewportWidth - cardRect.width - 10;
+
+                    this.card.style.top = top + 'px';
+                    this.card.style.left = left + 'px';
+                    this.card.style.transform = 'none';
+                    return;
+                }
+                case 'left': {
                     top = targetRect.top + (targetRect.height / 2) - (cardRect.height / 2);
                     left = targetRect.left - cardRect.width - margin;
 
-                    // Keep card in viewport vertically
-                    const maxTopLeft = viewportHeight - cardRect.height - 20;
-                    if (top > maxTopLeft) top = maxTopLeft;
+                    // If card doesn't fit to the left, flip to the right side
+                    if (left < 10) {
+                        left = targetRect.right + margin;
+                    }
+                    // If right side also doesn't fit, fall back to below/above the target
+                    if (left + cardRect.width > viewportWidth - 10) {
+                        left = targetRect.left + (targetRect.width / 2) - (cardRect.width / 2);
+                        top = targetRect.bottom + margin;
+                        if (top + cardRect.height > viewportHeight - 10) {
+                            top = targetRect.top - cardRect.height - margin;
+                        }
+                    }
+
+                    // Final clamp on both axes — last resort to keep card on-screen
                     if (top < 10) top = 10;
-                    break;
+                    if (top + cardRect.height > viewportHeight - 10) top = viewportHeight - cardRect.height - 10;
+                    if (left < 10) left = 10;
+                    if (left + cardRect.width > viewportWidth - 10) left = viewportWidth - cardRect.width - 10;
+
+                    this.card.style.top = top + 'px';
+                    this.card.style.left = left + 'px';
+                    this.card.style.transform = 'none';
+                    return;
+                }
                 default: // center
                     this.centerCard();
                     return;
             }
 
-            // Viewport horizontal bounds check
+            // Final horizontal clamp for top/bottom — card is above/below target so horizontal
+            // clamping cannot cause vertical overlap with the target
             if (left < 10) left = 10;
             if (left + cardRect.width > viewportWidth - 10) {
                 left = viewportWidth - cardRect.width - 10;
