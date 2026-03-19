@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getDatasetPriority(url = '') {
-        const match = url.match(/ut_reports(?:[-_]?((?:19|20)\d{2}-\d{2}-\d{2}|(?:19|20)\d{6}))?\.json(?:[?#].*)?$/i);
+        const match = url.match(/ut_reports(?:[-_]?(\d{4}-\d{2}-\d{2}|\d{6,8}))?\.json(?:[?#].*)?$/i);
         if (!match || !match[1]) {
             return 0;
         }
