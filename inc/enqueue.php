@@ -317,7 +317,10 @@ function kop_enqueue_report_scripts() {
             'script_handle' => 'ut-reports-script',
             'script_path'   => '/js/inspections/ut_reports.js',
             'data_object'   => 'utReportsData',
-            'json_glob'     => get_stylesheet_directory() . '/js/data/ut_reports*.json',
+            'json_glob'     => array(
+                get_stylesheet_directory() . '/js/data/ut_reports*.json',
+                get_stylesheet_directory() . '/js/data/ut_checklists/ut_reports*.json',
+            ),
         ),
         'az-reports' => array(
             'script_handle' => 'az-reports-script',
@@ -376,7 +379,25 @@ function kop_enqueue_report_scripts() {
                 true
             );
 
-            $json_files = glob($config['json_glob']);
+            $glob_patterns = is_array($config['json_glob']) ? $config['json_glob'] : array($config['json_glob']);
+            $json_files = array();
+
+            foreach ($glob_patterns as $glob_pattern) {
+                $matched_files = glob($glob_pattern);
+                if ($matched_files) {
+                    $json_files = array_merge($json_files, $matched_files);
+                }
+            }
+
+            if (!empty($json_files)) {
+                $json_files = array_values(array_unique($json_files));
+                usort($json_files, static function ($left, $right) {
+                    $left_mtime = filemtime($left);
+                    $right_mtime = filemtime($right);
+                    return ($right_mtime ?: 0) <=> ($left_mtime ?: 0);
+                });
+            }
+
             $json_urls  = array();
             if ($json_files) {
                 foreach ($json_files as $file) {

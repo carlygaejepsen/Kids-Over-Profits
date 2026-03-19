@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getDatasetPriority(url = '') {
-        const match = url.match(/ut_reports(?:[-_]?(\d{4}-\d{2}-\d{2}|\d{8}))?\.json(?:[?#].*)?$/i);
+        const match = url.match(/ut_reports(?:[-_]?((?:19|20)\d{2}-\d{2}-\d{2}|(?:19|20)\d{6}))?\.json(?:[?#].*)?$/i);
         if (!match || !match[1]) {
             return 0;
         }
@@ -245,14 +245,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function sortDatasetUrls(urls = []) {
-        return urls.slice().sort((left, right) => {
+        return urls
+            .map((url, index) => ({ url, index }))
+            .sort((left, right) => {
             const priorityDiff = getDatasetPriority(right) - getDatasetPriority(left);
             if (priorityDiff !== 0) {
                 return priorityDiff;
             }
 
-            return left.localeCompare(right);
-        });
+                return left.index - right.index;
+            })
+            .map(entry => entry.url);
     }
 
     async function initializeReport() {
