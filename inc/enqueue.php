@@ -401,7 +401,8 @@ function kop_enqueue_report_scripts() {
                 }
 
                 if (!empty($matched_group_files)) {
-                    $json_files = array_merge($json_files, $matched_group_files);
+                    $json_files = $matched_group_files;
+                    break;
                 }
             }
 

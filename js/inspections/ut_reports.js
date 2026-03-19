@@ -234,6 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getDatasetPriority(url = '') {
+        if (typeof url !== 'string') {
+            return 0;
+        }
+
         const match = url.match(/ut_reports(?:[-_]?(\d{4}-\d{2}-\d{2}|\d{6,8}))?\.json(?:[?#].*)?$/i);
         if (!match || !match[1]) {
             return 0;
@@ -248,10 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return urls
             .map((url, index) => ({ url, index }))
             .sort((left, right) => {
-            const priorityDiff = getDatasetPriority(right) - getDatasetPriority(left);
-            if (priorityDiff !== 0) {
-                return priorityDiff;
-            }
+                const priorityDiff = getDatasetPriority(right.url) - getDatasetPriority(left.url);
+                if (priorityDiff !== 0) {
+                    return priorityDiff;
+                }
 
                 return left.index - right.index;
             })
