@@ -126,111 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function getFacilityMergeKey(facility = {}) {
-        const facilityId = facility.facility_id ?? facility.facilityId ?? null;
-        if (facilityId !== null && facilityId !== undefined && String(facilityId).trim()) {
-            return 'id:' + String(facilityId).trim();
-        }
-
-        const name = getFacilityName(facility).trim().toLowerCase();
-        const address = getFacilityAddress(facility).trim().toLowerCase();
-        return 'name:' + name + '|address:' + address;
-    }
-
-    function getInspectionMergeKey(inspection = {}) {
-        const checklistKey = Array.isArray(inspection.checklists)
-            ? inspection.checklists
-                .map(item => item?.checklist_id || item?.pdf_file || '')
-                .filter(Boolean)
-                .join('|')
-            : '';
-
-        const checklistUrlKey = Array.isArray(inspection.checklist_urls)
-            ? inspection.checklist_urls.join('|')
-            : '';
-
-        const findingsKey = Array.isArray(inspection.inspection_findings)
-            ? inspection.inspection_findings
-                .map(finding => [
-                    safeString(finding?.rule_number),
-                    safeString(finding?.description),
-                    safeString(finding?.text),
-                ].join(':'))
-                .filter(Boolean)
-                .join('|')
-            : '';
-
-        return [
-            safeString(inspection.inspection_date),
-            safeString(inspection.inspection_type),
-            checklistKey || checklistUrlKey || findingsKey,
-        ].join('::');
-    }
-
-    function compareInspectionDatesDesc(a, b) {
-        const left = Date.parse(a?.inspection_date || '') || 0;
-        const right = Date.parse(b?.inspection_date || '') || 0;
-        return right - left;
-    }
-
-    function mergeFacilityRecords(existingFacility, incomingFacility) {
-        const mergedFacility = { ...existingFacility };
-
-        Object.entries(incomingFacility).forEach(([key, value]) => {
-            if (key === 'inspections') {
-                return;
-            }
-
-            const currentValue = mergedFacility[key];
-            const currentIsEmpty = currentValue === undefined || currentValue === null || currentValue === '';
-            if (currentIsEmpty && value !== undefined && value !== null && value !== '') {
-                mergedFacility[key] = value;
-            }
-        });
-
-        const mergedInspections = [];
-        const seenInspectionKeys = new Set();
-
-        [...(existingFacility.inspections || []), ...(incomingFacility.inspections || [])].forEach(inspection => {
-            const inspectionKey = getInspectionMergeKey(inspection);
-            if (seenInspectionKeys.has(inspectionKey)) {
-                return;
-            }
-
-            seenInspectionKeys.add(inspectionKey);
-            mergedInspections.push(inspection);
-        });
-
-        mergedFacility.inspections = mergedInspections.sort(compareInspectionDatesDesc);
-        mergedFacility.facility_name = getFacilityName(mergedFacility);
-        mergedFacility.facility_address = getFacilityAddress(mergedFacility);
-        mergedFacility.capacity = getFacilityCapacity(mergedFacility);
-        mergedFacility.most_recent_census = getFacilityCensus(mergedFacility);
-
-        return mergedFacility;
-    }
-
-    function mergeFacilitiesFromArrays(facilityArrays = []) {
-        const mergedFacilities = new Map();
+    function normaliseFacilitiesFromArrays(facilityArrays = []) {
+        const normalisedFacilities = [];
 
         facilityArrays.forEach(facilitiesArray => {
             facilitiesArray.forEach(rawFacility => {
-                const normalisedFacility = normaliseFacilityRecord(rawFacility);
-                const facilityKey = getFacilityMergeKey(normalisedFacility);
-
-                if (!mergedFacilities.has(facilityKey)) {
-                    mergedFacilities.set(facilityKey, normalisedFacility);
-                    return;
-                }
-
-                mergedFacilities.set(
-                    facilityKey,
-                    mergeFacilityRecords(mergedFacilities.get(facilityKey), normalisedFacility)
-                );
+                normalisedFacilities.push(normaliseFacilityRecord(rawFacility));
             });
         });
 
-        return Array.from(mergedFacilities.values());
+        return normalisedFacilities;
     }
 
     function getDatasetPriority(url = '') {
@@ -303,17 +208,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('No Utah report datasets could be loaded.');
             }
 
-            const mergedFacilities = mergeFacilitiesFromArrays(successfulResults.map(result => result.facilities));
-            console.log('Loaded ' + mergedFacilities.length + ' unique facilities from ' + successfulResults.length + ' file(s)');
+            const normalisedFacilities = normaliseFacilitiesFromArrays(successfulResults.map(result => result.facilities));
+            console.log('Loaded ' + normalisedFacilities.length + ' facilities from ' + successfulResults.length + ' file(s)');
 
-            allFacilitiesData = groupFacilitiesFromArray(mergedFacilities);
+            allFacilitiesData = groupFacilitiesFromArray(normalisedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
 
             renderAlphabetFilter();
-            const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-            if (firstLetter) {
-                renderFacilitiesForLetter(firstLetter);
+            if (Object.keys(allFacilitiesData).length) {
+                renderFacilitiesForLetter('ALL');
             } else {
                 reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
             }
@@ -361,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- RENDER FUNCTIONS ---
     function renderAlphabetFilter() {
         const letters = Object.keys(allFacilitiesData).sort();
-        alphabetFilter.innerHTML = letters.map(letter => `<a href="#" data-letter="${letter}">${letter}</a>`).join('');
+        alphabetFilter.innerHTML = [`<a href="#" data-letter="ALL">All</a>`, ...letters.map(letter => `<a href="#" data-letter="${letter}">${letter}</a>`)].join('');
         alphabetFilter.addEventListener('click', (e) => {
             e.preventDefault();
             if (e.target.tagName === 'A') {
@@ -369,6 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderFacilitiesForLetter(letter);
             }
         }, { passive: false });
+    }
+
+    function getFacilitiesForSelection(letter) {
+        if (letter === 'ALL') {
+            return Object.keys(allFacilitiesData)
+                .sort()
+                .reduce((allFacilities, groupLetter) => allFacilities.concat(allFacilitiesData[groupLetter] || []), []);
+        }
+
+        return allFacilitiesData[letter] || [];
     }
 
     function renderFacilitiesForLetter(letter) {
@@ -381,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             a.classList.toggle('active', a.dataset.letter === letter);
         });
         
-        const facilities = allFacilitiesData[letter];
+        const facilities = getFacilitiesForSelection(letter);
         const sortBy = sortSelect ? sortSelect.value : '';
         const sortedFacilities = sortFacilities(facilities || [], sortBy);
         renderFilteredFacilities(sortedFacilities, letter);
@@ -422,18 +336,17 @@ document.addEventListener('DOMContentLoaded', () => {
             isSearching = false;
             if (clearButton) clearButton.style.display = 'none';
             
-            if (currentLetter && allFacilitiesData[currentLetter]) {
+            if (currentLetter === 'ALL' || (currentLetter && allFacilitiesData[currentLetter])) {
                 document.querySelectorAll('#alphabet-filter a').forEach(a => {
                     a.classList.toggle('active', a.dataset.letter === currentLetter);
                 });
                 
-                const facilities = allFacilitiesData[currentLetter];
-                const sortedFacilities = sortFacilities(facilities, sortBy);
+                const facilities = getFacilitiesForSelection(currentLetter);
+                const sortedFacilities = sortFacilities(facilities || [], sortBy);
                 renderFilteredFacilities(sortedFacilities, currentLetter);
             } else {
-                const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-                if (firstLetter) {
-                    renderFacilitiesForLetter(firstLetter);
+                if (Object.keys(allFacilitiesData).length) {
+                    renderFacilitiesForLetter('ALL');
                 }
             }
         }
@@ -518,7 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!facilities || facilities.length === 0) {
             const message = isSearching ? 
                 'No facilities found matching your search.' : 
-                `No facilities found for the letter "${context}".`;
+                (context === 'ALL'
+                    ? 'No facilities found.'
+                    : `No facilities found for the letter "${context}".`);
             reportContainer.innerHTML = `<p>${message}</p>`;
             return;
         }
