@@ -115,6 +115,146 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function normaliseFacilityRecord(facility = {}) {
+        return {
+            ...facility,
+            facility_name: getFacilityName(facility),
+            facility_address: getFacilityAddress(facility),
+            capacity: getFacilityCapacity(facility),
+            most_recent_census: getFacilityCensus(facility),
+            inspections: normaliseInspections(Array.isArray(facility.inspections) ? facility.inspections : []),
+        };
+    }
+
+    function getFacilityMergeKey(facility = {}) {
+        const facilityId = facility.facility_id ?? facility.facilityId ?? null;
+        if (facilityId !== null && facilityId !== undefined && String(facilityId).trim()) {
+            return 'id:' + String(facilityId).trim();
+        }
+
+        const name = getFacilityName(facility).trim().toLowerCase();
+        const address = getFacilityAddress(facility).trim().toLowerCase();
+        return 'name:' + name + '|address:' + address;
+    }
+
+    function getInspectionMergeKey(inspection = {}) {
+        const checklistKey = Array.isArray(inspection.checklists)
+            ? inspection.checklists
+                .map(item => item?.checklist_id || item?.pdf_file || '')
+                .filter(Boolean)
+                .join('|')
+            : '';
+
+        const checklistUrlKey = Array.isArray(inspection.checklist_urls)
+            ? inspection.checklist_urls.join('|')
+            : '';
+
+        const findingsKey = Array.isArray(inspection.inspection_findings)
+            ? inspection.inspection_findings
+                .map(finding => [
+                    safeString(finding?.rule_number),
+                    safeString(finding?.description),
+                    safeString(finding?.text),
+                ].join(':'))
+                .filter(Boolean)
+                .join('|')
+            : '';
+
+        return [
+            safeString(inspection.inspection_date),
+            safeString(inspection.inspection_type),
+            checklistKey || checklistUrlKey || findingsKey,
+        ].join('::');
+    }
+
+    function compareInspectionDatesDesc(a, b) {
+        const left = Date.parse(a?.inspection_date || '') || 0;
+        const right = Date.parse(b?.inspection_date || '') || 0;
+        return right - left;
+    }
+
+    function mergeFacilityRecords(existingFacility, incomingFacility) {
+        const mergedFacility = { ...existingFacility };
+
+        Object.entries(incomingFacility).forEach(([key, value]) => {
+            if (key === 'inspections') {
+                return;
+            }
+
+            const currentValue = mergedFacility[key];
+            const currentIsEmpty = currentValue === undefined || currentValue === null || currentValue === '';
+            if (currentIsEmpty && value !== undefined && value !== null && value !== '') {
+                mergedFacility[key] = value;
+            }
+        });
+
+        const mergedInspections = [];
+        const seenInspectionKeys = new Set();
+
+        [...(existingFacility.inspections || []), ...(incomingFacility.inspections || [])].forEach(inspection => {
+            const inspectionKey = getInspectionMergeKey(inspection);
+            if (seenInspectionKeys.has(inspectionKey)) {
+                return;
+            }
+
+            seenInspectionKeys.add(inspectionKey);
+            mergedInspections.push(inspection);
+        });
+
+        mergedFacility.inspections = mergedInspections.sort(compareInspectionDatesDesc);
+        mergedFacility.facility_name = getFacilityName(mergedFacility);
+        mergedFacility.facility_address = getFacilityAddress(mergedFacility);
+        mergedFacility.capacity = getFacilityCapacity(mergedFacility);
+        mergedFacility.most_recent_census = getFacilityCensus(mergedFacility);
+
+        return mergedFacility;
+    }
+
+    function mergeFacilitiesFromArrays(facilityArrays = []) {
+        const mergedFacilities = new Map();
+
+        facilityArrays.forEach(facilitiesArray => {
+            facilitiesArray.forEach(rawFacility => {
+                const normalisedFacility = normaliseFacilityRecord(rawFacility);
+                const facilityKey = getFacilityMergeKey(normalisedFacility);
+
+                if (!mergedFacilities.has(facilityKey)) {
+                    mergedFacilities.set(facilityKey, normalisedFacility);
+                    return;
+                }
+
+                mergedFacilities.set(
+                    facilityKey,
+                    mergeFacilityRecords(mergedFacilities.get(facilityKey), normalisedFacility)
+                );
+            });
+        });
+
+        return Array.from(mergedFacilities.values());
+    }
+
+    function getDatasetPriority(url = '') {
+        const match = url.match(/ut_reports(?:[-_]?(\d{4}-\d{2}-\d{2}|\d{8}))?\.json(?:[?#].*)?$/i);
+        if (!match || !match[1]) {
+            return 0;
+        }
+
+        const dateToken = match[1].replace(/-/g, '');
+        const parsed = Number.parseInt(dateToken, 10);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function sortDatasetUrls(urls = []) {
+        return urls.slice().sort((left, right) => {
+            const priorityDiff = getDatasetPriority(right) - getDatasetPriority(left);
+            if (priorityDiff !== 0) {
+                return priorityDiff;
+            }
+
+            return left.localeCompare(right);
+        });
+    }
+
     async function initializeReport() {
         try {
             console.log('Starting to initialize Utah report...');
@@ -129,28 +269,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const jsonUrl = urls.find(url => url.includes('ut_reports')) || urls[0];
-            console.log('Using URL:', jsonUrl);
+            const utReportUrls = urls.filter(url => /ut_reports.*\.json(?:[?#].*)?$/i.test(url));
+            const orderedUrls = sortDatasetUrls(utReportUrls.length ? utReportUrls : urls);
+            console.log('Using URLs:', orderedUrls);
 
-            const response = await fetch(jsonUrl);
+            const loadResults = await Promise.allSettled(orderedUrls.map(async jsonUrl => {
+                const response = await fetch(jsonUrl);
 
-            if (!response.ok) {
-                throw new Error('HTTP error! status: ' + response.status);
-            }
+                if (!response.ok) {
+                    throw new Error(jsonUrl + ' returned HTTP ' + response.status);
+                }
 
-            const facilitiesArray = await response.json();
-            console.log('Loaded ' + facilitiesArray.length + ' facilities');
+                const payload = await response.json();
+                if (!Array.isArray(payload)) {
+                    throw new Error(jsonUrl + ' did not return an array payload');
+                }
 
-            const normalisedFacilities = facilitiesArray.map(facility => ({
-                ...facility,
-                facility_name: getFacilityName(facility),
-                facility_address: getFacilityAddress(facility),
-                capacity: getFacilityCapacity(facility),
-                most_recent_census: getFacilityCensus(facility),
-                inspections: normaliseInspections(facility.inspections),
+                return {
+                    url: jsonUrl,
+                    facilities: payload,
+                };
             }));
 
-            allFacilitiesData = groupFacilitiesFromArray(normalisedFacilities);
+            const successfulResults = loadResults
+                .filter(result => result.status === 'fulfilled')
+                .map(result => result.value);
+
+            loadResults
+                .filter(result => result.status === 'rejected')
+                .forEach(result => console.warn('Failed to load Utah report dataset:', result.reason));
+
+            if (!successfulResults.length) {
+                throw new Error('No Utah report datasets could be loaded.');
+            }
+
+            const mergedFacilities = mergeFacilitiesFromArrays(successfulResults.map(result => result.facilities));
+            console.log('Loaded ' + mergedFacilities.length + ' unique facilities from ' + successfulResults.length + ' file(s)');
+
+            allFacilitiesData = groupFacilitiesFromArray(mergedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
 

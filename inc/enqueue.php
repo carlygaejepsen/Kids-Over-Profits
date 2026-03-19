@@ -317,7 +317,7 @@ function kop_enqueue_report_scripts() {
             'script_handle' => 'ut-reports-script',
             'script_path'   => '/js/inspections/ut_reports.js',
             'data_object'   => 'utReportsData',
-            'json_glob'     => get_stylesheet_directory() . '/js/data/ut_*.json',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/ut_reports*.json',
         ),
         'az-reports' => array(
             'script_handle' => 'az-reports-script',
