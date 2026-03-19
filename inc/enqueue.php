@@ -318,8 +318,12 @@ function kop_enqueue_report_scripts() {
             'script_path'   => '/js/inspections/ut_reports.js',
             'data_object'   => 'utReportsData',
             'json_glob'     => array(
-                get_stylesheet_directory() . '/js/data/ut_reports*.json',
-                get_stylesheet_directory() . '/js/data/ut_checklists/ut_reports*.json',
+                array(
+                    get_stylesheet_directory() . '/js/data/ut_checklists/ut_reports*.json',
+                ),
+                array(
+                    get_stylesheet_directory() . '/js/data/ut_reports*.json',
+                ),
             ),
         ),
         'az-reports' => array(
@@ -379,13 +383,26 @@ function kop_enqueue_report_scripts() {
                 true
             );
 
-            $glob_patterns = is_array($config['json_glob']) ? $config['json_glob'] : array($config['json_glob']);
+            $glob_groups = is_array($config['json_glob']) ? $config['json_glob'] : array(array($config['json_glob']));
+            if (!empty($glob_groups) && !is_array(reset($glob_groups))) {
+                $glob_groups = array($glob_groups);
+            }
+
             $json_files = array();
 
-            foreach ($glob_patterns as $glob_pattern) {
-                $matched_files = glob($glob_pattern);
-                if ($matched_files) {
-                    $json_files = array_merge($json_files, $matched_files);
+            foreach ($glob_groups as $glob_group) {
+                $matched_group_files = array();
+
+                foreach ($glob_group as $glob_pattern) {
+                    $matched_files = glob($glob_pattern);
+                    if ($matched_files) {
+                        $matched_group_files = array_merge($matched_group_files, $matched_files);
+                    }
+                }
+
+                if (!empty($matched_group_files)) {
+                    $json_files = $matched_group_files;
+                    break;
                 }
             }
 
