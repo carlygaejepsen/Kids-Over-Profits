@@ -39,6 +39,68 @@ if (!is_user_logged_in() || !current_user_can('administrator')) {
 require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
+function kop_resolve_table_name(PDO $pdo, $base, $prefix = '') {
+    $candidates = [];
+    if (is_string($prefix) && $prefix !== '') {
+        $candidates[] = $prefix . $base;
+    }
+    $candidates[] = $base;
+
+    foreach ($candidates as $candidate) {
+        $stmt = $pdo->prepare('SHOW TABLES LIKE ?');
+        $stmt->execute([$candidate]);
+        if ($stmt->fetchColumn()) {
+            return $candidate;
+        }
+    }
+
+    return $candidates[0];
+}
+
+function kop_extract_project_data($payload) {
+    if (!is_array($payload)) {
+        return [];
+    }
+
+    $data = $payload;
+    $guard = 0;
+
+    while (
+        is_array($data)
+        && isset($data['data'])
+        && is_array($data['data'])
+        && $guard < 3
+    ) {
+        $inner = $data['data'];
+        $data = $inner;
+        $guard += 1;
+    }
+
+    return is_array($data) ? $data : [];
+}
+
+function kop_build_project_payload($payload, $project_name, $category) {
+    $project_name = trim((string) $project_name);
+    $wrapped = is_array($payload) ? $payload : [];
+    $wrapped['data'] = kop_extract_project_data($payload);
+
+    if (!isset($wrapped['name']) || trim((string) $wrapped['name']) === '') {
+        $wrapped['name'] = $project_name !== '' ? $project_name : 'Unnamed Project';
+    }
+
+    if (!isset($wrapped['category']) || trim((string) $wrapped['category']) === '') {
+        $wrapped['category'] = $category;
+    }
+
+    if (!isset($wrapped['currentFacilityIndex']) || !is_numeric($wrapped['currentFacilityIndex'])) {
+        $wrapped['currentFacilityIndex'] = 0;
+    }
+
+    $wrapped['timestamp'] = date('c');
+
+    return $wrapped;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
@@ -69,10 +131,16 @@ try {
         exit;
     }
 
+    $wp_prefix = isset($table_prefix) && is_string($table_prefix) ? $table_prefix : '';
+    $suggested_edits_table = kop_resolve_table_name($pdo, 'suggested_edits', $wp_prefix);
+    $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $wp_prefix);
+    $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix);
+    $locations_table = kop_resolve_table_name($pdo, 'locations_master', $wp_prefix);
+
     $pdo->beginTransaction();
 
     // Get the submission (limit 1 for safety)
-    $stmt = $pdo->prepare("SELECT * FROM suggested_edits WHERE id = ? AND status = 'pending' LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE id = ? AND status = 'pending' LIMIT 1");
     $stmt->execute([$id]);
     $submission = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -97,6 +165,7 @@ try {
 
         // Determine which table to use based on data structure and project name
         $decoded_data = json_decode($json_data, true);
+        $project_data = kop_extract_project_data($decoded_data);
         
         // US State names for location project detection
         $US_STATE_NAMES = [
@@ -123,59 +192,41 @@ try {
         $isLocation = in_array($masterIdUpper, $US_STATE_NAMES) || in_array($masterIdUpper, $COUNTRY_NAMES);
         
         // Check if it's a referrer project
-        $isReferrer = !empty($decoded_data['referrerAgency']['name']) ||
-                      !empty($decoded_data['referrerConsultants'][0]['firstName']) ||
-                      !empty($decoded_data['referrerConsultants'][0]['lastName']);
+        $isReferrer = !empty($project_data['referrerAgency']['name']) ||
+                      !empty($project_data['referrerConsultants'][0]['firstName']) ||
+                      !empty($project_data['referrerConsultants'][0]['lastName']);
         
         // Determine table: locations first, then referrers, then facilities
         if ($isLocation) {
-            $tableName = 'locations_master';
+            $tableName = $locations_table;
             $category = 'locations';
         } elseif ($isReferrer) {
-            $tableName = 'referrers_master';
+            $tableName = $referrers_table;
             $category = 'referrers';
         } else {
-            $tableName = 'facilities_master';
+            $tableName = $facilities_table;
             $category = 'companies';
         }
 
-        // Wrap the data in proper project structure if it's not already wrapped
-        // Expected format: { name, data: { operator, facilities }, category, timestamp }
-        $hasNestedData = isset($decoded_data['data']) && is_array($decoded_data['data']);
-        if (!$hasNestedData) {
-            // Data is at root level (old/raw format), wrap it
-            $wrappedData = [
-                'name' => $master_id ?: 'Unnamed Project',
-                'data' => $decoded_data,
-                'category' => $category,
-                'currentFacilityIndex' => 0,
-                'timestamp' => date('c')
-            ];
-            $json_data = json_encode($wrappedData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        } else {
-            // Already in new format, just ensure category is set
-            if (!isset($decoded_data['category'])) {
-                $decoded_data['category'] = $category;
-                $json_data = json_encode($decoded_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-            }
-        }
+        $project_payload = kop_build_project_payload($decoded_data, $master_id, $category);
+        $json_data = json_encode($project_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         // If master_id is empty, insert a new row with NULL unique_name
         if ($master_id) {
             // Check if record exists by unique_name in the appropriate table
-            $checkStmt = $pdo->prepare("SELECT id, json_data FROM {$tableName} WHERE unique_name = ? LIMIT 1");
+            $checkStmt = $pdo->prepare("SELECT id, json_data FROM `{$tableName}` WHERE unique_name = ? LIMIT 1");
             $checkStmt->execute([$master_id]);
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
             if ($exists) {
                 // For location projects, merge new facilities into existing data
                 if ($isLocation && !empty($exists['json_data'])) {
-                    $existingData = json_decode($exists['json_data'], true);
-                    $newData = json_decode($json_data, true);
+                    $existingData = kop_build_project_payload(json_decode($exists['json_data'], true), $master_id, $category);
+                    $newData = kop_build_project_payload(json_decode($json_data, true), $master_id, $category);
                     
                     // Get the actual data arrays
-                    $existingFacilities = $existingData['data']['facilities'] ?? [];
-                    $newFacilities = $newData['data']['facilities'] ?? [];
+                    $existingFacilities = is_array($existingData['data']['facilities'] ?? null) ? $existingData['data']['facilities'] : [];
+                    $newFacilities = is_array($newData['data']['facilities'] ?? null) ? $newData['data']['facilities'] : [];
                     
                     // Merge facilities - add new ones, avoiding exact duplicates by name
                     foreach ($newFacilities as $newFacility) {
@@ -204,16 +255,16 @@ try {
                 }
                 
                 // Update existing record
-                $updateStmt = $pdo->prepare("UPDATE {$tableName} SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
+                $updateStmt = $pdo->prepare("UPDATE `{$tableName}` SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
                 $updateStmt->execute([$json_data, $master_id]);
             } else {
                 // Insert new record with provided unique_name
-                $insertStmt = $pdo->prepare("INSERT INTO {$tableName} (unique_name, json_data) VALUES (?, ?)");
+                $insertStmt = $pdo->prepare("INSERT INTO `{$tableName}` (unique_name, json_data) VALUES (?, ?)");
                 $insertStmt->execute([$master_id, $json_data]);
             }
         } else {
             // Insert a completely new master record (unique_name left NULL)
-            $insertStmt = $pdo->prepare("INSERT INTO {$tableName} (json_data) VALUES (?)");
+            $insertStmt = $pdo->prepare("INSERT INTO `{$tableName}` (json_data) VALUES (?)");
             $insertStmt->execute([$json_data]);
         }
 
@@ -222,11 +273,11 @@ try {
         $timestampCols = ['reviewed_at', 'reviewed_on', 'processed_at', 'reviewed_at_ts'];
         foreach ($timestampCols as $col) {
             // Check if column exists in table
-            $colCheck = $pdo->prepare("SELECT COUNT(*) as c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'suggested_edits' AND COLUMN_NAME = ?");
-            $colCheck->execute([$col]);
+            $colCheck = $pdo->prepare("SELECT COUNT(*) as c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?");
+            $colCheck->execute([$suggested_edits_table, $col]);
             $res = $colCheck->fetch(PDO::FETCH_ASSOC);
             if ($res && isset($res['c']) && (int)$res['c'] > 0) {
-                $updateStatusStmt = $pdo->prepare("UPDATE suggested_edits SET status = 'approved', $col = NOW() WHERE id = ?");
+                $updateStatusStmt = $pdo->prepare("UPDATE `{$suggested_edits_table}` SET status = 'approved', $col = NOW() WHERE id = ?");
                 $updateStatusStmt->execute([$id]);
                 $updated = true;
                 break;
@@ -234,7 +285,7 @@ try {
         }
         if (! $updated) {
             // Fallback: update only the status
-            $updateStatusStmt = $pdo->prepare("UPDATE suggested_edits SET status = 'approved' WHERE id = ?");
+            $updateStatusStmt = $pdo->prepare("UPDATE `{$suggested_edits_table}` SET status = 'approved' WHERE id = ?");
             $updateStatusStmt->execute([$id]);
         }
 
@@ -246,18 +297,18 @@ try {
         $updated = false;
         $timestampCols = ['reviewed_at', 'reviewed_on', 'processed_at', 'reviewed_at_ts'];
         foreach ($timestampCols as $col) {
-            $colCheck = $pdo->prepare("SELECT COUNT(*) as c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'suggested_edits' AND COLUMN_NAME = ?");
-            $colCheck->execute([$col]);
+            $colCheck = $pdo->prepare("SELECT COUNT(*) as c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?");
+            $colCheck->execute([$suggested_edits_table, $col]);
             $res = $colCheck->fetch(PDO::FETCH_ASSOC);
             if ($res && isset($res['c']) && (int)$res['c'] > 0) {
-                $updateStatusStmt = $pdo->prepare("UPDATE suggested_edits SET status = 'rejected', $col = NOW() WHERE id = ?");
+                $updateStatusStmt = $pdo->prepare("UPDATE `{$suggested_edits_table}` SET status = 'rejected', $col = NOW() WHERE id = ?");
                 $updateStatusStmt->execute([$id]);
                 $updated = true;
                 break;
             }
         }
         if (! $updated) {
-            $updateStatusStmt = $pdo->prepare("UPDATE suggested_edits SET status = 'rejected' WHERE id = ?");
+            $updateStatusStmt = $pdo->prepare("UPDATE `{$suggested_edits_table}` SET status = 'rejected' WHERE id = ?");
             $updateStatusStmt->execute([$id]);
         }
 

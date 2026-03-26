@@ -9,18 +9,119 @@ if (!$pdo) {
     die("Could not connect to the database (pdo is null).");
 }
 
+function kop_resolve_table_name(PDO $pdo, $base, $prefix = '') {
+    $candidates = [];
+    if (is_string($prefix) && $prefix !== '') {
+        $candidates[] = $prefix . $base;
+    }
+    $candidates[] = $base;
+
+    foreach ($candidates as $candidate) {
+        $stmt = $pdo->prepare('SHOW TABLES LIKE ?');
+        $stmt->execute([$candidate]);
+        if ($stmt->fetchColumn()) {
+            return $candidate;
+        }
+    }
+
+    return $candidates[0];
+}
+
+function kop_extract_project_data($payload) {
+    if (!is_array($payload)) {
+        return [];
+    }
+
+    $data = $payload;
+    $guard = 0;
+
+    while (
+        is_array($data)
+        && isset($data['data'])
+        && is_array($data['data'])
+        && $guard < 3
+    ) {
+        $data = $data['data'];
+        $guard += 1;
+    }
+
+    return is_array($data) ? $data : [];
+}
+
+function kop_is_location_project_name($name) {
+    static $location_names = [
+        'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',
+        'DELAWARE', 'FLORIDA', 'GEORGIA', 'HAWAII', 'IDAHO', 'ILLINOIS', 'INDIANA', 'IOWA',
+        'KANSAS', 'KENTUCKY', 'LOUISIANA', 'MAINE', 'MARYLAND', 'MASSACHUSETTS', 'MICHIGAN',
+        'MINNESOTA', 'MISSISSIPPI', 'MISSOURI', 'MONTANA', 'NEBRASKA', 'NEVADA', 'NEW HAMPSHIRE',
+        'NEW JERSEY', 'NEW MEXICO', 'NEW YORK', 'NORTH CAROLINA', 'NORTH DAKOTA', 'OHIO',
+        'OKLAHOMA', 'OREGON', 'PENNSYLVANIA', 'RHODE ISLAND', 'SOUTH CAROLINA', 'SOUTH DAKOTA',
+        'TENNESSEE', 'TEXAS', 'UTAH', 'VERMONT', 'VIRGINIA', 'WASHINGTON', 'WEST VIRGINIA',
+        'WISCONSIN', 'WYOMING', 'CANADA', 'MEXICO', 'UNITED KINGDOM', 'AUSTRALIA', 'JAMAICA',
+        'SAMOA', 'COSTA RICA', 'BELIZE', 'BAHAMAS', 'DOMINICAN REPUBLIC', 'PUERTO RICO',
+        'FRANCE', 'GERMANY', 'ITALY', 'SPAIN', 'NETHERLANDS', 'SWITZERLAND', 'SWEDEN',
+        'NORWAY', 'DENMARK', 'IRELAND', 'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN',
+        'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
+    ];
+
+    return in_array(strtoupper(trim((string) $name)), $location_names, true);
+}
+
+function kop_load_existing_master_data(PDO $pdo, $master_id, $tables) {
+    $preferred_order = [];
+
+    if (kop_is_location_project_name($master_id)) {
+        $preferred_order[] = $tables['locations'];
+        $preferred_order[] = $tables['facilities'];
+        $preferred_order[] = $tables['referrers'];
+    } else {
+        $preferred_order[] = $tables['facilities'];
+        $preferred_order[] = $tables['referrers'];
+        $preferred_order[] = $tables['locations'];
+    }
+
+    foreach ($preferred_order as $table_name) {
+        if (!$table_name) {
+            continue;
+        }
+
+        $stmt = $pdo->prepare("SELECT json_data FROM `{$table_name}` WHERE unique_name = ? LIMIT 1");
+        $stmt->execute([$master_id]);
+        $payload = $stmt->fetchColumn();
+
+        if ($payload) {
+            $decoded = json_decode($payload, true);
+            if (is_array($decoded)) {
+                return kop_extract_project_data($decoded);
+            }
+        }
+    }
+
+    return [];
+}
+
+$wp_prefix = isset($table_prefix) && is_string($table_prefix) ? $table_prefix : '';
+$suggested_edits_table = kop_resolve_table_name($pdo, 'suggested_edits', $wp_prefix);
+$news_submissions_table = kop_resolve_table_name($pdo, 'news_submissions', $wp_prefix);
+$wiki_submissions_table = kop_resolve_table_name($pdo, 'wiki_submissions', $wp_prefix);
+$master_tables = [
+    'facilities' => kop_resolve_table_name($pdo, 'facilities_master', $wp_prefix),
+    'referrers' => kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix),
+    'locations' => kop_resolve_table_name($pdo, 'locations_master', $wp_prefix),
+];
+
 // Fetch pending suggestions (Data Form)
-$stmt = $pdo->prepare("SELECT * FROM suggested_edits WHERE status = 'pending'");
+$stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE status = 'pending'");
 $stmt->execute();
 $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch pending news
-$stmt = $pdo->prepare("SELECT * FROM news_submissions WHERE status = 'submitted'");
+$stmt = $pdo->prepare("SELECT * FROM `{$news_submissions_table}` WHERE status = 'submitted'");
 $stmt->execute();
 $news_submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch pending wiki
-$stmt = $pdo->prepare("SELECT * FROM wiki_submissions WHERE status = 'submitted' AND status != 'deleted'");
+$stmt = $pdo->prepare("SELECT * FROM `{$wiki_submissions_table}` WHERE status = 'submitted' AND status != 'deleted'");
 $stmt->execute();
 $wiki_submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -239,22 +340,9 @@ function kop_has_meaningful_referrer_payload($data) {
                     <?php foreach ($suggestions as $suggestion): ?>
                         <div class="suggestion item-suggestion" id="suggestion-<?php echo $suggestion['id']; ?>" data-id="<?php echo $suggestion['id']; ?>">
                             <?php
-                            $new_data = json_decode($suggestion['edited_json_data'], true);
+                            $new_data = kop_extract_project_data(json_decode($suggestion['edited_json_data'], true));
                             $master_id = $suggestion['master_id'];
-
-                            // Check both facilities_master and referrers_master tables
-                            $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ?");
-                            $stmt->execute([$master_id]);
-                            $original_data = $stmt->fetchColumn();
-
-                            // If not found in facilities, try referrers
-                            if (!$original_data) {
-                                $stmt = $pdo->prepare("SELECT json_data FROM referrers_master WHERE unique_name = ?");
-                                $stmt->execute([$master_id]);
-                                $original_data = $stmt->fetchColumn();
-                            }
-
-                            $old_data = $original_data ? json_decode($original_data, true) : [];
+                            $old_data = kop_load_existing_master_data($pdo, $master_id, $master_tables);
 
                             $diff = json_diff($old_data, $new_data);
 
