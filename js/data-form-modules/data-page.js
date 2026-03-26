@@ -216,6 +216,97 @@
         // Independent consultant toggle functionality
         let suggestionSubmissionInProgress = false;
 
+        function hasMeaningfulFacilityValue(value) {
+            if (typeof value === 'string') {
+                return value.trim() !== '';
+            }
+
+            if (typeof value === 'number') {
+                return !Number.isNaN(value);
+            }
+
+            if (typeof value === 'boolean') {
+                return value === true;
+            }
+
+            if (Array.isArray(value)) {
+                return value.some(item => hasMeaningfulFacilityValue(item));
+            }
+
+            if (value && typeof value === 'object') {
+                return Object.values(value).some(item => hasMeaningfulFacilityValue(item));
+            }
+
+            return false;
+        }
+
+        function facilityHasMeaningfulSubmissionData(facility) {
+            if (!facility || typeof facility !== 'object') {
+                return false;
+            }
+
+            return hasMeaningfulFacilityValue([
+                facility.identification?.currentName,
+                facility.identification?.currentOperator,
+                facility.identification?.currentOwner,
+                facility.identification?.currentOwners,
+                facility.identification?.otherNames,
+                facility.identification?.pastNames,
+                facility.identification?.knownReferrers,
+                facility.location,
+                facility.address,
+                facility.locationDetails?.city,
+                facility.locationDetails?.state,
+                facility.locationDetails?.country,
+                facility.locationDetails?.additionalLocations,
+                facility.otherOperators,
+                facility.operatingPeriod,
+                facility.staff,
+                facility.profileLinks,
+                facility.facilityDetails,
+                facility.accreditations,
+                facility.memberships,
+                facility.certifications,
+                facility.licensing,
+                facility.resources,
+                facility.treatmentTypes,
+                facility.philosophy,
+                facility.criticalIncidents,
+                facility.notes,
+                facility.fieldNotes,
+                facility.isPrivatelyOwned
+            ]);
+        }
+
+        function getIncompleteUnnamedFacilities(facilities) {
+            if (!Array.isArray(facilities)) {
+                return [];
+            }
+
+            return facilities.reduce((issues, facility, index) => {
+                const facilityName = typeof facility?.identification?.name === 'string'
+                    ? facility.identification.name.trim()
+                    : '';
+
+                if (facilityName || !facilityHasMeaningfulSubmissionData(facility)) {
+                    return issues;
+                }
+
+                const summaryParts = [
+                    facility?.locationDetails?.city,
+                    facility?.locationDetails?.state,
+                    facility?.facilityDetails?.type,
+                    facility?.identification?.currentName
+                ].filter(part => typeof part === 'string' && part.trim() !== '');
+
+                issues.push({
+                    index,
+                    summary: summaryParts.join(', ')
+                });
+                return issues;
+            }, []);
+        }
+
         function ensureSuggestionButtonBinding() {
             const toolbarButton = document.getElementById('submit-suggestion-btn-toolbar');
             if (toolbarButton && !toolbarButton.dataset.suggestionBound) {
@@ -332,6 +423,20 @@
 
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName;
+
+            const incompleteUnnamedFacilities = getIncompleteUnnamedFacilities(dataToSubmit.facilities);
+            if (incompleteUnnamedFacilities.length > 0) {
+                const facilityList = incompleteUnnamedFacilities
+                    .map(({ index, summary }) => summary ? `#${index + 1} (${summary})` : `#${index + 1}`)
+                    .join(', ');
+
+                showSuggestionStatus(
+                    `Please add a facility name for ${facilityList} before submitting, or clear the partial entry.`,
+                    'error'
+                );
+                suggestionSubmissionInProgress = false;
+                return false;
+            }
 
             console.log('📤 Submitting changes for project:', actualProjectName, {
                 facilityCount,

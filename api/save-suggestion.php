@@ -19,6 +19,91 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+function kop_value_is_meaningful($value) {
+    if (is_string($value)) {
+        return trim($value) !== '';
+    }
+
+    if (is_bool($value)) {
+        return $value === true;
+    }
+
+    if (is_int($value) || is_float($value)) {
+        return true;
+    }
+
+    if (is_array($value)) {
+        foreach ($value as $item) {
+            if (kop_value_is_meaningful($item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    return !empty($value);
+}
+
+function kop_facility_has_meaningful_data($facility) {
+    if (!is_array($facility)) {
+        return false;
+    }
+
+    $identification = is_array($facility['identification'] ?? null) ? $facility['identification'] : [];
+    $location_details = is_array($facility['locationDetails'] ?? null) ? $facility['locationDetails'] : [];
+
+    return kop_value_is_meaningful([
+        $identification['currentName'] ?? null,
+        $identification['currentOperator'] ?? null,
+        $identification['currentOwner'] ?? null,
+        $identification['currentOwners'] ?? null,
+        $identification['otherNames'] ?? null,
+        $identification['pastNames'] ?? null,
+        $identification['knownReferrers'] ?? null,
+        $facility['location'] ?? null,
+        $facility['address'] ?? null,
+        $location_details['city'] ?? null,
+        $location_details['state'] ?? null,
+        $location_details['country'] ?? null,
+        $location_details['additionalLocations'] ?? null,
+        $facility['otherOperators'] ?? null,
+        $facility['operatingPeriod'] ?? null,
+        $facility['staff'] ?? null,
+        $facility['profileLinks'] ?? null,
+        $facility['facilityDetails'] ?? null,
+        $facility['accreditations'] ?? null,
+        $facility['memberships'] ?? null,
+        $facility['certifications'] ?? null,
+        $facility['licensing'] ?? null,
+        $facility['resources'] ?? null,
+        $facility['treatmentTypes'] ?? null,
+        $facility['philosophy'] ?? null,
+        $facility['criticalIncidents'] ?? null,
+        $facility['notes'] ?? null,
+        $facility['fieldNotes'] ?? null,
+        $facility['isPrivatelyOwned'] ?? null,
+    ]);
+}
+
+function kop_get_first_named_facility($facilities) {
+    if (!is_array($facilities)) {
+        return null;
+    }
+
+    foreach ($facilities as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+
+        $name = trim((string) ($facility['identification']['name'] ?? ''));
+        if ($name !== '') {
+            return $facility;
+        }
+    }
+
+    return null;
+}
+
 try {
     // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
@@ -31,16 +116,35 @@ try {
     
     $data = $input['data'];
     $reason = trim($input['reason']);
+    $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];
     
     if (empty($reason)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Reason is required']);
         exit;
     }
+
+    $incomplete_unnamed_facilities = [];
+    foreach ($facilities as $index => $facility) {
+        $facility_name = trim((string) ($facility['identification']['name'] ?? ''));
+        if ($facility_name === '' && kop_facility_has_meaningful_data($facility)) {
+            $incomplete_unnamed_facilities[] = $index + 1;
+        }
+    }
+
+    if (!empty($incomplete_unnamed_facilities)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Please add a facility name for incomplete facility entries: #' . implode(', #', $incomplete_unnamed_facilities),
+        ]);
+        exit;
+    }
     
     // Validate that we have some meaningful data
     $hasOperator = !empty($data['operator']['name']);
-    $hasFacility = !empty($data['facilities'][0]['identification']['name']);
+    $first_named_facility = kop_get_first_named_facility($facilities);
+    $hasFacility = $first_named_facility !== null;
     $hasReferrer = !empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']);
 
     if (!$hasOperator && !$hasFacility && !$hasReferrer) {
@@ -74,11 +178,11 @@ try {
             $master_id = $data['operator']['name'];
         }
         // Try facility name
-        if (!empty($data['facilities'][0]['identification']['name'])) {
+        if ($first_named_facility !== null && !empty($first_named_facility['identification']['name'])) {
             if ($master_id) {
-                $master_id .= ' - ' . $data['facilities'][0]['identification']['name'];
+                $master_id .= ' - ' . $first_named_facility['identification']['name'];
             } else {
-                $master_id = $data['facilities'][0]['identification']['name'];
+                $master_id = $first_named_facility['identification']['name'];
             }
         }
         // Try referrer agency name

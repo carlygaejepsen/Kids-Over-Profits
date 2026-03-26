@@ -6,6 +6,167 @@
     // Depends on KOP_UI_Actions for some button clicks
     const KOP_UI_Actions = window.KOP_UI_Actions || {};
 
+    const STANDALONE_FIELD_BINDINGS = {
+        'operator-name': {
+            getTarget: () => window.formData,
+            path: 'operator.name'
+        },
+        'operator-current-name': {
+            getTarget: () => window.formData,
+            path: 'operator.currentName'
+        },
+        'operator-location-city': {
+            getTarget: () => window.formData,
+            path: 'operator.locationCity',
+            afterUpdate: () => {
+                if (window.formData?.operator) {
+                    window.formData.operator.location = window.combineCityState(
+                        window.formData.operator.locationCity,
+                        window.formData.operator.locationState
+                    );
+                }
+            }
+        },
+        'operator-location-state': {
+            getTarget: () => window.formData,
+            path: 'operator.locationState',
+            afterUpdate: () => {
+                if (window.formData?.operator) {
+                    window.formData.operator.location = window.combineCityState(
+                        window.formData.operator.locationCity,
+                        window.formData.operator.locationState
+                    );
+                }
+            }
+        },
+        'operator-headquarters-city': {
+            getTarget: () => window.formData,
+            path: 'operator.headquartersCity',
+            afterUpdate: () => {
+                if (window.formData?.operator) {
+                    window.formData.operator.headquarters = window.combineCityState(
+                        window.formData.operator.headquartersCity,
+                        window.formData.operator.headquartersState
+                    );
+                }
+            }
+        },
+        'operator-headquarters-state': {
+            getTarget: () => window.formData,
+            path: 'operator.headquartersState',
+            afterUpdate: () => {
+                if (window.formData?.operator) {
+                    window.formData.operator.headquarters = window.combineCityState(
+                        window.formData.operator.headquartersCity,
+                        window.formData.operator.headquartersState
+                    );
+                }
+            }
+        },
+        'operator-founded': {
+            getTarget: () => window.formData,
+            path: 'operator.founded'
+        },
+        'operator-period': {
+            getTarget: () => window.formData,
+            path: 'operator.operatingPeriod'
+        },
+        'operator-status': {
+            getTarget: () => window.formData,
+            path: 'operator.status'
+        },
+        'operator-ceo': {
+            getTarget: () => window.formData,
+            path: 'operator.keyStaff.ceo'
+        },
+        'operator-notes': {
+            getTarget: () => window.formData,
+            path: 'operator.notes'
+        },
+        'facility-name': {
+            getTarget: () => window.formData,
+            path: () => `facilities.${window.currentFacilityIndex || 0}.identification.name`,
+            afterUpdate: () => {
+                if (typeof window.updateAllUI === 'function') {
+                    window.updateAllUI();
+                }
+            }
+        },
+        'facility-type': {
+            getTarget: () => window.formData,
+            path: () => `facilities.${window.currentFacilityIndex || 0}.facilityDetails.type`
+        }
+    };
+
+    function normalizeInputValue(field) {
+        if (field.type === 'number') {
+            return field.value === '' ? null : parseInt(field.value, 10);
+        }
+
+        return field.value;
+    }
+
+    function setValueAtPath(target, path, value) {
+        if (!target || !path) {
+            return;
+        }
+
+        if (typeof window.setNestedValue === 'function') {
+            window.setNestedValue(target, path, value);
+            return;
+        }
+
+        const parts = path.split('.');
+        let current = target;
+        for (let i = 0; i < parts.length - 1; i++) {
+            if (!current[parts[i]] || typeof current[parts[i]] !== 'object') {
+                current[parts[i]] = {};
+            }
+            current = current[parts[i]];
+        }
+        current[parts[parts.length - 1]] = value;
+    }
+
+    function ensureCurrentFacility() {
+        if (!window.formData) {
+            return;
+        }
+
+        const facilityIndex = window.currentFacilityIndex || 0;
+        if (!Array.isArray(window.formData.facilities)) {
+            window.formData.facilities = [];
+        }
+        if (!window.formData.facilities[facilityIndex]) {
+            const defaultFacility = window.KOP_Project?.createNewProjectData?.().facilities?.[0] || {};
+            window.formData.facilities[facilityIndex] = window.deepClone ? window.deepClone(defaultFacility) : defaultFacility;
+        }
+    }
+
+    function persistStandaloneField(binding, field) {
+        if (!binding || !window.formData) {
+            return;
+        }
+
+        ensureCurrentFacility();
+
+        const target = typeof binding.getTarget === 'function' ? binding.getTarget() : window.formData;
+        const path = typeof binding.path === 'function' ? binding.path() : binding.path;
+        const value = normalizeInputValue(field);
+
+        setValueAtPath(target, path, value);
+
+        if (typeof binding.afterUpdate === 'function') {
+            binding.afterUpdate(value, field);
+        }
+
+        if (typeof window.updateJSON === 'function') {
+            window.updateJSON();
+        }
+        if (typeof window.autoSave === 'function') {
+            window.autoSave();
+        }
+    }
+
     function initializeSectionToggles() {
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
@@ -191,26 +352,12 @@
             if (!field.dataset.listenerAttached) {
                 field.addEventListener('input', () => {
                     const path = field.dataset.field;
-                    let value = field.type === 'number' ? (field.value === '' ? null : parseInt(field.value)) : field.value;
+                    const value = normalizeInputValue(field);
 
                     if (path && window.formData) {
                         const facilityIndex = window.currentFacilityIndex || 0;
-                        if (!window.formData.facilities) window.formData.facilities = [];
-                        if (!window.formData.facilities[facilityIndex]) window.formData.facilities[facilityIndex] = {};
-
-                        // Use setNestedValue if available, otherwise direct assignment
-                        if (typeof window.setNestedValue === 'function') {
-                            window.setNestedValue(window.formData, `facilities.${facilityIndex}.${path}`, value);
-                        } else {
-                            // Fallback for simple paths
-                            const parts = path.split('.');
-                            let target = window.formData.facilities[facilityIndex];
-                            for (let i = 0; i < parts.length - 1; i++) {
-                                if (!target[parts[i]]) target[parts[i]] = {};
-                                target = target[parts[i]];
-                            }
-                            target[parts[parts.length - 1]] = value;
-                        }
+                        ensureCurrentFacility();
+                        setValueAtPath(window.formData, `facilities.${facilityIndex}.${path}`, value);
 
                         if (typeof window.updateJSON === 'function') window.updateJSON();
                         if (typeof window.autoSave === 'function') window.autoSave();
@@ -218,6 +365,18 @@
                 }, { passive: true });
                 field.dataset.listenerAttached = 'true';
             }
+        });
+
+        Object.entries(STANDALONE_FIELD_BINDINGS).forEach(([id, binding]) => {
+            const field = document.getElementById(id);
+            if (!field || field.dataset.listenerAttached) {
+                return;
+            }
+
+            field.addEventListener('input', () => {
+                persistStandaloneField(binding, field);
+            }, { passive: true });
+            field.dataset.listenerAttached = 'true';
         });
     }
 
