@@ -387,15 +387,32 @@
         }
 
         function getLoadedProjectBaseline() {
-            if (
-                !window.__kopLoadedProjectBaseline ||
-                !window.currentProjectName ||
-                window.__kopLoadedProjectBaselineProjectName !== window.currentProjectName
-            ) {
-                return null;
+            const baselineMatchesCurrentProject = (
+                !!window.__kopLoadedProjectBaseline &&
+                !!window.currentProjectName &&
+                window.__kopLoadedProjectBaselineProjectName === window.currentProjectName
+            );
+
+            if (baselineMatchesCurrentProject) {
+                return cloneSubmissionValue(window.__kopLoadedProjectBaseline);
             }
 
-            return cloneSubmissionValue(window.__kopLoadedProjectBaseline);
+            const currentProjectData = window.currentProjectName
+                ? window.projects?.[window.currentProjectName]?.data
+                : null;
+
+            if (
+                currentProjectData &&
+                typeof window.KOP_DataNormalizer?.normalizeProjectData === 'function'
+            ) {
+                return cloneSubmissionValue(
+                    window.KOP_DataNormalizer.normalizeProjectData(
+                        cloneSubmissionValue(currentProjectData)
+                    )
+                );
+            }
+
+            return null;
         }
 
         function getChangedLocationFacilities(currentFacilities, baselineFacilities) {

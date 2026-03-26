@@ -193,7 +193,7 @@ $wiki_submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 function json_diff($old, $new) {
     $diff = [];
     foreach ($new as $k => $v) {
-        if (!isset($old[$k])) {
+        if (!is_array($old) || !array_key_exists($k, $old)) {
             $diff[$k] = ['new' => $v];
         } else if (is_array($v) && is_array($old[$k])) {
             $sub_diff = json_diff($old[$k], $v);
@@ -205,22 +205,50 @@ function json_diff($old, $new) {
         }
     }
     foreach ($old as $k => $v) {
-        if (!isset($new[$k])) {
+        if (!is_array($new) || !array_key_exists($k, $new)) {
             $diff[$k] = ['old' => $v];
         }
     }
     return $diff;
 }
 
+function kop_prune_null_values($value) {
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $normalized = [];
+    $is_list = array_keys($value) === range(0, count($value) - 1);
+
+    foreach ($value as $key => $item) {
+        $pruned = kop_prune_null_values($item);
+
+        if ($pruned === null) {
+            continue;
+        }
+
+        if ($is_list) {
+            $normalized[] = $pruned;
+        } else {
+            $normalized[$key] = $pruned;
+        }
+    }
+
+    return $normalized;
+}
+
 function render_diff($diff) {
     $html = '<dl>';
     foreach ($diff as $k => $v) {
         $html .= '<dt>' . htmlspecialchars($k) . '</dt>';
-        if (isset($v['new']) && !isset($v['old'])) {
+        $has_new = is_array($v) && array_key_exists('new', $v);
+        $has_old = is_array($v) && array_key_exists('old', $v);
+
+        if ($has_new && !$has_old) {
             $html .= '<dd class="added">' . htmlspecialchars(json_encode($v['new'])) . '</dd>';
-        } else if (isset($v['old']) && !isset($v['new'])) {
+        } else if ($has_old && !$has_new) {
             $html .= '<dd class="removed">' . htmlspecialchars(json_encode($v['old'])) . '</dd>';
-        } else if (isset($v['old']) && isset($v['new'])) {
+        } else if ($has_old && $has_new) {
             $html .= '<dd class="changed"><span class="removed-value">' . htmlspecialchars(json_encode($v['old'])) . '</span> <span class="added-value">' . htmlspecialchars(json_encode($v['new'])) . '</span></dd>';
         } else if (is_array($v)) {
             $html .= '<dd>' . render_diff($v) . '</dd>';
@@ -413,7 +441,10 @@ function kop_has_meaningful_referrer_payload($data) {
                                 ? kop_merge_location_submission_preview($old_data, $new_data)
                                 : $new_data;
 
-                            $diff = json_diff($old_data, $comparison_new_data);
+                            $diff = json_diff(
+                                kop_prune_null_values($old_data),
+                                kop_prune_null_values($comparison_new_data)
+                            );
 
                             $operator_name = trim((string) ($comparison_new_data['operator']['name'] ?? ''));
                             if (kop_is_location_project_name($master_id) && kop_is_synthetic_location_operator($comparison_new_data['operator'] ?? null, $master_id)) {
