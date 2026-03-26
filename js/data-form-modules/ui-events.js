@@ -19,10 +19,12 @@
             getTarget: () => window.formData,
             path: 'operator.locationCity',
             afterUpdate: () => {
-                if (window.formData?.operator) {
-                    window.formData.operator.location = window.combineCityState(
-                        window.formData.operator.locationCity,
-                        window.formData.operator.locationState
+                const resolved = typeof window.resolvePathTarget === 'function' ? window.resolvePathTarget('operator.location') : null;
+                const operatorTarget = resolved?.target || window.formData?.operator;
+                if (operatorTarget) {
+                    operatorTarget.location = window.combineCityState(
+                        operatorTarget.locationCity,
+                        operatorTarget.locationState
                     );
                 }
             }
@@ -31,10 +33,12 @@
             getTarget: () => window.formData,
             path: 'operator.locationState',
             afterUpdate: () => {
-                if (window.formData?.operator) {
-                    window.formData.operator.location = window.combineCityState(
-                        window.formData.operator.locationCity,
-                        window.formData.operator.locationState
+                const resolved = typeof window.resolvePathTarget === 'function' ? window.resolvePathTarget('operator.location') : null;
+                const operatorTarget = resolved?.target || window.formData?.operator;
+                if (operatorTarget) {
+                    operatorTarget.location = window.combineCityState(
+                        operatorTarget.locationCity,
+                        operatorTarget.locationState
                     );
                 }
             }
@@ -43,10 +47,12 @@
             getTarget: () => window.formData,
             path: 'operator.headquartersCity',
             afterUpdate: () => {
-                if (window.formData?.operator) {
-                    window.formData.operator.headquarters = window.combineCityState(
-                        window.formData.operator.headquartersCity,
-                        window.formData.operator.headquartersState
+                const resolved = typeof window.resolvePathTarget === 'function' ? window.resolvePathTarget('operator.headquarters') : null;
+                const operatorTarget = resolved?.target || window.formData?.operator;
+                if (operatorTarget) {
+                    operatorTarget.headquarters = window.combineCityState(
+                        operatorTarget.headquartersCity,
+                        operatorTarget.headquartersState
                     );
                 }
             }
@@ -55,10 +61,12 @@
             getTarget: () => window.formData,
             path: 'operator.headquartersState',
             afterUpdate: () => {
-                if (window.formData?.operator) {
-                    window.formData.operator.headquarters = window.combineCityState(
-                        window.formData.operator.headquartersCity,
-                        window.formData.operator.headquartersState
+                const resolved = typeof window.resolvePathTarget === 'function' ? window.resolvePathTarget('operator.headquarters') : null;
+                const operatorTarget = resolved?.target || window.formData?.operator;
+                if (operatorTarget) {
+                    operatorTarget.headquarters = window.combineCityState(
+                        operatorTarget.headquartersCity,
+                        operatorTarget.headquartersState
                     );
                 }
             }
@@ -149,9 +157,22 @@
 
         ensureCurrentFacility();
 
-        const target = typeof binding.getTarget === 'function' ? binding.getTarget() : window.formData;
-        const path = typeof binding.path === 'function' ? binding.path() : binding.path;
+        const rawPath = typeof binding.path === 'function' ? binding.path() : binding.path;
+        let target = typeof binding.getTarget === 'function' ? binding.getTarget() : window.formData;
+        let path = rawPath;
         const value = normalizeInputValue(field);
+
+        if (
+            typeof rawPath === 'string' &&
+            /^operator\./.test(rawPath) &&
+            typeof window.resolvePathTarget === 'function'
+        ) {
+            const resolved = window.resolvePathTarget(rawPath);
+            if (resolved && resolved.target && resolved.normalizedPath) {
+                target = resolved.target;
+                path = resolved.normalizedPath;
+            }
+        }
 
         setValueAtPath(target, path, value);
 

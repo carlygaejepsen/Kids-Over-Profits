@@ -122,6 +122,8 @@
                 } else {
                     window.formData = createNewProjectData();
                 }
+                window.__kopLoadedProjectBaselineProjectName = projectName;
+                window.__kopLoadedProjectBaseline = deepClone(window.formData);
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
@@ -155,7 +157,7 @@
     }
 
     function newProject() {
-        const { showUploadStatus, updateAllUI, updateLabelsForProjectType, handleReferrerToggle } = window;
+        const { showUploadStatus, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, deepClone } = window;
         if (!confirm('Start a new blank project? Any unsaved changes will be lost.')) return;
 
         let projectName = prompt('Enter a name for the new project:');
@@ -168,6 +170,8 @@
 
         window.currentProjectName = projectName;
         window.formData = createNewProjectData();
+        window.__kopLoadedProjectBaselineProjectName = projectName;
+        window.__kopLoadedProjectBaseline = typeof deepClone === 'function' ? deepClone(window.formData) : JSON.parse(JSON.stringify(window.formData || {}));
         window.currentFacilityIndex = 0;
 
         const projectNameInput = document.getElementById('project-name');
@@ -200,7 +204,7 @@
     }
 
     function initializeCategoryTabs() {
-        const { debugLog } = window;
+        const { debugLog, deepClone } = window;
         const categoryTabsContainer = document.querySelector('.category-tabs');
         if (!categoryTabsContainer || categoryTabsContainer.dataset.tabsInitialized === 'true') return;
 
@@ -231,6 +235,8 @@ Click Cancel to stay on the current tab.`);
                 }
                 window.currentProjectName = null;
                 window.formData = createNewProjectData();
+                window.__kopLoadedProjectBaselineProjectName = null;
+                window.__kopLoadedProjectBaseline = typeof deepClone === 'function' ? deepClone(window.formData) : JSON.parse(JSON.stringify(window.formData || {}));
                 window.currentFacilityIndex = 0;
                 const projectNameInput = document.getElementById('project-name');
                 if (projectNameInput) projectNameInput.value = '';

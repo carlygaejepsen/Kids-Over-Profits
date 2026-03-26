@@ -329,6 +329,118 @@
             delete data.referrerType;
         }
 
+        function cloneSubmissionValue(value) {
+            if (typeof value === 'undefined') {
+                return undefined;
+            }
+
+            if (typeof window.deepClone === 'function') {
+                return window.deepClone(value);
+            }
+
+            return JSON.parse(JSON.stringify(value));
+        }
+
+        function getDefaultFacilityTemplate() {
+            const projectTemplate = window.KOP_Project?.createNewProjectData?.()
+                || (typeof window.createNewProjectData === 'function' ? window.createNewProjectData() : null)
+                || { facilities: [{}] };
+
+            if (Array.isArray(projectTemplate.facilities) && projectTemplate.facilities[0]) {
+                return cloneSubmissionValue(projectTemplate.facilities[0]);
+            }
+
+            return {};
+        }
+
+        function mergeWithTemplate(template, value) {
+            if (Array.isArray(template)) {
+                return Array.isArray(value) ? cloneSubmissionValue(value) : cloneSubmissionValue(template);
+            }
+
+            if (template && typeof template === 'object') {
+                const result = cloneSubmissionValue(template);
+                const source = value && typeof value === 'object' ? value : {};
+
+                Object.keys(source).forEach((key) => {
+                    result[key] = mergeWithTemplate(template[key], source[key]);
+                });
+
+                return result;
+            }
+
+            return value === undefined ? cloneSubmissionValue(template) : cloneSubmissionValue(value);
+        }
+
+        function getFacilityComparisonKey(facility) {
+            return typeof facility?.identification?.name === 'string'
+                ? facility.identification.name.trim().toLowerCase()
+                : '';
+        }
+
+        function getCanonicalFacilityForComparison(facility) {
+            return mergeWithTemplate(getDefaultFacilityTemplate(), facility || {});
+        }
+
+        function facilitiesMatchForSubmission(currentFacility, baselineFacility) {
+            return JSON.stringify(getCanonicalFacilityForComparison(currentFacility)) === JSON.stringify(getCanonicalFacilityForComparison(baselineFacility));
+        }
+
+        function getLoadedProjectBaseline() {
+            if (
+                !window.__kopLoadedProjectBaseline ||
+                !window.currentProjectName ||
+                window.__kopLoadedProjectBaselineProjectName !== window.currentProjectName
+            ) {
+                return null;
+            }
+
+            return cloneSubmissionValue(window.__kopLoadedProjectBaseline);
+        }
+
+        function getChangedLocationFacilities(currentFacilities, baselineFacilities) {
+            if (!Array.isArray(currentFacilities)) {
+                return [];
+            }
+
+            const baselineByName = new Map();
+            if (Array.isArray(baselineFacilities)) {
+                baselineFacilities.forEach((facility) => {
+                    const key = getFacilityComparisonKey(facility);
+                    if (key) {
+                        baselineByName.set(key, facility);
+                    }
+                });
+            }
+
+            return currentFacilities.reduce((changedFacilities, facility) => {
+                const facilityName = typeof facility?.identification?.name === 'string'
+                    ? facility.identification.name.trim()
+                    : '';
+
+                if (!facilityName) {
+                    return changedFacilities;
+                }
+
+                const baselineFacility = baselineByName.get(facilityName.toLowerCase());
+                if (!baselineFacility || !facilitiesMatchForSubmission(facility, baselineFacility)) {
+                    changedFacilities.push(cloneSubmissionValue(facility));
+                }
+
+                return changedFacilities;
+            }, []);
+        }
+
+        function buildLocationSuggestionPayload(currentData) {
+            const baseline = getLoadedProjectBaseline();
+            const baselineFacilities = Array.isArray(baseline?.facilities) ? baseline.facilities : [];
+            const changedFacilities = getChangedLocationFacilities(currentData?.facilities, baselineFacilities);
+
+            return {
+                facilities: changedFacilities
+            };
+        }
+
         function ensureSuggestionButtonBinding() {
             const toolbarButton = document.getElementById('submit-suggestion-btn-toolbar');
             if (toolbarButton && !toolbarButton.dataset.suggestionBound) {
@@ -433,7 +545,6 @@
             const projectNameInput = document.getElementById('project-name');
             const activeTab = document.querySelector('.category-tab.active');
             const activeCategory = normalizeSuggestionCategory(activeTab ? activeTab.dataset.category : 'companies');
-            const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;
 
             if (activeCategory !== 'referrers') {
                 stripReferrerSubmissionData(dataToSubmit);
@@ -450,7 +561,8 @@
             dataToSubmit.projectName = actualProjectName;
             dataToSubmit.name = actualProjectName;
 
-            const incompleteUnnamedFacilities = getIncompleteUnnamedFacilities(dataToSubmit.facilities);
+            const validationFacilities = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities : [];
+            const incompleteUnnamedFacilities = getIncompleteUnnamedFacilities(validationFacilities);
             if (incompleteUnnamedFacilities.length > 0) {
                 const facilityList = incompleteUnnamedFacilities
                     .map(({ index, summary }) => summary ? `#${index + 1} (${summary})` : `#${index + 1}`)
@@ -460,6 +572,18 @@
                     `Please add a facility name for ${facilityList} before submitting, or clear the partial entry.`,
                     'error'
                 );
+                suggestionSubmissionInProgress = false;
+                return false;
+            }
+
+            if (activeCategory === 'locations') {
+                dataToSubmit = buildLocationSuggestionPayload(dataToSubmit);
+            }
+
+            const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;
+
+            if (activeCategory === 'locations' && facilityCount === 0) {
+                showSuggestionStatus('No facility changes were detected to submit for this location project.', 'error');
                 suggestionSubmissionInProgress = false;
                 return false;
             }
@@ -511,6 +635,11 @@
                         response: result
                     }
                 }));
+
+                if (window.currentProjectName === actualProjectName) {
+                    window.__kopLoadedProjectBaselineProjectName = actualProjectName;
+                    window.__kopLoadedProjectBaseline = cloneSubmissionValue(currentFormData);
+                }
 
                 return true;
             } catch (error) {

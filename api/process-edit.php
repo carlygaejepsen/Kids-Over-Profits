@@ -101,6 +101,40 @@ function kop_build_project_payload($payload, $project_name, $category) {
     return $wrapped;
 }
 
+function kop_find_facility_index_by_name($facilities, $facility_name) {
+    $facility_name = strtolower(trim((string) $facility_name));
+    if ($facility_name === '' || !is_array($facilities)) {
+        return -1;
+    }
+
+    foreach ($facilities as $index => $facility) {
+        $candidate = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+        if ($candidate !== '' && $candidate === $facility_name) {
+            return $index;
+        }
+    }
+
+    return -1;
+}
+
+function kop_merge_location_facilities($existing_facilities, $new_facilities) {
+    $existing_facilities = is_array($existing_facilities) ? array_values($existing_facilities) : [];
+    $new_facilities = is_array($new_facilities) ? $new_facilities : [];
+
+    foreach ($new_facilities as $new_facility) {
+        $facility_name = trim((string) ($new_facility['identification']['name'] ?? ''));
+        $existing_index = kop_find_facility_index_by_name($existing_facilities, $facility_name);
+
+        if ($existing_index >= 0) {
+            $existing_facilities[$existing_index] = $new_facility;
+        } else {
+            $existing_facilities[] = $new_facility;
+        }
+    }
+
+    return array_values($existing_facilities);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
@@ -228,25 +262,7 @@ try {
                     $existingFacilities = is_array($existingData['data']['facilities'] ?? null) ? $existingData['data']['facilities'] : [];
                     $newFacilities = is_array($newData['data']['facilities'] ?? null) ? $newData['data']['facilities'] : [];
                     
-                    // Merge facilities - add new ones, avoiding exact duplicates by name
-                    foreach ($newFacilities as $newFacility) {
-                        $newName = $newFacility['identification']['name'] ?? '';
-                        $isDuplicate = false;
-                        
-                        if ($newName) {
-                            foreach ($existingFacilities as $existingFacility) {
-                                $existingName = $existingFacility['identification']['name'] ?? '';
-                                if ($existingName === $newName) {
-                                    $isDuplicate = true;
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if (!$isDuplicate) {
-                            $existingFacilities[] = $newFacility;
-                        }
-                    }
+                    $existingFacilities = kop_merge_location_facilities($existingFacilities, $newFacilities);
                     
                     // Update the merged data
                     $existingData['data']['facilities'] = $existingFacilities;

@@ -59,6 +59,52 @@ function createDefaultReferrerIndividual() {
     };
 }
 
+function referrerAgencyHasMeaningfulData(agency) {
+    if (!agency || typeof agency !== 'object') {
+        return false;
+    }
+
+    const scalarFields = ['name', 'city', 'state', 'website', 'address', 'founded', 'notes'];
+    if (scalarFields.some(field => typeof agency[field] === 'string' && agency[field].trim() !== '')) {
+        return true;
+    }
+
+    return ['websites', 'affiliations', 'keyPersonnel'].some(field =>
+        Array.isArray(agency[field]) && agency[field].some(item => {
+            if (typeof item === 'string') {
+                return item.trim() !== '';
+            }
+            if (item && typeof item === 'object') {
+                return Object.values(item).some(value => typeof value === 'string' ? value.trim() !== '' : value !== null && value !== undefined);
+            }
+            return item !== null && item !== undefined;
+        })
+    );
+}
+
+function referrerConsultantHasMeaningfulData(consultant) {
+    if (!consultant || typeof consultant !== 'object') {
+        return false;
+    }
+
+    const scalarFields = ['firstName', 'lastName', 'fullName', 'name', 'role', 'status', 'education', 'credentials', 'city', 'state', 'email', 'phone', 'website', 'lawsuits', 'notes'];
+    if (scalarFields.some(field => typeof consultant[field] === 'string' && consultant[field].trim() !== '')) {
+        return true;
+    }
+
+    return ['websites', 'affiliations', 'knownReferrals', 'facilitiesReferred', 'pastTTIJobs', 'schoolDistricts'].some(field =>
+        Array.isArray(consultant[field]) && consultant[field].some(item => {
+            if (typeof item === 'string') {
+                return item.trim() !== '';
+            }
+            if (item && typeof item === 'object') {
+                return Object.values(item).some(value => typeof value === 'string' ? value.trim() !== '' : value !== null && value !== undefined);
+            }
+            return item !== null && item !== undefined;
+        })
+    );
+}
+
 /**
  * Build referrer entries from form data for backward compatibility
  */
@@ -86,10 +132,14 @@ function buildReferrerEntries(formData) {
         return clone;
     };
 
-    const consultants = Array.isArray(source.referrerConsultants) ? source.referrerConsultants : [];
+    const consultants = (Array.isArray(source.referrerConsultants) ? source.referrerConsultants : [])
+        .filter(referrerConsultantHasMeaningfulData);
     const agencyName = (agency.name || '').trim();
 
     if (!consultants.length) {
+        if (!agencyName && !referrerAgencyHasMeaningfulData(agency)) {
+            return [];
+        }
         return [{
             name: agencyName,
             data: cloneTemplate(),
@@ -142,6 +192,13 @@ function ensureReferrerDataStructures() {
     console.log('  - RAW referrerConsultants:', JSON.stringify(window.formData.referrerConsultants));
     console.log('  - RAW referrerAgency:', JSON.stringify(window.formData.referrerAgency));
 
+    const activeTab = document.querySelector('.category-tab.active');
+    const activeCategory = activeTab ? activeTab.dataset.category : '';
+    const currentProjectCategory = window.currentProjectName && window.projects?.[window.currentProjectName]?.category
+        ? window.projects[window.currentProjectName].category
+        : activeCategory;
+    const isReferrerContext = currentProjectCategory === 'referrers' || activeCategory === 'referrers';
+
     const legacyAgency = window.formData.referrerAgency || window.formData.referrerGroup || {};
     const agency = Object.assign(createDefaultReferrerGroup(), legacyAgency);
     if (typeof agency.website === 'string' && agency.website.trim()) {
@@ -169,7 +226,11 @@ function ensureReferrerDataStructures() {
     }
 
     // Merge legacy single referrerIndividual objects into the consultants array
-    if (window.formData.referrerIndividual && window.formData.referrerConsultants.length === 0) {
+    if (
+        window.formData.referrerIndividual &&
+        window.formData.referrerConsultants.length === 0 &&
+        (isReferrerContext || referrerConsultantHasMeaningfulData(window.formData.referrerIndividual))
+    ) {
         window.formData.referrerConsultants.push(window.formData.referrerIndividual);
     }
 
@@ -213,7 +274,7 @@ function ensureReferrerDataStructures() {
         } else if (!merged.fullName && merged.name) {
             // No firstName/lastName, no fullName - use legacy name field
             merged.fullName = merged.name.trim();
-        } else if (!merged.fullName && window.currentProjectName && window.formData.referrerConsultants.length === 1) {
+        } else if (!merged.fullName && isReferrerContext && window.currentProjectName && window.formData.referrerConsultants.length === 1) {
             // Fallback to project name if no name is found and it's a single-consultant project
             merged.fullName = window.currentProjectName;
         }
@@ -228,9 +289,9 @@ function ensureReferrerDataStructures() {
             merged.education = merged.credentials;
         }
         return merged;
-    });
+    }).filter(consultant => isReferrerContext || referrerConsultantHasMeaningfulData(consultant));
 
-    if (window.formData.referrerConsultants.length === 0) {
+    if (window.formData.referrerConsultants.length === 0 && isReferrerContext) {
         window.formData.referrerConsultants.push(createDefaultReferrerIndividual());
     }
 
@@ -241,11 +302,15 @@ function ensureReferrerDataStructures() {
         window.currentConsultantIndex = 0;
     }
 
-    const activeConsultant = window.formData.referrerConsultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
-    window.formData.referrerConsultants[window.currentConsultantIndex] = activeConsultant;
-    window.formData.referrerIndividual = activeConsultant;
+    const activeConsultant = window.formData.referrerConsultants[window.currentConsultantIndex] || (isReferrerContext ? createDefaultReferrerIndividual() : null);
+    if (activeConsultant) {
+        window.formData.referrerConsultants[window.currentConsultantIndex] = activeConsultant;
+        window.formData.referrerIndividual = activeConsultant;
+    } else if (!window.formData.referrerIndividual || typeof window.formData.referrerIndividual !== 'object') {
+        window.formData.referrerIndividual = {};
+    }
 
-    if (!window.formData.referrerType) {
+    if (!window.formData.referrerType && isReferrerContext) {
         window.formData.referrerType = window.formData.isIndependentConsultant ? 'individual' : 'group';
     }
 

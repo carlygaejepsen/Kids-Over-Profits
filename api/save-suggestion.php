@@ -52,6 +52,50 @@ function kop_normalize_submission_category($value) {
     return $normalized;
 }
 
+function kop_is_location_project_name($value) {
+    static $location_names = [
+        'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',
+        'DELAWARE', 'FLORIDA', 'GEORGIA', 'HAWAII', 'IDAHO', 'ILLINOIS', 'INDIANA', 'IOWA',
+        'KANSAS', 'KENTUCKY', 'LOUISIANA', 'MAINE', 'MARYLAND', 'MASSACHUSETTS', 'MICHIGAN',
+        'MINNESOTA', 'MISSISSIPPI', 'MISSOURI', 'MONTANA', 'NEBRASKA', 'NEVADA', 'NEW HAMPSHIRE',
+        'NEW JERSEY', 'NEW MEXICO', 'NEW YORK', 'NORTH CAROLINA', 'NORTH DAKOTA', 'OHIO',
+        'OKLAHOMA', 'OREGON', 'PENNSYLVANIA', 'RHODE ISLAND', 'SOUTH CAROLINA', 'SOUTH DAKOTA',
+        'TENNESSEE', 'TEXAS', 'UTAH', 'VERMONT', 'VIRGINIA', 'WASHINGTON', 'WEST VIRGINIA',
+        'WISCONSIN', 'WYOMING', 'CANADA', 'MEXICO', 'UNITED KINGDOM', 'AUSTRALIA', 'JAMAICA',
+        'SAMOA', 'COSTA RICA', 'BELIZE', 'BAHAMAS', 'DOMINICAN REPUBLIC', 'PUERTO RICO',
+        'FRANCE', 'GERMANY', 'ITALY', 'SPAIN', 'NETHERLANDS', 'SWITZERLAND', 'SWEDEN',
+        'NORWAY', 'DENMARK', 'IRELAND', 'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN',
+        'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
+    ];
+
+    return in_array(strtoupper(trim((string) $value)), $location_names, true);
+}
+
+function kop_infer_submission_category($input, $data, $active_category) {
+    if ($active_category !== '') {
+        return $active_category;
+    }
+
+    $project_candidates = [
+        $input['projectName'] ?? '',
+        $input['metadata']['actualProjectName'] ?? '',
+        $data['projectName'] ?? '',
+        $data['name'] ?? ''
+    ];
+
+    foreach ($project_candidates as $candidate) {
+        if (kop_is_location_project_name($candidate)) {
+            return 'locations';
+        }
+    }
+
+    if (!empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']) || !empty($data['referrerConsultants'][0]['lastName'])) {
+        return 'referrers';
+    }
+
+    return 'companies';
+}
+
 function kop_strip_referrer_submission_data(&$data) {
     if (!is_array($data)) {
         return;
@@ -130,6 +174,29 @@ function kop_get_first_named_facility($facilities) {
     return null;
 }
 
+function kop_is_synthetic_location_operator($operator, $project_name) {
+    if (!is_array($operator)) {
+        return false;
+    }
+
+    $operator_name = trim((string) ($operator['name'] ?? ''));
+    $project_name = trim((string) $project_name);
+    $operator_type = strtolower(trim((string) ($operator['type'] ?? '')));
+
+    if ($operator_name === '' || $project_name === '' || strcasecmp($operator_name, $project_name) !== 0) {
+        return false;
+    }
+
+    if ($operator_type !== 'location aggregate') {
+        return false;
+    }
+
+    $meaningful_fields = $operator;
+    unset($meaningful_fields['name'], $meaningful_fields['type']);
+
+    return !kop_value_is_meaningful($meaningful_fields);
+}
+
 try {
     // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
@@ -143,8 +210,15 @@ try {
     $data = $input['data'];
     $reason = trim($input['reason']);
     $active_category = kop_normalize_submission_category($input['metadata']['activeCategory'] ?? '');
+    $effective_category = kop_infer_submission_category($input, $data, $active_category);
+    $project_name_hint = trim((string) (
+        $input['projectName']
+        ?? ($input['metadata']['actualProjectName'] ?? '')
+        ?? ($data['projectName'] ?? '')
+        ?? ($data['name'] ?? '')
+    ));
 
-    if ($active_category !== '' && $active_category !== 'referrers') {
+    if ($effective_category !== 'referrers') {
         kop_strip_referrer_submission_data($data);
     }
 
@@ -174,7 +248,7 @@ try {
     }
     
     // Validate that we have some meaningful data
-    $hasOperator = !empty($data['operator']['name']);
+    $hasOperator = !empty($data['operator']['name']) && !kop_is_synthetic_location_operator($data['operator'] ?? null, $project_name_hint);
     $first_named_facility = kop_get_first_named_facility($facilities);
     $hasFacility = $first_named_facility !== null;
     $hasReferrer = !empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']);

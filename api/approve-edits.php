@@ -100,6 +100,71 @@ function kop_load_existing_master_data(PDO $pdo, $master_id, $tables) {
     return [];
 }
 
+function kop_find_facility_index_by_name($facilities, $facility_name) {
+    $facility_name = strtolower(trim((string) $facility_name));
+    if ($facility_name === '' || !is_array($facilities)) {
+        return -1;
+    }
+
+    foreach ($facilities as $index => $facility) {
+        $candidate = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+        if ($candidate !== '' && $candidate === $facility_name) {
+            return $index;
+        }
+    }
+
+    return -1;
+}
+
+function kop_merge_location_submission_preview($old_data, $submitted_data) {
+    $preview = is_array($old_data) ? $old_data : [];
+    $patch = is_array($submitted_data) ? $submitted_data : [];
+
+    foreach ($patch as $key => $value) {
+        if ($key === 'facilities') {
+            continue;
+        }
+        $preview[$key] = $value;
+    }
+
+    if (!isset($preview['facilities']) || !is_array($preview['facilities'])) {
+        $preview['facilities'] = [];
+    }
+
+    if (!isset($patch['facilities']) || !is_array($patch['facilities'])) {
+        return $preview;
+    }
+
+    foreach ($patch['facilities'] as $facility) {
+        $facility_name = trim((string) ($facility['identification']['name'] ?? ''));
+        $existing_index = kop_find_facility_index_by_name($preview['facilities'], $facility_name);
+
+        if ($existing_index >= 0) {
+            $preview['facilities'][$existing_index] = $facility;
+        } else {
+            $preview['facilities'][] = $facility;
+        }
+    }
+
+    return $preview;
+}
+
+function kop_is_synthetic_location_operator($operator, $project_name) {
+    if (!is_array($operator)) {
+        return false;
+    }
+
+    $operator_name = trim((string) ($operator['name'] ?? ''));
+    $project_name = trim((string) $project_name);
+    $operator_type = strtolower(trim((string) ($operator['type'] ?? '')));
+
+    if ($operator_name === '' || $project_name === '' || strcasecmp($operator_name, $project_name) !== 0) {
+        return false;
+    }
+
+    return $operator_type === 'location aggregate';
+}
+
 $wp_prefix = isset($table_prefix) && is_string($table_prefix) ? $table_prefix : '';
 $suggested_edits_table = kop_resolve_table_name($pdo, 'suggested_edits', $wp_prefix);
 $news_submissions_table = kop_resolve_table_name($pdo, 'news_submissions', $wp_prefix);
@@ -344,13 +409,20 @@ function kop_has_meaningful_referrer_payload($data) {
                             $master_id = $suggestion['master_id'];
                             $old_data = kop_load_existing_master_data($pdo, $master_id, $master_tables);
 
-                            $diff = json_diff($old_data, $new_data);
+                            $comparison_new_data = kop_is_location_project_name($master_id)
+                                ? kop_merge_location_submission_preview($old_data, $new_data)
+                                : $new_data;
 
-                            $operator_name = trim((string) ($new_data['operator']['name'] ?? ''));
+                            $diff = json_diff($old_data, $comparison_new_data);
+
+                            $operator_name = trim((string) ($comparison_new_data['operator']['name'] ?? ''));
+                            if (kop_is_location_project_name($master_id) && kop_is_synthetic_location_operator($comparison_new_data['operator'] ?? null, $master_id)) {
+                                $operator_name = '';
+                            }
                             $facility_label = '';
                             $facility_value = '';
-                            $added_facilities = kop_collect_added_facilities($old_data, $new_data);
-                            $named_facilities = kop_collect_named_facilities($new_data);
+                            $added_facilities = kop_collect_added_facilities($old_data, $comparison_new_data);
+                            $named_facilities = kop_collect_named_facilities($comparison_new_data);
 
                             if (!empty($added_facilities)) {
                                 $facility_label = count($added_facilities) === 1 ? 'Facility Added' : 'Facilities Added';
@@ -363,12 +435,12 @@ function kop_has_meaningful_referrer_payload($data) {
                                 $facility_value = count($named_facilities) . ' total';
                             }
 
-                            $referrer_agency = trim((string) ($new_data['referrerAgency']['name'] ?? ''));
+                            $referrer_agency = trim((string) ($comparison_new_data['referrerAgency']['name'] ?? ''));
                             $referrer_consultant = '';
-                            $show_referrer_summary = $operator_name === '' && $facility_value === '' && kop_has_meaningful_referrer_payload($new_data);
+                            $show_referrer_summary = $operator_name === '' && $facility_value === '' && kop_has_meaningful_referrer_payload($comparison_new_data);
 
-                            if ($show_referrer_summary && !empty($new_data['referrerConsultants'][0])) {
-                                $referrer_consultant = kop_consultant_display_name($new_data['referrerConsultants'][0]);
+                            if ($show_referrer_summary && !empty($comparison_new_data['referrerConsultants'][0])) {
+                                $referrer_consultant = kop_consultant_display_name($comparison_new_data['referrerConsultants'][0]);
                             }
                             ?>
                             <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
