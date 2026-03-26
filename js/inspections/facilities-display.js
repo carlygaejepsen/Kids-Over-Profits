@@ -77,18 +77,52 @@ function displayFacilities(facilitiesData, containerId) {
         return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
     const escapeAttribute = value => escapeHtml(value);
-    const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
-    const combineLists = (...lists) => {
-        const combined = [];
-        lists.forEach(list => {
-            joinList(list).forEach(item => {
-                if (!combined.includes(item)) {
-                    combined.push(item);
-                }
+    const textCollator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+    });
+    const normalizeTextKey = value => cleanText(value).replace(/\s+/g, ' ').trim().toLocaleLowerCase();
+    const compareDisplayText = (a, b) => {
+        const textA = cleanText(a);
+        const textB = cleanText(b);
+
+        if (!textA && !textB) return 0;
+        if (!textA) return 1;
+        if (!textB) return -1;
+
+        return textCollator.compare(textA, textB);
+    };
+    const collectUniqueTexts = (...values) => {
+        const seen = new Set();
+        const items = [];
+
+        values.forEach(value => {
+            const candidates = Array.isArray(value) ? value : [value];
+            candidates.forEach(candidate => {
+                const text = cleanText(candidate);
+                if (!text) return;
+
+                const key = normalizeTextKey(text);
+                if (!key || seen.has(key)) return;
+
+                seen.add(key);
+                items.push(text);
             });
         });
-        return combined;
+
+        return items;
     };
+    const getFacilityDisplayName = facility => {
+        const identification = facility && facility.identification ? facility.identification : {};
+        return cleanText(identification.name)
+            || cleanText(identification.currentName)
+            || cleanText(facility && facility.name)
+            || cleanText(facility && facility.programName)
+            || cleanText(facility && facility.facilityName)
+            || cleanText(facility && facility.title)
+            || '';
+    };
+    const joinList = values => toArray(values).map(item => cleanText(item)).filter(item => item);
     const formatFieldLabel = (key) => {
         if (!key || typeof key !== 'string') return 'Field';
         return key
@@ -207,7 +241,7 @@ function displayFacilities(facilitiesData, containerId) {
         const operatorB = b && b.operator ? b.operator : {};
         const nameA = cleanText(operatorA.name) || cleanText(operatorA.currentName) || cleanText(a && a.name) || '';
         const nameB = cleanText(operatorB.name) || cleanText(operatorB.currentName) || cleanText(b && b.name) || '';
-        return nameA.localeCompare(nameB);
+        return compareDisplayText(nameA, nameB);
     });
 
     // Generate operator sections
@@ -238,11 +272,7 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
-            const facilityA = a && a.identification ? a.identification : {};
-            const facilityB = b && b.identification ? b.identification : {};
-            const nameA = facilityA.name || facilityA.currentName || '';
-            const nameB = facilityB.name || facilityB.currentName || '';
-            return nameA.localeCompare(nameB);
+            return compareDisplayText(getFacilityDisplayName(a), getFacilityDisplayName(b));
         });
 
         // Build operator header with Name - add class for long names or long words
@@ -283,14 +313,16 @@ function displayFacilities(facilitiesData, containerId) {
         const keyExecutives = joinList(keyStaff.keyExecutives);
         const websites = joinList(operator.websites);
         const ceoName = cleanText(keyStaff.ceo);
-        const pastNames = combineLists(operator.pastNames, operator.otherNames);
+        const operatorPastNames = collectUniqueTexts(operator.pastNames, operator.formerNames);
+        const operatorOtherNames = collectUniqueTexts(operator.otherNames);
         const operatorNotes = joinList(operator.notes);
 
         const operatorFields = [
             { key: 'status', label: 'Status', value: cleanText(operator.status) },
             { key: 'founded', label: 'Founded', value: cleanText(operator.founded) },
             { key: 'parentCompanies', label: 'Parent Companies', value: parentCompanies.length > 0 ? parentCompanies : null, isList: true },
-            { key: 'pastNames', label: 'Past Names', value: pastNames.length > 0 ? pastNames : null, isList: true },
+            { key: 'pastNames', label: 'Past Names', value: operatorPastNames.length > 0 ? operatorPastNames : null, isList: true },
+            { key: 'otherNames', label: 'Other Names', value: operatorOtherNames.length > 0 ? operatorOtherNames : null, isList: true },
             { key: 'keyStaff.founders', label: 'Founders', value: founders.length > 0 ? founders : null, isList: true },
             { key: 'keyStaff.keyExecutives', label: 'Key Executives', value: keyExecutives.length > 0 ? keyExecutives : null, isList: true },
             { key: 'keyStaff.ceo', label: 'CEO', value: ceoName || null },
@@ -361,7 +393,7 @@ function displayFacilities(facilitiesData, containerId) {
             const statusLabel = escapeHtml(statusLabelRaw);
 
             // Build facility header with Name
-            let facilityHeaderRaw = cleanText(identification.name) || cleanText(identification.currentName);
+            let facilityHeaderRaw = getFacilityDisplayName(facility);
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
 
             // Data for display above the "cut"
@@ -372,14 +404,16 @@ function displayFacilities(facilitiesData, containerId) {
 
             // Build other facility data
             let otherFacilityData = '';
-            const identificationPastNames = combineLists(identification.pastNames, identification.otherNames);
+            const identificationPastNames = collectUniqueTexts(identification.pastNames, identification.formerNames);
+            const identificationOtherNames = collectUniqueTexts(identification.otherNames);
             const facilityFields = [
                 { key: 'facilityDetails.type', label: 'Type', value: cleanText(facilityDetails.type) },
                 { key: 'facilityDetails.capacity', label: 'Capacity', value: cleanText(facilityDetails.capacity) },
                 { key: 'facilityDetails.ageRange', label: 'Age Range', value: (ageRange.min || ageRange.max) ? `${ageRange.min || '?'}-${ageRange.max || '?'}` : null },
                 { key: 'facilityDetails.gender', label: 'Gender', value: cleanText(facilityDetails.gender) },
                 { key: 'identification.currentOperator', label: 'Current Operator', value: cleanText(identification.currentOperator) },
-                { key: 'identification.pastNames', label: 'Past Names', value: identificationPastNames, isList: true },
+                { key: 'identification.pastNames', label: 'Past Names', value: identificationPastNames.length > 0 ? identificationPastNames : null, isList: true },
+                { key: 'identification.otherNames', label: 'Other Names', value: identificationOtherNames.length > 0 ? identificationOtherNames : null, isList: true },
                 { key: 'staff.administrator', label: 'Administrator', value: joinList(staff.administrator), isList: true },
                 { key: 'accreditations.current', label: 'Current Accreditations', value: joinList(accreditations.current), isList: true },
                 { key: 'accreditations.past', label: 'Past Accreditations', value: joinList(accreditations.past), isList: true },

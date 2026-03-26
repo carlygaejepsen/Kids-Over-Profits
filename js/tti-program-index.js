@@ -150,8 +150,41 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const escapeAttribute = value => escapeHtml(value);
+    const textCollator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+    });
+    const normalizeTextKey = value => cleanText(value).replace(/\s+/g, ' ').trim().toLocaleLowerCase();
+    const compareDisplayText = (a, b) => {
+        const textA = cleanText(a);
+        const textB = cleanText(b);
 
+        if (!textA && !textB) return 0;
+        if (!textA) return 1;
+        if (!textB) return -1;
 
+        return textCollator.compare(textA, textB);
+    };
+    const collectUniqueTexts = (...values) => {
+        const seen = new Set();
+        const items = [];
+
+        values.forEach(value => {
+            const candidates = Array.isArray(value) ? value : [value];
+            candidates.forEach(candidate => {
+                const text = cleanText(candidate);
+                if (!text || isValueEmpty(text)) return;
+
+                const key = normalizeTextKey(text);
+                if (!key || seen.has(key)) return;
+
+                seen.add(key);
+                items.push(text);
+            });
+        });
+
+        return items;
+    };
 
     const joinList = values => toArray(values)
         .filter(item => !isValueEmpty(item))
@@ -219,6 +252,12 @@ function displayFacilities(facilitiesData, containerId) {
         }
         return null;
     };
+
+    const getFacilityDisplayName = facility => getValueFromKeys(facility, [
+        'identification.name', 'identification.currentName',
+        'name', 'programName', 'facilityName', 'title',
+        'program_name', 'facility_name'
+    ]) || '';
 
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
@@ -406,7 +445,7 @@ function displayFacilities(facilitiesData, containerId) {
         const operatorB = b && b.operator ? b.operator : {};
         const nameA = cleanText(operatorA.name) || cleanText(operatorA.currentName) || cleanText(a && a.name) || '';
         const nameB = cleanText(operatorB.name) || cleanText(operatorB.currentName) || cleanText(b && b.name) || '';
-        return nameA.localeCompare(nameB);
+        return compareDisplayText(nameA, nameB);
     });
 
     // Generate operator sections
@@ -419,7 +458,7 @@ function displayFacilities(facilitiesData, containerId) {
         const facilities = rawFacilities.filter(f => {
             if (!f) return false;
             // Enhanced name check for deduplication
-            const name = getValueFromKeys(f, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
+            const name = getFacilityDisplayName(f);
 
             // FILTER: exclude known corporate entities from being listed as facilities
             // This prevents data errors where a parent company is listed as a facility of another
@@ -443,8 +482,9 @@ function displayFacilities(facilitiesData, containerId) {
                 if (corporateNames.includes(strippedName)) return false;
             }
 
-            if (!name || seenFacilityNames.has(name)) return false;
-            seenFacilityNames.add(name);
+            const nameKey = normalizeTextKey(name);
+            if (!nameKey || seenFacilityNames.has(nameKey)) return false;
+            seenFacilityNames.add(nameKey);
             return true;
         });
 
@@ -475,9 +515,7 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
-            const nameA = getValueFromKeys(a, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
-            const nameB = getValueFromKeys(b, ['identification.name', 'identification.currentName', 'name', 'programName', 'facilityName', 'title']) || '';
-            return nameA.localeCompare(nameB);
+            return compareDisplayText(getFacilityDisplayName(a), getFacilityDisplayName(b));
         });
 
         // Build operator header with Name - add class for long names or long words
@@ -661,11 +699,7 @@ function displayFacilities(facilitiesData, containerId) {
             const statusLabel = escapeHtml(statusLabelRaw);
 
             // Build facility header with Name - Enhanced lookup
-            const facilityHeaderRaw = getValueFromKeys(facility, [
-                'identification.name', 'identification.currentName', 
-                'name', 'programName', 'facilityName', 'title',
-                'program_name', 'facility_name'
-            ]);
+            const facilityHeaderRaw = getFacilityDisplayName(facility);
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
 
             // Data for display above the "cut"
@@ -684,18 +718,24 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             }
 
-            // Subtext for Other Names AND Current Operator
-            const otherNames = getValueFromKeys(facility, ['identification.otherNames', 'otherNames', 'identification.pastNames', 'pastNames', 'formerNames']);
+            // Subtext for former names, aliases, and current operator
+            const formerNames = collectUniqueTexts(
+                getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
+            );
+            const formerNameKeys = new Set(formerNames.map(normalizeTextKey));
+            const otherNames = collectUniqueTexts(
+                getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
+            ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
             const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
             
             let subtextParts = [];
             
-            if (otherNames) {
-                const names = Array.isArray(otherNames) ? otherNames : [otherNames];
-                const validNames = names.filter(n => !isValueEmpty(n));
-                if (validNames.length > 0) {
-                    subtextParts.push(`Formerly: ${escapeHtml(validNames.join(', '))}`);
-                }
+            if (formerNames.length > 0) {
+                subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
+            }
+
+            if (otherNames.length > 0) {
+                subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
             }
 
             if (currentOp && !isValueEmpty(currentOp)) {
@@ -1476,7 +1516,7 @@ function handleSort() {
 
     switch(sortValue) {
         case 'name':
-            operatorSections.sort((a, b) => a.dataset.operator.localeCompare(b.dataset.operator));
+            operatorSections.sort((a, b) => compareDisplayText(a.dataset.operator, b.dataset.operator));
             break;
         case 'violations-only':
             // Filter to show only facilities with violations (you'll need to add violation data to your JSON)
@@ -1501,7 +1541,7 @@ function handleSort() {
             break;
         default:
             // Default A-Z sort
-            operatorSections.sort((a, b) => a.dataset.operator.localeCompare(b.dataset.operator));
+            operatorSections.sort((a, b) => compareDisplayText(a.dataset.operator, b.dataset.operator));
     }
 
     // Re-append sorted sections

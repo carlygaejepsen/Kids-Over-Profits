@@ -63,6 +63,41 @@ document.addEventListener('DOMContentLoaded', function() {
         return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
     const escapeAttribute = value => escapeHtml(value);
+    const textCollator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+    });
+    const normalizeTextKey = value => cleanText(value).replace(/\s+/g, ' ').trim().toLocaleLowerCase();
+    const compareDisplayText = (a, b) => {
+        const textA = cleanText(a);
+        const textB = cleanText(b);
+
+        if (!textA && !textB) return 0;
+        if (!textA) return 1;
+        if (!textB) return -1;
+
+        return textCollator.compare(textA, textB);
+    };
+    const collectUniqueTexts = (...values) => {
+        const seen = new Set();
+        const items = [];
+
+        values.forEach(value => {
+            const candidates = Array.isArray(value) ? value : [value];
+            candidates.forEach(candidate => {
+                const text = cleanText(candidate);
+                if (!text || isValueEmpty(text)) return;
+
+                const key = normalizeTextKey(text);
+                if (!key || seen.has(key)) return;
+
+                seen.add(key);
+                items.push(text);
+            });
+        });
+
+        return items;
+    };
 
     const joinList = values => toArray(values).filter(item => !isValueEmpty(item)).map(item => cleanText(item)).filter(item => item);
 
@@ -98,6 +133,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return null;
     };
+
+    const getFacilityDisplayName = facility => getValueFromKeys(facility, [
+        'identification.name', 'identification.currentName',
+        'name', 'programName', 'facilityName', 'title'
+    ]) || '';
+
+    const sortFacilitiesAlphabetically = facilities => toArray(facilities)
+        .slice()
+        .sort((a, b) => compareDisplayText(getFacilityDisplayName(a), getFacilityDisplayName(b)));
 
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
@@ -176,13 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     allLocations.push({
                         name: project.name,
                         type: US_STATES.has(project.name.toUpperCase()) ? 'state' : 'country',
-                        facilities: facilities
+                        facilities: sortFacilitiesAlphabetically(facilities)
                     });
                 }
             }
         });
 
-        allLocations.sort((a, b) => a.name.localeCompare(b.name));
+        allLocations.sort((a, b) => compareDisplayText(a.name, b.name));
         renderAlphabetFilter();
         filterAndRender();
     }
@@ -224,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const sortVal = sortBy.value;
         filteredLocations.sort((a, b) => {
-            if (sortVal === 'name') return a.name.localeCompare(b.name);
+            if (sortVal === 'name') return compareDisplayText(a.name, b.name);
             if (sortVal === 'count') return b.facilities.length - a.facilities.length;
             return 0;
         });
@@ -271,10 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                 const statusLabel = escapeHtml(statusLabelRaw);
 
-                const facilityHeaderRaw = getValueFromKeys(facility, [
-                    'identification.name', 'identification.currentName', 
-                    'name', 'programName', 'facilityName', 'title'
-                ]);
+                const facilityHeaderRaw = getFacilityDisplayName(facility);
                 const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
                 const facilityDatasetName = escapeAttribute(facilityHeaderRaw || 'Unnamed Facility');
 
@@ -292,16 +333,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
 
-                // Subtext for Other Names AND Current Operator
-                const otherNames = getValueFromKeys(facility, ['identification.otherNames', 'otherNames', 'pastNames']);
+                // Subtext for former names, aliases, and current operator
+                const formerNames = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
+                );
+                const formerNameKeys = new Set(formerNames.map(normalizeTextKey));
+                const otherNames = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
+                ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
                 const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'sourceOperator.name']);
                 
                 let subtextParts = [];
-                if (otherNames) {
-                    const names = Array.isArray(otherNames) ? otherNames : [otherNames];
-                    const validNames = names.filter(n => !isValueEmpty(n));
-                    if (validNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(validNames.join(', '))}`);
-                }
+                if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
+                if (otherNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
                 if (currentOp && !isValueEmpty(currentOp)) {
                     subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
                 }
