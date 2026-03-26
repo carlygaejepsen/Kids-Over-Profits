@@ -74,20 +74,6 @@ get_header();
                         </div>
                     </div>
 
-                    <!-- Private Ownership Choice -->
-                    <div id="private-ownership-toggle-section" class="location-card">
-                        <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
-                            <span>Privately Owned Facility (not part of a chain):</span>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
-                                <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Edit ownership</button>
-                                <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                            </div>
-                        </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                            Click "Edit ownership" to answer the popup. Your choice still hides/shows operator vs owner fields like the old toggle.
-                        </p>
-                    </div>
                     <div id="ownership-modal" class="kop-modal" aria-hidden="true" role="dialog" aria-labelledby="ownership-modal-title" aria-modal="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:20px;">
                         <div style="background:#fff; border-radius:10px; max-width:420px; width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.2); padding:22px; position:relative;">
                             <h3 id="ownership-modal-title" style="margin-top:0; margin-bottom:12px; font-size:18px; color:#0f172a;">Is this a privately owned facility?</h3>
@@ -560,6 +546,19 @@ get_header();
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <div class="sub-section-content">
+                        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
+                            <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
+                                <span>Ownership Type:</span>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
+                                    <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Set ownership</button>
+                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                                </div>
+                            </div>
+                            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                                Set this first for location projects. It switches the fields below between parent company and owner information.
+                            </p>
+                        </div>
                         <!-- Current Operator (shown for corporate ownership) -->
                         <div class="form-group" id="current-operator-group">
                             <label id="current-operator-label">Current Parent Company</label>
