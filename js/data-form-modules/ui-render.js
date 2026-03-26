@@ -802,8 +802,21 @@
                 source: 'database'
             };
 
-            // Set current project name
+            // Set current project name and sync DOM input (save button reads from #project-name)
             window.currentProjectName = project.name;
+            const projectNameInput = document.getElementById('project-name');
+            if (projectNameInput) projectNameInput.value = project.name;
+
+            // Set facility index
+            window.currentFacilityIndex = 0;
+
+            // Switch to the correct category tab
+            const categoryMap = { locations: 'states', referrers: 'referrers', companies: 'companies' };
+            const tabCategory = categoryMap[projectData.category] || projectData.category;
+            const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
+            if (targetTab && !targetTab.classList.contains('active')) {
+                targetTab.click();
+            }
 
             // Load the project data into the form
             if (window.KOP_FormData && typeof window.KOP_FormData.loadProjectData === 'function') {
@@ -814,12 +827,15 @@
                 window.populateForm(projectData.data);
             } else {
                 // Fallback: set the data directly
-                if (window.formData) {
-                    window.formData = projectData.data;
-                }
+                window.formData = projectData.data;
                 if (window.updateJSON && typeof window.updateJSON === 'function') {
                     window.updateJSON();
                 }
+            }
+
+            // Refresh all UI panels
+            if (typeof window.updateAllUI === 'function') {
+                window.updateAllUI();
             }
 
             // Scroll to form
@@ -827,7 +843,6 @@
                 this.scrollToFormInput();
             }
 
-            // Show success message
             console.log(`Loaded database project: ${project.name}`);
         }
     };
