@@ -1041,7 +1041,7 @@
             }
 
             if (operatorSection) operatorSection.style.display = isPrivate ? 'none' : 'block';
-            modifyOperationsForPrivateOwnership(isPrivate);
+            applyPrivateOwnershipFormState(isPrivate);
         }
 
         function clearOperatorFields() {
@@ -1070,75 +1070,35 @@
             }
         }
 
-        function modifyOperationsForPrivateOwnership(isPrivate) {
+        function applyPrivateOwnershipFormState(isPrivate) {
             const operationsSection = document.getElementById('operations-section');
 
-            // Handle Identification section changes
             const currentOperatorGroup = document.getElementById('current-operator-group');
             const currentOwnerGroup = document.getElementById('current-owner-group');
             const pastOwnersGroup = document.getElementById('past-owners-group');
 
             if (isPrivate) {
-                // Show owner fields, hide operator field in Identification
                 if (currentOperatorGroup) currentOperatorGroup.style.display = 'none';
                 if (currentOwnerGroup) currentOwnerGroup.style.display = 'block';
                 if (pastOwnersGroup) pastOwnersGroup.style.display = 'block';
             } else {
-                // Show operator field, hide owner fields in Identification
                 if (currentOperatorGroup) currentOperatorGroup.style.display = 'block';
                 if (currentOwnerGroup) currentOwnerGroup.style.display = 'none';
                 if (pastOwnersGroup) pastOwnersGroup.style.display = 'none';
             }
 
-            // Handle Operations section changes
             if (!operationsSection) return;
 
-            const otherOperatorsGroup = operationsSection.querySelector('.array-container[data-path="otherOperators"]');
-            const otherOperatorsLabel = otherOperatorsGroup ? otherOperatorsGroup.previousElementSibling : null;
-
-            if (isPrivate) {
-                // Hide "Other Operators" and add "Owners" fields
-                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'none';
-                if (otherOperatorsLabel && otherOperatorsLabel.textContent == 'Other Operators') {
-                    otherOperatorsLabel.style.display = 'none';
-                }
-
-                // Add owners fields if they don't exist
-                if (!document.getElementById('owners-group')) {
-                    const ownersHTML = `
-                        <div class="form-group" id="owners-group">
-                            <label>Current Owner</label>
-                            <div class="autocomplete-wrapper">
-                                <input type="text" class="facility-field" data-field="owner" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                            </div>
-                        </div>
-                        <div class="form-group" id="other-owners-group">
-                            <label>Previous/Other Owners</label>
-                            <div class="autocomplete-wrapper">
-                                <input type="text" class="facility-field" data-field="otherOwners" data-field-type="human-name" placeholder="Type owner name..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                            </div>
-                        </div>
-                    `;
-                    const sectionContent = operationsSection.querySelector('.section-content');
-                    if (sectionContent) {
-                        sectionContent.insertAdjacentHTML('beforeend', ownersHTML);
-                    }
-                } else {
-                    const ownersGroup = document.getElementById('owners-group');
-                    const otherOwnersGroup = document.getElementById('other-owners-group');
-                    if (ownersGroup) ownersGroup.style.display = 'block';
-                    if (otherOwnersGroup) otherOwnersGroup.style.display = 'block';
-                }
-            } else {
-                // Restore "Other Operators" and hide "Owners" fields
-                if (otherOperatorsGroup) otherOperatorsGroup.style.display = 'block';
-                if (otherOperatorsLabel) otherOperatorsLabel.style.display = 'block';
-
-                const ownersGroup = document.getElementById('owners-group');
-                const otherOwnersGroup = document.getElementById('other-owners-group');
-                if (ownersGroup) ownersGroup.style.display = 'none';
-                if (otherOwnersGroup) otherOwnersGroup.style.display = 'none';
+            const otherOperatorsContainer = operationsSection.querySelector('.array-container[data-path="otherOperators"]');
+            const otherOperatorsGroup = otherOperatorsContainer ? otherOperatorsContainer.closest('.form-group') : null;
+            if (otherOperatorsGroup) {
+                otherOperatorsGroup.style.display = isPrivate ? 'none' : 'block';
             }
+
+            const legacyOwnersGroup = document.getElementById('owners-group');
+            const legacyOtherOwnersGroup = document.getElementById('other-owners-group');
+            if (legacyOwnersGroup) legacyOwnersGroup.style.display = 'none';
+            if (legacyOtherOwnersGroup) legacyOtherOwnersGroup.style.display = 'none';
         }
 
         if (privateOwnershipToggle && !privateOwnershipToggle.dataset.listenerAttached) {
