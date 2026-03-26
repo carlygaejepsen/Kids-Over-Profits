@@ -64,6 +64,127 @@ function render_diff($diff) {
     return $html;
 }
 
+function kop_has_meaningful_value($value) {
+    if (is_string($value)) {
+        return trim($value) !== '';
+    }
+
+    if (is_bool($value)) {
+        return $value === true;
+    }
+
+    if (is_int($value) || is_float($value)) {
+        return true;
+    }
+
+    if (is_array($value)) {
+        foreach ($value as $item) {
+            if (kop_has_meaningful_value($item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    return !empty($value);
+}
+
+function kop_collect_named_facilities($data) {
+    $facilities = [];
+    if (!is_array($data) || !isset($data['facilities']) || !is_array($data['facilities'])) {
+        return $facilities;
+    }
+
+    foreach ($data['facilities'] as $facility) {
+        $name = trim((string) ($facility['identification']['name'] ?? ''));
+        if ($name !== '') {
+            $facilities[] = $name;
+        }
+    }
+
+    return array_values(array_unique($facilities));
+}
+
+function kop_collect_added_facilities($old_data, $new_data) {
+    $old_names = kop_collect_named_facilities($old_data);
+    $new_names = kop_collect_named_facilities($new_data);
+
+    if (empty($new_names)) {
+        return [];
+    }
+
+    return array_values(array_diff($new_names, $old_names));
+}
+
+function kop_consultant_display_name($consultant) {
+    if (!is_array($consultant)) {
+        return '';
+    }
+
+    $full_name = trim(
+        ((string) ($consultant['firstName'] ?? '')) . ' ' .
+        ((string) ($consultant['lastName'] ?? ''))
+    );
+
+    if ($full_name !== '') {
+        return $full_name;
+    }
+
+    return trim((string) ($consultant['fullName'] ?? ''));
+}
+
+function kop_has_meaningful_referrer_payload($data) {
+    if (!is_array($data)) {
+        return false;
+    }
+
+    $agency_name = trim((string) ($data['referrerAgency']['name'] ?? ''));
+    if ($agency_name !== '') {
+        return true;
+    }
+
+    if (!isset($data['referrerConsultants']) || !is_array($data['referrerConsultants'])) {
+        return false;
+    }
+
+    foreach ($data['referrerConsultants'] as $consultant) {
+        if (!is_array($consultant)) {
+            continue;
+        }
+
+        $name = kop_consultant_display_name($consultant);
+        if ($name === '') {
+            continue;
+        }
+
+        $extra_fields = [
+            trim((string) ($consultant['role'] ?? '')),
+            trim((string) ($consultant['status'] ?? '')),
+            trim((string) ($consultant['education'] ?? '')),
+            trim((string) ($consultant['credentials'] ?? '')),
+            trim((string) ($consultant['city'] ?? '')),
+            trim((string) ($consultant['state'] ?? '')),
+            trim((string) ($consultant['email'] ?? '')),
+            trim((string) ($consultant['phone'] ?? '')),
+            trim((string) ($consultant['website'] ?? '')),
+        ];
+
+        foreach ($extra_fields as $value) {
+            if (kop_has_meaningful_value($value)) {
+                return true;
+            }
+        }
+
+        foreach (['websites', 'affiliations', 'knownReferrals', 'pastTTIJobs', 'schoolDistricts', 'facilitiesReferred'] as $field) {
+            if (kop_has_meaningful_value($consultant[$field] ?? null)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -137,29 +258,42 @@ function render_diff($diff) {
 
                             $diff = json_diff($old_data, $new_data);
 
-                            // Determine display names based on data type (facility vs referrer)
-                            $operator_name = $new_data['operator']['name'] ?? 'N/A';
-                            $facility_name = $new_data['facilities'][0]['identification']['name'] ?? 'N/A';
-                            $referrer_agency = $new_data['referrerAgency']['name'] ?? '';
+                            $operator_name = trim((string) ($new_data['operator']['name'] ?? ''));
+                            $facility_label = '';
+                            $facility_value = '';
+                            $added_facilities = kop_collect_added_facilities($old_data, $new_data);
+                            $named_facilities = kop_collect_named_facilities($new_data);
+
+                            if (!empty($added_facilities)) {
+                                $facility_label = count($added_facilities) === 1 ? 'Facility Added' : 'Facilities Added';
+                                $facility_value = implode(', ', $added_facilities);
+                            } elseif (count($named_facilities) === 1) {
+                                $facility_label = 'Facility';
+                                $facility_value = $named_facilities[0];
+                            } elseif (count($named_facilities) > 1) {
+                                $facility_label = 'Facilities in Project';
+                                $facility_value = count($named_facilities) . ' total';
+                            }
+
+                            $referrer_agency = trim((string) ($new_data['referrerAgency']['name'] ?? ''));
                             $referrer_consultant = '';
-                            if (!empty($new_data['referrerConsultants'][0]['firstName']) || !empty($new_data['referrerConsultants'][0]['lastName'])) {
-                                $referrer_consultant = trim(
-                                    ($new_data['referrerConsultants'][0]['firstName'] ?? '') . ' ' .
-                                    ($new_data['referrerConsultants'][0]['lastName'] ?? '')
-                                );
+                            $show_referrer_summary = $operator_name === '' && $facility_value === '' && kop_has_meaningful_referrer_payload($new_data);
+
+                            if ($show_referrer_summary && !empty($new_data['referrerConsultants'][0])) {
+                                $referrer_consultant = kop_consultant_display_name($new_data['referrerConsultants'][0]);
                             }
                             ?>
                             <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
-                            <?php if ($operator_name !== 'N/A'): ?>
+                            <?php if ($operator_name !== ''): ?>
                                 <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
                             <?php endif; ?>
-                            <?php if ($facility_name !== 'N/A'): ?>
-                                <p><strong>Facility:</strong> <?php echo htmlspecialchars($facility_name); ?></p>
+                            <?php if ($facility_value !== ''): ?>
+                                <p><strong><?php echo htmlspecialchars($facility_label); ?>:</strong> <?php echo htmlspecialchars($facility_value); ?></p>
                             <?php endif; ?>
-                            <?php if (!empty($referrer_agency)): ?>
+                            <?php if ($show_referrer_summary && !empty($referrer_agency)): ?>
                                 <p><strong>Referrer Agency:</strong> <?php echo htmlspecialchars($referrer_agency); ?></p>
                             <?php endif; ?>
-                            <?php if (!empty($referrer_consultant)): ?>
+                            <?php if ($show_referrer_summary && !empty($referrer_consultant)): ?>
                                 <p><strong>Referrer Consultant:</strong> <?php echo htmlspecialchars($referrer_consultant); ?></p>
                             <?php endif; ?>
                             <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>

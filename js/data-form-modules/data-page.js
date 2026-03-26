@@ -307,6 +307,28 @@
             }, []);
         }
 
+        function normalizeSuggestionCategory(category) {
+            const normalized = String(category || '').trim().toLowerCase();
+            if (normalized === 'states') {
+                return 'locations';
+            }
+            return normalized || 'companies';
+        }
+
+        function stripReferrerSubmissionData(data) {
+            if (!data || typeof data !== 'object') {
+                return;
+            }
+
+            delete data.referrer;
+            delete data.referrerAgency;
+            delete data.referrerConsultants;
+            delete data.referrerGroup;
+            delete data.referrerIndividual;
+            delete data.isIndependentConsultant;
+            delete data.referrerType;
+        }
+
         function ensureSuggestionButtonBinding() {
             const toolbarButton = document.getElementById('submit-suggestion-btn-toolbar');
             if (toolbarButton && !toolbarButton.dataset.suggestionBound) {
@@ -410,8 +432,12 @@
 
             const projectNameInput = document.getElementById('project-name');
             const activeTab = document.querySelector('.category-tab.active');
-            const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
+            const activeCategory = normalizeSuggestionCategory(activeTab ? activeTab.dataset.category : 'companies');
             const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;
+
+            if (activeCategory !== 'referrers') {
+                stripReferrerSubmissionData(dataToSubmit);
+            }
 
             const actualProjectName = (
                 window.currentProjectName ||

@@ -44,6 +44,32 @@ function kop_value_is_meaningful($value) {
     return !empty($value);
 }
 
+function kop_normalize_submission_category($value) {
+    $normalized = strtolower(trim((string) $value));
+    if ($normalized === 'states') {
+        return 'locations';
+    }
+    return $normalized;
+}
+
+function kop_strip_referrer_submission_data(&$data) {
+    if (!is_array($data)) {
+        return;
+    }
+
+    foreach ([
+        'referrer',
+        'referrerAgency',
+        'referrerConsultants',
+        'referrerGroup',
+        'referrerIndividual',
+        'isIndependentConsultant',
+        'referrerType',
+    ] as $field) {
+        unset($data[$field]);
+    }
+}
+
 function kop_facility_has_meaningful_data($facility) {
     if (!is_array($facility)) {
         return false;
@@ -116,6 +142,12 @@ try {
     
     $data = $input['data'];
     $reason = trim($input['reason']);
+    $active_category = kop_normalize_submission_category($input['metadata']['activeCategory'] ?? '');
+
+    if ($active_category !== '' && $active_category !== 'referrers') {
+        kop_strip_referrer_submission_data($data);
+    }
+
     $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];
     
     if (empty($reason)) {
