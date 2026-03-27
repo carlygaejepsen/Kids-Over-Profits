@@ -330,6 +330,21 @@
                 }
             }
 
+            let canonicalProjectName = projectName;
+            if (category === 'locations' && typeof window.normalizeLocationProjectName === 'function') {
+                canonicalProjectName = window.normalizeLocationProjectName(projectName) || projectName;
+                if (canonicalProjectName !== projectName && window.projects?.[projectName]) {
+                    window.projects[canonicalProjectName] = {
+                        ...window.projects[projectName],
+                        ...window.projects[canonicalProjectName],
+                        name: canonicalProjectName,
+                        category: 'locations'
+                    };
+                    delete window.projects[projectName];
+                }
+                projectName = canonicalProjectName;
+            }
+
             const projectData = {
                 name: projectName,
                 data: deepClone(window.formData),

@@ -335,29 +335,50 @@ function extractReferrerStateCli($referrer) {
 function kop_merge_location_facilities_cli($existingFacilities, $newFacilities) {
     $existingFacilities = is_array($existingFacilities) ? array_values($existingFacilities) : [];
     $newFacilities = is_array($newFacilities) ? array_values($newFacilities) : [];
-    $indexByName = [];
+    $indexByKey = [];
 
     foreach ($existingFacilities as $index => $facility) {
-        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
-        if ($name !== '') {
-            $indexByName[$name] = $index;
+        $key = kop_build_location_facility_key_cli($facility);
+        if ($key !== '') {
+            $indexByKey[$key] = $index;
         }
     }
 
     foreach ($newFacilities as $facility) {
-        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
-        if ($name !== '' && array_key_exists($name, $indexByName)) {
-            $existingFacilities[$indexByName[$name]] = $facility;
+        $key = kop_build_location_facility_key_cli($facility);
+        if ($key !== '' && array_key_exists($key, $indexByKey)) {
+            $existingFacilities[$indexByKey[$key]] = $facility;
             continue;
         }
 
         $existingFacilities[] = $facility;
-        if ($name !== '') {
-            $indexByName[$name] = count($existingFacilities) - 1;
+        if ($key !== '') {
+            $indexByKey[$key] = count($existingFacilities) - 1;
         }
     }
 
     return array_values($existingFacilities);
+}
+
+function kop_build_location_facility_key_cli($facility) {
+    if (!is_array($facility)) {
+        return '';
+    }
+
+    $identification = !empty($facility['identification']) && is_array($facility['identification'])
+        ? $facility['identification']
+        : [];
+    $locationDetails = !empty($facility['locationDetails']) && is_array($facility['locationDetails'])
+        ? $facility['locationDetails']
+        : [];
+
+    $name = trim((string) ($identification['name'] ?? $facility['name'] ?? ''));
+    $address = trim((string) ($facility['address'] ?? ''));
+    $location = trim((string) ($facility['location'] ?? ''));
+    $city = trim((string) ($locationDetails['city'] ?? $facility['locationCity'] ?? ''));
+    $state = trim((string) ($locationDetails['state'] ?? $facility['locationState'] ?? ''));
+
+    return strtolower($name . '|' . $address . '|' . $location . '|' . $city . '|' . $state);
 }
 
 function kop_build_location_referrer_key_cli($referrer) {
@@ -584,6 +605,20 @@ function kop_resolve_location_duplicate_target_cli($projectName, $projectJson) {
     return null;
 }
 
+function kop_has_named_location_identity_cli($projectName, $projectJson) {
+    $projectJsonName = is_array($projectJson) ? ($projectJson['name'] ?? '') : '';
+
+    if (kop_try_normalize_location_name_cli($projectName) || kop_try_normalize_location_name_cli($projectJsonName)) {
+        return true;
+    }
+
+    if (kop_find_location_name_in_text_cli($projectName) || kop_find_location_name_in_text_cli($projectJsonName)) {
+        return true;
+    }
+
+    return false;
+}
+
 function mergeDuplicateLocationProjectsCli(PDO $pdo, $options = []) {
     $dryRun = !empty($options['dryRun']);
     $deleteSources = !$dryRun && !empty($options['deleteSources']);
@@ -627,11 +662,18 @@ function mergeDuplicateLocationProjectsCli(PDO $pdo, $options = []) {
             }
 
             $category = strtolower(trim((string) ($projectJson['category'] ?? '')));
+            $targetLocation = kop_resolve_location_duplicate_target_cli($row['unique_name'], $projectJson);
+
             if ($tableName !== $locationsTable && $category !== 'locations') {
-                continue;
+                // Some imported location aggregates were saved without category metadata.
+                // Only treat those as merge candidates when the project's own name
+                // identifies it as a location aggregate. This avoids sweeping normal
+                // company projects into state rows just because they operate in one state.
+                if ($category !== '' || !$targetLocation || !kop_has_named_location_identity_cli($row['unique_name'], $projectJson)) {
+                    continue;
+                }
             }
 
-            $targetLocation = kop_resolve_location_duplicate_target_cli($row['unique_name'], $projectJson);
             if (!$targetLocation) {
                 $skipped[] = [
                     'table' => $tableName,

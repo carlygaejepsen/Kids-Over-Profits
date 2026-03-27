@@ -848,11 +848,30 @@ function handleFileUpload(event) {
                 };
             }
 
-            Object.keys(importedProjects).forEach(key => {
-                window.projects[key] = importedProjects[key];
+            Object.entries(importedProjects).forEach(([key, project]) => {
+                const isLocationProject = project?.category === 'locations'
+                    || window.US_STATE_SET?.has?.(String(key).trim().toLowerCase())
+                    || window.COUNTRY_SET?.has?.(String(key).trim().toLowerCase());
+                const normalizedKey = isLocationProject && typeof window.normalizeLocationProjectName === 'function'
+                    ? window.normalizeLocationProjectName(project?.name || key)
+                    : key;
+
+                window.projects[normalizedKey] = {
+                    ...project,
+                    name: normalizedKey
+                };
             });
 
-            const firstProject = Object.keys(importedProjects)[0];
+            if (typeof window.deduplicateLocationProjects === 'function') {
+                window.projects = window.deduplicateLocationProjects(window.projects);
+            }
+
+            const importedProjectNames = Object.keys(importedProjects);
+            const firstProject = importedProjectNames.length
+                ? (typeof window.normalizeLocationProjectName === 'function'
+                    ? window.normalizeLocationProjectName(importedProjects[importedProjectNames[0]]?.name || importedProjectNames[0])
+                    : importedProjectNames[0])
+                : null;
             if (firstProject) {
                 loadProject(firstProject);
             }

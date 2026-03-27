@@ -167,6 +167,7 @@ if ($projectName) {
     $projectNameUpper = strtoupper(trim($projectName));
     if (in_array($projectNameUpper, $US_STATE_NAMES) || in_array($projectNameUpper, $COUNTRY_NAMES)) {
         $category = 'locations';
+        $projectName = $projectNameUpper;
         // Log if frontend sent wrong category (helps debug issues)
         if ($requestedCategory !== 'locations') {
             error_log("Category override: '$projectName' is a state/country name - forcing category from '$requestedCategory' to 'locations'");
@@ -963,6 +964,10 @@ if ($action === 'save') {
         'timestamp' => $timestamp
     ];
 
+    if ($category === 'locations') {
+        $projectStructure['name'] = strtoupper(trim((string) $projectName));
+    }
+
     // Encode the complete project structure as a JSON string
     $jsonData = json_encode($projectStructure);
 
@@ -1498,29 +1503,50 @@ function rebuildAllLocationProjects($pdo) {
 function kop_merge_location_facilities($existingFacilities, $newFacilities) {
     $existingFacilities = is_array($existingFacilities) ? array_values($existingFacilities) : [];
     $newFacilities = is_array($newFacilities) ? array_values($newFacilities) : [];
-    $indexByName = [];
+    $indexByKey = [];
 
     foreach ($existingFacilities as $index => $facility) {
-        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
-        if ($name !== '') {
-            $indexByName[$name] = $index;
+        $key = kop_build_location_facility_key($facility);
+        if ($key !== '') {
+            $indexByKey[$key] = $index;
         }
     }
 
     foreach ($newFacilities as $facility) {
-        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
-        if ($name !== '' && array_key_exists($name, $indexByName)) {
-            $existingFacilities[$indexByName[$name]] = $facility;
+        $key = kop_build_location_facility_key($facility);
+        if ($key !== '' && array_key_exists($key, $indexByKey)) {
+            $existingFacilities[$indexByKey[$key]] = $facility;
             continue;
         }
 
         $existingFacilities[] = $facility;
-        if ($name !== '') {
-            $indexByName[$name] = count($existingFacilities) - 1;
+        if ($key !== '') {
+            $indexByKey[$key] = count($existingFacilities) - 1;
         }
     }
 
     return array_values($existingFacilities);
+}
+
+function kop_build_location_facility_key($facility) {
+    if (!is_array($facility)) {
+        return '';
+    }
+
+    $identification = isset($facility['identification']) && is_array($facility['identification'])
+        ? $facility['identification']
+        : [];
+    $locationDetails = isset($facility['locationDetails']) && is_array($facility['locationDetails'])
+        ? $facility['locationDetails']
+        : [];
+
+    $name = trim((string) ($identification['name'] ?? $facility['name'] ?? ''));
+    $address = trim((string) ($facility['address'] ?? ''));
+    $location = trim((string) ($facility['location'] ?? ''));
+    $city = trim((string) ($locationDetails['city'] ?? $facility['locationCity'] ?? ''));
+    $state = trim((string) ($locationDetails['state'] ?? $facility['locationState'] ?? ''));
+
+    return strtolower($name . '|' . $address . '|' . $location . '|' . $city . '|' . $state);
 }
 
 function kop_build_location_referrer_key($referrer) {

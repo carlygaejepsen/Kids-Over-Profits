@@ -28,6 +28,81 @@ const COUNTRY_NAMES = [
 const US_STATE_SET = new Set(US_STATE_NAMES);
 const COUNTRY_SET = new Set(COUNTRY_NAMES);
 
+function normalizeLocationProjectName(name) {
+    const trimmed = typeof name === 'string' ? name.trim() : '';
+    if (!trimmed) return '';
+
+    const upperName = trimmed.toUpperCase();
+    return US_STATE_SET.has(trimmed.toLowerCase()) || COUNTRY_SET.has(trimmed.toLowerCase()) ? upperName : trimmed;
+}
+
+function buildLocationFacilityKey(facility) {
+    if (!facility || typeof facility !== 'object') return '';
+
+    const identification = facility.identification || {};
+    const name = String(identification.name || facility.name || '').trim().toLowerCase();
+    const locationDetails = facility.locationDetails || {};
+    const address = String(facility.address || '').trim().toLowerCase();
+    const location = String(facility.location || '').trim().toLowerCase();
+    const city = String(locationDetails.city || facility.locationCity || '').trim().toLowerCase();
+    const state = String(locationDetails.state || facility.locationState || '').trim().toLowerCase();
+    return `${name}|${address}|${location}|${city}|${state}`;
+}
+
+function buildLocationReferrerKey(referrer) {
+    if (!referrer || typeof referrer !== 'object') return '';
+
+    const name = String(referrer.name || referrer.fullName || referrer.consultantName || '').trim().toLowerCase();
+    const location = String(referrer.location || '').trim().toLowerCase();
+    const city = String(referrer.city || '').trim().toLowerCase();
+    const state = String(referrer.state || '').trim().toLowerCase();
+    return `${name}|${location}|${city}|${state}`;
+}
+
+function mergeLocationProjectRecords(baseProject, incomingProject, canonicalName) {
+    const merged = {
+        ...(baseProject || {}),
+        ...(incomingProject || {})
+    };
+
+    const baseData = (baseProject && typeof baseProject === 'object' && baseProject.data && typeof baseProject.data === 'object') ? baseProject.data : {};
+    const incomingData = (incomingProject && typeof incomingProject === 'object' && incomingProject.data && typeof incomingProject.data === 'object') ? incomingProject.data : {};
+
+    merged.name = canonicalName;
+    merged.category = 'locations';
+    merged.data = {
+        ...baseData,
+        ...incomingData
+    };
+
+    const facilityMap = new Map();
+    [...(baseData.facilities || []), ...(incomingData.facilities || [])].forEach((facility) => {
+        const key = buildLocationFacilityKey(facility) || `facility-${facilityMap.size}`;
+        facilityMap.set(key, facility);
+    });
+    merged.data.facilities = Array.from(facilityMap.values());
+
+    const referrerMap = new Map();
+    [...(baseData.referrerConsultants || []), ...(incomingData.referrerConsultants || [])].forEach((referrer) => {
+        const key = buildLocationReferrerKey(referrer) || `referrer-${referrerMap.size}`;
+        referrerMap.set(key, referrer);
+    });
+    merged.data.referrerConsultants = Array.from(referrerMap.values());
+
+    if (!merged.data.operator || typeof merged.data.operator !== 'object') {
+        merged.data.operator = {};
+    }
+    if (!merged.data.operator.name) {
+        merged.data.operator.name = canonicalName;
+    }
+
+    if (typeof merged.currentFacilityIndex !== 'number') {
+        merged.currentFacilityIndex = 0;
+    }
+
+    return merged;
+}
+
 // ============================================
 // LOCATION DATA FUNCTIONS
 // ============================================
@@ -80,7 +155,7 @@ function deduplicateLocationProjects(projectsObj) {
     const locationKeys = {};  // Maps uppercase name -> array of actual keys
 
     Object.keys(projectsObj).forEach(key => {
-        const upperKey = key.toUpperCase();
+        const upperKey = normalizeLocationProjectName(key).toUpperCase();
         if (locationNames.has(upperKey)) {
             if (!locationKeys[upperKey]) {
                 locationKeys[upperKey] = [];
@@ -99,28 +174,18 @@ function deduplicateLocationProjects(projectsObj) {
         if (keys.length === 1) {
             // Only one version exists, use it but normalize to uppercase
             const originalKey = keys[0];
-            result[upperName] = projectsObj[originalKey];
-            result[upperName].name = upperName;  // Normalize the name
+            result[upperName] = mergeLocationProjectRecords(projectsObj[originalKey], null, upperName);
             if (typeof debugLog === 'function') {
                 debugLog(`📍 Location project "${originalKey}" normalized to "${upperName}"`);
             }
         } else {
-            // Multiple versions exist (e.g., 'alabama' and 'ALABAMA')
-            // Pick the one with more facilities, or prefer uppercase if tied
-            let bestKey = keys[0];
-            let bestCount = projectsObj[keys[0]]?.data?.facilities?.length || 0;
-
-            keys.forEach(key => {
-                const count = projectsObj[key]?.data?.facilities?.length || 0;
-                if (count > bestCount || (count === bestCount && key === upperName)) {
-                    bestKey = key;
-                    bestCount = count;
-                }
+            let mergedProject = null;
+            keys.forEach((key) => {
+                mergedProject = mergeLocationProjectRecords(mergedProject, projectsObj[key], upperName);
             });
 
-            result[upperName] = projectsObj[bestKey];
-            result[upperName].name = upperName;  // Normalize the name
-            console.log(`🔀 Deduplicated location "${upperName}": kept "${bestKey}" (${bestCount} facilities), discarded: ${keys.filter(k => k !== bestKey).join(', ')}`);
+            result[upperName] = mergedProject;
+            console.log(`🔀 Deduplicated location "${upperName}": merged variants ${keys.join(', ')}`);
         }
     });
 
@@ -444,6 +509,7 @@ window.US_STATE_NAMES = US_STATE_NAMES;
 window.COUNTRY_NAMES = COUNTRY_NAMES;
 window.US_STATE_SET = US_STATE_SET;
 window.COUNTRY_SET = COUNTRY_SET;
+window.normalizeLocationProjectName = normalizeLocationProjectName;
 
 // Expose functions to window for global access
 window.getAllLocations = getAllLocations;

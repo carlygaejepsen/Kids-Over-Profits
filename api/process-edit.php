@@ -117,18 +117,53 @@ function kop_find_facility_index_by_name($facilities, $facility_name) {
     return -1;
 }
 
+function kop_build_location_facility_key($facility) {
+    if (!is_array($facility)) {
+        return '';
+    }
+
+    $identification = isset($facility['identification']) && is_array($facility['identification'])
+        ? $facility['identification']
+        : array();
+    $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails'])
+        ? $facility['locationDetails']
+        : array();
+
+    $name = trim((string) ($identification['name'] ?? $facility['name'] ?? ''));
+    $address = trim((string) ($facility['address'] ?? ''));
+    $location = trim((string) ($facility['location'] ?? ''));
+    $city = trim((string) ($location_details['city'] ?? $facility['locationCity'] ?? ''));
+    $state = trim((string) ($location_details['state'] ?? $facility['locationState'] ?? ''));
+
+    return strtolower($name . '|' . $address . '|' . $location . '|' . $city . '|' . $state);
+}
+
 function kop_merge_location_facilities($existing_facilities, $new_facilities) {
     $existing_facilities = is_array($existing_facilities) ? array_values($existing_facilities) : [];
     $new_facilities = is_array($new_facilities) ? $new_facilities : [];
 
+    $index_by_key = array();
+
+    foreach ($existing_facilities as $index => $facility) {
+        $key = kop_build_location_facility_key($facility);
+        if ($key !== '') {
+            $index_by_key[$key] = $index;
+        }
+    }
+
     foreach ($new_facilities as $new_facility) {
-        $facility_name = trim((string) ($new_facility['identification']['name'] ?? ''));
-        $existing_index = kop_find_facility_index_by_name($existing_facilities, $facility_name);
+        $facility_key = kop_build_location_facility_key($new_facility);
+        $existing_index = ($facility_key !== '' && array_key_exists($facility_key, $index_by_key))
+            ? $index_by_key[$facility_key]
+            : -1;
 
         if ($existing_index >= 0) {
             $existing_facilities[$existing_index] = $new_facility;
         } else {
             $existing_facilities[] = $new_facility;
+            if ($facility_key !== '') {
+                $index_by_key[$facility_key] = count($existing_facilities) - 1;
+            }
         }
     }
 
