@@ -4,6 +4,147 @@
 
 (function() {
 
+const getRestBase = () => {
+    const configured = (window.locationIndexConfig && typeof window.locationIndexConfig.restUrl === 'string')
+        ? window.locationIndexConfig.restUrl.trim()
+        : '';
+    if (configured) return configured.endsWith('/') ? configured : configured + '/';
+    return '/wp-json/kop/v1/';
+};
+
+const escapeHtmlValue = value => {
+    if (value === null || value === undefined) return '';
+    const text = typeof value === 'string' ? value : String(value);
+    if (!text) return '';
+    return text.replace(/[&<>\"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char] || char));
+};
+
+const toTitleCase = value => {
+    if (value === null || value === undefined) return '';
+    const text = typeof value === 'string' ? value : String(value);
+    if (!text) return '';
+    return text.split(/\s+/).map(word => {
+        if (!word) return word;
+        if (/^[A-Z0-9]{2,}$/.test(word)) return word;
+        const lower = word.toLowerCase();
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+    }).join(' ');
+};
+
+function attachDocumentButtons(scope) {
+    const root = scope && scope.querySelectorAll ? scope : document;
+    const buttons = root.querySelectorAll('.doc-library-button');
+    buttons.forEach(button => {
+        if (button.dataset && button.dataset.kopBound === 'true') return;
+        if (button.dataset) button.dataset.kopBound = 'true';
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            const folderId = button.dataset ? button.dataset.folderId : '';
+            const container = button.closest('.field-row');
+            if (typeof window.loadFacilityDocuments === 'function') {
+                window.loadFacilityDocuments(folderId, container);
+            } else {
+                console.warn('Location index: loadFacilityDocuments is not available');
+            }
+        });
+    });
+}
+
+async function loadFacilityDocumentsFallback(folderId, container) {
+    try {
+        const restBase = getRestBase();
+        const response = await fetch(`${restBase}folder-content?id=${folderId}`, { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Failed to load content');
+        const files = await response.json();
+
+        const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+
+        if (Array.isArray(files) && files.length === 0) {
+            container.innerHTML = `${labelSpan}<span class="field-value">No documents found.</span>`;
+            return;
+        }
+
+        const safeFiles = Array.isArray(files) ? files : [];
+        const fileItems = safeFiles.map(file => {
+            if (!file || typeof file !== 'object') return '';
+
+            const title = escapeHtmlValue(toTitleCase(file.title || 'Document'));
+            const rawUrl = typeof file.url === 'string' ? file.url : '';
+            const url = escapeHtmlValue(rawUrl || '');
+            const mime = typeof file.mime_type === 'string' ? file.mime_type : '';
+            const isImage = mime.includes('image');
+            const extRaw = rawUrl.split('.').pop() ? rawUrl.split('.').pop().split('?')[0].split('#')[0] : '';
+            const extText = escapeHtmlValue(extRaw ? extRaw.toUpperCase() : 'FILE');
+            const extClass = extRaw ? extRaw.toLowerCase().replace(/[^a-z0-9]/g, '') : 'file';
+            const date = file.date ? new Date(file.date).toLocaleDateString() : '';
+            const dateHtml = date ? `<span class="doc-meta">${escapeHtmlValue(date)}</span>` : '';
+            const thumbUrlRaw = file.thumb_url || file.thumbnail_url || (isImage ? rawUrl : '');
+            const thumbUrl = escapeHtmlValue(thumbUrlRaw || '');
+            const hasThumb = thumbUrl.length > 0;
+            const thumbHtml = hasThumb
+                ? `<img src="${thumbUrl}" alt="${title}">`
+                : `<span class="doc-icon doc-icon-${extClass}">${extText}</span>`;
+
+            return `
+                <li class="doc-item" data-title="${title}">
+                    <a href="${url}" class="doc-link" target="_blank" rel="noopener" data-title="${title}" data-mime="${escapeHtmlValue(mime)}" data-thumb="${thumbUrl}">
+                        <div class="doc-thumbnail">${thumbHtml}</div>
+                        <div class="doc-info">
+                            <span class="doc-title">${title}</span>
+                            ${dateHtml}
+                        </div>
+                    </a>
+                </li>
+            `;
+        }).filter(Boolean).join('');
+
+        const listHtml = `<ul class="doc-list doc-layout-grid">${fileItems}</ul>`;
+        container.innerHTML = `${labelSpan}<span class="field-value">${listHtml}</span>`;
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = `<span class="field-value" style="color:#d45500">Error loading documents.</span>`;
+    }
+}
+
+window.loadFacilityDocuments = async function(folderId, containerOrId) {
+    const container = (containerOrId instanceof Element)
+        ? containerOrId
+        : document.getElementById(containerOrId);
+    if (!container) return;
+
+    const parsedId = parseInt(folderId, 10);
+    if (!Number.isFinite(parsedId)) {
+        console.warn('Location index: invalid folder id', folderId);
+        return;
+    }
+
+    const restBase = getRestBase();
+    const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+    container.innerHTML = `${labelSpan}<span class="field-value">Loading Document Library...</span>`;
+
+    try {
+        const response = await fetch(`${restBase}render-folder-shortcode?id=${parsedId}`, { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Failed to load library');
+        const data = await response.json();
+
+        if (!data.html || data.html.trim() === '') {
+            await loadFacilityDocumentsFallback(parsedId, container);
+            return;
+        }
+
+        container.innerHTML = `<div class="filebird-library-container" style="grid-column: 1 / -1; margin-top: 10px;">${data.html}</div>`;
+    } catch (e) {
+        console.warn('Location index: shortcode render failed, trying fallback list...', e);
+        await loadFacilityDocumentsFallback(parsedId, container);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const containerId = 'locations-container';
     const searchInput = document.getElementById('searchInput');
@@ -25,6 +166,67 @@ document.addEventListener('DOMContentLoaded', function() {
         'TENNESSEE', 'TEXAS', 'UTAH', 'VERMONT', 'VIRGINIA', 'WASHINGTON', 'WEST VIRGINIA',
         'WISCONSIN', 'WYOMING'
     ]);
+
+    const normalizeFolderMatchText = value => cleanText(value).toLowerCase().replace(/[^\w\s]/g, '').trim();
+
+    const findMatchingFilebirdFolder = facilityName => {
+        if (!window.filebirdFolders || !Array.isArray(window.filebirdFolders)) return null;
+
+        if (!window.filebirdFolderMap) {
+            window.filebirdFolderMap = {};
+            window.filebirdFolders.forEach(folder => {
+                window.filebirdFolderMap[String(folder.id)] = folder;
+            });
+        }
+
+        const rawFacilityName = cleanText(facilityName).toLowerCase().trim();
+        const normalizedFacilityName = normalizeFolderMatchText(rawFacilityName);
+        if (!rawFacilityName || !normalizedFacilityName) return null;
+
+        let matchingFolder = null;
+        try {
+            matchingFolder = window.filebirdFolders.find(folder => folder.name && folder.name.toLowerCase().trim() === rawFacilityName);
+
+            if (!matchingFolder) {
+                matchingFolder = window.filebirdFolders.find(folder => folder.name && normalizeFolderMatchText(folder.name.toLowerCase()) === normalizedFacilityName);
+            }
+
+            if (!matchingFolder && normalizedFacilityName.length > 6) {
+                matchingFolder = window.filebirdFolders.find(folder => {
+                    if (!folder.name) return false;
+                    const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
+                    return normalizedFolderName.includes(normalizedFacilityName);
+                });
+            }
+
+            if (!matchingFolder) {
+                matchingFolder = window.filebirdFolders.find(folder => {
+                    if (!folder.name) return false;
+                    const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
+                    return normalizedFolderName.length > 6 && normalizedFacilityName.includes(normalizedFolderName);
+                });
+            }
+
+            if (!matchingFolder && window.filebirdFolderMap) {
+                matchingFolder = window.filebirdFolders.find(folder => {
+                    if (!folder.name) return false;
+                    const parentId = String(folder.parent || '0');
+                    if (parentId === '0') return false;
+                    const parentFolder = window.filebirdFolderMap[parentId];
+                    if (!parentFolder || !parentFolder.name) return false;
+                    const pathWords = (normalizeFolderMatchText(parentFolder.name.toLowerCase()) + ' ' + normalizeFolderMatchText(folder.name.toLowerCase()))
+                        .split(/\s+/)
+                        .filter(word => word.length > 2);
+                    if (pathWords.length < 2) return false;
+                    return pathWords.every(word => normalizedFacilityName.includes(word));
+                });
+            }
+        } catch (error) {
+            console.warn('[KOP] Folder matching error for facility "' + rawFacilityName + '":', error);
+        }
+
+        return matchingFolder;
+    };
 
     // --- Helper Functions (Copied from tti-program-index.js) ---
 
@@ -187,10 +389,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const config = window.locationConfig || {};
         const url = config.jsonFileUrls ? config.jsonFileUrls[0] : '/api/get-master-data.php';
 
-        fetch(url)
+        fetch(url, { credentials: 'same-origin' })
             .then(response => response.json())
-            .then(data => {
+            .then(async data => {
                 if (data.success && data.projects) {
+                    try {
+                        const restBase = getRestBase();
+                        const foldersResponse = await fetch(`${restBase}folders`, { credentials: 'same-origin' });
+                        if (foldersResponse.ok) {
+                            window.filebirdFolders = await foldersResponse.json();
+                            window.filebirdFolderMap = null;
+                            console.log('Location index: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
+                        }
+                    } catch (error) {
+                        console.warn('Location index: failed to load FileBird folders', error);
+                    }
+
                     processData(data.projects);
                 } else {
                     document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
@@ -342,6 +556,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
                 ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
                 const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'sourceOperator.name']);
+                const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
                 
                 let subtextParts = [];
                 if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
@@ -399,6 +614,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 });
 
+                let documentsHtml = '';
+                if (matchingFolder) {
+                    documentsHtml = `
+                        <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
+                            <span class="field-label">Documents</span>
+                            <span class="field-value doc-library-btn-wrap">
+                                <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
+                                    📂 View Document Library
+                                </button>
+                            </span>
+                        </div>`;
+                }
+
                 contentHtml += `
                     <div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
                         <div class="facility-summary">
@@ -415,6 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
                                 <div class="facility-extra-content">
                                     ${otherFacilityData}
+                                    ${documentsHtml}
                                     ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                                 </div>
                             </details>
@@ -429,6 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         container.appendChild(grid);
+        attachDocumentButtons(container);
     }
 
     // Events

@@ -13,6 +13,7 @@ get_header();
 ?>
 
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/document-library.css">
 
 <div class="tti-program-index-wrapper">
     <div class="facility-report-container">
@@ -69,8 +70,13 @@ window.locationConfig = {
         '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
     ]
 };
+
+window.locationIndexConfig = {
+    restUrl: '<?php echo esc_url_raw(rest_url('kop/v1/')); ?>'
+};
 </script>
 
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/document-library.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/location-index.js?v=<?php echo time(); ?>"></script>
 
 <?php
