@@ -62,6 +62,14 @@ const isAdminMode = !!editorSettings.isAdmin;
 
 document.addEventListener('DOMContentLoaded', () => {
     const wikiForm = document.getElementById('wikiForm');
+    const generateBtn = document.getElementById('generateBtn');
+    const outputCode = document.getElementById('outputCode');
+    const entriesList = document.getElementById('entriesList');
+    const entrySearch = document.getElementById('entrySearch');
+    const pageInfo = document.getElementById('pageInfo');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const backBtn = document.getElementById('backBtn');
 
     if (!wikiForm) {
         console.warn('Wiki Editor: #wikiForm not found, skipping initialization.');
@@ -85,6 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let relatedPrograms = [];
     let importedMarkdown = ''; // Store original imported markdown
     let isOrganizationEntry = false; // Track if current entry is an organization
+    let currentPage = 1;
+    let totalEntries = 0;
+    const entriesPerPage = 25;
+    let currentNavType = '';
+    let currentNavList = [];
+    let currentNavIndex = -1;
 
     // --- Empty-slug mapping (loaded from markdown_output) ---
     // Set of known-empty wiki slugs (derived from markdown_output/empty_files_updated.md)
@@ -645,17 +659,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
 
-        // Close both browser panels
+        // Older layouts used toggle buttons and hid the browser panels after load.
+        // The current split-pane layout keeps the browser visible.
         const indexPanel = document.getElementById('indexBrowserPanel');
         const facilitiesPanel = document.getElementById('facilitiesBrowserPanel');
-        if (indexPanel) indexPanel.style.display = 'none';
-        if (facilitiesPanel) facilitiesPanel.style.display = 'none';
 
-        // Reset toggle button text
         const indexBtn = document.getElementById('toggleIndexBrowserBtn');
         const facilitiesBtn = document.getElementById('toggleFacilitiesBrowserBtn');
-        if (indexBtn) indexBtn.textContent = '📄 Browse Index Pages';
-        if (facilitiesBtn) facilitiesBtn.textContent = '🏢 Browse Saved Facilities';
+        const hasLegacyBrowserToggles = !!indexBtn || !!facilitiesBtn;
+
+        if (hasLegacyBrowserToggles) {
+            if (indexPanel) indexPanel.style.display = 'none';
+            if (facilitiesPanel) facilitiesPanel.style.display = 'none';
+            if (indexBtn) indexBtn.textContent = '📄 Browse Index Pages';
+            if (facilitiesBtn) facilitiesBtn.textContent = '🏢 Browse Saved Facilities';
+        } else {
+            if (indexPanel) indexPanel.style.display = '';
+            if (facilitiesPanel) facilitiesPanel.style.display = '';
+        }
 
         // Flash loaded status on the appropriate button
         const flashBtn = options.source === 'index' ? indexBtn : facilitiesBtn;
@@ -671,6 +692,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!options.noScroll && wikiForm) wikiForm.scrollIntoView({ behavior: 'smooth' });
     }
+
+    function updateNavButtons() {
+        if (!backBtn) return;
+
+        const showOrgBack = selectedIndexState === 'ORG_PROGRAMS';
+        backBtn.style.display = showOrgBack ? 'inline-flex' : 'none';
+        backBtn.textContent = '← Back';
+    }
+
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
         const lowerCategory = (category || '').toLowerCase();
@@ -2200,6 +2230,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            currentNavType = '';
+            currentNavList = [];
+            currentNavIndex = -1;
+
+            if (selectedIndexState === 'ORG_PROGRAMS') {
+                selectedIndexState = '';
+                currentIndexPrograms = [];
+                if (orgIndexSelect) orgIndexSelect.value = '';
+                if (indexSearch) indexSearch.value = '';
+                setIndexSearchEnabled(false);
+                updateIndexEntriesMessage('Select an organization above to load facilities.');
+            }
+
+            updateNavButtons();
+        });
+    }
+
     async function loadProgramsForState(stateCode) {
         selectedIndexState = stateCode || '';
         setIndexSearchEnabled(!!stateCode);
@@ -2556,10 +2605,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    indexSelect?.addEventListener('change', event => loadProgramsForState(event.target.value));
     indexSearch?.addEventListener('input', () => renderIndexEntries());
 
     setIndexSearchEnabled(false);
+    updateNavButtons();
 
     // Load entries from API
     async function loadEntries() {
