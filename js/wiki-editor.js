@@ -2486,31 +2486,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (orgPage && orgPage.original_markdown) {
                     const markdown = orgPage.original_markdown || '';
+                    // Only extract links from table rows to avoid picking up
+                    // links in staff bios, lawsuits, or other narrative sections
+                    const tableRowRegex = /^\|.+\|/gm;
                     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-                    let match;
+                    let tableRow;
 
-                    while ((match = linkRegex.exec(markdown)) !== null) {
-                        let name = match[1];
-                        const url = match[2];
+                    while ((tableRow = tableRowRegex.exec(markdown)) !== null) {
+                        const rowText = tableRow[0];
+                        let match;
+                        linkRegex.lastIndex = 0;
+                        while ((match = linkRegex.exec(rowText)) !== null) {
+                            let name = match[1];
+                            const url = match[2];
 
-                        // Remove markdown bold/italic markers from name
-                        name = name.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
+                            // Remove markdown bold/italic markers from name
+                            name = name.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
 
-                        const isUserLink = url.includes('/u/') || url.includes('/user/');
-                        const isExternal = url.startsWith('http') && !url.includes('/wiki/');
-                        const isWikiLink = url.includes('/wiki/index/');
-                        const isJustIndexPage = url.endsWith('/index/') || url.endsWith('/index');
+                            const isUserLink = url.includes('/u/') || url.includes('/user/');
+                            const isExternal = url.startsWith('http') && !url.includes('/wiki/');
+                            const isWikiLink = url.includes('/wiki/index/');
+                            const isJustIndexPage = url.endsWith('/index/') || url.endsWith('/index');
 
-                        // Include relative wiki links (start with / or contain /wiki/)
-                        if (isWikiLink && !isUserLink && !isExternal && !isJustIndexPage && name.length > 2) {
-                            if (!processedNames.has(name.toLowerCase())) {
-                                programs.push({
-                                    name: name,
-                                    url: url,
-                                    normalizedName: name.toLowerCase(),
-                                    source: 'markdown'
-                                });
-                                processedNames.add(name.toLowerCase());
+                            if (isWikiLink && !isUserLink && !isExternal && !isJustIndexPage && name.length > 2) {
+                                if (!processedNames.has(name.toLowerCase())) {
+                                    programs.push({
+                                        name: name,
+                                        url: url,
+                                        normalizedName: name.toLowerCase(),
+                                        source: 'markdown'
+                                    });
+                                    processedNames.add(name.toLowerCase());
+                                }
                             }
                         }
                     }
