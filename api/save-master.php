@@ -1206,6 +1206,39 @@ if ($action === 'rebuild-locations') {
     exit;
 }
 
+// Handle merge-location-duplicates action - merges misnamed location projects into canonical location rows
+if ($action === 'merge-location-duplicates') {
+    try {
+        $dryRun = !isset($request['dryRun']) ? true : filter_var($request['dryRun'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($dryRun === null) {
+            $dryRun = true;
+        }
+
+        $result = mergeDuplicateLocationProjects($pdo, [
+            'dryRun' => $dryRun,
+            'facilitiesTable' => $facilities_table,
+            'locationsTable' => $locations_table
+        ]);
+
+        $message = $dryRun
+            ? "Previewed {$result['mergeCount']} duplicate location project merge(s)"
+            : "Merged {$result['mergeCount']} duplicate location project(s) into {$result['targetCount']} canonical location project(s)";
+
+        echo json_encode([
+            'success' => true,
+            'message' => $message,
+            'dryRun' => $dryRun,
+            'details' => $result
+        ]);
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Failed to merge duplicate location projects: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
 /**
  * Rebuild ALL location projects from scratch by processing all existing company/referrer projects
  */
@@ -1459,6 +1492,401 @@ function rebuildAllLocationProjects($pdo) {
         'debug' => $debugInfo,
         'bucketCount' => count($locationBuckets),
         'saveErrors' => $saveErrors
+    ];
+}
+
+function kop_merge_location_facilities($existingFacilities, $newFacilities) {
+    $existingFacilities = is_array($existingFacilities) ? array_values($existingFacilities) : [];
+    $newFacilities = is_array($newFacilities) ? array_values($newFacilities) : [];
+    $indexByName = [];
+
+    foreach ($existingFacilities as $index => $facility) {
+        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+        if ($name !== '') {
+            $indexByName[$name] = $index;
+        }
+    }
+
+    foreach ($newFacilities as $facility) {
+        $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+        if ($name !== '' && array_key_exists($name, $indexByName)) {
+            $existingFacilities[$indexByName[$name]] = $facility;
+            continue;
+        }
+
+        $existingFacilities[] = $facility;
+        if ($name !== '') {
+            $indexByName[$name] = count($existingFacilities) - 1;
+        }
+    }
+
+    return array_values($existingFacilities);
+}
+
+function kop_build_location_referrer_key($referrer) {
+    if (!is_array($referrer)) {
+        return '';
+    }
+
+    $name = trim((string) ($referrer['name'] ?? $referrer['fullName'] ?? $referrer['consultantName'] ?? ''));
+    $location = trim((string) ($referrer['location'] ?? ''));
+    $city = trim((string) ($referrer['city'] ?? ''));
+    $state = trim((string) ($referrer['state'] ?? ''));
+
+    return strtolower($name . '|' . $location . '|' . $city . '|' . $state);
+}
+
+function kop_merge_location_referrers($existingReferrers, $newReferrers) {
+    $existingReferrers = is_array($existingReferrers) ? array_values($existingReferrers) : [];
+    $newReferrers = is_array($newReferrers) ? array_values($newReferrers) : [];
+    $indexByKey = [];
+
+    foreach ($existingReferrers as $index => $referrer) {
+        $key = kop_build_location_referrer_key($referrer);
+        if ($key !== '') {
+            $indexByKey[$key] = $index;
+        }
+    }
+
+    foreach ($newReferrers as $referrer) {
+        $key = kop_build_location_referrer_key($referrer);
+        if ($key !== '' && array_key_exists($key, $indexByKey)) {
+            $existingReferrers[$indexByKey[$key]] = $referrer;
+            continue;
+        }
+
+        $existingReferrers[] = $referrer;
+        if ($key !== '') {
+            $indexByKey[$key] = count($existingReferrers) - 1;
+        }
+    }
+
+    return array_values($existingReferrers);
+}
+
+function kop_is_known_country_name($value) {
+    global $COUNTRY_NAMES;
+
+    if (!is_string($value) || trim($value) === '') {
+        return null;
+    }
+
+    $normalized = strtoupper(trim($value));
+    return in_array($normalized, $COUNTRY_NAMES, true) ? $normalized : null;
+}
+
+function kop_try_normalize_location_name($value) {
+    if (!is_string($value) || trim($value) === '') {
+        return null;
+    }
+
+    $state = normalizeStateName($value);
+    if ($state) {
+        return $state;
+    }
+
+    return kop_is_known_country_name($value);
+}
+
+function kop_find_location_name_in_text($value) {
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
+
+    if (!is_string($value) || trim($value) === '') {
+        return null;
+    }
+
+    $normalized = strtoupper(trim($value));
+    $matches = [];
+
+    foreach (array_merge($US_STATE_NAMES, $COUNTRY_NAMES) as $locationName) {
+        if (preg_match('/\\b' . preg_quote($locationName, '/') . '\\b/i', $normalized)) {
+            $matches[$locationName] = true;
+        }
+    }
+
+    $matchNames = array_keys($matches);
+    return count($matchNames) === 1 ? $matchNames[0] : null;
+}
+
+function kop_format_location_project_name($locationName) {
+    $formatted = ucwords(strtolower(trim((string) $locationName)));
+    return preg_replace_callback('/\\b([A-Za-z])([A-Za-z]*)\\b/u', function($matches) {
+        return strtoupper($matches[1]) . strtolower($matches[2]);
+    }, $formatted);
+}
+
+function kop_get_project_payload_data($projectJson) {
+    if (!is_array($projectJson)) {
+        return [];
+    }
+
+    if (isset($projectJson['data']) && is_array($projectJson['data'])) {
+        return $projectJson['data'];
+    }
+
+    return $projectJson;
+}
+
+function kop_create_empty_location_project($projectName) {
+    return [
+        'name' => $projectName,
+        'data' => [
+            'facilities' => [],
+            'referrerConsultants' => [],
+            'operator' => [
+                'name' => $projectName,
+                'type' => 'Location Aggregate'
+            ]
+        ],
+        'category' => 'locations',
+        'currentFacilityIndex' => 0,
+        'timestamp' => date('c')
+    ];
+}
+
+function kop_prepare_location_project_for_merge($projectJson, $projectName) {
+    $projectJson = is_array($projectJson) ? $projectJson : [];
+    $prepared = kop_create_empty_location_project($projectName);
+
+    if (!empty($projectJson)) {
+        $prepared = array_merge($prepared, $projectJson);
+    }
+
+    $prepared['name'] = $projectName;
+    $prepared['category'] = 'locations';
+    $prepared['currentFacilityIndex'] = isset($prepared['currentFacilityIndex']) ? intval($prepared['currentFacilityIndex']) : 0;
+    $prepared['timestamp'] = date('c');
+
+    $prepared['data'] = kop_get_project_payload_data($prepared);
+    if (!isset($prepared['data']['facilities']) || !is_array($prepared['data']['facilities'])) {
+        $prepared['data']['facilities'] = [];
+    }
+    if (!isset($prepared['data']['referrerConsultants']) || !is_array($prepared['data']['referrerConsultants'])) {
+        $prepared['data']['referrerConsultants'] = [];
+    }
+    if (!isset($prepared['data']['operator']) || !is_array($prepared['data']['operator'])) {
+        $prepared['data']['operator'] = [];
+    }
+    if (empty($prepared['data']['operator']['name'])) {
+        $prepared['data']['operator']['name'] = $projectName;
+    }
+    if (empty($prepared['data']['operator']['type'])) {
+        $prepared['data']['operator']['type'] = 'Location Aggregate';
+    }
+
+    return $prepared;
+}
+
+function kop_count_project_locations($projectJson) {
+    global $US_STATE_NAMES, $COUNTRY_NAMES;
+
+    $knownLocations = array_fill_keys(array_merge($US_STATE_NAMES, $COUNTRY_NAMES), true);
+    $counts = [];
+    $data = kop_get_project_payload_data($projectJson);
+
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            $location = extractFacilityState($facility);
+            if ($location && isset($knownLocations[$location])) {
+                $counts[$location] = ($counts[$location] ?? 0) + 1;
+            }
+        }
+    }
+
+    if (!empty($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $referrer) {
+            $location = extractReferrerState($referrer);
+            if ($location && isset($knownLocations[$location])) {
+                $counts[$location] = ($counts[$location] ?? 0) + 1;
+            }
+        }
+    }
+
+    return $counts;
+}
+
+function kop_resolve_location_duplicate_target($projectName, $projectJson) {
+    $directCandidates = [
+        kop_try_normalize_location_name($projectName),
+        kop_try_normalize_location_name($projectJson['name'] ?? '')
+    ];
+
+    foreach ($directCandidates as $candidate) {
+        if ($candidate) {
+            return $candidate;
+        }
+    }
+
+    $embeddedCandidates = [
+        kop_find_location_name_in_text($projectName),
+        kop_find_location_name_in_text($projectJson['name'] ?? '')
+    ];
+
+    foreach ($embeddedCandidates as $candidate) {
+        if ($candidate) {
+            return $candidate;
+        }
+    }
+
+    $data = kop_get_project_payload_data($projectJson);
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        foreach (['locationState', 'state', 'locationCountry', 'country'] as $fieldName) {
+            $candidate = kop_try_normalize_location_name($data['operator'][$fieldName] ?? '');
+            if ($candidate) {
+                return $candidate;
+            }
+        }
+    }
+
+    $locationCounts = kop_count_project_locations($projectJson);
+    if (count($locationCounts) === 1) {
+        $locations = array_keys($locationCounts);
+        return $locations[0];
+    }
+
+    return null;
+}
+
+function mergeDuplicateLocationProjects($pdo, $options = []) {
+    $dryRun = !empty($options['dryRun']);
+    $facilitiesTable = $options['facilitiesTable'] ?? 'facilities_master';
+    $locationsTable = $options['locationsTable'] ?? 'locations_master';
+
+    $canonicalTargets = [];
+    $mergePlan = [];
+    $skipped = [];
+    $targetProjects = [];
+    $targetNames = [];
+    $sourcesToDelete = [];
+
+    $rowsByTable = [];
+    foreach ([$locationsTable, $facilitiesTable] as $tableName) {
+        $stmt = $pdo->prepare("SELECT unique_name, json_data, updated_at FROM {$tableName} ORDER BY updated_at ASC, unique_name ASC");
+        $stmt->execute();
+        $rowsByTable[$tableName] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    foreach ($rowsByTable[$locationsTable] as $row) {
+        $canonicalName = kop_try_normalize_location_name($row['unique_name']);
+        if ($canonicalName) {
+            $canonicalTargets[$canonicalName] = $row['unique_name'];
+        }
+    }
+
+    foreach ($rowsByTable as $tableName => $rows) {
+        foreach ($rows as $row) {
+            $projectJson = json_decode($row['json_data'], true);
+            if (!is_array($projectJson)) {
+                $skipped[] = [
+                    'table' => $tableName,
+                    'projectName' => $row['unique_name'],
+                    'reason' => 'Invalid JSON payload'
+                ];
+                continue;
+            }
+
+            $category = strtolower(trim((string) ($projectJson['category'] ?? '')));
+            if ($tableName !== $locationsTable && $category !== 'locations') {
+                continue;
+            }
+
+            $targetLocation = kop_resolve_location_duplicate_target($row['unique_name'], $projectJson);
+            if (!$targetLocation) {
+                $skipped[] = [
+                    'table' => $tableName,
+                    'projectName' => $row['unique_name'],
+                    'reason' => 'Could not resolve canonical state/country target'
+                ];
+                continue;
+            }
+
+            if (!isset($canonicalTargets[$targetLocation])) {
+                $exactMatch = kop_try_normalize_location_name($row['unique_name']) === $targetLocation;
+                $canonicalTargets[$targetLocation] = $exactMatch
+                    ? $row['unique_name']
+                    : kop_format_location_project_name($targetLocation);
+            }
+
+            $targetProjectName = $canonicalTargets[$targetLocation];
+            $sourceCanonicalName = kop_try_normalize_location_name($row['unique_name']);
+            $isCanonicalName = $sourceCanonicalName && $sourceCanonicalName === $targetLocation;
+            $isCanonicalRow = ($tableName === $locationsTable && $isCanonicalName && strcasecmp($row['unique_name'], $targetProjectName) === 0);
+
+            if ($isCanonicalRow) {
+                if (!isset($targetProjects[$targetLocation])) {
+                    $targetProjects[$targetLocation] = kop_prepare_location_project_for_merge($projectJson, $targetProjectName);
+                    $targetNames[$targetLocation] = $targetProjectName;
+                }
+                continue;
+            }
+
+            if (!isset($targetProjects[$targetLocation])) {
+                $targetProjects[$targetLocation] = kop_prepare_location_project_for_merge([], $targetProjectName);
+                $targetNames[$targetLocation] = $targetProjectName;
+            }
+
+            $targetProjects[$targetLocation]['data']['facilities'] = kop_merge_location_facilities(
+                $targetProjects[$targetLocation]['data']['facilities'],
+                $projectJson['data']['facilities'] ?? $projectJson['facilities'] ?? []
+            );
+            $targetProjects[$targetLocation]['data']['referrerConsultants'] = kop_merge_location_referrers(
+                $targetProjects[$targetLocation]['data']['referrerConsultants'],
+                $projectJson['data']['referrerConsultants'] ?? $projectJson['referrerConsultants'] ?? []
+            );
+
+            $mergePlan[] = [
+                'sourceTable' => $tableName,
+                'sourceProjectName' => $row['unique_name'],
+                'targetProjectName' => $targetProjectName,
+                'targetLocation' => $targetLocation,
+                'facilities' => count($projectJson['data']['facilities'] ?? $projectJson['facilities'] ?? []),
+                'referrers' => count($projectJson['data']['referrerConsultants'] ?? $projectJson['referrerConsultants'] ?? []),
+                'updatedAt' => $row['updated_at'] ?? null
+            ];
+
+            $sourcesToDelete[] = [
+                'table' => $tableName,
+                'projectName' => $row['unique_name']
+            ];
+        }
+    }
+
+    if (!$dryRun && !empty($mergePlan)) {
+        $pdo->beginTransaction();
+        try {
+            foreach ($targetProjects as $targetLocation => $projectJson) {
+                $targetProjectName = $targetNames[$targetLocation];
+                $jsonData = json_encode($projectJson);
+
+                $stmt = $pdo->prepare("INSERT INTO {$locationsTable} (unique_name, json_data, updated_at) VALUES (:unique_name, :json_data_insert, NOW()) ON DUPLICATE KEY UPDATE json_data = :json_data_update, updated_at = NOW()");
+                $stmt->execute([
+                    ':unique_name' => $targetProjectName,
+                    ':json_data_insert' => $jsonData,
+                    ':json_data_update' => $jsonData
+                ]);
+            }
+
+            foreach ($sourcesToDelete as $source) {
+                $stmt = $pdo->prepare("DELETE FROM {$source['table']} WHERE unique_name = :projectName");
+                $stmt->execute([':projectName' => $source['projectName']]);
+            }
+
+            $pdo->commit();
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    return [
+        'dryRun' => $dryRun,
+        'mergeCount' => count($mergePlan),
+        'targetCount' => count(array_unique(array_column($mergePlan, 'targetProjectName'))),
+        'targets' => array_values(array_unique(array_column($mergePlan, 'targetProjectName'))),
+        'mergePlan' => $mergePlan,
+        'skipped' => $skipped
     ];
 }
 
