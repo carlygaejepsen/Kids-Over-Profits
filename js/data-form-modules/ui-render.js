@@ -44,20 +44,50 @@
                 referrers: document.getElementById('referrer-saved-projects-list')
             };
 
+            const normalizeDisplayKey = (name, project) => {
+                const rawName = typeof name === 'string' ? name : '';
+                const category = String(project?.category || '').toLowerCase();
+                const candidateName = String(project?.name || rawName).trim();
+                const isLocationProject = category === 'locations'
+                    || category === 'location'
+                    || window.US_STATE_SET?.has?.(candidateName.toLowerCase())
+                    || window.COUNTRY_SET?.has?.(candidateName.toLowerCase());
+
+                if (isLocationProject && typeof window.normalizeLocationProjectName === 'function') {
+                    return window.normalizeLocationProjectName(candidateName) || candidateName;
+                }
+
+                return candidateName || rawName;
+            };
+
             // Clear all containers
             Object.values(containers).forEach(container => {
                 if (container) container.innerHTML = '';
             });
 
-            // Merge local projects and database projects
-            const allProjects = { ...(window.projects || {}) };
+            // Merge local projects and database projects while collapsing canonical duplicates.
+            const allProjects = {};
 
-            // Add database projects (if any) - these will override local projects with same name
+            Object.entries(window.projects || {}).forEach(([name, project]) => {
+                const displayKey = normalizeDisplayKey(name, project);
+                allProjects[displayKey] = {
+                    ...project,
+                    name: displayKey
+                };
+            });
+
             if (window.databaseProjects && Object.keys(window.databaseProjects).length > 0) {
                 Object.entries(window.databaseProjects).forEach(([name, project]) => {
-                    // Add a prefix to database projects to avoid name collision
-                    const dbKey = `db_${name}`;
-                    allProjects[dbKey] = { ...project, isDatabase: true };
+                    const displayKey = normalizeDisplayKey(name, project);
+                    if (allProjects[displayKey]) {
+                        return;
+                    }
+
+                    allProjects[displayKey] = {
+                        ...project,
+                        name: displayKey,
+                        isDatabase: true
+                    };
                 });
             }
 
