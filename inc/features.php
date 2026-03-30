@@ -253,7 +253,7 @@ class AnonymousDocPortal {
             'manage_options',
             'anonymous-docs',
             array($this, 'render_admin_page'),
-            'dashicons-hidden',
+            'dashicons-shield',
             50
         );
     }
