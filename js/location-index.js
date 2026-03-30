@@ -468,14 +468,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function filterAndRender() {
         const query = searchInput.value.toLowerCase();
         const typeQuery = typeFilter.value;
-        
+
         filteredLocations = allLocations.map(loc => {
-            const matchesName = loc.name.toLowerCase().includes(query);
             const matchesType = !typeQuery || loc.type === typeQuery;
             const matchesAlpha = !currentAlphaFilter || loc.name.toUpperCase().startsWith(currentAlphaFilter);
-            
-            if (matchesName && matchesType && matchesAlpha) {
-                return loc;
+            if (!matchesType || !matchesAlpha) return null;
+
+            const matchesLocationName = loc.name.toLowerCase().includes(query);
+            if (!query || matchesLocationName) return loc;
+
+            // Search within facility names, former names, and aliases
+            const matchingFacilities = loc.facilities.filter(facility => {
+                const name = getFacilityDisplayName(facility).toLowerCase();
+                if (name.includes(query)) return true;
+                const formerNames = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
+                );
+                const otherNames = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
+                );
+                return formerNames.concat(otherNames).some(n => n.toLowerCase().includes(query));
+            });
+
+            if (matchingFacilities.length > 0) {
+                return { ...loc, facilities: matchingFacilities };
             }
             return null;
         }).filter(l => l !== null);
