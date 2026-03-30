@@ -142,6 +142,14 @@
                 }
                 if (projectCategory === 'referrers') window.currentConsultantIndex = 0;
 
+                // Sort facilities alphabetically by name on load
+                if (window.formData.facilities && window.formData.facilities.length > 1) {
+                    window.formData.facilities.sort((a, b) =>
+                        (a.identification?.name || '').localeCompare(b.identification?.name || '')
+                    );
+                    window.currentFacilityIndex = 0;
+                }
+
                 const projectNameInput = document.getElementById('project-name');
                 if (projectNameInput) projectNameInput.value = projectName;
                 const referrerProjectNameInput = document.getElementById('referrer-project-name');
