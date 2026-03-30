@@ -2732,6 +2732,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             entries.forEach(entry => {
                 const createdDate = new Date(entry.created_at).toLocaleDateString();
+                const status = String(entry.status || '').toLowerCase();
 
                 // Check if entry content indicates it doesn't exist
                 const content = entry.generated_markdown || entry.original_markdown || '';
@@ -2740,10 +2741,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                    content.trim().length < 50; // Very short content likely means empty page
 
                 const notFoundFlag = isEmptyPage ? '<span class="entry-not-found-flag" title="This page has no content">⚠️ EMPTY</span> ' : '';
+                const statusBadge = status === 'approved' || status === 'published'
+                    ? `<span class="entry-status-badge entry-status-${escapeHtml(status)}" title="This markdown upload has already been ${escapeHtml(status)}">${escapeHtml(status === 'published' ? 'Published' : 'Approved')}</span> `
+                    : '';
 
                 const actionButtons = `
                     <tr data-entry-id="${entry.id}">
-                        <td class="entry-name" data-label="Program Name">${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
+                        <td class="entry-name" data-label="Program Name">${statusBadge}${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
                         <td data-label="Location">${escapeHtml(entry.city_state || '-')}</td>
                         <td data-label="Type">${escapeHtml(entry.program_type || '-')}</td>
                         <td data-label="Years Active">${escapeHtml(entry.years_active || '-')}</td>
