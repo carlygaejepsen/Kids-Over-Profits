@@ -36,7 +36,54 @@ function generateWikiMarkdown(formData) {
     // Helper: Pad bolded staff names with a space if they run directly into text
     const ensureBoldNameSpacing = (text) => {
         if (!text) return text;
-        return text.replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+        return text
+            .replace(/\*\*\s+([^*]+?)\s*\*\*/g, '**$1**')
+            .replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+    };
+
+    const getFirstSentence = (text) => {
+        const match = String(text || '').trim().match(/^(.+?[.!?])(?:\s|$)/);
+        return match ? match[1].trim() : String(text || '').trim();
+    };
+
+    const stripRedundantRoleIntro = (text, roleText) => {
+        const source = String(text || '').trim();
+        if (!source) return '';
+
+        const firstSentence = getFirstSentence(source);
+        const normalize = (value) => String(value || '')
+            .toLowerCase()
+            .replace(/\[[^\]]+\]\([^\)]+\)/g, '$1')
+            .replace(/[*_`]/g, '')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        const normalizedSentence = normalize(firstSentence);
+        const normalizedRole = normalize(roleText).replace(/^(?:the|a|an)\s+/, '');
+
+        if (normalizedRole && normalizedSentence.includes(normalizedRole)) {
+            return source.slice(firstSentence.length).trim();
+        }
+
+        return source;
+    };
+
+    const normalizeForComparison = (value) => String(value || '')
+        .toLowerCase()
+        .replace(/\[[^\]]+\]\([^\)]+\)/g, '$1')
+        .replace(/[*_`]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const addRoleArticle = (text) => {
+        const trimmed = (text || '').trim();
+        if (!trimmed) return '';
+        if (/^(?:the|a|an|one of|co-?founder|founder|in)\b/i.test(trimmed)) {
+            return trimmed;
+        }
+        return `the ${trimmed}`;
     };
 
     // Helper: Determine verb tense for staff members
@@ -193,6 +240,7 @@ function generateWikiMarkdown(formData) {
         });
 
         staffSection = sortedStaff.map(s => {
+            const safeStaffName = escapeMarkdown((s.name || '').trim());
             let roleText = escapeMarkdown(s.role);
 
             const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
@@ -208,14 +256,12 @@ function generateWikiMarkdown(formData) {
                 return `**${safeStaffName}** ${bio}`.trim();
             }
 
-            const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
-
-            const safeStaffName = escapeMarkdown((s.name || '').trim());
+            const articleRole = addRoleArticle(roleText);
 
             let verb, descriptor;
             if (s.isFormer && !roleHasFormer) {
-                verb = 'is';
-                descriptor = articleRole.replace(/^the\s+/i, 'the former ');
+                verb = 'was';
+                descriptor = articleRole;
             } else if (roleHasFormer) {
                 verb = 'was';
                 descriptor = articleRole;
@@ -231,15 +277,25 @@ function generateWikiMarkdown(formData) {
             if (s.previousRoles && s.previousRoles.length) {
                 const formattedRoles = s.previousRoles.map(pr => {
                     if (typeof pr === 'string') return escapeMarkdown(pr);
-                    if (pr.role && pr.employer) return `${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
-                    return escapeMarkdown(pr.role || pr.employer || '');
+                    if (pr.role && pr.employer) return `as ${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
+                    if (pr.role) return `as ${escapeMarkdown(pr.role)}`;
+                    if (pr.employer) return `at ${escapeMarkdown(pr.employer)}`;
+                    return '';
                 }).filter(Boolean);
                 if (formattedRoles.length > 0) {
-                    previousSentence = ensureSentence(`Previously worked as ${joinWithAnd(formattedRoles)}`);
+                    previousSentence = ensureSentence(`Previously worked ${joinWithAnd(formattedRoles)}`);
                 }
             }
 
-            const bioSentence = ensureSentence(s.bio || '');
+            const bioSentence = ensureSentence(stripRedundantRoleIntro(s.bio || '', roleText));
+            if (previousSentence && bioSentence) {
+                const normalizedPrevious = normalizeForComparison(previousSentence).replace(/^previously worked\s+/, '');
+                const normalizedBio = normalizeForComparison(bioSentence);
+                if (normalizedPrevious && normalizedBio.includes(normalizedPrevious)) {
+                    previousSentence = '';
+                }
+            }
+
             return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
         }).join('\n\n');
         staffSection = ensureBoldNameSpacing(staffSection);
@@ -511,7 +567,7 @@ ${relatedProgramsSection}## **Related Media**
 ${relatedMediaSection}
     `;
 
-    const footerPattern = /Last revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
+    const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = output.replace(footerPattern, '');
 
     return sanitizedOutput.trim();

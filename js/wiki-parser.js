@@ -68,6 +68,137 @@ function sanitizeUrl(input) {
     return url;
 }
 
+function isIgnoredWikiMetaLink(title, url, lineText = '') {
+    const normalizedTitle = String(title || '').trim().toLowerCase();
+    const normalizedUrl = sanitizeUrl(url).toLowerCase();
+    const normalizedLine = String(lineText || '').trim().toLowerCase();
+
+    if (!normalizedUrl) return false;
+
+    const isUserLink = /\/(?:u|user)\/signal-strain9810\/?$/i.test(normalizedUrl)
+        || /\/(?:u|user)\/shroomskillet\/?$/i.test(normalizedUrl);
+
+    if (!isUserLink) return false;
+
+    return normalizedTitle.includes('signal-strain9810')
+        || normalizedTitle.includes('shroomskillet')
+        || normalizedTitle === 'u/signaI-strain9810'
+        || normalizedTitle === 'u/signal-strain9810'
+        || normalizedLine.includes('last revised by')
+        || normalizedLine.includes('please contact')
+        || normalizedLine.includes('submitted directly to wiki');
+}
+
+function escapeRegExp(text) {
+    return String(text || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function maskMarkdownLinks(text) {
+    const links = [];
+    const maskedText = String(text || '').replace(/\[[^\]]+\]\([^\)]+\)/g, (match) => {
+        const token = `__MD_LINK_${links.length}__`;
+        links.push(match);
+        return token;
+    });
+
+    return { maskedText, links };
+}
+
+function unmaskMarkdownLinks(text, links) {
+    return String(text || '').replace(/__MD_LINK_(\d+)__/g, (_, index) => links[Number(index)] || '');
+}
+
+function getFirstSentence(text) {
+    const { maskedText, links } = maskMarkdownLinks(text);
+    const match = maskedText.match(/^(.+?[.!?])(?:\s|$)/);
+    return unmaskMarkdownLinks(match ? match[1] : maskedText, links).trim();
+}
+
+function removeFirstSentence(text) {
+    const firstSentence = getFirstSentence(text);
+    if (!firstSentence) return String(text || '').trim();
+
+    const source = String(text || '');
+    if (source.startsWith(firstSentence)) {
+        return source.slice(firstSentence.length).trim();
+    }
+
+    return source.trim();
+}
+
+function cleanStaffRoleCandidate(candidate, programName) {
+    let cleaned = String(candidate || '').trim();
+    if (!cleaned) return '';
+
+    cleaned = cleaned
+        .replace(/^the\s+/i, '')
+        .replace(/\s*,?\s+(?:from|until|since|beginning|starting|between)\b[\s\S]*$/i, '')
+        .trim();
+
+    if (programName) {
+        const escapedProgramName = escapeRegExp(programName);
+        cleaned = cleaned
+            .replace(new RegExp(`\\s+(?:of|at)\\s+${escapedProgramName}\\b.*$`, 'i'), '')
+            .trim();
+    }
+
+    cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+    if (/^(?:married|wife|husband|mother|father|daughter|son|sister|brother|partner)\b/i.test(cleaned)) {
+        return '';
+    }
+
+    return cleaned;
+}
+
+function extractStaffPreviousRoles(bioText) {
+    const { maskedText, links } = maskMarkdownLinks(bioText);
+    const previousRoles = [];
+    const seen = new Set();
+    const addPreviousRole = (role = '', employer = '') => {
+        const entry = {
+            role: unmaskMarkdownLinks(role, links).trim(),
+            employer: unmaskMarkdownLinks(employer, links).trim()
+        };
+
+        if (!entry.role && !entry.employer) return;
+
+        const key = `${entry.role}||${entry.employer}`.toLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+        previousRoles.push(entry);
+    };
+
+    const patterns = [
+        {
+            pattern: /(?:prior|previous|formerly|like\s+(?:his|her)\s+(?:husband|wife))[^.]*?\b(?:worked|served|was employed)\s+as\s+(.+?)(?=(?:\s+(?:at|for|with|from|until|before|after|when|since)\b|[.;]|$))/gi,
+            target: 'role'
+        },
+        {
+            pattern: /(?:prior|previous|formerly|like\s+(?:his|her)\s+(?:husband|wife))[^.]*?\b(?:worked|served|was employed)\s+at\s+(.+?)(?=(?:\s+(?:from|until|before|after|when|since|in)\b|[.;]|$))/gi,
+            target: 'employer'
+        },
+        {
+            pattern: /(?:prior|previous|formerly|like\s+(?:his|her)\s+(?:husband|wife))[^.]*?\b(?:worked|served|was employed)\s+for\s+(.+?)(?=(?:\s+(?:from|until|before|after|when|since|in)\b|[.;]|$))/gi,
+            target: 'employer'
+        }
+    ];
+
+    patterns.forEach(({ pattern, target }) => {
+        for (const match of maskedText.matchAll(pattern)) {
+            const value = (match[1] || '').trim();
+            if (!value) continue;
+            if (target === 'role') {
+                addPreviousRole(value, '');
+            } else {
+                addPreviousRole('', value);
+            }
+        }
+    });
+
+    return previousRoles;
+}
+
 /**
  * Parse Reddit markdown for TTI program wiki entries
  * @param {string} markdown - The markdown text to parse
@@ -151,11 +282,12 @@ function parseWikiMarkdown(markdown) {
 
     // Remove specific boilerplate text as requested by user
     normalizedMarkdown = normalizedMarkdown.replace(/\nthis text should always be removed\s*/g, '');
-    normalizedMarkdown = normalizedMarkdown.replace(/SaveCancelLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page titleSaveCancel/g, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/SaveCancelLast revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)## Page titleSaveCancel/gi, '');
     normalizedMarkdown = normalizedMarkdown.replace(/SaveCancel/g, '');
-    normalizedMarkdown = normalizedMarkdown.replace(/\nLast revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)## Page title/g, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/\nLast revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:## Page title)?/gi, '');
     // Normalize user signature
     normalizedMarkdown = normalizedMarkdown.replace(/- \[shroomskillet\]\(\/user\/shroomskillet\/\)/g, '- [Signal-Strain9810](/user/Signal-Strain9810/)');
+    normalizedMarkdown = normalizedMarkdown.replace(/^\s*Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)\s*$/gim, '');
 
 
     // Common acronym expansions for TTI industry companies
@@ -1208,55 +1340,42 @@ function parseWikiMarkdown(markdown) {
     ]);
 
     if (staffSection && !staffSection.includes('No information is known')) {
-        // Split on newlines followed by a bold name and any common verb/connector.
-        // Handles: **Name** is/was/worked/served/founded/has/also/does/currently...
-        // Also handles names with dates: **Name**(1930-2002) was...
-        const staffBlocks = staffSection.split(/\n(?=\*\*\s*[^*]+\*\*\s*(?:\([^)]*\)\s*)?(?:is |was |formerly |worked |served |has |co-founded |founded |also |does |currently ))/i);
+        const staffEntryPattern = /(?:^|\n)\*\*\s*([^*]+?)\s*\*\*\s*(?:\(([^)]*)\)\s*)?([\s\S]*?)(?=\n\s*\*\*\s*[^*]+?\s*\*\*\s*(?:\([^)]*\)\s*)?(?:is |was |formerly |previously |worked |served |has |co-founded |founded |also |does |currently )|\s*$)/gi;
 
-        staffBlocks.forEach(block => {
-            const trimmed = block.trim();
-            if (!trimmed) return;
+        for (const blockMatch of staffSection.matchAll(staffEntryPattern)) {
+            const name = (blockMatch[1] || '').trim();
+            const staffDates = blockMatch[2] ? blockMatch[2].trim() : '';
+            const bioText = (blockMatch[3] || '').trim();
 
-            // Match bold name, optionally followed by parenthetical dates
-            const nameMatch = trimmed.match(/^\*\*\s*([^*]+?)\s*\*\*\s*(?:\(([^)]*)\)\s*)?/);
-            if (!nameMatch) return;
-
-            const name = nameMatch[1].trim();
-            const staffDates = nameMatch[2] ? nameMatch[2].trim() : '';
-            const bioText = trimmed.substring(nameMatch[0].length).trim();
+            if (!name || !bioText) continue;
 
             const isFormer = /formerly|former|ex-|passed away|death|no longer/i.test(bioText)
                 || /^worked\b/i.test(bioText)       // "worked as..." implies past
+                || /^previously\s+worked\b/i.test(bioText)
                 || /^served\b/i.test(bioText)       // "served as..." implies past
                 || /\d{4}\s*-\s*\d{4}/.test(staffDates); // date range like (1930-2002)
 
             let role = '';
-            // Word boundaries (\b) on terminators prevent matching inside words
-            // (e.g., "Officer" being split at "Of" by the "of" terminator)
+            const introSentence = getFirstSentence(bioText);
             const rolePatterns = [
-                /worked\s+(?:as\s+)?(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
-                /served\s+as\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
-                /is\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
-                /was\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
-                /formerly\s+([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i
+                /worked\s+as\s+(.+?)(?:\.|$)/i,
+                /worked\s+in\s+(.+?)(?:\.|$)/i,
+                /served\s+as\s+(.+?)(?:\.|$)/i,
+                /(?:is|was)\s+(.+?)(?:\.|$)/i,
+                /formerly\s+(.+?)(?:\.|$)/i
             ];
 
             for (const pattern of rolePatterns) {
-                const roleMatch = bioText.match(pattern);
+                const roleMatch = introSentence.match(pattern);
                 if (roleMatch) {
-                    const candidate = roleMatch[1].trim();
-                    // Skip matches that captured inside markdown links
-                    if (candidate.includes('](') || candidate.includes('http')) continue;
+                    const candidate = cleanStaffRoleCandidate(roleMatch[1], parsedData.programName);
+                    if (!candidate) continue;
                     role = candidate;
                     break;
                 }
             }
 
-            const previousRoles = [];
-            const prevRoleMatches = bioText.matchAll(/(?:prior|previous|formerly)[^.]*?(?:worked|served|employed)\s+(?:as|at)\s+([^.,]+)/gi);
-            for (const match of prevRoleMatches) {
-                previousRoles.push({ role: match[1].trim(), employer: '' });
-            }
+            const previousRoles = extractStaffPreviousRoles(removeFirstSentence(bioText));
 
             parsedData.staffMembers.push({
                 name,
@@ -1265,7 +1384,7 @@ function parseWikiMarkdown(markdown) {
                 previousRoles,
                 isFormer
             });
-        });
+        }
     }
 
     // Parse Program Structure section
@@ -1583,6 +1702,9 @@ function parseWikiMarkdown(markdown) {
         // Extract news articles with links [Title](URL)
         const articleMatches = mediaSection.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g);
         for (const match of articleMatches) {
+            if (isIgnoredWikiMetaLink(match[1], match[2], mediaSection)) {
+                continue;
+            }
             parsedData.newsArticles.push({
                 title: match[1].trim(),
                 url: sanitizeUrl(match[2])
@@ -1746,6 +1868,9 @@ function parseWikiMarkdown(markdown) {
             // Match pattern: [Title](URL) (Source, Date)
             const withSourceDateMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)\s*\(([^,]+),\s*([^)]+)\)/);
             if (withSourceDateMatch) {
+                if (isIgnoredWikiMetaLink(withSourceDateMatch[1], withSourceDateMatch[2], trimmed)) {
+                    return;
+                }
                 parsedData.relatedMedia.push({
                     title: withSourceDateMatch[1].trim(),
                     url: sanitizeUrl(withSourceDateMatch[2]),
@@ -1759,6 +1884,9 @@ function parseWikiMarkdown(markdown) {
             // e.g., [Title](URL) (November 2014) or [Title](URL) (*website created by survivor*)
             const withAnnotationMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)\s*\(([^)]+)\)/);
             if (withAnnotationMatch) {
+                if (isIgnoredWikiMetaLink(withAnnotationMatch[1], withAnnotationMatch[2], trimmed)) {
+                    return;
+                }
                 const annotation = withAnnotationMatch[3].replace(/^\*|\*$/g, '').trim();
                 // Check if annotation looks like a date (contains a year)
                 const yearMatch = annotation.match(/\d{4}/);
@@ -1774,6 +1902,9 @@ function parseWikiMarkdown(markdown) {
             // Match simple pattern: [Title](URL)
             const simpleMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)/);
             if (simpleMatch) {
+                if (isIgnoredWikiMetaLink(simpleMatch[1], simpleMatch[2], trimmed)) {
+                    return;
+                }
                 parsedData.relatedMedia.push({
                     title: simpleMatch[1].trim(),
                     url: sanitizeUrl(simpleMatch[2]),
