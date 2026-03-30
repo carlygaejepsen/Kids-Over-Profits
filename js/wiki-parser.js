@@ -731,14 +731,16 @@ function parseWikiMarkdown(markdown) {
         // Handle both "## **Title**" and "##**Title**" (no space between # and *)
         const headerPattern = `#{1,6}\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
         const regex = new RegExp(
-            // Updated lookahead to match ##** (no space) or ## (with space) or *** or end
-            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}(?:\\s|\\*)|\\n\\*\\*\\*|$)',
+            // Lookahead: next ## header, standalone *** or --- separator (on its own line), or end
+            // The separator must be on its own line (not ***bold*** mid-content)
+            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}(?:\\s|\\*)|\\n(?:\\*\\*\\*|---)\\s*\\n|\\n(?:\\*\\*\\*|---)\\s*$|$)',
             'i'
         );
 
         const match = source.match(regex);
         let result = match ? match[1].trim() : '';
-        result = result.replace(/^\*\*\*|(?:\r\n|\n|\r)?\*\*\*$/g, '').trim();
+        // Strip standalone *** or --- separators at start/end of captured content
+        result = result.replace(/^(?:\*\*\*|---)\s*$|(?:\r\n|\n|\r)?(?:\*\*\*|---)\s*$/gm, '').trim();
 
         console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
         return result;
@@ -788,10 +790,23 @@ function parseWikiMarkdown(markdown) {
     }
     console.log('Header match result:', parsedData.programName);
 
-    // Parse program type
+    // Parse program type — first try the standalone *Type* line
     const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
     if (typeMatch) {
         parsedData.programType = typeMatch[1].trim();
+    }
+
+    // Fallback: extract program type from history text if not found
+    if (!parsedData.programType) {
+        const typeFromHistory = normalizedMarkdown.match(/marketed as (?:an?|the)\s+([^.]+?)\s+(?:for|program|that|who|serving|located)/i);
+        if (typeFromHistory) {
+            parsedData.programType = typeFromHistory[1].trim();
+        } else {
+            const typeFromHistory2 = normalizedMarkdown.match(/(?:is|was)\s+(?:an?|the)\s+((?:Residential Treatment Center|Therapeutic Boarding School|Wilderness Program|Behavior Modification Program|Behavioral Health Facility|Outdoor Therapeutic Program|Group Home|Boot Camp|Youth Treatment Center|Psychiatric Residential Treatment Facility)[^.]*)/i);
+            if (typeFromHistory2) {
+                parsedData.programType = typeFromHistory2[1].trim();
+            }
+        }
     }
 
     // Parse History section
@@ -877,18 +892,55 @@ function parseWikiMarkdown(markdown) {
             }
         }
 
-        // Alternative ownership change pattern
-        const purchasedInYearMatch = normalizedHistory.match(
-            /in\s+(\d{4})[^.]*?(?:was\s+)?(?:purchased|acquired|bought)\s+by\s+\[([^\]]+)\]\(([^)]+)\)/i
-        );
-        if (purchasedInYearMatch && parsedData.ownershipChanges.length === 0) {
-            parsedData.ownershipChanges.push({
-                year: purchasedInYearMatch[1].trim(),
-                previous: '',
-                previousLink: '',
-                newOwner: expandAcronym(purchasedInYearMatch[2]),
-                newOwnerLink: purchasedInYearMatch[3].trim()
-            });
+        // Alternative ownership change patterns — capture all occurrences
+        // Pattern: "in YEAR...was purchased/acquired/sold/taken over by [Name](link)"
+        const ownerChangeWithLinkPattern = /(?:in\s+(\d{4})[^.]*?(?:was\s+)?(?:purchased|acquired|bought|sold|taken over)\s+(?:by|to)\s+\[([^\]]+)\]\(([^)]+)\))|(?:(?:was\s+)?(?:purchased|acquired|bought|sold|taken over)\s+(?:by|to)\s+\[([^\]]+)\]\(([^)]+)\)[^.]*?in\s+(\d{4}))/gi;
+        let ownerChangeMatch;
+        while ((ownerChangeMatch = ownerChangeWithLinkPattern.exec(normalizedHistory)) !== null) {
+            const year = (ownerChangeMatch[1] || ownerChangeMatch[6] || '').trim();
+            const name = (ownerChangeMatch[2] || ownerChangeMatch[4] || '').trim();
+            const link = (ownerChangeMatch[3] || ownerChangeMatch[5] || '').trim();
+            if (name && !parsedData.ownershipChanges.some(o => o.newOwner === name)) {
+                parsedData.ownershipChanges.push({
+                    year,
+                    previous: '',
+                    previousLink: '',
+                    newOwner: expandAcronym(name),
+                    newOwnerLink: link
+                });
+            }
+        }
+
+        // Pattern: "in YEAR...was purchased/sold/taken over by Name" (no link)
+        const ownerChangeTextPattern = /(?:in\s+(\d{4})[^.]*?(?:was\s+)?(?:purchased|acquired|bought|sold|taken over)\s+(?:by|to)\s+(?:the\s+)?([^.,\[\n]+))|(?:(?:was\s+)?(?:purchased|acquired|bought|sold|taken over)\s+(?:by|to)\s+(?:the\s+)?([^.,\[\n]+?)\s+in\s+(\d{4}))/gi;
+        while ((ownerChangeMatch = ownerChangeTextPattern.exec(normalizedHistory)) !== null) {
+            const year = (ownerChangeMatch[1] || ownerChangeMatch[4] || '').trim();
+            const name = (ownerChangeMatch[2] || ownerChangeMatch[3] || '').trim();
+            if (name && !parsedData.ownershipChanges.some(o => o.newOwner === expandAcronym(name))) {
+                parsedData.ownershipChanges.push({
+                    year,
+                    previous: '',
+                    previousLink: '',
+                    newOwner: expandAcronym(name),
+                    newOwnerLink: ''
+                });
+            }
+        }
+
+        // Pattern: "became [Name]" or "renamed [Name]" (rebrand-style ownership changes)
+        const renamedPattern = /(?:in\s+(\d{4})[^.]*?)?(?:became|was renamed|changed (?:its )?name to)\s+(?:the\s+)?([^.,\[\n]+?)(?:\.|,|\s+in\s+)/gi;
+        while ((ownerChangeMatch = renamedPattern.exec(normalizedHistory)) !== null) {
+            const year = (ownerChangeMatch[1] || '').trim();
+            const name = ownerChangeMatch[2].trim();
+            if (name && name.length > 3 && !parsedData.ownershipChanges.some(o => o.newOwner === name)) {
+                parsedData.ownershipChanges.push({
+                    year,
+                    previous: '',
+                    previousLink: '',
+                    newOwner: name,
+                    newOwnerLink: ''
+                });
+            }
         }
 
         // Age range
@@ -1033,15 +1085,17 @@ function parseWikiMarkdown(markdown) {
             }
         }
 
-        // Average stay
-        const stayMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
+        // Average stay — handles "between X and Y months", "X-Y months", "X months"
+        const stayBetweenMatch = normalizedHistory.match(/average length of stay[^0-9]*(?:between\s+)?(\d+\s*(?:and|to|-)\s*\d+\s*(?:days?|weeks?|months?|years?))/i);
+        const staySingleMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
+        const stayMatch = stayBetweenMatch || staySingleMatch;
         if (stayMatch) {
             parsedData.avgStay = stayMatch[1].trim();
         }
 
         // Tuition
         // 1. Look for explicit "Unknown" / "Undisclosed"
-        const tuitionUnknownMatch = normalizedHistory.match(/(?:tuition|cost)[^.\n]*?(?:is|was|remains)\s+(unknown|undisclosed|not listed|not public)/i);
+        const tuitionUnknownMatch = normalizedHistory.match(/(?:tuition|cost)[^.\n]*?(?:is|was|remains)\s+(?:presently\s+|currently\s+)?(unknown|undisclosed|not listed|not public|not known)/i);
         if (tuitionUnknownMatch) {
             parsedData.tuition = "Unknown"; // Normalize to standard "Unknown"
         } else {
@@ -1095,14 +1149,17 @@ function parseWikiMarkdown(markdown) {
         }
 
         // Rebrand/Legacy
-        const rebrandMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to|reopened\/rebranded as|integrated into|merged with|merged into|clone of)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?\[([^\]]+)\]\(([^)]+)\)/i);
+        const rebrandKeywords = '(?:rebrand of|formerly known as|previously known as|successor to|reopened\\/rebranded as|integrated into|merged with|merged into|clone of)';
+        const rebrandMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+(?:the\\s+)?(?:notorious\\s+)?(?:and\\s+)?(?:confirmedly\\s+)?(?:abusive\\s+)?(?:program\\s+)?\\[([^\\]]+)\\]\\(([^)]+)\\)', 'i'));
         if (rebrandMatch) {
             parsedData.rebrand = rebrandMatch[1].trim();
             parsedData.rebrandLink = sanitizeUrl(rebrandMatch[2]);
         } else {
-             const rebrandTextMatch = normalizedHistory.match(/(?:rebrand of|formerly known as|successor to|reopened\/rebranded as|integrated into|merged with|merged into|clone of)\s+(?:the\s+)?(?:notorious\s+)?(?:and\s+)?(?:confirmedly\s+)?(?:abusive\s+)?(?:program\s+)?([^\.]+)/i);
+             // Capture until next clause boundary: period, closing paren+space, "was", "is"
+             const rebrandTextMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+(?:the\\s+)?(?:notorious\\s+)?(?:and\\s+)?(?:confirmedly\\s+)?(?:abusive\\s+)?(?:program\\s+)?([^.)]+?)(?:\\)|\\s+was\\b|\\s+is\\b|\\.|$)', 'i'));
              if (rebrandTextMatch) {
-                 parsedData.rebrand = rebrandTextMatch[1].trim();
+                 // Clean trailing comma, "and", etc.
+                 parsedData.rebrand = rebrandTextMatch[1].trim().replace(/[,\s]+$/, '');
              }
         }
 
@@ -1125,10 +1182,10 @@ function parseWikiMarkdown(markdown) {
              }
         }
 
-        // DON'T store everything in historyMisc - let the user edit form fields
-        // historyMisc should only contain content that truly couldn't be parsed
-        // For now, leave it empty and rely on structured fields
-        // parsedData.historyMisc = historySection;
+        // Preserve the full history section so it survives the parse→generate round-trip.
+        // Structured fields (year, owner, etc.) are still extracted above for form inputs,
+        // but historyMisc feeds the generation template and prevents content loss.
+        parsedData.historyMisc = historySection;
     }
 
     // Parse Staff section
@@ -1151,32 +1208,46 @@ function parseWikiMarkdown(markdown) {
     ]);
 
     if (staffSection && !staffSection.includes('No information is known')) {
-        const staffBlocks = staffSection.split(/\n(?=\*\*[^*]+\*\*(?:\s*is|\s*was|\s*formerly))/);
+        // Split on newlines followed by a bold name and any common verb/connector.
+        // Handles: **Name** is/was/worked/served/founded/has/also/does/currently...
+        // Also handles names with dates: **Name**(1930-2002) was...
+        const staffBlocks = staffSection.split(/\n(?=\*\*\s*[^*]+\*\*\s*(?:\([^)]*\)\s*)?(?:is |was |formerly |worked |served |has |co-founded |founded |also |does |currently ))/i);
 
         staffBlocks.forEach(block => {
             const trimmed = block.trim();
             if (!trimmed) return;
 
-            const nameMatch = trimmed.match(/^\*\*([^*]+)\*\*/);
+            // Match bold name, optionally followed by parenthetical dates
+            const nameMatch = trimmed.match(/^\*\*\s*([^*]+?)\s*\*\*\s*(?:\(([^)]*)\)\s*)?/);
             if (!nameMatch) return;
 
             const name = nameMatch[1].trim();
+            const staffDates = nameMatch[2] ? nameMatch[2].trim() : '';
             const bioText = trimmed.substring(nameMatch[0].length).trim();
 
-            const isFormer = /formerly|former|ex-/i.test(bioText);
+            const isFormer = /formerly|former|ex-|passed away|death|no longer/i.test(bioText)
+                || /^worked\b/i.test(bioText)       // "worked as..." implies past
+                || /^served\b/i.test(bioText)       // "served as..." implies past
+                || /\d{4}\s*-\s*\d{4}/.test(staffDates); // date range like (1930-2002)
 
             let role = '';
+            // Word boundaries (\b) on terminators prevent matching inside words
+            // (e.g., "Officer" being split at "Of" by the "of" terminator)
             const rolePatterns = [
-                /is\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i,
-                /was\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i,
-                /formerly\s+([^.]+?)(?:\s+of|\s+at|\.|$)/i,
-                /worked\s+as\s+(?:the\s+)?([^.]+?)(?:\s+of|\s+at|\.|$)/i
+                /worked\s+(?:as\s+)?(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
+                /served\s+as\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
+                /is\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
+                /was\s+(?:the\s+)?([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i,
+                /formerly\s+([^.]+?)(?:\s+of\b|\s+at\b|\.|$)/i
             ];
 
             for (const pattern of rolePatterns) {
                 const roleMatch = bioText.match(pattern);
                 if (roleMatch) {
-                    role = roleMatch[1].trim();
+                    const candidate = roleMatch[1].trim();
+                    // Skip matches that captured inside markdown links
+                    if (candidate.includes('](') || candidate.includes('http')) continue;
+                    role = candidate;
                     break;
                 }
             }
@@ -1218,9 +1289,12 @@ function parseWikiMarkdown(markdown) {
             parsedData.levelSystemDesc = levelDescMatch[1].trim();
         }
 
-        // Parse levels/phases/stages - Match pattern: - **Level Name:** Description
-        // This matches bullet points with bold level names followed by descriptions
-        const levelMatches = structureSection.matchAll(/-\s+\*\*([^*:]+?)\*\*\s*:?\s*([\s\S]*?)(?=\n-\s+\*\*|\n\nAs stated|\n\nThere is also|\n##|\n\*\*\*|$)/g);
+        // Parse levels/phases/stages
+        // Matches bullet or non-bullet formats:
+        //   - **Level Name:** Description
+        //   ***Level Name:***description*          (bold+italic, seen in Reddit wikis)
+        //   **Level Name** — Description
+        const levelMatches = structureSection.matchAll(/(?:^|\n)\s*(?:-\s+)?\*{2,3}\s*([^*:]+?)\s*(?::?\s*)\*{2,3}\s*([\s\S]*?)(?=\n\s*(?:-\s+)?\*{2,3}[^*]|\n\nAs stated|\n\nThere is also|\n##|\n\*\*\*\s*$|$)/g);
         
         for (const match of levelMatches) {
             const levelName = match[1].trim();
@@ -1472,9 +1546,17 @@ function parseWikiMarkdown(markdown) {
         const punishmentPatterns = rulesSection.split('\n\n');
         punishmentPatterns.forEach(block => {
             const trimmed = block.trim();
-            // Match patterns like "**Name:** description" or "**Name** - description"
-            // Also handles "** Name:**" (with space inside bold) and leading bullets
-            const punishmentMatch = trimmed.match(/^(?:[*•-]\s*)?\*\*\s*([^*:]+?)(?::|–|-)\*\*\s*(.+)$/m);
+            // Match patterns like:
+            //   **Name:** description          (colon inside bold)
+            //   **Name** - description          (dash after bold)
+            //   ***Name:*** description         (bold+italic)
+            //   ** Name:**  description         (space inside bold)
+            //   - **Name:** description         (with bullet)
+            const punishmentMatch = trimmed.match(
+                /^(?:[*•-]\s*)?\*{2,3}\s*([^*:]+?)\s*(?::|–|-)\s*\*{2,3}\s*(.+)$/m
+            ) || trimmed.match(
+                /^(?:[*•-]\s*)?\*{2,3}\s*([^*]+?)\s*\*{2,3}\s*(?::|–|[-])\s*(.+)$/m
+            );
             if (punishmentMatch) {
                 parsedData.punishments.push({
                     name: punishmentMatch[1].trim(),
@@ -1483,8 +1565,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // DON'T store everything in punishmentsMisc - let the user edit form fields
-        // parsedData.punishmentsMisc = rulesSection;
+        // Preserve full section text to prevent content loss during round-trip
+        parsedData.punishmentsMisc = rulesSection;
     }
 
     // Parse In the Media & News section
@@ -1507,8 +1589,8 @@ function parseWikiMarkdown(markdown) {
             });
         }
 
-        // DON'T store everything in mediaInfo - let the user edit form fields
-        // parsedData.mediaInfo = mediaSection;
+        // Preserve full section text to prevent content loss during round-trip
+        parsedData.mediaInfo = mediaSection;
     }
 
     // Parse Survivor/Parent Testimonials section
@@ -1548,52 +1630,87 @@ function parseWikiMarkdown(markdown) {
             const trimmed = block.trim();
             if (!trimmed || trimmed.length < 10) return;
 
+            // Attribution helper: extracts "- [Source](URL)" or "- Source" from end of text
+            // Uses GREEDY quote capture so internal dashes don't truncate the quote
+            const extractAttribution = (text) => {
+                // Match the LAST "- [Source](URL)" or "- Source text" at end of string
+                const attrMatch = text.match(/^([\s\S]+)\s+[-–—]\s+(?:\[([^\]]+)\]\(([^)]+)\)|([A-Z][^[(\n]*))$/);
+                if (attrMatch) {
+                    return {
+                        body: attrMatch[1].trim(),
+                        source: (attrMatch[2] || attrMatch[4] || '').trim(),
+                        url: attrMatch[3] ? sanitizeUrl(attrMatch[3]) : ''
+                    };
+                }
+                return null;
+            };
+
             // Pattern 1: Standard "**Date: (Type)** Quote" (flexible whitespace)
-            // Matches: **9/9/2021: (SURVIVOR)** "Quote..."
-            // Using [\s\S] for quote capture to handle multi-line content
-            const stdMatch = trimmed.match(/^\*\*([^:]+?):?\s*\(([^)]+)\)\*\*\s*"?([\s\S]+?)"?\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
-            
+            // Matches: **9/9/2021: (SURVIVOR)** "Quote..." - [Source](URL)
+            const stdMatch = trimmed.match(/^\*\*([^:]+?):?\s*\(([^)]+)\)\*\*\s*"?([\s\S]+)"?\s*$/);
+
             if (stdMatch) {
-                parsedData.testimonies.push({
-                    date: stdMatch[1].trim(),
-                    type: stdMatch[2].trim(),
-                    quote: stdMatch[3].trim(),
-                    source: (stdMatch[4] || stdMatch[6] || '').trim(),
-                    url: stdMatch[5] ? sanitizeUrl(stdMatch[5]) : ''
-                });
-                return;
+                const attr = extractAttribution(stdMatch[3]);
+                if (attr) {
+                    parsedData.testimonies.push({
+                        date: stdMatch[1].trim(),
+                        type: stdMatch[2].trim(),
+                        quote: attr.body.replace(/^"|"$/g, '').trim(),
+                        source: attr.source,
+                        url: attr.url
+                    });
+                    return;
+                }
             }
 
             // Pattern 2: "**Date** (Type) Quote" (no colon, maybe no quotes)
-            const noColonMatch = trimmed.match(/^\*\*([^*]+)\*\*\s*\(([^)]+)\)\s*"?([\s\S]+?)"?\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
-            
+            const noColonMatch = trimmed.match(/^\*\*([^*]+)\*\*\s*\(([^)]+)\)\s*"?([\s\S]+)"?\s*$/);
+
             if (noColonMatch) {
-                parsedData.testimonies.push({
-                    date: noColonMatch[1].trim(),
-                    type: noColonMatch[2].trim(),
-                    quote: noColonMatch[3].trim(),
-                    source: (noColonMatch[4] || noColonMatch[6] || '').trim(),
-                    url: noColonMatch[5] ? sanitizeUrl(noColonMatch[5]) : ''
-                });
-                return;
+                const attr = extractAttribution(noColonMatch[3]);
+                if (attr) {
+                    parsedData.testimonies.push({
+                        date: noColonMatch[1].trim(),
+                        type: noColonMatch[2].trim(),
+                        quote: attr.body.replace(/^"|"$/g, '').trim(),
+                        source: attr.source,
+                        url: attr.url
+                    });
+                    return;
+                }
             }
 
             // Pattern 3: Simple "Quote" - Source (Fallback)
-            const simpleMatch = trimmed.match(/"([\s\S]+?)"\s*[-–—]\s*(?:\[([^\]]+)\]\(([^)]+)\)|([^[(\n]+))/);
-            
+            // Use greedy capture to avoid truncation at internal dashes
+            const simpleMatch = trimmed.match(/^"([\s\S]+)"\s*$/);
             if (simpleMatch) {
+                const attr = extractAttribution(simpleMatch[0]);
+                if (attr) {
+                    parsedData.testimonies.push({
+                        date: '',
+                        type: '',
+                        quote: attr.body.replace(/^"|"$/g, '').trim(),
+                        source: attr.source,
+                        url: attr.url
+                    });
+                    return;
+                }
+            }
+            // Pattern 3b: Unquoted text with attribution
+            const unquotedAttr = extractAttribution(trimmed);
+            if (unquotedAttr && unquotedAttr.body.length > 20) {
                 parsedData.testimonies.push({
                     date: '',
                     type: '',
-                    quote: simpleMatch[1].trim(),
-                    source: (simpleMatch[2] || simpleMatch[4] || '').trim(),
-                    url: simpleMatch[3] ? sanitizeUrl(simpleMatch[3]) : ''
+                    quote: unquotedAttr.body.replace(/^"|"$/g, '').trim(),
+                    source: unquotedAttr.source,
+                    url: unquotedAttr.url
                 });
             }
         });
 
-        // DON'T store everything in testimoniesMisc - let the user edit form fields
-        // parsedData.testimoniesMisc = testimoniesSection;
+        // Preserve full section text to prevent content loss during round-trip
+        parsedData.testimoniesMisc = testimoniesSection;
         
         // Scan testimonies for abuse allegations keywords
         const testimoniesLower = testimoniesSection.toLowerCase();
@@ -1627,13 +1744,29 @@ function parseWikiMarkdown(markdown) {
             const trimmed = line.trim();
 
             // Match pattern: [Title](URL) (Source, Date)
-            const withSourceMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)\s*\(([^,]+),\s*([^)]+)\)/);
-            if (withSourceMatch) {
+            const withSourceDateMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)\s*\(([^,]+),\s*([^)]+)\)/);
+            if (withSourceDateMatch) {
                 parsedData.relatedMedia.push({
-                    title: withSourceMatch[1].trim(),
-                    url: sanitizeUrl(withSourceMatch[2]),
-                    source: withSourceMatch[3].trim(),
-                    date: withSourceMatch[4].trim()
+                    title: withSourceDateMatch[1].trim(),
+                    url: sanitizeUrl(withSourceDateMatch[2]),
+                    source: withSourceDateMatch[3].trim(),
+                    date: withSourceDateMatch[4].trim()
+                });
+                return;
+            }
+
+            // Match pattern: [Title](URL) (annotation) — parenthetical without comma
+            // e.g., [Title](URL) (November 2014) or [Title](URL) (*website created by survivor*)
+            const withAnnotationMatch = trimmed.match(/\[([^\]]+)\]\(([^)]+)\)\s*\(([^)]+)\)/);
+            if (withAnnotationMatch) {
+                const annotation = withAnnotationMatch[3].replace(/^\*|\*$/g, '').trim();
+                // Check if annotation looks like a date (contains a year)
+                const yearMatch = annotation.match(/\d{4}/);
+                parsedData.relatedMedia.push({
+                    title: withAnnotationMatch[1].trim(),
+                    url: sanitizeUrl(withAnnotationMatch[2]),
+                    source: yearMatch ? '' : annotation,
+                    date: yearMatch ? annotation : ''
                 });
                 return;
             }
@@ -1650,8 +1783,8 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // DON'T store everything in relatedMediaMisc - let the user edit form fields
-        // parsedData.relatedMediaMisc = relatedMediaSection;
+        // Preserve full section text to prevent content loss during round-trip
+        parsedData.relatedMediaMisc = relatedMediaSection;
     }
 
     // Parse Campuses/Locations
@@ -1897,12 +2030,19 @@ function parseWikiMarkdown(markdown) {
         'Affiliated Programs',
         'Active Programs',
         'Closed Programs',
-        'Essential Information'
+        'Essential Information',
+        'Groups/Workshops',
+        'Groups',
+        'Workshops',
+        'Locations',
+        'Facilities',
+        'Campuses',
+        'Page title'
     ];
 
     // Split markdown into sections
-    // Updated lookahead to handle ##** (no space) format
-    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##(?:\s|\*)|\n\*\*\*|$)/g;
+    // Lookahead: next ## header, standalone *** or --- separator, or end of string
+    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##(?:\s|\*)|\n(?:\*\*\*|---)\s*\n|\n(?:\*\*\*|---)\s*$|$)/g;
     const unparsedSections = [];
     let match;
 
