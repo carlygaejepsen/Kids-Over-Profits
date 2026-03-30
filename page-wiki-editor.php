@@ -368,7 +368,7 @@ get_header();
                     <label for="staffRole">Role:</label>
                     <input type="text" id="staffRole" data-autocomplete-category="role">
                     <label for="staffBio">Bio/Details (can include Markdown links):</label>
-                    <textarea id="staffBio" rows="3" placeholder="e.g., Previously worked at [Another Program](link)..."></textarea>
+                        <textarea id="staffBio" rows="3" placeholder="e.g., Include a short bio, prior roles, credentials, or links to relevant sources."></textarea>
                     
                     <div class="previous-roles-section">
                         <label>Previous Roles:</label>
@@ -484,7 +484,7 @@ get_header();
                     <label for="punishmentName">Punishment Name:</label>
                     <input type="text" id="punishmentName" placeholder="e.g., Back to Basics, Stone Circle">
                     <label for="punishmentDescription">Complete Description:</label>
-                    <textarea id="punishmentDescription" rows="4" placeholder="e.g., (also called 'Frozen') which is used as punishment for severe rule infractions including bullying, incidents of hazing, physical assault, property destruction, possession of contraband, running away, stealing, community disruption, or unacceptable sexual behavior. During this punishment, the teens must complete a repair plan with his/her advocate and clinician..."></textarea>
+                    <textarea id="punishmentDescription" rows="4" placeholder="Describe how this consequence or intervention was used, who it applied to, and any details about duration, restrictions, or expectations."></textarea>
                     <button type="button" class="add-btn" id="addPunishmentBtn">Add Punishment</button>
                 </div>
                 <div class="list-preview" id="punishmentListOutput"></div>
@@ -496,7 +496,7 @@ get_header();
 
             <fieldset>
                 <legend>Abuse/Neglect Allegations and Lawsuits</legend>
-                <label>Allegations Reported by Survivors (select all that apply):</label>
+                <label>Reported Allegations (select all that apply):</label>
                 <div class="allegations-checklist">
                     <div class="checklist-column">
                         <h4>Abuse Types</h4>
@@ -533,7 +533,7 @@ get_header();
                     </div>
                 </div>
                 <label for="customAllegations">Additional Allegations (comma-separated):</label>
-                <input type="text" id="customAllegations" name="customAllegations" placeholder="Add any allegations not listed above">
+                <input type="text" id="customAllegations" name="customAllegations" placeholder="Add any reported issues not listed above">
                 <hr>
                 <h4>Lawsuits</h4>
                 <div class="form-adder">
@@ -583,7 +583,7 @@ get_header();
                 <div class="list-preview" id="lawsuitListOutput"></div>
                 <hr>
                 <label for="lawsuitsMisc">Additional Abuse/Lawsuit Notes (will be included as-is):</label>
-                <textarea id="lawsuitsMisc" name="lawsuitsMisc" rows="4" placeholder="Any additional abuse allegations or lawsuit information that doesn't fit the fields above..."></textarea>
+                <textarea id="lawsuitsMisc" name="lawsuitsMisc" rows="4" placeholder="Add any additional notes, sourced summaries, or context that do not fit the fields above."></textarea>
             </fieldset>
 
             <fieldset>
@@ -618,9 +618,9 @@ get_header();
                         <option value="STAFF">STAFF</option>
                     </select>
                     <label for="testimonyQuote">Quote or Description:</label>
-                    <textarea id="testimonyQuote" rows="3" placeholder="e.g., 'This place thrives...' or 'Reddit Post by u/...'"></textarea>
+                    <textarea id="testimonyQuote" rows="3" placeholder="Paste a short quotation or a brief summary of the account."></textarea>
                     <label for="testimonySource">Source Name:</label>
-                    <input type="text" id="testimonySource" data-autocomplete-category="human" placeholder="e.g., Brooke (Google Reviews) or Reddit">
+                    <input type="text" id="testimonySource" data-autocomplete-category="human" placeholder="e.g., Google Reviews, Reddit, or a publication name">
                     <label for="testimonyUrl">Source URL:</label>
                     <input type="text" id="testimonyUrl">
                     <button type="button" class="add-btn" id="addTestimonyBtn">Add Testimony</button>
@@ -628,7 +628,7 @@ get_header();
                 <div class="list-preview" id="testimonyListOutput"></div>
                 <hr>
                 <label for="testimoniesMisc">Additional Testimony Notes (will be included as-is):</label>
-                <textarea id="testimoniesMisc" name="testimoniesMisc" rows="4" placeholder="Any additional survivor testimony information that doesn't fit the fields above..."></textarea>
+                <textarea id="testimoniesMisc" name="testimoniesMisc" rows="4" placeholder="Add any additional testimony notes, summaries, or source context that do not fit the fields above."></textarea>
             </fieldset>
 
             <fieldset>
@@ -682,7 +682,7 @@ get_header();
                 <div class="list-preview" id="mediaListOutput"></div>
                 <hr>
                 <label for="relatedMediaMisc">Additional Related Media Notes (will be included as-is):</label>
-                <textarea id="relatedMediaMisc" name="relatedMediaMisc" rows="4" placeholder="Any additional related media information that doesn't fit the fields above..."></textarea>
+                <textarea id="relatedMediaMisc" name="relatedMediaMisc" rows="4" placeholder="Add any additional related links, archive notes, or source context that do not fit the fields above."></textarea>
             </fieldset>
 
             <!-- Auto-linking Options -->

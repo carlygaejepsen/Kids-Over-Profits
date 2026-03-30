@@ -46,21 +46,22 @@ function generateWikiMarkdown(formData) {
         return match ? match[1].trim() : String(text || '').trim();
     };
 
+    const normalizeGeneratedText = (value) => String(value || '')
+        .toLowerCase()
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+        .replace(/[*_`]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
     const stripRedundantRoleIntro = (text, roleText) => {
         const source = String(text || '').trim();
         if (!source) return '';
 
         const firstSentence = getFirstSentence(source);
-        const normalize = (value) => String(value || '')
-            .toLowerCase()
-            .replace(/\[[^\]]+\]\([^\)]+\)/g, '$1')
-            .replace(/[*_`]/g, '')
-            .replace(/[^a-z0-9\s]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
 
-        const normalizedSentence = normalize(firstSentence);
-        const normalizedRole = normalize(roleText).replace(/^(?:the|a|an)\s+/, '');
+        const normalizedSentence = normalizeGeneratedText(firstSentence);
+        const normalizedRole = normalizeGeneratedText(roleText).replace(/^(?:the|a|an)\s+/, '');
 
         if (normalizedRole && normalizedSentence.includes(normalizedRole)) {
             return source.slice(firstSentence.length).trim();
@@ -69,13 +70,7 @@ function generateWikiMarkdown(formData) {
         return source;
     };
 
-    const normalizeForComparison = (value) => String(value || '')
-        .toLowerCase()
-        .replace(/\[[^\]]+\]\([^\)]+\)/g, '$1')
-        .replace(/[*_`]/g, '')
-        .replace(/[^a-z0-9\s]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const normalizeForComparison = normalizeGeneratedText;
 
     const addRoleArticle = (text) => {
         const trimmed = (text || '').trim();
@@ -102,7 +97,16 @@ function generateWikiMarkdown(formData) {
         const lower = trimmed.toLowerCase();
         return lower === 'no information is known' || 
                lower === 'no information available' ||
-               lower.startsWith('no information is known about');
+               lower.startsWith('no information is known about') ||
+               lower.startsWith('background information for ') ||
+               lower.startsWith('detailed information about the founders or notable staff at ') ||
+               lower.startsWith('detailed information about the program structure at ') ||
+               lower.startsWith('detailed information about the rules, consequences, or disciplinary practices at ') ||
+               lower.startsWith('documented information about abuse allegations, neglect, or lawsuits involving ') ||
+               lower.startsWith('no survivor testimonies for ') ||
+               lower.startsWith('no related media links for ') ||
+               lower.startsWith('no media coverage for ') ||
+               lower.startsWith('additional information about ');
     };
 
     // --- Build History Section ---
@@ -475,10 +479,14 @@ function generateWikiMarkdown(formData) {
         testimoniesSection = formData.testimoniesMisc.trim();
     } else if (formData.testimonies && formData.testimonies.length > 0) {
         testimoniesSection = formData.testimonies.map(t => {
-            const datePart = t.date ? `${t.date}: ` : '';
+            const headingParts = [];
+            if (t.date) headingParts.push(t.date);
+            if (t.type) headingParts.push(`(${t.type})`);
             const safeUrl = sanitizeUrl(t.url);
             const sourceLink = safeUrl ? `[${escapeMarkdown(t.source)}](${safeUrl})` : escapeMarkdown(t.source);
-            return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - ${sourceLink}`;
+            const heading = headingParts.length > 0 ? `**${headingParts.join(': ')}** ` : '';
+            const attribution = sourceLink ? ` - ${sourceLink}` : '';
+            return `${heading}"${escapeMarkdown(t.quote)}"${attribution}`;
         }).join('\n\n');
     } else {
         testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
@@ -487,10 +495,10 @@ function generateWikiMarkdown(formData) {
     // --- Build Related Programs Section ---
     let relatedProgramsSection = '';
     if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
-        const tableHeader = '|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|';
+        const tableHeader = '|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened?**|';
         const tableSep = '|---|---|---|---|---|';
         const tableRows = formData.relatedPrograms.map(prog => {
-            const nameLink = prog.link ? `[** ${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `** ${escapeMarkdown(prog.name)}**`;
+            const nameLink = prog.link ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `**${escapeMarkdown(prog.name)}**`;
             const healLink = prog.healLink ? `[HEAL](${sanitizeUrl(prog.healLink)})` : (prog.healInfo || '-');
             return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
         });
@@ -578,11 +586,50 @@ ${relatedMediaSection}
 function getPlaceholder(category, programName) {
     const name = programName || '[Program Name]';
     const lowerCategory = (category || '').toLowerCase();
-    if (lowerCategory.includes('media')) {
-        return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain9810.`;
+    const placeholderByCategory = [
+        {
+            match: ['history', 'background'],
+            text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['founders', 'staff'],
+            text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['structure'],
+            text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['rules', 'punishments'],
+            text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['abuse', 'neglect', 'lawsuits'],
+            text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'],
+            text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['related media'],
+            text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact u/Signal-Strain9810.`
+        }
+    ];
+
+    const categoryPlaceholder = placeholderByCategory.find((entry) =>
+        entry.match.some((term) => lowerCategory.includes(term))
+    );
+
+    if (categoryPlaceholder) {
+        return categoryPlaceholder.text;
     }
 
-    return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please contact u/Signal-Strain9810.`;
+    if (lowerCategory.includes('media')) {
+        return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact u/Signal-Strain9810.`;
+    }
+
+    return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact u/Signal-Strain9810.`;
 }
 
 function sanitizeUrl(input) {
