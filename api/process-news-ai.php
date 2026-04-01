@@ -548,7 +548,12 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error'] ?? "API request failed";
+        $errorMsg = "API request failed";
+        if (isset($errorData['error'])) {
+            $errorMsg = is_array($errorData['error']) ? json_encode($errorData['error']) : $errorData['error'];
+        } elseif (isset($errorData['message'])) {
+            $errorMsg = is_array($errorData['message']) ? json_encode($errorData['message']) : $errorData['message'];
+        }
 
         // Check for common Hugging Face errors
         if ($httpCode === 401) {

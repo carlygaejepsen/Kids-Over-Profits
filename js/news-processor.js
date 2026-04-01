@@ -879,7 +879,6 @@
 
         const providerDescriptions = {
             'groq': 'Groq offers 14,400 free requests/day. Get API key from console.groq.com',
-            'gemini': 'Google Gemini offers 60 requests/minute free. Get API key from ai.google.dev',
             'huggingface': 'Hugging Face has free inference API. Get API key from huggingface.co'
         };
 

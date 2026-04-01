@@ -53,7 +53,6 @@ get_header();
                         <label>Choose AI Provider</label>
                         <select id="ai-provider" class="news-input">
                             <option value="groq">Groq (Free Tier - Very Fast)</option>
-                            <option value="gemini">Google Gemini (Free Tier)</option>
                             <option value="huggingface">Hugging Face (Free Tier)</option>
                         </select>
                         <small style="display: block; margin-top: 0.25rem; color: #004435;">
