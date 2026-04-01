@@ -451,8 +451,8 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
     ];
 
     $ch = curl_init();
-    // Use gemini-2.0-flash (free tier, fast)
-    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey");
+    // Use gemini-2.0-flash-lite (free tier, fast, generous quota)
+    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
