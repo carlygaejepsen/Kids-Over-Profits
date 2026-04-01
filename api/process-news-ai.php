@@ -521,7 +521,7 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     $ch = curl_init();
     // Use the HF Inference API chat completions endpoint
-    curl_setopt($ch, CURLOPT_URL, 'https://api-inference.huggingface.co/v1/chat/completions');
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/v1/chat/completions');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
