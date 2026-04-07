@@ -511,7 +511,7 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     // Use the chat completions API format (current HF Inference API standard)
     $requestData = [
-        'model' => 'mistralai/Mistral-7B-Instruct-v0.3',
+        'model' => 'mistralai/Mistral-Small-24B-Instruct-2501',
         'messages' => [
             ['role' => 'user', 'content' => $prompt]
         ],
