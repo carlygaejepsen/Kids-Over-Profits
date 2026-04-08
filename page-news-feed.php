@@ -18,23 +18,62 @@ global $wpdb; // Use global WPDB or the custom connection if preferred, but exis
 // Let's use the same PDO logic as the API for consistency with the JSON data structure.
 require_once get_stylesheet_directory() . '/api/config.php';
 
+// Pagination settings
+$per_page = 50;
+$current_page = max(1, intval($_GET['pg'] ?? 1));
+$offset = ($current_page - 1) * $per_page;
+
+// Archive month filter (format: YYYY-MM)
+$archive_month = isset($_GET['archive']) ? sanitize_text_field($_GET['archive']) : '';
+
 // Fetch approved submissions
 $status_filter = ['approved', 'published'];
 $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
 
 try {
-    $sql = "SELECT * FROM news_submissions 
-            WHERE status IN ($placeholders) 
-            ORDER BY publication_date DESC, created_at DESC 
-            LIMIT 50";
-    
+    // Build WHERE clause
+    $where = "status IN ($placeholders)";
+    $params = $status_filter;
+
+    if ($archive_month && preg_match('/^\d{4}-\d{2}$/', $archive_month)) {
+        $where .= " AND DATE_FORMAT(publication_date, '%Y-%m') = ?";
+        $params[] = $archive_month;
+    }
+
+    // Get total count for pagination
+    $count_sql = "SELECT COUNT(*) FROM news_submissions WHERE $where";
+    $count_stmt = $pdo->prepare($count_sql);
+    $count_stmt->execute($params);
+    $total_items = (int) $count_stmt->fetchColumn();
+    $total_pages = max(1, ceil($total_items / $per_page));
+
+    // Fetch page of results
+    $sql = "SELECT * FROM news_submissions
+            WHERE $where
+            ORDER BY publication_date DESC, created_at DESC
+            LIMIT $per_page OFFSET $offset";
+
     $stmt = $pdo->prepare($sql);
-    $stmt->execute($status_filter);
+    $stmt->execute($params);
     $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
+    // Fetch available archive months for the dropdown
+    $archive_sql = "SELECT DATE_FORMAT(publication_date, '%Y-%m') AS month_key,
+                           DATE_FORMAT(publication_date, '%M %Y') AS month_label,
+                           COUNT(*) AS cnt
+                    FROM news_submissions
+                    WHERE status IN ($placeholders) AND publication_date IS NOT NULL
+                    GROUP BY month_key, month_label
+                    ORDER BY month_key DESC";
+    $archive_stmt = $pdo->prepare($archive_sql);
+    $archive_stmt->execute($status_filter);
+    $archive_months = $archive_stmt->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     $error_message = "Error fetching news: " . $e->getMessage();
     $submissions = [];
+    $total_pages = 1;
+    $archive_months = [];
 }
 
 ?>
@@ -43,6 +82,26 @@ try {
     <div class="news-feed-header">
         <h1>Troubled Teen Industry News</h1>
         <p>Latest updates, investigations, and reports monitored by our team.</p>
+
+        <?php if (!empty($archive_months)): ?>
+        <div class="news-archive-picker">
+            <form method="get" action="">
+                <label for="archive-select">Browse by month:</label>
+                <select name="archive" id="archive-select" onchange="this.form.submit()">
+                    <option value="">All Dates</option>
+                    <?php foreach ($archive_months as $am): ?>
+                        <option value="<?php echo esc_attr($am['month_key']); ?>"
+                            <?php echo $archive_month === $am['month_key'] ? 'selected' : ''; ?>>
+                            <?php echo esc_html($am['month_label']); ?> (<?php echo $am['cnt']; ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
+            <?php if ($archive_month): ?>
+                <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>" class="archive-clear-link">Clear filter</a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
     </div>
 
     <?php if (isset($error_message)): ?>
@@ -547,6 +606,33 @@ try {
                 </article>
             <?php endforeach; ?>
         </div>
+
+        <?php if ($total_pages > 1): ?>
+        <nav class="news-pagination" aria-label="News feed pagination">
+            <?php
+            // Build base URL preserving archive filter
+            $base_params = [];
+            if ($archive_month) $base_params['archive'] = $archive_month;
+
+            function kop_pagination_url($page, $base_params) {
+                $params = $base_params;
+                if ($page > 1) $params['pg'] = $page;
+                $query = http_build_query($params);
+                return strtok($_SERVER['REQUEST_URI'], '?') . ($query ? '?' . $query : '');
+            }
+            ?>
+
+            <?php if ($current_page > 1): ?>
+                <a href="<?php echo esc_url(kop_pagination_url($current_page - 1, $base_params)); ?>" class="pagination-btn pagination-prev">&laquo; Newer</a>
+            <?php endif; ?>
+
+            <span class="pagination-info">Page <?php echo $current_page; ?> of <?php echo $total_pages; ?> (<?php echo $total_items; ?> articles)</span>
+
+            <?php if ($current_page < $total_pages): ?>
+                <a href="<?php echo esc_url(kop_pagination_url($current_page + 1, $base_params)); ?>" class="pagination-btn pagination-next">Older &raquo;</a>
+            <?php endif; ?>
+        </nav>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
 

@@ -419,6 +419,71 @@
     margin-bottom: 0;
 }
 
+/* Archive Picker */
+.news-archive-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.news-archive-picker label {
+    font-weight: 600;
+    color: var(--kop-midnight-blue);
+    font-size: 0.95rem;
+}
+
+.news-archive-picker select {
+    padding: 0.4rem 0.75rem;
+    border: 2px solid var(--kop-teal);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
+    cursor: pointer;
+}
+
+.archive-clear-link {
+    font-size: 0.85rem;
+    color: var(--kop-teal);
+    text-decoration: underline;
+}
+
+/* Pagination */
+.news-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding: 1.5rem 0;
+    border-top: 2px solid var(--kop-sand);
+}
+
+.pagination-btn {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    background: var(--kop-teal);
+    color: var(--kop-white);
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+.pagination-btn:hover {
+    background: var(--kop-navy);
+    color: var(--kop-white);
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--kop-midnight-blue);
+    font-weight: 500;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .news-feed-grid {
