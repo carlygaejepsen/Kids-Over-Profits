@@ -878,11 +878,8 @@
         if (!toggle || !aiControls || !processBtn) return;
 
         const providerDescriptions = {
-            'ollama': 'Ollama runs on your computer - completely free and unlimited! Install from ollama.com',
             'groq': 'Groq offers 14,400 free requests/day. Get API key from console.groq.com',
-            'gemini': 'Google Gemini offers 60 requests/minute free. Get API key from ai.google.dev',
-            'huggingface': 'Hugging Face has free inference API. Get API key from huggingface.co',
-            'claude': 'Claude API costs ~$0.01-0.03 per article. Get API key from console.anthropic.com'
+            'huggingface': 'Hugging Face has free inference API. Get API key from huggingface.co'
         };
 
         toggle.addEventListener('change', function() {

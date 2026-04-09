@@ -451,8 +451,8 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
     ];
 
     $ch = curl_init();
-    // Use gemini-1.5-flash (free tier, fast)
-    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey");
+    // Use gemini-2.0-flash-lite (free tier, fast, generous quota)
+    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -509,19 +509,19 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
 function processWithHuggingFace($apiKey, $content, $url = '', $customInstructions = '') {
     $prompt = buildPrompt($content, $url, $customInstructions);
 
-    // Use the Inference API with a text-generation model
+    // Use the chat completions API format (current HF Inference API standard)
     $requestData = [
-        'inputs' => $prompt,
-        'parameters' => [
-            'max_new_tokens' => 4096,
-            'temperature' => 0.1,
-            'return_full_text' => false
-        ]
+        'model' => 'meta-llama/Llama-3.1-8B-Instruct:fastest',
+        'messages' => [
+            ['role' => 'user', 'content' => $prompt]
+        ],
+        'max_tokens' => 4096,
+        'temperature' => 0.1
     ];
 
     $ch = curl_init();
-    // Use the Inference API endpoint with Mistral (more reliable for structured output)
-    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.3');
+    // Use the HF Inference API chat completions endpoint
+    curl_setopt($ch, CURLOPT_URL, 'https://router.huggingface.co/v1/chat/completions');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -534,7 +534,7 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     $result = executeCurlRequest($ch, 'HuggingFace');
     curl_close($ch);
-    
+
     $response = $result['response'];
     $httpCode = $result['httpCode'];
 
@@ -548,30 +548,36 @@ function processWithHuggingFace($apiKey, $content, $url = '', $customInstruction
 
     if ($httpCode !== 200) {
         $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error'] ?? "API request failed";
-        
+        $errorMsg = "API request failed";
+        if (isset($errorData['error'])) {
+            $errorMsg = is_array($errorData['error']) ? json_encode($errorData['error']) : $errorData['error'];
+        } elseif (isset($errorData['message'])) {
+            $errorMsg = is_array($errorData['message']) ? json_encode($errorData['message']) : $errorData['message'];
+        }
+
         // Check for common Hugging Face errors
         if ($httpCode === 401) {
             throw new Exception("Hugging Face API key is invalid or expired. Please check your HUGGINGFACE_API_KEY in .env file. Get a new key at: https://huggingface.co/settings/tokens");
         }
-        
+
         error_log("[HuggingFace] HTTP $httpCode error response: " . substr($response, 0, 500));
         throw new Exception("Hugging Face API error (HTTP $httpCode): $errorMsg");
     }
 
     $responseData = json_decode($response, true);
 
-    // The inference API can return different formats
+    // Chat completions format returns choices[].message.content
     $generatedText = null;
-    
-    if (isset($responseData[0]['generated_text'])) {
+
+    if (isset($responseData['choices'][0]['message']['content'])) {
+        $generatedText = $responseData['choices'][0]['message']['content'];
+    } elseif (isset($responseData[0]['generated_text'])) {
+        // Fallback for legacy text-generation format
         $generatedText = $responseData[0]['generated_text'];
     } elseif (is_array($responseData) && isset($responseData['generated_text'])) {
         $generatedText = $responseData['generated_text'];
-    } elseif (is_string($responseData)) {
-        $generatedText = $responseData;
     }
-    
+
     if ($generatedText === null) {
         error_log("[HuggingFace] Unexpected response structure: " . substr($response, 0, 500));
         throw new Exception('Invalid response from Hugging Face - unexpected format. Response: ' . substr($response, 0, 200));

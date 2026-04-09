@@ -17,7 +17,7 @@ function add_approval_page_to_menu() {
         'manage_options',                    // Capability (admin only)
         'approve-facility-edits',            // Menu slug
         'render_approval_page_iframe',       // Callback function
-        'dashi',                 // Icon
+        'dashicons-yes-alt',                // Icon
         6
     );
 }

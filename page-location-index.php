@@ -30,7 +30,7 @@ get_header();
                 <input
                     type="text"
                     id="searchInput"
-                    placeholder="Search locations..."
+                    placeholder="Search locations or facilities..."
                 >
 
                 <select id="typeFilter">

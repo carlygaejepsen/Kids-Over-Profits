@@ -1030,7 +1030,15 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
 
-            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
+            // Build searchable text: facility name + former names + aliases + location
+            const searchParts = [facilityDatasetNameRaw];
+            formerNames.forEach(n => searchParts.push(n));
+            otherNames.forEach(n => searchParts.push(n));
+            const facLocation = getMergedLocation(facility);
+            if (facLocation) searchParts.push(facLocation);
+            const facilitySearchText = escapeAttribute(searchParts.join(' | '));
+
+            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-search="${facilitySearchText}" data-status="${statusClass}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
                         ${otherNamesHtml}
@@ -1083,10 +1091,10 @@ function filterFacilities() {
         let visibleFacilities = 0;
 
         facilityCards.forEach(card => {
-            const facilityName = card.dataset.facility.toLowerCase();
+            const facilitySearch = (card.dataset.search || card.dataset.facility || '').toLowerCase();
             const facilityStatus = card.dataset.status;
 
-            const matchesSearch = operatorName.includes(searchTerm) || facilityName.includes(searchTerm);
+            const matchesSearch = operatorName.includes(searchTerm) || facilitySearch.includes(searchTerm);
             const matchesStatus = !statusFilter || facilityStatus === statusFilter;
 
             if (matchesSearch && matchesStatus) {

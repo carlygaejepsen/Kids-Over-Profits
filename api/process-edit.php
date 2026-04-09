@@ -101,6 +101,111 @@ function kop_build_project_payload($payload, $project_name, $category) {
     return $wrapped;
 }
 
+function kop_get_first_named_facility($facilities) {
+    if (!is_array($facilities)) {
+        return null;
+    }
+
+    foreach ($facilities as $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+
+        $facility_name = trim((string) ($facility['identification']['name'] ?? ''));
+        if ($facility_name !== '') {
+            return $facility;
+        }
+    }
+
+    return null;
+}
+
+function kop_consultant_display_name($consultant) {
+    if (!is_array($consultant)) {
+        return '';
+    }
+
+    $full_name = trim(
+        ((string) ($consultant['firstName'] ?? '')) . ' ' .
+        ((string) ($consultant['lastName'] ?? ''))
+    );
+
+    if ($full_name !== '') {
+        return $full_name;
+    }
+
+    return trim((string) ($consultant['fullName'] ?? ''));
+}
+
+function kop_sanitize_project_identifier($value) {
+    $value = trim((string) $value);
+    if ($value === '') {
+        return '';
+    }
+
+    $value = preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $value);
+    $value = preg_replace('/\s+/', ' ', $value);
+
+    return substr(trim((string) $value), 0, 255);
+}
+
+function kop_resolve_submission_project_name($master_id, $project_data, $submission_id) {
+    $resolved = kop_sanitize_project_identifier($master_id);
+    if ($resolved !== '') {
+        return $resolved;
+    }
+
+    if (!is_array($project_data)) {
+        return 'Approved Suggestion ' . (int) $submission_id;
+    }
+
+    $candidates = [];
+
+    if (!empty($project_data['projectName'])) {
+        $candidates[] = $project_data['projectName'];
+    }
+
+    if (!empty($project_data['name'])) {
+        $candidates[] = $project_data['name'];
+    }
+
+    if (!empty($project_data['operator']['name'])) {
+        $candidates[] = $project_data['operator']['name'];
+    }
+
+    $first_named_facility = kop_get_first_named_facility($project_data['facilities'] ?? []);
+    if ($first_named_facility && !empty($first_named_facility['identification']['name'])) {
+        $facility_name = $first_named_facility['identification']['name'];
+        if (!empty($project_data['operator']['name'])) {
+            $candidates[] = $project_data['operator']['name'] . ' - ' . $facility_name;
+        }
+        $candidates[] = $facility_name;
+    }
+
+    if (!empty($project_data['referrerAgency']['name'])) {
+        $candidates[] = $project_data['referrerAgency']['name'];
+    }
+
+    if (!empty($project_data['referrerConsultants'][0])) {
+        $consultant_name = kop_consultant_display_name($project_data['referrerConsultants'][0]);
+        if ($consultant_name !== '') {
+            if (!empty($project_data['referrerAgency']['name'])) {
+                $candidates[] = $project_data['referrerAgency']['name'] . ' - ' . $consultant_name;
+            }
+            $candidates[] = $consultant_name;
+        }
+    }
+
+    foreach ($candidates as $candidate) {
+        $sanitized = kop_sanitize_project_identifier($candidate);
+        if ($sanitized !== '') {
+            return $sanitized;
+        }
+    }
+
+    return 'Approved Suggestion ' . (int) $submission_id;
+}
+
 function kop_find_facility_index_by_name($facilities, $facility_name) {
     $facility_name = strtolower(trim((string) $facility_name));
     if ($facility_name === '' || !is_array($facilities)) {
@@ -235,6 +340,7 @@ try {
         // Determine which table to use based on data structure and project name
         $decoded_data = json_decode($json_data, true);
         $project_data = kop_extract_project_data($decoded_data);
+        $resolved_master_id = kop_resolve_submission_project_name($master_id, $project_data, $id);
         
         // US State names for location project detection
         $US_STATE_NAMES = [
@@ -257,8 +363,11 @@ try {
         ];
         
         // Check if master_id is a state or country name (location project)
-        $masterIdUpper = strtoupper(trim($master_id ?? ''));
+        $masterIdUpper = strtoupper(trim($resolved_master_id));
         $isLocation = in_array($masterIdUpper, $US_STATE_NAMES) || in_array($masterIdUpper, $COUNTRY_NAMES);
+        if ($isLocation) {
+            $resolved_master_id = $masterIdUpper;
+        }
         
         // Check if it's a referrer project
         $isReferrer = !empty($project_data['referrerAgency']['name']) ||
@@ -277,21 +386,20 @@ try {
             $category = 'companies';
         }
 
-        $project_payload = kop_build_project_payload($decoded_data, $master_id, $category);
+        $project_payload = kop_build_project_payload($decoded_data, $resolved_master_id, $category);
         $json_data = json_encode($project_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-        // If master_id is empty, insert a new row with NULL unique_name
-        if ($master_id) {
+        if ($resolved_master_id) {
             // Check if record exists by unique_name in the appropriate table
             $checkStmt = $pdo->prepare("SELECT id, json_data FROM `{$tableName}` WHERE unique_name = ? LIMIT 1");
-            $checkStmt->execute([$master_id]);
+            $checkStmt->execute([$resolved_master_id]);
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
             if ($exists) {
                 // For location projects, merge new facilities into existing data
                 if ($isLocation && !empty($exists['json_data'])) {
-                    $existingData = kop_build_project_payload(json_decode($exists['json_data'], true), $master_id, $category);
-                    $newData = kop_build_project_payload(json_decode($json_data, true), $master_id, $category);
+                    $existingData = kop_build_project_payload(json_decode($exists['json_data'], true), $resolved_master_id, $category);
+                    $newData = kop_build_project_payload(json_decode($json_data, true), $resolved_master_id, $category);
                     
                     // Get the actual data arrays
                     $existingFacilities = is_array($existingData['data']['facilities'] ?? null) ? $existingData['data']['facilities'] : [];
@@ -307,16 +415,17 @@ try {
                 
                 // Update existing record
                 $updateStmt = $pdo->prepare("UPDATE `{$tableName}` SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");
-                $updateStmt->execute([$json_data, $master_id]);
+                $updateStmt->execute([$json_data, $resolved_master_id]);
             } else {
                 // Insert new record with provided unique_name
                 $insertStmt = $pdo->prepare("INSERT INTO `{$tableName}` (unique_name, json_data) VALUES (?, ?)");
-                $insertStmt->execute([$master_id, $json_data]);
+                $insertStmt->execute([$resolved_master_id, $json_data]);
             }
         } else {
-            // Insert a completely new master record (unique_name left NULL)
-            $insertStmt = $pdo->prepare("INSERT INTO `{$tableName}` (json_data) VALUES (?)");
-            $insertStmt->execute([$json_data]);
+            $pdo->rollBack();
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Approved suggestion is missing a usable project name']);
+            exit;
         }
 
         // Update submission status to approved. Try to set a reviewed/processed timestamp if the column exists.
@@ -341,7 +450,11 @@ try {
         }
 
         $pdo->commit();
-        echo json_encode(['success' => true, 'message' => 'Submission approved and published']);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Submission approved and published',
+            'projectName' => $resolved_master_id
+        ]);
 
     } else { // reject
         // Update submission status to rejected. Try to set a reviewed/processed timestamp if the column exists.

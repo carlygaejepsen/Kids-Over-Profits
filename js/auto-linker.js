@@ -10,6 +10,14 @@ class TTIProgramAutoLinker {
         this.programLinks = null;
         this.searchIndex = null;
         this.loaded = false;
+        this.genericAliasTerms = new Set([
+            'rtc',
+            'residential treatment center',
+            'therapeutic boarding school',
+            'boarding school',
+            'wilderness program',
+            'residential treatment'
+        ]);
     }
 
     /**
@@ -156,6 +164,10 @@ class TTIProgramAutoLinker {
             currentProgramName = null       // Name of current program being edited
         } = options;
 
+        const normalizedCurrentProgramName = (currentProgramName || '').toLowerCase().trim();
+        const currentProgramEntry = normalizedCurrentProgramName ? this.searchIndex[normalizedCurrentProgramName] : null;
+        const currentProgramUrl = currentProgramEntry?.url || null;
+
         // Create a copy to work with
         let result = text;
 
@@ -196,9 +208,31 @@ class TTIProgramAutoLinker {
                 url: value.url,
                 matchType: value.matchType
             }))
-            // Filter out current program if requested
-            .filter(p => linkCurrentProgram || !currentProgramName ||
-                p.name.toLowerCase() !== currentProgramName.toLowerCase())
+            .filter((program) => {
+                const normalizedSearchTerm = program.searchTerm.toLowerCase().trim();
+
+                if (this.genericAliasTerms.has(normalizedSearchTerm)) {
+                    return false;
+                }
+
+                if (!linkCurrentProgram && normalizedCurrentProgramName) {
+                    if (program.name.toLowerCase() === normalizedCurrentProgramName) {
+                        return false;
+                    }
+
+                    if (currentProgramUrl && program.url === currentProgramUrl) {
+                        return false;
+                    }
+
+                    if (normalizedSearchTerm.length >= minWordLength &&
+                        normalizedSearchTerm.length < normalizedCurrentProgramName.length &&
+                        normalizedCurrentProgramName.includes(normalizedSearchTerm)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
             // Sort by length (longest first)
             .sort((a, b) => b.searchTerm.length - a.searchTerm.length);
 

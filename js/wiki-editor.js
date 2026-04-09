@@ -710,11 +710,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const getPlaceholder = (category, programName) => {
         const name = programName || '[Program Name]';
         const lowerCategory = (category || '').toLowerCase();
-        if (lowerCategory.includes('media')) {
-            return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain9810.`;
+        const placeholderByCategory = [
+            {
+                match: ['history', 'background'],
+                text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['founders', 'staff'],
+                text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['structure'],
+                text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['rules', 'punishments'],
+                text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['abuse', 'neglect', 'lawsuits'],
+                text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'],
+                text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact u/Signal-Strain9810.`
+            },
+            {
+                match: ['related media'],
+                text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact u/Signal-Strain9810.`
+            }
+        ];
+
+        const categoryPlaceholder = placeholderByCategory.find((entry) =>
+            entry.match.some((term) => lowerCategory.includes(term))
+        );
+
+        if (categoryPlaceholder) {
+            return categoryPlaceholder.text;
         }
 
-        return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please contact u/Signal-Strain9810.`;
+        if (lowerCategory.includes('media')) {
+            return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact u/Signal-Strain9810.`;
+        }
+
+        return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact u/Signal-Strain9810.`;
     };
 
     // --- Helper: Normalize/Sanitize URLs for Markdown ---
@@ -2693,6 +2732,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             entries.forEach(entry => {
                 const createdDate = new Date(entry.created_at).toLocaleDateString();
+                const status = String(entry.status || '').toLowerCase();
 
                 // Check if entry content indicates it doesn't exist
                 const content = entry.generated_markdown || entry.original_markdown || '';
@@ -2701,10 +2741,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                    content.trim().length < 50; // Very short content likely means empty page
 
                 const notFoundFlag = isEmptyPage ? '<span class="entry-not-found-flag" title="This page has no content">⚠️ EMPTY</span> ' : '';
+                const statusBadge = status === 'approved' || status === 'published'
+                    ? `<span class="entry-status-badge entry-status-${escapeHtml(status)}" title="This markdown upload has already been ${escapeHtml(status)}">${escapeHtml(status === 'published' ? 'Published' : 'Approved')}</span> `
+                    : '';
 
                 const actionButtons = `
                     <tr data-entry-id="${entry.id}">
-                        <td class="entry-name" data-label="Program Name">${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
+                        <td class="entry-name" data-label="Program Name">${statusBadge}${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
                         <td data-label="Location">${escapeHtml(entry.city_state || '-')}</td>
                         <td data-label="Type">${escapeHtml(entry.program_type || '-')}</td>
                         <td data-label="Years Active">${escapeHtml(entry.years_active || '-')}</td>

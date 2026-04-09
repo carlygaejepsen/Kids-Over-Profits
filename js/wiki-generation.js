@@ -36,7 +36,49 @@ function generateWikiMarkdown(formData) {
     // Helper: Pad bolded staff names with a space if they run directly into text
     const ensureBoldNameSpacing = (text) => {
         if (!text) return text;
-        return text.replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+        return text
+            .replace(/\*\*\s+([^*]+?)\s*\*\*/g, '**$1**')
+            .replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+    };
+
+    const getFirstSentence = (text) => {
+        const match = String(text || '').trim().match(/^(.+?[.!?])(?:\s|$)/);
+        return match ? match[1].trim() : String(text || '').trim();
+    };
+
+    const normalizeGeneratedText = (value) => String(value || '')
+        .toLowerCase()
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+        .replace(/[*_`]/g, '')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const stripRedundantRoleIntro = (text, roleText) => {
+        const source = String(text || '').trim();
+        if (!source) return '';
+
+        const firstSentence = getFirstSentence(source);
+
+        const normalizedSentence = normalizeGeneratedText(firstSentence);
+        const normalizedRole = normalizeGeneratedText(roleText).replace(/^(?:the|a|an)\s+/, '');
+
+        if (normalizedRole && normalizedSentence.includes(normalizedRole)) {
+            return source.slice(firstSentence.length).trim();
+        }
+
+        return source;
+    };
+
+    const normalizeForComparison = normalizeGeneratedText;
+
+    const addRoleArticle = (text) => {
+        const trimmed = (text || '').trim();
+        if (!trimmed) return '';
+        if (/^(?:the|a|an|one of|co-?founder|founder|in)\b/i.test(trimmed)) {
+            return trimmed;
+        }
+        return `the ${trimmed}`;
     };
 
     // Helper: Determine verb tense for staff members
@@ -55,7 +97,16 @@ function generateWikiMarkdown(formData) {
         const lower = trimmed.toLowerCase();
         return lower === 'no information is known' || 
                lower === 'no information available' ||
-               lower.startsWith('no information is known about');
+               lower.startsWith('no information is known about') ||
+               lower.startsWith('background information for ') ||
+               lower.startsWith('detailed information about the founders or notable staff at ') ||
+               lower.startsWith('detailed information about the program structure at ') ||
+               lower.startsWith('detailed information about the rules, consequences, or disciplinary practices at ') ||
+               lower.startsWith('documented information about abuse allegations, neglect, or lawsuits involving ') ||
+               lower.startsWith('no survivor testimonies for ') ||
+               lower.startsWith('no related media links for ') ||
+               lower.startsWith('no media coverage for ') ||
+               lower.startsWith('additional information about ');
     };
 
     // --- Build History Section ---
@@ -193,6 +244,7 @@ function generateWikiMarkdown(formData) {
         });
 
         staffSection = sortedStaff.map(s => {
+            const safeStaffName = escapeMarkdown((s.name || '').trim());
             let roleText = escapeMarkdown(s.role);
 
             const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
@@ -208,14 +260,12 @@ function generateWikiMarkdown(formData) {
                 return `**${safeStaffName}** ${bio}`.trim();
             }
 
-            const articleRole = roleText.toLowerCase().startsWith('the ') ? roleText : `the ${roleText}`;
-
-            const safeStaffName = escapeMarkdown((s.name || '').trim());
+            const articleRole = addRoleArticle(roleText);
 
             let verb, descriptor;
             if (s.isFormer && !roleHasFormer) {
-                verb = 'is';
-                descriptor = articleRole.replace(/^the\s+/i, 'the former ');
+                verb = 'was';
+                descriptor = articleRole;
             } else if (roleHasFormer) {
                 verb = 'was';
                 descriptor = articleRole;
@@ -231,15 +281,25 @@ function generateWikiMarkdown(formData) {
             if (s.previousRoles && s.previousRoles.length) {
                 const formattedRoles = s.previousRoles.map(pr => {
                     if (typeof pr === 'string') return escapeMarkdown(pr);
-                    if (pr.role && pr.employer) return `${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
-                    return escapeMarkdown(pr.role || pr.employer || '');
+                    if (pr.role && pr.employer) return `as ${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
+                    if (pr.role) return `as ${escapeMarkdown(pr.role)}`;
+                    if (pr.employer) return `at ${escapeMarkdown(pr.employer)}`;
+                    return '';
                 }).filter(Boolean);
                 if (formattedRoles.length > 0) {
-                    previousSentence = ensureSentence(`Previously worked as ${joinWithAnd(formattedRoles)}`);
+                    previousSentence = ensureSentence(`Previously worked ${joinWithAnd(formattedRoles)}`);
                 }
             }
 
-            const bioSentence = ensureSentence(s.bio || '');
+            const bioSentence = ensureSentence(stripRedundantRoleIntro(s.bio || '', roleText));
+            if (previousSentence && bioSentence) {
+                const normalizedPrevious = normalizeForComparison(previousSentence).replace(/^previously worked\s+/, '');
+                const normalizedBio = normalizeForComparison(bioSentence);
+                if (normalizedPrevious && normalizedBio.includes(normalizedPrevious)) {
+                    previousSentence = '';
+                }
+            }
+
             return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
         }).join('\n\n');
         staffSection = ensureBoldNameSpacing(staffSection);
@@ -419,10 +479,14 @@ function generateWikiMarkdown(formData) {
         testimoniesSection = formData.testimoniesMisc.trim();
     } else if (formData.testimonies && formData.testimonies.length > 0) {
         testimoniesSection = formData.testimonies.map(t => {
-            const datePart = t.date ? `${t.date}: ` : '';
+            const headingParts = [];
+            if (t.date) headingParts.push(t.date);
+            if (t.type) headingParts.push(`(${t.type})`);
             const safeUrl = sanitizeUrl(t.url);
             const sourceLink = safeUrl ? `[${escapeMarkdown(t.source)}](${safeUrl})` : escapeMarkdown(t.source);
-            return `**${datePart}(${t.type})** "${escapeMarkdown(t.quote)}" - ${sourceLink}`;
+            const heading = headingParts.length > 0 ? `**${headingParts.join(': ')}** ` : '';
+            const attribution = sourceLink ? ` - ${sourceLink}` : '';
+            return `${heading}"${escapeMarkdown(t.quote)}"${attribution}`;
         }).join('\n\n');
     } else {
         testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
@@ -431,10 +495,10 @@ function generateWikiMarkdown(formData) {
     // --- Build Related Programs Section ---
     let relatedProgramsSection = '';
     if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
-        const tableHeader = '|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|';
+        const tableHeader = '|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened?**|';
         const tableSep = '|---|---|---|---|---|';
         const tableRows = formData.relatedPrograms.map(prog => {
-            const nameLink = prog.link ? `[** ${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `** ${escapeMarkdown(prog.name)}**`;
+            const nameLink = prog.link ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `**${escapeMarkdown(prog.name)}**`;
             const healLink = prog.healLink ? `[HEAL](${sanitizeUrl(prog.healLink)})` : (prog.healInfo || '-');
             return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
         });
@@ -511,7 +575,7 @@ ${relatedProgramsSection}## **Related Media**
 ${relatedMediaSection}
     `;
 
-    const footerPattern = /Last revised by \[shroomskillet\]\(\/user\/shroomskillet\/\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
+    const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = output.replace(footerPattern, '');
 
     return sanitizedOutput.trim();
@@ -522,11 +586,50 @@ ${relatedMediaSection}
 function getPlaceholder(category, programName) {
     const name = programName || '[Program Name]';
     const lowerCategory = (category || '').toLowerCase();
-    if (lowerCategory.includes('media')) {
-        return `No media coverage for ${name} has been noted yet. If you have seen a news item about ${name} and would like to contribute information to help complete this page, please contact u/Signal-Strain9810.`;
+    const placeholderByCategory = [
+        {
+            match: ['history', 'background'],
+            text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['founders', 'staff'],
+            text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['structure'],
+            text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['rules', 'punishments'],
+            text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['abuse', 'neglect', 'lawsuits'],
+            text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'],
+            text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['related media'],
+            text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact u/Signal-Strain9810.`
+        }
+    ];
+
+    const categoryPlaceholder = placeholderByCategory.find((entry) =>
+        entry.match.some((term) => lowerCategory.includes(term))
+    );
+
+    if (categoryPlaceholder) {
+        return categoryPlaceholder.text;
     }
 
-    return `No information is known about ${category} at ${name} yet. If you have reliable updates or references, please contact u/Signal-Strain9810.`;
+    if (lowerCategory.includes('media')) {
+        return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact u/Signal-Strain9810.`;
+    }
+
+    return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact u/Signal-Strain9810.`;
 }
 
 function sanitizeUrl(input) {

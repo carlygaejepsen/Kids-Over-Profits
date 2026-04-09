@@ -409,6 +409,8 @@ function kop_has_meaningful_referrer_payload($data) {
         .badge-data { background: #6f42c1; }
         
         .meta-row { display: flex; gap: 20px; color: #666; font-size: 0.9em; margin-bottom: 10px; }
+        .bulk-actions { display: flex; gap: 10px; align-items: center; }
+        .bulk-actions button { cursor: pointer; }
     </style>
 </head>
 <body>
@@ -423,7 +425,10 @@ function kop_has_meaningful_referrer_payload($data) {
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Data Form Updates <span class="badge badge-data"><?php echo count($suggestions); ?></span></h2>
                 <?php if (!empty($suggestions)): ?>
-                    <button onclick="approveAll('suggestion')" style="cursor: pointer;">Approve All Data Updates</button>
+                    <div class="bulk-actions">
+                        <button onclick="processAll('suggestion', 'approve')">Approve All Data Updates</button>
+                        <button onclick="processAll('suggestion', 'reject')">Reject All Data Updates</button>
+                    </div>
                 <?php endif; ?>
             </div>
             <div id="suggestions-container">
@@ -506,7 +511,10 @@ function kop_has_meaningful_referrer_payload($data) {
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>News Submissions <span class="badge badge-news"><?php echo count($news_submissions); ?></span></h2>
                 <?php if (!empty($news_submissions)): ?>
-                    <button onclick="approveAll('news')" style="cursor: pointer;">Approve All News</button>
+                    <div class="bulk-actions">
+                        <button onclick="processAll('news', 'approve')">Approve All News</button>
+                        <button onclick="processAll('news', 'reject')">Reject All News</button>
+                    </div>
                 <?php endif; ?>
             </div>
             <div id="news-container">
@@ -543,7 +551,10 @@ function kop_has_meaningful_referrer_payload($data) {
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Wiki Submissions <span class="badge badge-wiki"><?php echo count($wiki_submissions); ?></span></h2>
                 <?php if (!empty($wiki_submissions)): ?>
-                    <button onclick="approveAll('wiki')" style="cursor: pointer;">Approve All Wiki</button>
+                    <div class="bulk-actions">
+                        <button onclick="processAll('wiki', 'approve')">Approve All Wiki</button>
+                        <button onclick="processAll('wiki', 'reject')">Reject All Wiki</button>
+                    </div>
                 <?php endif; ?>
             </div>
             <div id="wiki-container">
@@ -575,16 +586,26 @@ function kop_has_meaningful_referrer_payload($data) {
     </div>
 
     <script>
-    async function approveAll(type) {
-        if (!confirm(`Are you sure you want to approve ALL ${type === 'all' ? 'pending submissions' : type + ' items'}?`)) {
+    function getTypeLabel(type) {
+        if (type === 'suggestion') return 'data updates';
+        if (type === 'news') return 'news submissions';
+        if (type === 'wiki') return 'wiki submissions';
+        return 'pending submissions';
+    }
+
+    async function processAll(type, action) {
+        const actionLabel = action === 'approve' ? 'approve' : 'reject';
+        const targetLabel = type === 'all' ? 'all pending submissions' : `all ${getTypeLabel(type)}`;
+
+        if (!confirm(`Are you sure you want to ${actionLabel} ${targetLabel}?`)) {
             return;
         }
 
         if (type === 'all') {
-            await approveAll('suggestion');
-            await approveAll('news');
-            await approveAll('wiki');
-            alert('All submissions processed.');
+            await processAll('suggestion', action);
+            await processAll('news', action);
+            await processAll('wiki', action);
+            alert(`All submissions ${action === 'approve' ? 'approved' : 'rejected'}.`);
             return;
         }
 
@@ -599,7 +620,7 @@ function kop_has_meaningful_referrer_payload($data) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    action: 'approve',
+                    action: action,
                     type: type,
                     ids: ids
                 })
@@ -610,13 +631,13 @@ function kop_has_meaningful_referrer_payload($data) {
                     items.forEach(item => item.remove());
                     // Update header count if we wanted to be fancy, but removal is enough visual feedback
                 } else {
-                    console.error('Batch approval failed:', data);
-                    alert(`Failed to approve all ${type} items: ` + data.error);
+                    console.error(`Batch ${action} failed:`, data);
+                    alert(`Failed to ${action} all ${getTypeLabel(type)}: ` + data.error);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred during batch approval.');
+                alert(`An error occurred during batch ${action}.`);
             });
 
         } else if (type === 'suggestion') {
@@ -628,23 +649,31 @@ function kop_has_meaningful_referrer_payload($data) {
                     const response = await fetch('process-edit.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: id, action: 'approve' })
+                        body: JSON.stringify({ id: id, action: action })
                     });
                     const data = await response.json();
                     if (data.success) {
                         item.remove();
                         successCount++;
                     } else {
-                        console.error(`Failed to approve suggestion ${id}:`, data.error);
+                        console.error(`Failed to ${action} suggestion ${id}:`, data.error);
                     }
                 } catch (error) {
-                    console.error(`Error approving suggestion ${id}:`, error);
+                    console.error(`Error ${action}ing suggestion ${id}:`, error);
                 }
             }
             if (successCount < items.length) {
-                alert(`Approved ${successCount} out of ${items.length} suggestions. Check console for errors.`);
+                alert(`${action === 'approve' ? 'Approved' : 'Rejected'} ${successCount} out of ${items.length} suggestions. Check console for errors.`);
             }
         }
+    }
+
+    function approveAll(type) {
+        return processAll(type, 'approve');
+    }
+
+    function rejectAll(type) {
+        return processAll(type, 'reject');
     }
 
     function processEdit(id, action, type) {
