@@ -51,27 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Get URLs from WordPress theme data
+            // Fetch from database API, fall back to legacy JSON
             const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
-            console.log('URLs to fetch:', urls);
+            const url = urls[0] || '/wp-content/themes/child/api/inspections-read.php?state=TX';
+            console.log('URL to fetch:', url);
 
-            if (!urls || urls.length === 0) {
-                reportContainer.innerHTML = '<p>No data files found to load.</p>';
-                return;
-            }
-
-            // Find the Texas reports file
-            const reportsUrl = urls.find(url => url.includes('tx_reports.json'));
-            
-            if (!reportsUrl) {
-                reportContainer.innerHTML = '<p>Texas reports data file not found.</p>';
-                return;
-            }
-
-            console.log('Loading reports from:', reportsUrl);
-            
-            // Load reports data
-            const reportsResponse = await fetch(reportsUrl);
+            const reportsResponse = await fetch(url);
             if (!reportsResponse.ok) {
                 throw new Error('Failed to load reports: ' + reportsResponse.status);
             }
@@ -108,11 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function convertTexasDataToFacilities(reportsData) {
         const facilities = [];
-        
+
         // Handle different possible data structures
         let dataToProcess = reportsData;
-        
-        // If the data has a "facilities" or similar wrapper, unwrap it
         if (reportsData.facilities) {
             dataToProcess = reportsData.facilities;
         } else if (reportsData.data) {
@@ -120,11 +103,36 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (reportsData.response) {
             dataToProcess = reportsData.response;
         }
-        
-        // If it's an array, process each facility
+
         if (Array.isArray(dataToProcess)) {
             dataToProcess.forEach(facility => {
-                // Construct full address from components
+                // --- Database API format (facility_info + reports with categories) ---
+                if (facility.facility_info) {
+                    const info = facility.facility_info;
+                    // Each report's categories holds the original TX citation fields
+                    const citations = (facility.reports || []).map(r => r.categories || {});
+
+                    facilities.push({
+                        providerNum: info.program_name || info.operation_num || 'Unknown',
+                        facility_name: info.facility_name || `Operation #${info.program_name || 'Unknown'}`,
+                        facility_type: info.program_category || 'Unknown',
+                        facility_address: info.full_address || 'Address not available',
+                        city: info.city || '',
+                        county: info.county || '',
+                        capacity: info.bed_capacity || null,
+                        ages_served: info.ages_served || '',
+                        gender_served: info.gender_served || '',
+                        phone: info.phone || '',
+                        status: info.action || '',
+                        issue_date: info.license_exp_date || '',
+                        deficiencies: citations.length,
+                        citations: citations,
+                        citation_count: citations.length,
+                    });
+                    return;
+                }
+
+                // --- Legacy flat JSON format ---
                 const addressParts = [];
                 if (facility['Address']) addressParts.push(facility['Address']);
                 if (facility['City']) addressParts.push(facility['City']);
@@ -132,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (facility['Zip']) addressParts.push(facility['Zip']);
                 const fullAddress = addressParts.length > 0 ? addressParts.join(', ') : 'Address not available';
 
-                const facilityObj = {
+                facilities.push({
                     providerNum: facility['Operation #'] || facility.operation_num || facility.id || 'Unknown',
                     facility_name: facility['Operation/Caregiver Name'] || facility.facility_name || facility.name || `Operation #${facility['Operation #'] || 'Unknown'}`,
                     facility_type: facility['Type'] || facility.facility_type || facility.type || 'Unknown',
@@ -141,26 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     county: facility['County'] || facility.county || facility.countyName || '',
                     capacity: facility['Capacity'] || facility.capacity || null,
                     ages_served: facility['Ages Served'] || facility.ages_served || facility.agesServed || '',
-                    gender_served: facility['Genders '] || facility['Genders'] || facility.gender_served || facility.genderServed || '', // Note the space in 'Genders '
+                    gender_served: facility['Genders '] || facility['Genders'] || facility.gender_served || facility.genderServed || '',
                     phone: facility['Phone'] || facility.phone || '',
                     status: facility['Status'] || facility.status || '',
                     issue_date: facility['Issue Date'] || facility.issue_date || '',
                     deficiencies: facility['Deficiencies'] || facility.deficiencies || 0,
                     citations: facility.citations || facility.violations || [],
-                    citation_count: (facility.citations || facility.violations || []).length
-                };
-                facilities.push(facilityObj);
+                    citation_count: (facility.citations || facility.violations || []).length,
+                });
             });
-        } 
-        // If it's an object with provider numbers as keys (original expected format)
-        else if (typeof dataToProcess === 'object') {
+        } else if (typeof dataToProcess === 'object') {
             for (const [key, value] of Object.entries(dataToProcess)) {
-                // Skip if this looks like a metadata key
-                if (key === 'metadata' || key === 'info' || key === 'summary') {
-                    continue;
-                }
-                
-                const facility = {
+                if (key === 'metadata' || key === 'info' || key === 'summary') continue;
+
+                facilities.push({
                     providerNum: key,
                     facility_name: `Provider #${key}`,
                     facility_type: 'Unknown',
@@ -171,13 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     ages_served: '',
                     gender_served: '',
                     citations: Array.isArray(value) ? value : [],
-                    citation_count: Array.isArray(value) ? value.length : 0
-                };
-                
-                facilities.push(facility);
+                    citation_count: Array.isArray(value) ? value.length : 0,
+                });
             }
         }
-        
+
         return facilities;
     }
 
