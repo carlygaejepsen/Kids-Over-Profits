@@ -34,9 +34,16 @@
       "WebFetch(domain:github.com)",
       "Bash(git branch:*)",
       "Bash(git log:*)",
-      "Bash(node --check:*)"
+      "Bash(node --check:*)",
+      "Bash(GIT_INDEX_FILE=/c/Temp/kop-index git add css/wiki-editor.css js/wiki-editor.js)",
+      "Bash(git clone:*)",
+      "Bash(git -C /c/Users/daniu/OneDrive/Documents/GitHub/Kids-Over-Profits status)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\Temp",
+      "C:\\Users\\daniu\\OneDrive\\Documents\\GitHub\\Kids-Over-Profits\\.claude"
+    ]
   }
 }

@@ -459,6 +459,23 @@ select {
     align-items: center;
 }
 
+/* ============================================
+   ORGANIZATION / FACILITY MODE TOGGLE
+   ============================================ */
+
+/* Hide org-only fields by default (facility mode) */
+.organization-only-field {
+    display: none;
+}
+
+/* In org mode: show org fields, hide facility-only fields */
+.organization-mode .organization-only-field {
+    display: block;
+}
+.organization-mode .facility-only-field {
+    display: none;
+}
+
 .submit-modal-content {
     background: #fff;
     padding: 30px;

@@ -620,28 +620,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const dbEntry = await fetchSubmissionByName(programName);
             if (dbEntry) {
                 await loadEntryIntoForm(dbEntry.id);
-                return;
+            } else {
+                const slug = getSlugFromEntryUrl(entry.url);
+                if (!slug) {
+                    throw new Error('Unable to determine index slug');
+                }
+
+                const markdown = await loadLocalIndexMarkdown(slug);
+                if (!markdown) {
+                    throw new Error('Local index markdown not found');
+                }
+
+                parseAndPopulate(markdown);
+                updateMarkdownFromForm();
+
+                importedMarkdown = markdown;
+                if (programName) {
+                    setFieldValue('programName', programName);
+                }
+                finalizeEntryLoad(programName || entry.url, { source: 'index' });
             }
 
-            const slug = getSlugFromEntryUrl(entry.url);
-            if (!slug) {
-                throw new Error('Unable to determine index slug');
+            // Explicitly enable organization mode since we know this is an org index page
+            isOrganizationEntry = true;
+            const pageContainer = document.querySelector('.wiki-editor-page');
+            if (pageContainer) {
+                pageContainer.classList.add('organization-mode');
+                updateOrganizationFacilitiesList();
             }
-
-            const markdown = await loadLocalIndexMarkdown(slug);
-            if (!markdown) {
-                throw new Error('Local index markdown not found');
-            }
-
-            parseAndPopulate(markdown);
-            // Regenerate clean markdown from the parsed data immediately
-            updateMarkdownFromForm();
-            
-            importedMarkdown = markdown;
-            if (programName) {
-                setFieldValue('programName', programName);
-            }
-            finalizeEntryLoad(programName || entry.url, { source: 'index' });
         } catch (error) {
             console.error('Wiki Editor: failed to load organization entry:', error);
             alert(`Failed to load ${entry.name || 'organization'} index page: ${error.message || 'Entry not found'}`);
@@ -1176,50 +1182,79 @@ document.addEventListener('DOMContentLoaded', () => {
         const facilitiesList = document.getElementById('organizationFacilitiesList');
         if (!facilitiesList) return;
 
-        // Parse facilities from the current markdown
-        const outputCode = document.getElementById('outputCode');
-        const markdown = outputCode?.value || '';
+        const markdown = importedMarkdown || document.getElementById('outputCode')?.value || '';
 
         if (!markdown.trim()) {
             facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>';
             return;
         }
 
-        const facilities = [];
-        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-        let match;
-
-        while ((match = linkRegex.exec(markdown)) !== null) {
-            let name = match[1];
-            const url = match[2];
-
-            // Remove markdown formatting
-            name = name.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
-
-            const isWikiLink = url.includes('/wiki/index/');
-            const isUserLink = url.includes('/u/') || url.includes('/user/');
-            const isExternal = url.startsWith('http') && !url.includes('/wiki/');
-            const isJustIndex = url.endsWith('/index/') || url.endsWith('/index');
-
-            // Only include facility links
-            if (isWikiLink && !isUserLink && !isExternal && !isJustIndex && name.length > 2) {
-                facilities.push({ name, url });
+        // Extract wiki links only from table rows in a block of markdown
+        function extractTableLinks(content) {
+            const links = [];
+            const tableRowRegex = /^\|.+\|/gm;
+            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            let row;
+            while ((row = tableRowRegex.exec(content)) !== null) {
+                let lm;
+                linkRegex.lastIndex = 0;
+                while ((lm = linkRegex.exec(row[0])) !== null) {
+                    let name = lm[1].replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '').trim();
+                    const url = lm[2];
+                    const isWikiLink = url.includes('/wiki/index/');
+                    const isUserLink = url.includes('/u/') || url.includes('/user/');
+                    const isExternal = url.startsWith('http') && !url.includes('/wiki/');
+                    const isJustIndex = url.endsWith('/index/') || url.endsWith('/index');
+                    if (isWikiLink && !isUserLink && !isExternal && !isJustIndex && name.length > 2) {
+                        links.push({ name, url });
+                    }
+                }
             }
+            return links;
         }
 
-        if (facilities.length === 0) {
-            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
-        } else {
-            facilitiesList.innerHTML = '<ul style="list-style: none; padding: 0; margin: 0;">' +
-                facilities.map(f => `
-                    <li style="padding: 8px; margin: 5px 0; background-color: #FFFFFF; border-left: 4px solid #33A7B5; border-radius: 4px;">
-                        <strong style="color: #000080;">${escapeHtml(f.name)}</strong>
-                        <br><span style="font-size: 0.85rem; color: #666;">${escapeHtml(f.url)}</span>
-                    </li>
-                `).join('') +
-                '</ul>' +
-                `<p style="margin-top: 10px; font-size: 0.9rem; color: #004435;"><strong>Total: ${facilities.length} facilities</strong></p>`;
+        // Split markdown into sections by headings and classify as open/closed
+        const headingRegex = /^#{1,3}\s+(.+)$/gm;
+        const sectionBoundaries = [];
+        let m;
+        while ((m = headingRegex.exec(markdown)) !== null) {
+            sectionBoundaries.push({ index: m.index, end: m.index + m[0].length, heading: m[1].replace(/\*\*/g, '').trim() });
         }
+
+        const openPrograms = [];
+        const closedPrograms = [];
+
+        sectionBoundaries.forEach((section, i) => {
+            const contentStart = section.end;
+            const contentEnd = i + 1 < sectionBoundaries.length ? sectionBoundaries[i + 1].index : markdown.length;
+            const content = markdown.slice(contentStart, contentEnd);
+            const heading = section.heading.toLowerCase();
+            const links = extractTableLinks(content);
+            if (/open|active|current/i.test(heading)) {
+                openPrograms.push(...links);
+            } else if (/clos|inactiv|former|past/i.test(heading)) {
+                closedPrograms.push(...links);
+            }
+        });
+
+        if (openPrograms.length === 0 && closedPrograms.length === 0) {
+            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
+            return;
+        }
+
+        const renderList = (programs) =>
+            '<ul style="list-style:none; padding:0; margin:0 0 12px;">' +
+            programs.map(f => `<li style="padding:6px 8px; margin:4px 0; background:#fff; border-left:4px solid #33A7B5; border-radius:3px;"><strong style="color:#000080;">${escapeHtml(f.name)}</strong></li>`).join('') +
+            '</ul>';
+
+        let html = '';
+        if (openPrograms.length > 0) {
+            html += `<h4 style="margin:0 0 6px; color:#000435;">Open Programs (${openPrograms.length})</h4>${renderList(openPrograms)}`;
+        }
+        if (closedPrograms.length > 0) {
+            html += `<h4 style="margin:10px 0 6px; color:#000435;">Closed Programs (${closedPrograms.length})</h4>${renderList(closedPrograms)}`;
+        }
+        facilitiesList.innerHTML = html;
     }
 
     if (programTypeField) {
@@ -2717,6 +2752,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load entry into form
     async function loadEntryIntoForm(entryId) {
+        // Reset to facility mode by default; org mode set explicitly if needed after load
+        isOrganizationEntry = false;
+        const _pageContainer = document.querySelector('.wiki-editor-page');
+        if (_pageContainer) _pageContainer.classList.remove('organization-mode');
+
         try {
             const response = await fetch(`/wp-content/themes/child/api/save-wiki-submission.php?id=${encodeURIComponent(entryId)}`);
             const result = await response.json();

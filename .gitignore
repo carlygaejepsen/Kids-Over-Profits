@@ -32,7 +32,7 @@ wp-config-local.php
 # KOP API configuration
 api/config.local.php
 api/ai-config.php
-.claude/settings.local.json
+.claude/
 
 # SQL reference files (not for deployment)
 facilities_master.sql
