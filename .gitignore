@@ -33,6 +33,7 @@ wp-config-local.php
 api/config.local.php
 api/ai-config.php
 .claude/
+settings.json
 
 # SQL reference files (not for deployment)
 facilities_master.sql
