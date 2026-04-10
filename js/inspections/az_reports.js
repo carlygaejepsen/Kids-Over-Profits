@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
+
+    // Check if container exists - log error if missing
+    if (!reportContainer) {
+        console.error('ERROR: #report-container element not found on page');
+        const availableContainers = document.querySelectorAll('[id*="container"], [id*="report"], [class*="container"], [class*="report"]');
+        console.log('Available container elements:', Array.from(availableContainers).map(el => `${el.tagName}#${el.id}.${el.className}`).join(', '));
+        return;
+    }
+
     const alphabetFilter = document.getElementById('alphabet-filter');
     let allFacilitiesData = {};
     const searchInput = document.getElementById('searchInput');
