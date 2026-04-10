@@ -21,6 +21,8 @@ get_header();
                     the_post();
                     ?>
                     <div class="entry-content">
+                        <?php the_content(); ?>
+
                         <div class="facility-report-container">
                             <header class="report-header">
                                 <nav id="alphabet-filter" class="alphabet-filter">
@@ -44,8 +46,6 @@ get_header();
                                 <p class="loading-message">Loading report data...</p>
                             </main>
                         </div>
-
-                        <?php the_content(); ?>
                     </div>
                     <?php
                 endwhile;
