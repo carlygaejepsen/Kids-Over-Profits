@@ -53,30 +53,43 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initializeReport() {
         try {
             console.log('Starting to initialize Arizona report...');
-            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
-            console.log('URLs to fetch:', urls);
 
-            if (!urls || urls.length === 0) {
-                reportContainer.innerHTML = '<p>No data files found to load.</p>';
-                return;
+            // Fetch from database API, fall back to legacy JSON files
+            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
+            const apiUrl = '/wp-content/themes/child/api/inspections-read.php?state=AZ';
+
+            let aggregatedFacilities = [];
+
+            // Try the database API first
+            try {
+                const apiResp = await fetch(apiUrl);
+                if (apiResp.ok) {
+                    const apiData = await apiResp.json();
+                    if (apiData.facilities && apiData.facilities.length > 0) {
+                        console.log(`Loaded ${apiData.facilities.length} facilities from API`);
+                        aggregatedFacilities = convertApiDataToFacilities(apiData.facilities);
+                    }
+                }
+            } catch (e) {
+                console.log('API fetch failed, falling back to JSON files:', e.message);
             }
 
-            // Fetch all JSON files concurrently
-            const fetchPromises = urls.map(url => fetch(url));
-            const responses = await Promise.all(fetchPromises);
-            const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve(null));
-            const allJsonData = await Promise.all(jsonPromises);
+            // Fall back to legacy JSON files if API returned nothing
+            if (aggregatedFacilities.length === 0 && urls.length > 0) {
+                console.log('Falling back to legacy JSON files:', urls.length);
+                const fetchPromises = urls.map(url => fetch(url));
+                const responses = await Promise.all(fetchPromises);
+                const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve(null));
+                const allJsonData = await Promise.all(jsonPromises);
+                const rawReports = allJsonData.filter(data => data !== null);
+                console.log(`Loaded ${rawReports.length} inspection reports from JSON`);
+                aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);
+            }
 
-            // Filter out failed requests and combine data
-            const rawReports = allJsonData.filter(data => data !== null);
-            console.log(`Loaded ${rawReports.length} inspection reports`);
-            
-            // Group reports by facility
-            const aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);
             allFacilitiesData = groupFacilitiesFromArray(aggregatedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
-            
+
             renderAlphabetFilter();
             const firstLetter = Object.keys(allFacilitiesData).sort()[0];
             if (firstLetter) {
@@ -88,6 +101,44 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to load or process report data:', error);
             reportContainer.innerHTML = `<p class="error">Error loading data: ${error.message}</p>`;
         }
+    }
+
+    /**
+     * Convert API database format (facility_info + reports) to the AZ facility format
+     */
+    function convertApiDataToFacilities(apiFacilities) {
+        return apiFacilities.map(facility => {
+            const info = facility.facility_info || {};
+            const inspections = (facility.reports || []).map(report => {
+                const cats = report.categories || {};
+                return {
+                    inspection_number: cats.inspection_number || report.report_id || '',
+                    inspection_date: cats.inspection_date || report.report_date || '',
+                    inspection_type: cats.inspection_type || '',
+                    certificate_number: cats.certificate_number || '',
+                    deficiencies: cats.deficiencies || [],
+                };
+            }).sort((a, b) => {
+                const da = new Date(a.inspection_date || 0);
+                const db = new Date(b.inspection_date || 0);
+                return db - da;
+            });
+
+            return {
+                license_number: info.program_name || '',
+                name: info.facility_name || '',
+                facility_status: info.action || '',
+                license_status: '',
+                address: info.full_address || '',
+                phone: info.phone || '',
+                max_capacity: info.bed_capacity || '',
+                license_effective_date: info.relicense_visit_date || '',
+                license_expires_date: info.license_exp_date || '',
+                chief_officer: info.executive_director || '',
+                owner_licensee: '',
+                inspections: inspections,
+            };
+        });
     }
 
     // Helper function to check if inspection has violations
