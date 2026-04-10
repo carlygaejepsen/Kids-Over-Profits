@@ -94,9 +94,19 @@ try {
         ];
     }
 
+    // Get the most recent scraped timestamp
+    $latestTimestamp = '';
+    if (!empty($facilityRows)) {
+        $timestamps = array_filter(array_column($facilityRows, 'scraped_timestamp'));
+        if (!empty($timestamps)) {
+            $latestTimestamp = max($timestamps);
+        }
+    }
+
     echo json_encode([
         'total_facilities' => count($facilities),
         'source_state'     => $state,
+        'scraped_timestamp' => $latestTimestamp,
         'scraping_notes'   => [
             'total_reports' => $totalReports,
         ],
