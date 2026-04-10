@@ -21,9 +21,9 @@ get_header();
                     the_post();
                     ?>
                     <div class="entry-content">
-                        <?php the_content(); ?>
-
                         <div class="facility-report-container">
+                            <?php the_content(); ?>
+
                             <header class="report-header">
                                 <nav id="alphabet-filter" class="alphabet-filter">
                                     <!-- JavaScript will populate this -->
