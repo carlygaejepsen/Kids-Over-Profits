@@ -42,7 +42,7 @@ get_header();
                                 </div>
                             </header>
 
-                            <main id="report-container" class="facility-report-container">
+                            <main id="report-container" class="report-list">
                                 <p class="loading-message">Loading report data...</p>
                             </main>
                         </div>
