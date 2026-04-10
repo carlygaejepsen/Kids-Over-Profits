@@ -17,28 +17,30 @@ get_header();
 					the_post();
 					?>
 					<div class="entry-content">
-						<h1><?php the_title(); ?></h1>
-						<?php the_content(); ?>
+						<div class="state-reports-wrapper">
+							<h1><?php the_title(); ?></h1>
+							<?php the_content(); ?>
 
-						<div class="facility-report-container">
-							<nav id="alphabet-filter" class="alphabet-filter">
-								<!-- JavaScript will populate this -->
-							</nav>
+							<div class="facility-report-container">
+								<nav id="alphabet-filter" class="alphabet-filter">
+									<!-- JavaScript will populate this -->
+								</nav>
 
-							<div class="controls">
-								<input type="text" id="searchInput" placeholder="Search all facilities...">
-								<select id="sortBy">
-									<option value="">Default Order (A-Z)</option>
-									<option value="name">Sort by Name</option>
-									<option value="violations-only">Facilities with Violations Only</option>
-									<option value="violations-desc">Most Violations First</option>
-									<option value="recent-inspection">Most Recent Inspection</option>
-								</select>
-								<button id="clearSearch" onclick="clearSearch()" style="display: none;">Clear Search</button>
-							</div>
+								<div class="controls">
+									<input type="text" id="searchInput" placeholder="Search all facilities...">
+									<select id="sortBy">
+										<option value="">Default Order (A-Z)</option>
+										<option value="name">Sort by Name</option>
+										<option value="violations-only">Facilities with Violations Only</option>
+										<option value="violations-desc">Most Violations First</option>
+										<option value="recent-inspection">Most Recent Inspection</option>
+									</select>
+									<button id="clearSearch" onclick="clearSearch()" style="display: none;">Clear Search</button>
+								</div>
 
-							<div id="report-container" class="report-list">
-								<p class="loading-message">Loading report data...</p>
+								<div id="report-container" class="report-list">
+									<p class="loading-message">Loading report data...</p>
+								</div>
 							</div>
 						</div>
 					</div>
