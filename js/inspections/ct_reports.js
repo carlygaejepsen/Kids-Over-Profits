@@ -65,11 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const jsonData = await response.json();
             console.log('Loaded CT DCF data:', jsonData);
-            
+
             // Extract facilities from the CT DCF data structure
-            const facilities = jsonData.facilities || [];
+            let facilities = jsonData.facilities || [];
             console.log(`Found ${facilities.length} facilities`);
-            
+
+            // Sort reports within each facility by date (newest first)
+            facilities = facilities.map(facility => ({
+                ...facility,
+                reports: (facility.reports || []).sort((a, b) => {
+                    const dateA = new Date(a.report_date || 0);
+                    const dateB = new Date(b.report_date || 0);
+                    return dateB - dateA;
+                })
+            }));
+
             allFacilitiesData = groupFacilitiesFromArray(facilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
