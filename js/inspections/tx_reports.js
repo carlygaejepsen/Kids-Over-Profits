@@ -110,7 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (facility.facility_info) {
                     const info = facility.facility_info;
                     // Each report's categories holds the original TX citation fields
-                    const citations = (facility.reports || []).map(r => r.categories || {});
+                    const citations = (facility.reports || [])
+                        .map(r => r.categories || {})
+                        .sort((a, b) => {
+                            const da = new Date(a['Citation Date'] || 0);
+                            const db = new Date(b['Citation Date'] || 0);
+                            return db - da;
+                        });
 
                     facilities.push({
                         providerNum: info.program_name || info.operation_num || 'Unknown',
