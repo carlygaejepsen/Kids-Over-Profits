@@ -4,6 +4,11 @@
  * Description: Template for state inspection reports (CT, AZ, TX, etc.)
  */
 
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 get_header();
 ?>
 
