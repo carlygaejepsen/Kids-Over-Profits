@@ -119,8 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     deficiencies: cats.deficiencies || [],
                 };
             }).sort((a, b) => {
-                const da = new Date(a.inspection_date || 0);
-                const db = new Date(b.inspection_date || 0);
+                // inspection_date can be "12/16/2025 - 12/17/2025", parse first date
+                const da = new Date((a.inspection_date || '').split(' - ')[0] || 0);
+                const db = new Date((b.inspection_date || '').split(' - ')[0] || 0);
                 return db - da;
             });
 
@@ -198,8 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Sort inspections within each facility by date (most recent first)
         Object.values(facilities).forEach(facility => {
             facility.inspections.sort((a, b) => {
-                const dateA = new Date(a.inspection_date || 0);
-                const dateB = new Date(b.inspection_date || 0);
+                const dateA = new Date((a.inspection_date || '').split(' - ')[0] || 0);
+                const dateB = new Date((b.inspection_date || '').split(' - ')[0] || 0);
                 return dateB - dateA; // Most recent first
             });
         });
@@ -375,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const dates = facility.inspections
-            .map(inspection => new Date(inspection.inspection_date || 0))
+            .map(inspection => new Date((inspection.inspection_date || '').split(' - ')[0] || 0))
             .filter(date => !isNaN(date.getTime()));
         
         return dates.length > 0 ? Math.max(...dates) : new Date(0);
