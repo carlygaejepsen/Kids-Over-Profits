@@ -375,10 +375,9 @@ document.addEventListener('DOMContentLoaded', () => {
             reportContainer.appendChild(facilityElement);
         });
 
-        // Add last updated timestamp at the bottom
         if (scrapedTimestamp) {
             const lastUpdateDiv = document.createElement('div');
-            lastUpdateDiv.style.cssText = 'margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 14px;';
+            lastUpdateDiv.className = 'last-updated';
             const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
             reportContainer.appendChild(lastUpdateDiv);

@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLetter = null;
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
-    
+    let scrapedTimestamp = '';
+
         if (searchInput) {
         searchInput.addEventListener('input', filterAndSort);
     }
@@ -101,6 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fetch all 21 files concurrently for better performance
             const fetchPromises = urls.map(url => fetch(url));
             const responses = await Promise.all(fetchPromises);
+            const lastModifiedDates = responses
+                .map(r => r.headers.get('Last-Modified'))
+                .filter(Boolean)
+                .map(s => new Date(s))
+                .filter(d => !isNaN(d.getTime()));
+            if (lastModifiedDates.length > 0) {
+                scrapedTimestamp = new Date(Math.max(...lastModifiedDates.map(d => d.getTime()))).toISOString();
+            }
             const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve([]));
             const allJsonData = await Promise.all(jsonPromises);
 
@@ -420,8 +429,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             reportContainer.appendChild(facilityElement);
         });
+
+        if (scrapedTimestamp) {
+            const lastUpdateDiv = document.createElement('div');
+            lastUpdateDiv.className = 'last-updated';
+            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
+            reportContainer.appendChild(lastUpdateDiv);
+        }
     }
-        
+
         function toTitleCase(str) {
     if (!str) return str;
     

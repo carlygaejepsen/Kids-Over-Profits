@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLetter = null;
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
-    
+    let scrapedTimestamp = '';
+
     if (searchInput) {
         searchInput.addEventListener('input', filterAndSort);
     }
@@ -64,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch data: ${response.status}`);
             }
-            
+            scrapedTimestamp = response.headers.get('Last-Modified') || '';
+
             const rawReports = await response.json();
             console.log(`Loaded ${rawReports.length} raw reports`);
             
@@ -394,6 +396,14 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             reportContainer.appendChild(facilityElement);
         });
+
+        if (scrapedTimestamp) {
+            const lastUpdateDiv = document.createElement('div');
+            lastUpdateDiv.className = 'last-updated';
+            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
+            reportContainer.appendChild(lastUpdateDiv);
+        }
     }
 
     function toTitleCase(str) {

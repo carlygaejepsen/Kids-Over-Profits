@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
     let facilitiesArray = [];
+    let scrapedTimestamp = '';
 
     // Check if elements exist
     if (!reportContainer) {
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const reportsData = await reportsResponse.json();
             console.log('Loaded reports data:', reportsData);
+            scrapedTimestamp = reportsData.scraped_timestamp || reportsResponse.headers.get('Last-Modified') || '';
 
             // Convert Texas data structure to facility array
             facilitiesArray = convertTexasDataToFacilities(reportsData);
@@ -434,6 +436,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             reportContainer.appendChild(facilityElement);
         });
+
+        if (scrapedTimestamp) {
+            const lastUpdateDiv = document.createElement('div');
+            lastUpdateDiv.className = 'last-updated';
+            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
+            reportContainer.appendChild(lastUpdateDiv);
+        }
     }
 
     function createCitationHTML(citation) {

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLetter = null;
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
+    let scrapedTimestamp = '';
 
     if (searchInput) {
         searchInput.addEventListener('input', filterAndSort);
@@ -287,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(jsonUrl + ' returned HTTP ' + response.status);
                 }
 
+                const lastModified = response.headers.get('Last-Modified') || '';
                 const payload = await response.json();
                 if (!Array.isArray(payload)) {
                     throw new Error(jsonUrl + ' did not return an array payload');
@@ -295,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return {
                     url: jsonUrl,
                     facilities: payload,
+                    lastModified,
                 };
             }));
 
@@ -308,6 +311,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!successfulResults.length) {
                 throw new Error('No Utah report datasets could be loaded.');
+            }
+
+            const lastModifiedDates = successfulResults
+                .map(r => r.lastModified)
+                .filter(Boolean)
+                .map(s => new Date(s))
+                .filter(d => !isNaN(d.getTime()));
+            if (lastModifiedDates.length > 0) {
+                scrapedTimestamp = new Date(Math.max(...lastModifiedDates.map(d => d.getTime()))).toISOString();
             }
 
             const mergedFacilities = mergeFacilitiesFromArrays(successfulResults.map(result => result.facilities));
@@ -577,8 +589,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             reportContainer.appendChild(facilityElement);
         });
+
+        if (scrapedTimestamp) {
+            const lastUpdateDiv = document.createElement('div');
+            lastUpdateDiv.className = 'last-updated';
+            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
+            reportContainer.appendChild(lastUpdateDiv);
+        }
     }
-        
+
     function toTitleCase(str) {
         if (!str) return str;
         
