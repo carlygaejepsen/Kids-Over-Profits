@@ -54,37 +54,26 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('Starting to initialize Arizona report...');
 
-            // Fetch from database API, fall back to legacy JSON files
-            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
+            // Fetch from database API
             const apiUrl = '/wp-content/themes/child/api/inspections-read.php?state=AZ';
+            console.log('Fetching from API:', apiUrl);
 
-            let aggregatedFacilities = [];
-
-            // Try the database API first
-            try {
-                const apiResp = await fetch(apiUrl);
-                if (apiResp.ok) {
-                    const apiData = await apiResp.json();
-                    if (apiData.facilities && apiData.facilities.length > 0) {
-                        console.log(`Loaded ${apiData.facilities.length} facilities from API`);
-                        aggregatedFacilities = convertApiDataToFacilities(apiData.facilities);
-                    }
-                }
-            } catch (e) {
-                console.log('API fetch failed, falling back to JSON files:', e.message);
+            const apiResp = await fetch(apiUrl);
+            if (!apiResp.ok) {
+                throw new Error(`API returned ${apiResp.status}`);
             }
 
-            // Fall back to legacy JSON files if API returned nothing
-            if (aggregatedFacilities.length === 0 && urls.length > 0) {
-                console.log('Falling back to legacy JSON files:', urls.length);
-                const fetchPromises = urls.map(url => fetch(url));
-                const responses = await Promise.all(fetchPromises);
-                const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve(null));
-                const allJsonData = await Promise.all(jsonPromises);
-                const rawReports = allJsonData.filter(data => data !== null);
-                console.log(`Loaded ${rawReports.length} inspection reports from JSON`);
-                aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);
+            const apiData = await apiResp.json();
+            console.log('API response:', apiData);
+
+            if (!apiData.facilities || apiData.facilities.length === 0) {
+                console.log('No facilities returned from API');
+                reportContainer.innerHTML = '<p>No facilities found in the database for Arizona.</p>';
+                return;
             }
+
+            console.log(`Loaded ${apiData.facilities.length} facilities from API`);
+            const aggregatedFacilities = convertApiDataToFacilities(apiData.facilities);
 
             allFacilitiesData = groupFacilitiesFromArray(aggregatedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
