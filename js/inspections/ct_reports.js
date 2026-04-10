@@ -54,8 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initializeReport() {
         try {
             console.log('Starting to initialize CT DCF report...');
-            const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
-            const url = urls[0] || '/wp-content/themes/child/api/inspections-read.php?state=CT';
+            const url = '/wp-content/themes/child/api/inspections-read.php?state=CT';
             console.log('URL to fetch:', url);
 
             // Fetch the CT DCF data
