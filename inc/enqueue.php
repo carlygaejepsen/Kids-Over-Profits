@@ -437,6 +437,21 @@ function kop_enqueue_report_scripts() {
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 
+function kop_state_reports_body_class($classes) {
+    $state_report_slugs = array(
+        'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
+        'mt-reports', 'ct-reports', 'wa-reports',
+    );
+    foreach ($state_report_slugs as $slug) {
+        if (is_page($slug)) {
+            $classes[] = 'kop-state-reports-page';
+            break;
+        }
+    }
+    return $classes;
+}
+add_filter('body_class', 'kop_state_reports_body_class');
+
 /**
  * Enqueue shared scripts that power the autocomplete module.
  */
