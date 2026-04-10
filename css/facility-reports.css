@@ -51,6 +51,13 @@ details[open] > summary .open-text {
     font-family: sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    background-color: #ffffff;
+    padding: 2em;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-width: 780px;
+    margin: 2em auto;
+    box-sizing: border-box;
 }
 
 .facility-report-container h1,
