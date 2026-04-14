@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             scrapedTimestamp = data?.summary?.parsed_date || lastModified || '';
+            renderLastUpdated();
             console.log('Raw data loaded:', data);
             
             // Handle the structure from your Python parser
@@ -375,17 +376,17 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             reportContainer.appendChild(facilityElement);
         });
+    }
 
-        if (scrapedTimestamp) {
-            const lastUpdateDiv = document.createElement('div');
-            lastUpdateDiv.className = 'last-updated';
-            const parsed = new Date(scrapedTimestamp);
-            const updateDate = isNaN(parsed.getTime())
-                ? scrapedTimestamp
-                : parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
-            reportContainer.appendChild(lastUpdateDiv);
-        }
+    function renderLastUpdated() {
+        const el = document.getElementById('last-updated');
+        if (!el) return;
+        if (!scrapedTimestamp) { el.innerHTML = ''; return; }
+        const parsed = new Date(scrapedTimestamp);
+        const updateDate = isNaN(parsed.getTime())
+            ? scrapedTimestamp
+            : parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
 
     function toTitleCase(str) {

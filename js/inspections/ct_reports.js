@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Extract facilities from the CT DCF data structure
             let facilities = jsonData.facilities || [];
             scrapedTimestamp = jsonData.scraped_timestamp || '';
+            renderLastUpdated();
             console.log(`Found ${facilities.length} facilities`);
 
             // Sort reports within each facility by date (newest first)
@@ -375,13 +376,17 @@ document.addEventListener('DOMContentLoaded', () => {
             reportContainer.appendChild(facilityElement);
         });
 
-        if (scrapedTimestamp) {
-            const lastUpdateDiv = document.createElement('div');
-            lastUpdateDiv.className = 'last-updated';
-            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
-            reportContainer.appendChild(lastUpdateDiv);
-        }
+    }
+
+    function renderLastUpdated() {
+        const el = document.getElementById('last-updated');
+        if (!el) return;
+        if (!scrapedTimestamp) { el.innerHTML = ''; return; }
+        const parsed = new Date(scrapedTimestamp);
+        const updateDate = isNaN(parsed.getTime())
+            ? scrapedTimestamp
+            : parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
         
     function toTitleCase(str) {

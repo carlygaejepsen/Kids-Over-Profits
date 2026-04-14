@@ -320,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(d => !isNaN(d.getTime()));
             if (lastModifiedDates.length > 0) {
                 scrapedTimestamp = new Date(Math.max(...lastModifiedDates.map(d => d.getTime()))).toISOString();
+                renderLastUpdated();
             }
 
             const mergedFacilities = mergeFacilitiesFromArrays(successfulResults.map(result => result.facilities));
@@ -589,14 +590,17 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             reportContainer.appendChild(facilityElement);
         });
+    }
 
-        if (scrapedTimestamp) {
-            const lastUpdateDiv = document.createElement('div');
-            lastUpdateDiv.className = 'last-updated';
-            const updateDate = new Date(scrapedTimestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            lastUpdateDiv.innerHTML = `<p>Last updated: ${updateDate}</p>`;
-            reportContainer.appendChild(lastUpdateDiv);
-        }
+    function renderLastUpdated() {
+        const el = document.getElementById('last-updated');
+        if (!el) return;
+        if (!scrapedTimestamp) { el.innerHTML = ''; return; }
+        const parsed = new Date(scrapedTimestamp);
+        const updateDate = isNaN(parsed.getTime())
+            ? scrapedTimestamp
+            : parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
 
     function toTitleCase(str) {

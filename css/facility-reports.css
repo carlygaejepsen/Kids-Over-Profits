@@ -819,16 +819,24 @@ RESPONSIVE
    LAST UPDATED STAMP
    ================================================================= */
 .facility-report-container .last-updated {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
+    margin: 0 0 20px;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
     text-align: center;
     color: #666;
     font-size: 14px;
 }
 
+.facility-report-container .last-updated:empty {
+    display: none;
+}
+
 .facility-report-container .last-updated p {
     margin: 0;
+}
+
+.facility-report-container .state-reports-title {
+    margin: 0 0 16px;
 }
 
 /* =================================================================
