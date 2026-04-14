@@ -81,9 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render alphabet filter and show first letter
             renderAlphabetFilter();
-            const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-            if (firstLetter) {
-                renderFacilitiesForLetter(firstLetter);
+            if (Object.keys(allFacilitiesData).length) {
+                renderFacilitiesForLetter('ALL');
             }
 
         } catch (error) {
@@ -220,9 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!alphabetFilter) return;
         
         const letters = Object.keys(allFacilitiesData).sort();
-        alphabetFilter.innerHTML = letters.map(letter => 
-            `<a href="#" data-letter="${letter}">${letter}</a>`
-        ).join('');
+        alphabetFilter.innerHTML = [
+            `<a href="#" data-letter="ALL">All</a>`,
+            ...letters.map(letter => `<a href="#" data-letter="${letter}">${letter}</a>`)
+        ].join('');
         
         alphabetFilter.addEventListener('click', (e) => {
             e.preventDefault();
@@ -243,10 +243,18 @@ document.addEventListener('DOMContentLoaded', () => {
             a.classList.toggle('active', a.dataset.letter === letter);
         });
         
-        const facilities = allFacilitiesData[letter] || [];
+        const facilities = getFacilitiesForSelection(letter);
         const sortBy = sortSelect ? sortSelect.value : '';
         const sortedFacilities = sortFacilities(facilities, sortBy);
         renderFilteredFacilities(sortedFacilities, letter);
+    }
+
+    function getFacilitiesForSelection(letter) {
+        if (letter === 'ALL') {
+            return Object.keys(allFacilitiesData).sort()
+                .reduce((all, l) => all.concat(allFacilitiesData[l] || []), []);
+        }
+        return allFacilitiesData[letter] || [];
     }
 
     function filterAndSort() {
@@ -283,13 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (clearButton) clearButton.style.display = 'none';
             
             // Return to letter view
-            if (currentLetter && allFacilitiesData[currentLetter]) {
+            if (currentLetter && (currentLetter === 'ALL' || allFacilitiesData[currentLetter])) {
                 renderFacilitiesForLetter(currentLetter);
             } else {
-                const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-                if (firstLetter) {
-                    renderFacilitiesForLetter(firstLetter);
-                }
+                renderFacilitiesForLetter('ALL');
             }
         }
     }

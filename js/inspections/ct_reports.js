@@ -88,9 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Available letters:', Object.keys(allFacilitiesData));
             
             renderAlphabetFilter();
-            const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-            if (firstLetter) {
-                renderFacilitiesForLetter(firstLetter);
+            if (Object.keys(allFacilitiesData).length) {
+                renderFacilitiesForLetter('ALL');
             } else {
                 reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
             }
@@ -140,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- RENDER FUNCTIONS ---
     function renderAlphabetFilter() {
         const letters = Object.keys(allFacilitiesData).sort();
-        alphabetFilter.innerHTML = letters.map(letter => `<a href="#" data-letter="${letter}">${letter}</a>`).join('');
+        alphabetFilter.innerHTML = [`<a href="#" data-letter="ALL">All</a>`, ...letters.map(letter => `<a href="#" data-letter="${letter}">${letter}</a>`)].join('');
         alphabetFilter.addEventListener('click', (e) => {
             e.preventDefault();
             if (e.target.tagName === 'A') {
@@ -160,11 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
             a.classList.toggle('active', a.dataset.letter === letter);
         });
         
-        const facilities = allFacilitiesData[letter];
+        const facilities = getFacilitiesForSelection(letter);
         // Apply current sorting/filtering if any is selected
         const sortBy = sortSelect ? sortSelect.value : '';
         const sortedFacilities = sortFacilities(facilities || [], sortBy);
         renderFilteredFacilities(sortedFacilities, letter);
+    }
+
+    function getFacilitiesForSelection(letter) {
+        if (letter === 'ALL') {
+            return Object.keys(allFacilitiesData).sort()
+                .reduce((all, l) => all.concat(allFacilitiesData[l] || []), []);
+        }
+        return allFacilitiesData[letter] || [];
     }
 
     function filterAndSort() {
@@ -224,21 +231,17 @@ document.addEventListener('DOMContentLoaded', () => {
             isSearching = false;
             if (clearButton) clearButton.style.display = 'none';
             
-            if (currentLetter && allFacilitiesData[currentLetter]) {
+            if (currentLetter && (currentLetter === 'ALL' || allFacilitiesData[currentLetter])) {
                 // Restore the current letter selection
                 document.querySelectorAll('#alphabet-filter a').forEach(a => {
                     a.classList.toggle('active', a.dataset.letter === currentLetter);
                 });
-                
-                const facilities = allFacilitiesData[currentLetter];
+
+                const facilities = getFacilitiesForSelection(currentLetter);
                 const sortedFacilities = sortFacilities(facilities, sortBy);
                 renderFilteredFacilities(sortedFacilities, currentLetter);
             } else {
-                // No letter selected, show first letter
-                const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-                if (firstLetter) {
-                    renderFacilitiesForLetter(firstLetter);
-                }
+                renderFacilitiesForLetter('ALL');
             }
         }
     }

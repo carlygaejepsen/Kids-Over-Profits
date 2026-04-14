@@ -52,9 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
             allFacilitiesData = groupFacilitiesFromArray(facilitiesArray);
 
             renderAlphabetFilter();
-            const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-            if (firstLetter) {
-                renderFacilitiesForLetter(firstLetter);
+            if (Object.keys(allFacilitiesData).length) {
+                renderFacilitiesForLetter('ALL');
             } else {
                 reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
             }
@@ -128,11 +127,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAlphabetFilter() {
         const letters = Object.keys(allFacilitiesData).sort();
-        alphabetFilter.innerHTML = letters.map(l => `<a href="#" data-letter="${l}">${l}</a>`).join('');
+        alphabetFilter.innerHTML = [`<a href="#" data-letter="ALL">All</a>`, ...letters.map(l => `<a href="#" data-letter="${l}">${l}</a>`)].join('');
         alphabetFilter.addEventListener('click', (e) => {
             e.preventDefault();
             if (e.target.tagName === 'A') renderFacilitiesForLetter(e.target.dataset.letter);
         }, { passive: false });
+    }
+
+    function getFacilitiesForSelection(letter) {
+        if (letter === 'ALL') {
+            return Object.keys(allFacilitiesData).sort()
+                .reduce((all, l) => all.concat(allFacilitiesData[l] || []), []);
+        }
+        return allFacilitiesData[letter] || [];
     }
 
     function renderFacilitiesForLetter(letter) {
@@ -141,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('#alphabet-filter a').forEach(a => {
             a.classList.toggle('active', a.dataset.letter === letter);
         });
-        const facilities = allFacilitiesData[letter] || [];
+        const facilities = getFacilitiesForSelection(letter);
         renderFilteredFacilities(sortFacilities(facilities, sortSelect ? sortSelect.value : ''), letter);
     }
 
@@ -165,11 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             isSearching = false;
             if (clearButton) clearButton.style.display = 'none';
-            if (currentLetter && allFacilitiesData[currentLetter]) {
+            if (currentLetter && (currentLetter === 'ALL' || allFacilitiesData[currentLetter])) {
                 renderFacilitiesForLetter(currentLetter);
             } else {
-                const firstLetter = Object.keys(allFacilitiesData).sort()[0];
-                if (firstLetter) renderFacilitiesForLetter(firstLetter);
+                renderFacilitiesForLetter('ALL');
             }
         }
     }
