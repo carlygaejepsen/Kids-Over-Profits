@@ -18,8 +18,8 @@ get_header();
 					?>
 					<div class="entry-content">
 						<div class="state-reports-wrapper">
+							<h1 class="state-reports-title"><?php the_title(); ?></h1>
 							<div class="facility-report-container">
-								<h1 class="state-reports-title"><?php the_title(); ?></h1>
 								<?php the_content(); ?>
 
 								<div id="last-updated" class="last-updated"></div>
