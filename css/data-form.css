@@ -774,6 +774,13 @@ select:focus {
     box-shadow: 0 3px 8px rgba(178, 225, 2, 0.4);
 }
 
+#project-status:empty,
+#project-status-location:empty,
+#referrer-project-status:empty,
+#upload-status:empty {
+    display: none;
+}
+
 /* Saved project lists - styled containers */
 #company-saved-projects-list {
     background: #FFFFFF !important;

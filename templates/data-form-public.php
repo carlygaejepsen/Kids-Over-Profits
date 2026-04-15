@@ -400,6 +400,21 @@ get_header();
             </div>
         </div>
         
+        <!-- Private Ownership Toggle (locations view only) -->
+        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
+            <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
+                <span>Ownership Type:</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
+                    <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Set ownership</button>
+                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                </div>
+            </div>
+            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                Set this first for location projects. It switches the fields below between parent company and owner information.
+            </p>
+        </div>
+
         <!-- Operator Information Section -->
         <div class="section expanded" id="operator-section" data-section-views="companies,locations">
             <div class="section-header">
@@ -546,19 +561,6 @@ get_header();
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <div class="sub-section-content">
-                        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
-                            <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
-                                <span>Ownership Type:</span>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
-                                    <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Set ownership</button>
-                                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                                </div>
-                            </div>
-                            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                                Set this first for location projects. It switches the fields below between parent company and owner information.
-                            </p>
-                        </div>
                         <!-- Current Operator (shown for corporate ownership) -->
                         <div class="form-group" id="current-operator-group">
                             <label id="current-operator-label">Current Parent Company</label>

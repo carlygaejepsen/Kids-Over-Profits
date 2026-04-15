@@ -424,6 +424,20 @@ get_header();
             </div>
         </div>
         
+        <!-- Private Ownership Toggle (locations view only) -->
+        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
+            <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
+                <span>Ownership Type:</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="private-ownership-badge" class="facility-ownership-badge not-private" title="Click to toggle ownership status">Chain/Corporate</span>
+                    <input type="checkbox" id="private-ownership-toggle" style="display: none;">
+                </div>
+            </div>
+            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                Set this first for location projects. It switches the fields below between parent company and owner information.
+            </p>
+        </div>
+
         <!-- Operator Information Section -->
         <div class="section expanded" id="operator-section" data-section-views="companies,locations">
             <div class="section-header">
@@ -563,18 +577,6 @@ get_header();
                         <label>Current Name</label>
                         <input type="text" class="facility-field" data-field="identification.currentName" data-autocomplete-category="facility">
                     </div>
-                </div>
-                <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
-                    <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
-                        <span>Ownership Type:</span>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span id="private-ownership-badge" class="facility-ownership-badge not-private" title="Click to toggle ownership status">Chain/Corporate</span>
-                            <input type="checkbox" id="private-ownership-toggle" style="display: none;">
-                        </div>
-                    </div>
-                    <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                        Set this first for location projects. It switches the fields below between parent company and owner information.
-                    </p>
                 </div>
                 <!-- Current Operator (shown for corporate ownership) -->
                 <div class="form-group" id="current-operator-group">
