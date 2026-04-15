@@ -835,11 +835,26 @@ RESPONSIVE
     margin: 0;
 }
 
-.state-reports-wrapper .state-reports-title {
+.state-reports-wrapper .state-reports-title,
+.facility-report-container .state-reports-title {
     margin: 0 0 16px;
     font-size: 2em;
     font-weight: bold;
     color: #000000;
+}
+
+/* Hide Kadence's theme-level page title hero on state report pages
+   (the title is rendered inside the .facility-report-container instead). */
+.kop-state-reports-page .entry-hero,
+.kop-state-reports-page .entry-hero-container-inner,
+.kop-state-reports-page .page-title,
+.kop-state-reports-page > #main .entry-header,
+.kop-state-reports-page article > .entry-header {
+    display: none;
+}
+
+.facility-report-container .state-reports-intro {
+    margin: 0 0 20px;
 }
 
 /* =================================================================

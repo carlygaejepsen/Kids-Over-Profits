@@ -16,15 +16,15 @@ get_header();
 				the_post();
 				?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<header class="entry-header">
-						<h1 class="entry-title"><?php the_title(); ?></h1>
-					</header>
-
 					<div class="entry-content">
 						<div class="facility-report-container">
-							<header class="report-header">
-								<div id="last-updated" class="last-updated"></div>
+							<h1 class="entry-title state-reports-title"><?php the_title(); ?></h1>
 
+							<div class="state-reports-intro">
+								<?php the_content(); ?>
+							</div>
+
+							<header class="report-header">
 								<nav id="alphabet-filter" class="alphabet-filter">
 									<!-- JavaScript will populate this -->
 								</nav>
@@ -45,9 +45,9 @@ get_header();
 							<main id="report-container" class="report-list">
 								<p class="loading-message">Loading report data...</p>
 							</main>
-						</div>
 
-						<?php the_content(); ?>
+							<div id="last-updated" class="last-updated"></div>
+						</div>
 					</div>
 				</article>
 				<?php

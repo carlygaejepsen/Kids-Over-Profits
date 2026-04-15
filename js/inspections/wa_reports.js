@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.id = 'last-updated';
             el.className = 'last-updated';
             const anchor = document.querySelector('.facility-report-container') || reportContainer.parentNode;
-            anchor.insertBefore(el, anchor.firstChild);
+            anchor.appendChild(el);
         }
         if (!scrapedTimestamp) { el.innerHTML = ''; return; }
         const parsed = new Date(scrapedTimestamp);
