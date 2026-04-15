@@ -264,8 +264,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderLastUpdated() {
-        const el = document.getElementById('last-updated');
-        if (!el) return;
+        let el = document.getElementById('last-updated');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'last-updated';
+            el.className = 'last-updated';
+            const anchor = document.querySelector('.facility-report-container') || reportContainer.parentNode;
+            anchor.insertBefore(el, anchor.firstChild);
+        }
         if (!scrapedTimestamp) { el.innerHTML = ''; return; }
         const parsed = new Date(scrapedTimestamp);
         const updateDate = isNaN(parsed.getTime())
