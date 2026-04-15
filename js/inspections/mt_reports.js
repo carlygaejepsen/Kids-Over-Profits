@@ -92,15 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Valid MT license numbers are digits only, or digits-digits (e.g. "7276-43", "000000185")
+    function isValidLicenseNumber(value) {
+        if (!value) return false;
+        return /^\d+(-\d+)?$/.test(value.trim());
+    }
+
     // --- AGGREGATES RAW MONTANA REPORTS INTO FACILITY GROUPS ---
     function aggregateReportsIntoFacilities(reports) {
         const facilities = reports.reduce((acc, report) => {
-            // Use License # as the facility identifier, fallback to facility name
-            const facilityId = report.Header['License #'] || report.Header.Facility || Math.random().toString(36);
-            
+            const rawLicense = (report.Header['License #'] || '').trim();
+            const validLicense = isValidLicenseNumber(rawLicense) ? rawLicense : '';
+            // Group by facility name (stripped of trailing punctuation) since license numbers
+            // are sometimes mis-parsed as city names or addresses by the PDF extractor
+            const rawName = (report.Header.Facility || '').trim().replace(/[,.\s]+$/, '').toUpperCase();
+            const facilityId = rawName || validLicense || 'UNKNOWN';
+
             if (!acc[facilityId]) {
                 acc[facilityId] = {
-                    number: report.Header['License #'] || 'N/A',
+                    number: validLicense || 'N/A',
                     name: report.Header.Facility || `Facility ${facilityId}`,
                     facility_type: report.Header['Survey Type'] || 'Unknown',
                     officer: report.Header.Administrator || 'Unknown',
@@ -111,6 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     phone: report.Header['Phone Number'] || '',
                     inspections: []
                 };
+            } else if (acc[facilityId].number === 'N/A' && validLicense) {
+                // Backfill the license number if we now have a valid one
+                acc[facilityId].number = validLicense;
             }
 
             // Transform the report into an inspection format
@@ -118,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 report_type: report.Header['Survey Type'] || 'Survey',
                 visit_date: report.Header['Survey Date'] || 'N/A',
                 report_date: report.Header['Survey Date'] || 'N/A',
-                form_number: 'MT-' + (report.Header['License #'] || Math.random().toString(36).substr(2, 9)),
+                form_number: validLicense ? 'MT-' + validLicense : 'N/A',
                 census: 'N/A',
                 complaint_status: 'N/A',
                 met_with: report.Header['Survey Team Leader'] || 'N/A',
                 narrative: '', // Montana doesn't seem to have general narrative
                 investigation_findings: '',
-                facility_number: report.Header['License #'] || '',
+                facility_number: validLicense || '',
                 deficiencies: report.Issues.map(issue => ({
                     section_cited: issue.Rule || '',
                     description: issue.Findings || '',
