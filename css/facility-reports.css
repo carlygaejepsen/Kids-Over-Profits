@@ -857,6 +857,23 @@ RESPONSIVE
     margin: 0 0 20px;
 }
 
+/* AR report tag chips */
+.facility-report-container .ar-tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+.facility-report-container .ar-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #eef2f7;
+    color: #00004d;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 /* =================================================================
    AUTOCOMPLETE
    ================================================================= */

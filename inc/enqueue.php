@@ -356,6 +356,18 @@ function kop_enqueue_report_scripts() {
             'data_object'   => 'waReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/wa_reports.json',
         ),
+        'ar-reports' => array(
+            'script_handle' => 'ar-reports-script',
+            'script_path'   => '/js/inspections/ar_reports.js',
+            'data_object'   => 'arReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/ar_reports.json',
+        ),
+        'mn-reports' => array(
+            'script_handle' => 'mn-reports-script',
+            'script_path'   => '/js/inspections/mn_reports.js',
+            'data_object'   => 'mnReportsData',
+            'json_glob'     => get_stylesheet_directory() . '/js/data/mn_reports.json',
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -440,7 +452,7 @@ add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 function kop_state_reports_body_class($classes) {
     $state_report_slugs = array(
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
-        'mt-reports', 'ct-reports', 'wa-reports',
+        'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mn-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {

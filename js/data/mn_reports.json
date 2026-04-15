@@ -1,0 +1,248 @@
+{
+  "facilities": [
+    {
+      "facility_info": {
+        "facility_name": "License Details",
+        "full_address": "",
+        "phone": "",
+        "program_category": "180 Degrees Inc",
+        "program_name": "180 Degrees Inc",
+        "executive_director": "180 Degrees Inc",
+        "bed_capacity": "180 Degrees Inc",
+        "license_exp_date": "",
+        "relicense_visit_date": "",
+        "action": "180 Degrees Inc"
+      },
+      "reports": [
+        {
+          "report_id": "MN-1074484-001",
+          "report_date": "",
+          "report_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "Correction Order",
+          "categories": {
+            "doc_type": "Correction Order",
+            "tags": [
+              "violation",
+              "correction order"
+            ],
+            "pdf_url": "",
+            "doc_page_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878"
+          }
+        },
+        {
+          "report_id": "MN-1074484-002",
+          "report_date": "",
+          "report_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "Correction Order",
+          "categories": {
+            "doc_type": "Correction Order",
+            "tags": [
+              "violation",
+              "correction order"
+            ],
+            "pdf_url": "",
+            "doc_page_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879"
+          }
+        },
+        {
+          "report_id": "MN-1074484-003",
+          "report_date": "",
+          "report_url": "https://licensinglookup.dhs.state.mn.us/Glossary.pdf",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "glossary of terms",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "https://licensinglookup.dhs.state.mn.us/Glossary.pdf",
+            "doc_page_url": ""
+          }
+        },
+        {
+          "report_id": "MN-1074484-004",
+          "report_date": "",
+          "report_url": "https://licensinglookup.dhs.state.mn.us/Disclaimer.aspx",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "Terms/conditions of use, DHS disclaimers and notices",
+          "categories": {
+            "doc_type": "Notice",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://licensinglookup.dhs.state.mn.us/Disclaimer.aspx"
+          }
+        },
+        {
+          "report_id": "MN-1074484-005",
+          "report_date": "",
+          "report_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878"
+          }
+        },
+        {
+          "report_id": "MN-1074484-006",
+          "report_date": "",
+          "report_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879"
+          }
+        },
+        {
+          "report_id": "MN-1074484-007",
+          "report_date": "",
+          "report_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878"
+          }
+        },
+        {
+          "report_id": "MN-1074484-008",
+          "report_date": "",
+          "report_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879"
+          }
+        },
+        {
+          "report_id": "MN-1074484-009",
+          "report_date": "",
+          "report_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878"
+          }
+        },
+        {
+          "report_id": "MN-1074484-010",
+          "report_date": "",
+          "report_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879",
+          "raw_content": "",
+          "content_length": 0,
+          "is_structured": false,
+          "summary": "DHS document link (parsed from HTML)",
+          "categories": {
+            "doc_type": "Document",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879"
+          }
+        },
+        {
+          "report_id": "MN-1074484-011",
+          "report_date": "8/20/2025",
+          "report_url": "",
+          "raw_content": " | License Details\n\n\nBasic license details.\n180 Degrees Inc\tLicense status: Active\n\n(612) 287-4801\n\nRamsey County\n\nLicense number: 1074484\nLicense holder(s): 180 Degrees Inc\nLicense Holder Entity Identification Number(s): 4543479\nLicense status: Active\nType of service: Children's Residential Facilities\nInitial effective date: August 1, 2014\nLast renewed or updated on: January 1, 2026\nNext renewal due: December 31, 2026\nJurisdiction: Minnesota Department of Human Services\n\n\n\nLicensed to serve\nTotal capacity: 14\n\n\n\nLicensed to provide\nRestrictions: None\n\nUnit name: 180 Degrees Inc\nUnit capacity: 14\nAges served: 10 through 17\nGender: Female\nServices provided: Group Residential Setting, Shelter Services, Transitional Services\nSpecialized Setting Certifications: Sex Trafficked, Commercially Sexually Exploited or At Risk\n\n\n\nNote: If the program has a Qualified Residential Treatment Program (QRTP) certification, the QRTP certification for the program may not apply to all services. The placing agency should confirm with the licensor holder which service track(s) have a QRTP certification prior to placement.\n\n\n\nAdditional information\nLicensing authority: Minnesota Department of Human Services\n\n\nNote: For additional information relating to providers who are licensed by an authority other than the Minnesota Department of Human Services, please contact the licensing authority directly. A directory of county agencies is online.\n\n\n\nPublic documents available for this license.\nLicensing Actions and Maltreatment Investigation Memorandums\nDocuments below appear for four years from the date of posting\nDocument type\tDate issued\tFormat\nCorrection Order\t8/20/2025\tHTML\nCorrection Order\t12/2/2024\tHTML\n\n\n\n\nHuman Services (DHS) licensing web page statement:\n\nThe information found on this web page is public information. Types of public information you will find on this website include:\n\nMaltreatment investigation memorandum*\nLicensing actions for license types other than family child foster care, including: conditional licenses, fines, revocations, indefinite suspensions, and temporary immediate suspensions (See the glossary of terms for an explanation of each type of licensing action.) Please note that licensing actions for family child foster care are public documents and available upon request from DHS.\nSummary of reviews and investigations for family child care**\nDecisions issued by DHS to appeals of violations cited on correction orders and conditional licenses\nFinal agency decisions for licensing actions\nCorrection Orders for license types other than family child care, child foster care, adult foster care, and family adult day service programs. Please note that correction orders are public documents and available upon request from DHS, the licensing county, or the licensing agency\n\n*Maltreatment allegations involving a family child care or family child foster care program are conducted by the County in which the alleged incident occurred.\n\n**Summary of reviews and investigations for all other provider types will be added in the future.\n\nDeterminations may be subject to appeal. Not all records related to the license are included on this web page. If you view information that you believe is not public, notify DHS Licensing Division immediately by calling (651) 431-6500.\n\nMinnesota Department of Human Services website accessibility disclaimer: The Minnesota Department of Human Services has a policy of making the information on its websites accessible to people with disabilities. Pursuant to this commitment, DHS implements the provisions of the Americans with Disabilities Act and the Minnesota Human Rights Act. If you experience any difficulty accessing the content, call (651) 431-6500 or send an electronic mail message to DHS.LicensingDivision@state.mn.us to receive the subject matter in an alternative format. Indicate the nature of your accessibility problem, your preferred format, the license number of the facility, type and date of the document and your contact information so DHS can reach you with any questions in fulfilling your request. | 180 Degrees Inc | License status: Active | (612) 287-4801\n\nRamsey County\n\nLicense number: 1074484\nLicense holder(s): 180 Degrees Inc\nLicense Holder Entity Identification Number(s): 4543479\nLicense status: Active\nType of service: Children's Residential Facilities\nInitial effective date: August 1, 2014\nLast renewed or updated on: January 1, 2026\nNext renewal due: December 31, 2026\nJurisdiction: Minnesota Department of Human Services | Licensed to serve | Total capacity: 14 | Licensed to provide | Restrictions: None\n\nUnit name: 180 Degrees Inc\nUnit capacity: 14\nAges served: 10 through 17\nGender: Female\nServices provided: Group Residential Setting, Shelter Services, Transitional Services\nSpecialized Setting Certifications: Sex Trafficked, Commercially Sexually Exploited or At Risk\n\n\n\nNote: If the program has a Qualified Residential Treatment Program (QRTP) certification, the QRTP certification for the program may not apply to all services. The placing agency should confirm with the licensor holder which service track(s) have a QRTP certification prior to placement. | Additional information | Licensing authority: Minnesota Department of Human Services\n\n\nNote: For additional information relating to providers who are licensed by an authority other than the Minnesota Department of Human Services, please contact the licensing authority directly. A directory of county agencies is online. | Licensing Actions and Maltreatment Investigation Memorandums\nDocuments below appear for four years from the date of posting | Document type | Date issued | Format | Correction Order | 8/20/2025 | HTML | Correction Order | 12/2/2024 | HTML |  |  | Helpful Links:\n\n\n\nNew search\n\nGlossary of terms\n\nFeedback for this site\n\nTerms/conditions of use, DHS disclaimers and notices",
+          "content_length": 5873,
+          "is_structured": true,
+          "summary": " | License Details\n\n\nBasic license details.\n180 Degrees Inc\tLicense status: Active\n\n(612) 287-4801\n\nRamsey County\n\nLicense number: 1074484\nLicense holder(s): 180 Degrees Inc\nLicense Holder Entity Identification Number(s): 4543479\nLicense status: Active\nType of service: Children's Residential Facilities\nInitial effective date: August 1, 2014\nLast renewed or updated on: January 1, 2026\nNext renewal due: December 31, 2026\nJurisdiction: Minnesota Department of Human Services\n\n\n\nLicensed to serve\nTotal capacity: 14\n\n\n\nLicensed to provide\nRestrictions: None\n\nUnit name: 180 Degrees Inc\nUnit capacity: 14\nAges served: 10 through 17\nGender: Female\nServices provided: Group Residential Setting, Shelter Services, Transitional Services\nSpecialized Setting Certifications: Sex Trafficked, Commercially Sexually Exploited or At Risk\n\n\n\nNote: If the program has a Qualified Residential Treatment Program (QRTP) certification, the QRTP certification for the program may not apply to all services. The placing agency should confirm with the licensor holder which service track(s) have a QRTP certification prior to placement.\n\n\n\nAdditional information\nLicensing authority: Minnesota Department of Human Services\n\n\nNote: For additional information relating to providers who are licensed by an authority other than the Minnesota Department of Human Services, please contact the licensing authority directly. A directory of county agencies is online.\n\n\n\nPublic documents available for this license.\nLicensing Actions and Maltreatment Investigation Memorandums\nDocuments below appear for four years from the date of posting\nDocument type\tDate issued\tFormat\nCorrection Order\t8/20/2025\tHTML\nCorrection Order\t12/2/2024\tHTML\n\n\n\n\nHuman Services (DHS) licensing web page statement:\n\nThe information found on this web page is public information. Types of public information you will find on this website include:\n\nMaltreatment investigation memorandum*\nLicensing actions for license types other than family child foster care, including: conditional licenses, fines, revocations, indefinite suspensions, and temporary immediate suspensions (See the glossary of terms for an explanation of each type of licensing action.) Please note that licensing actions for family child foster care are public documents and available upon request from DHS.\nSummary of reviews and investigations for family child care**\nDecisions issued by DHS to appeals of violations cited on correction orders and conditional licenses\nFinal agency decisions for licensing actions\nCorrection Orders for license types other than family child care, child foster care, adult foster care, and family adult day service programs. Please note that correction orders are public documents and available upon request from DHS, the licensing county, or the licensing agency\n\n*Maltreatment allegations involving a family child care or family child foster care program are conducted by the County in which the alleged incident occurred.\n\n**Summary of reviews and investigations for all other provider types will be added in the future.\n\nDeterminations may be subject to appeal. Not all records related to the license are included on this web page. If you view information that you believe is not public, notify DHS Licensing Division immediately by calling (651) 431-6500.\n\nMinnesota Department of Human Services website accessibility disclaimer: The Minnesota Department of Human Services has a policy of making the information on its websites accessible to people with disabilities. Pursuant to this commitment, DHS implements the provisions of the Americans with Disabilities Act and the Minnesota Human Rights Act. If you experience any difficulty accessing the content, call (651) 431-6500 or send an electronic mail message to DHS.LicensingDivision@state.mn.us to receive the subject matter in an alternative format. Indicate the nature of your accessibility problem, your preferred format, the license number of the facility, type and date of the document and your contact information so DHS can reach you with any questions in fulfilling your request. | 180 Degrees Inc | License status: Active | (612) 287-4801\n\nRamsey County\n\nLicense number: 1074484\nLicense holder(s): 180 Degrees Inc\nLicense Holder Entity Identification Number(s): 4543479\nLicense status: Active\nType of service: Children's Residential Facilities\nInitial effective date: August 1, 2014\nLast renewed or updated on: January 1, 2026\nNext renewal due: December 31, 2026\nJurisdiction: Minnesota Department of Human Services | Licensed to serve | Total capacity: 14 | Licensed to provide | Restrictions: None\n\nUnit name: 180 Degrees Inc\nUnit capacity: 14\nAges served: 10 through 17\nGender: Female\nServices provided: Group Residential Setting, Shelter Services, Transitional Services\nSpecialized Setting Certifications: Sex Trafficked, Commercially Sexually Exploited or At Risk\n\n\n\nNote: If the program has a Qualified Residential Treatment Program (QRTP) certification, the QRTP certification for the program may not apply to all services. The placing agency should confirm with the licensor holder which service track(s) have a QRTP certification prior to placement. | Additional information | Licensing authority: Minnesota Department of Human Services\n\n\nNote: For additional information relating to providers who are licensed by an authority other than the Minnesota Department of Human Services, please contact the licensing authority directly. A directory of county agencies is online. | Licensing Actions and Maltreatment Investigation Memorandums\nDocuments below appear for four years from the date of posting | Document type | Date issued | Format | Correction Order | 8/20/2025 | HTML | Correction Order | 12/2/2024 | HTML |  |  | Helpful Links:\n\n\n\nNew search\n\nGlossary of terms\n\nFeedback for this site\n\nTerms/conditions of use, DHS disclaimers and notices",
+          "categories": {
+            "doc_type": "Inspection Record",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://licensinglookup.dhs.state.mn.us/Details.aspx?l=1074484"
+          }
+        },
+        {
+          "report_id": "MN-1074484-012",
+          "report_date": "8/20/2025",
+          "report_url": "",
+          "raw_content": "Correction Order | 8/20/2025 | HTML",
+          "content_length": 35,
+          "is_structured": true,
+          "summary": "Correction Order | 8/20/2025 | HTML",
+          "categories": {
+            "doc_type": "Inspection Record",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://licensinglookup.dhs.state.mn.us/Details.aspx?l=1074484"
+          }
+        },
+        {
+          "report_id": "MN-1074484-013",
+          "report_date": "12/2/2024",
+          "report_url": "",
+          "raw_content": "Correction Order | 12/2/2024 | HTML",
+          "content_length": 35,
+          "is_structured": true,
+          "summary": "Correction Order | 12/2/2024 | HTML",
+          "categories": {
+            "doc_type": "Inspection Record",
+            "tags": [],
+            "pdf_url": "",
+            "doc_page_url": "https://licensinglookup.dhs.state.mn.us/Details.aspx?l=1074484"
+          }
+        }
+      ],
+      "_meta": {
+        "license_id": "1074484",
+        "county": "180 Degrees Inc",
+        "license_number": "180 Degrees Inc",
+        "source_url": "https://licensinglookup.dhs.state.mn.us/Details.aspx?l=1074484",
+        "parsed_doc_links": [
+          "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878",
+          "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879",
+          "https://licensinglookup.dhs.state.mn.us/Glossary.pdf",
+          "https://licensinglookup.dhs.state.mn.us/Disclaimer.aspx",
+          "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878",
+          "http://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879",
+          "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471878",
+          "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&amp%3BRevisionSelectionMethod=LatestReleased&amp%3BdDocName=LLO_471879",
+          "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471878",
+          "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=LLO_471879"
+        ]
+      }
+    }
+  ],
+  "scraped_timestamp": "2026-04-15T20:14:26.095314+00:00",
+  "scraping_notes": {
+    "total_facilities": 1,
+    "failed_count": 0,
+    "failed_ids": [],
+    "run_issue": "",
+    "source": "MN DHS Licensing Information Lookup",
+    "source_url": "https://licensinglookup.dhs.state.mn.us/Results.aspx?a=False&cdtrt=False&crfcc=False&crfmhc=False&e=0&dsfpv=False&hcbsbss=False&ppy40=False&crfss=False&irts=False&qrtp61=False&crfsc=False&con=All&afcfads=False&hcbsses=False&rsfsls=False&crsrc=False&ppy62=False&ppy61=False&dsfeds=False&sn=All&irtsrcs=False&co=All&sils62=False&hcbsihss=False&crssls=False&hcbsics=False&locked=False&adcrem29=False&sils40=False&ci=All&hcbsds=False&crfgrs=False&crfts=False&rsfrs=false&hcbsrss=False&cdtsamht=False&hcbsiss=False&crfrt=False&crscr=False&crfprtf=False&cdtidat=False&stcse40=False&qrtp40=False&crsaost=False&cdtat=False&rcs40=False&dsfess=False&crfcdc=False&rcs=False&stcse62=False&stcse61=False&qrtp62=False&crfmhlock=False&dsfees=False&tn=Children%27s%20Residential%20Facilities&z=&mhc=False&crfd=False&cdtnrt=False&sils61=False&s=All&afcaost=False&t=40&cdtcwct=False&dsfdth=False&n=&l="
+  }
+}
