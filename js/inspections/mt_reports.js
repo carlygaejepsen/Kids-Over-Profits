@@ -66,10 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`Failed to fetch data: ${response.status}`);
             }
             scrapedTimestamp = response.headers.get('Last-Modified') || '';
-            renderLastUpdated();
 
             const rawReports = await response.json();
             console.log(`Loaded ${rawReports.length} raw reports`);
+
+            // Fall back to most recent survey date if Last-Modified header wasn't available
+            if (!scrapedTimestamp && rawReports.length > 0) {
+                const surveyDates = rawReports
+                    .map(r => r.Header && r.Header['Survey Date'])
+                    .filter(Boolean);
+                if (surveyDates.length > 0) {
+                    scrapedTimestamp = surveyDates.sort().reverse()[0];
+                }
+            }
+            renderLastUpdated();
             
             // Transform Montana reports into facility structure
             const aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);

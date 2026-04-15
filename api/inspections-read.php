@@ -100,6 +100,12 @@ try {
         $timestamps = array_filter(array_column($facilityRows, 'scraped_timestamp'));
         if (!empty($timestamps)) {
             $latestTimestamp = max($timestamps);
+        } else {
+            // Fall back to the most recent updated_at from the DB
+            $updatedAts = array_filter(array_column($facilityRows, 'updated_at'));
+            if (!empty($updatedAts)) {
+                $latestTimestamp = max($updatedAts);
+            }
         }
     }
 
