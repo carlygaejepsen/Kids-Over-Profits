@@ -880,3 +880,102 @@ RESPONSIVE
 .autocomplete-item.highlighted {
     background-color: #e5e7eb;
 }
+
+/* =================================================================
+   MN REPORT STYLES
+   ================================================================= */
+
+/* Inspection summary header layout */
+.facility-report-container .inspection-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.facility-report-container .doc-type-label {
+    font-weight: 700;
+}
+.facility-report-container .doc-date {
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
+/* Parsed structured fields */
+.facility-report-container .mn-parsed-fields {
+    margin-bottom: 12px;
+}
+.facility-report-container .mn-field {
+    margin: 6px 0;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+.facility-report-container .mn-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Violations list */
+.facility-report-container .mn-violations-list {
+    margin: 10px 0;
+}
+.facility-report-container .mn-violation {
+    border-left: 3px solid #ff6600;
+    padding: 8px 12px;
+    margin: 8px 0;
+    background: #fff8f5;
+    border-radius: 0 4px 4px 0;
+}
+.facility-report-container .mn-violation-text {
+    margin-bottom: 4px;
+    font-size: 0.95em;
+}
+.facility-report-container .mn-violation-rule {
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 2px;
+}
+.facility-report-container .mn-violation-correction {
+    font-size: 0.85em;
+    color: #333;
+    margin-top: 2px;
+}
+
+/* Tags (MN) */
+.facility-report-container .mn-tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.facility-report-container .mn-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #fff0e6;
+    color: #c45000;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Excerpt text */
+.facility-report-container .doc-excerpt {
+    font-size: 0.95em;
+    color: #333;
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+}
+
+/* Full document text */
+.facility-report-container .doc-body p {
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+    color: #222;
+}
+.facility-report-container .doc-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* Source link */
+.facility-report-container .doc-source-link {
+    margin-top: 10px;
+    font-size: 0.9em;
+}

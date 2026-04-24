@@ -43,3 +43,8 @@ update_organizations.sql
 
 # Claude Code temp files
 tmpclaude-*
+
+# MN scraper — local state (browser profile, progress cache, temp)
+.tmp/
+scripts/.mn-browser-profile/
+scripts/mn_progress.json
