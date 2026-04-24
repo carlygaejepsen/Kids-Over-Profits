@@ -368,6 +368,12 @@ function kop_enqueue_report_scripts() {
             'data_object'   => 'mnReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/mn_reports.json',
         ),
+        'or-reports' => array(
+            'script_handle' => 'or-reports-script',
+            'script_path'   => '/js/inspections/or_reports.js',
+            'data_object'   => 'orReportsData',
+            'json_glob'     => '',
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -452,7 +458,7 @@ add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 function kop_state_reports_body_class($classes) {
     $state_report_slugs = array(
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
-        'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mn-reports',
+        'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mn-reports', 'or-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {
