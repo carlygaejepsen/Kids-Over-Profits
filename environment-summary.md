@@ -1,137 +1,103 @@
 # Environment and Access Summary
 
-This document outlines the key details of the development and server environment for the Kids Over Profits project.
+This document summarizes the runtime expectations for the Kids Over Profits child theme.
 
-## 1. Local Development Environment
+## 1. Repo Scope
 
-*   **Platform:** Flywheel Local (WordPress local development environment)
-*   **Operating System:** Windows
-*   **Project Root:** `c:\Users\daniu\Local Sites\kids-over-profits\`
-*   **WordPress Root:** `app/public/` (relative to project root)
-*   **Child Theme Directory:** `app/public/wp-content/themes/child/`
-*   **Web Server:** Apache (via Flywheel Local)
-*   **PHP Version:** 8.2.29
-*   **Database:** MySQL (accessible via Flywheel Local's Adminer)
-*   **Local URL:** https://kids-over-profits.local
-*   **Version Control:** Git repository maintained within the child theme directory
-*   **Current Branch:** `staging.v2`
-*   **Default Branch:** `main`
+- Repository type: standalone WordPress child theme source
+- Theme stack: Kadence parent theme plus this child theme
+- Runtime expectation: this repo may be mounted into any compatible WordPress install
+- Do not assume a fixed local checkout path such as `app/public/wp-content/themes/child/`
+- Prefer WordPress path helpers like `get_stylesheet_directory()` and `get_stylesheet_directory_uri()` over hard-coded filesystem paths
 
-## 2. Production Server Environment
+## 2. Production Environment
 
-*   **Hosting Provider:** NixiHost (shared hosting, cPanel)
-*   **Web Server:** Apache with LiteSpeed
-*   **PHP Version:** 8.2 (handler: `ea-php82___lsphp`)
-*   **Database:** MySQL (provisioned through hosting)
-*   **Remote Access:** SSH access available for shell commands
-*   **Deployment:** Git deployment via `.cpanel.yml` or manual file transfer
+- Hosting provider: NixiHost shared hosting with cPanel
+- Web server: Apache with LiteSpeed
+- PHP version: 8.2 (`ea-php82___lsphp`)
+- Database: MySQL
+- Deployment: `.cpanel.yml` or manual file transfer
+- Remote access: SSH is available outside the repo, but no credentials are stored here
 
-## 3. Application Details
+## 3. Application Runtime
 
-*   **Framework:** WordPress
-*   **Theme Architecture:** Kadence parent theme with custom child theme
-    *   **Parent Theme:** Kadence
-    *   **Child Theme Directory:** `child`
-*   **Active Plugins:**
-    *   **Security:** Wordfence WAF (loaded via `.htaccess`)
-    *   **Caching:** LiteSpeed Cache (LSCache)
-    *   **SEO:** Yoast SEO (wordpress-seo)
-    *   **Custom Fields:** Advanced Custom Fields
-    *   **Media:** FileBird Pro, Media Sync, PDF Embedder
-    *   **Donations:** Givebutter
-    *   **Analytics:** Google Site Kit
-    *   **Backup:** UpdraftPlus
-    *   **And more...** (33 total plugins)
+### Core Bootstrap
+- `functions.php` is now a thin bootstrap
+- most theme logic lives in:
+  - `inc/utilities.php`
+  - `inc/enqueue.php`
+  - `inc/database.php`
+  - `inc/rest-api.php`
+  - `inc/admin.php`
+  - `inc/features.php`
 
-## 4. Custom Application Architecture
+### Main Data Stores
+- `facilities_master`
+- `suggested_edits`
+- `locations_master`
+- `referrers_master`
+- `wiki_submissions`
+- `news_submissions`
+- `inspection_facilities`
+- `inspection_reports`
 
-The child theme contains a full-stack data management application:
+### Primary Endpoints
+- `api/get-master-data.php`
+- `api/save-master.php`
+- `api/save-suggestion.php`
+- `api/process-edit.php`
+- `api/save-wiki-submission.php`
+- `api/save-news-submission.php`
+- `api/manage-submissions.php`
+- `api/inspections-read.php`
+- `api/inspections-write.php`
 
-### Database Tables
-*   `facilities_master` — Official facility records (admin-managed)
-*   `suggested_edits` — Public-submitted changes pending approval
-*   `locations_master` — Location/address data for facilities
-*   `referrers_master` — Referrer information for facilities
-*   `wiki_submissions` — Wiki editor form submissions (TTI program wiki entries)
-*   `news_submissions` — News processor form submissions (processed articles)
+## 4. Key Pages
 
-### API Endpoints (`api/`)
-*   **Admin Workflow:**
-    *   `get-master-data.php` — Fetches official records
-    *   `save-master.php` — Saves directly to master table
-*   **Public Suggestion Workflow:**
-    *   `save-suggestion.php` — Saves to suggested_edits for review
-    *   `process-edit.php` — Admin approval/rejection handler
-*   **Content Submission Workflow:**
-    *   `save-wiki-submission.php` — Saves wiki editor submissions
-    *   `save-news-submission.php` — Saves news processor submissions
-    *   `manage-submissions.php` — Admin submission management
-    *   `init-submissions-db.php` — Creates submission tables (run with `?init=1`)
-*   **Shared:**
-    *   `get-autocomplete.php` — Form field autocomplete
-    *   `approve-edits.php` — Admin approval UI
-
-### Page Templates
-*   `page-admin-data.php` — Admin data entry interface
-*   `page-data.php` — Public suggestion form
-*   `page-tti-program-index.php` — Facility directory
-*   `page-wiki-editor.php` — Wiki content editor
-*   `page-news-processor.php` — News processing interface
-
-### JavaScript Modules (`js/`)
-*   `js/data-form/` — Facility data entry form system (modular architecture)
-*   `js/inspections/` — State inspection report displays
-*   `js/data/` — Static JSON fallback datasets
-
-### Stylesheets (`css/`)
-*   `data-form.css`, `colors.css`, `facility-reports.css`, `wiki-editor.css`, etc.
+- `page-admin-data.php`
+- `page-data.php`
+- `page-admin-submissions.php`
+- `page-tti-program-index.php`
+- `page-state-reports.php`
+- `page-location-index.php`
+- `page-referrer-index.php`
+- `page-wiki-editor.php`
+- `page-wiki-feed.php`
+- `page-news-processor.php`
+- `page-news-feed.php`
 
 ## 5. Configuration Files
 
-*   **`.env`** — Environment variables (gitignored, contains credentials)
-*   **`.env.example`** — Template for `.env` file
-*   **`.cpanel.yml`** — cPanel Git deployment automation
-*   **`.htaccess`** — Apache directives (Wordfence, LiteSpeed)
-*   **`tailwind.config.js`** — Tailwind CSS configuration
-*   **`api/config.php`** — Database configuration loader
-*   **`api/config.local.php`** — Local database credentials (gitignored)
-*   **`submissions_database.sql`** — SQL schema for wiki/news submission tables
+- `.env.example`
+- `.cpanel.yml`
+- `.htaccess`
+- `api/config.php`
+- `api/config.local.php`
+- `submissions_database.sql`
 
-## 6. Database Credential Configuration
+## 6. Credential Resolution
 
-`api/config.php` resolves connection settings from multiple sources in this priority order:
+`api/config.php` resolves database credentials in this order:
+1. `.env`
+2. WordPress constants (`KOP_*` or `DB_*`)
+3. environment variables
+4. `api/config.local.php`
 
-### Source Priority
-1. **`.env` file** — Loaded first, sets environment variables
-2. **WordPress constants** — From `wp-config.php` (KOP_* or DB_* constants)
-3. **Environment variables** — System-level environment
-4. **Local override file** — `api/config.local.php` (fallback)
+Credential keys:
+- host: `KOP_DB_HOST` then `DB_HOST`
+- database: `KOP_DB_NAME` then `DB_NAME`
+- username: `KOP_DB_USER`, `KOP_DB_USERNAME`, `DB_USER`, `DB_USERNAME`
+- password: `KOP_DB_PASS`, `KOP_DB_PASSWORD`, `DB_PASS`, `DB_PASSWORD`
 
-### Credential Resolution Order
-*   **Host:** `KOP_DB_HOST` → `DB_HOST`
-*   **Database:** `KOP_DB_NAME` → `DB_NAME`
-*   **Username:** `KOP_DB_USER` → `KOP_DB_USERNAME` → `DB_USER` → `DB_USERNAME`
-*   **Password:** `KOP_DB_PASS` → `KOP_DB_PASSWORD` → `DB_PASS` → `DB_PASSWORD`
+## 7. Local Development Expectations
 
-### Setup Options
-1. **For Flywheel Local:** Create `.env` file with database credentials from Flywheel's Database tab
-2. **For Production:** Credentials are typically in `wp-config.php`
-3. **For CLI scripts:** Copy `api/config.php.example` to `api/config.local.php` and configure
+- Use any WordPress environment that can mount this child theme alongside the Kadence parent theme.
+- Avoid documentation that assumes a single machine path or a specific Flywheel Local checkout.
+- Test the workflows that your changes affect: data forms, TTI index, state reports, wiki/news tooling, and anonymous portal.
 
-When credentials are missing, the API responds with HTTP 500 and a JSON payload describing the missing fields.
+## 8. Documentation References
 
-## 7. Development Workflow
-
-1. Start the site in Flywheel Local
-2. Make changes in `app/public/wp-content/themes/child/`
-3. Test changes at `https://kids-over-profits.local`
-4. Commit changes from within the child theme directory
-5. Export database if schema changes were made
-6. Deploy to production via Git or manual transfer
-
-## 8. Documentation
-
-*   **`AGENTS.md`** — Central developer guide (architecture, conventions, design)
-*   **`environment-summary.md`** — This file
-*   **`COLOR_SYSTEM_SUMMARY.md`** — Color palette and design system
-
+- `AGENTS.md`
+- `README.md`
+- `QUICK-REFERENCE.md`
+- `docs/README.md`

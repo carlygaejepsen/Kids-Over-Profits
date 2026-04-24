@@ -1,34 +1,42 @@
-# Kids Over Profits - Project Documentation
+# Kids Over Profits Documentation
 
-This repository contains several specialized tools and modules designed to support the Kids Over Profits mission. This directory serves as the central hub for documentation regarding these various projects.
+This folder contains focused documentation for the major workflows inside the Kids Over Profits child theme.
 
-## Projects
+## Workflow Docs
 
 ### [News Processor](./news-processor/README.md)
-An AI-powered tool for fetching, analyzing, and structuring news articles related to the troubled teen industry. It automates data extraction using multiple AI providers.
+AI-assisted article intake, extraction, review, and submission for TTI-related news coverage.
 
 ### [Wiki Editor](./wiki-editor/README.md)
-A custom editor interface designed for creating and modifying wiki entries within the platform.
+Structured wiki entry editing, markdown generation, import, browsing, and submission workflows.
 
 ### [TTI Program Index](./tti-program-index/README.md)
-A searchable index and directory for "Troubled Teen Industry" (TTI) programs, providing a user-friendly interface to browse program data.
+Public facility directory and search experience backed by the facilities REST endpoint with fallback datasets.
 
-### [State-Level Inspection Reports](./state-inspection-reports/README.md)
-Specialized data viewers for browsing detailed government inspection reports, citations, and deficiency narratives for specific states (e.g., Texas, Utah).
+### [State Inspection Reports](./state-inspection-reports/README.md)
+State-specific regulatory inspection viewers for Arizona, Arkansas, California, Connecticut, Minnesota, Montana, Texas, Utah, and Washington.
 
 ### [Admin Submissions](./admin-submissions/README.md)
-A dashboard for administrators to review, approve, or reject user-submitted data and content.
+Dashboard for reviewing wiki, news, and data-form submissions.
 
 ### [Data Forms](./data-forms/README.md)
-Public and administrative forms used for data collection and entry into the system.
+Administrative and public data-entry forms for facilities, operators, locations, and referrers.
 
 ### [Anonymous Portal](./anonymous-portal/README.md)
-A secure system allowing whistleblowers and victims to submit documents and reports anonymously.
+Secure anonymous document upload flow for whistleblowers, survivors, and staff.
 
-## Repository Overview
+## Repository Runtime Overview
 
-- **`/api`**: Backend PHP scripts and endpoints for data processing and database interactions.
-- **`/js`**: Client-side JavaScript files for the various single-page applications (SPAs).
-- **`/css`**: Stylesheets corresponding to specific modules.
-- **`/templates`**: PHP page templates.
-- **`functions.php`**: Main theme entry point, handling script enqueueing and global configurations.
+- `functions.php` is now a thin bootstrap that loads the real runtime from `inc/*.php`.
+- `inc/` contains the theme modules for enqueueing, REST routes, database helpers, admin glue, utilities, and feature classes.
+- `api/` contains the procedural endpoints for CRUD, submissions, inspections, diagnostics, and AI processing.
+- `page-*.php` files provide WordPress page templates; `templates/` holds shared markup fragments.
+- `js/` and `css/` contain the page entry points, module scripts, and page-specific styles.
+- `scripts/` contains data pipelines, importers, and inspection scrapers such as `scripts/mn_scraper.py`.
+
+## Current Notes
+
+- State inspection reports now use a shared report-page structure and surface API-backed `last updated` timestamps.
+- The TTI Program Index prefers `/wp-json/kop/v1/facilities` and falls back to packaged datasets only when necessary.
+- The data-form stack relies on localized `KOP_DATA_FORM_CONFIG` values instead of environment-specific local filesystem paths.
+- This repo should be treated as the child theme source itself, not as a full local WordPress checkout.

@@ -1,57 +1,95 @@
 # News Processor
 
-The **News Processor** is a specialized tool within the Kids Over Profits platform designed to streamline the collection and analysis of news articles related to the Troubled Teen Industry (TTI). It leverages Artificial Intelligence to automatically extract structured data from raw article text.
+The News Processor is the structured intake workflow for TTI-related news coverage. It helps staff and researchers capture article metadata, trauma-sensitive summaries, tagged entities, and publication details before saving the record into `news_submissions`.
 
 ## Overview
 
-The tool functions as a Single Page Application (SPA) embedded within the WordPress theme. It allows users (typically researchers or admins) to:
-1.  Input a news article URL.
-2.  Fetch the article content.
-3.  Process the content using various AI models (Ollama, Groq, Gemini, Claude) to identify key entities like program names, people, and allegations.
-4.  Review and edit the extracted data.
-5.  Save the structured data into the `news_submissions` database.
+The processor is a WordPress page backed by a large client-side form. It supports both manual entry and AI-assisted extraction from article URLs or pasted article text.
+
+Typical workflow:
+1. Open the News Processor page.
+2. Paste an article URL or source text.
+3. Optionally run AI extraction.
+4. Review and edit the extracted fields.
+5. Check duplicates.
+6. Save the structured submission for review or publication workflows.
 
 ## Architecture
 
-The module follows a decoupled architecture where the frontend handles the UI and state, while the backend manages external API calls and database operations.
+### Page and Markup
+- `page-news-processor.php` is the WordPress page template.
+- That template loads `api/news_processor.php`, which contains the markup for the processor UI.
 
 ### Frontend
-- **Entry Point:** `page-news-processor.php` - The WordPress template that loads the page.
-- **UI Structure:** `api/news_processor.php` - Contains the HTML markup for the form, modals, and layout.
-- **Logic:** `js/news-processor.js` - The core engine. It handles:
-    - State management (using `localStorage` for persistence).
-    - API communication (fetching articles, sending prompts to AI, saving data).
-    - UI updates and form validation.
+- `inc/enqueue.php::enqueue_news_processor_scripts()` loads `css/news-processor.css` and `js/news-processor.js`.
+- The frontend receives `KOP_NewsProcessor_Settings`, which includes:
+  - `apiUrl` for AI extraction
+  - `submissionUrl` for saving submissions
+  - `savedValuesUrl` for saved-value lists
+  - `duplicateCheckUrl` for duplicate detection
+  - `nonce` for request validation
+- `js/news-processor.js` manages the UI, dynamic fields, local draft persistence, AI interactions, and submission flow.
 
-### Backend (`/api`)
-- **AI Processing:** `process-news-ai.php` - The bridge to AI services. It constructs prompts and routes requests to the configured AI provider.
-- **Data Persistence:** `save-news-submission.php` - CRUD endpoint for the `news_submissions` table.
-- **Data Consistency:** `get-autocomplete.php` - Provides standardized lists of programs and entities to ensure data quality.
+### Backend
+- `api/process-news-ai.php` handles AI extraction requests.
+- `api/save-news-submission.php` persists processed news submissions.
+- `api/check-news-duplicate.php` checks for likely duplicate articles.
+- `api/saved-values.php` stores and returns reusable saved values.
+
+## AI Providers
+
+### Current UI
+The current page UI exposes:
+- Groq
+- Hugging Face
+
+### Backend Support
+`api/process-news-ai.php` also contains provider support for:
+- Ollama
+- Claude
+- Gemini
+- Groq
+- Hugging Face
+
+That means the backend can support more providers than the current visible selector. If the UI is expanded later, update this doc to match the actual page controls.
 
 ## Key Features
 
-- **Multi-Model AI Support:** Configurable to use different LLMs depending on availability or cost (e.g., local Ollama instance vs. cloud-based Claude/Gemini).
-- **Auto-Extraction:** Automatically identifies:
-    - **Programs:** Facilities mentioned in the article.
-    - **People:** Staff, owners, or victims involved.
-    - **Locations:** City, State, Country.
-    - **Dates:** Publication date and relevant event dates.
-    - **Summary:** A concise summary of the article.
-- **Local Persistence:** Drafts are saved to the browser's local storage, preventing data loss during accidental refreshes.
+### Structured Article Intake
+The form captures:
+- article title, publication, author, URL, and publication date
+- location and tags
+- facilities and companies mentioned
+- staff, owners, survivors, and victims mentioned
+- trauma-sensitive summary and alternate title when needed
+- content warnings and article-type specific details
 
-## Usage
+### AI-Assisted Extraction
+- Can process either a URL or pasted article text
+- Applies optional custom AI instructions
+- Returns structured values for review instead of publishing automatically
 
-1.  **Navigate** to the News Processor page (e.g., `/news-processor`).
-2.  **Paste** the URL of a news article in the input field.
-3.  **Click** "Fetch & Process".
-4.  **Review** the AI-generated form filling. Verify the "Programs" and "People" fields against the article text.
-5.  **Edit** any incorrect information.
-6.  **Submit** the entry to the database.
+### Local Draft Persistence
+- `js/news-processor.js` stores working form state in `localStorage`
+- saved values and AI preferences are also persisted locally
+- accidental refreshes should not wipe the current draft
+
+### Duplicate Protection
+- the processor can call `api/check-news-duplicate.php` before submission
+- this helps avoid storing the same article multiple times under slightly different metadata
+
+## Usage Notes
+
+- AI output is a draft, not a final record. Review all extracted people, facilities, and allegations before saving.
+- The processor is designed for trauma-sensitive editorial handling, so summaries should remain factual and concise.
+- If the page UI and the backend provider list drift apart, trust the visible UI first and document any manual-only providers separately.
 
 ## Configuration
 
-Environment variables (typically in `.env` or server config) control the API keys for the AI services:
-- `OLLAMA_API_URL`
-- `GROQ_API_KEY`
+Common environment keys used by the AI backend include:
+- `GROQ_API_KEY` or `GROK_API_KEY`
+- `HUGGINGFACE_API_KEY`
+- `ANTHROPIC_API_KEY`
 - `GEMINI_API_KEY`
-- `CLAUDE_API_KEY`
+
+Ollama support is local and does not require a cloud API key, but it does require a reachable Ollama instance when used.

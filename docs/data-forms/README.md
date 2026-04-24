@@ -1,60 +1,73 @@
 # Data Forms
 
-The **Data Forms** module provides the interface for users (both public and administrative) to input detailed information about the Troubled Teen Industry ecosystem. It supports collecting data on Companies (Operators), Locations (Facilities), and Referrers.
+The Data Forms module covers both the admin master-data form and the public suggestion form. Together they support structured data entry for facilities, operators, locations, referrers, and related program metadata.
 
 ## Overview
 
-This module is a complex, multi-step form application designed to capture granular data. It features a "Project" system that allows users to save their work locally in the browser before submitting, enabling them to build comprehensive datasets over time without losing progress.
+The forms use a project-based workflow so contributors can build, save, reload, export, and submit complex records over time instead of entering everything in a single session.
 
-## Architecture
+## Page Entry Points
 
-- **Entry Point:** `page-data.php` - Wrapper for the public form.
-- **Template:** `templates/data-form-public.php` - Contains the HTML structure for the form.
-- **Frontend Logic:**
-    - `edcons-display.js` (likely shared logic for display).
-    - `autocomplete.js` (implied) - Handles the "search-as-you-type" functionality for fields like "Owner", "Location", etc.
-- **Backend:** Submissions are sent to `api/save-suggestion.php` (or similar, based on `submitSuggestion()` calls).
+### Admin Form
+- `page-admin-data.php`
+- shared markup in `templates/data-form-admin.php`
+- saves directly to the master data workflow
+
+### Public Suggestion Form
+- `page-data.php`
+- shared markup in `templates/data-form-public.php`
+- submits suggestions for review rather than writing directly to the master dataset
+
+## Runtime Architecture
+
+### Asset Loading
+- `inc/enqueue.php::enqueue_data_form_script()` decides when the data-form stack should load.
+- The form assets are localized with `KOP_DATA_FORM_CONFIG` so the frontend can resolve endpoints without hard-coded machine paths.
+
+### Frontend Modules
+- `js/data-form/` contains the legacy shared modules and the `data-form.v4.js` orchestrator.
+- `js/data-form-modules/` contains the newer config, API, normalization, UI, and page-specific modules.
+- supporting scripts include `js/autocomplete.js`, `js/field-tooltips.js`, and `js/tutorial-overlay.js`.
+
+### Backend Endpoints
+- `api/get-master-data.php` loads the master dataset
+- `api/save-master.php` saves admin edits
+- `api/save-suggestion.php` stores public suggestions
+- `api/get-autocomplete.php` powers shared autocomplete fields
+- `api/process-edit.php` is part of the suggestion approval workflow
 
 ## Key Features
 
-### 1. Multi-Category Support
-The form is divided into three main contexts:
-- **Companies / Operators:** For corporate entities and ownership groups.
-- **Locations / Facilities:** For specific program sites (e.g., a campus in Utah).
-- **Referrers:** For educational consultants and school districts who funnel children into these programs.
+### Project Workflow
+- local project save and reload support
+- import and export of project JSON
+- browser-based draft persistence as backup
+- ability to move between complex records without losing work
 
-### 2. Project Management (Local Storage)
-- **Save Drafts:** Users can "Save Draft Locally", preserving their current form state in the browser's `localStorage`.
-- **Project Lists:** A sidebar/panel allows users to switch between different "Projects" (drafts) they are working on.
-- **Export/Import:** Users can export their projects to JSON files and import them back, facilitating data sharing or backup.
+### Structured Editing
+- facility, operator, location, and referrer data entry
+- field notes and helper tooling
+- autocomplete-backed entity lookups
+- clone-facility workflow for quickly duplicating similar records
 
-### 3. Detailed Data Collection
-The form captures extensive details, including:
-- **Identification:** Names, aliases, past names.
-- **Operations:** Opening/closing dates, capacity, census.
-- **Staff:** Key personnel, past employment history.
-- **Treatment:** Standard and custom treatment types (e.g., ABA, Wilderness).
-- **Resources:** Availability of documents (lawsuits, inspections, brochures).
-- **Philosophy:** Core beliefs/methods (e.g., 12-step, Synanon-based).
+### Guidance and Tooling
+- tutorial overlay for new users
+- field tooltips for dense form sections
+- admin-specific and public-specific page behaviors layered on top of shared modules
 
-### 4. Advanced Tools
-- **Data Organizer:** A search tool to find existing facilities by keyword, staff name, or operator.
-- **Clone Facility:** Allows users to duplicate an existing facility record to speed up data entry for chains or similar programs.
-- **JSON Editor:** "Advanced User Mode" allows direct pasting/editing of the raw JSON payload.
+## Admin vs Public Behavior
 
-### 5. User Tutorial
-- **Interactive Overlay:** A built-in tutorial guides new users through the interface, explaining the project system, categories, and submission process.
-- **Toggleable:** Users can restart the tutorial at any time via the "?" floating button.
+### Admin
+- edits are saved through `api/save-master.php`
+- intended for direct maintenance of authoritative records in `facilities_master`
 
-## Usage
+### Public
+- submissions go through `api/save-suggestion.php`
+- intended for review and approval before records affect the live master dataset
+- public pages expose "Submit for Review" and local draft save flows
 
-1.  **Select Category:** Choose "Companies", "Locations", or "Referrers".
-2.  **Start Project:** Click "New Project" or select an existing one.
-3.  **Enter Data:** Fill out the various sections (Identification, Location, Staff, etc.).
-4.  **Save:** Periodically click "Save Draft Locally".
-5.  **Submit:** When finished, click "Submit for Review" to send the data to the master database.
+## Configuration Notes
 
-## Integration
-
-- **Autocomplete:** Fields like "Operator Name" and "City" fetch suggestions from the backend to ensure data consistency.
-- **Master Data:** Submissions are reviewed via the Admin Dashboard and eventually merged into the master database used by the [TTI Program Index](../tti-program-index/README.md).
+- Prefer `KOP_DATA_FORM_CONFIG` and related localized settings instead of hard-coded environment paths.
+- The form stack can hydrate from live endpoints and fallback datasets depending on what the enqueue layer provides.
+- When updating the data-form docs, check both shared templates and the page-specific modules because the admin and public flows intentionally diverge.
