@@ -895,6 +895,14 @@ RESPONSIVE
 .facility-report-container .doc-type-label {
     font-weight: 700;
 }
+/* Orange labels for enforcement/action document types */
+.facility-report-container .doc-type-label[data-doc-type="correction-order"],
+.facility-report-container .doc-type-label[data-doc-type="fine-order"],
+.facility-report-container .doc-type-label[data-doc-type="license-revocation"],
+.facility-report-container .doc-type-label[data-doc-type="conditional-license-order"],
+.facility-report-container .doc-type-label[data-doc-type="notice-of-violation"] {
+    color: #c45000;
+}
 .facility-report-container .doc-date {
     font-size: 0.9em;
     opacity: 0.85;

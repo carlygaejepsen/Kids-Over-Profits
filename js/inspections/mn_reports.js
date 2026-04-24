@@ -290,10 +290,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createReportHTML(report) {
-        const isViol = reportIsViolation(report);
-        const klass = isViol ? 'inspection-box-violation' : 'inspection-box-clean';
+        // Reclassify doc type from the actual document text (scraper's type is sometimes wrong)
+        const refinedType = classifyDocument(report.raw_content, report.doc_type);
+        const reportForDisplay = { ...report, doc_type: refinedType };
+
+        const empty   = isEmptyDocument(report.raw_content);
+        const isViol  = reportIsViolation(reportForDisplay);
+        const klass   = isViol ? 'inspection-box-violation' : 'inspection-box-clean';
         const dateStr = escapeHtml(report.report_date) || 'Date unknown';
-        const typeStr = escapeHtml(report.doc_type);
+        const typeStr = escapeHtml(refinedType);
+        const typeSlug = refinedType.toLowerCase().replace(/\s+/g, '-');
 
         const tagsHtml = (report.tags || []).length
             ? `<div class="mn-tags">${report.tags.map(t => `<span class="mn-tag">${escapeHtml(t)}</span>`).join('')}</div>`
@@ -303,12 +309,26 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<a href="${escapeAttr(report.doc_page_url || report.report_url)}" target="_blank" rel="noopener">View source document ↗</a>`
             : '';
 
-        const parsed = parseDocumentFields(report.raw_content, report.doc_type);
-        const parsedHtml = renderParsedFields(parsed, report.doc_type);
+        // If scrape only captured the footer, show a clear note instead of noise
+        if (empty) {
+            return `
+            <details class="inspection-box inspection-box-clean mn-empty">
+                <summary class="inspection-header">
+                    <span class="doc-type-label" data-doc-type="${typeSlug}">${typeStr}</span>
+                    <span class="doc-date">${dateStr}</span>
+                </summary>
+                <div class="inspection-content">
+                    <p class="mn-empty-note">Document content could not be retrieved.</p>
+                    ${docLink ? `<div class="doc-source-link">${docLink}</div>` : ''}
+                </div>
+            </details>`;
+        }
 
-        // Only show excerpt if no structured fields were parsed
+        const parsed     = parseDocumentFields(report.raw_content, refinedType);
+        const parsedHtml = renderParsedFields(parsed, refinedType);
+
         const excerptHtml = !parsedHtml && report.raw_content
-            ? `<p class="doc-excerpt">${escapeHtml(extractExcerpt(report.raw_content))}</p>`
+            ? `<p class="doc-excerpt">${highlightCitations(escapeHtml(extractExcerpt(report.raw_content)))}</p>`
             : '';
 
         const fullTextHtml = report.raw_content
@@ -321,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
         <details class="inspection-box ${klass}">
             <summary class="inspection-header">
-                <span class="doc-type-label">${typeStr}</span>
+                <span class="doc-type-label" data-doc-type="${typeSlug}">${typeStr}</span>
                 <span class="doc-date">${dateStr}</span>
                 ${tagsHtml}
             </summary>
@@ -334,6 +354,42 @@ document.addEventListener('DOMContentLoaded', () => {
         </details>`;
     }
 
+    function highlightCitations(escapedText) {
+        if (!escapedText) return '';
+        const patterns = [
+            // Minnesota Rules citations
+            /(Minnesota\s+Rules?,?\s+(?:parts?|chapter)\s+[\d.]+(?:\s*(?:through|to)\s+[\d.]+)?(?:,?\s*subparts?\s+[\d]+(?:\s*(?:through|to|,)\s*[\d]+)?)?(?:,?\s*items?\s+[A-Z0-9]+)?)/gi,
+            // Minnesota Statutes citations
+            /(Minnesota\s+Statutes?,?\s+sections?\s+[\d.]+[A-Z]?(?:\.\d+)*(?:,\s*subdivisions?\s+\d+(?:\(\w+\))?)?(?:,\s*paragraphs?\s+\([a-z]\))?(?:,\s*clauses?\s+\(\d+\))?)/gi,
+        ];
+        let html = escapedText;
+        patterns.forEach(p => {
+            html = html.replace(p, '<span class="mn-citation">$1</span>');
+        });
+        return html;
+    }
+
+    function classifyDocument(text, fallbackType) {
+        // Classify using clear markers in the actual document body
+        const head = (text || '').slice(0, 600);
+        if (/MALTREATMENT INVESTIGATION MEMORANDUM/i.test(head))    return 'Maltreatment Investigation';
+        if (/ORDER TO PAY A FINE/i.test(head))                      return 'Fine Order';
+        if (/ORDER OF CONDITIONAL LICENSE/i.test(head))             return 'Conditional License Order';
+        if (/Summary of Settlement Agreement/i.test(head))          return 'Settlement Agreement';
+        if (/LICENSE REVOCATION|REVOCATION OF LICENSE/i.test(head)) return 'License Revocation';
+        if (/CORRECTION ORDER/i.test(head))                         return 'Correction Order';
+        if (/NOTICE OF .*VIOLATION/i.test(head))                    return 'Notice of Violation';
+        return fallbackType || 'Document';
+    }
+
+    function isEmptyDocument(text) {
+        if (!text) return true;
+        const stripped = text.replace(/\s+/g, ' ').trim();
+        if (stripped.length < 300) return true;
+        // Detect pages that only returned the DHS footer
+        return /^PO Box 64242.*Veteran Friendly Employer/i.test(stripped);
+    }
+
     function parseDocumentFields(rawContent, docType) {
         if (!rawContent) return {};
         const t = rawContent;
@@ -344,43 +400,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return m ? m[1].trim() : '';
         };
 
-        // Fields common to both doc types
         fields.license_number = grab(/License Number[:\s]+(\d{6,})/i);
+        fields.report_number  = grab(/Report Number[:\s]+(\d{7,})/i);
         fields.incident_date  = grab(/Date of Incident[s()]*[:\s]+(.+?)(?=\s+Nature of|\s+Summary of|\s+Suspected)/i);
 
-        if (/maltreatment|investigation memorandum/i.test(docType + ' ' + t.slice(0, 200))) {
-            // Maltreatment Investigation Memo fields
-            fields.report_number   = grab(/Report Number[:\s]+(\d{7,})/i);
-            fields.date_issued     = grab(/Date Issued[:\s]+([\w ]+\d{4})/i);
-            fields.date_reissued   = grab(/Date Reissued[:\s]+([\w ]+\d{4})/i);
-            fields.disposition     = grab(/Disposition[:\s]+(.+?)(?=\s+(?:License Number|Investigator|Program Type))/i);
-            fields.investigators   = grab(/Investigator[s(]*[):\s]+(.+?)(?=\s+(?:Minnesota Department|Suspected|Saint Paul|651-))/i);
+        // Maltreatment-specific fields
+        if (/Maltreatment|Investigation/i.test(docType)) {
+            fields.date_issued           = grab(/Date Issued[:\s]+([\w ]+\d{4})/i);
+            fields.date_reissued         = grab(/Date Reissued[:\s]+([\w ]+\d{4})/i);
+            fields.disposition           = grab(/Disposition[:\s]+(.+?)(?=\s+(?:License Number|Investigator|Program Type))/i);
+            fields.investigators         = grab(/Investigator[s(]*[):\s]+(.+?)(?=\s+(?:Minnesota Department|Suspected|Saint Paul|651-))/i);
             fields.maltreatment_reported = grab(/Suspected Maltreatment Reported[:\s]+(.+?)(?=\s+(?:Date of Incident|Nature of|Summary of))/i);
-            fields.action_facility = grab(/Action Taken by Facility[:\s]+(.+?)(?=\s+(?:Action Taken by Dep|Certification|Pursuant))/i);
-            fields.action_dhs      = grab(/Action Taken by Department[^:]*[:\s]+(.+?)(?=\s+(?:Certification|Pursuant|PO Box))/i);
-        } else {
-            // Correction Order — extract each numbered violation block
-            const violations = [];
-            const violRe = /\d+\.\s+Violation:\s+(.*?)(?=Rule Violated:|YOUR RIGHT|\d+\.\s+Violation:|$)/gs;
-            const ruleRe  = /Rule Violated:\s*(.*?)(?=Corrective Action Required:|YOUR RIGHT|\d+\.\s+Violation:|$)/gs;
-            const corrRe  = /Corrective Action Required:\s*(.*?)(?=YOUR RIGHT|\d+\.\s+Violation:|$)/gs;
-
-            let vm, rm, cm;
-            const violTexts = [], ruleTexts = [], corrTexts = [];
-            while ((vm = violRe.exec(t)) !== null) violTexts.push(vm[1].trim());
-            while ((rm = ruleRe.exec(t)) !== null) ruleTexts.push(rm[1].trim());
-            while ((cm = corrRe.exec(t)) !== null) corrTexts.push(cm[1].trim());
-
-            for (let i = 0; i < violTexts.length; i++) {
-                violations.push({
-                    number: i + 1,
-                    violation: violTexts[i],
-                    rule: ruleTexts[i] || '',
-                    correction: corrTexts[i] || '',
-                });
-            }
-            if (violations.length) fields.violations = violations;
+            fields.action_facility       = grab(/Action Taken by Facility[:\s]+(.+?)(?=\s+(?:Action Taken by Dep|Certification|Pursuant))/i);
+            fields.action_dhs            = grab(/Action Taken by Department[^:]*[:\s]+(.+?)(?=\s+(?:Certification|Pursuant|PO Box))/i);
         }
+
+        // Fine order / Conditional license / Settlement fields
+        if (/Fine Order|Settlement|Conditional/i.test(docType)) {
+            fields.fine_amount = grab(/(?:fine in the amount of|amount of the fine is|fine of)\s*\$?([\d,]+(?:\.\d+)?)/i);
+            fields.license_action = grab(/(?:Licensing Action|License Action|Date of Licensing Action)[:\s]+(.+?)(?=\s+(?:License Holder|Program Type|Effective|$))/i);
+        }
+
+        // Extract all violation blocks (numbered OR section-headed) via Rule Violated markers
+        const violations = extractViolations(t);
+        if (violations.length) fields.violations = violations;
 
         // Remove empty fields
         Object.keys(fields).forEach(k => {
@@ -390,31 +433,48 @@ document.addEventListener('DOMContentLoaded', () => {
         return fields;
     }
 
+    function extractViolations(text) {
+        // Find every violation trio (Violation: … Rule Violated: … Corrective Action Required: …)
+        // Works for "1. Violation:", "Resident File Violation:", "Violation:", etc.
+        const violations = [];
+        const pattern = /Violation:\s+([\s\S]+?)Rule Violated:\s*([\s\S]+?)Corrective Action Required:\s*([\s\S]+?)(?=\bViolation:|Written Response|YOUR RIGHT|Legal authority|$)/g;
+        let m, num = 1;
+        while ((m = pattern.exec(text)) !== null) {
+            violations.push({
+                number:     num++,
+                violation:  m[1].trim(),
+                rule:       m[2].trim(),
+                correction: m[3].trim(),
+            });
+        }
+        return violations;
+    }
+
     function renderParsedFields(fields, docType) {
         if (!fields || !Object.keys(fields).length) return '';
         const parts = [];
 
-        if (fields.disposition)
-            parts.push(`<div class="mn-field"><span class="mn-label">Disposition:</span> ${escapeHtml(fields.disposition)}</div>`);
-        if (fields.investigators)
-            parts.push(`<div class="mn-field"><span class="mn-label">Investigator(s):</span> ${escapeHtml(fields.investigators)}</div>`);
-        if (fields.incident_date)
-            parts.push(`<div class="mn-field"><span class="mn-label">Date of Incident:</span> ${escapeHtml(fields.incident_date)}</div>`);
-        if (fields.maltreatment_reported)
-            parts.push(`<div class="mn-field"><span class="mn-label">Reported:</span> ${escapeHtml(fields.maltreatment_reported)}</div>`);
-        if (fields.action_facility)
-            parts.push(`<div class="mn-field"><span class="mn-label">Action by Facility:</span> ${escapeHtml(fields.action_facility)}</div>`);
-        if (fields.action_dhs)
-            parts.push(`<div class="mn-field"><span class="mn-label">Action by DHS:</span> ${escapeHtml(fields.action_dhs)}</div>`);
-        if (fields.report_number)
-            parts.push(`<div class="mn-field"><span class="mn-label">Report #:</span> ${escapeHtml(fields.report_number)}</div>`);
+        const row = (label, value, highlightCite = false) => {
+            const v = highlightCite ? highlightCitations(escapeHtml(value)) : escapeHtml(value);
+            return `<div class="mn-field"><span class="mn-label">${label}:</span> ${v}</div>`;
+        };
+
+        if (fields.disposition)           parts.push(row('Disposition',         fields.disposition));
+        if (fields.investigators)         parts.push(row('Investigator(s)',     fields.investigators));
+        if (fields.incident_date)         parts.push(row('Date of Incident',    fields.incident_date));
+        if (fields.maltreatment_reported) parts.push(row('Reported',            fields.maltreatment_reported, true));
+        if (fields.fine_amount)           parts.push(row('Fine Amount',         '$' + fields.fine_amount));
+        if (fields.license_action)        parts.push(row('Licensing Action',    fields.license_action));
+        if (fields.action_facility)       parts.push(row('Action by Facility',  fields.action_facility, true));
+        if (fields.action_dhs)            parts.push(row('Action by DHS',       fields.action_dhs, true));
+        if (fields.report_number)         parts.push(row('Report #',            fields.report_number));
 
         if (fields.violations && fields.violations.length) {
             const violHtml = fields.violations.map(v => `
                 <div class="mn-violation">
-                    <div class="mn-violation-text"><strong>Violation ${v.number}:</strong> ${escapeHtml(v.violation)}</div>
-                    ${v.rule ? `<div class="mn-violation-rule"><em>Rule violated:</em> ${escapeHtml(v.rule)}</div>` : ''}
-                    ${v.correction ? `<div class="mn-violation-correction"><em>Required correction:</em> ${escapeHtml(v.correction)}</div>` : ''}
+                    <div class="mn-violation-text"><strong>Violation ${v.number}:</strong> ${highlightCitations(escapeHtml(v.violation))}</div>
+                    ${v.rule ? `<div class="mn-violation-rule"><em>Rule violated:</em> ${highlightCitations(escapeHtml(v.rule))}</div>` : ''}
+                    ${v.correction ? `<div class="mn-violation-correction"><em>Required correction:</em> ${highlightCitations(escapeHtml(v.correction))}</div>` : ''}
                 </div>`).join('');
             parts.push(`<div class="mn-violations-list"><strong>Licensing Violations (${fields.violations.length}):</strong>${violHtml}</div>`);
         }
@@ -435,12 +495,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDocText(text) {
         if (!text) return '';
-        // Split on blank lines to get paragraphs; fall back to whole text
         const paras = text.split(/\n\n+/).map(p => p.replace(/\n/g, ' ').trim()).filter(Boolean);
-        if (paras.length <= 1) {
-            return `<p>${escapeHtml(text)}</p>`;
-        }
-        return paras.map(p => `<p>${escapeHtml(p)}</p>`).join('\n');
+        const wrap = (p) => `<p>${highlightCitations(escapeHtml(p))}</p>`;
+        if (paras.length <= 1) return wrap(text);
+        return paras.map(wrap).join('\n');
     }
 
     function escapeHtml(s) {
