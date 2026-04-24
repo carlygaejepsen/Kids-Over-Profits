@@ -15,7 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSearching = false;
     let scrapedTimestamp = '';
 
-    const VIOLATION_DOC_TYPES = new Set(['Notice of Incident', 'Compliance Report', 'CFS Report']);
+    const VIOLATION_DOC_TYPES = new Set([
+        'Notice of Incident',
+        'Compliance Report',
+        'CFS Report',
+        'Correction Order',
+        'Fine Order',
+        'License Revocation',
+        'Conditional License Order',
+        'Notice of Violation',
+        'Maltreatment Investigation',
+    ]);
 
     if (searchInput) searchInput.addEventListener('input', filterAndSort);
     if (sortSelect) sortSelect.addEventListener('change', filterAndSort);
@@ -123,7 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function reportIsViolation(r) {
-        return VIOLATION_DOC_TYPES.has(r.doc_type) ||
+         const docType = safeString(r.doc_type);
+         return VIOLATION_DOC_TYPES.has(docType) ||
+             /correction\s*order|notice\s+of\s+.*violation|fine\s*order|license\s*revocation|conditional\s+license|maltreatment/i.test(docType) ||
                (r.tags || []).some(t => /citation|maltreatment|assault|abuse|sexual|violence|neglect|complaint/i.test(t));
     }
 
