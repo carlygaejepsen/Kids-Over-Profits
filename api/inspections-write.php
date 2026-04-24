@@ -126,6 +126,11 @@ $reportsSaved = 0;
 try {
     $pdo->beginTransaction();
 
+    // Optional full replace: clear existing data for this state before reinserting
+    if (!empty($input['replace'])) {
+        $pdo->prepare("DELETE FROM inspection_facilities WHERE state = ?")->execute([$state]);
+    }
+
     foreach ($facilities as $facility) {
         $info = $facility['facility_info'] ?? [];
 
