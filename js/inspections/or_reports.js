@@ -66,6 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     corrective_actions: cats.corrective_actions || '',
                     findings:           Array.isArray(cats.findings) ? cats.findings : [],
                     finding_count:      parseInt(cats.finding_count, 10) || 0,
+                    program_description:         cats.program_description         || '',
+                    program_services:            cats.program_services            || '',
+                    capacity_age_range:          cats.capacity_age_range          || '',
+                    average_length_of_stay:      cats.average_length_of_stay      || '',
+                    average_daily_population:    cats.average_daily_population_served || '',
+                    number_children_annually:    cats.number_of_children_served_annually || '',
+                    use_of_seclusion_or_restraint: cats.use_of_seclusion_or_restraint || '',
+                    interviews_observations:     cats.interviews_observations     || '',
+                    interview_summary:           cats.interview_summary           || '',
+                    observations:                cats.observations                || '',
+                    program_strengths:           cats.program_strengths           || '',
+                    program_challenges:          cats.program_challenges          || '',
+                    lawsuits:                    cats.lawsuits                    || '',
+                    grievances_and_complaints:   cats.grievances_and_complaints   || '',
                 };
             }).sort((a, b) => parseDate(b.report_date) - parseDate(a.report_date));
 
@@ -280,6 +294,57 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<a href="${escapeAttr(report.pdf_url)}" target="_blank" rel="noopener">View PDF</a>`
             : '';
 
+        // Helper: render a labelled narrative paragraph only when non-empty.
+        const narrativeRow = (label, value) =>
+            value ? `<div class="narrative-section"><h4>${label}</h4><p>${escapeHtml(value)}</p></div>` : '';
+
+        // Program overview fields — shown when present.
+        const programInfoRows = [
+            report.program_description   && narrativeRow('Program Description', report.program_description),
+            report.program_services      && narrativeRow('Program Type & Services', report.program_services),
+            report.capacity_age_range    && narrativeRow('Capacity & Age Range', report.capacity_age_range),
+            report.average_length_of_stay && narrativeRow('Average Length of Stay', report.average_length_of_stay),
+            report.average_daily_population && narrativeRow('Average Daily Population', report.average_daily_population),
+            report.number_children_annually && narrativeRow('Children Served Annually', report.number_children_annually),
+            report.use_of_seclusion_or_restraint && narrativeRow('Use of Seclusion or Restraint', report.use_of_seclusion_or_restraint),
+        ].filter(Boolean).join('');
+
+        const programInfoHtml = programInfoRows
+            ? `<details class="violation-box">
+                <summary class="deficiency-header">Program Information</summary>
+                <div class="deficiency-content">${programInfoRows}</div>
+               </details>`
+            : '';
+
+        // Observation / interview fields.
+        const observationRows = [
+            report.interviews_observations && narrativeRow('Interviews & Observations', report.interviews_observations),
+            report.interview_summary       && narrativeRow('Interview Summary', report.interview_summary),
+            report.observations            && narrativeRow('Observations', report.observations),
+            report.program_strengths       && narrativeRow('Program Strengths', report.program_strengths),
+            report.program_challenges      && narrativeRow('Program Challenges', report.program_challenges),
+        ].filter(Boolean).join('');
+
+        const observationsHtml = observationRows
+            ? `<details class="violation-box">
+                <summary class="deficiency-header">Observations & Interviews</summary>
+                <div class="deficiency-content">${observationRows}</div>
+               </details>`
+            : '';
+
+        // Legal / complaint fields.
+        const legalRows = [
+            report.lawsuits                && narrativeRow('Lawsuits', report.lawsuits),
+            report.grievances_and_complaints && narrativeRow('Grievances & Complaints', report.grievances_and_complaints),
+        ].filter(Boolean).join('');
+
+        const legalHtml = legalRows
+            ? `<details class="violation-box">
+                <summary class="deficiency-header">Lawsuits & Grievances</summary>
+                <div class="deficiency-content">${legalRows}</div>
+               </details>`
+            : '';
+
         const findingsHtml = report.findings && report.findings.length
             ? `<details class="violation-box">
                 <summary class="deficiency-header">${report.finding_count} compliance finding${report.finding_count === 1 ? '' : 's'}</summary>
@@ -295,11 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         const correctiveHtml = report.corrective_actions && report.corrective_actions.toLowerCase() !== 'none'
-            ? `<div class="narrative-section"><h4>Corrective Actions</h4><p>${escapeHtml(report.corrective_actions)}</p></div>`
+            ? narrativeRow('Corrective Actions', report.corrective_actions)
             : '';
 
         const complianceHtml = report.program_compliance
-            ? `<div class="narrative-section"><h4>Program Compliance</h4><p>${escapeHtml(report.program_compliance)}</p></div>`
+            ? narrativeRow('Program Compliance', report.program_compliance)
             : '';
 
         const rawHtml = report.raw_content
@@ -320,6 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${pdfLink ? `<strong>Source:</strong> ${pdfLink}` : ''}
                 </div>
                 ${complianceHtml}
+                ${programInfoHtml}
+                ${observationsHtml}
+                ${legalHtml}
                 ${correctiveHtml}
                 ${findingsHtml}
                 ${rawHtml}
