@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function convertApiDataToFacilities(apiFacilities) {
-        return apiFacilities.map(facility => {
+        const raw = apiFacilities.map(facility => {
             const info = facility.facility_info || {};
             const reports = (facility.reports || []).map(report => {
                 const cats = report.categories || {};
@@ -93,6 +93,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 reports:          reports,
             };
         });
+
+        // Merge facilities whose names differ only in punctuation/separators
+        // e.g. "Adapt Deer Creek" and "Adapt - Deer Creek"
+        const normName = name => {
+            if (!name) return '';
+            return name.toLowerCase()
+                .replace(/\s*[-–—]\s*/g, ' ')
+                .replace(/\s*&\s*/g, ' and ')
+                .replace(/[^\w\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
+
+        const mergeMap = new Map();
+        for (const f of raw) {
+            const key = normName(f.name);
+            if (!mergeMap.has(key)) {
+                mergeMap.set(key, { ...f, reports: [...f.reports] });
+            } else {
+                const existing = mergeMap.get(key);
+                const seenIds = new Set(existing.reports.map(r => r.report_id));
+                for (const r of f.reports) {
+                    if (!seenIds.has(r.report_id)) {
+                        existing.reports.push(r);
+                        seenIds.add(r.report_id);
+                    }
+                }
+                existing.reports.sort((a, b) => parseDate(b.report_date) - parseDate(a.report_date));
+            }
+        }
+
+        return Array.from(mergeMap.values());
     }
 
     function parseDate(dateStr) {
