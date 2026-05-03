@@ -37,6 +37,9 @@ get_header();
 										<option value="violations-desc">Most Violations First</option>
 										<option value="recent-inspection">Most Recent Inspection</option>
 									</select>
+									<label class="new-only-toggle">
+										<input type="checkbox" id="newReportsOnly"> New reports only (last 30 days)
+									</label>
 									<button id="clearSearch" onclick="clearSearch()" style="display: none;">Clear Search</button>
 								</div>
 

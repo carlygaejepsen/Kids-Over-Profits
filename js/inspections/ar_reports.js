@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const sortSelect = document.getElementById('sortBy');
     const clearButton = document.getElementById('clearSearch');
+    const newOnlyCheckbox = document.getElementById('newReportsOnly');
 
     let allFacilitiesData = {};
     let currentLetter = null;
@@ -16,9 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrapedTimestamp = '';
 
     const VIOLATION_DOC_TYPES = new Set(['Notice of Incident', 'Compliance Report', 'CFS Report']);
+    const NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
     if (searchInput) searchInput.addEventListener('input', filterAndSort);
     if (sortSelect) sortSelect.addEventListener('change', filterAndSort);
+    if (newOnlyCheckbox) newOnlyCheckbox.addEventListener('change', filterAndSort);
+
+    function isRecentReport(report) {
+        if (!report) return false;
+        const t = parseDate(report.report_date).getTime();
+        return t > 0 && (Date.now() - t) <= NEW_REPORT_WINDOW_MS;
+    }
 
     const safeString = v => (v == null ? '' : String(v).trim());
 
@@ -166,10 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
     window.clearSearch = clearSearch;
 
     function sortFacilities(facilities, sortBy) {
-        if (!sortBy) return facilities;
         let processed = [...facilities];
+        if (newOnlyCheckbox && newOnlyCheckbox.checked) {
+            processed = processed.map(f => {
+                const recent = (f.reports || []).filter(isRecentReport);
+                return recent.length ? { ...f, reports: recent } : null;
+            }).filter(Boolean);
+        }
+        if (!sortBy) return processed;
         if (sortBy === 'violations-only' || sortBy === 'violations-desc') {
-            processed = facilities.map(f => {
+            processed = processed.map(f => {
                 const v = f.reports.filter(reportIsViolation);
                 return v.length ? { ...f, reports: v } : null;
             }).filter(Boolean);

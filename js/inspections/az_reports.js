@@ -17,13 +17,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLetter = null;
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
+    const newOnlyCheckbox = document.getElementById('newReportsOnly');
     let scrapedTimestamp = ''; // Store the timestamp
-    
+
+    const NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+
     if (searchInput) {
         searchInput.addEventListener('input', filterAndSort);
     }
     if (sortSelect) {
         sortSelect.addEventListener('change', filterAndSort);
+    }
+    if (newOnlyCheckbox) {
+        newOnlyCheckbox.addEventListener('change', filterAndSort);
+    }
+
+    function reportDateMs(dateStr) {
+        if (!dateStr) return 0;
+        const first = String(dateStr).split(/\s*[-–]\s*/)[0].trim();
+        const parts = first.split('/');
+        if (parts.length === 3) {
+            let [m, d, y] = parts.map(p => parseInt(p, 10));
+            if (y < 100) y += (y < 50) ? 2000 : 1900;
+            const t = new Date(y, m - 1, d).getTime();
+            return isNaN(t) ? 0 : t;
+        }
+        const t = new Date(first).getTime();
+        return isNaN(t) ? 0 : t;
+    }
+
+    function isRecentReport(item) {
+        if (!item) return false;
+        const t = reportDateMs(item.inspection_date || item.report_date);
+        return t > 0 && (Date.now() - t) <= NEW_REPORT_WINDOW_MS;
     }
     
     const themeData = window.azReportsData || window.myThemeData || {};
@@ -329,14 +355,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.clearSearch = clearSearch;
 
     function sortFacilities(facilities, sortBy) {
-        if (!sortBy) return facilities;
-        
         let processedFacilities = [...facilities];
-        
+
+        if (newOnlyCheckbox && newOnlyCheckbox.checked) {
+            processedFacilities = processedFacilities.map(facility => {
+                const recent = (facility.inspections || []).filter(isRecentReport);
+                return recent.length ? { ...facility, inspections: recent } : null;
+            }).filter(facility => facility !== null);
+        }
+
+        if (!sortBy) return processedFacilities;
+
         if (sortBy === 'violations-only' || sortBy === 'violations-desc') {
-            processedFacilities = facilities.map(facility => {
+            processedFacilities = processedFacilities.map(facility => {
                 const violationInspections = facility.inspections.filter(inspectionHasViolations);
-                
+
                 if (violationInspections.length > 0) {
                     return {
                         ...facility,

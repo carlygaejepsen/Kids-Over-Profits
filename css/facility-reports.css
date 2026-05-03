@@ -486,8 +486,29 @@ Inspection Details
     border-radius: 4px;
 }
 
-.controls input {
+.controls input[type="text"] {
     width: 300px;
+}
+
+.controls .new-only-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 10px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #33A7B5;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+}
+
+.controls .new-only-toggle input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
 }
 
 .facility-card {

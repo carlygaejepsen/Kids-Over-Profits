@@ -13,10 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLetter = null;
     let isSearching = false;
     const clearButton = document.getElementById('clearSearch');
+    const newOnlyCheckbox = document.getElementById('newReportsOnly');
     let scrapedTimestamp = '';
+
+    const NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
     if (searchInput) searchInput.addEventListener('input', filterAndSort);
     if (sortSelect) sortSelect.addEventListener('change', filterAndSort);
+    if (newOnlyCheckbox) newOnlyCheckbox.addEventListener('change', filterAndSort);
+
+    function isRecentInspection(inspection) {
+        if (!inspection) return false;
+        const t = parseDate(inspection.inspection_date || inspection.report_date).getTime();
+        return t > 0 && (Date.now() - t) <= NEW_REPORT_WINDOW_MS;
+    }
 
     const safeString = value => {
         if (value === null || value === undefined) return '';
@@ -188,10 +198,16 @@ document.addEventListener('DOMContentLoaded', () => {
     window.clearSearch = clearSearch;
 
     function sortFacilities(facilities, sortBy) {
-        if (!sortBy) return facilities;
         let processed = [...facilities];
+        if (newOnlyCheckbox && newOnlyCheckbox.checked) {
+            processed = processed.map(f => {
+                const recent = (f.inspections || []).filter(isRecentInspection);
+                return recent.length ? { ...f, inspections: recent } : null;
+            }).filter(Boolean);
+        }
+        if (!sortBy) return processed;
         if (sortBy === 'violations-only' || sortBy === 'violations-desc') {
-            processed = facilities.map(f => {
+            processed = processed.map(f => {
                 const v = f.inspections.filter(inspectionHasViolations);
                 return v.length > 0 ? { ...f, inspections: v } : null;
             }).filter(Boolean);
