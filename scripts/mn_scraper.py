@@ -270,9 +270,9 @@ async def run():
         print(f"Limiting to first {len(facilities)} (MN_LIMIT_IDS={MN_LIMIT_IDS})")
 
     progress = load_progress()
-    already_done = sum(1 for f in facilities if f["license_id"] in progress)
-    if already_done:
-        print(f"Resuming: {already_done}/{len(facilities)} already scraped\n")
+    with_prior = sum(1 for f in facilities if f["license_id"] in progress)
+    if with_prior:
+        print(f"{with_prior}/{len(facilities)} have prior data; checking for new inspections\n")
 
     print(f"Browser profile: {BROWSER_PROFILE}")
     print("(Profile is saved between runs — you only need to solve CAPTCHA once)\n")
@@ -300,9 +300,9 @@ async def run():
             lid = fac["license_id"]
             name = fac["facility_info"]["facility_name"]
 
-            if lid in progress:
-                print(f"[{i}/{len(facilities)}] {name} — already done, skipping")
-                continue
+            existing_entry = progress.get(lid) or {}
+            existing_reports = list(existing_entry.get("reports") or [])
+            seen_urls = {r.get("report_url") for r in existing_reports if r.get("report_url")}
 
             print(f"[{i}/{len(facilities)}] {name} (license {lid})")
 
@@ -311,16 +311,27 @@ async def run():
             content = await goto_safe(page, detail_url)
             if content is None:
                 print(f"  Skipping {lid} (CAPTCHA not cleared)")
-                progress[lid] = {"facility_info": fac["facility_info"], "reports": []}
-                save_progress(progress)
+                if lid not in progress:
+                    progress[lid] = {"facility_info": fac["facility_info"], "reports": []}
+                    save_progress(progress)
                 continue
 
             doc_urls = extract_doc_urls(content)
-            print(f"  Found {len(doc_urls)} document link(s)")
+            new_doc_urls = [u for u in doc_urls if u not in seen_urls]
+            print(f"  Found {len(doc_urls)} document link(s); {len(new_doc_urls)} new")
 
-            # Fetch each document in the same browser session
-            reports = []
-            for j, doc_url in enumerate(doc_urls, 1):
+            if not new_doc_urls:
+                # Refresh facility_info in case CSV fields changed; keep existing reports.
+                progress[lid] = {"facility_info": fac["facility_info"], "reports": existing_reports}
+                save_progress(progress)
+                await page.wait_for_timeout(DELAY_MS)
+                continue
+
+            # Fetch each NEW document in the same browser session.
+            # Index continues after existing reports so old report_ids stay stable.
+            new_reports = []
+            for offset, doc_url in enumerate(new_doc_urls, 1):
+                j = len(existing_reports) + offset
                 doc_content = await goto_safe(page, doc_url)
                 if doc_content is None:
                     print(f"  Doc {j}: skipped (CAPTCHA)")
@@ -335,13 +346,14 @@ async def run():
                     print(f"  Doc {j}: too short, skipping")
                     continue
 
-                reports.append(build_report(lid, j, doc_url, text))
-                print(f"  Doc {j}: {reports[-1]['categories']['doc_type']} ({len(text)} chars)")
+                new_reports.append(build_report(lid, j, doc_url, text))
+                print(f"  Doc {j}: {new_reports[-1]['categories']['doc_type']} ({len(text)} chars)")
                 await page.wait_for_timeout(DELAY_MS)
 
-            progress[lid] = {"facility_info": fac["facility_info"], "reports": reports}
+            all_reports = existing_reports + new_reports
+            progress[lid] = {"facility_info": fac["facility_info"], "reports": all_reports}
             save_progress(progress)
-            print(f"  -> {len(reports)} report(s) saved\n")
+            print(f"  -> {len(new_reports)} new report(s) saved (total: {len(all_reports)})\n")
 
             await page.wait_for_timeout(DELAY_MS)
 
