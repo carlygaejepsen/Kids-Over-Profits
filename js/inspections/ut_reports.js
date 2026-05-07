@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         .map(item => item?.pdf_file)
                         .filter(Boolean)
                         .map(file => {
-                            const fileName = file.split('/').pop();
+                            const fileName = file.split(/[\\/]/).pop();
                             return fileName ? `https://kidsoverprofits.org/wp-content/themes/child/js/data/ut_checklists/${fileName}` : null;
                         })
                         .filter(Boolean)
