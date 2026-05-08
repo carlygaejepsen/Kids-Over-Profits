@@ -205,27 +205,95 @@
     };
 
     // ---------- Facilities (merged Programs + Inspections) ----------
+    const narrativeRow = (label, value) => {
+        if (!value) return '';
+        return `
+            <div class="narrative-row">
+                <strong>${escapeHtml(label)}:</strong>
+                <p>${escapeHtml(String(value))}</p>
+            </div>`;
+    };
+
     const renderInspectionRecords = inspections => {
         if (!Array.isArray(inspections) || inspections.length === 0) {
             return '<p class="docs-empty">No inspection records on file.</p>';
         }
         return `<div class="inspection-record-list">${inspections.map(insp => {
             const findings = Array.isArray(insp.findings) ? insp.findings : [];
-            const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0;
+            const cats = (insp.categories && typeof insp.categories === 'object') ? insp.categories : {};
+            const hasCorrectiveActions = cats.corrective_actions && String(cats.corrective_actions).toLowerCase() !== 'none';
+            const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0 || hasCorrectiveActions;
+            const findingCount = insp.finding_count || findings.length;
             const klass = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
             const dateStr = formatDate(insp.date) || '—';
             const typeStr = insp.type ? escapeHtml(insp.type) : 'Inspection';
             const findingsLabel = hasFindings
-                ? `${insp.finding_count || findings.length} finding${(insp.finding_count || findings.length) === 1 ? '' : 's'}`
+                ? (findingCount > 0
+                    ? `${findingCount} finding${findingCount === 1 ? '' : 's'}`
+                    : 'Has corrective actions')
                 : 'No findings';
 
             const sourceLinks = [];
             if (insp.pdf_url) sourceLinks.push(`<a href="${escapeHtml(insp.pdf_url)}" target="_blank" rel="noopener">PDF</a>`);
             if (insp.report_url) sourceLinks.push(`<a href="${escapeHtml(insp.report_url)}" target="_blank" rel="noopener">Source page</a>`);
 
+            const detailsRows = [
+                cats.licensee ? `<strong>Licensee:</strong> ${escapeHtml(cats.licensee)}` : '',
+                `<strong>Type:</strong> ${typeStr}`,
+                `<strong>Date:</strong> ${escapeHtml(dateStr)}`,
+                cats.visit_date ? `<strong>Visit:</strong> ${escapeHtml(cats.visit_date)}` : '',
+                sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : '',
+            ].filter(Boolean).join('<br>');
+
+            const programInfoRows = [
+                narrativeRow('Program Description', cats.program_description),
+                narrativeRow('Program Services', cats.program_services),
+                narrativeRow('Capacity & Age Range', cats.capacity_age_range),
+                narrativeRow('Average Length of Stay', cats.average_length_of_stay),
+                narrativeRow('Average Daily Population', cats.average_daily_population_served),
+                narrativeRow('Children Served Annually', cats.number_of_children_served_annually),
+                narrativeRow('Seclusion / Restraint', cats.use_of_seclusion_or_restraint),
+            ].filter(Boolean).join('');
+            const programInfoBlock = programInfoRows ? `
+                <details class="violation-box">
+                    <summary class="deficiency-header">Program Information</summary>
+                    <div class="deficiency-content">${programInfoRows}</div>
+                </details>` : '';
+
+            const observationsRows = [
+                narrativeRow('Interviews & Observations', cats.interviews_observations),
+                narrativeRow('Interview Summary', cats.interview_summary),
+                narrativeRow('Observations', cats.observations),
+                narrativeRow('Program Strengths', cats.program_strengths),
+                narrativeRow('Program Challenges', cats.program_challenges),
+            ].filter(Boolean).join('');
+            const observationsBlock = observationsRows ? `
+                <details class="violation-box">
+                    <summary class="deficiency-header">Observations & Interviews</summary>
+                    <div class="deficiency-content">${observationsRows}</div>
+                </details>` : '';
+
+            const legalRows = [
+                narrativeRow('Lawsuits', cats.lawsuits),
+                narrativeRow('Grievances & Complaints', cats.grievances_and_complaints),
+            ].filter(Boolean).join('');
+            const legalBlock = legalRows ? `
+                <details class="violation-box">
+                    <summary class="deficiency-header">Lawsuits & Grievances</summary>
+                    <div class="deficiency-content">${legalRows}</div>
+                </details>` : '';
+
+            const complianceBlock = cats.program_compliance
+                ? `<div class="narrative-row"><strong>Program Compliance:</strong><p>${escapeHtml(cats.program_compliance)}</p></div>`
+                : '';
+
+            const correctiveBlock = hasCorrectiveActions
+                ? `<div class="narrative-row"><strong>Corrective Actions:</strong><p>${escapeHtml(cats.corrective_actions)}</p></div>`
+                : '';
+
             const findingsBlock = findings.length
                 ? `<details class="violation-box" open>
-                       <summary class="deficiency-header">${findings.length} finding${findings.length === 1 ? '' : 's'}</summary>
+                       <summary class="deficiency-header">${findings.length} compliance finding${findings.length === 1 ? '' : 's'}</summary>
                        <div class="deficiency-content">
                            ${findings.map(f => `
                                <div class="finding-item">
@@ -245,12 +313,13 @@
                         <span class="inspection-summary-findings">${escapeHtml(findingsLabel)}</span>
                     </summary>
                     <div class="inspection-content">
-                        <div class="inspection-details-block">
-                            <strong>Type:</strong> ${typeStr}<br>
-                            <strong>Date:</strong> ${escapeHtml(dateStr)}<br>
-                            ${sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : ''}
-                        </div>
+                        <div class="inspection-details-block">${detailsRows}</div>
                         ${insp.summary ? `<div class="inspection-summary-text">${escapeHtml(insp.summary)}</div>` : ''}
+                        ${complianceBlock}
+                        ${programInfoBlock}
+                        ${observationsBlock}
+                        ${legalBlock}
+                        ${correctiveBlock}
                         ${findingsBlock}
                     </div>
                 </details>

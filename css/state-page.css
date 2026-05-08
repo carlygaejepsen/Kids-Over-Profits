@@ -482,6 +482,28 @@
     white-space: pre-wrap;
 }
 
+.narrative-row {
+    margin-bottom: 0.65em;
+    font-size: 0.9em;
+    line-height: 1.55;
+}
+
+.narrative-row:last-child {
+    margin-bottom: 0;
+}
+
+.narrative-row strong {
+    color: #00004d;
+    display: inline-block;
+    margin-right: 0.4em;
+}
+
+.narrative-row p {
+    margin: 0.2em 0 0;
+    color: #374151;
+    white-space: pre-wrap;
+}
+
 /* Closed group: dampen the expand affordances slightly */
 .facility-group-closed .facility-expand-btn {
     background: #eaeefa;

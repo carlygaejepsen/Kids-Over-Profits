@@ -1795,7 +1795,8 @@ function kop_state_collect_programs($state_name) {
 
     $abbrev_map = array_flip(kop_state_abbrev_to_name());
     $abbrev = isset($abbrev_map[$state_name]) ? $abbrev_map[$state_name] : '';
-    $needles = array_filter(array(strtolower($state_name), strtolower($abbrev)));
+    $state_lower = strtolower($state_name);
+    $abbrev_lower = strtolower($abbrev);
 
     $rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master", ARRAY_A);
     if (!is_array($rows)) return array();
@@ -1814,17 +1815,22 @@ function kop_state_collect_programs($state_name) {
             $facility_state = trim((string)($address['state'] ?? ''));
             $facility_state_lower = strtolower($facility_state);
 
-            // Match either by state name, abbreviation, or by facility 'location' field.
             $location_string = strtolower((string)($facility['location'] ?? ''));
 
+            // Match priority:
+            //   1. address.state field exactly equals the state name or its 2-letter abbrev
+            //   2. location field contains the FULL state name (not the abbrev — "or" would
+            //      match "California" / "Florida" as a substring)
+            //   3. location field contains the abbrev wrapped in word boundaries (", OR ", " OR$")
             $matched = false;
-            foreach ($needles as $needle) {
-                if ($needle === '') continue;
-                if ($facility_state_lower === $needle ||
-                    ($needle && strpos($location_string, $needle) !== false)) {
-                    $matched = true;
-                    break;
-                }
+            if ($state_lower !== '' && ($facility_state_lower === $state_lower)) {
+                $matched = true;
+            } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower)) {
+                $matched = true;
+            } elseif ($state_lower !== '' && strpos($location_string, $state_lower) !== false) {
+                $matched = true;
+            } elseif ($abbrev_lower !== '' && preg_match('/\b' . preg_quote($abbrev_lower, '/') . '\b/', $location_string)) {
+                $matched = true;
             }
             if (!$matched) continue;
 
@@ -1921,11 +1927,17 @@ function kop_state_collect_inspection_summaries($state_name) {
                                     $findings[] = array('rule_number' => '', 'description' => $f_item);
                                 } elseif (is_array($f_item)) {
                                     $findings[] = array(
-                                        'rule_number' => (string)($f_item['rule_number'] ?? $f_item['ruleNumber'] ?? ''),
-                                        'description' => (string)($f_item['description'] ?? $f_item['rule_description'] ?? $f_item['text'] ?? ''),
+                                        'rule_number' => (string)($f_item['rule'] ?? $f_item['rule_number'] ?? $f_item['ruleNumber'] ?? ''),
+                                        'description' => (string)($f_item['excerpt'] ?? $f_item['description'] ?? $f_item['rule_description'] ?? $f_item['text'] ?? ''),
                                     );
                                 }
                             }
+                        }
+                        // If still no count but corrective actions exist that aren't "none",
+                        // treat as "has findings" so the inspection is visually flagged.
+                        $corrective = trim((string)($categories['corrective_actions'] ?? ''));
+                        if (!$finding_count && $corrective !== '' && strcasecmp($corrective, 'none') !== 0) {
+                            $finding_count = max(1, $finding_count);
                         }
                         $type = (string)($categories['report_type'] ?? '');
                         $pdf_url = (string)($categories['pdf_url'] ?? '');
@@ -1942,6 +1954,30 @@ function kop_state_collect_inspection_summaries($state_name) {
                     }
 
                     if (count($inspections_by_facility[$fid]) < 20) {
+                        // Cherry-pick state-report category fields so JS can render
+                        // the same accordion sections that /xx-reports/ pages do,
+                        // without inflating the payload with every category every time.
+                        $cats = is_array($categories) ? $categories : array();
+                        $picked_categories = array();
+                        $cat_fields = array(
+                            'licensee', 'visit_date',
+                            'program_compliance', 'corrective_actions',
+                            'program_description', 'program_services',
+                            'capacity_age_range', 'average_length_of_stay',
+                            'average_daily_population_served', 'number_of_children_served_annually',
+                            'use_of_seclusion_or_restraint',
+                            'interviews_observations', 'interview_summary', 'observations',
+                            'program_strengths', 'program_challenges',
+                            'lawsuits', 'grievances_and_complaints',
+                        );
+                        foreach ($cat_fields as $cf) {
+                            if (isset($cats[$cf]) && $cats[$cf] !== '' && $cats[$cf] !== null) {
+                                // Trim very long narrative fields
+                                $value = is_string($cats[$cf]) ? mb_substr($cats[$cf], 0, 4000) : $cats[$cf];
+                                $picked_categories[$cf] = $value;
+                            }
+                        }
+
                         $inspections_by_facility[$fid][] = array(
                             'date'          => (string)$date_str,
                             'type'          => $type,
@@ -1949,7 +1985,8 @@ function kop_state_collect_inspection_summaries($state_name) {
                             'findings'      => $findings,
                             'pdf_url'       => $pdf_url,
                             'report_url'    => (string)($r['report_url'] ?? ''),
-                            'summary'       => mb_substr((string)($r['summary'] ?? ''), 0, 600),
+                            'summary'       => mb_substr((string)($r['summary'] ?? ''), 0, 1200),
+                            'categories'    => $picked_categories,
                         );
                     }
                 }
