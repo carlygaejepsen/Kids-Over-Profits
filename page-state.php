@@ -45,8 +45,7 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
         <?php endif; ?>
 
         <div class="state-page-counts" id="stateCounts" aria-live="polite">
-            <span class="count-pill" data-section="programs">Programs <em>—</em></span>
-            <span class="count-pill" data-section="inspections">Inspections <em>—</em></span>
+            <span class="count-pill" data-section="facilities">Facilities <em>—</em></span>
             <span class="count-pill" data-section="news">News <em>—</em></span>
             <span class="count-pill" data-section="lawsuits">Lawsuits <em>—</em></span>
             <span class="count-pill" data-section="legislation">Legislation <em>—</em></span>
@@ -54,21 +53,15 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
     </header>
 
     <nav class="state-page-tabs" role="tablist">
-        <button class="state-tab active" data-tab="programs" role="tab" aria-selected="true">Programs</button>
-        <button class="state-tab" data-tab="inspections" role="tab">Inspection Reports</button>
+        <button class="state-tab active" data-tab="facilities" role="tab" aria-selected="true">Facilities</button>
         <button class="state-tab" data-tab="news" role="tab">News</button>
         <button class="state-tab" data-tab="lawsuits" role="tab">Lawsuits</button>
         <button class="state-tab" data-tab="legislation" role="tab">Legislation</button>
     </nav>
 
-    <section class="state-section active" id="section-programs" data-section="programs" role="tabpanel">
-        <h2>Programs in <?php echo esc_html($state_name); ?></h2>
-        <div class="section-content"><p class="loading">Loading programs…</p></div>
-    </section>
-
-    <section class="state-section" id="section-inspections" data-section="inspections" role="tabpanel" hidden>
-        <h2>Inspection Reports</h2>
-        <div class="section-content"><p class="loading">Loading inspection data…</p></div>
+    <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel">
+        <h2>Facilities in <?php echo esc_html($state_name); ?></h2>
+        <div class="section-content"><p class="loading">Loading facilities…</p></div>
     </section>
 
     <section class="state-section" id="section-news" data-section="news" role="tabpanel" hidden>

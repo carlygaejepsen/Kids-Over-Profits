@@ -5,9 +5,7 @@
     if (!config || !config.apiUrl) return;
 
     const state = {
-        data: null,
-        inspectionData: null,
-        inspectionFiltered: null
+        data: null
     };
 
     const $ = sel => document.querySelector(sel);
@@ -99,8 +97,7 @@
             const data = await res.json();
             state.data = data;
             updateCounts();
-            renderPrograms();
-            renderInspections();
+            renderFacilities();
             renderNews();
             renderLawsuits();
             renderLegislation();
@@ -131,10 +128,8 @@
 
     const updateCounts = () => {
         const counts = state.data.counts || {};
-        const inspections = state.data.inspections || {};
         const map = {
-            programs: counts.programs ?? 0,
-            inspections: inspections.has_reports ? 'available' : 'none',
+            facilities: counts.facilities_total ?? 0,
             news: counts.news ?? 0,
             lawsuits: counts.lawsuits ?? 0,
             legislation: counts.legislation ?? 0
@@ -144,12 +139,8 @@
             if (pill) pill.textContent = value;
         });
 
-        // Hide tabs/sections that have nothing.
-        const isEmpty = section => {
-            if (section === 'inspections') return !inspections.has_reports;
-            return (counts[section] ?? 0) === 0;
-        };
-        ['programs', 'inspections', 'news', 'lawsuits', 'legislation'].forEach(section => {
+        const isEmpty = section => (map[section] ?? 0) === 0;
+        ['facilities', 'news', 'lawsuits', 'legislation'].forEach(section => {
             const tab = document.querySelector(`.state-tab[data-tab="${section}"]`);
             const pill = document.querySelector(`.count-pill[data-section="${section}"]`);
             if (isEmpty(section)) {
@@ -160,177 +151,101 @@
             }
         });
 
-        // Make sure the first visible tab is active.
         const firstVisibleTab = $$('.state-tab').find(t => t.style.display !== 'none');
         if (firstVisibleTab && !firstVisibleTab.classList.contains('active')) {
             firstVisibleTab.click();
         }
     };
 
-    // ---------- Programs ----------
-    const renderPrograms = () => {
-        const container = document.querySelector('#section-programs .section-content');
-        const programs = state.data.programs || [];
-        if (programs.length === 0) {
-            container.innerHTML = '<p class="empty">No programs on file for this state yet.</p>';
-            return;
+    // ---------- Facilities (merged Programs + Inspections) ----------
+    const facilityCardHtml = facility => {
+        const stats = [];
+        if (facility.inspection_count > 0) {
+            stats.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
         }
-        const items = programs.map(p => `
-            <li class="program-item">
-                <div class="program-name">${escapeHtml(p.facility_name || p.project_name)}</div>
-                <div class="program-meta">
-                    ${p.operator_name ? `<span class="op">Operator: ${escapeHtml(p.operator_name)}</span>` : ''}
-                    ${p.city ? `<span>${escapeHtml(p.city)}, ${escapeHtml(p.state)}</span>` : ''}
-                    ${p.type ? `<span class="type">${escapeHtml(p.type)}</span>` : ''}
-                    ${p.status ? `<span class="status status-${escapeHtml(String(p.status).toLowerCase())}">${escapeHtml(p.status)}</span>` : ''}
+        if (facility.violation_count > 0) {
+            stats.push(`<span class="stat stat-violation">${facility.violation_count} violation${facility.violation_count === 1 ? '' : 's'}</span>`);
+        }
+        if (facility.latest_inspection_date) {
+            stats.push(`<span class="stat">Latest: ${escapeHtml(facility.latest_inspection_date)}</span>`);
+        }
+        if (facility.type) {
+            stats.push(`<span class="stat">${escapeHtml(facility.type)}</span>`);
+        }
+        if (facility.operating_period) {
+            stats.push(`<span class="stat">${escapeHtml(facility.operating_period)}</span>`);
+        }
+
+        return `
+            <li class="facility-card">
+                <div class="facility-card-header">
+                    <h3 class="facility-card-name">${escapeHtml(facility.name)}</h3>
+                    ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
+                ${facility.address ? `<div class="facility-card-address">${escapeHtml(facility.address)}</div>` : ''}
+                ${facility.operator_name ? `<div class="facility-card-operator">Operator: ${escapeHtml(facility.operator_name)}</div>` : ''}
+                ${stats.length ? `<div class="facility-card-stats">${stats.join('')}</div>` : ''}
             </li>
-        `).join('');
-        container.innerHTML = `
-            <input type="text" class="section-search" id="programSearch" placeholder="Search programs...">
-            <ul class="program-list" id="programList">${items}</ul>
         `;
-        const search = container.querySelector('#programSearch');
-        search.addEventListener('input', () => {
-            const q = search.value.trim().toLowerCase();
-            container.querySelectorAll('.program-item').forEach(li => {
-                li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none';
-            });
-        });
     };
 
-    // ---------- Inspections ----------
-    const renderInspections = async () => {
-        const container = document.querySelector('#section-inspections .section-content');
+    const renderFacilities = () => {
+        const container = document.querySelector('#section-facilities .section-content');
+        const facilities = state.data.facilities || { active: [], closed: [], total: 0 };
         const inspections = state.data.inspections || {};
 
-        if (!inspections.has_reports) {
-            container.innerHTML = '<p class="empty">No inspection reports are available for this state.</p>';
+        if ((facilities.total ?? 0) === 0) {
+            container.innerHTML = '<p class="empty">No facilities on file for this state yet.</p>';
             return;
         }
 
+        const inspectionsLink = inspections.has_reports
+            ? `<a href="${escapeHtml(inspections.page_url)}" class="full-page-link">View full inspection report search →</a>`
+            : '';
+
+        const activeHtml = facilities.active.length
+            ? `<ul class="facility-list">${facilities.active.map(facilityCardHtml).join('')}</ul>`
+            : '<p class="empty">No active facilities listed.</p>';
+
+        const closedHtml = facilities.closed.length
+            ? `<ul class="facility-list closed-list">${facilities.closed.map(facilityCardHtml).join('')}</ul>`
+            : '';
+
         container.innerHTML = `
-            <div class="inspections-search-area">
-                <input type="text" class="section-search" id="inspectionSearch" placeholder="Search inspection reports by facility name…">
-                <a href="${escapeHtml(inspections.page_url)}" class="full-page-link">View full inspection reports →</a>
+            <div class="facility-toolbar">
+                <input type="text" class="section-search" id="facilitySearch" placeholder="Search facilities...">
+                ${inspectionsLink}
             </div>
-            <div id="inspectionResults" class="inspection-results">
-                <p class="loading">Loading inspection data…</p>
+
+            <div class="facility-group facility-group-active">
+                <h3 class="facility-group-heading">
+                    Active <span class="count">(${facilities.active.length})</span>
+                </h3>
+                ${activeHtml}
             </div>
+
+            ${facilities.closed.length ? `
+                <div class="facility-group facility-group-closed">
+                    <h3 class="facility-group-heading">
+                        Closed <span class="count">(${facilities.closed.length})</span>
+                    </h3>
+                    ${closedHtml}
+                </div>
+            ` : ''}
         `;
 
-        try {
-            const datasets = inspections.dataset_urls || [];
-            if (datasets.length === 0) {
-                container.querySelector('#inspectionResults').innerHTML =
-                    '<p class="empty">Inspection page is available but data could not be loaded inline.</p>';
-                return;
-            }
-            const responses = await Promise.all(datasets.map(url =>
-                fetch(url, { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null)
-            ));
-
-            const merged = mergeInspectionDatasets(responses.filter(Boolean));
-            state.inspectionData = merged;
-            state.inspectionFiltered = merged;
-            renderInspectionResults('');
-
-            container.querySelector('#inspectionSearch').addEventListener('input', e => {
-                renderInspectionResults(e.target.value.trim().toLowerCase());
+        const search = container.querySelector('#facilitySearch');
+        search.addEventListener('input', () => {
+            const q = search.value.trim().toLowerCase();
+            container.querySelectorAll('.facility-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
             });
-        } catch (err) {
-            console.error('Inspection load failed', err);
-            container.querySelector('#inspectionResults').innerHTML =
-                '<p class="error">Could not load inspection data inline. Use the link above to view the full reports page.</p>';
-        }
-    };
-
-    const mergeInspectionDatasets = datasets => {
-        const facilities = new Map();
-        datasets.forEach(ds => {
-            const list = Array.isArray(ds) ? ds : (ds && Array.isArray(ds.facilities) ? ds.facilities : []);
-            list.forEach(facility => {
-                if (!facility || typeof facility !== 'object') return;
-                const name = facility.facility_name || facility.name || '';
-                const address = facility.facility_address || facility.address || '';
-                const key = (facility.facility_id || (name + '|' + address)).toString().toLowerCase();
-                if (!facilities.has(key)) {
-                    facilities.set(key, {
-                        name,
-                        address,
-                        inspectionCount: Array.isArray(facility.inspections) ? facility.inspections.length : 0,
-                        violationCount: countViolations(facility),
-                        latest: getLatestInspection(facility)
-                    });
-                }
+            // Hide group heading if all cards within are hidden.
+            container.querySelectorAll('.facility-group').forEach(group => {
+                const visible = group.querySelectorAll('.facility-card:not([style*="display: none"])').length;
+                group.style.display = visible === 0 ? 'none' : '';
             });
         });
-        return Array.from(facilities.values()).sort((a, b) =>
-            (a.name || '').localeCompare(b.name || '')
-        );
-    };
-
-    const countViolations = facility => {
-        if (!Array.isArray(facility.inspections)) return 0;
-        let total = 0;
-        facility.inspections.forEach(inspection => {
-            if (Array.isArray(inspection.inspection_findings)) {
-                total += inspection.inspection_findings.length;
-            } else if (Array.isArray(inspection.findings)) {
-                total += inspection.findings.length;
-            }
-        });
-        return total;
-    };
-
-    const getLatestInspection = facility => {
-        if (!Array.isArray(facility.inspections) || facility.inspections.length === 0) return null;
-        let best = null;
-        let bestTs = 0;
-        facility.inspections.forEach(insp => {
-            const dateStr = insp.inspection_date || insp.date || insp.report_date || '';
-            const ts = Date.parse(dateStr) || 0;
-            if (ts > bestTs) {
-                bestTs = ts;
-                best = { date: dateStr, type: insp.inspection_type || insp.type || '' };
-            }
-        });
-        return best;
-    };
-
-    const renderInspectionResults = query => {
-        const container = document.getElementById('inspectionResults');
-        if (!container) return;
-        const data = state.inspectionData || [];
-        const filtered = query
-            ? data.filter(f =>
-                (f.name || '').toLowerCase().includes(query) ||
-                (f.address || '').toLowerCase().includes(query)
-              )
-            : data;
-
-        if (filtered.length === 0) {
-            container.innerHTML = '<p class="empty">No matching facilities.</p>';
-            return;
-        }
-
-        const top = filtered.slice(0, 50);
-        container.innerHTML = `
-            <p class="result-count">${filtered.length} facilit${filtered.length === 1 ? 'y' : 'ies'} ${query ? 'matched' : 'on file'}${filtered.length > 50 ? ' (showing first 50)' : ''}.</p>
-            <ul class="inspection-list">
-                ${top.map(f => `
-                    <li class="inspection-item">
-                        <div class="facility-name">${escapeHtml(f.name || 'Unnamed facility')}</div>
-                        ${f.address ? `<div class="facility-address">${escapeHtml(f.address)}</div>` : ''}
-                        <div class="facility-stats">
-                            <span>${f.inspectionCount} inspection${f.inspectionCount === 1 ? '' : 's'}</span>
-                            <span>${f.violationCount} violation${f.violationCount === 1 ? '' : 's'}</span>
-                            ${f.latest ? `<span>Latest: ${escapeHtml(f.latest.date)}</span>` : ''}
-                        </div>
-                    </li>
-                `).join('')}
-            </ul>
-        `;
     };
 
     // ---------- News ----------
