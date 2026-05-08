@@ -20,6 +20,28 @@ get_header();
 						<div class="state-reports-wrapper">
 							<div class="facility-report-container">
 								<h1 class="state-reports-title"><?php the_title(); ?></h1>
+
+								<?php
+								// Resolve a state hub page from the report slug (e.g. "ut-reports" -> "Utah" -> "/utah/")
+								$report_slug = get_post_field('post_name', get_post());
+								$state_lookup = preg_replace('/-?reports?$/i', '', $report_slug);
+								$state_hub_name = function_exists('kop_state_slug_to_name') ? kop_state_slug_to_name($state_lookup) : null;
+								if ($state_hub_name) {
+									$hub_slug = kop_state_slug($state_hub_name);
+									$hub_page = get_page_by_path($hub_slug);
+									if ($hub_page) {
+										$hub_url = get_permalink($hub_page);
+										?>
+										<p class="state-hub-back-link" style="margin: 0.5em 0 1.5em; padding: 0.65em 1em; background: #f0f3fa; border-left: 4px solid #00004d; border-radius: 4px;">
+											<a href="<?php echo esc_url($hub_url); ?>" style="color: #00004d; font-weight: 600; text-decoration: none;">
+												← View the full <?php echo esc_html($state_hub_name); ?> state page (programs, news, lawsuits, legislation)
+											</a>
+										</p>
+										<?php
+									}
+								}
+								?>
+
 								<?php the_content(); ?>
 
 								<div id="last-updated" class="last-updated"></div>

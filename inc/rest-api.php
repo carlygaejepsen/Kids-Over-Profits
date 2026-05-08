@@ -1634,3 +1634,352 @@ function kop_search_in_data($data, $query) {
 function kop_get_facilities_rest_endpoint_url() {
     return esc_url_raw(rest_url('kop/v1/facilities'));
 }
+
+/**
+ * State page aggregation: name normalization, slug map, inspection page index.
+ */
+function kop_state_us_states() {
+    return array(
+        'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia',
+        'Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland',
+        'Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey',
+        'New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina',
+        'South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming',
+        'District of Columbia',
+    );
+}
+
+function kop_state_abbrev_to_name() {
+    return array(
+        'AL'=>'Alabama','AK'=>'Alaska','AZ'=>'Arizona','AR'=>'Arkansas','CA'=>'California','CO'=>'Colorado','CT'=>'Connecticut',
+        'DE'=>'Delaware','FL'=>'Florida','GA'=>'Georgia','HI'=>'Hawaii','ID'=>'Idaho','IL'=>'Illinois','IN'=>'Indiana',
+        'IA'=>'Iowa','KS'=>'Kansas','KY'=>'Kentucky','LA'=>'Louisiana','ME'=>'Maine','MD'=>'Maryland','MA'=>'Massachusetts',
+        'MI'=>'Michigan','MN'=>'Minnesota','MS'=>'Mississippi','MO'=>'Missouri','MT'=>'Montana','NE'=>'Nebraska','NV'=>'Nevada',
+        'NH'=>'New Hampshire','NJ'=>'New Jersey','NM'=>'New Mexico','NY'=>'New York','NC'=>'North Carolina','ND'=>'North Dakota',
+        'OH'=>'Ohio','OK'=>'Oklahoma','OR'=>'Oregon','PA'=>'Pennsylvania','RI'=>'Rhode Island','SC'=>'South Carolina',
+        'SD'=>'South Dakota','TN'=>'Tennessee','TX'=>'Texas','UT'=>'Utah','VT'=>'Vermont','VA'=>'Virginia','WA'=>'Washington',
+        'WV'=>'West Virginia','WI'=>'Wisconsin','WY'=>'Wyoming','DC'=>'District of Columbia',
+    );
+}
+
+/**
+ * Convert "Utah" -> "utah", "New York" -> "new-york".
+ */
+function kop_state_slug($state_name) {
+    $slug = strtolower(trim((string)$state_name));
+    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    return trim($slug, '-');
+}
+
+/**
+ * Resolve a slug ("utah", "new-york", "ut") to a canonical state name.
+ *
+ * @return string|null Canonical state name or null if unknown.
+ */
+function kop_state_slug_to_name($slug) {
+    if (!is_string($slug) || $slug === '') return null;
+    $slug = strtolower(trim($slug));
+
+    $abbrev_map = kop_state_abbrev_to_name();
+    $upper = strtoupper($slug);
+    if (isset($abbrev_map[$upper])) {
+        return $abbrev_map[$upper];
+    }
+
+    foreach (kop_state_us_states() as $state) {
+        if (kop_state_slug($state) === $slug) {
+            return $state;
+        }
+    }
+    return null;
+}
+
+/**
+ * State -> existing inspection page slug (if any).
+ */
+function kop_state_inspection_page_map() {
+    return array(
+        'Arkansas'   => 'ar-reports',
+        'Arizona'    => 'az-reports',
+        'California' => 'ca-reports',
+        'Connecticut'=> 'ct-reports',
+        'Minnesota'  => 'mn-reports',
+        'Montana'    => 'mt-reports',
+        'Oregon'     => 'or-reports',
+        'Texas'      => 'tx-reports',
+        'Utah'       => 'ut-reports',
+        'Washington' => 'wa-reports',
+    );
+}
+
+/**
+ * State -> static inspection JSON URL(s) used for the on-page search bar.
+ * Mirrors the globs in kop_enqueue_report_scripts.
+ */
+function kop_state_inspection_dataset_urls($state_name) {
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+
+    $glob_groups = array();
+    switch ($state_name) {
+        case 'Utah':
+            $glob_groups = array(
+                array($theme_dir . '/js/data/ut_checklists/ut_reports*.json'),
+                array($theme_dir . '/js/data/ut_reports*.json'),
+            );
+            break;
+        case 'Arizona':
+            $glob_groups = array(array($theme_dir . '/js/data/az_reports/*.json'));
+            break;
+        case 'California':
+            $glob_groups = array(array($theme_dir . '/js/data/ccl*.json'));
+            break;
+        case 'Texas':
+            $glob_groups = array(array($theme_dir . '/js/data/tx_reports.json'));
+            break;
+        case 'Montana':
+            $glob_groups = array(array($theme_dir . '/js/data/mt_reports.json'));
+            break;
+        case 'Connecticut':
+            $glob_groups = array(array($theme_dir . '/js/data/ct_reports.json'));
+            break;
+        case 'Washington':
+            $glob_groups = array(array($theme_dir . '/js/data/wa_reports.json'));
+            break;
+        case 'Arkansas':
+            $glob_groups = array(array($theme_dir . '/js/data/ar_reports.json'));
+            break;
+        case 'Minnesota':
+            $glob_groups = array(array($theme_dir . '/js/data/mn_reports.json'));
+            break;
+        case 'Oregon':
+            $glob_groups = array(array($theme_dir . '/js/data/or_reports*.json'));
+            break;
+    }
+
+    $matched_files = array();
+    foreach ($glob_groups as $group) {
+        $group_files = array();
+        foreach ($group as $pattern) {
+            $files = glob($pattern);
+            if (is_array($files)) {
+                $group_files = array_merge($group_files, $files);
+            }
+        }
+        if (!empty($group_files)) {
+            $matched_files = $group_files;
+            break;
+        }
+    }
+
+    if (empty($matched_files)) {
+        return array();
+    }
+
+    $matched_files = array_values(array_unique($matched_files));
+    usort($matched_files, static function ($a, $b) {
+        return (filemtime($b) ?: 0) <=> (filemtime($a) ?: 0);
+    });
+
+    return array_map(static function ($file) use ($theme_dir, $theme_uri) {
+        $relative = str_replace($theme_dir, '', $file);
+        return $theme_uri . str_replace('\\', '/', $relative);
+    }, $matched_files);
+}
+
+/**
+ * Build the programs list for a state by filtering facilities_master.
+ */
+function kop_state_collect_programs($state_name) {
+    global $wpdb;
+
+    $abbrev_map = array_flip(kop_state_abbrev_to_name());
+    $abbrev = isset($abbrev_map[$state_name]) ? $abbrev_map[$state_name] : '';
+    $needles = array_filter(array(strtolower($state_name), strtolower($abbrev)));
+
+    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master", ARRAY_A);
+    if (!is_array($rows)) return array();
+
+    $programs = array();
+    foreach ($rows as $row) {
+        $data = kop_normalize_project_payload($row['json_data']);
+        if (!is_array($data) || empty($data['facilities']) || !is_array($data['facilities'])) {
+            continue;
+        }
+
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) continue;
+
+            $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
+            $facility_state = trim((string)($address['state'] ?? ''));
+            $facility_state_lower = strtolower($facility_state);
+
+            // Match either by state name, abbreviation, or by facility 'location' field.
+            $location_string = strtolower((string)($facility['location'] ?? ''));
+
+            $matched = false;
+            foreach ($needles as $needle) {
+                if ($needle === '') continue;
+                if ($facility_state_lower === $needle ||
+                    ($needle && strpos($location_string, $needle) !== false)) {
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) continue;
+
+            $identification = isset($facility['identification']) && is_array($facility['identification'])
+                ? $facility['identification'] : array();
+
+            $programs[] = array(
+                'project_name'   => $row['unique_name'],
+                'facility_name'  => $identification['name'] ?? $identification['currentName'] ?? '',
+                'operator_name'  => isset($data['operator']['name']) ? $data['operator']['name'] : '',
+                'city'           => $address['city'] ?? '',
+                'state'          => $facility_state ?: $state_name,
+                'type'           => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
+                'status'         => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',
+            );
+        }
+    }
+
+    usort($programs, static function ($a, $b) {
+        return strnatcasecmp($a['facility_name'] ?: $a['project_name'], $b['facility_name'] ?: $b['project_name']);
+    });
+
+    return $programs;
+}
+
+/**
+ * Pull news_submissions tagged with this state.
+ */
+function kop_state_collect_news($state_name) {
+    global $wpdb;
+
+    $like_loc = '%' . $wpdb->esc_like($state_name) . '%';
+    $like_tag = '%"' . $wpdb->esc_like($state_name) . '"%';
+
+    $sql = "SELECT id, article_title, alternate_title, author, publication_name, publication_date,
+                   article_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
+            FROM news_submissions
+            WHERE status IN ('approved','published')
+              AND (article_location LIKE %s OR tags LIKE %s)
+            ORDER BY publication_date DESC, created_at DESC
+            LIMIT 200";
+
+    $rows = $wpdb->get_results($wpdb->prepare($sql, $like_loc, $like_tag), ARRAY_A);
+    if (!is_array($rows)) return array();
+
+    return array_map(static function ($row) {
+        $row['tags'] = json_decode($row['tags'] ?? '[]', true) ?: array();
+        $row['facilities_mentioned'] = json_decode($row['facilities_mentioned'] ?? '[]', true) ?: array();
+        $row['content_warnings'] = json_decode($row['content_warnings'] ?? '[]', true) ?: array();
+        $row['display_title'] = !empty($row['alternate_title']) ? $row['alternate_title'] : $row['article_title'];
+        return $row;
+    }, $rows);
+}
+
+function kop_state_collect_lawsuits($state_name) {
+    global $wpdb;
+    $table = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", 'lawsuits'));
+    if ($table !== 'lawsuits') return array();
+
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT * FROM lawsuits WHERE jurisdiction = %s AND publication_status = 'published'
+         ORDER BY filing_date DESC, created_at DESC LIMIT 200",
+        $state_name
+    ), ARRAY_A);
+
+    if (!is_array($rows)) return array();
+
+    $json_fields = array('plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','source_urls','document_urls','tags');
+    return array_map(static function ($row) use ($json_fields) {
+        foreach ($json_fields as $f) {
+            $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
+        }
+        return $row;
+    }, $rows);
+}
+
+function kop_state_collect_legislation($state_name) {
+    global $wpdb;
+    $table = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", 'legislation'));
+    if ($table !== 'legislation') return array();
+
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT * FROM legislation WHERE jurisdiction = %s AND publication_status = 'published'
+         ORDER BY introduced_date DESC, created_at DESC LIMIT 200",
+        $state_name
+    ), ARRAY_A);
+
+    if (!is_array($rows)) return array();
+
+    $json_fields = array('sponsors','subject_tags','facilities_affected','tags');
+    return array_map(static function ($row) use ($json_fields) {
+        foreach ($json_fields as $f) {
+            $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
+        }
+        return $row;
+    }, $rows);
+}
+
+/**
+ * Register the state aggregation REST route.
+ */
+function kop_register_state_rest_routes() {
+    register_rest_route(
+        'kop/v1',
+        '/state/(?P<slug>[a-z0-9-]+)',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'permission_callback' => '__return_true',
+            'callback' => function ($request) {
+                $slug = strtolower($request['slug']);
+                $state_name = kop_state_slug_to_name($slug);
+                if (!$state_name) {
+                    return new WP_Error('unknown_state', 'Unknown state slug', array('status' => 404));
+                }
+
+                $inspection_pages = kop_state_inspection_page_map();
+                $inspection_slug = isset($inspection_pages[$state_name]) ? $inspection_pages[$state_name] : null;
+                $inspection_url = $inspection_slug ? home_url('/' . $inspection_slug . '/') : null;
+                $inspection_datasets = kop_state_inspection_dataset_urls($state_name);
+
+                $programs = kop_state_collect_programs($state_name);
+                $news = kop_state_collect_news($state_name);
+                $lawsuits = kop_state_collect_lawsuits($state_name);
+                $legislation = kop_state_collect_legislation($state_name);
+
+                return rest_ensure_response(array(
+                    'state' => array(
+                        'name' => $state_name,
+                        'slug' => kop_state_slug($state_name),
+                    ),
+                    'inspections' => array(
+                        'has_reports' => $inspection_slug !== null && !empty($inspection_datasets),
+                        'page_url' => $inspection_url,
+                        'dataset_urls' => $inspection_datasets,
+                    ),
+                    'programs' => $programs,
+                    'news' => $news,
+                    'lawsuits' => $lawsuits,
+                    'legislation' => $legislation,
+                    'counts' => array(
+                        'programs' => count($programs),
+                        'news' => count($news),
+                        'lawsuits' => count($lawsuits),
+                        'legislation' => count($legislation),
+                    ),
+                ));
+            },
+            'args' => array(
+                'slug' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_title',
+                ),
+            ),
+        )
+    );
+}
+add_action('rest_api_init', 'kop_register_state_rest_routes');
