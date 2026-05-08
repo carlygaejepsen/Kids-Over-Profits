@@ -12,13 +12,19 @@ deployment:
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp .env.example $DEPLOYPATH
-    - /bin/cp page-admin-data.php $DEPLOYPATH
-    - /bin/cp page-admin-submissions.php $DEPLOYPATH
-    - /bin/cp page-data.php $DEPLOYPATH
-    - /bin/cp page-location-index.php $DEPLOYPATH
-    - /bin/cp page-news-feed.php $DEPLOYPATH
-    - /bin/cp page-news-processor.php $DEPLOYPATH
-    - /bin/cp page-referrer-index.php $DEPLOYPATH
-    - /bin/cp page-tti-program-index.php $DEPLOYPATH
-    - /bin/cp page-wiki-editor.php $DEPLOYPATH
-    - /bin/cp page-wiki-feed.php $DEPLOYPATH
+    # Page templates moved into templates/ — remove stranded copies at theme root
+    # so WordPress doesn't see duplicate "Template Name:" entries.
+    - /bin/rm -f $DEPLOYPATH/page-admin-data.php
+    - /bin/rm -f $DEPLOYPATH/page-admin-submissions.php
+    - /bin/rm -f $DEPLOYPATH/page-admin-lawsuits.php
+    - /bin/rm -f $DEPLOYPATH/page-admin-legislation.php
+    - /bin/rm -f $DEPLOYPATH/page-data.php
+    - /bin/rm -f $DEPLOYPATH/page-location-index.php
+    - /bin/rm -f $DEPLOYPATH/page-news-feed.php
+    - /bin/rm -f $DEPLOYPATH/page-news-processor.php
+    - /bin/rm -f $DEPLOYPATH/page-referrer-index.php
+    - /bin/rm -f $DEPLOYPATH/page-state.php
+    - /bin/rm -f $DEPLOYPATH/page-state-reports.php
+    - /bin/rm -f $DEPLOYPATH/page-tti-program-index.php
+    - /bin/rm -f $DEPLOYPATH/page-wiki-editor.php
+    - /bin/rm -f $DEPLOYPATH/page-wiki-feed.php
