@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: State Reports
- * Description: Template for state inspection reports (CT, AZ, TX, WA, etc.)
+ * Description: Template for state inspection reports (CT, AZ, TX, etc.)
  * Template Post Type: page
  */
 
@@ -12,19 +12,40 @@ get_header();
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<?php
-			while ( have_posts() ) {
-				the_post();
-				?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			if ( have_posts() ) {
+				while ( have_posts() ) {
+					the_post();
+					?>
 					<div class="entry-content">
-						<div class="facility-report-container">
-							<h1 class="entry-title state-reports-title"><?php the_title(); ?></h1>
+						<div class="state-reports-wrapper">
+							<div class="facility-report-container">
+								<h1 class="state-reports-title"><?php the_title(); ?></h1>
 
-							<div class="state-reports-intro">
+								<?php
+								// Resolve a state hub page from the report slug (e.g. "ut-reports" -> "Utah" -> "/utah/")
+								$report_slug = get_post_field('post_name', get_post());
+								$state_lookup = preg_replace('/-?reports?$/i', '', $report_slug);
+								$state_hub_name = function_exists('kop_state_slug_to_name') ? kop_state_slug_to_name($state_lookup) : null;
+								if ($state_hub_name) {
+									$hub_slug = kop_state_slug($state_hub_name);
+									$hub_page = get_page_by_path($hub_slug);
+									if ($hub_page) {
+										$hub_url = get_permalink($hub_page);
+										?>
+										<p class="state-hub-back-link" style="margin: 0.5em 0 1.5em; padding: 0.65em 1em; background: #f0f3fa; border-left: 4px solid #00004d; border-radius: 4px;">
+											<a href="<?php echo esc_url($hub_url); ?>" style="color: #00004d; font-weight: 600; text-decoration: none;">
+												← View the full <?php echo esc_html($state_hub_name); ?> state page (programs, news, lawsuits, legislation)
+											</a>
+										</p>
+										<?php
+									}
+								}
+								?>
+
 								<?php the_content(); ?>
-							</div>
 
-							<header class="report-header">
+								<div id="last-updated" class="last-updated"></div>
+
 								<nav id="alphabet-filter" class="alphabet-filter">
 									<!-- JavaScript will populate this -->
 								</nav>
@@ -38,19 +59,20 @@ get_header();
 										<option value="violations-desc">Most Violations First</option>
 										<option value="recent-inspection">Most Recent Inspection</option>
 									</select>
+									<label class="new-only-toggle">
+										<input type="checkbox" id="newReportsOnly"> New reports only (last 30 days)
+									</label>
 									<button id="clearSearch" onclick="clearSearch()" style="display: none;">Clear Search</button>
 								</div>
-							</header>
 
-							<main id="report-container" class="report-list">
-								<p class="loading-message">Loading report data...</p>
-							</main>
-
-							<div id="last-updated" class="last-updated"></div>
+								<div id="report-container" class="report-list">
+									<p class="loading-message">Loading report data...</p>
+								</div>
+							</div>
 						</div>
 					</div>
-				</article>
-				<?php
+					<?php
+				}
 			}
 			?>
 		</main>
@@ -59,3 +81,5 @@ get_header();
 
 <?php
 get_footer();
+?>
+
