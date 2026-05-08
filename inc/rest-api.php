@@ -1854,18 +1854,91 @@ function kop_state_collect_programs($state_name) {
 }
 
 /**
- * Read inspection JSON for the state from disk and reduce to per-facility summaries.
+ * Reduce inspection data to per-facility summaries.
  *
- * @return array List of ['name', 'address', 'inspection_count', 'violation_count', 'latest_inspection_date']
+ * Primary source: inspection_facilities + inspection_reports MySQL tables (per AGENTS.md).
+ * Fallback: legacy JSON files in js/data, used only when no DB rows exist for the state.
+ *
+ * @return array List of ['facility_name', 'inspection_address', 'inspection_count', 'violation_count', 'latest_inspection_date']
  */
 function kop_state_collect_inspection_summaries($state_name) {
+    global $wpdb;
+
+    $abbrev_map = array_flip(kop_state_abbrev_to_name());
+    $abbrev = isset($abbrev_map[$state_name]) ? $abbrev_map[$state_name] : '';
+
+    $facilities_table_exists = $wpdb->get_var("SHOW TABLES LIKE 'inspection_facilities'");
+    $reports_table_exists    = $wpdb->get_var("SHOW TABLES LIKE 'inspection_reports'");
+
+    // -------- Primary source: DB --------
+    if ($abbrev !== '' && $facilities_table_exists === 'inspection_facilities' && $reports_table_exists === 'inspection_reports') {
+        $facility_rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, facility_name, full_address FROM inspection_facilities WHERE state = %s",
+            $abbrev
+        ), ARRAY_A);
+
+        if (is_array($facility_rows) && !empty($facility_rows)) {
+            $facility_ids = array_map('intval', wp_list_pluck($facility_rows, 'id'));
+            $placeholders = implode(',', array_fill(0, count($facility_ids), '%d'));
+
+            $report_rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT facility_id, report_date, categories_json
+                 FROM inspection_reports
+                 WHERE facility_id IN ($placeholders)",
+                ...$facility_ids
+            ), ARRAY_A);
+
+            $by_facility = array();
+            if (is_array($report_rows)) {
+                foreach ($report_rows as $r) {
+                    $fid = (int)$r['facility_id'];
+                    if (!isset($by_facility[$fid])) {
+                        $by_facility[$fid] = array('count' => 0, 'violations' => 0, 'latest' => '');
+                    }
+                    $by_facility[$fid]['count']++;
+
+                    $categories = json_decode($r['categories_json'] ?? '', true);
+                    if (is_array($categories)) {
+                        if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
+                            $by_facility[$fid]['violations'] += (int)$categories['finding_count'];
+                        } elseif (isset($categories['findings']) && is_array($categories['findings'])) {
+                            $by_facility[$fid]['violations'] += count($categories['findings']);
+                        }
+                    }
+
+                    $date_str = $r['report_date'] ?? '';
+                    if ($date_str) {
+                        $existing_ts = strtotime((string)$by_facility[$fid]['latest']);
+                        $new_ts = strtotime((string)$date_str);
+                        if ($new_ts && (!$existing_ts || $new_ts > $existing_ts)) {
+                            $by_facility[$fid]['latest'] = $date_str;
+                        }
+                    }
+                }
+            }
+
+            $summaries = array();
+            foreach ($facility_rows as $f) {
+                $fid = (int)$f['id'];
+                $stats = $by_facility[$fid] ?? array('count' => 0, 'violations' => 0, 'latest' => '');
+                $summaries[] = array(
+                    'facility_name'          => trim((string)$f['facility_name']),
+                    'inspection_address'     => trim((string)($f['full_address'] ?? '')),
+                    'inspection_count'       => (int)$stats['count'],
+                    'violation_count'        => (int)$stats['violations'],
+                    'latest_inspection_date' => (string)$stats['latest'],
+                );
+            }
+            return $summaries;
+        }
+    }
+
+    // -------- Fallback: legacy JSON files --------
     $dataset_urls = kop_state_inspection_dataset_urls($state_name);
     if (empty($dataset_urls)) return array();
 
-    // Re-resolve URLs back to local file paths for direct reading.
     $theme_dir = get_stylesheet_directory();
     $theme_uri = get_stylesheet_directory_uri();
-
     $facilities_by_key = array();
 
     foreach ($dataset_urls as $url) {
@@ -1889,8 +1962,6 @@ function kop_state_collect_inspection_summaries($state_name) {
             $name = trim((string)($facility['facility_name'] ?? $facility['name'] ?? ''));
             $address = trim((string)($facility['facility_address'] ?? $facility['address'] ?? ''));
             if ($name === '') continue;
-
-            $key = strtolower($name);
 
             $inspection_count = 0;
             $violation_count = 0;
@@ -1917,19 +1988,24 @@ function kop_state_collect_inspection_summaries($state_name) {
                 }
             }
 
+            $key = strtolower($name);
             if (!isset($facilities_by_key[$key])) {
                 $facilities_by_key[$key] = array(
-                    'facility_name'    => $name,
-                    'inspection_address' => $address,
-                    'inspection_count' => 0,
-                    'violation_count'  => 0,
+                    'facility_name'          => $name,
+                    'inspection_address'     => $address,
+                    'inspection_count'       => 0,
+                    'violation_count'        => 0,
                     'latest_inspection_date' => '',
                 );
             }
             $facilities_by_key[$key]['inspection_count'] += $inspection_count;
             $facilities_by_key[$key]['violation_count']  += $violation_count;
-            if ($latest_ts > strtotime((string)$facilities_by_key[$key]['latest_inspection_date'])) {
-                $facilities_by_key[$key]['latest_inspection_date'] = $latest_date;
+            if ($latest_date) {
+                $existing_ts = strtotime((string)$facilities_by_key[$key]['latest_inspection_date']);
+                $new_ts = strtotime((string)$latest_date);
+                if ($new_ts && (!$existing_ts || $new_ts > $existing_ts)) {
+                    $facilities_by_key[$key]['latest_inspection_date'] = $latest_date;
+                }
             }
         }
     }
@@ -2149,7 +2225,7 @@ function kop_register_state_rest_routes() {
                         'slug' => kop_state_slug($state_name),
                     ),
                     'inspections' => array(
-                        'has_reports' => $inspection_slug !== null && !empty($inspection_datasets),
+                        'has_reports' => $inspection_slug !== null,
                         'page_url' => $inspection_url,
                     ),
                     'facilities' => $facilities,
