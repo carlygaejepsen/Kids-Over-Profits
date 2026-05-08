@@ -85,10 +85,11 @@ window.statePageConfig = {
     stateSlug: <?php echo wp_json_encode($state_slug); ?>,
     apiUrl: <?php echo wp_json_encode($rest_url); ?>,
     folderContentUrl: <?php echo wp_json_encode(esc_url_raw(rest_url('kop/v1/folder-content'))); ?>,
+    foldersUrl: <?php echo wp_json_encode(esc_url_raw(rest_url('kop/v1/folders'))); ?>,
     newsSubmitUrl: <?php
         $news_pages = function_exists('get_pages') ? get_pages(array(
             'meta_key' => '_wp_page_template',
-            'meta_value' => 'page-news-processor.php',
+            'meta_value__in' => array('templates/page-news-processor.php', 'page-news-processor.php'),
             'number' => 1,
         )) : array();
         $news_url = (is_array($news_pages) && !empty($news_pages))

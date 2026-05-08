@@ -5,7 +5,9 @@
     if (!config || !config.apiUrl) return;
 
     const state = {
-        data: null
+        data: null,
+        folders: null,        // FileBird folder list (cached on first need)
+        folderByName: null,   // normalized name -> folder id lookup
     };
 
     const $ = sel => document.querySelector(sel);
@@ -73,9 +75,7 @@
                 if (!target) return;
                 if (target.dataset.loaded === '1') {
                     target.hidden = !target.hidden;
-                    btn.textContent = target.hidden
-                        ? `📂 Show documents (${btn.dataset.count})`
-                        : '📂 Hide documents';
+                    btn.textContent = target.hidden ? '📂 Show documents' : '📂 Hide documents';
                     return;
                 }
                 btn.disabled = true;
@@ -90,12 +90,59 @@
         });
     };
 
+    // ---- FileBird folder lookup for facilities ----
+    const normalizeFolderText = s => String(s || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '')
+        .trim();
+
+    const ensureFoldersLoaded = async () => {
+        if (state.folders) return state.folders;
+        if (!config.foldersUrl) return [];
+        try {
+            const res = await fetch(config.foldersUrl, { credentials: 'same-origin' });
+            const data = await res.json();
+            state.folders = Array.isArray(data) ? data : [];
+        } catch (err) {
+            console.warn('Failed to load FileBird folders', err);
+            state.folders = [];
+        }
+        // Build name lookup
+        state.folderByName = new Map();
+        state.folders.forEach(f => {
+            if (!f || !f.name) return;
+            const norm = normalizeFolderText(f.name);
+            if (!state.folderByName.has(norm)) {
+                state.folderByName.set(norm, f.id);
+            }
+        });
+        return state.folders;
+    };
+
+    const findFolderForFacility = facilityName => {
+        if (!state.folderByName) return null;
+        const norm = normalizeFolderText(facilityName);
+        if (!norm) return null;
+        // Exact normalized match first
+        if (state.folderByName.has(norm)) return state.folderByName.get(norm);
+        // Substring fallback: any folder whose normalized name contains the facility name
+        // or vice versa (handles "Newport Academy – Seattle" vs "Newport Academy")
+        for (const [folderNorm, id] of state.folderByName.entries()) {
+            if (norm.length > 6 && (folderNorm.includes(norm) || norm.includes(folderNorm))) {
+                return id;
+            }
+        }
+        return null;
+    };
+
     const init = async () => {
         wireTabs();
         try {
-            const res = await fetch(config.apiUrl, { credentials: 'same-origin' });
-            const data = await res.json();
-            state.data = data;
+            const [stateRes] = await Promise.all([
+                fetch(config.apiUrl, { credentials: 'same-origin' }).then(r => r.json()),
+                ensureFoldersLoaded(),
+            ]);
+            state.data = stateRes;
             updateCounts();
             renderFacilities();
             renderNews();
@@ -158,6 +205,42 @@
     };
 
     // ---------- Facilities (merged Programs + Inspections) ----------
+    const renderInspectionRecords = inspections => {
+        if (!Array.isArray(inspections) || inspections.length === 0) {
+            return '<p class="docs-empty">No inspection records on file.</p>';
+        }
+        return `<ul class="inspection-record-list">${inspections.map(insp => {
+            const findings = Array.isArray(insp.findings) ? insp.findings : [];
+            return `
+                <li class="inspection-record">
+                    <div class="inspection-record-header">
+                        <span class="inspection-record-date">${escapeHtml(formatDate(insp.date) || '—')}</span>
+                        ${insp.type ? `<span class="inspection-record-type">${escapeHtml(insp.type)}</span>` : ''}
+                        ${insp.finding_count > 0
+                            ? `<span class="inspection-record-findings">${insp.finding_count} finding${insp.finding_count === 1 ? '' : 's'}</span>`
+                            : `<span class="inspection-record-findings inspection-record-clean">No findings</span>`}
+                        ${insp.pdf_url
+                            ? `<a class="inspection-record-pdf" href="${escapeHtml(insp.pdf_url)}" target="_blank" rel="noopener">PDF</a>`
+                            : ''}
+                        ${insp.report_url
+                            ? `<a class="inspection-record-pdf" href="${escapeHtml(insp.report_url)}" target="_blank" rel="noopener">Source</a>`
+                            : ''}
+                    </div>
+                    ${insp.summary ? `<p class="inspection-record-summary">${escapeHtml(insp.summary)}</p>` : ''}
+                    ${findings.length ? `
+                        <ul class="inspection-record-findings-list">
+                            ${findings.map(f => `
+                                <li>
+                                    ${f.rule_number ? `<strong>${escapeHtml(f.rule_number)}</strong> ` : ''}
+                                    ${escapeHtml(f.description || '')}
+                                </li>
+                            `).join('')}
+                        </ul>` : ''}
+                </li>
+            `;
+        }).join('')}</ul>`;
+    };
+
     const facilityCardHtml = facility => {
         const stats = [];
         if (facility.inspection_count > 0) {
@@ -176,8 +259,19 @@
             stats.push(`<span class="stat">${escapeHtml(facility.operating_period)}</span>`);
         }
 
+        const folderId = findFolderForFacility(facility.name);
+        const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
+
+        const toggleButtons = [];
+        if (hasInspections) {
+            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="inspections">📋 Show inspections</button>`);
+        }
+        if (folderId) {
+            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}">📂 Show documents</button>`);
+        }
+
         return `
-            <li class="facility-card">
+            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}">
                 <div class="facility-card-header">
                     <h3 class="facility-card-name">${escapeHtml(facility.name)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
@@ -185,8 +279,45 @@
                 ${facility.address ? `<div class="facility-card-address">${escapeHtml(facility.address)}</div>` : ''}
                 ${facility.operator_name ? `<div class="facility-card-operator">Operator: ${escapeHtml(facility.operator_name)}</div>` : ''}
                 ${stats.length ? `<div class="facility-card-stats">${stats.join('')}</div>` : ''}
+                ${toggleButtons.length ? `
+                    <div class="facility-card-actions">${toggleButtons.join('')}</div>
+                    <div class="facility-card-panels">
+                        ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}
+                        ${folderId ? `<div class="facility-panel" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}" hidden><p class="loading">Loading documents…</p></div>` : ''}
+                    </div>
+                ` : ''}
             </li>
         `;
+    };
+
+    const wireFacilityToggles = container => {
+        container.querySelectorAll('.facility-expand-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const card = btn.closest('.facility-card');
+                if (!card) return;
+                const panelKind = btn.dataset.panel;
+                const panel = card.querySelector(`.facility-panel[data-panel="${panelKind}"]`);
+                if (!panel) return;
+
+                if (panel.hidden) {
+                    panel.hidden = false;
+                    btn.textContent = panelKind === 'inspections' ? '📋 Hide inspections' : '📂 Hide documents';
+                } else {
+                    panel.hidden = true;
+                    btn.textContent = panelKind === 'inspections' ? '📋 Show inspections' : '📂 Show documents';
+                    return;
+                }
+
+                if (panelKind === 'docs' && panel.dataset.loaded !== '1') {
+                    const folderId = panel.dataset.folderId || btn.dataset.folderId;
+                    btn.disabled = true;
+                    const files = await fetchFolderContent(folderId);
+                    panel.innerHTML = renderFileGrid(files);
+                    panel.dataset.loaded = '1';
+                    btn.disabled = false;
+                }
+            });
+        });
     };
 
     const renderFacilities = () => {
@@ -233,6 +364,8 @@
                 </div>
             ` : ''}
         `;
+
+        wireFacilityToggles(container);
 
         const search = container.querySelector('#facilitySearch');
         search.addEventListener('input', () => {

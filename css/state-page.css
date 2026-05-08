@@ -242,6 +242,141 @@
     font-weight: 600;
 }
 
+/* Expand toggles */
+.facility-card.is-expandable {
+    cursor: default;
+}
+
+.facility-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    margin-top: 0.6em;
+    padding-top: 0.5em;
+    border-top: 1px dashed #eef0f4;
+}
+
+.facility-expand-btn {
+    background: #f0f3fa;
+    color: #00004d;
+    border: 1px solid #d8dff0;
+    border-radius: 4px;
+    padding: 0.32em 0.65em;
+    cursor: pointer;
+    font-size: 0.78em;
+    font-weight: 600;
+}
+
+.facility-expand-btn:hover {
+    background: #e3e9f7;
+}
+
+.facility-expand-btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.facility-card-panels {
+    margin-top: 0.5em;
+}
+
+.facility-panel {
+    margin-top: 0.4em;
+    padding: 0.6em 0.7em;
+    background: #fafbfd;
+    border: 1px solid #e8ecf3;
+    border-radius: 5px;
+}
+
+/* Inspection record list inside expanded panel */
+.inspection-record-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+}
+
+.inspection-record {
+    padding: 0.45em 0.55em;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+.inspection-record-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.inspection-record-date {
+    font-weight: 600;
+    color: #00004d;
+}
+
+.inspection-record-type {
+    color: #4b5563;
+    font-size: 0.92em;
+}
+
+.inspection-record-findings {
+    color: #b91c1c;
+    font-size: 0.82em;
+    font-weight: 600;
+}
+
+.inspection-record-clean {
+    color: #047857;
+}
+
+.inspection-record-pdf {
+    margin-left: auto;
+    color: #1e40af;
+    font-size: 0.82em;
+    text-decoration: none;
+    border: 1px solid #c7d2fe;
+    padding: 0.1em 0.5em;
+    border-radius: 3px;
+}
+
+.inspection-record-pdf:hover {
+    background: #eef2ff;
+}
+
+.inspection-record-summary {
+    margin: 0.3em 0;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.inspection-record-findings-list {
+    margin: 0.3em 0 0;
+    padding-left: 1.3em;
+    color: #4b5563;
+    font-size: 0.92em;
+}
+
+.inspection-record-findings-list li {
+    margin-bottom: 0.18em;
+    line-height: 1.4;
+}
+
+/* Closed group: dampen the expand affordances slightly */
+.facility-group-closed .facility-expand-btn {
+    background: #eaeefa;
+    color: #4a5b85;
+    border-color: #cfd6e7;
+}
+
+.facility-group-closed .facility-panel {
+    background: #f3f6fb;
+    border-color: #d9e0ed;
+}
+
 /* Closed group: lighter blue palette */
 .facility-group-closed .facility-group-heading {
     color: #6b8cc7;

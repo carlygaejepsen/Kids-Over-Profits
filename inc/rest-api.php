@@ -1854,12 +1854,15 @@ function kop_state_collect_programs($state_name) {
 }
 
 /**
- * Reduce inspection data to per-facility summaries.
+ * Reduce inspection data to per-facility summaries plus per-inspection details
+ * needed for inline expansion on the state page.
  *
  * Primary source: inspection_facilities + inspection_reports MySQL tables (per AGENTS.md).
  * Fallback: legacy JSON files in js/data, used only when no DB rows exist for the state.
  *
- * @return array List of ['facility_name', 'inspection_address', 'inspection_count', 'violation_count', 'latest_inspection_date']
+ * Inspection records are capped (most recent 20 per facility, up to 12 findings each).
+ *
+ * @return array List of ['facility_name','inspection_address','inspection_count','violation_count','latest_inspection_date','inspections'=>[...]]
  */
 function kop_state_collect_inspection_summaries($state_name) {
     global $wpdb;
@@ -1882,37 +1885,72 @@ function kop_state_collect_inspection_summaries($state_name) {
             $placeholders = implode(',', array_fill(0, count($facility_ids), '%d'));
 
             $report_rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT facility_id, report_date, categories_json
+                "SELECT id, facility_id, report_date, report_url, summary, categories_json
                  FROM inspection_reports
-                 WHERE facility_id IN ($placeholders)",
+                 WHERE facility_id IN ($placeholders)
+                 ORDER BY report_date DESC",
                 ...$facility_ids
             ), ARRAY_A);
 
-            $by_facility = array();
+            $stats_by_facility = array();        // counts
+            $inspections_by_facility = array();  // per-record details
+
             if (is_array($report_rows)) {
                 foreach ($report_rows as $r) {
                     $fid = (int)$r['facility_id'];
-                    if (!isset($by_facility[$fid])) {
-                        $by_facility[$fid] = array('count' => 0, 'violations' => 0, 'latest' => '');
+                    if (!isset($stats_by_facility[$fid])) {
+                        $stats_by_facility[$fid] = array('count' => 0, 'violations' => 0, 'latest' => '');
+                        $inspections_by_facility[$fid] = array();
                     }
-                    $by_facility[$fid]['count']++;
+                    $stats_by_facility[$fid]['count']++;
 
                     $categories = json_decode($r['categories_json'] ?? '', true);
+                    $finding_count = 0;
+                    $findings = array();
+                    $type = '';
+                    $pdf_url = '';
+
                     if (is_array($categories)) {
                         if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
-                            $by_facility[$fid]['violations'] += (int)$categories['finding_count'];
-                        } elseif (isset($categories['findings']) && is_array($categories['findings'])) {
-                            $by_facility[$fid]['violations'] += count($categories['findings']);
+                            $finding_count = (int)$categories['finding_count'];
                         }
+                        if (isset($categories['findings']) && is_array($categories['findings'])) {
+                            if (!$finding_count) $finding_count = count($categories['findings']);
+                            foreach (array_slice($categories['findings'], 0, 12) as $f_item) {
+                                if (is_string($f_item)) {
+                                    $findings[] = array('rule_number' => '', 'description' => $f_item);
+                                } elseif (is_array($f_item)) {
+                                    $findings[] = array(
+                                        'rule_number' => (string)($f_item['rule_number'] ?? $f_item['ruleNumber'] ?? ''),
+                                        'description' => (string)($f_item['description'] ?? $f_item['rule_description'] ?? $f_item['text'] ?? ''),
+                                    );
+                                }
+                            }
+                        }
+                        $type = (string)($categories['report_type'] ?? '');
+                        $pdf_url = (string)($categories['pdf_url'] ?? '');
                     }
+                    $stats_by_facility[$fid]['violations'] += $finding_count;
 
                     $date_str = $r['report_date'] ?? '';
                     if ($date_str) {
-                        $existing_ts = strtotime((string)$by_facility[$fid]['latest']);
+                        $existing_ts = strtotime((string)$stats_by_facility[$fid]['latest']);
                         $new_ts = strtotime((string)$date_str);
                         if ($new_ts && (!$existing_ts || $new_ts > $existing_ts)) {
-                            $by_facility[$fid]['latest'] = $date_str;
+                            $stats_by_facility[$fid]['latest'] = $date_str;
                         }
+                    }
+
+                    if (count($inspections_by_facility[$fid]) < 20) {
+                        $inspections_by_facility[$fid][] = array(
+                            'date'          => (string)$date_str,
+                            'type'          => $type,
+                            'finding_count' => $finding_count,
+                            'findings'      => $findings,
+                            'pdf_url'       => $pdf_url,
+                            'report_url'    => (string)($r['report_url'] ?? ''),
+                            'summary'       => mb_substr((string)($r['summary'] ?? ''), 0, 600),
+                        );
                     }
                 }
             }
@@ -1920,13 +1958,14 @@ function kop_state_collect_inspection_summaries($state_name) {
             $summaries = array();
             foreach ($facility_rows as $f) {
                 $fid = (int)$f['id'];
-                $stats = $by_facility[$fid] ?? array('count' => 0, 'violations' => 0, 'latest' => '');
+                $stats = $stats_by_facility[$fid] ?? array('count' => 0, 'violations' => 0, 'latest' => '');
                 $summaries[] = array(
                     'facility_name'          => trim((string)$f['facility_name']),
                     'inspection_address'     => trim((string)($f['full_address'] ?? '')),
                     'inspection_count'       => (int)$stats['count'],
                     'violation_count'        => (int)$stats['violations'],
                     'latest_inspection_date' => (string)$stats['latest'],
+                    'inspections'            => $inspections_by_facility[$fid] ?? array(),
                 );
             }
             return $summaries;
@@ -1967,16 +2006,17 @@ function kop_state_collect_inspection_summaries($state_name) {
             $violation_count = 0;
             $latest_date = '';
             $latest_ts = 0;
+            $insp_records = array();
 
             $inspections = isset($facility['inspections']) && is_array($facility['inspections']) ? $facility['inspections'] : array();
             foreach ($inspections as $insp) {
                 if (!is_array($insp)) continue;
                 $inspection_count++;
 
-                $findings = isset($insp['inspection_findings']) && is_array($insp['inspection_findings'])
+                $findings_raw = isset($insp['inspection_findings']) && is_array($insp['inspection_findings'])
                     ? $insp['inspection_findings']
                     : (isset($insp['findings']) && is_array($insp['findings']) ? $insp['findings'] : array());
-                $violation_count += count($findings);
+                $violation_count += count($findings_raw);
 
                 $date_str = $insp['inspection_date'] ?? $insp['date'] ?? $insp['report_date'] ?? '';
                 if ($date_str) {
@@ -1985,6 +2025,30 @@ function kop_state_collect_inspection_summaries($state_name) {
                         $latest_ts = $ts;
                         $latest_date = $date_str;
                     }
+                }
+
+                if (count($insp_records) < 20) {
+                    $findings = array();
+                    foreach (array_slice($findings_raw, 0, 12) as $f_item) {
+                        if (is_string($f_item)) {
+                            $findings[] = array('rule_number' => '', 'description' => $f_item);
+                        } elseif (is_array($f_item)) {
+                            $findings[] = array(
+                                'rule_number' => (string)($f_item['rule_number'] ?? $f_item['ruleNumber'] ?? ''),
+                                'description' => (string)($f_item['description'] ?? $f_item['rule_description'] ?? $f_item['text'] ?? ''),
+                            );
+                        }
+                    }
+                    $checklist_urls = isset($insp['checklist_urls']) && is_array($insp['checklist_urls']) ? $insp['checklist_urls'] : array();
+                    $insp_records[] = array(
+                        'date'          => (string)$date_str,
+                        'type'          => (string)($insp['inspection_type'] ?? $insp['inspection_types'] ?? ''),
+                        'finding_count' => count($findings_raw),
+                        'findings'      => $findings,
+                        'pdf_url'       => $checklist_urls[0] ?? '',
+                        'report_url'    => '',
+                        'summary'       => '',
+                    );
                 }
             }
 
@@ -1996,10 +2060,12 @@ function kop_state_collect_inspection_summaries($state_name) {
                     'inspection_count'       => 0,
                     'violation_count'        => 0,
                     'latest_inspection_date' => '',
+                    'inspections'            => array(),
                 );
             }
             $facilities_by_key[$key]['inspection_count'] += $inspection_count;
             $facilities_by_key[$key]['violation_count']  += $violation_count;
+            $facilities_by_key[$key]['inspections'] = array_merge($facilities_by_key[$key]['inspections'], $insp_records);
             if ($latest_date) {
                 $existing_ts = strtotime((string)$facilities_by_key[$key]['latest_inspection_date']);
                 $new_ts = strtotime((string)$latest_date);
@@ -2065,7 +2131,8 @@ function kop_state_collect_facilities($state_name) {
             $by_key[$key]['inspection_count'] = $insp['inspection_count'];
             $by_key[$key]['violation_count']  = $insp['violation_count'];
             $by_key[$key]['latest_inspection_date'] = $insp['latest_inspection_date'];
-            $by_key[$key]['in_inspections'] = true;
+            $by_key[$key]['inspections']      = $insp['inspections'] ?? array();
+            $by_key[$key]['in_inspections']   = true;
             if (!$by_key[$key]['address'] && !empty($insp['inspection_address'])) {
                 $by_key[$key]['address'] = $insp['inspection_address'];
             }
@@ -2083,6 +2150,7 @@ function kop_state_collect_facilities($state_name) {
                 'inspection_count'  => $insp['inspection_count'],
                 'violation_count'   => $insp['violation_count'],
                 'latest_inspection_date' => $insp['latest_inspection_date'],
+                'inspections'       => $insp['inspections'] ?? array(),
                 'in_master'         => false,
                 'in_inspections'    => true,
             );
