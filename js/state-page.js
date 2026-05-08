@@ -209,36 +209,53 @@
         if (!Array.isArray(inspections) || inspections.length === 0) {
             return '<p class="docs-empty">No inspection records on file.</p>';
         }
-        return `<ul class="inspection-record-list">${inspections.map(insp => {
+        return `<div class="inspection-record-list">${inspections.map(insp => {
             const findings = Array.isArray(insp.findings) ? insp.findings : [];
+            const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0;
+            const klass = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
+            const dateStr = formatDate(insp.date) || '—';
+            const typeStr = insp.type ? escapeHtml(insp.type) : 'Inspection';
+            const findingsLabel = hasFindings
+                ? `${insp.finding_count || findings.length} finding${(insp.finding_count || findings.length) === 1 ? '' : 's'}`
+                : 'No findings';
+
+            const sourceLinks = [];
+            if (insp.pdf_url) sourceLinks.push(`<a href="${escapeHtml(insp.pdf_url)}" target="_blank" rel="noopener">PDF</a>`);
+            if (insp.report_url) sourceLinks.push(`<a href="${escapeHtml(insp.report_url)}" target="_blank" rel="noopener">Source page</a>`);
+
+            const findingsBlock = findings.length
+                ? `<details class="violation-box" open>
+                       <summary class="deficiency-header">${findings.length} finding${findings.length === 1 ? '' : 's'}</summary>
+                       <div class="deficiency-content">
+                           ${findings.map(f => `
+                               <div class="finding-item">
+                                   ${f.rule_number ? `<strong>${escapeHtml(f.rule_number)}</strong>` : ''}
+                                   <p>${escapeHtml(f.description || '')}</p>
+                               </div>
+                           `).join('')}
+                       </div>
+                   </details>`
+                : '';
+
             return `
-                <li class="inspection-record">
-                    <div class="inspection-record-header">
-                        <span class="inspection-record-date">${escapeHtml(formatDate(insp.date) || '—')}</span>
-                        ${insp.type ? `<span class="inspection-record-type">${escapeHtml(insp.type)}</span>` : ''}
-                        ${insp.finding_count > 0
-                            ? `<span class="inspection-record-findings">${insp.finding_count} finding${insp.finding_count === 1 ? '' : 's'}</span>`
-                            : `<span class="inspection-record-findings inspection-record-clean">No findings</span>`}
-                        ${insp.pdf_url
-                            ? `<a class="inspection-record-pdf" href="${escapeHtml(insp.pdf_url)}" target="_blank" rel="noopener">PDF</a>`
-                            : ''}
-                        ${insp.report_url
-                            ? `<a class="inspection-record-pdf" href="${escapeHtml(insp.report_url)}" target="_blank" rel="noopener">Source</a>`
-                            : ''}
+                <details class="inspection-box ${klass}">
+                    <summary class="inspection-header">
+                        <span class="inspection-summary-date">${escapeHtml(dateStr)}</span>
+                        <span class="inspection-summary-type">${typeStr}</span>
+                        <span class="inspection-summary-findings">${escapeHtml(findingsLabel)}</span>
+                    </summary>
+                    <div class="inspection-content">
+                        <div class="inspection-details-block">
+                            <strong>Type:</strong> ${typeStr}<br>
+                            <strong>Date:</strong> ${escapeHtml(dateStr)}<br>
+                            ${sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : ''}
+                        </div>
+                        ${insp.summary ? `<div class="inspection-summary-text">${escapeHtml(insp.summary)}</div>` : ''}
+                        ${findingsBlock}
                     </div>
-                    ${insp.summary ? `<p class="inspection-record-summary">${escapeHtml(insp.summary)}</p>` : ''}
-                    ${findings.length ? `
-                        <ul class="inspection-record-findings-list">
-                            ${findings.map(f => `
-                                <li>
-                                    ${f.rule_number ? `<strong>${escapeHtml(f.rule_number)}</strong> ` : ''}
-                                    ${escapeHtml(f.description || '')}
-                                </li>
-                            `).join('')}
-                        </ul>` : ''}
-                </li>
+                </details>
             `;
-        }).join('')}</ul>`;
+        }).join('')}</div>`;
     };
 
     const facilityCardHtml = facility => {
