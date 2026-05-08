@@ -37,7 +37,7 @@ add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
  * Enqueue admin submissions page scripts and styles
  */
 function kop_enqueue_admin_submissions() {
-    if (is_page_template('page-admin-submissions.php')) {
+    if (is_page_template('page-admin-submissions.php') || is_page_template('templates/page-admin-submissions.php')) {
         wp_enqueue_style(
             'kop-admin-submissions',
             get_stylesheet_directory_uri() . '/css/admin-submissions.css',
@@ -205,7 +205,7 @@ function kop_add_navigation_error_suppressor() {
  */
 function load_facilities_data() {
     // Skip if using the page template (which uses the full data form)
-    if (is_page_template('page-tti-program-index.php')) {
+    if (is_page_template('page-tti-program-index.php') || is_page_template('templates/page-tti-program-index.php')) {
         return;
     }
 
@@ -544,11 +544,13 @@ function enqueue_data_form_script() {
     // Check for data form templates (multiple possible paths WordPress might store)
     // Also check by slug for pages that may not have template meta set correctly
     $is_data_template  = is_page_template('page-data.php')
+        || is_page_template('templates/page-data.php')
         || is_page_template('child/page-data.php')
         || is_page_template('templates/data-form-public.php')
         || is_page('tti-data-submission')
         || is_page('data');
     $is_admin_template = is_page_template('page-admin-data.php')
+        || is_page_template('templates/page-admin-data.php')
         || is_page_template('child/page-admin-data.php')
         || is_page_template('templates/data-form-admin.php')
         || is_page('admin-data')
@@ -1234,7 +1236,7 @@ add_action('wp_enqueue_scripts', 'enqueue_data_form_script');
  */
 function enqueue_news_processor_scripts() {
     // Only run on the news processor page template
-    if (!is_page_template('page-news-processor.php')) {
+    if (!is_page_template('page-news-processor.php') && !is_page_template('templates/page-news-processor.php')) {
         return;
     }
 
@@ -1283,7 +1285,7 @@ add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
  * Enqueue scripts for TTI Program Index page
  */
 function enqueue_tti_processor_scripts() {
-    if (!is_page_template('page-tti-program-index.php')) {
+    if (!is_page_template('page-tti-program-index.php') && !is_page_template('templates/page-tti-program-index.php')) {
         return;
     }
 
@@ -1351,7 +1353,7 @@ add_action('wp_enqueue_scripts', 'enqueue_tti_processor_scripts');
  * Enqueue the wiki editor generator assets when its template is used.
  */
 function kop_enqueue_wiki_editor_assets() {
-    if (!is_page_template('page-wiki-editor.php')) {
+    if (!is_page_template('page-wiki-editor.php') && !is_page_template('templates/page-wiki-editor.php')) {
         return;
     }
 

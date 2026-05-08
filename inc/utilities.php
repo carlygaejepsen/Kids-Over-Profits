@@ -15,10 +15,12 @@ if (!defined('ABSPATH')) {
  * @return bool
  */
 function kop_is_headerless_layout() {
-    // Check for page templates (multiple possible paths/names)
-    return is_page_template('page-admin-data.php') 
+    // Check for page templates (root and templates/ paths supported)
+    return is_page_template('page-admin-data.php')
+        || is_page_template('templates/page-admin-data.php')
         || is_page_template('page-data.php')
-        || is_page_template('templates/data-form-public.php') 
+        || is_page_template('templates/page-data.php')
+        || is_page_template('templates/data-form-public.php')
         || is_page_template('templates/data-form-admin.php');
 }
 
@@ -28,8 +30,9 @@ function kop_is_headerless_layout() {
  * @return bool
  */
 function kop_is_tti_program_index_context() {
-    // Check if using the page template (preferred method)
-    if (is_page_template('page-tti-program-index.php')) {
+    // Check if using the page template (root or templates/ path)
+    if (is_page_template('page-tti-program-index.php')
+        || is_page_template('templates/page-tti-program-index.php')) {
         return true;
     }
 
