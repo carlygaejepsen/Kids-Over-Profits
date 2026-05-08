@@ -1,9 +1,8 @@
 <?php
 /**
  * Template Name: State Page
- * Description: Dynamic per-state hub. Looks up the state by page slug
- * (e.g. "utah", "new-york") and aggregates programs, inspections, news,
- * lawsuits, and legislation tagged to that state.
+ * Description: Dynamic per-state hub aggregating facilities, news, lawsuits, and legislation by state slug.
+ * Template Post Type: page
  */
 
 if (!defined('ABSPATH')) {
