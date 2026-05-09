@@ -1920,18 +1920,12 @@ function kop_state_collect_inspection_summaries($state_name) {
                         if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
                             $finding_count = (int)$categories['finding_count'];
                         }
+                        // Pass findings through as-is so the client can apply
+                        // state-specific key extraction (OR uses {rule, excerpt},
+                        // AZ uses {rule, evidence, findings}, etc.). Cap to 12.
                         if (isset($categories['findings']) && is_array($categories['findings'])) {
                             if (!$finding_count) $finding_count = count($categories['findings']);
-                            foreach (array_slice($categories['findings'], 0, 12) as $f_item) {
-                                if (is_string($f_item)) {
-                                    $findings[] = array('rule_number' => '', 'description' => $f_item);
-                                } elseif (is_array($f_item)) {
-                                    $findings[] = array(
-                                        'rule_number' => (string)($f_item['rule'] ?? $f_item['rule_number'] ?? $f_item['ruleNumber'] ?? ''),
-                                        'description' => (string)($f_item['excerpt'] ?? $f_item['description'] ?? $f_item['rule_description'] ?? $f_item['text'] ?? ''),
-                                    );
-                                }
-                            }
+                            $findings = array_slice($categories['findings'], 0, 12);
                         }
                         // If still no count but corrective actions exist that aren't "none",
                         // treat as "has findings" so the inspection is visually flagged.

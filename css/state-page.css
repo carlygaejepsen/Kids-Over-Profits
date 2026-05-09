@@ -312,14 +312,15 @@
 
 .inspection-header {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 0.6em;
+    gap: 0.75em;
     padding: 0.7em 0.9em;
     cursor: pointer;
     list-style: none;
     transition: background-color 0.15s;
     font-size: 0.92em;
+    overflow: hidden;
 }
 
 .inspection-header::-webkit-details-marker {
@@ -358,20 +359,27 @@
 
 .inspection-summary-date {
     font-weight: 700;
-    min-width: 8em;
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .inspection-summary-type {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .inspection-summary-findings {
-    font-size: 0.85em;
-    font-weight: 600;
-    padding: 0.15em 0.55em;
+    flex: 0 0 auto;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding: 0.18em 0.6em;
     border-radius: 3px;
-    background: rgba(255, 255, 255, 0.18);
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.95);
+    color: #b91c1c;
 }
 
 .inspection-box-clean .inspection-summary-findings {
@@ -480,6 +488,18 @@
     margin: 0.2em 0 0;
     color: #374151;
     white-space: pre-wrap;
+}
+
+.finding-evidence {
+    margin-top: 0.3em;
+    color: #4b5563;
+    font-size: 0.92em;
+}
+
+.finding-evidence em {
+    color: #00004d;
+    font-style: italic;
+    margin-right: 0.3em;
 }
 
 .narrative-row {

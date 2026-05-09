@@ -214,6 +214,46 @@
             </div>`;
     };
 
+    // Render a single finding regardless of state-specific shape.
+    // OR uses {rule, excerpt}; AZ uses {rule, evidence, findings};
+    // WA mixes {rule, evidence, findings}; some states pass plain strings.
+    const extractFindingHtml = f => {
+        if (!f) return '';
+        if (typeof f === 'string') {
+            return `<div class="finding-item"><p>${escapeHtml(f)}</p></div>`;
+        }
+        if (typeof f !== 'object') return '';
+
+        const rule = f.rule || f.rule_number || f.ruleNumber || f.rule_id || '';
+        // For AZ/WA the long descriptive text often lives in the `findings` field
+        // alongside an `evidence` field; try them in order.
+        const description =
+            f.excerpt ||
+            f.description ||
+            f.rule_description ||
+            f.text ||
+            f.findings ||
+            f.evidence ||
+            f.short_text ||
+            '';
+
+        if (!rule && !description) {
+            // Last-resort: serialize so the user sees something rather than blank rows.
+            return `<div class="finding-item"><pre style="white-space:pre-wrap;font-family:inherit;margin:0;">${escapeHtml(JSON.stringify(f, null, 2))}</pre></div>`;
+        }
+
+        const extra = (f.evidence && description !== f.evidence)
+            ? `<p class="finding-evidence"><em>Evidence:</em> ${escapeHtml(String(f.evidence))}</p>`
+            : '';
+
+        return `
+            <div class="finding-item">
+                ${rule ? `<strong>${escapeHtml(rule)}</strong>` : ''}
+                <p>${escapeHtml(String(description))}</p>
+                ${extra}
+            </div>`;
+    };
+
     const renderInspectionRecords = inspections => {
         if (!Array.isArray(inspections) || inspections.length === 0) {
             return '<p class="docs-empty">No inspection records on file.</p>';
@@ -295,12 +335,7 @@
                 ? `<details class="violation-box" open>
                        <summary class="deficiency-header">${findings.length} compliance finding${findings.length === 1 ? '' : 's'}</summary>
                        <div class="deficiency-content">
-                           ${findings.map(f => `
-                               <div class="finding-item">
-                                   ${f.rule_number ? `<strong>${escapeHtml(f.rule_number)}</strong>` : ''}
-                                   <p>${escapeHtml(f.description || '')}</p>
-                               </div>
-                           `).join('')}
+                           ${findings.map(extractFindingHtml).join('')}
                        </div>
                    </details>`
                 : '';
