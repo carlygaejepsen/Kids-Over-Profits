@@ -266,7 +266,13 @@
         if (!Array.isArray(inspections) || inspections.length === 0) {
             return '<p class="docs-empty">No inspection records on file.</p>';
         }
-        return `<div class="inspection-record-list">${inspections.map(insp => {
+        // Newest-first defensive sort (server already does this, but the cost is trivial).
+        const sorted = [...inspections].sort((a, b) => {
+            const ta = Date.parse(a.date || '') || 0;
+            const tb = Date.parse(b.date || '') || 0;
+            return tb - ta;
+        });
+        return `<div class="inspection-record-list">${sorted.map(insp => {
             const findings = Array.isArray(insp.findings) ? insp.findings : [];
             const cats = (insp.categories && typeof insp.categories === 'object') ? insp.categories : {};
             const hasCorrectiveActions = cats.corrective_actions && String(cats.corrective_actions).toLowerCase() !== 'none';

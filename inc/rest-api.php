@@ -1893,10 +1893,20 @@ function kop_state_collect_inspection_summaries($state_name) {
             $report_rows = $wpdb->get_results($wpdb->prepare(
                 "SELECT id, facility_id, report_date, report_url, summary, categories_json
                  FROM inspection_reports
-                 WHERE facility_id IN ($placeholders)
-                 ORDER BY report_date DESC",
+                 WHERE facility_id IN ($placeholders)",
                 ...$facility_ids
             ), ARRAY_A);
+
+            // Sort newest-first using parsed timestamps. SQL string ORDER BY is
+            // unreliable for date columns stored as varchar (e.g. "Sep 24, 2024"
+            // vs "May 19, 2022"), so we explicitly sort in PHP before the cap.
+            if (is_array($report_rows)) {
+                usort($report_rows, static function ($a, $b) {
+                    $ta = strtotime((string)($a['report_date'] ?? '')) ?: 0;
+                    $tb = strtotime((string)($b['report_date'] ?? '')) ?: 0;
+                    return $tb <=> $ta;
+                });
+            }
 
             $stats_by_facility = array();        // counts
             $inspections_by_facility = array();  // per-record details
@@ -2097,6 +2107,12 @@ function kop_state_collect_inspection_summaries($state_name) {
             $facilities_by_key[$key]['inspection_count'] += $inspection_count;
             $facilities_by_key[$key]['violation_count']  += $violation_count;
             $facilities_by_key[$key]['inspections'] = array_merge($facilities_by_key[$key]['inspections'], $insp_records);
+            // Sort accumulated inspections newest-first.
+            usort($facilities_by_key[$key]['inspections'], static function ($a, $b) {
+                $ta = strtotime((string)($a['date'] ?? '')) ?: 0;
+                $tb = strtotime((string)($b['date'] ?? '')) ?: 0;
+                return $tb <=> $ta;
+            });
             if ($latest_date) {
                 $existing_ts = strtotime((string)$facilities_by_key[$key]['latest_inspection_date']);
                 $new_ts = strtotime((string)$latest_date);
