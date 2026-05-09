@@ -1860,6 +1860,40 @@ function kop_state_collect_programs($state_name) {
 }
 
 /**
+ * Normalize a facility name for cross-source matching (programs, inspections, FileBird folders).
+ * Strips administrative-title suffixes (Board Chairperson, Date of site visit, etc.) that
+ * scrapers occasionally concatenate onto facility names.
+ *
+ * @param string $name
+ * @return string Normalized lowercase form, e.g. "adapt deer creek".
+ */
+function kop_normalize_facility_name($name) {
+    $s = strtolower(trim((string)$name));
+    if ($s === '') return '';
+
+    // Strip everything after the first colon — usually scraper metadata
+    // ("Board Chairperson: Kelsey Wood", "Date of site visit: 03/11/2025").
+    $colon_pos = mb_strpos($s, ':');
+    if ($colon_pos !== false) {
+        $s = mb_substr($s, 0, $colon_pos);
+    }
+
+    // Peel off trailing administrative titles / scraper field labels.
+    $s = preg_replace(
+        '/\s+(?:board\s+chairperson|chairperson|administrator|executive\s+director|director|owner|operator|date\s+of\s+site\s+visit|site\s+visit|visit\s+date|inspection\s+date|licensee|licensed\s+capacity).*$/iu',
+        '',
+        $s
+    );
+
+    // Punctuation, dashes, ampersand, whitespace cleanup.
+    $s = preg_replace('/\s*[\-\x{2013}\x{2014}]\s*/u', ' ', $s);
+    $s = preg_replace('/\s*&\s*/', ' and ', $s);
+    $s = preg_replace('/[^\w\s]/u', '', $s);
+    $s = preg_replace('/\s+/', ' ', $s);
+    return trim($s);
+}
+
+/**
  * Reduce inspection data to per-facility summaries plus per-inspection details
  * needed for inline expansion on the state page.
  *
@@ -2009,7 +2043,70 @@ function kop_state_collect_inspection_summaries($state_name) {
                     'inspections'            => $inspections_by_facility[$fid] ?? array(),
                 );
             }
-            return $summaries;
+
+            // Dedupe scraper-duplicate facility entries (e.g. "ADAPT - Deer Creek" and
+            // "ADAPT - Deer Creek Board Chairperson: Kelsey Wood") that resolve to the
+            // same normalized facility name. Use MAX of stats and a fingerprint-based
+            // dedupe of inspection records (by report URL or date+type).
+            $report_fingerprint = static function ($r) {
+                if (!empty($r['report_url'])) return 'u:' . strtolower((string)$r['report_url']);
+                if (!empty($r['pdf_url']))    return 'p:' . strtolower((string)$r['pdf_url']);
+                return 'd:' . strtolower(((string)($r['date'] ?? '')) . '|' . ((string)($r['type'] ?? '')));
+            };
+
+            $deduped = array();
+            foreach ($summaries as $s) {
+                $key = kop_normalize_facility_name($s['facility_name']);
+                if ($key === '') {
+                    $deduped[] = $s;
+                    continue;
+                }
+                if (!isset($deduped[$key])) {
+                    $s['_seen'] = array();
+                    foreach ($s['inspections'] as $r) {
+                        $s['_seen'][$report_fingerprint($r)] = true;
+                    }
+                    $deduped[$key] = $s;
+                    continue;
+                }
+                // Same facility — merge.
+                $existing = &$deduped[$key];
+                $existing['inspection_count'] = max((int)$existing['inspection_count'], (int)$s['inspection_count']);
+                $existing['violation_count']  = max((int)$existing['violation_count'], (int)$s['violation_count']);
+                if (!$existing['inspection_address'] && $s['inspection_address']) {
+                    $existing['inspection_address'] = $s['inspection_address'];
+                }
+                $existing_ts = strtotime((string)$existing['latest_inspection_date']) ?: 0;
+                $incoming_ts = strtotime((string)$s['latest_inspection_date']) ?: 0;
+                if ($incoming_ts > $existing_ts) {
+                    $existing['latest_inspection_date'] = $s['latest_inspection_date'];
+                }
+                foreach ($s['inspections'] as $r) {
+                    $fp = $report_fingerprint($r);
+                    if (!isset($existing['_seen'][$fp])) {
+                        $existing['inspections'][] = $r;
+                        $existing['_seen'][$fp] = true;
+                    }
+                }
+                // Prefer the longer/more descriptive facility name when one is clearly junkier.
+                if (mb_strlen($s['facility_name']) > mb_strlen($existing['facility_name']) &&
+                    mb_strpos(kop_normalize_facility_name($s['facility_name']), $key) === 0) {
+                    // Don't take a name that just appended "Board Chairperson..." — that's the case
+                    // we already stripped in the key. Only take longer if it doesn't contain a colon.
+                    if (mb_strpos($s['facility_name'], ':') === false) {
+                        $existing['facility_name'] = $s['facility_name'];
+                    }
+                }
+                unset($existing);
+            }
+
+            // Drop the bookkeeping field and return as a list.
+            $clean = array();
+            foreach ($deduped as $s) {
+                unset($s['_seen']);
+                $clean[] = $s;
+            }
+            return $clean;
         }
     }
 
@@ -2136,16 +2233,8 @@ function kop_state_collect_facilities($state_name) {
 
     $by_key = array();
 
-    // Aggressive name normalization: lowercase, strip punctuation/dashes/&, collapse whitespace.
-    // Mirrors the normName() helper in js/inspections/or_reports.js so client and server match.
-    $normalize_key = static function ($name) {
-        $s = strtolower(trim((string)$name));
-        $s = preg_replace('/\s*[\-\x{2013}\x{2014}]\s*/u', ' ', $s);
-        $s = preg_replace('/\s*&\s*/', ' and ', $s);
-        $s = preg_replace('/[^\w\s]/u', '', $s);
-        $s = preg_replace('/\s+/', ' ', $s);
-        return trim($s);
-    };
+    // Use the shared normalizer (also applied at the inspection-summary level).
+    $normalize_key = 'kop_normalize_facility_name';
 
     // Look up an existing key that's an exact match OR a prefix match of length ≥ 12.
     // Handles "Adapt Deer Creek" ↔ "Adapt Deer Creek Adolescent Treatment Center".
