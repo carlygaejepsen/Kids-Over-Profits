@@ -123,15 +123,23 @@
         if (!state.folderByName) return null;
         const norm = normalizeFolderText(facilityName);
         if (!norm) return null;
-        // Exact normalized match first
+
+        // 1. Exact normalized match
         if (state.folderByName.has(norm)) return state.folderByName.get(norm);
-        // Substring fallback: any folder whose normalized name contains the facility name
-        // or vice versa (handles "Newport Academy – Seattle" vs "Newport Academy")
+
+        // 2. Prefix match — covers "Newport Academy" folder vs "Newport Academy – Port Townsend"
+        //    facility, or "Asheville Academy" folder vs "Asheville Academy For Girls" facility.
+        //    Requires the shorter name to be at least 12 chars, so single shared words like
+        //    "Trails" or "Academy" can't match facilities they don't actually belong to.
+        const MIN_PREFIX_LEN = 12;
         for (const [folderNorm, id] of state.folderByName.entries()) {
-            if (norm.length > 6 && (folderNorm.includes(norm) || norm.includes(folderNorm))) {
+            const shorter = norm.length < folderNorm.length ? norm : folderNorm;
+            const longer  = norm.length < folderNorm.length ? folderNorm : norm;
+            if (shorter.length >= MIN_PREFIX_LEN && longer.startsWith(shorter)) {
                 return id;
             }
         }
+
         return null;
     };
 
