@@ -2134,16 +2134,40 @@ function kop_state_collect_facilities($state_name) {
     $programs = kop_state_collect_programs($state_name);
     $inspections = kop_state_collect_inspection_summaries($state_name);
 
-    $merged = array();
     $by_key = array();
 
+    // Aggressive name normalization: lowercase, strip punctuation/dashes/&, collapse whitespace.
+    // Mirrors the normName() helper in js/inspections/or_reports.js so client and server match.
     $normalize_key = static function ($name) {
-        return strtolower(trim((string)$name));
+        $s = strtolower(trim((string)$name));
+        $s = preg_replace('/\s*[\-\x{2013}\x{2014}]\s*/u', ' ', $s);
+        $s = preg_replace('/\s*&\s*/', ' and ', $s);
+        $s = preg_replace('/[^\w\s]/u', '', $s);
+        $s = preg_replace('/\s+/', ' ', $s);
+        return trim($s);
+    };
+
+    // Look up an existing key that's an exact match OR a prefix match of length ≥ 12.
+    // Handles "Adapt Deer Creek" ↔ "Adapt Deer Creek Adolescent Treatment Center".
+    $find_matching_key = static function ($by_key_ref, $candidate) {
+        if ($candidate === '') return null;
+        if (isset($by_key_ref[$candidate])) return $candidate;
+        if (mb_strlen($candidate) < 12) return null;
+        foreach (array_keys($by_key_ref) as $existing) {
+            if (mb_strlen($existing) < 12) continue;
+            $shorter = mb_strlen($existing) < mb_strlen($candidate) ? $existing : $candidate;
+            $longer  = $shorter === $existing ? $candidate : $existing;
+            if (mb_strpos($longer, $shorter) === 0) {
+                return $existing;
+            }
+        }
+        return null;
     };
 
     foreach ($programs as $p) {
-        $key = $normalize_key($p['facility_name'] ?: $p['project_name']);
-        if ($key === '') continue;
+        $candidate = $normalize_key($p['facility_name'] ?: $p['project_name']);
+        if ($candidate === '') continue;
+        $key = $find_matching_key($by_key, $candidate) ?: $candidate;
 
         $address_parts = array_filter(array(
             $p['street'] ?? '',
@@ -2152,33 +2176,59 @@ function kop_state_collect_facilities($state_name) {
             $p['zip'] ?? '',
         ));
 
-        $by_key[$key] = array(
-            'name'              => $p['facility_name'] ?: $p['project_name'],
-            'project_name'      => $p['project_name'],
-            'address'           => implode(', ', $address_parts),
-            'city'              => $p['city'] ?? '',
-            'state'             => $p['state'] ?? $state_name,
-            'operator_name'     => $p['operator_name'] ?? '',
-            'type'              => $p['type'] ?? '',
-            'status'            => $p['status'] ?? '',
-            'operating_period'  => $p['operating_period'] ?? '',
-            'inspection_count'  => 0,
-            'violation_count'   => 0,
-            'latest_inspection_date' => '',
-            'in_master'         => true,
-            'in_inspections'    => false,
-        );
+        if (isset($by_key[$key])) {
+            // Existing record (e.g. another program variant) — fill in missing fields.
+            $existing = &$by_key[$key];
+            if (!$existing['operator_name'] && !empty($p['operator_name'])) $existing['operator_name'] = $p['operator_name'];
+            if (!$existing['type']          && !empty($p['type']))          $existing['type']          = $p['type'];
+            if (!$existing['status']        && !empty($p['status']))        $existing['status']        = $p['status'];
+            if (!$existing['operating_period'] && !empty($p['operating_period'])) $existing['operating_period'] = $p['operating_period'];
+            if (!$existing['address'] && !empty($address_parts)) $existing['address'] = implode(', ', $address_parts);
+            $existing['in_master'] = true;
+            unset($existing);
+        } else {
+            $by_key[$key] = array(
+                'name'              => $p['facility_name'] ?: $p['project_name'],
+                'project_name'      => $p['project_name'],
+                'address'           => implode(', ', $address_parts),
+                'city'              => $p['city'] ?? '',
+                'state'             => $p['state'] ?? $state_name,
+                'operator_name'     => $p['operator_name'] ?? '',
+                'type'              => $p['type'] ?? '',
+                'status'            => $p['status'] ?? '',
+                'operating_period'  => $p['operating_period'] ?? '',
+                'inspection_count'  => 0,
+                'violation_count'   => 0,
+                'latest_inspection_date' => '',
+                'inspections'       => array(),
+                'in_master'         => true,
+                'in_inspections'    => false,
+            );
+        }
     }
 
     foreach ($inspections as $insp) {
-        $key = $normalize_key($insp['facility_name']);
-        if ($key === '') continue;
+        $candidate = $normalize_key($insp['facility_name']);
+        if ($candidate === '') continue;
+        $key = $find_matching_key($by_key, $candidate) ?: $candidate;
 
         if (isset($by_key[$key])) {
-            $by_key[$key]['inspection_count'] = $insp['inspection_count'];
-            $by_key[$key]['violation_count']  = $insp['violation_count'];
-            $by_key[$key]['latest_inspection_date'] = $insp['latest_inspection_date'];
-            $by_key[$key]['inspections']      = $insp['inspections'] ?? array();
+            // Merge — accumulate counts; prefer the longer/cleaner inspection list and most recent date.
+            $by_key[$key]['inspection_count'] += $insp['inspection_count'];
+            $by_key[$key]['violation_count']  += $insp['violation_count'];
+            $existing_ts = strtotime((string)$by_key[$key]['latest_inspection_date']) ?: 0;
+            $incoming_ts = strtotime((string)$insp['latest_inspection_date']) ?: 0;
+            if ($incoming_ts > $existing_ts) {
+                $by_key[$key]['latest_inspection_date'] = $insp['latest_inspection_date'];
+            }
+            $existing_inspections = is_array($by_key[$key]['inspections'] ?? null) ? $by_key[$key]['inspections'] : array();
+            $by_key[$key]['inspections'] = array_merge($existing_inspections, $insp['inspections'] ?? array());
+            // Re-sort newest-first after merge.
+            usort($by_key[$key]['inspections'], static function ($a, $b) {
+                $ta = strtotime((string)($a['date'] ?? '')) ?: 0;
+                $tb = strtotime((string)($b['date'] ?? '')) ?: 0;
+                return $tb <=> $ta;
+            });
             $by_key[$key]['in_inspections']   = true;
             if (!$by_key[$key]['address'] && !empty($insp['inspection_address'])) {
                 $by_key[$key]['address'] = $insp['inspection_address'];
