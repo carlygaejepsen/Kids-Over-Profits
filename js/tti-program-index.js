@@ -385,12 +385,9 @@ function displayFacilities(facilitiesData, containerId) {
 
     // Convert the new JSON structure to work with existing code
     let operatorGroups = [];
-    console.log('[KOP FILTER v3] running named-facility chain filter');
     if (facilitiesData && facilitiesData.projects) {
         // Handle new JSON structure
         const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
-        let blockedSingle = 0;
-        let blockedFewNames = 0;
 
         const seenOperatorKeys = new Set();
 
@@ -415,17 +412,20 @@ function displayFacilities(facilitiesData, containerId) {
             const operator = projectData.operator || {};
             const facilities = toArray(projectData.facilities);
 
-            // Corporate-chain filter: only render operators with 2+ NAMED facilities.
-            // Single-program records often have multiple facility entries that are just
-            // addresses with no name (e.g. inspection / licensing duplicates) — those
-            // are not chains and should be excluded.
+            // Corporate-chain filter: a parent company is identified by
+            //   (1) a populated operator name, AND
+            //   (2) at least 2 named facilities.
+            // Drops single-program records, address-keyed location clusters,
+            // and operator-less brand records.
+            const operatorHasName = !!(cleanText(operator.name) || cleanText(operator.currentName));
+            if (!operatorHasName) {
+                return;
+            }
             const namedFacilityCount = facilities.reduce((sum, f) => {
                 const name = getFacilityDisplayName(f);
                 return name && name.trim() ? sum + 1 : sum;
             }, 0);
             if (namedFacilityCount < 2) {
-                if (facilities.length < 2) blockedSingle += 1;
-                else blockedFewNames += 1;
                 return;
             }
 
@@ -444,9 +444,6 @@ function displayFacilities(facilitiesData, containerId) {
                 name: cleanText(project.name)
             });
         });
-        console.log('[KOP FILTER v3] kept', operatorGroups.length,
-            '| blocked single-facility:', blockedSingle,
-            '| blocked few-named-facilities:', blockedFewNames);
     } else if (Array.isArray(facilitiesData)) {
         // Handle old structure (fallback)
         operatorGroups = facilitiesData;
