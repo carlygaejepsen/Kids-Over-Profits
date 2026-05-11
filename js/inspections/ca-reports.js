@@ -59,6 +59,103 @@ document.addEventListener('DOMContentLoaded', () => {
         return (str && str !== '[object Object]') ? str : '';
     };
 
+    const normalizeWhitespace = value => safeString(value).replace(/\s+/g, ' ').trim();
+
+    function cleanFacilityNameCandidate(value) {
+        let name = normalizeWhitespace(value);
+        if (!name) return '';
+
+        name = name
+            .replace(/\s+Facility Number:\s*\d+.*$/i, '')
+            .replace(/\s+Administrator:\s*.+$/i, '')
+            .replace(/\s+Licensed Capacity:\s*.+$/i, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+
+        return name;
+    }
+
+    function pickMostUsefulCandidate(candidates) {
+        const scored = new Map();
+
+        candidates.forEach(candidate => {
+            const cleaned = cleanFacilityNameCandidate(candidate);
+            if (!cleaned) return;
+
+            const key = cleaned.toLowerCase();
+            if (!scored.has(key)) {
+                scored.set(key, { name: cleaned, count: 0 });
+            }
+
+            const entry = scored.get(key);
+            entry.count += 1;
+
+            // Keep the most descriptive variant when the normalized key matches.
+            if (cleaned.length > entry.name.length) {
+                entry.name = cleaned;
+            }
+        });
+
+        return Array.from(scored.values())
+            .sort((a, b) => (b.count - a.count) || (b.name.length - a.name.length))
+            .map(entry => entry.name)[0] || '';
+    }
+
+    function inferFacilityNameFromText(text) {
+        const source = normalizeWhitespace(text);
+        if (!source) return '';
+
+        const patterns = [
+            /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?)\s+Short Term Residential Therapeutic Program\s*\(STRTP\)(?:\b|[.])/i,
+            /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?)\s+Enhanced Behavioral Support Home\s*\(EBSH\)(?:\b|[.])/i,
+            /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?)\s+Community Crisis Home\s*\(CCH\)(?:\b|[.])/i,
+            /\bheld at the\s+([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?(?:Program|Center|Home|House|Ranch|School))(?:\b|[.])/i,
+            /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?(?:Group Home|House|Home|Ranch|Center|Services|School|Foundation|Academy|Program))(?:\b|[.])/i,
+        ];
+
+        for (const pattern of patterns) {
+            const match = source.match(pattern);
+            if (!match || !match[1]) continue;
+
+            const candidate = cleanFacilityNameCandidate(match[1]);
+            if (!candidate) continue;
+
+            const lower = candidate.toLowerCase();
+            if (lower === 'the facility' || lower === 'above facility' || lower === 'the above facility') {
+                continue;
+            }
+            if (/\b(?:licensing program|lpa\b|lpas\b|analyst\b|manager\b|this meeting was held|process for|above listed facility)\b/i.test(candidate)) {
+                continue;
+            }
+
+            return candidate;
+        }
+
+        return '';
+    }
+
+    function pickLatestNonEmpty(rows, field) {
+        const sorted = [...rows].sort((a, b) => reportDateMs(b.visit_date || b.report_date) - reportDateMs(a.visit_date || a.report_date));
+        for (const row of sorted) {
+            const value = normalizeWhitespace(row && row[field]);
+            if (value) return value;
+        }
+        return '';
+    }
+
+    function resolveFacilityName(rows, facilityNumber) {
+        const explicit = pickMostUsefulCandidate(rows.map(row => row && row.facility_name));
+        if (explicit) return explicit;
+
+        const inferred = pickMostUsefulCandidate(rows.flatMap(row => ([
+            inferFacilityNameFromText(row && row.narrative),
+            inferFacilityNameFromText(row && row.investigation_findings),
+        ])));
+        if (inferred) return inferred;
+
+        return `Facility #${facilityNumber}`;
+    }
+    
     // --- GET HTML ELEMENTS ---
     const reportContainer = document.getElementById('report-container');
     const alphabetFilter = document.getElementById('alphabet-filter');
@@ -167,34 +264,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- AGGREGATES RAW REPORTS INTO FACILITY GROUPS ---
     function aggregateReportsIntoFacilities(reports) {
-        const facilities = reports.reduce((acc, report) => {
-            const num = report.facility_number;
-            if (!num) { return acc; }
-    
+        const groupedReports = reports.reduce((acc, report) => {
+            const num = safeString(report && report.facility_number);
+            if (!num) return acc;
+
             if (!acc[num]) {
-                acc[num] = {
-                    number: num,
-                    name: report.facility_name || `Facility #${num}`,
-                    facility_type: report.facility_type_name,
-                    officer: report.administrator,
-                    capacity: report.capacity,
-                    inspections: []
-                };
+                acc[num] = [];
             }
-            acc[num].inspections.push(report);
+
+            acc[num].push(report);
             return acc;
         }, {});
-        
-        // Sort inspections within each facility by date (most recent first)
-        Object.values(facilities).forEach(facility => {
-            facility.inspections.sort((a, b) => {
-                const dateA = new Date(a.visit_date || 0);
-                const dateB = new Date(b.visit_date || 0);
-                return dateB - dateA; // Most recent first
-            });
+
+        return Object.entries(groupedReports).map(([num, facilityReports]) => {
+            const inspections = [...facilityReports].sort((a, b) => reportDateMs(b.visit_date || b.report_date) - reportDateMs(a.visit_date || a.report_date));
+            const facilityType = pickMostUsefulCandidate(facilityReports.map(report => report && report.facility_type_name))
+                || pickLatestNonEmpty(facilityReports, 'facility_type_name');
+            const officer = pickLatestNonEmpty(facilityReports, 'administrator');
+            const capacity = pickLatestNonEmpty(facilityReports, 'capacity');
+
+            return {
+                number: num,
+                name: resolveFacilityName(facilityReports, num),
+                facility_type: facilityType,
+                officer,
+                capacity,
+                inspections,
+            };
         });
-        
-        return Object.values(facilities);
     }
    
     // Helper function to check if inspection has violations (same logic as orange/white boxes)
