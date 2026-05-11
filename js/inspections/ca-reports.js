@@ -72,7 +72,143 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/\s{2,}/g, ' ')
             .trim();
 
+        // Guard against long narrative chunks accidentally treated as facility names.
+        if (name.length > 120) return '';
+        if (/\b(report date|facility evaluation report|complaint investigation report|deficienc|plan of correction)\b/i.test(name)) {
+            return '';
+        }
+
+        // Reject anything that looks like a street address.
+        // Addresses typically start with a number or contain street-type abbreviations.
+        if (/^\d/.test(name)) return '';
+        if (/\b\d+\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)\b/i.test(name)) return '';
+        if (/\b(north|south|east|west|ne|nw|se|sw)\s+\d+/i.test(name)) return '';
+
         return name;
+    }
+
+    function parseUsDateToIso(dateStr) {
+        const source = normalizeWhitespace(dateStr);
+        if (!source) return '';
+
+        const first = source.split(/\s*[-–]\s*/)[0].trim();
+        const parts = first.split('/');
+        if (parts.length === 3) {
+            let [m, d, y] = parts.map(p => parseInt(p, 10));
+            if (Number.isNaN(m) || Number.isNaN(d) || Number.isNaN(y)) return '';
+            if (y < 100) y += (y < 50) ? 2000 : 1900;
+            const mm = String(m).padStart(2, '0');
+            const dd = String(d).padStart(2, '0');
+            return `${y}-${mm}-${dd}`;
+        }
+
+        const t = new Date(first);
+        if (Number.isNaN(t.getTime())) return '';
+        return t.toISOString().slice(0, 10);
+    }
+
+    function normalizeOneReport(report) {
+        if (!report || typeof report !== 'object') return null;
+
+        // Legacy flat CA JSON already has facility_number and visit/report fields.
+        if (report.facility_number) {
+            return report;
+        }
+
+        // New API schema: flatten reports[*] with categories and facility-level info.
+        const categories = (report.categories && typeof report.categories === 'object') ? report.categories : {};
+        const rawDate = safeString(report.report_date || categories.report_date || categories.visit_date);
+        const fallbackVisit = parseUsDateToIso(rawDate);
+
+        return {
+            facility_number: safeString(report.facility_number || report.program_name || ''),
+            facility_name: safeString(report.facility_name || report.program_name || ''),
+            administrator: safeString(report.executive_director || categories.administrator || ''),
+            facility_type_name: safeString(report.program_category || categories.facility_type_name || ''),
+            capacity: safeString(report.bed_capacity || categories.capacity || ''),
+            census: safeString(categories.census || ''),
+            report_type: safeString(categories.report_type || ''),
+            form_number: safeString(categories.form_number || ''),
+            report_date: safeString(rawDate),
+            visit_date: safeString(categories.visit_date || fallbackVisit),
+            date_signed: safeString(categories.date_signed || ''),
+            met_with: safeString(categories.met_with || ''),
+            complaint_status: safeString(categories.complaint_status || ''),
+            narrative: safeString(categories.narrative || report.raw_content || ''),
+            investigation_findings: safeString(categories.investigation_findings || ''),
+            deficiencies: Array.isArray(categories.deficiencies) ? categories.deficiencies : [],
+            allegations: Array.isArray(categories.allegations) ? categories.allegations : [],
+            source_url: safeString(categories.source_url || ''),
+            report_id: safeString(report.report_id || ''),
+            report_index: safeString(categories.report_index || ''),
+        };
+    }
+
+    function normalizeRawReports(rawPayload) {
+        const normalized = [];
+
+        (rawPayload || []).forEach(item => {
+            if (!item || typeof item !== 'object') return;
+
+            // New API wrapper shape: { facilities: [...] }
+            if (Array.isArray(item.facilities)) {
+                item.facilities.forEach(facility => {
+                    const facilityInfo = (facility && facility.facility_info) || {};
+                    const reports = (facility && Array.isArray(facility.reports)) ? facility.reports : [];
+                    reports.forEach(rep => {
+                        const flattened = normalizeOneReport({
+                            ...rep,
+                            facility_number: rep && rep.facility_number ? rep.facility_number : facilityInfo.program_name,
+                            program_name: facilityInfo.program_name,
+                            facility_name: facilityInfo.facility_name,
+                            executive_director: facilityInfo.executive_director,
+                            program_category: facilityInfo.program_category,
+                            bed_capacity: facilityInfo.bed_capacity,
+                        });
+                        if (flattened) normalized.push(flattened);
+                    });
+                });
+                return;
+            }
+
+            // Direct array of facilities shape: [{facility_info, reports:[]}, ...]
+            if (item.facility_info && Array.isArray(item.reports)) {
+                const facilityInfo = item.facility_info || {};
+                item.reports.forEach(rep => {
+                    const flattened = normalizeOneReport({
+                        ...rep,
+                        facility_number: rep && rep.facility_number ? rep.facility_number : facilityInfo.program_name,
+                        program_name: facilityInfo.program_name,
+                        facility_name: facilityInfo.facility_name,
+                        executive_director: facilityInfo.executive_director,
+                        program_category: facilityInfo.program_category,
+                        bed_capacity: facilityInfo.bed_capacity,
+                    });
+                    if (flattened) normalized.push(flattened);
+                });
+                return;
+            }
+
+            const flattened = normalizeOneReport(item);
+            if (flattened) normalized.push(flattened);
+        });
+
+        // Deduplicate at report level to prevent repeated cards when multiple sources overlap.
+        const seen = new Set();
+        return normalized.filter(report => {
+            const key = [
+                safeString(report.facility_number),
+                safeString(report.report_id),
+                safeString(report.report_date),
+                safeString(report.visit_date),
+                safeString(report.report_type),
+                safeString(report.narrative).slice(0, 120),
+            ].join('|');
+
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
     }
 
     function pickMostUsefulCandidate(candidates) {
@@ -110,7 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
             /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?)\s+Enhanced Behavioral Support Home\s*\(EBSH\)(?:\b|[.])/i,
             /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?)\s+Community Crisis Home\s*\(CCH\)(?:\b|[.])/i,
             /\bheld at the\s+([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?(?:Program|Center|Home|House|Ranch|School))(?:\b|[.])/i,
-            /\b([A-Z][A-Za-z0-9&'.,#()\/\- ]{4,120}?(?:Group Home|House|Home|Ranch|Center|Services|School|Foundation|Academy|Program))(?:\b|[.])/i,
+            // Broad last-resort: only match when facility-type word is the FINAL word of the name.
+            /(?:^|[.!?]\s+|\bthe\s+)([A-Z][A-Za-z0-9&'.,()\/\- ]{4,100}?\s+(?:Group Home|Crisis Home|Group|House|Ranch|Center|Services|School|Foundation|Academy|Program))\s*(?:[,.]|$)/,
         ];
 
         for (const pattern of patterns) {
@@ -237,8 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve([]));
             const allJsonData = await Promise.all(jsonPromises);
 
-            // Combine the data from all files into one single list
-            const rawReports = allJsonData.flat();
+            // Normalize mixed payloads (legacy flat rows and API facility/reports rows).
+            const rawReports = normalizeRawReports(allJsonData.flat());
             console.log(`Loaded ${rawReports.length} raw reports`);
             
             // The rest of the logic remains the same
@@ -277,7 +414,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }, {});
 
         return Object.entries(groupedReports).map(([num, facilityReports]) => {
-            const inspections = [...facilityReports].sort((a, b) => reportDateMs(b.visit_date || b.report_date) - reportDateMs(a.visit_date || a.report_date));
+            const dedupedFacilityReports = [];
+            const reportKeys = new Set();
+            facilityReports.forEach(report => {
+                const reportKey = [
+                    safeString(report.report_id),
+                    safeString(report.report_date),
+                    safeString(report.visit_date),
+                    safeString(report.report_type),
+                    safeString(report.narrative).slice(0, 120),
+                ].join('|');
+                if (reportKeys.has(reportKey)) return;
+                reportKeys.add(reportKey);
+                dedupedFacilityReports.push(report);
+            });
+
+            const inspections = [...dedupedFacilityReports].sort((a, b) => reportDateMs(b.visit_date || b.report_date) - reportDateMs(a.visit_date || a.report_date));
             const facilityType = pickMostUsefulCandidate(facilityReports.map(report => report && report.facility_type_name))
                 || pickLatestNonEmpty(facilityReports, 'facility_type_name');
             const officer = pickLatestNonEmpty(facilityReports, 'administrator');
