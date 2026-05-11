@@ -390,9 +390,8 @@ function displayFacilities(facilitiesData, containerId) {
         const allProjectValues = Object.values(facilitiesData.projects);
         const operatorProjects = allProjectValues.filter(isOperatorCategory);
 
-        // DEBUG: log facility-count distribution + sample of operator-category records
-        const facilityCountBuckets = { '0': 0, '1': 0, '2-5': 0, '6-20': 0, '21+': 0 };
-        const sampleHighCount = [];
+        // DEBUG: list every operator-category record with 2+ facilities and a small snapshot
+        const passingProjects = [];
         operatorProjects.forEach(p => {
             let pd = (p.data && typeof p.data === 'object') ? p.data : p;
             let g = 0;
@@ -400,20 +399,15 @@ function displayFacilities(facilitiesData, containerId) {
                 pd = pd.data;
                 g += 1;
             }
-            const fc = Array.isArray(pd && pd.facilities) ? pd.facilities.length : 0;
-            if (fc === 0) facilityCountBuckets['0'] += 1;
-            else if (fc === 1) facilityCountBuckets['1'] += 1;
-            else if (fc <= 5) facilityCountBuckets['2-5'] += 1;
-            else if (fc <= 20) facilityCountBuckets['6-20'] += 1;
-            else facilityCountBuckets['21+'] += 1;
-            if (fc >= 2 && sampleHighCount.length < 8) {
-                sampleHighCount.push({ name: p.name || (pd && pd.operator && pd.operator.name) || '(unknown)', count: fc, category: p.category });
+            const facs = Array.isArray(pd && pd.facilities) ? pd.facilities : [];
+            if (facs.length >= 2) {
+                const opName = (pd && pd.operator && (pd.operator.name || pd.operator.currentName)) || p.name || '(unknown)';
+                const facNames = facs.slice(0, 6).map(f => (f && (f.name || (f.identification && f.identification.name))) || (f && f.address) || '(no name)');
+                passingProjects.push({ operator: opName, count: facs.length, sampleFacilities: facNames });
             }
         });
-        console.log('[KOP DEBUG] total projects:', allProjectValues.length,
-            '| isOperatorCategory matches:', operatorProjects.length,
-            '| facility-count buckets:', facilityCountBuckets,
-            '| sample 2+ facility:', sampleHighCount);
+        console.log('[KOP DEBUG] operators passing length>=2 filter:', passingProjects.length);
+        console.table(passingProjects);
 
         const seenOperatorKeys = new Set();
 
