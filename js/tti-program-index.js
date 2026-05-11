@@ -387,27 +387,7 @@ function displayFacilities(facilitiesData, containerId) {
     let operatorGroups = [];
     if (facilitiesData && facilitiesData.projects) {
         // Handle new JSON structure
-        const allProjectValues = Object.values(facilitiesData.projects);
-        const operatorProjects = allProjectValues.filter(isOperatorCategory);
-
-        // DEBUG: list every operator-category record with 2+ facilities and a small snapshot
-        const passingProjects = [];
-        operatorProjects.forEach(p => {
-            let pd = (p.data && typeof p.data === 'object') ? p.data : p;
-            let g = 0;
-            while (pd && typeof pd === 'object' && !pd.operator && !pd.facilities && pd.data && typeof pd.data === 'object' && g < 2) {
-                pd = pd.data;
-                g += 1;
-            }
-            const facs = Array.isArray(pd && pd.facilities) ? pd.facilities : [];
-            if (facs.length >= 2) {
-                const opName = (pd && pd.operator && (pd.operator.name || pd.operator.currentName)) || p.name || '(unknown)';
-                const facNames = facs.slice(0, 6).map(f => (f && (f.name || (f.identification && f.identification.name))) || (f && f.address) || '(no name)');
-                passingProjects.push({ operator: opName, count: facs.length, sampleFacilities: facNames });
-            }
-        });
-        console.log('[KOP DEBUG] operators passing length>=2 filter:', passingProjects.length);
-        console.table(passingProjects);
+        const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
 
         const seenOperatorKeys = new Set();
 
@@ -432,8 +412,15 @@ function displayFacilities(facilitiesData, containerId) {
             const operator = projectData.operator || {};
             const facilities = toArray(projectData.facilities);
 
-            // Corporate-chain filter: only render operators with 2+ facilities.
-            if (facilities.length < 2) {
+            // Corporate-chain filter: only render operators with 2+ NAMED facilities.
+            // Single-program records often have multiple facility entries that are just
+            // addresses with no name (e.g. inspection / licensing duplicates) — those
+            // are not chains and should be excluded.
+            const namedFacilityCount = facilities.reduce((sum, f) => {
+                const name = getFacilityDisplayName(f);
+                return name && name.trim() ? sum + 1 : sum;
+            }, 0);
+            if (namedFacilityCount < 2) {
                 return;
             }
 
