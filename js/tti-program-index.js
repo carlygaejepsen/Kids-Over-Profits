@@ -272,6 +272,41 @@ function displayFacilities(facilitiesData, containerId) {
         return city || state || null;
     };
 
+    const consumeFieldNotesForKeys = (fieldNotes, keys, usedKeys) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object') return [];
+        const notes = [];
+
+        keys.forEach(key => {
+            if (!key || typeof key !== 'string') return;
+
+            let matchedKey = key;
+            let matchedNotes = getNotesForKey(fieldNotes, key);
+
+            if (!matchedNotes.length && key.includes('.')) {
+                matchedKey = key.split('.').pop();
+                matchedNotes = getNotesForKey(fieldNotes, matchedKey);
+            }
+
+            if (!matchedNotes.length) return;
+
+            if (usedKeys && matchedKey) usedKeys.add(matchedKey);
+            notes.push(...matchedNotes);
+        });
+
+        return collectUniqueTexts(notes);
+    };
+
+    const renderDetailSection = (title, content, extraClass = '') => {
+        if (!content) return '';
+        const className = extraClass ? `facility-detail-section ${extraClass}` : 'facility-detail-section';
+        return `
+            <section class="${className}">
+                <h4 class="facility-section-title">${escapeHtml(title)}</h4>
+                ${content}
+            </section>
+        `;
+    };
+
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
         // Try full key
         let notes = getNotesForKey(fieldNotes, key);
@@ -323,10 +358,10 @@ function displayFacilities(facilitiesData, containerId) {
             return `<li><strong>${escapeHtml(label)}:</strong> ${textHtml}${previews}</li>`;
         }).join('');
         return `
-            <div class="facility-field-notes">
-                <p><strong>Additional Field Notes</strong></p>
+            <section class="facility-detail-section facility-field-notes">
+                <h4 class="facility-section-title">Additional Notes</h4>
                 <ul>${list}</ul>
-            </div>
+            </section>
         `;
     };
 
@@ -771,6 +806,108 @@ function displayFacilities(facilitiesData, containerId) {
                 otherNamesHtml = `<div class="facility-header-subtext">${subtextParts.join('<br>')}</div>`;
             }
 
+            const facilityFieldKeys = {
+                type: [
+                    'facilityDetails.type', 'type', 'programType', 'program_type',
+                    'facilityType', 'facility_type', 'category', 'identification.type'
+                ],
+                capacity: [
+                    'facilityDetails.capacity', 'capacity', 'licensedCapacity',
+                    'licensed_capacity', 'maxCapacity', 'max_capacity'
+                ],
+                gender: [
+                    'facilityDetails.gender', 'gender', 'servedGender',
+                    'served_gender', 'sex'
+                ],
+                ageRangeText: [
+                    'facilityDetails.ageRange.label', 'facilityDetails.ageRange.display',
+                    'facilityDetails.ageRange.text', 'ageRange.label',
+                    'ageRange.display', 'ageRange.text',
+                    'facilityDetails.ageRange', 'ageRange', 'age_range'
+                ],
+                ageMin: [
+                    'facilityDetails.ageRange.min', 'facilityDetails.ageRange.minimum',
+                    'facilityDetails.ageRange.minAge', 'facilityDetails.ageRange.min_age',
+                    'ageRange.min', 'ageRange.minimum', 'ageRange.minAge',
+                    'ageRange.min_age', 'ageMin', 'age_min'
+                ],
+                ageMax: [
+                    'facilityDetails.ageRange.max', 'facilityDetails.ageRange.maximum',
+                    'facilityDetails.ageRange.maxAge', 'facilityDetails.ageRange.max_age',
+                    'ageRange.max', 'ageRange.maximum', 'ageRange.maxAge',
+                    'ageRange.max_age', 'ageMax', 'age_max'
+                ],
+                notes: [
+                    'notes', 'note', 'summary', 'description',
+                    'facilityDetails.notes', 'facilityDetails.note',
+                    'facilityDetails.summary', 'facilityDetails.description',
+                    'identification.notes'
+                ]
+            };
+
+            const typeValue = getValueFromKeys(facility, facilityFieldKeys.type);
+            const capacityValue = getValueFromKeys(facility, facilityFieldKeys.capacity);
+            const genderValue = getValueFromKeys(facility, facilityFieldKeys.gender);
+
+            const rawAgeRangeText = getValueFromKeys(facility, facilityFieldKeys.ageRangeText);
+            const ageMinValue = getValueFromKeys(facility, facilityFieldKeys.ageMin);
+            const ageMaxValue = getValueFromKeys(facility, facilityFieldKeys.ageMax);
+
+            let ageDisplay = '';
+            if (typeof rawAgeRangeText === 'string' && !isValueEmpty(rawAgeRangeText)) {
+                ageDisplay = rawAgeRangeText;
+            } else if (!isValueEmpty(ageMinValue) && !isValueEmpty(ageMaxValue)) {
+                ageDisplay = `${ageMinValue}-${ageMaxValue}`;
+            } else if (!isValueEmpty(ageMinValue)) {
+                ageDisplay = `${ageMinValue}+`;
+            } else if (!isValueEmpty(ageMaxValue)) {
+                ageDisplay = `Up to ${ageMaxValue}`;
+            }
+
+            const factItems = [];
+            if (!isValueEmpty(typeValue)) {
+                factItems.push({ label: 'Type', value: escapeHtml(typeValue) });
+            }
+            if (ageDisplay) {
+                factItems.push({ label: 'Ages', value: escapeHtml(ageDisplay) });
+            }
+            if (!isValueEmpty(genderValue)) {
+                factItems.push({ label: 'Gender', value: escapeHtml(toTitleCase(genderValue)) });
+            }
+            if (!isValueEmpty(capacityValue)) {
+                factItems.push({ label: 'Capacity', value: escapeHtml(String(capacityValue)) });
+            }
+
+            const factsHtml = factItems.length
+                ? renderDetailSection(
+                    'At a glance',
+                    `<div class="facility-facts-grid">${
+                        factItems.map(item => `
+                            <div class="facility-fact">
+                                <span class="facility-fact-label">${item.label}</span>
+                                <span class="facility-fact-value">${item.value}</span>
+                            </div>
+                        `).join('')
+                    }</div>`,
+                    'facility-facts-section'
+                )
+                : '';
+
+            const noteItems = collectUniqueTexts(
+                getValueFromKeys(facility, facilityFieldKeys.notes),
+                consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.notes, usedFieldNoteKeys)
+            );
+
+            const notesHtml = noteItems.length
+                ? renderDetailSection(
+                    'Notes',
+                    `<div class="facility-note-list">${
+                        noteItems.map(item => `<div class="facility-note-item">${escapeHtml(item)}</div>`).join('')
+                    }</div>`,
+                    'facility-notes-section'
+                )
+                : '';
+
             // Build other facility data
             let otherFacilityData = '';
 
@@ -807,6 +944,37 @@ function displayFacilities(facilitiesData, containerId) {
                     return parts.join(' - ');
                 }
                 return escapeHtml(String(item));
+            };
+
+            const suppressedFieldKeys = new Set([
+                'identification.name', 'identification.currentName',
+                'name', 'programName', 'facilityName', 'title',
+                'program_name', 'facility_name',
+                'identification.otherNames', 'otherNames',
+                'identification.pastNames', 'pastNames',
+                'identification.formerNames', 'formerNames',
+                'location', 'address', 'cityState', 'city_state',
+                'fullAddress', 'full_address', 'city', 'state',
+                'locationCity', 'location_city', 'locationState', 'location_state',
+                'operatingPeriod.status', 'status',
+                'yearsOfOperation', 'yearsActive', 'years_active',
+                'operating_period_text', 'founded', 'yearFounded', 'opened',
+                'startYear', 'year_founded', 'start_year',
+                'operatingPeriod.startYear', 'operatingPeriod.start_year',
+                'operatingPeriod.endYear', 'operatingPeriod.end_year',
+                ...facilityFieldKeys.type,
+                ...facilityFieldKeys.capacity,
+                ...facilityFieldKeys.gender,
+                ...facilityFieldKeys.ageRangeText,
+                ...facilityFieldKeys.ageMin,
+                ...facilityFieldKeys.ageMax,
+                ...facilityFieldKeys.notes
+            ]);
+
+            const shouldSuppressFacilityField = key => {
+                if (!key || typeof key !== 'string') return false;
+                if (suppressedFieldKeys.has(key)) return true;
+                return /^(locationDetails|location_details)\.(city|state)$/i.test(key);
             };
 
             // Function to recursively render all fields from an object
@@ -870,6 +1038,7 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityFields = renderAllObjectFieldsFac(facility);
 
             facilityFields.forEach(field => {
+                if (shouldSuppressFacilityField(field.key)) return;
                 if (isValueEmpty(field.value)) return;
 
                 let renderedValue = '';
@@ -997,8 +1166,7 @@ function displayFacilities(facilitiesData, containerId) {
                 if (matchingFolder) {
                     // console.log(`MATCHED! Facility: "${facName}" -> Folder: "${matchingFolder.name}" (ID: ${matchingFolder.id})`);
                     documentsHtml = `
-                        <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
-                            <span class="field-label">Documents</span>
+                        <div class="field-row full-width-grid facility-document-row" id="documents-${matchingFolder.id}" data-documents-container="true">
                             <span class="field-value doc-library-btn-wrap">
                                 <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
                                     📂 View Document Library
@@ -1009,7 +1177,7 @@ function displayFacilities(facilitiesData, containerId) {
             }
 
             // Build resources available section
-            let resourcesAvailable = '';
+            let resourcesSectionHtml = '';
             if (facility.resources) {
                 const resources = [];
                 const resourceMap = {
@@ -1039,10 +1207,31 @@ function displayFacilities(facilitiesData, containerId) {
                 }
 
                 if (resources.length > 0) {
-                    const safeResources = resources.map(item => escapeHtml(item)).join(', ');
-                    resourcesAvailable = `<div class="field-row full-width-grid"><span class="field-label">Resources Available</span><span class="field-value">${safeResources}</span></div>`;
+                    resourcesSectionHtml = renderDetailSection(
+                        'Resources',
+                        `<div class="resource-chip-list">${
+                            resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')
+                        }</div>`,
+                        'facility-resources-section'
+                    );
                 }
             }
+
+            const documentsSectionHtml = documentsHtml
+                ? renderDetailSection(
+                    'Documents',
+                    `<div class="facility-detail-grid">${documentsHtml}</div>`,
+                    'facility-documents-section'
+                )
+                : '';
+
+            const additionalDetailsHtml = otherFacilityData
+                ? renderDetailSection(
+                    'More details',
+                    `<div class="facility-detail-grid">${otherFacilityData}</div>`,
+                    'facility-additional-section'
+                )
+                : '';
 
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
@@ -1069,9 +1258,11 @@ function displayFacilities(facilitiesData, containerId) {
                         <details class="facility-expanded-info">
                             <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
                             <div class="facility-extra-content">
-                                ${otherFacilityData}
-                                ${documentsHtml}
-                                ${resourcesAvailable}
+                                ${factsHtml}
+                                ${notesHtml}
+                                ${resourcesSectionHtml}
+                                ${documentsSectionHtml}
+                                ${additionalDetailsHtml}
                                 ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                             </div>
                         </details>
@@ -1166,7 +1357,7 @@ window.loadFacilityDocuments = async function(folderId, containerOrId) {
     const restBase = getRestBase();
 
     // Keep the label, show loading in value
-    const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+    const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '';
     container.innerHTML = `${labelSpan}<span class="field-value">Loading Document Library...</span>`;
 
     try {
@@ -1413,7 +1604,7 @@ function attachDocumentButtons(scope) {
         button.addEventListener('click', event => {
             event.preventDefault();
             const folderId = button.dataset ? button.dataset.folderId : '';
-            const container = button.closest('.field-row');
+            const container = button.closest('[data-documents-container="true"], .field-row');
             if (typeof window.loadFacilityDocuments === 'function') {
                 window.loadFacilityDocuments(folderId, container);
             } else {
@@ -1430,7 +1621,7 @@ async function loadFacilityDocumentsFallback(folderId, container) {
         if (!response.ok) throw new Error('Failed to load content');
         const files = await response.json();
 
-        const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '<span class="field-label">Documents</span>';
+        const labelSpan = container.querySelector('.field-label') ? container.querySelector('.field-label').outerHTML : '';
 
         if (Array.isArray(files) && files.length === 0) {
             container.innerHTML = `${labelSpan}<span class="field-value">No documents found.</span>`;

@@ -471,12 +471,95 @@ details.operator-section[open] .facility-card {
 
 .facility-extra-content {
     padding: 10px 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns of fields */
-    column-gap: 20px;
-    row-gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 100%;
     font-size: 0.9em;
+}
+
+.facility-detail-section {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.025);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+}
+
+.facility-section-title {
+    margin: 0 0 10px;
+    font-size: 0.82em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #00004d !important;
+}
+
+.facility-facts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.facility-fact {
+    padding: 8px 10px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 6px;
+}
+
+.facility-fact-label {
+    display: block;
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #666666 !important;
+    margin-bottom: 3px;
+}
+
+.facility-fact-value {
+    display: block;
+    font-size: 0.98em;
+    font-weight: 600;
+    color: #111111 !important;
+    line-height: 1.3;
+}
+
+.facility-note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.facility-note-item {
+    padding-left: 10px;
+    border-left: 3px solid #33A7B5;
+    line-height: 1.45;
+}
+
+.resource-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.resource-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #0d4450 !important;
+}
+
+.facility-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 8px;
 }
 
 .operator-details {
@@ -528,7 +611,8 @@ details.operator-section[open] .facility-card {
 
 /* Responsive: 1 column on small screens */
 @media (max-width: 600px) {
-    .facility-extra-content,
+    .facility-facts-grid,
+    .facility-detail-grid,
     .operator-details {
         grid-template-columns: 1fr;
     }
@@ -746,6 +830,10 @@ RESPONSIVE
     .facility-extra-content,
     .operator-details {
         font-size: 0.95em;
+    }
+
+    .facility-detail-section {
+        padding: 10px;
     }
 
     .field-label {
