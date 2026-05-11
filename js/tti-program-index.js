@@ -412,6 +412,11 @@ function displayFacilities(facilitiesData, containerId) {
             const operator = projectData.operator || {};
             const facilities = toArray(projectData.facilities);
 
+            // Corporate-chain filter: only render operators with 2+ facilities.
+            if (facilities.length < 2) {
+                return;
+            }
+
             const operatorNameKeySource = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(project.name);
             const operatorKey = operatorNameKeySource ? operatorNameKeySource.toLowerCase() : '';
             if (operatorKey) {
