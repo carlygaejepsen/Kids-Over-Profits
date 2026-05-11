@@ -12,6 +12,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const newOnlyCheckbox = document.getElementById('newReportsOnly');
 
     const NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+    const OREGON_INLINE_STOP_LABELS = [
+        'Date of site visit',
+        'Date of Unannounced',
+        'Executive Director',
+        'Program Director',
+        'Board Chairperson',
+        'Licensing Coordinator',
+        'Other Regulatory or Accrediting Agencies',
+        'Purpose',
+        'Program Compliance',
+        'Program Description',
+        'Program type and services',
+        'Capacity and age-range',
+        'Capacity and Age Range',
+        'Funding sources',
+        'Contracts and sources for referrals',
+        'Average length of stay',
+        'Average daily population served',
+        'Number of children served annually',
+        'Use of seclusion or restraint',
+        'Interviews, Observations',
+        'Program Strengths',
+        'Program Challenges',
+        'Changes that have occurred in the last 2 years',
+        'Changes that have occurred in the last two years',
+        'Lawsuits',
+        'Grievances and complaints filed in the last two years',
+        'Corrective Actions and Timeframes',
+        'Recommendations',
+        'Exceptions',
+        'Changes in License',
+        'Summary of Review',
+    ];
 
     let allFacilitiesData = {};
     let currentLetter     = null;
@@ -29,6 +62,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const safeString = v => (v == null ? '' : String(v).trim());
+    const escapeRegex = value => safeString(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const oregonInlineStopRe = new RegExp(
+        `\\s+(?=${OREGON_INLINE_STOP_LABELS.map(escapeRegex).join('|')})\\s*:`,
+        'i'
+    );
+
+    function normalizeOregonWhitespace(value) {
+        return safeString(value)
+            .replace(/\r/g, '\n')
+            .replace(/\u00a0/g, ' ')
+            .replace(/[ \t]+/g, ' ')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+    }
+
+    function stripTrailingOregonLabel(value) {
+        const normalized = normalizeOregonWhitespace(value);
+        if (!normalized) return '';
+
+        const match = normalized.match(oregonInlineStopRe);
+        const trimmed = (match ? normalized.slice(0, match.index) : normalized)
+            .replace(/\s+[:,-]\s*$/, '')
+            .trim();
+
+        return trimmed;
+    }
+
+    function cleanOregonInlineField(value) {
+        return stripTrailingOregonLabel(value).replace(/\s+/g, ' ').trim();
+    }
+
+    function cleanOregonNarrative(value) {
+        return stripTrailingOregonLabel(value)
+            .replace(/[ \t]+\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+    }
+
+    function formatMultilineHtml(value) {
+        return escapeHtml(cleanOregonNarrative(value)).replace(/\n/g, '<br>');
+    }
+
+    function extractOregonDisplayDate(value) {
+        const cleaned = cleanOregonInlineField(value);
+        if (!cleaned) return '';
+
+        const match = cleaned.match(
+            /\b(?:\d{1,2}\/\d{1,2}\/\d{2,4}|January \d{1,2}, \d{4}|February \d{1,2}, \d{4}|March \d{1,2}, \d{4}|April \d{1,2}, \d{4}|May \d{1,2}, \d{4}|June \d{1,2}, \d{4}|July \d{1,2}, \d{4}|August \d{1,2}, \d{4}|September \d{1,2}, \d{4}|October \d{1,2}, \d{4}|November \d{1,2}, \d{4}|December \d{1,2}, \d{4})\b/
+        );
+
+        return match ? match[0] : cleaned;
+    }
+
+    function normalizeFindings(findings) {
+        if (!Array.isArray(findings)) return [];
+
+        return findings.map(finding => ({
+            rule: cleanOregonInlineField(finding && finding.rule),
+            excerpt: cleanOregonNarrative(finding && finding.excerpt),
+        })).filter(finding => finding.rule || finding.excerpt);
+    }
+
+    function getFindingCount(report) {
+        if (!report) return 0;
+        if (Number.isFinite(report.finding_count) && report.finding_count > 0) {
+            return report.finding_count;
+        }
+        return Array.isArray(report.findings) ? report.findings.length : 0;
+    }
 
     async function initializeReport() {
         try {
@@ -60,46 +162,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const info = facility.facility_info || {};
             const reports = (facility.reports || []).map(report => {
                 const cats = report.categories || {};
+                const findings = normalizeFindings(cats.findings);
+                const parsedFindingCount = parseInt(cats.finding_count, 10);
                 return {
                     report_id:          report.report_id    || '',
                     report_date:        report.report_date  || '',
                     summary:            report.summary      || '',
                     raw_content:        report.raw_content  || '',
                     content_length:     report.content_length || 0,
-                    report_type:        cats.report_type    || '',
-                    view_code:          cats.view_code      || '',
-                    pdf_url:            cats.pdf_url        || '',
-                    source_page:        cats.source_page    || '',
-                    visit_date:         cats.visit_date     || '',
-                    licensee:           cats.licensee       || '',
-                    program_compliance: cats.program_compliance || '',
-                    corrective_actions: cats.corrective_actions || '',
-                    findings:           Array.isArray(cats.findings) ? cats.findings : [],
-                    finding_count:      parseInt(cats.finding_count, 10) || 0,
-                    program_description:         cats.program_description         || '',
-                    program_services:            cats.program_services            || '',
-                    capacity_age_range:          cats.capacity_age_range          || '',
-                    average_length_of_stay:      cats.average_length_of_stay      || '',
-                    average_daily_population:    cats.average_daily_population_served || '',
-                    number_children_annually:    cats.number_of_children_served_annually || '',
-                    use_of_seclusion_or_restraint: cats.use_of_seclusion_or_restraint || '',
-                    interviews_observations:     cats.interviews_observations     || '',
-                    interview_summary:           cats.interview_summary           || '',
-                    observations:                cats.observations                || '',
-                    program_strengths:           cats.program_strengths           || '',
-                    program_challenges:          cats.program_challenges          || '',
-                    lawsuits:                    cats.lawsuits                    || '',
-                    grievances_and_complaints:   cats.grievances_and_complaints   || '',
+                    report_type:        cleanOregonInlineField(cats.report_type || cats.report_title || ''),
+                    view_code:          cleanOregonInlineField(cats.view_code || ''),
+                    pdf_url:            safeString(cats.pdf_url || ''),
+                    source_page:        safeString(cats.source_page || ''),
+                    visit_date:         extractOregonDisplayDate(cats.visit_date || report.report_date || ''),
+                    licensee:           cleanOregonInlineField(cats.licensee || ''),
+                    program_compliance: cleanOregonNarrative(cats.program_compliance || ''),
+                    corrective_actions: cleanOregonNarrative(cats.corrective_actions || ''),
+                    findings,
+                    finding_count:      Number.isFinite(parsedFindingCount) && parsedFindingCount >= 0 ? parsedFindingCount : findings.length,
+                    program_description:         cleanOregonNarrative(cats.program_description || ''),
+                    program_services:            cleanOregonNarrative(cats.program_services || ''),
+                    capacity_age_range:          cleanOregonInlineField(cats.capacity_age_range || ''),
+                    average_length_of_stay:      cleanOregonInlineField(cats.average_length_of_stay || ''),
+                    average_daily_population:    cleanOregonInlineField(cats.average_daily_population_served || ''),
+                    number_children_annually:    cleanOregonInlineField(cats.number_of_children_served_annually || ''),
+                    use_of_seclusion_or_restraint: cleanOregonNarrative(cats.use_of_seclusion_or_restraint || ''),
+                    interviews_observations:     cleanOregonNarrative(cats.interviews_observations || ''),
+                    interview_summary:           cleanOregonNarrative(cats.interview_summary || ''),
+                    observations:                cleanOregonNarrative(cats.observations || ''),
+                    program_strengths:           cleanOregonNarrative(cats.program_strengths || ''),
+                    program_challenges:          cleanOregonNarrative(cats.program_challenges || ''),
+                    lawsuits:                    cleanOregonNarrative(cats.lawsuits || ''),
+                    grievances_and_complaints:   cleanOregonNarrative(cats.grievances_and_complaints || ''),
+                    recommendations:             cleanOregonNarrative(cats.recommendations || ''),
+                    exceptions:                  cleanOregonNarrative(cats.exceptions || ''),
+                    changes_in_license:          cleanOregonNarrative(cats.changes_in_license || ''),
+                    previous_findings:           cleanOregonNarrative(cats.previous_findings || ''),
+                    new_findings:                cleanOregonNarrative(cats.new_findings || ''),
                 };
             }).sort((a, b) => parseDate(b.report_date) - parseDate(a.report_date));
 
             return {
-                name:             info.facility_name    || '',
-                program_name:     info.program_name     || '',
-                program_category: info.program_category || '',
-                agency_name:      info.agency_name      || '',
-                address:          info.full_address     || '',
-                website:          info.website          || '',
+                name:             cleanOregonInlineField(info.facility_name || info.agency_name || ''),
+                program_name:     cleanOregonInlineField(info.program_name || ''),
+                program_category: cleanOregonInlineField(info.program_category || ''),
+                agency_name:      cleanOregonInlineField(info.agency_name || ''),
+                address:          cleanOregonNarrative(info.full_address || ''),
+                website:          safeString(info.website || ''),
                 reports:          reports,
             };
         });
@@ -151,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function reportHasFindings(r) {
-        return r.finding_count > 0 ||
+        return getFindingCount(r) > 0 ||
                (r.corrective_actions && r.corrective_actions.toLowerCase() !== 'none');
     }
 
@@ -334,8 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function createReportHTML(report) {
         const hasFindings = reportHasFindings(report);
         const klass       = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
-        const label       = report.report_type || 'Report';
-        const date        = report.visit_date || report.report_date || 'N/A';
+        const label       = cleanOregonInlineField(report.report_type) || 'Report';
+        const date        = extractOregonDisplayDate(report.visit_date || report.report_date || '') || 'N/A';
+        const licensee    = cleanOregonInlineField(report.licensee);
+        const findingCount = getFindingCount(report);
         const heading     = `${escapeHtml(label)} — ${escapeHtml(date)}`;
 
         const pdfLink = report.pdf_url
@@ -343,8 +454,12 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         // Helper: render a labelled narrative paragraph only when non-empty.
-        const narrativeRow = (label, value) =>
-            value ? `<div class="narrative-section"><h4>${label}</h4><p>${escapeHtml(value)}</p></div>` : '';
+        const narrativeRow = (rowLabel, value) => {
+            const cleaned = cleanOregonNarrative(value);
+            return cleaned
+                ? `<div class="narrative-section"><h4>${escapeHtml(rowLabel)}</h4><p>${formatMultilineHtml(cleaned)}</p></div>`
+                : '';
+        };
 
         // Program overview fields — shown when present.
         const programInfoRows = [
@@ -393,14 +508,29 @@ document.addEventListener('DOMContentLoaded', () => {
                </details>`
             : '';
 
+        const reviewRows = [
+            report.previous_findings && narrativeRow('Previous Findings', report.previous_findings),
+            report.new_findings && narrativeRow('New Findings', report.new_findings),
+            report.recommendations && narrativeRow('Recommendations', report.recommendations),
+            report.exceptions && narrativeRow('Exceptions', report.exceptions),
+            report.changes_in_license && narrativeRow('Changes in License', report.changes_in_license),
+        ].filter(Boolean).join('');
+
+        const reviewHtml = reviewRows
+            ? `<details class="violation-box">
+                <summary class="deficiency-header">Review Notes</summary>
+                <div class="deficiency-content">${reviewRows}</div>
+               </details>`
+            : '';
+
         const findingsHtml = report.findings && report.findings.length
             ? `<details class="violation-box">
-                <summary class="deficiency-header">${report.finding_count} compliance finding${report.finding_count === 1 ? '' : 's'}</summary>
+                <summary class="deficiency-header">${findingCount} compliance finding${findingCount === 1 ? '' : 's'}</summary>
                 <div class="deficiency-content">
                     ${report.findings.map(f => `
                         <div style="margin-bottom:10px">
                             <strong>${escapeHtml(f.rule)}</strong>
-                            <p style="margin:4px 0 0;white-space:pre-wrap">${escapeHtml(f.excerpt)}</p>
+                            <p style="margin:4px 0 0;white-space:pre-wrap">${formatMultilineHtml(f.excerpt)}</p>
                         </div>
                     `).join('')}
                 </div>
@@ -429,13 +559,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="inspection-details-block">
                     <strong>Type:</strong> ${escapeHtml(label)}<br>
                     <strong>Visit Date:</strong> ${escapeHtml(date)}<br>
-                    ${report.licensee ? `<strong>Licensee:</strong> ${escapeHtml(report.licensee)}<br>` : ''}
+                    ${licensee ? `<strong>Licensee:</strong> ${escapeHtml(licensee)}<br>` : ''}
                     ${pdfLink ? `<strong>Source:</strong> ${pdfLink}` : ''}
                 </div>
                 ${complianceHtml}
                 ${programInfoHtml}
                 ${observationsHtml}
                 ${legalHtml}
+                ${reviewHtml}
                 ${correctiveHtml}
                 ${findingsHtml}
                 ${rawHtml}
