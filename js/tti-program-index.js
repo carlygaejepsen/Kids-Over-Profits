@@ -385,9 +385,12 @@ function displayFacilities(facilitiesData, containerId) {
 
     // Convert the new JSON structure to work with existing code
     let operatorGroups = [];
+    console.log('[KOP FILTER v3] running named-facility chain filter');
     if (facilitiesData && facilitiesData.projects) {
         // Handle new JSON structure
         const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
+        let blockedSingle = 0;
+        let blockedFewNames = 0;
 
         const seenOperatorKeys = new Set();
 
@@ -421,6 +424,8 @@ function displayFacilities(facilitiesData, containerId) {
                 return name && name.trim() ? sum + 1 : sum;
             }, 0);
             if (namedFacilityCount < 2) {
+                if (facilities.length < 2) blockedSingle += 1;
+                else blockedFewNames += 1;
                 return;
             }
 
@@ -439,6 +444,9 @@ function displayFacilities(facilitiesData, containerId) {
                 name: cleanText(project.name)
             });
         });
+        console.log('[KOP FILTER v3] kept', operatorGroups.length,
+            '| blocked single-facility:', blockedSingle,
+            '| blocked few-named-facilities:', blockedFewNames);
     } else if (Array.isArray(facilitiesData)) {
         // Handle old structure (fallback)
         operatorGroups = facilitiesData;
