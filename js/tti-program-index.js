@@ -194,6 +194,15 @@ function displayFacilities(facilitiesData, containerId) {
     const formatFieldLabel = (key) => {
         if (!key || typeof key !== 'string') return 'Field';
 
+        const labelOverrides = {
+            'accreditations.current': 'Current Accreditations',
+            'accreditations.past': 'Past Accreditations'
+        };
+
+        if (labelOverrides[key]) {
+            return labelOverrides[key];
+        }
+
         // Strip common redundant prefixes
         let cleanKey = key
             .replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '')
@@ -602,6 +611,17 @@ function displayFacilities(facilitiesData, containerId) {
             locationYearsLine = `<span class="operator-location">${locationLines.join('')}</span>`;
         }
 
+        const operatorFieldKeys = {
+            status: ['status', 'operatingPeriod.status', 'operating_period.status'],
+            headquarters: ['headquarters', 'hq_location', 'location', 'address'],
+            founded: ['founded', 'yearFounded', 'year_founded'],
+            parentCompanies: ['parentCompanies', 'parent_companies', 'parentCompany', 'parent_company', 'parents'],
+            websites: ['websites', 'website', 'links', 'profileLinks', 'urls'],
+            founders: ['keyStaff.founders', 'founders'],
+            ceo: ['keyStaff.ceo', 'ceo', 'chiefExecutiveOfficer', 'chief_executive_officer'],
+            executives: ['keyStaff.keyExecutives', 'keyStaff.executives', 'keyExecutives', 'executives']
+        };
+
         // Build other operator data
         let otherOperatorData = '';
 
@@ -636,6 +656,140 @@ function displayFacilities(facilitiesData, containerId) {
                 return parts.join(' - ');
             }
             return escapeHtml(String(item));
+        };
+
+        const normalizeDisplayItems = (value, splitComma = false) => {
+            const items = Array.isArray(value)
+                ? value
+                : isValueEmpty(value)
+                    ? []
+                    : [value];
+
+            return items.flatMap(item => {
+                if (!splitComma || typeof item !== 'string') return [item];
+                return item.split(/\s*,\s*/).map(part => part.trim()).filter(Boolean);
+            }).filter(item => !isValueEmpty(item));
+        };
+
+        const operatorStatusValue = getValueFromKeys(operator, operatorFieldKeys.status);
+        const operatorHeadquartersValue = getValueFromKeys(operator, operatorFieldKeys.headquarters) || operatorLocation;
+        const operatorFoundedValue = getValueFromKeys(operator, operatorFieldKeys.founded);
+        const operatorPeriodValue = typeof opYears === 'string' ? opYears : '';
+
+        const operatorFactItems = [];
+        if (!isValueEmpty(operatorStatusValue)) {
+            operatorFactItems.push({ label: 'Status', value: escapeHtml(operatorStatusValue) });
+        }
+        if (!isValueEmpty(operatorFoundedValue)) {
+            operatorFactItems.push({ label: 'Founded', value: escapeHtml(String(operatorFoundedValue)) });
+        }
+        if (!isValueEmpty(operatorHeadquartersValue) && normalizeTextKey(operatorHeadquartersValue) !== normalizeTextKey(operatorLocation)) {
+            operatorFactItems.push({ label: 'Headquarters', value: escapeHtml(operatorHeadquartersValue) });
+        }
+        if (!isValueEmpty(operatorPeriodValue) && normalizeTextKey(operatorPeriodValue) !== normalizeTextKey(opYears)) {
+            operatorFactItems.push({ label: 'Operating period', value: escapeHtml(operatorPeriodValue) });
+        }
+
+        const operatorFactsHtml = operatorFactItems.length
+            ? renderDetailSection(
+                'At a glance',
+                `<div class="facility-facts-grid">${
+                    operatorFactItems.map(item => `
+                        <div class="facility-fact">
+                            <span class="facility-fact-label">${item.label}</span>
+                            <span class="facility-fact-value">${item.value}</span>
+                        </div>
+                    `).join('')
+                }</div>`,
+                'operator-facts-section'
+            )
+            : '';
+
+        const parentCompanyItems = normalizeDisplayItems(
+            getValueFromKeys(operator, operatorFieldKeys.parentCompanies),
+            true
+        ).map(item => renderItemOp(item)).filter(Boolean);
+
+        const operatorParentCompaniesHtml = parentCompanyItems.length
+            ? renderDetailSection(
+                'Parent companies',
+                `<div class="resource-chip-list">${
+                    parentCompanyItems.map(item => `<span class="resource-chip">${item}</span>`).join('')
+                }</div>`,
+                'operator-parent-companies-section'
+            )
+            : '';
+
+        const websiteItems = normalizeDisplayItems(getValueFromKeys(operator, operatorFieldKeys.websites));
+        const websiteLinks = websiteItems.map(item => {
+            if (typeof item === 'string') {
+                const safeUrl = escapeAttribute(item);
+                let displayUrl = item.replace(/^https?:\/\/(www\.)?/, '');
+                if (displayUrl.length > 60) displayUrl = displayUrl.substring(0, 57) + '...';
+                return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+            }
+            return renderItemOp(item);
+        }).filter(Boolean);
+
+        const operatorWebsitesHtml = websiteLinks.length
+            ? renderDetailSection(
+                'Websites',
+                `<div class="operator-link-list">${
+                    websiteLinks.map(link => `<div class="operator-link-item">${link}</div>`).join('')
+                }</div>`,
+                'operator-websites-section'
+            )
+            : '';
+
+        const founderItems = normalizeDisplayItems(getValueFromKeys(operator, operatorFieldKeys.founders), true)
+            .map(item => renderItemOp(item))
+            .filter(Boolean);
+        const executiveItems = normalizeDisplayItems(getValueFromKeys(operator, operatorFieldKeys.executives), true)
+            .map(item => renderItemOp(item))
+            .filter(Boolean);
+        const ceoValueRaw = getValueFromKeys(operator, operatorFieldKeys.ceo);
+        const ceoValue = isValueEmpty(ceoValueRaw) ? '' : renderItemOp(ceoValueRaw);
+
+        let operatorPeopleRows = '';
+        if (founderItems.length) {
+            operatorPeopleRows += `<div class="field-row"><span class="field-label">Founders</span><span class="field-value">${founderItems.join(', ')}</span></div>`;
+        }
+        if (ceoValue) {
+            operatorPeopleRows += `<div class="field-row"><span class="field-label">CEO</span><span class="field-value">${ceoValue}</span></div>`;
+        }
+        if (executiveItems.length) {
+            operatorPeopleRows += `<div class="field-row"><span class="field-label">Key executives</span><span class="field-value">${executiveItems.join(', ')}</span></div>`;
+        }
+
+        const operatorPeopleHtml = operatorPeopleRows
+            ? renderDetailSection(
+                'Key staff',
+                `<div class="facility-detail-grid">${operatorPeopleRows}</div>`,
+                'operator-people-section'
+            )
+            : '';
+
+        const suppressedOperatorFieldKeys = new Set([
+            'name', 'currentName', 'operatorName', 'ownerName', 'companyName',
+            'current_name', 'operator_name', 'owner_name', 'company_name',
+            'title',
+            'status', 'operatingPeriod.status', 'operating_period.status',
+            'headquarters', 'hq_location', 'location', 'address',
+            'founded', 'yearFounded', 'year_founded',
+            'operatingPeriod', 'operating_period', 'yearsActive', 'years_active',
+            'operatingPeriod.startYear', 'operatingPeriod.endYear',
+            'operating_period.start_year', 'operating_period.end_year',
+            ...operatorFieldKeys.parentCompanies,
+            ...operatorFieldKeys.websites,
+            ...operatorFieldKeys.founders,
+            ...operatorFieldKeys.ceo,
+            ...operatorFieldKeys.executives
+        ]);
+
+        const shouldSuppressOperatorField = key => {
+            if (!key || typeof key !== 'string') return false;
+            if (suppressedOperatorFieldKeys.has(key)) return true;
+            return /^(locationDetails|location_details)\.(city|state)$/i.test(key);
         };
 
         // Function to recursively render all fields from an object
@@ -688,6 +842,7 @@ function displayFacilities(facilitiesData, containerId) {
         const operatorFields = renderAllObjectFieldsOp(operator);
 
         operatorFields.forEach(field => {
+            if (shouldSuppressOperatorField(field.key)) return;
             if (isValueEmpty(field.value)) return;
 
             let renderedValue = '';
@@ -722,8 +877,25 @@ function displayFacilities(facilitiesData, containerId) {
             }
         });
 
-        // Only create the div if there's actual content       
-        const operatorDetailsDiv = otherOperatorData ? `<div class="operator-details">${otherOperatorData}</div>` : '';       
+        const additionalOperatorDetailsHtml = otherOperatorData
+            ? renderDetailSection(
+                'More details',
+                `<div class="facility-detail-grid">${otherOperatorData}</div>`,
+                'operator-additional-section'
+            )
+            : '';
+
+        const operatorSectionsHtml = [
+            operatorFactsHtml,
+            operatorParentCompaniesHtml,
+            operatorWebsitesHtml,
+            operatorPeopleHtml,
+            additionalOperatorDetailsHtml
+        ].join('');
+
+        const operatorDetailsDiv = operatorSectionsHtml
+            ? `<div class="operator-details">${operatorSectionsHtml}</div>`
+            : '';
 
         html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '">' +
                 '<summary class="operator-header">' +

@@ -567,10 +567,57 @@ details.operator-section[open] .facility-card {
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns of fields */
-    column-gap: 20px;
-    row-gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.operator-details .facility-detail-section {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.operator-details .facility-section-title {
+    color: #AEE0ED !important;
+}
+
+.operator-details .facility-fact {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.operator-details .facility-fact-label {
+    color: #AEE0ED !important;
+}
+
+.operator-details .facility-fact-value {
+    color: #ffffff !important;
+}
+
+.operator-details .resource-chip {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff !important;
+}
+
+.operator-link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.operator-link-item {
+    padding-left: 10px;
+    border-left: 3px solid rgba(174, 224, 237, 0.7);
+    line-height: 1.45;
+}
+
+.operator-details .facility-note-item {
+    border-left-color: #AEE0ED;
+}
+
+.operator-details .list-item {
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* Ensure full width for resources or long text if needed */
