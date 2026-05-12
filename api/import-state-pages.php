@@ -413,10 +413,12 @@ function import_entry_to_payload($entry, $state_name) {
 // ----------------------------------------------------------------------------
 if ($cleanup_addresses) {
     try {
-        // Match unique_name ending with ", XX" or ", XX 12345" or ", XX, 12345".
-        // Restrict to rows tagged as imported from a state page so we never
-        // touch curated data.
-        $where_pattern = "unique_name REGEXP ', [A-Z]{2}([, ]+[0-9]{5})?$'";
+        // Match rows that are clearly broken: unique_name starts with a street number
+        // ("1797 San Jose Ave, ..."), OR unique_name starts with the literal
+        // "Facility (" placeholder string. Excludes borderline cases like
+        // "Lamar House – Sunnyvale, CA" where a real facility name has a location
+        // suffix — those need manual review.
+        $where_pattern = "(unique_name REGEXP '^[0-9]+ ' OR unique_name LIKE 'Facility (%')";
 
         // Inspect both tagged and untagged matches so the response is informative.
         $count_tagged = $pdo->query(
@@ -434,7 +436,7 @@ if ($cleanup_addresses) {
         $samples = $pdo->query(
             "SELECT id, unique_name FROM facilities_master
              WHERE $where_pattern
-             ORDER BY id DESC LIMIT 20"
+             ORDER BY id DESC LIMIT 30"
         )->fetchAll(PDO::FETCH_ASSOC);
 
         $deleted = 0;
