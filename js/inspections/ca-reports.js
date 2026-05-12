@@ -145,11 +145,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return t.toISOString().slice(0, 10);
     }
 
+    function isValidFacilityNumber(value) {
+        const s = safeString(value).trim();
+        if (!s) return false;
+        // A real CA facility number is 6-12 digits (possibly with dashes).
+        // Reject anything that looks like a street address or is very long.
+        if (s.length > 20) return false;
+        if (isStreetAddressLike(s)) return false;
+        if (/[a-z]{4,}/i.test(s)) return false; // contains a word — not a bare number
+        return /\d/.test(s); // must have at least one digit
+    }
+
     function normalizeOneReport(report) {
         if (!report || typeof report !== 'object') return null;
 
-        // Legacy flat CA JSON already has facility_number and visit/report fields.
-        if (report.facility_number) {
+        // Legacy flat CA JSON already has facility_number and visit/report fields,
+        // but only trust it when facility_number actually looks like a licence number
+        // (not an address or program name that slipped into that field from an import).
+        if (report.facility_number && isValidFacilityNumber(report.facility_number)) {
             return report;
         }
 
@@ -328,6 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ])));
         if (inferred) return inferred;
 
+        // If facilityNumber is address-like or not a real licence number, don't echo it
+        // as a visible card title — show a generic placeholder instead.
+        if (!isValidFacilityNumber(facilityNumber)) return 'Unknown Facility';
         return `Facility #${facilityNumber}`;
     }
     
