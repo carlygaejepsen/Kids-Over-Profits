@@ -168,6 +168,36 @@ function import_line_looks_like_name($line) {
 }
 
 /**
+ * Reject non-facility names that scrapers commonly pick up:
+ * link/CTA text, instructions, or page headings.
+ */
+function import_name_is_junk($name) {
+    $lower = strtolower(trim((string)$name));
+    if ($lower === '') return true;
+    if (mb_strlen($lower) < 3) return true;
+    if (preg_match('/^(click|see|view|read|visit|browse|review|learn|find|press|tap)\s+/i', $lower)) return true;
+    if (preg_match('/\bclick\s+here\b/i', $lower)) return true;
+    if (preg_match('/\b(here|now|below|above)\s*(to|for)\s/i', $lower)) return true;
+    if (preg_match('/\bavailable\s+(inspections?|reports?|violations?)\b/i', $lower)) return true;
+    return false;
+}
+
+/**
+ * Return true if a line is wrapped in a single pair of parentheses with comma-separated
+ * alias names inside — typically rendered as a separate paragraph below a facility name.
+ * Example: "(Group Home for Children, The Anoka Ranch, The Nisqually Nest)"
+ */
+function import_line_is_alias_block($line) {
+    $line = trim((string)$line);
+    if ($line === '' || $line[0] !== '(' || mb_substr($line, -1) !== ')') return false;
+    $inner = mb_substr($line, 1, -1);
+    // Reject single-token parentheticals like "(CLOSED)" — those are handled elsewhere.
+    if (mb_strpos($inner, ',') === false) return false;
+    if (preg_match('/\b(closed|clip|aka|fka|est|established)\b/i', $inner)) return false;
+    return true;
+}
+
+/**
  * Parse the cleaned text into facility entries.
  *
  * Supports two layouts the WP editor produces:
@@ -185,6 +215,7 @@ function import_parse_state_page($text, $state_name) {
 
     $finalize = function ($pending) use (&$entries) {
         if (!$pending || empty($pending['name'])) return;
+        if (import_name_is_junk($pending['name'])) return;
         $entries[] = $pending;
     };
 
@@ -223,6 +254,17 @@ function import_parse_state_page($text, $state_name) {
                 $pending = null;
             }
             // Address with no preceding name — silently drop.
+            continue;
+        }
+
+        // Alias block paragraph: "(Group Home A, Group Home B, ...)" — attach to pending
+        // name as aka entries; do NOT start a new pending.
+        if ($pending && import_line_is_alias_block($first) && empty($rest_text)) {
+            $inner = mb_substr($first, 1, -1);
+            $aliases = array_filter(array_map('trim', explode(',', $inner)));
+            foreach ($aliases as $alias) {
+                if ($alias !== '') $pending['aka'][] = $alias;
+            }
             continue;
         }
 
