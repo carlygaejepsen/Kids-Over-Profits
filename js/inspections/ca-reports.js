@@ -61,6 +61,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const normalizeWhitespace = value => safeString(value).replace(/\s+/g, ' ').trim();
 
+    function isStreetAddressLike(value) {
+        const name = normalizeWhitespace(value);
+        if (!name) return false;
+
+        // Treat only house-number style patterns as addresses.
+        // This preserves legitimate facility names like "2 Loving Hearts" or "2nd Chance".
+        if (/^\d{1,6}\s+[a-z0-9.'-]+(?:\s+[a-z0-9.'-]+){0,4}\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)\b/i.test(name)) {
+            return true;
+        }
+
+        if (/^(north|south|east|west|ne|nw|se|sw)\s+\d{1,6}\s+[a-z0-9.'-]+(?:\s+[a-z0-9.'-]+){0,3}\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)\b/i.test(name)) {
+            return true;
+        }
+
+        return false;
+    }
+
     function cleanFacilityNameCandidate(value) {
         let name = normalizeWhitespace(value);
         if (!name) return '';
@@ -78,11 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return '';
         }
 
-        // Reject anything that looks like a street address.
-        // Addresses typically start with a number or contain street-type abbreviations.
-        if (/^\d/.test(name)) return '';
-        if (/\b\d+\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)\b/i.test(name)) return '';
-        if (/\b(north|south|east|west|ne|nw|se|sw)\s+\d+/i.test(name)) return '';
+        // Reject only actual street-address patterns, not names that happen to begin with digits.
+        if (isStreetAddressLike(name)) return '';
 
         return name;
     }
@@ -381,8 +395,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // The rest of the logic remains the same
             const aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);
             console.log(`Aggregated into ${aggregatedFacilities.length} facilities`);
-            
-            allFacilitiesData = groupFacilitiesFromArray(aggregatedFacilities);
+
+            const mergedFacilities = mergeFacilitiesByName(aggregatedFacilities);
+            console.log(`After name-merge: ${mergedFacilities.length} facilities`);
+
+            allFacilitiesData = groupFacilitiesFromArray(mergedFacilities);
             console.log('Processed facilities data:', allFacilitiesData);
             console.log('Available letters:', Object.keys(allFacilitiesData));
             
@@ -445,7 +462,74 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
     }
-   
+
+    // --- MERGE FACILITIES WITH THE SAME RESOLVED NAME ---
+    // A single operator may hold multiple license numbers (e.g. different buildings)
+    // that all share the same programme name. Collapse them into one card so the
+    // same facility doesn't appear as several separate entries.
+    function isAddressLikeName(name) {
+        return isStreetAddressLike(name);
+    }
+
+    function mergeFacilitiesByName(facilitiesArray) {
+        const nameMap = new Map(); // normalizedName -> merged facility object
+
+        facilitiesArray.forEach(facility => {
+            const name = (facility.name || '').trim();
+            const isFallback = /^Facility\s*#/i.test(name);
+            // Don't merge on address-like names, very short names, or fallbacks — keep those separate.
+            const isMergeable = !isFallback && !isAddressLikeName(name) && name.length >= 8;
+            const key = isMergeable
+                ? name.toLowerCase()
+                : `__unique__${facility.number}`;
+
+            if (!nameMap.has(key)) {
+                // First occurrence: seed with a copy so we can mutate it safely.
+                nameMap.set(key, {
+                    ...facility,
+                    // Keep all facility numbers for reference; start as array.
+                    numbers: [facility.number],
+                    inspections: [...(facility.inspections || [])],
+                });
+            } else {
+                const existing = nameMap.get(key);
+                if (!existing.numbers.includes(facility.number)) {
+                    existing.numbers.push(facility.number);
+                }
+                // Merge inspections, tagging each with its originating number.
+                (facility.inspections || []).forEach(insp => {
+                    existing.inspections.push(insp);
+                });
+                // Prefer whichever record has the richer metadata.
+                if (!existing.facility_type && facility.facility_type) existing.facility_type = facility.facility_type;
+                if (!existing.officer && facility.officer) existing.officer = facility.officer;
+                if (!existing.capacity && facility.capacity) existing.capacity = facility.capacity;
+            }
+        });
+
+        return Array.from(nameMap.values()).map(facility => {
+            // Sort merged inspections newest-first and dedupe.
+            const seen = new Set();
+            const deduped = facility.inspections
+                .sort((a, b) => reportDateMs(b.visit_date || b.report_date) - reportDateMs(a.visit_date || a.report_date))
+                .filter(insp => {
+                    const k = [
+                        safeString(insp.report_id),
+                        safeString(insp.report_date),
+                        safeString(insp.visit_date),
+                        safeString(insp.report_type),
+                        safeString(insp.narrative).slice(0, 120),
+                    ].join('|');
+                    if (seen.has(k)) return false;
+                    seen.add(k);
+                    return true;
+                });
+
+            // Expose merged numbers; keep .number as primary for links.
+            return { ...facility, inspections: deduped };
+        });
+    }
+
     // Helper function to check if inspection has violations (same logic as orange/white boxes)
     function inspectionHasViolations(inspection) {
         // If no deficiencies array, no violations
