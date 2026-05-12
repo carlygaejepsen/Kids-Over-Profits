@@ -1894,6 +1894,46 @@ function kop_normalize_facility_name($name) {
 }
 
 /**
+ * Normalize an address string for cross-source matching.
+ * Used to merge inspection-only rows (sometimes keyed by loose address text)
+ * into named facilities from facilities_master.
+ *
+ * @param string $address
+ * @return string
+ */
+function kop_normalize_address_for_match($address) {
+    $s = strtolower(trim((string)$address));
+    if ($s === '') return '';
+
+    // Remove unit/suite markers that vary between sources.
+    $s = preg_replace('/\b(?:apt|apartment|suite|ste|unit|#)\s*[a-z0-9-]+\b/iu', ' ', $s);
+
+    // Standardize common street suffix variants.
+    $replacements = array(
+        '/\bstreet\b/iu'    => 'st',
+        '/\bavenue\b/iu'    => 'ave',
+        '/\bboulevard\b/iu' => 'blvd',
+        '/\broad\b/iu'      => 'rd',
+        '/\bdrive\b/iu'     => 'dr',
+        '/\blane\b/iu'      => 'ln',
+        '/\bcourt\b/iu'     => 'ct',
+        '/\bcircle\b/iu'    => 'cir',
+        '/\bplace\b/iu'     => 'pl',
+        '/\bhighway\b/iu'   => 'hwy',
+        '/\bterrace\b/iu'   => 'ter',
+        '/\btrail\b/iu'     => 'trl',
+    );
+    foreach ($replacements as $pattern => $replacement) {
+        $s = preg_replace($pattern, $replacement, $s);
+    }
+
+    // Drop punctuation noise and normalize whitespace.
+    $s = preg_replace('/[^a-z0-9\s]/iu', ' ', $s);
+    $s = preg_replace('/\s+/u', ' ', $s);
+    return trim($s);
+}
+
+/**
  * Reduce inspection data to per-facility summaries plus per-inspection details
  * needed for inline expansion on the state page.
  *
@@ -2232,6 +2272,7 @@ function kop_state_collect_facilities($state_name) {
     $inspections = kop_state_collect_inspection_summaries($state_name);
 
     $by_key = array();
+    $address_to_key = array();
 
     // Use the shared normalizer (also applied at the inspection-summary level).
     $normalize_key = 'kop_normalize_facility_name';
@@ -2273,6 +2314,12 @@ function kop_state_collect_facilities($state_name) {
             if (!$existing['status']        && !empty($p['status']))        $existing['status']        = $p['status'];
             if (!$existing['operating_period'] && !empty($p['operating_period'])) $existing['operating_period'] = $p['operating_period'];
             if (!$existing['address'] && !empty($address_parts)) $existing['address'] = implode(', ', $address_parts);
+            if (!empty($existing['address'])) {
+                $addr_key = kop_normalize_address_for_match($existing['address']);
+                if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                    $address_to_key[$addr_key] = $key;
+                }
+            }
             $existing['in_master'] = true;
             unset($existing);
         } else {
@@ -2293,13 +2340,45 @@ function kop_state_collect_facilities($state_name) {
                 'in_master'         => true,
                 'in_inspections'    => false,
             );
+
+            $addr_key = kop_normalize_address_for_match($by_key[$key]['address']);
+            if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                $address_to_key[$addr_key] = $key;
+            }
         }
     }
 
     foreach ($inspections as $insp) {
         $candidate = $normalize_key($insp['facility_name']);
         if ($candidate === '') continue;
-        $key = $find_matching_key($by_key, $candidate) ?: $candidate;
+
+        $matched_key = $find_matching_key($by_key, $candidate);
+
+        // Secondary merge path: inspection rows that carry loose address labels
+        // should merge into the named program record at the same address.
+        if (!$matched_key) {
+            $insp_addr_key = kop_normalize_address_for_match($insp['inspection_address'] ?? '');
+            if ($insp_addr_key === '') {
+                $insp_addr_key = kop_normalize_address_for_match($insp['facility_name'] ?? '');
+            }
+
+            if ($insp_addr_key !== '') {
+                if (isset($address_to_key[$insp_addr_key])) {
+                    $matched_key = $address_to_key[$insp_addr_key];
+                } else {
+                    // Relaxed containment check to handle minor formatting differences.
+                    foreach ($address_to_key as $known_addr => $known_key) {
+                        if (mb_strlen($known_addr) < 16 || mb_strlen($insp_addr_key) < 16) continue;
+                        if (mb_strpos($known_addr, $insp_addr_key) !== false || mb_strpos($insp_addr_key, $known_addr) !== false) {
+                            $matched_key = $known_key;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        $key = $matched_key ?: $candidate;
 
         if (isset($by_key[$key])) {
             // Merge — accumulate counts; prefer the longer/cleaner inspection list and most recent date.
@@ -2321,6 +2400,10 @@ function kop_state_collect_facilities($state_name) {
             $by_key[$key]['in_inspections']   = true;
             if (!$by_key[$key]['address'] && !empty($insp['inspection_address'])) {
                 $by_key[$key]['address'] = $insp['inspection_address'];
+                $addr_key = kop_normalize_address_for_match($by_key[$key]['address']);
+                if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                    $address_to_key[$addr_key] = $key;
+                }
             }
         } else {
             $by_key[$key] = array(
@@ -2340,6 +2423,11 @@ function kop_state_collect_facilities($state_name) {
                 'in_master'         => false,
                 'in_inspections'    => true,
             );
+
+            $addr_key = kop_normalize_address_for_match($by_key[$key]['address']);
+            if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                $address_to_key[$addr_key] = $key;
+            }
         }
     }
 
