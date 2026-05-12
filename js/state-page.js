@@ -77,13 +77,149 @@
         return '';
     };
 
+    const normalizeAddressForMatch = value => {
+        let s = normalizeText(value).toLowerCase();
+        if (!s) return '';
+
+        s = s.replace(/\b(?:apt|apartment|suite|ste|unit|#)\s*[a-z0-9-]+\b/g, ' ');
+        s = s
+            .replace(/\bstreet\b/g, 'st')
+            .replace(/\bavenue\b/g, 'ave')
+            .replace(/\bboulevard\b/g, 'blvd')
+            .replace(/\broad\b/g, 'rd')
+            .replace(/\bdrive\b/g, 'dr')
+            .replace(/\blane\b/g, 'ln')
+            .replace(/\bcourt\b/g, 'ct')
+            .replace(/\bcircle\b/g, 'cir')
+            .replace(/\bplace\b/g, 'pl')
+            .replace(/\bhighway\b/g, 'hwy')
+            .replace(/\bterrace\b/g, 'ter')
+            .replace(/\btrail\b/g, 'trl');
+
+        s = s.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        return s;
+    };
+
+    const inspectionFingerprint = insp => {
+        if (!insp || typeof insp !== 'object') return '';
+        if (insp.report_url) return `u:${String(insp.report_url).toLowerCase()}`;
+        if (insp.pdf_url) return `p:${String(insp.pdf_url).toLowerCase()}`;
+        return `d:${String(insp.date || '').toLowerCase()}|${String(insp.type || '').toLowerCase()}`;
+    };
+
+    const mergeInspectionLists = (left, right) => {
+        const out = [];
+        const seen = new Set();
+        [...(left || []), ...(right || [])].forEach(insp => {
+            const fp = inspectionFingerprint(insp);
+            if (!fp || seen.has(fp)) return;
+            seen.add(fp);
+            out.push(insp);
+        });
+        out.sort((a, b) => (Date.parse(b.date || '') || 0) - (Date.parse(a.date || '') || 0));
+        return out;
+    };
+
+    const mergeFacilityRecords = (target, source) => {
+        target.inspection_count = (target.inspection_count || 0) + (source.inspection_count || 0);
+        target.violation_count = (target.violation_count || 0) + (source.violation_count || 0);
+
+        const tTs = Date.parse(target.latest_inspection_date || '') || 0;
+        const sTs = Date.parse(source.latest_inspection_date || '') || 0;
+        if (sTs > tTs) target.latest_inspection_date = source.latest_inspection_date;
+
+        target.inspections = mergeInspectionLists(target.inspections, source.inspections);
+
+        if (!normalizeText(target.address) && normalizeText(source.address)) {
+            target.address = source.address;
+        }
+        if (!normalizeText(target.operator_name) && normalizeText(source.operator_name)) {
+            target.operator_name = source.operator_name;
+        }
+        if (!normalizeText(target.project_name) && normalizeText(source.project_name)) {
+            target.project_name = source.project_name;
+        }
+        if (!normalizeText(target.type) && normalizeText(source.type)) {
+            target.type = source.type;
+        }
+        if (!normalizeText(target.operating_period) && normalizeText(source.operating_period)) {
+            target.operating_period = source.operating_period;
+        }
+    };
+
+    const consolidateFacilitiesForDisplay = facilities => {
+        const list = Array.isArray(facilities) ? facilities.map(f => ({ ...f, inspections: [...(f.inspections || [])] })) : [];
+        if (!list.length) return [];
+
+        const addrToNamed = new Map();
+        const named = [];
+        const loose = [];
+
+        list.forEach(facility => {
+            const candidate = pickBestFacilityLabel(facility.name, facility.project_name, facility.operator_name);
+            const isLoose = !candidate || isAddressLikeText(facility.name);
+            if (isLoose) {
+                loose.push(facility);
+                return;
+            }
+
+            named.push(facility);
+            const addrKey = normalizeAddressForMatch(facility.address);
+            if (addrKey && !addrToNamed.has(addrKey)) {
+                addrToNamed.set(addrKey, facility);
+            }
+        });
+
+        loose.forEach(facility => {
+            const addrKey = normalizeAddressForMatch(facility.address || facility.name);
+            let target = null;
+
+            if (addrKey) {
+                if (addrToNamed.has(addrKey)) {
+                    target = addrToNamed.get(addrKey);
+                } else {
+                    // Relaxed containment check for minor address-format differences.
+                    for (const [known, namedFacility] of addrToNamed.entries()) {
+                        if (known.length < 16 || addrKey.length < 16) continue;
+                        if (known.includes(addrKey) || addrKey.includes(known)) {
+                            target = namedFacility;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (target) {
+                mergeFacilityRecords(target, facility);
+            } else {
+                named.push(facility);
+                if (addrKey && !addrToNamed.has(addrKey)) {
+                    addrToNamed.set(addrKey, facility);
+                }
+            }
+        });
+
+        return named;
+    };
+
     const getFacilityDisplayName = facility => {
         const explicitName = normalizeText(facility && facility.name);
         const projectName = normalizeText(facility && facility.project_name);
         const operatorName = normalizeText(facility && facility.operator_name);
 
+        let inspectionLicensee = '';
+        if (Array.isArray(facility?.inspections)) {
+            for (const insp of facility.inspections) {
+                const candidate = normalizeText(insp && insp.categories && insp.categories.licensee);
+                if (candidate && !isAddressLikeText(candidate)) {
+                    inspectionLicensee = candidate;
+                    break;
+                }
+            }
+        }
+
         // Primary choice: non-address explicit/program names.
-        const baseName = pickBestFacilityLabel(explicitName, projectName, operatorName);
+        const baseName = pickBestFacilityLabel(explicitName, projectName, operatorName, inspectionLicensee);
         if (baseName) {
             // If explicit source was address-like but we have an operator/program name,
             // append location so multiple sites remain distinguishable.
@@ -542,12 +678,15 @@
             ? `<a href="${escapeHtml(inspections.page_url)}" class="full-page-link">View full inspection report search →</a>`
             : '';
 
-        const activeHtml = facilities.active.length
-            ? `<ul class="facility-list">${facilities.active.map(facilityCardHtml).join('')}</ul>`
+        const consolidatedActive = consolidateFacilitiesForDisplay(facilities.active || []);
+        const consolidatedClosed = consolidateFacilitiesForDisplay(facilities.closed || []);
+
+        const activeHtml = consolidatedActive.length
+            ? `<ul class="facility-list">${consolidatedActive.map(facilityCardHtml).join('')}</ul>`
             : '<p class="empty">No active facilities listed.</p>';
 
-        const closedHtml = facilities.closed.length
-            ? `<ul class="facility-list closed-list">${facilities.closed.map(facilityCardHtml).join('')}</ul>`
+        const closedHtml = consolidatedClosed.length
+            ? `<ul class="facility-list closed-list">${consolidatedClosed.map(facilityCardHtml).join('')}</ul>`
             : '';
 
         container.innerHTML = `
@@ -558,15 +697,15 @@
 
             <div class="facility-group facility-group-active">
                 <h3 class="facility-group-heading">
-                    Active <span class="count">(${facilities.active.length})</span>
+                    Active <span class="count">(${consolidatedActive.length})</span>
                 </h3>
                 ${activeHtml}
             </div>
 
-            ${facilities.closed.length ? `
+            ${consolidatedClosed.length ? `
                 <div class="facility-group facility-group-closed">
                     <h3 class="facility-group-heading">
-                        Closed <span class="count">(${facilities.closed.length})</span>
+                        Closed <span class="count">(${consolidatedClosed.length})</span>
                     </h3>
                     ${closedHtml}
                 </div>
