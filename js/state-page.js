@@ -27,6 +27,35 @@
         return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     };
 
+    const normalizeText = value => String(value || '').replace(/\s+/g, ' ').trim();
+
+    const isAddressLikeText = value => {
+        const text = normalizeText(value);
+        if (!text) return false;
+
+        // Full address pattern: street + city/state + zip.
+        if (/^\d{1,6}\s+[^,]+,\s*[A-Za-z .'-]+,\s*[A-Z]{2}\s+\d{5}(?:-\d{4})?$/i.test(text)) {
+            return true;
+        }
+
+        // Street-address-like name that starts with a house number and street suffix.
+        if (/^\d{1,6}\s+[A-Za-z0-9.'-]+(?:\s+[A-Za-z0-9.'-]+){0,6}\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)\b/i.test(text)) {
+            return true;
+        }
+
+        return false;
+    };
+
+    const getFacilityDisplayName = facility => {
+        const explicitName = normalizeText(facility && facility.name);
+        if (explicitName && !isAddressLikeText(explicitName)) return explicitName;
+
+        const operatorName = normalizeText(facility && facility.operator_name);
+        if (operatorName && !isAddressLikeText(operatorName)) return operatorName;
+
+        return 'Unknown Facility';
+    };
+
     const folderContentCache = new Map();
     const fetchFolderContent = async folderId => {
         if (!folderId || !config.folderContentUrl) return [];
@@ -377,6 +406,7 @@
     };
 
     const facilityCardHtml = facility => {
+        const displayName = getFacilityDisplayName(facility);
         const stats = [];
         if (facility.inspection_count > 0) {
             stats.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
@@ -408,7 +438,7 @@
         return `
             <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}">
                 <div class="facility-card-header">
-                    <h3 class="facility-card-name">${escapeHtml(facility.name)}</h3>
+                    <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
                 ${facility.address ? `<div class="facility-card-address">${escapeHtml(facility.address)}</div>` : ''}
