@@ -427,12 +427,32 @@ foreach ($slugs_to_process as $slug) {
     }
 
     $raw_content = $page->post_content ?? '';
+    $content_source = 'current';
+    $revision_id_used = null;
+
+    // Fallback: if current post_content looks too short to hold a facility list,
+    // walk back through WordPress page revisions for a fuller version.
+    if (mb_strlen($raw_content) < 1500) {
+        $revisions = function_exists('wp_get_post_revisions') ? wp_get_post_revisions($page->ID) : array();
+        foreach ($revisions as $rev) {
+            $rev_content = $rev->post_content ?? '';
+            if (mb_strlen($rev_content) >= 1500) {
+                $raw_content = $rev_content;
+                $content_source = 'revision';
+                $revision_id_used = $rev->ID;
+                break;
+            }
+        }
+    }
+
     $text = import_html_to_text($raw_content);
     $entries = import_parse_state_page($text, $state_name);
 
-    $state_result['wp_page_id'] = $page->ID;
-    $state_result['parsed']     = count($entries);
-    $state_result['samples']    = array_slice($entries, 0, 3);
+    $state_result['wp_page_id']      = $page->ID;
+    $state_result['content_source']  = $content_source;
+    if ($revision_id_used) $state_result['revision_id'] = $revision_id_used;
+    $state_result['parsed']          = count($entries);
+    $state_result['samples']         = array_slice($entries, 0, 3);
 
     if ($debug_mode) {
         $state_result['debug'] = [
@@ -443,6 +463,20 @@ foreach ($slugs_to_process as $slug) {
             'paragraph_count' => count(preg_split('/\n\s*\n/', $text)),
             'first_5_paragraphs' => array_slice(preg_split('/\n\s*\n/', $text), 0, 5),
         ];
+
+        // Also show revision survey so we know what's available even when current passes the 1500-char check.
+        if (function_exists('wp_get_post_revisions')) {
+            $rev_summary = array();
+            foreach (wp_get_post_revisions($page->ID) as $rev) {
+                $rev_summary[] = array(
+                    'id'             => $rev->ID,
+                    'date'           => $rev->post_date,
+                    'content_length' => mb_strlen($rev->post_content ?? ''),
+                );
+                if (count($rev_summary) >= 10) break;
+            }
+            $state_result['debug']['revisions'] = $rev_summary;
+        }
     }
 
     if ($write_mode && !empty($entries)) {
