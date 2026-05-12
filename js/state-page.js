@@ -46,14 +46,57 @@
         return false;
     };
 
+    const pickBestFacilityLabel = (...candidates) => {
+        for (const candidate of candidates) {
+            const text = normalizeText(candidate);
+            if (!text) continue;
+            if (isAddressLikeText(text)) continue;
+            return text;
+        }
+        return '';
+    };
+
+    const getFacilityLocationSuffix = facility => {
+        const city = normalizeText(facility && facility.city);
+        const stateCode = normalizeText(facility && facility.state);
+        if (city && stateCode) return `${city}, ${stateCode}`;
+        if (city) return city;
+
+        const address = normalizeText(facility && facility.address);
+        if (address && address.includes(',')) {
+            const parts = address.split(',').map(p => normalizeText(p)).filter(Boolean);
+            if (parts.length >= 2) {
+                // Usually: street, city, state, zip
+                const maybeCity = parts[1] || '';
+                const maybeState = (parts[2] || '').split(/\s+/)[0] || '';
+                if (maybeCity && maybeState && /^[A-Z]{2}$/i.test(maybeState)) return `${maybeCity}, ${maybeState.toUpperCase()}`;
+                if (maybeCity) return maybeCity;
+            }
+        }
+
+        return '';
+    };
+
     const getFacilityDisplayName = facility => {
         const explicitName = normalizeText(facility && facility.name);
-        if (explicitName && !isAddressLikeText(explicitName)) return explicitName;
-
+        const projectName = normalizeText(facility && facility.project_name);
         const operatorName = normalizeText(facility && facility.operator_name);
-        if (operatorName && !isAddressLikeText(operatorName)) return operatorName;
 
-        return 'Unknown Facility';
+        // Primary choice: non-address explicit/program names.
+        const baseName = pickBestFacilityLabel(explicitName, projectName, operatorName);
+        if (baseName) {
+            // If explicit source was address-like but we have an operator/program name,
+            // append location so multiple sites remain distinguishable.
+            if (isAddressLikeText(explicitName)) {
+                const suffix = getFacilityLocationSuffix(facility);
+                return suffix ? `${baseName} (${suffix})` : baseName;
+            }
+            return baseName;
+        }
+
+        // Last resort: no usable name fields; use location-based placeholder.
+        const suffix = getFacilityLocationSuffix(facility);
+        return suffix ? `Facility (${suffix})` : 'Unknown Facility';
     };
 
     const folderContentCache = new Map();
@@ -424,7 +467,7 @@
             stats.push(`<span class="stat">${escapeHtml(facility.operating_period)}</span>`);
         }
 
-        const folderId = findFolderForFacility(facility.name);
+        const folderId = findFolderForFacility(displayName);
         const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
 
         const toggleButtons = [];
