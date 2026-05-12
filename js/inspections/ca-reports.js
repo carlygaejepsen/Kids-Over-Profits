@@ -78,6 +78,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
+    function stripTrailingLocationSuffix(value) {
+        const name = normalizeWhitespace(value);
+        if (!name) return '';
+
+        const delimitedLocationMatch = name.match(
+            /^(.*?\b[A-Za-z][A-Za-z0-9'&.,/-]*(?:\s+[A-Za-z0-9][A-Za-z0-9'&.,/-]*){1,8})\s*[,/-]\s*([A-Za-z0-9.'-]+(?:\s+[A-Za-z0-9.'-]+){0,4}\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter))$/i
+        );
+        if (delimitedLocationMatch && delimitedLocationMatch[1]) {
+            return normalizeWhitespace(delimitedLocationMatch[1]);
+        }
+
+        const ordinalStreetMatch = name.match(
+            /^(.*?\b[A-Za-z][A-Za-z0-9'&./-]*(?:\s+[A-Za-z][A-Za-z0-9'&./-]*){1,8})\s+\d+(?:st|nd|rd|th)\s+(street|st|avenue|ave|boulevard|blvd|road|rd|drive|dr|lane|ln|court|ct|circle|cir|way|place|pl|highway|hwy|trail|terrace|ter)$/i
+        );
+        if (ordinalStreetMatch && ordinalStreetMatch[1]) {
+            return normalizeWhitespace(ordinalStreetMatch[1]);
+        }
+
+        return name;
+    }
+
     function cleanFacilityNameCandidate(value) {
         let name = normalizeWhitespace(value);
         if (!name) return '';
@@ -88,6 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/\s+Licensed Capacity:\s*.+$/i, '')
             .replace(/\s{2,}/g, ' ')
             .trim();
+
+        name = stripTrailingLocationSuffix(name);
+        if (!name) return '';
 
         // Guard against long narrative chunks accidentally treated as facility names.
         if (name.length > 120) return '';
