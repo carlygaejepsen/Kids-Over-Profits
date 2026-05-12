@@ -128,6 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // DJJ (default)
+        const djjFindings = Array.isArray(cats.findings) ? cats.findings.map(f => ({
+            rule:    safeString(f && f.rule),
+            excerpt: safeString(f && f.excerpt),
+            rating:  safeString(f && f.rating),
+        })).filter(f => f.rule || f.excerpt) : [];
+        const parsedDjjCount = parseInt(cats.finding_count, 10);
         return Object.assign(base, {
             kind:           'djj',
             report_type:    safeString(cats.report_type),
@@ -138,15 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cycle:          safeString(cats.cycle),
             service_type:   safeString(cats.service_type),
             unmatched:      !!cats.unmatched,
+            findings:       djjFindings,
+            finding_count:  Number.isFinite(parsedDjjCount) && parsedDjjCount >= 0 ? parsedDjjCount : djjFindings.length,
         });
     }
 
     function reportHasFindings(r) {
         if (r.kind === 'ahca') return (r.deficiency_count || 0) > 0;
-        // DJJ PDF parsing doesn't extract structured findings yet — mark
-        // PREA Interim and re-review reports as needing attention as a
-        // reasonable proxy until structured extraction lands.
-        return /(?:re-?review|interim)/i.test(r.status || '') || /findings?\s*:?\s*[1-9]/i.test(r.raw_content || '');
+        return (r.finding_count || 0) > 0;
     }
 
     function groupFacilitiesFromArray(arr) {
@@ -401,6 +406,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (report.file_name) detailRows.push(`<strong>File:</strong> ${escapeHtml(report.file_name)}`);
         if (pdfLink) detailRows.push(`<strong>PDF:</strong> ${pdfLink}`);
 
+        const findingsHtml = report.findings && report.findings.length
+            ? `<details class="violation-box" open>
+                <summary class="deficiency-header">${report.finding_count} compliance finding${report.finding_count === 1 ? '' : 's'}</summary>
+                <div class="deficiency-content">
+                    ${report.findings.map(f => {
+                        const ratingBadge = f.rating
+                            ? `<span class="fl-rating-badge fl-rating-${f.rating.toLowerCase().replace(/[^a-z]+/g, '-')}" style="display:inline-block;padding:2px 8px;margin-left:6px;border-radius:3px;font-size:0.8em;font-weight:600;background:${f.rating.toLowerCase().includes('failed') || f.rating.toLowerCase().includes('does not') ? '#8c1f2e' : '#b07f1c'};color:#fff;">${escapeHtml(f.rating)}</span>`
+                            : '';
+                        return `
+                            <div style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #eee;">
+                                <strong>${escapeHtml(f.rule)}</strong>${ratingBadge}
+                                <p style="margin:4px 0 0;">${escapeHtml(f.excerpt)}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+               </details>`
+            : '';
+
         const rawHtml = report.raw_content
             ? `<details class="violation-box">
                 <summary class="deficiency-header">Full report text</summary>
@@ -418,6 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="inspection-content">
                 ${unmatchedNote}
                 <div class="inspection-details-block">${detailRows.join('<br>')}</div>
+                ${findingsHtml}
                 ${rawHtml}
             </div>
         </details>

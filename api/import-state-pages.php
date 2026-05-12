@@ -48,6 +48,13 @@ $write_mode = !empty($_GET['write']);
 $overwrite = !empty($_GET['overwrite']);
 $purge_mode = !empty($_GET['purge']);  // Delete previously-imported rows for the chosen state(s)
 $debug_mode = !empty($_GET['debug']);  // Include raw post_content snippet + parser text in response
+$revision_id_override = isset($_GET['revision_id']) ? (int)$_GET['revision_id'] : 0;  // Force a specific revision
+$cleanup_addresses = !empty($_GET['cleanup_addresses']);  // Find/delete rows whose unique_name is an address
+
+// Cleanup mode runs without needing a ?state= param.
+if ($cleanup_addresses && $state_param === '') {
+    $state_param = 'all';
+}
 
 if ($state_param === '') {
     echo json_encode([
@@ -399,6 +406,79 @@ function import_entry_to_payload($entry, $state_name) {
 }
 
 // ----------------------------------------------------------------------------
+// Address-as-name cleanup mode — short-circuits the per-state loop.
+// Finds facilities_master rows whose unique_name is just a postal address
+// (ends with ", ST" or ", ST 99999"). These were created by an earlier
+// version of this parser before the stateful name+address pairing fix.
+// ----------------------------------------------------------------------------
+if ($cleanup_addresses) {
+    try {
+        // Match unique_name ending with ", XX" or ", XX 12345" or ", XX, 12345".
+        // Restrict to rows tagged as imported from a state page so we never
+        // touch curated data.
+        $where_pattern = "unique_name REGEXP ', [A-Z]{2}([, ]+[0-9]{5})?$'";
+
+        // Inspect both tagged and untagged matches so the response is informative.
+        $count_tagged = $pdo->query(
+            "SELECT COUNT(*) FROM facilities_master
+             WHERE $where_pattern
+               AND json_data LIKE '%\"imported_from\":\"state_page\"%'"
+        )->fetchColumn();
+
+        $count_untagged = $pdo->query(
+            "SELECT COUNT(*) FROM facilities_master
+             WHERE $where_pattern
+               AND json_data NOT LIKE '%\"imported_from\":\"state_page\"%'"
+        )->fetchColumn();
+
+        $samples = $pdo->query(
+            "SELECT id, unique_name FROM facilities_master
+             WHERE $where_pattern
+             ORDER BY id DESC LIMIT 20"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $deleted = 0;
+        if ($write_mode) {
+            // Default: only delete the tagged rows (safe). Add &include_untagged=1
+            // to also remove rows that aren't tagged (riskier — only do this if
+            // the untagged samples really are address-only).
+            if (!empty($_GET['include_untagged'])) {
+                $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE $where_pattern");
+            } else {
+                $stmt = $pdo->prepare(
+                    "DELETE FROM facilities_master
+                     WHERE $where_pattern
+                       AND json_data LIKE '%\"imported_from\":\"state_page\"%'"
+                );
+            }
+            $stmt->execute();
+            $deleted = $stmt->rowCount();
+        }
+
+        echo json_encode([
+            'success'        => true,
+            'mode'           => $write_mode ? 'write' : 'dry_run',
+            'cleanup_target' => 'address-as-name rows in facilities_master',
+            'counts' => [
+                'tagged_imports'   => (int)$count_tagged,
+                'untagged_imports' => (int)$count_untagged,
+                'total_matches'    => (int)$count_tagged + (int)$count_untagged,
+                'deleted'          => (int)$deleted,
+            ],
+            'samples' => $samples,
+            'note' => $write_mode
+                ? 'Tagged imports were deleted. Add &include_untagged=1 to also remove untagged matches.'
+                : 'Dry-run only. Add &write=1 to delete tagged imports. Add &include_untagged=1 to also remove untagged matches.',
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        exit;
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Cleanup failed: ' . $e->getMessage()]);
+        exit;
+    }
+}
+
+// ----------------------------------------------------------------------------
 // Build the list of state slugs to process
 // ----------------------------------------------------------------------------
 $slugs_to_process = [];
@@ -472,9 +552,16 @@ foreach ($slugs_to_process as $slug) {
     $content_source = 'current';
     $revision_id_used = null;
 
-    // Fallback: if current post_content looks too short to hold a facility list,
-    // walk back through WordPress page revisions for a fuller version.
-    if (mb_strlen($raw_content) < 1500) {
+    // Explicit revision override (debugging older imports)
+    if ($revision_id_override > 0) {
+        $rev = get_post($revision_id_override);
+        if ($rev && (int)$rev->post_parent === (int)$page->ID && $rev->post_type === 'revision') {
+            $raw_content = $rev->post_content ?? '';
+            $content_source = 'revision_override';
+            $revision_id_used = $rev->ID;
+        }
+    } elseif (mb_strlen($raw_content) < 1500) {
+        // Fallback: walk back through revisions for a fuller version.
         $revisions = function_exists('wp_get_post_revisions') ? wp_get_post_revisions($page->ID) : array();
         foreach ($revisions as $rev) {
             $rev_content = $rev->post_content ?? '';
