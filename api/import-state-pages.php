@@ -46,6 +46,8 @@ if (!$is_cli && !$is_admin) {
 $state_param = strtolower(trim($_GET['state'] ?? ''));
 $write_mode = !empty($_GET['write']);
 $overwrite = !empty($_GET['overwrite']);
+$purge_mode = !empty($_GET['purge']);  // Delete previously-imported rows for the chosen state(s)
+$debug_mode = !empty($_GET['debug']);  // Include raw post_content snippet + parser text in response
 
 if ($state_param === '') {
     echo json_encode([
@@ -139,18 +141,52 @@ function import_parse_address($addr, $default_state) {
 }
 
 /**
+ * Decide whether a single line looks like a postal address rather than a facility name.
+ * Used to attach orphan address paragraphs to the preceding name paragraph when
+ * WordPress wraps each line in its own <p> tag.
+ */
+function import_line_looks_like_address($line) {
+    $line = trim((string)$line);
+    if ($line === '') return false;
+    // Starts with a street number, or contains a zip, or matches a "City, ST" pattern
+    if (preg_match('/^\d{1,6}\s+\S/', $line)) return true;
+    if (preg_match('/\b\d{5}(?:-\d{4})?\b/', $line)) return true;
+    if (preg_match('/,\s*[A-Z]{2}\b/', $line)) return true;
+    return false;
+}
+
+/**
+ * Decide whether a paragraph looks like a facility name (has a parenthetical tag
+ * or a colon-free single-line text that isn't an address).
+ */
+function import_line_looks_like_name($line) {
+    $line = trim((string)$line);
+    if ($line === '') return false;
+    if (import_line_looks_like_address($line)) return false;
+    if (mb_strlen($line) > 220) return false;
+    return true;
+}
+
+/**
  * Parse the cleaned text into facility entries.
  *
- * Each entry is a paragraph (blank-line-separated block) where:
- *  - The first line is the name (with optional parentheticals)
- *  - The remaining lines contain one or more addresses, possibly separated by ';'
+ * Supports two layouts the WP editor produces:
+ *  1. Name and address on consecutive lines inside the same <p> block.
+ *  2. Name in one <p>, address in the next <p> (single newlines collapse to blank line
+ *     between paragraphs after the HTML→text pass).
  *
- * A paragraph is treated as a facility entry only if it carries either a 5-digit zip,
- * a "(CLOSED)" / "(CLIP)" / etc. tag, or a recognizable "City, ST" pattern.
+ * Strategy: walk paragraphs in order, holding a "pending name" until we see an
+ * address-only paragraph that completes it.
  */
 function import_parse_state_page($text, $state_name) {
     $paragraphs = preg_split('/\n\s*\n/', $text);
     $entries = [];
+    $pending = null;
+
+    $finalize = function ($pending) use (&$entries) {
+        if (!$pending || empty($pending['name'])) return;
+        $entries[] = $pending;
+    };
 
     foreach ($paragraphs as $para) {
         $lines = array_values(array_filter(array_map('trim', explode("\n", $para)), static function ($l) {
@@ -161,20 +197,39 @@ function import_parse_state_page($text, $state_name) {
         $first = $lines[0];
         $rest_text = trim(implode(' ', array_slice($lines, 1)));
 
-        $has_zip       = (bool)preg_match('/\b\d{5}(?:-\d{4})?\b/', $para);
-        $has_state_pat = (bool)preg_match('/,\s*[A-Z]{2}\b/', $para);
-        $has_paren     = (bool)preg_match('/\((?:CLOSED|CLIP|aka |fka |est\.?|established)\b/i', $first);
-
-        if (!$has_zip && !$has_state_pat && !$has_paren) {
+        // Skip breadcrumbs / page title
+        if (preg_match('/^home\s*\/\s*' . preg_quote($state_name, '/') . '$/i', $first)) continue;
+        if (strcasecmp($first, $state_name) === 0) continue;
+        if (mb_strlen($first) > 220) {
+            // Long intro paragraph — flush any pending name as standalone (no address) and skip.
+            if ($pending) { $finalize($pending); $pending = null; }
             continue;
         }
 
-        // Skip section headings / breadcrumbs / intro paragraphs
-        if (preg_match('/^home\s*\/\s*' . preg_quote($state_name, '/') . '$/i', $first)) continue;
-        if (strcasecmp($first, $state_name) === 0) continue;
-        if (mb_strlen($first) > 220) continue; // Long paragraphs are likely intro text
+        $has_paren = (bool)preg_match('/\((?:CLOSED|CLIP|aka |fka |est\.?|established|\d{4}\s*[-\x{2013}\x{2014}]\s*\d{4}?)/iu', $first);
+        $first_is_address = import_line_looks_like_address($first);
+        $first_is_name    = !$first_is_address;
 
-        // Name parentheticals: collect, then strip
+        // Address-only paragraph: attach to pending name, if any.
+        if ($first_is_address && empty($rest_text) && !$has_paren) {
+            if ($pending) {
+                $combined = trim($first . (count($lines) > 1 ? ' ' . trim(implode(' ', array_slice($lines, 1))) : ''));
+                $address_blocks = preg_split('/;\s*/', $combined);
+                foreach ($address_blocks as $block) {
+                    $parsed = import_parse_address(trim($block), 'XX');
+                    if ($parsed) $pending['addresses'][] = $parsed;
+                }
+                $finalize($pending);
+                $pending = null;
+            }
+            // Address with no preceding name — silently drop.
+            continue;
+        }
+
+        // Otherwise this paragraph starts with a name. Flush any unresolved pending first.
+        if ($pending) { $finalize($pending); $pending = null; }
+
+        // Parse the name + parentheticals
         $closed = false;
         $clip = false;
         $aka = [];
@@ -196,8 +251,7 @@ function import_parse_state_page($text, $state_name) {
                     $fka[] = trim($m[1]);
                 } elseif (preg_match('/^(?:est\.?|established)\s*\.?\s*(\d{4})/i', $p, $m)) {
                     $est_year = $m[1];
-                } elseif (preg_match('/(\d{4})\s*[-–]\s*(\d{4})?/', $p, $m)) {
-                    // Years range like "(1949-1990)"
+                } elseif (preg_match('/(\d{4})\s*[-\x{2013}]\s*(\d{4})?/u', $p, $m)) {
                     $est_year = $m[1];
                 }
             }
@@ -206,21 +260,24 @@ function import_parse_state_page($text, $state_name) {
         $name = trim(preg_replace('/\s*\([^)]+\)\s*/', ' ', $first));
         $name = preg_replace('/\s+/', ' ', $name);
 
-        // Some entries have years on a line of their own beneath the name (like "(1949-1990)")
-        if (!$est_year && !empty($lines[1]) && preg_match('/^\((\d{4})\s*[-–]\s*(\d{4})?\)/', $lines[1], $m)) {
-            $est_year = $m[1];
+        if ($name === '') continue;
+
+        // Same-paragraph address(es), if any
+        $addresses = [];
+        if (!empty($lines[1]) && preg_match('/^\((\d{4})\s*[-\x{2013}]\s*(\d{4})?\)/u', $lines[1], $m)) {
+            // Years-range line, advance
+            if (!$est_year) $est_year = $m[1];
             $rest_text = trim(implode(' ', array_slice($lines, 2)));
         }
-
-        // Multiple addresses separated by ';'
-        $addresses = [];
-        $address_blocks = preg_split('/;\s*/', $rest_text);
-        foreach ($address_blocks as $block) {
-            $parsed = import_parse_address(trim($block), 'XX');
-            if ($parsed) $addresses[] = $parsed;
+        if ($rest_text !== '') {
+            $address_blocks = preg_split('/;\s*/', $rest_text);
+            foreach ($address_blocks as $block) {
+                $parsed = import_parse_address(trim($block), 'XX');
+                if ($parsed) $addresses[] = $parsed;
+            }
         }
 
-        $entries[] = [
+        $pending = [
             'name'      => $name,
             'closed'    => $closed,
             'clip'      => $clip,
@@ -230,7 +287,16 @@ function import_parse_state_page($text, $state_name) {
             'addresses' => $addresses,
             'raw'       => $first,
         ];
+
+        // If the paragraph already had an address inline, the entry is complete.
+        if (!empty($addresses)) {
+            $finalize($pending);
+            $pending = null;
+        }
     }
+
+    // Flush trailing name (no address)
+    if ($pending) $finalize($pending);
 
     return $entries;
 }
@@ -313,9 +379,50 @@ foreach ($slugs_to_process as $slug) {
         continue;
     }
 
+    $state_result = [
+        'slug'      => $slug,
+        'state'     => $state_name,
+        'purged'    => 0,
+        'parsed'    => 0,
+        'inserted'  => 0,
+        'updated'   => 0,
+        'skipped'   => 0,
+    ];
+
+    // Purge mode: delete every facilities_master row tagged as imported from
+    // this state's page (json_data.data.source.imported_state matches). This
+    // gives a clean slate before re-importing.
+    if ($purge_mode) {
+        try {
+            // facilities_master.json_data is a longtext JSON blob — match the source tag
+            // via a LIKE pattern on the rendered JSON to avoid version-specific JSON ops.
+            $needle = '%"imported_state":"' . str_replace('"', '\\"', $state_name) . '"%';
+            if ($write_mode) {
+                $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE json_data LIKE ?");
+                $stmt->execute([$needle]);
+                $state_result['purged'] = $stmt->rowCount();
+            } else {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM facilities_master WHERE json_data LIKE ?");
+                $stmt->execute([$needle]);
+                $state_result['purged'] = (int)$stmt->fetchColumn();  // dry-run count only
+            }
+        } catch (PDOException $e) {
+            $state_result['error'] = 'Purge failed: ' . $e->getMessage();
+            $results[] = $state_result;
+            continue;
+        }
+
+        // If purge-only (no state= page parse desired), skip the import step.
+        if (empty($_GET['reimport']) && $state_param !== 'all') {
+            $results[] = $state_result;
+            continue;
+        }
+    }
+
     $page = function_exists('get_page_by_path') ? get_page_by_path($slug) : null;
     if (!$page) {
-        $results[] = ['slug' => $slug, 'state' => $state_name, 'error' => 'No WP page found at /' . $slug . '/'];
+        $state_result['error'] = 'No WP page found at /' . $slug . '/';
+        $results[] = $state_result;
         continue;
     }
 
@@ -323,16 +430,20 @@ foreach ($slugs_to_process as $slug) {
     $text = import_html_to_text($raw_content);
     $entries = import_parse_state_page($text, $state_name);
 
-    $state_result = [
-        'slug'     => $slug,
-        'state'    => $state_name,
-        'wp_page_id' => $page->ID,
-        'parsed'   => count($entries),
-        'inserted' => 0,
-        'updated'  => 0,
-        'skipped'  => 0,
-        'samples'  => array_slice($entries, 0, 3),
-    ];
+    $state_result['wp_page_id'] = $page->ID;
+    $state_result['parsed']     = count($entries);
+    $state_result['samples']    = array_slice($entries, 0, 3);
+
+    if ($debug_mode) {
+        $state_result['debug'] = [
+            'post_content_length' => mb_strlen($raw_content),
+            'post_content_snippet' => mb_substr($raw_content, 0, 2000),
+            'cleaned_text_length' => mb_strlen($text),
+            'cleaned_text_snippet' => mb_substr($text, 0, 2000),
+            'paragraph_count' => count(preg_split('/\n\s*\n/', $text)),
+            'first_5_paragraphs' => array_slice(preg_split('/\n\s*\n/', $text), 0, 5),
+        ];
+    }
 
     if ($write_mode && !empty($entries)) {
         try {
@@ -371,6 +482,8 @@ foreach ($slugs_to_process as $slug) {
     $grand_totals['inserted'] += $state_result['inserted'];
     $grand_totals['updated'] += $state_result['updated'];
     $grand_totals['skipped'] += $state_result['skipped'];
+    if (!isset($grand_totals['purged'])) $grand_totals['purged'] = 0;
+    $grand_totals['purged'] += $state_result['purged'] ?? 0;
 
     $results[] = $state_result;
 }
