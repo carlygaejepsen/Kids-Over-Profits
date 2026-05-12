@@ -2569,6 +2569,7 @@ function kop_register_state_rest_routes() {
                     'inspections' => array(
                         'has_reports' => $inspection_slug !== null,
                         'page_url' => $inspection_url,
+                        'dataset_urls' => $inspection_datasets,
                     ),
                     'facilities' => $facilities,
                     'news' => $news,

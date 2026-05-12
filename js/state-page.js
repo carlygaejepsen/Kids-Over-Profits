@@ -56,6 +56,42 @@
         return '';
     };
 
+    const normalizeFacilityLookupKey = value => {
+        let text = normalizeText(value).toLowerCase();
+        if (!text) return '';
+        const colonPos = text.indexOf(':');
+        if (colonPos !== -1) text = text.slice(0, colonPos);
+        text = text
+            .replace(/\s*[-,;]\s*/g, ' ')
+            .replace(/\s*&\s*/g, ' and ')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        return text;
+    };
+
+    const normalizeDateKey = value => {
+        const text = normalizeText(value);
+        if (!text) return '';
+        const direct = Date.parse(text);
+        if (!Number.isNaN(direct)) return new Date(direct).toISOString().slice(0, 10);
+
+        const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        if (!match) return '';
+        const month = match[1].padStart(2, '0');
+        const day = match[2].padStart(2, '0');
+        const year = match[3].length === 2 ? `20${match[3]}` : match[3];
+        return `${year}-${month}-${day}`;
+    };
+
+    const chooseRicherText = (left, right) => {
+        const a = normalizeText(left);
+        const b = normalizeText(right);
+        if (!a) return b;
+        if (!b) return a;
+        return b.length > a.length ? b : a;
+    };
+
     const getFacilityLocationSuffix = facility => {
         const city = normalizeText(facility && facility.city);
         const stateCode = normalizeText(facility && facility.state);
@@ -75,6 +111,172 @@
         }
 
         return '';
+    };
+
+    const isLikelyBrokenFacilityRecord = facility => {
+        const name = normalizeText(facility && facility.name);
+        const projectName = normalizeText(facility && facility.project_name);
+        const operatorName = normalizeText(facility && facility.operator_name);
+        const address = normalizeText(facility && facility.address);
+        const hasInspections = (facility && facility.inspection_count > 0) || (Array.isArray(facility && facility.inspections) && facility.inspections.length > 0);
+        const hasUsableLabel = Boolean(pickBestFacilityLabel(name, projectName, operatorName));
+        const addressLikeLabel = isAddressLikeText(name) || isAddressLikeText(projectName);
+        const stateOnlyAddress = address && normalizeText(config.stateName).toLowerCase() === address.toLowerCase();
+
+        return !hasInspections && !hasUsableLabel && addressLikeLabel && !operatorName && (!address || stateOnlyAddress);
+    };
+
+    const normalizeCaliforniaDetailedReport = raw => {
+        if (!raw || typeof raw !== 'object') return null;
+
+        const categories = (raw.categories && typeof raw.categories === 'object') ? raw.categories : raw;
+        const rawDate = normalizeText(raw.report_date || categories.report_date || categories.visit_date || raw.visit_date);
+
+        const deficiencies = Array.isArray(categories.deficiencies)
+            ? categories.deficiencies
+            : (Array.isArray(raw.deficiencies) ? raw.deficiencies : []);
+
+        return {
+            facility_name: normalizeText(raw.facility_name || raw.program_name || categories.facility_name || categories.program_name),
+            facility_number: normalizeText(raw.facility_number || categories.facility_number),
+            report_type: normalizeText(raw.report_type || categories.report_type),
+            visit_date: normalizeText(raw.visit_date || categories.visit_date || rawDate),
+            report_date: rawDate,
+            form_number: normalizeText(raw.form_number || categories.form_number),
+            census: normalizeText(raw.census || categories.census),
+            complaint_status: normalizeText(raw.complaint_status || categories.complaint_status),
+            met_with: normalizeText(raw.met_with || categories.met_with),
+            narrative: normalizeText(raw.narrative || categories.narrative || raw.raw_content),
+            investigation_findings: normalizeText(raw.investigation_findings || categories.investigation_findings),
+            deficiencies,
+            source_url: normalizeText(raw.source_url || categories.source_url || raw.report_url),
+        };
+    };
+
+    const buildCaliforniaDetailIndex = payloads => {
+        const byFacilityAndDate = new Map();
+
+        const storeReport = report => {
+            const normalized = normalizeCaliforniaDetailedReport(report);
+            if (!normalized) return;
+
+            const facilityKey = normalizeFacilityLookupKey(normalized.facility_name);
+            const dateKey = normalizeDateKey(normalized.visit_date || normalized.report_date);
+            if (!facilityKey || !dateKey) return;
+
+            const mapKey = `${facilityKey}||${dateKey}`;
+            const existing = byFacilityAndDate.get(mapKey);
+            if (!existing) {
+                byFacilityAndDate.set(mapKey, normalized);
+                return;
+            }
+
+            const existingScore = (existing.narrative ? 1 : 0) + (existing.investigation_findings ? 1 : 0) + ((existing.deficiencies || []).length ? 1 : 0);
+            const incomingScore = (normalized.narrative ? 1 : 0) + (normalized.investigation_findings ? 1 : 0) + ((normalized.deficiencies || []).length ? 1 : 0);
+            if (incomingScore > existingScore) {
+                byFacilityAndDate.set(mapKey, normalized);
+            }
+        };
+
+        payloads.forEach(payload => {
+            if (!Array.isArray(payload)) return;
+            payload.forEach(storeReport);
+        });
+
+        return byFacilityAndDate;
+    };
+
+    const buildFacilityLookupCandidates = facility => {
+        const candidates = [facility && facility.name, facility && facility.project_name, facility && facility.operator_name];
+        if (Array.isArray(facility && facility.inspections)) {
+            facility.inspections.forEach(insp => {
+                if (insp && insp.categories && insp.categories.licensee) {
+                    candidates.push(insp.categories.licensee);
+                }
+            });
+        }
+        return Array.from(new Set(candidates.map(normalizeFacilityLookupKey).filter(Boolean)));
+    };
+
+    const enrichFacilityWithCaliforniaDetails = (facility, detailIndex) => {
+        if (!facility || !Array.isArray(facility.inspections) || !facility.inspections.length) return facility;
+        const facilityKeys = buildFacilityLookupCandidates(facility);
+        if (!facilityKeys.length) return facility;
+
+        let violationCount = 0;
+        const inspections = facility.inspections.map(insp => {
+            const dateKeys = [
+                normalizeDateKey(insp && insp.date),
+                normalizeDateKey(insp && insp.categories && insp.categories.visit_date),
+            ].filter(Boolean);
+
+            let detail = null;
+            for (const facilityKey of facilityKeys) {
+                for (const dateKey of dateKeys) {
+                    detail = detailIndex.get(`${facilityKey}||${dateKey}`);
+                    if (detail) break;
+                }
+                if (detail) break;
+            }
+
+            const merged = {
+                ...insp,
+                report_url: normalizeText(insp && insp.report_url) || (detail && detail.source_url) || '',
+                summary: chooseRicherText(insp && insp.summary, detail && detail.report_type),
+                narrative: chooseRicherText(insp && insp.narrative, detail && detail.narrative),
+                investigation_findings: chooseRicherText(insp && insp.investigation_findings, detail && detail.investigation_findings),
+                deficiencies: Array.isArray(insp && insp.deficiencies) && insp.deficiencies.length
+                    ? insp.deficiencies
+                    : ((detail && Array.isArray(detail.deficiencies)) ? detail.deficiencies : []),
+                finding_count: Number(insp && insp.finding_count) || ((detail && Array.isArray(detail.deficiencies)) ? detail.deficiencies.length : 0),
+                categories: {
+                    ...((insp && insp.categories && typeof insp.categories === 'object') ? insp.categories : {}),
+                    ...(detail && detail.visit_date ? { visit_date: detail.visit_date } : {}),
+                    ...(detail && detail.form_number ? { form_number: detail.form_number } : {}),
+                    ...(detail && detail.census ? { census: detail.census } : {}),
+                    ...(detail && detail.complaint_status ? { complaint_status: detail.complaint_status } : {}),
+                    ...(detail && detail.met_with ? { met_with: detail.met_with } : {}),
+                }
+            };
+
+            violationCount += merged.finding_count || 0;
+            return merged;
+        });
+
+        return {
+            ...facility,
+            inspections,
+            violation_count: facility.violation_count || violationCount,
+        };
+    };
+
+    const enrichCaliforniaFacilities = async stateData => {
+        const datasetUrls = Array.isArray(stateData?.inspections?.dataset_urls) ? stateData.inspections.dataset_urls : [];
+        if (stateData?.state?.slug !== 'california' || !datasetUrls.length) return stateData;
+
+        const payloads = await Promise.all(datasetUrls.map(async url => {
+            try {
+                const response = await fetch(url, { credentials: 'same-origin' });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (error) {
+                console.warn('California detail dataset load failed', error);
+                return [];
+            }
+        }));
+
+        const detailIndex = buildCaliforniaDetailIndex(payloads);
+        if (!detailIndex.size) return stateData;
+
+        const enrichList = list => Array.isArray(list) ? list.map(facility => enrichFacilityWithCaliforniaDetails(facility, detailIndex)) : [];
+        return {
+            ...stateData,
+            facilities: {
+                ...stateData.facilities,
+                active: enrichList(stateData.facilities && stateData.facilities.active),
+                closed: enrichList(stateData.facilities && stateData.facilities.closed),
+            }
+        };
     };
 
     const normalizeAddressForMatch = value => {
@@ -358,7 +560,7 @@
                 fetch(config.apiUrl, { credentials: 'same-origin' }).then(r => r.json()),
                 ensureFoldersLoaded(),
             ]);
-            state.data = stateRes;
+            state.data = await enrichCaliforniaFacilities(stateRes);
             updateCounts();
             renderFacilities();
             renderNews();
@@ -482,10 +684,11 @@
         });
         return `<div class="inspection-record-list">${sorted.map(insp => {
             const findings = Array.isArray(insp.findings) ? insp.findings : [];
+            const deficiencies = Array.isArray(insp.deficiencies) ? insp.deficiencies : [];
             const cats = (insp.categories && typeof insp.categories === 'object') ? insp.categories : {};
             const hasCorrectiveActions = cats.corrective_actions && String(cats.corrective_actions).toLowerCase() !== 'none';
-            const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0 || hasCorrectiveActions;
-            const findingCount = insp.finding_count || findings.length;
+            const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0 || deficiencies.length > 0 || hasCorrectiveActions;
+            const findingCount = insp.finding_count || findings.length || deficiencies.length;
             const klass = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
             const dateStr = formatDate(insp.date) || '—';
             const typeStr = insp.type ? escapeHtml(insp.type) : 'Inspection';
@@ -504,6 +707,10 @@
                 `<strong>Type:</strong> ${typeStr}`,
                 `<strong>Date:</strong> ${escapeHtml(dateStr)}`,
                 cats.visit_date ? `<strong>Visit:</strong> ${escapeHtml(cats.visit_date)}` : '',
+                cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
+                cats.census ? `<strong>Census:</strong> ${escapeHtml(cats.census)}` : '',
+                cats.complaint_status ? `<strong>Complaint Status:</strong> ${escapeHtml(cats.complaint_status)}` : '',
+                cats.met_with ? `<strong>Met With:</strong> ${escapeHtml(cats.met_with)}` : '',
                 sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : '',
             ].filter(Boolean).join('<br>');
 
@@ -553,6 +760,30 @@
                 ? `<div class="narrative-row"><strong>Corrective Actions:</strong><p>${escapeHtml(cats.corrective_actions)}</p></div>`
                 : '';
 
+            const narrativeBlock = insp.narrative
+                ? `<div class="narrative-row"><strong>Narrative:</strong><p>${escapeHtml(insp.narrative)}</p></div>`
+                : '';
+
+            const investigationFindingsBlock = insp.investigation_findings
+                ? `<div class="narrative-row"><strong>Investigation Findings:</strong><p>${escapeHtml(insp.investigation_findings)}</p></div>`
+                : '';
+
+            const californiaDeficienciesBlock = deficiencies.length
+                ? `<details class="violation-box" open>
+                       <summary class="deficiency-header">${deficiencies.length} deficiency${deficiencies.length === 1 ? '' : 'ies'}</summary>
+                       <div class="deficiency-content">
+                           ${deficiencies.map((deficiency, index) => `
+                               <div class="finding-item">
+                                   <strong>Violation ${index + 1}</strong>
+                                   ${deficiency.section_cited ? `<p><strong>Regulation:</strong> ${escapeHtml(String(deficiency.section_cited))}</p>` : ''}
+                                   ${deficiency.description ? `<p>${escapeHtml(String(deficiency.description))}</p>` : ''}
+                                   ${deficiency.plan_of_correction ? `<p><em>Plan of correction:</em> ${escapeHtml(String(deficiency.plan_of_correction))}</p>` : ''}
+                               </div>
+                           `).join('')}
+                       </div>
+                   </details>`
+                : '';
+
             const findingsBlock = findings.length
                 ? `<details class="violation-box" open>
                        <summary class="deficiency-header">${findings.length} compliance finding${findings.length === 1 ? '' : 's'}</summary>
@@ -572,11 +803,14 @@
                     <div class="inspection-content">
                         <div class="inspection-details-block">${detailsRows}</div>
                         ${insp.summary ? `<div class="inspection-summary-text">${escapeHtml(insp.summary)}</div>` : ''}
+                        ${narrativeBlock}
+                        ${investigationFindingsBlock}
                         ${complianceBlock}
                         ${programInfoBlock}
                         ${observationsBlock}
                         ${legalBlock}
                         ${correctiveBlock}
+                        ${californiaDeficienciesBlock}
                         ${findingsBlock}
                     </div>
                 </details>
@@ -678,8 +912,8 @@
             ? `<a href="${escapeHtml(inspections.page_url)}" class="full-page-link">View full inspection report search →</a>`
             : '';
 
-        const consolidatedActive = consolidateFacilitiesForDisplay(facilities.active || []);
-        const consolidatedClosed = consolidateFacilitiesForDisplay(facilities.closed || []);
+        const consolidatedActive = (facilities.active || []).filter(facility => !isLikelyBrokenFacilityRecord(facility));
+        const consolidatedClosed = (facilities.closed || []).filter(facility => !isLikelyBrokenFacilityRecord(facility));
 
         const activeHtml = consolidatedActive.length
             ? `<ul class="facility-list">${consolidatedActive.map(facilityCardHtml).join('')}</ul>`
