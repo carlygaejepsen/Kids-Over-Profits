@@ -157,7 +157,7 @@
 
         list.forEach(facility => {
             const candidate = pickBestFacilityLabel(facility.name, facility.project_name, facility.operator_name);
-            const isLoose = !candidate || isAddressLikeText(facility.name);
+            const isLoose = !candidate;
             if (isLoose) {
                 loose.push(facility);
                 return;
