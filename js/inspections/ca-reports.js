@@ -820,13 +820,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         facilities.forEach(facility => {
+            const validDisplayNumber = isValidFacilityNumber(facility.number) ? facility.number : '';
             const facilityElement = document.createElement('div');
             facilityElement.className = 'facility-box';
             facilityElement.innerHTML = `
                 <details>
                     <summary class="facility-header">
                         <h1>${toTitleCase(safeString(facility.name)) || 'N/A'}</h1>
-                        <h2>Facility Number: ${facility.number || 'N/A'}</h2>
+                        <h2>Facility Number: ${validDisplayNumber || 'N/A'}</h2>
                         <p class="facility-details">Type: ${safeString(facility.facility_type) || 'N/A'} | Administrator: ${toTitleCase(safeString(facility.officer)) || 'N/A'} | Licensed Capacity: ${facility.capacity || 'N/A'}</p>
                     </summary>
                     <div class="inspections-container">
@@ -911,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const findings = (inspection.investigation_findings || '').replace(/\n/g, '<br>');
     
     // Create facility detail link using facility number
-    const facilityNumber = inspection.facility_number || '';
+    const facilityNumber = isValidFacilityNumber(inspection.facility_number) ? inspection.facility_number : '';
     const facilityDetailLink = facilityNumber ? 
         `<a href="https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${facilityNumber}" target="_blank" rel="noopener noreferrer">View Facility Details</a>` : 
         'N/A';
