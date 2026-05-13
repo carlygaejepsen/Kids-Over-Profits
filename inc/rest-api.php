@@ -1980,6 +1980,14 @@ function kop_state_collect_inspection_summaries($state_name) {
     $facilities_table_exists = $wpdb->get_var("SHOW TABLES LIKE 'inspection_facilities'");
     $reports_table_exists    = $wpdb->get_var("SHOW TABLES LIKE 'inspection_reports'");
 
+    // California: CCL JSON files are the rich primary source — same data /ca-reports/ uses.
+    // The DB inspection_facilities/_reports for CA are sparse and miss findings detail,
+    // so for CA we deliberately skip the DB branch and let the JSON fallback run.
+    $prefer_json_states = array('California');
+    if (in_array($state_name, $prefer_json_states, true)) {
+        $facilities_table_exists = null;
+    }
+
     // -------- Primary source: DB --------
     if ($abbrev !== '' && $facilities_table_exists === 'inspection_facilities' && $reports_table_exists === 'inspection_reports') {
         $facility_rows = $wpdb->get_results($wpdb->prepare(
@@ -2202,8 +2210,77 @@ function kop_state_collect_inspection_summaries($state_name) {
         $data = json_decode($raw, true);
         if (!is_array($data)) continue;
 
-        $facilities = isset($data[0]) && is_array($data) ? $data : (isset($data['facilities']) ? $data['facilities'] : array());
-        if (!is_array($facilities)) continue;
+        // Detect the two formats:
+        //   A) Nested: array of facility objects, each with an `inspections` array
+        //      (e.g. wa_reports.json, ut_reports.json — same shape as /xx-reports/).
+        //   B) Flat:   array of report objects, each carrying its own facility_name
+        //      (e.g. ccl_reports_batch_*.json — California). We need to group these
+        //      by facility_name into the same shape as (A) before processing.
+        $facilities = isset($data['facilities']) ? $data['facilities'] : $data;
+        if (!is_array($facilities) || empty($facilities)) continue;
+
+        $first = reset($facilities);
+        $is_flat_reports = is_array($first) && !isset($first['inspections']) &&
+            (isset($first['facility_name']) || isset($first['facility_number'])) &&
+            (isset($first['report_date']) || isset($first['visit_date']) || isset($first['report_type']));
+
+        if ($is_flat_reports) {
+            // Group flat reports by facility_name into the nested shape.
+            $grouped = array();
+            foreach ($facilities as $report) {
+                if (!is_array($report)) continue;
+                $fname = trim((string)($report['facility_name'] ?? ''));
+                if ($fname === '') continue;
+                $key = strtolower($fname);
+                if (!isset($grouped[$key])) {
+                    $grouped[$key] = array(
+                        'facility_name' => $fname,
+                        'facility_address' => '',
+                        'inspections' => array(),
+                    );
+                }
+                // Convert one CCL report into one inspection record.
+                $report_type = (string)($report['report_type'] ?? '');
+                $date_str = (string)($report['report_date'] ?? $report['visit_date'] ?? '');
+                $findings_text = (string)($report['investigation_findings'] ?? '');
+                $complaint_status = strtolower((string)($report['complaint_status'] ?? ''));
+
+                // Treat substantiated complaints / non-empty findings as findings; CCL doesn't
+                // give a per-report finding_count for facility evaluations.
+                $finding_count = 0;
+                if ($complaint_status === 'substantiated' || $complaint_status === 'inconclusive') {
+                    $finding_count = 1;
+                }
+                $findings_arr = array();
+                if ($findings_text !== '') {
+                    $findings_arr[] = array('rule_number' => '', 'description' => $findings_text);
+                }
+
+                $grouped[$key]['inspections'][] = array(
+                    'inspection_date' => $date_str,
+                    'inspection_type' => $report_type,
+                    'inspection_findings' => $findings_arr,
+                    'checklist_urls' => array_filter(array((string)($report['source_url'] ?? ''))),
+                    // Embed remaining CCL fields in 'categories' so the state-page UI
+                    // can render administrator/capacity/census/met_with/narrative
+                    // when the toggle expands.
+                    'categories' => array(
+                        'report_type'      => $report_type,
+                        'pdf_url'          => (string)($report['source_url'] ?? ''),
+                        'licensee'         => (string)($report['administrator'] ?? ''),
+                        'visit_date'       => (string)($report['visit_date'] ?? ''),
+                        'capacity_age_range' => isset($report['capacity']) ? 'Capacity: ' . $report['capacity'] : '',
+                        'average_daily_population_served' => isset($report['census']) ? (string)$report['census'] : '',
+                        'corrective_actions' => (string)($report['complaint_status'] ?? ''),
+                        'observations'     => (string)($report['investigation_findings'] ?? ''),
+                        'finding_count'    => $finding_count,
+                        'findings'         => $findings_arr,
+                        'narrative'        => (string)($report['investigation_findings'] ?? ''),
+                    ),
+                );
+            }
+            $facilities = array_values($grouped);
+        }
 
         foreach ($facilities as $facility) {
             if (!is_array($facility)) continue;
@@ -2250,14 +2327,16 @@ function kop_state_collect_inspection_summaries($state_name) {
                         }
                     }
                     $checklist_urls = isset($insp['checklist_urls']) && is_array($insp['checklist_urls']) ? $insp['checklist_urls'] : array();
+                    $passthrough_categories = isset($insp['categories']) && is_array($insp['categories']) ? $insp['categories'] : null;
                     $insp_records[] = array(
                         'date'          => (string)$date_str,
                         'type'          => (string)($insp['inspection_type'] ?? $insp['inspection_types'] ?? ''),
-                        'finding_count' => count($findings_raw),
+                        'finding_count' => $passthrough_categories['finding_count'] ?? count($findings_raw),
                         'findings'      => $findings,
-                        'pdf_url'       => $checklist_urls[0] ?? '',
-                        'report_url'    => '',
+                        'pdf_url'       => $passthrough_categories['pdf_url'] ?? ($checklist_urls[0] ?? ''),
+                        'report_url'    => $passthrough_categories['pdf_url'] ?? '',
                         'summary'       => '',
+                        'categories'    => $passthrough_categories ?: array(),
                     );
                 }
             }
