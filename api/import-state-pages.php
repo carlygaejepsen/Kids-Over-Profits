@@ -416,14 +416,21 @@ if ($cleanup_addresses) {
         // Catch rows whose unique_name is clearly NOT a facility name:
         //   - Ends with ';' (multi-address strings)
         //   - Contains a ZIP code pattern (", ST 99999" or ", ST, 99999")
-        //   - Is purely numeric (raw facility_number from a scraper)
+        //   - Is essentially purely numeric (raw facility_number from a scraper)
         //   - Starts with the literal "Facility (" placeholder
-        // This deliberately spares names like "4 Healing Hearts" or "180 Degrees Inc."
-        // which start with digits but contain no zip / no semicolon / non-numeric tail.
+        //   - Contains CCL metadata field labels ("Facility Number:", "Administrator:",
+        //     "Facility Type:", "Address:") — these come from a scraper that
+        //     concatenated multiple fields into one string instead of parsing them.
+        // Spares names like "4 Healing Hearts" or "180 Degrees Inc." which start
+        // with digits but contain no zip / no semicolon / non-numeric tail.
         $where_pattern = "("
             . " unique_name LIKE 'Facility (%'"
-            . " OR unique_name REGEXP '^[0-9]+\$'"
-            . " OR unique_name REGEXP ';\$'"
+            . " OR unique_name LIKE '%Facility Number:%'"
+            . " OR unique_name LIKE '%Administrator:%'"
+            . " OR unique_name LIKE '%Facility Type:%'"
+            . " OR unique_name LIKE '%Address:%'"
+            . " OR unique_name REGEXP '^[[:space:]]*[0-9]+[[:space:]]*\$'"
+            . " OR unique_name REGEXP ';[[:space:]]*\$'"
             . " OR unique_name REGEXP ', [A-Z]{2}[ ,]+[0-9]{5}'"
             . ")";
 
