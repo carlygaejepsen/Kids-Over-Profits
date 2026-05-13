@@ -538,11 +538,31 @@ if ($recover_ca_names) {
         }
 
         $updated = 0;
-        if ($write_mode && !empty($matched)) {
-            $upd = $pdo->prepare("UPDATE inspection_facilities SET facility_name = ? WHERE id = ?");
-            foreach ($matched as $m) {
-                $upd->execute([$m['new_name'], $m['id']]);
-                $updated += $upd->rowCount();
+        $deleted_facilities = 0;
+        $deleted_reports = 0;
+
+        if ($write_mode) {
+            // Apply renames for matched rows.
+            if (!empty($matched)) {
+                $upd = $pdo->prepare("UPDATE inspection_facilities SET facility_name = ? WHERE id = ?");
+                foreach ($matched as $m) {
+                    $upd->execute([$m['new_name'], $m['id']]);
+                    $updated += $upd->rowCount();
+                }
+            }
+
+            // Optionally cascade-delete the unmatched numeric-named rows + their reports.
+            if (!empty($_GET['delete_unmatched_numeric']) && !empty($unmatched)) {
+                $unmatched_ids = array_map(static function ($u) { return (int)$u['id']; }, $unmatched);
+                $placeholders = implode(',', array_fill(0, count($unmatched_ids), '?'));
+
+                $rep_del = $pdo->prepare("DELETE FROM inspection_reports WHERE facility_id IN ($placeholders)");
+                $rep_del->execute($unmatched_ids);
+                $deleted_reports = $rep_del->rowCount();
+
+                $fac_del = $pdo->prepare("DELETE FROM inspection_facilities WHERE id IN ($placeholders)");
+                $fac_del->execute($unmatched_ids);
+                $deleted_facilities = $fac_del->rowCount();
             }
         }
 
@@ -594,6 +614,8 @@ if ($recover_ca_names) {
             'unmatched_with_reports'=> $unmatched_with_reports,
             'unmatched_no_reports'  => $unmatched_no_reports,
             'updated'               => $updated,
+            'deleted_facilities'    => $deleted_facilities,
+            'deleted_reports'       => $deleted_reports,
             'matched_samples'       => array_slice($matched, 0, 30),
             'unmatched_samples'     => array_slice($unmatched, 0, 30),
             'unmatched_report_samples' => $unmatched_report_samples,
