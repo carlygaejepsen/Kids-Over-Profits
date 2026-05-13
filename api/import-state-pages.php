@@ -456,13 +456,46 @@ if ($recover_ca_names) {
 
         $matched = [];
         $unmatched = [];
+        $rep_lookup = $pdo->prepare(
+            "SELECT categories_json FROM inspection_reports WHERE facility_id = ?"
+        );
+
+        $extract_name_from_reports = static function ($facility_id) use ($rep_lookup) {
+            $rep_lookup->execute([$facility_id]);
+            while ($cat_json = $rep_lookup->fetchColumn()) {
+                $cats = json_decode($cat_json, true);
+                if (!is_array($cats)) continue;
+                foreach (['facility_name', 'program_name', 'licensee', 'name'] as $key) {
+                    if (!empty($cats[$key]) && is_string($cats[$key])) {
+                        $candidate = trim($cats[$key]);
+                        if ($candidate !== '' && !preg_match('/^[0-9]+$/', $candidate)) {
+                            return $candidate;
+                        }
+                    }
+                }
+            }
+            return null;
+        };
+
         foreach ($candidates as $row) {
             $num = trim((string)$row['facility_name']);
-            if (isset($name_by_number[$num])) {
+
+            // First try: JSON lookup by facility_number
+            $real_name = $name_by_number[$num] ?? null;
+            $source = $real_name ? 'ccl_json' : null;
+
+            // Second try: look in this facility's own linked inspection_reports.categories_json
+            if (!$real_name) {
+                $real_name = $extract_name_from_reports((int)$row['id']);
+                if ($real_name) $source = 'linked_reports';
+            }
+
+            if ($real_name) {
                 $matched[] = [
                     'id' => (int)$row['id'],
                     'old_name' => $num,
-                    'new_name' => $name_by_number[$num],
+                    'new_name' => $real_name,
+                    'source' => $source,
                 ];
             } else {
                 $unmatched[] = [
