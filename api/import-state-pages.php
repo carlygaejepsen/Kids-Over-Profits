@@ -253,14 +253,63 @@ function import_parse_state_page($text, $state_name) {
         $first_is_address = import_line_looks_like_address($first);
         $first_is_name    = !$first_is_address;
 
-        // Address-only paragraph: attach to pending name, if any.
-        if ($first_is_address && empty($rest_text) && !$has_paren) {
+        // Metadata-continuation paragraph: a single line wrapped in parens that
+        // carries year range, CLOSED tag, aka/fka, or established year. Attach
+        // to the pending name instead of starting a new entry.
+        if ($pending && count($lines) === 1) {
+            $candidate_meta = trim($first);
+            if (preg_match('/^\(\s*(\d{4})\s*[-\x{2013}\x{2014}]\s*(\d{4})?\s*\)$/u', $candidate_meta, $m)) {
+                if (empty($pending['est_year'])) $pending['est_year'] = $m[1];
+                continue;
+            }
+            if (preg_match('/^\(\s*closed\s*\)$/i', $candidate_meta)) {
+                $pending['closed'] = true;
+                continue;
+            }
+            if (preg_match('/^\(\s*clip\s*\)$/i', $candidate_meta)) {
+                $pending['clip'] = true;
+                continue;
+            }
+            if (preg_match('/^\(\s*aka\s+(.+?)\s*\)$/i', $candidate_meta, $m)) {
+                $pending['aka'][] = trim($m[1]);
+                continue;
+            }
+            if (preg_match('/^\(\s*fka\s+(.+?)\s*\)$/i', $candidate_meta, $m)) {
+                $pending['fka'][] = trim($m[1]);
+                continue;
+            }
+            if (preg_match('/^\(\s*(?:est\.?|established)\s*\.?\s*(\d{4})\s*\)$/i', $candidate_meta, $m)) {
+                if (empty($pending['est_year'])) $pending['est_year'] = $m[1];
+                continue;
+            }
+        }
+
+        // Address-block paragraph: attach to pending name, if any.
+        //
+        // Two shapes both qualify:
+        //   (a) Single-line address paragraph ("9537 Chiwawa Loop Rd, Leavenworth, WA 98826")
+        //   (b) Multi-line address paragraph where EVERY line looks like an address
+        //       (e.g. Pacific Autism Center for Education's campuses, each
+        //        "Campus Name – City, CA" on its own <br>'d line).
+        $all_lines_address_like = $first_is_address && !$has_paren;
+        if ($all_lines_address_like && count($lines) > 1) {
+            foreach (array_slice($lines, 1) as $line) {
+                if (!import_line_looks_like_address($line)) {
+                    $all_lines_address_like = false;
+                    break;
+                }
+            }
+        }
+
+        if ($all_lines_address_like) {
             if ($pending) {
-                $combined = trim($first . (count($lines) > 1 ? ' ' . trim(implode(' ', array_slice($lines, 1))) : ''));
-                $address_blocks = preg_split('/;\s*/', $combined);
-                foreach ($address_blocks as $block) {
-                    $parsed = import_parse_address(trim($block), 'XX');
-                    if ($parsed) $pending['addresses'][] = $parsed;
+                foreach ($lines as $line) {
+                    // Each line may itself be a semicolon-separated list of addresses.
+                    $address_blocks = preg_split('/;\s*/', $line);
+                    foreach ($address_blocks as $block) {
+                        $parsed = import_parse_address(trim($block), 'XX');
+                        if ($parsed) $pending['addresses'][] = $parsed;
+                    }
                 }
                 $finalize($pending);
                 $pending = null;

@@ -1991,7 +1991,8 @@ function kop_state_collect_inspection_summaries($state_name) {
     // -------- Primary source: DB --------
     if ($abbrev !== '' && $facilities_table_exists === 'inspection_facilities' && $reports_table_exists === 'inspection_reports') {
         $facility_rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, facility_name, full_address FROM inspection_facilities WHERE state = %s",
+            "SELECT id, facility_name, full_address, bed_capacity, program_category
+             FROM inspection_facilities WHERE state = %s",
             $abbrev
         ), ARRAY_A);
 
@@ -2120,6 +2121,9 @@ function kop_state_collect_inspection_summaries($state_name) {
                     'inspection_count'       => (int)$stats['count'],
                     'violation_count'        => (int)$stats['violations'],
                     'latest_inspection_date' => (string)$stats['latest'],
+                    'capacity'               => trim((string)($f['bed_capacity'] ?? '')),
+                    'census'                 => '',
+                    'program_category'       => trim((string)($f['program_category'] ?? '')),
                     'inspections'            => $inspections_by_facility[$fid] ?? array(),
                 );
             }
@@ -2236,8 +2240,27 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $grouped[$key] = array(
                         'facility_name' => $fname,
                         'facility_address' => '',
+                        'capacity' => '',
+                        'census' => '',
+                        'program_category' => '',
+                        'latest_report_ts' => 0,
                         'inspections' => array(),
                     );
+                }
+                // Capture facility-level metadata from the MOST RECENT report.
+                $rdate_str = (string)($report['report_date'] ?? $report['visit_date'] ?? '');
+                $rts = $rdate_str ? (strtotime($rdate_str) ?: 0) : 0;
+                if ($rts >= $grouped[$key]['latest_report_ts']) {
+                    if (isset($report['capacity']) && $report['capacity'] !== '' && $report['capacity'] !== null) {
+                        $grouped[$key]['capacity'] = (string)$report['capacity'];
+                    }
+                    if (isset($report['census']) && $report['census'] !== '' && $report['census'] !== null) {
+                        $grouped[$key]['census'] = (string)$report['census'];
+                    }
+                    if (!empty($report['facility_type_name'])) {
+                        $grouped[$key]['program_category'] = (string)$report['facility_type_name'];
+                    }
+                    $grouped[$key]['latest_report_ts'] = $rts;
                 }
                 // Convert one CCL report into one inspection record.
                 $report_type = (string)($report['report_type'] ?? '');
@@ -2288,6 +2311,10 @@ function kop_state_collect_inspection_summaries($state_name) {
             $name = trim((string)($facility['facility_name'] ?? $facility['name'] ?? ''));
             $address = trim((string)($facility['facility_address'] ?? $facility['address'] ?? ''));
             if ($name === '') continue;
+
+            $facility_capacity = trim((string)($facility['capacity'] ?? ''));
+            $facility_census   = trim((string)($facility['census'] ?? ''));
+            $facility_program  = trim((string)($facility['program_category'] ?? ''));
 
             $inspection_count = 0;
             $violation_count = 0;
@@ -2349,8 +2376,16 @@ function kop_state_collect_inspection_summaries($state_name) {
                     'inspection_count'       => 0,
                     'violation_count'        => 0,
                     'latest_inspection_date' => '',
+                    'capacity'               => $facility_capacity,
+                    'census'                 => $facility_census,
+                    'program_category'       => $facility_program,
                     'inspections'            => array(),
                 );
+            } else {
+                // Fill in capacity/census/program if not already set
+                if (!$facilities_by_key[$key]['capacity'] && $facility_capacity) $facilities_by_key[$key]['capacity'] = $facility_capacity;
+                if (!$facilities_by_key[$key]['census']   && $facility_census)   $facilities_by_key[$key]['census']   = $facility_census;
+                if (!$facilities_by_key[$key]['program_category'] && $facility_program) $facilities_by_key[$key]['program_category'] = $facility_program;
             }
             $facilities_by_key[$key]['inspection_count'] += $inspection_count;
             $facilities_by_key[$key]['violation_count']  += $violation_count;
@@ -2418,15 +2453,27 @@ function kop_state_collect_facilities($state_name) {
         ));
 
         if (isset($by_key[$key])) {
-            // Existing record (e.g. another program variant) — fill in missing fields.
+            // Existing record (e.g. another campus of the same facility) — fill in
+            // missing scalar fields, and accumulate the campus's address into addresses[].
             $existing = &$by_key[$key];
             if (!$existing['operator_name'] && !empty($p['operator_name'])) $existing['operator_name'] = $p['operator_name'];
             if (!$existing['type']          && !empty($p['type']))          $existing['type']          = $p['type'];
             if (!$existing['status']        && !empty($p['status']))        $existing['status']        = $p['status'];
             if (!$existing['operating_period'] && !empty($p['operating_period'])) $existing['operating_period'] = $p['operating_period'];
-            if (!$existing['address'] && !empty($address_parts)) $existing['address'] = implode(', ', $address_parts);
-            if (!empty($existing['address'])) {
-                $addr_key = kop_normalize_address_for_match($existing['address']);
+
+            $incoming_address = implode(', ', $address_parts);
+            if ($incoming_address !== '') {
+                if (!isset($existing['addresses']) || !is_array($existing['addresses'])) {
+                    $existing['addresses'] = array();
+                    if (!empty($existing['address'])) $existing['addresses'][] = $existing['address'];
+                }
+                // Dedup case-insensitively
+                $known = array_map('strtolower', $existing['addresses']);
+                if (!in_array(strtolower($incoming_address), $known, true)) {
+                    $existing['addresses'][] = $incoming_address;
+                }
+                if (empty($existing['address'])) $existing['address'] = $incoming_address;
+                $addr_key = kop_normalize_address_for_match($incoming_address);
                 if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
                     $address_to_key[$addr_key] = $key;
                 }
@@ -2434,10 +2481,12 @@ function kop_state_collect_facilities($state_name) {
             $existing['in_master'] = true;
             unset($existing);
         } else {
+            $primary_address = implode(', ', $address_parts);
             $by_key[$key] = array(
                 'name'              => $p['facility_name'] ?: $p['project_name'],
                 'project_name'      => $p['project_name'],
-                'address'           => implode(', ', $address_parts),
+                'address'           => $primary_address,
+                'addresses'         => $primary_address !== '' ? array($primary_address) : array(),
                 'city'              => $p['city'] ?? '',
                 'state'             => $p['state'] ?? $state_name,
                 'operator_name'     => $p['operator_name'] ?? '',
@@ -2447,6 +2496,8 @@ function kop_state_collect_facilities($state_name) {
                 'inspection_count'  => 0,
                 'violation_count'   => 0,
                 'latest_inspection_date' => '',
+                'capacity'          => '',
+                'census'            => '',
                 'inspections'       => array(),
                 'in_master'         => true,
                 'in_inspections'    => false,
@@ -2516,20 +2567,34 @@ function kop_state_collect_facilities($state_name) {
                     $address_to_key[$addr_key] = $key;
                 }
             }
+            // Inherit capacity/census/type from the inspection summary if the master row doesn't have them.
+            if (empty($by_key[$key]['capacity']) && !empty($insp['capacity'])) {
+                $by_key[$key]['capacity'] = $insp['capacity'];
+            }
+            if (empty($by_key[$key]['census']) && !empty($insp['census'])) {
+                $by_key[$key]['census'] = $insp['census'];
+            }
+            if (empty($by_key[$key]['type']) && !empty($insp['program_category'])) {
+                $by_key[$key]['type'] = $insp['program_category'];
+            }
         } else {
+            $insp_addr = (string)$insp['inspection_address'];
             $by_key[$key] = array(
                 'name'              => $insp['facility_name'],
                 'project_name'      => '',
-                'address'           => $insp['inspection_address'],
+                'address'           => $insp_addr,
+                'addresses'         => $insp_addr !== '' ? array($insp_addr) : array(),
                 'city'              => '',
                 'state'             => $state_name,
                 'operator_name'     => '',
-                'type'              => '',
+                'type'              => trim((string)($insp['program_category'] ?? '')),
                 'status'            => '',
                 'operating_period'  => '',
                 'inspection_count'  => $insp['inspection_count'],
                 'violation_count'   => $insp['violation_count'],
                 'latest_inspection_date' => $insp['latest_inspection_date'],
+                'capacity'          => trim((string)($insp['capacity'] ?? '')),
+                'census'            => trim((string)($insp['census'] ?? '')),
                 'inspections'       => $insp['inspections'] ?? array(),
                 'in_master'         => false,
                 'in_inspections'    => true,

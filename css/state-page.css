@@ -237,6 +237,123 @@
     border-top: 1px dashed #eef0f4;
 }
 
+.facility-card-address-missing {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.facility-card-address-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.facility-card-address-list li {
+    padding-left: 1em;
+    position: relative;
+    line-height: 1.4;
+}
+
+.facility-card-address-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #6b7280;
+}
+
+.facility-card-address-list li + li {
+    margin-top: 0.2em;
+}
+
+.facility-card-years {
+    color: #4b5563;
+    font-size: 0.85em;
+    margin-top: 0.2em;
+    font-weight: 500;
+}
+
+.facility-card-capacity {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 1em;
+    color: #4b5563;
+    font-size: 0.85em;
+    margin-top: 0.25em;
+}
+
+.facility-card-capacity strong {
+    color: #00004d;
+}
+
+/* Details panel rows */
+.detail-row {
+    color: #374151;
+    font-size: 0.88em;
+    margin-bottom: 0.35em;
+    line-height: 1.45;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-row strong {
+    color: #00004d;
+    margin-right: 0.3em;
+}
+
+.detail-row.detail-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 0.75em;
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+    border-top: 1px dashed #eef0f4;
+}
+
+/* Per-facility news list inside expand panel */
+.facility-news-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65em;
+}
+
+.facility-news-item {
+    padding: 0.5em 0.6em;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.88em;
+}
+
+.facility-news-title {
+    display: block;
+    color: #00004d;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.35;
+}
+
+.facility-news-title:hover {
+    text-decoration: underline;
+}
+
+.facility-news-meta {
+    color: #6b7280;
+    font-size: 0.85em;
+    margin-top: 0.2em;
+}
+
+.facility-news-summary {
+    margin: 0.35em 0 0;
+    color: #374151;
+    line-height: 1.45;
+    font-size: 0.92em;
+}
+
 .stat-violation {
     color: #b91c1c;
     font-weight: 600;

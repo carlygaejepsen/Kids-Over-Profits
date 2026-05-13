@@ -818,31 +818,114 @@
         }).join('')}</div>`;
     };
 
+    // For a given facility, find state-level news items whose facilities_mentioned
+    // list contains this facility (case-insensitive, normalized name match).
+    const findNewsForFacility = facilityName => {
+        const stateNews = (state.data && Array.isArray(state.data.news)) ? state.data.news : [];
+        if (!stateNews.length || !facilityName) return [];
+        const targetKey = normalizeFolderText(facilityName);  // reuse the FileBird normalizer
+        if (!targetKey) return [];
+        return stateNews.filter(n => {
+            const mentions = Array.isArray(n.facilities_mentioned) ? n.facilities_mentioned : [];
+            for (const m of mentions) {
+                if (!m) continue;
+                const mKey = normalizeFolderText(m);
+                if (!mKey) continue;
+                if (mKey === targetKey) return true;
+                // Loose prefix match for variant phrasing.
+                if (mKey.length >= 10 && targetKey.length >= 10 &&
+                    (mKey.startsWith(targetKey) || targetKey.startsWith(mKey))) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    };
+
+    const renderFacilityNewsList = items => {
+        if (!Array.isArray(items) || !items.length) {
+            return '<p class="docs-empty">No news items mention this facility.</p>';
+        }
+        return `<ul class="facility-news-list">${items.map(n => `
+            <li class="facility-news-item">
+                <a href="${escapeHtml(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">
+                    ${escapeHtml(n.display_title || n.article_title)}
+                </a>
+                <div class="facility-news-meta">
+                    ${n.publication_name ? escapeHtml(n.publication_name) + ' · ' : ''}
+                    ${formatDate(n.publication_date)}
+                </div>
+                ${n.summary ? `<p class="facility-news-summary">${escapeHtml(String(n.summary).slice(0, 240))}${String(n.summary).length > 240 ? '…' : ''}</p>` : ''}
+            </li>
+        `).join('')}</ul>`;
+    };
+
+    // Format operating-year(s) for the main card based on status.
+    //   Open + has start year   -> "Est. 1994"
+    //   Closed                  -> "1949–1990" / "1949–" if no end
+    //   Anything else          -> the raw operating_period if it makes sense
+    const formatOperatingYears = facility => {
+        const period = String(facility.operating_period || '').trim();
+        const status = String(facility.status || '').trim().toLowerCase();
+        if (!period) return '';
+
+        const isClosed = ['closed', 'shut down', 'shutdown', 'defunct'].includes(status);
+        const startMatch = period.match(/(\d{4})/);
+        const startYear = startMatch ? startMatch[1] : '';
+
+        if (isClosed) {
+            // Try to find a range "1949-1990" or "1949–1990"; otherwise show the raw period.
+            const rangeMatch = period.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
+            if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+            return period;
+        }
+
+        // Open
+        if (startYear) return `Est. ${startYear}`;
+        return period;
+    };
+
     const facilityCardHtml = facility => {
         const displayName = getFacilityDisplayName(facility);
-        const stats = [];
-        if (facility.inspection_count > 0) {
-            stats.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
-        }
-        if (facility.violation_count > 0) {
-            stats.push(`<span class="stat stat-violation">${facility.violation_count} violation${facility.violation_count === 1 ? '' : 's'}</span>`);
-        }
-        if (facility.latest_inspection_date) {
-            stats.push(`<span class="stat">Latest: ${escapeHtml(facility.latest_inspection_date)}</span>`);
+
+        // Stats / metadata that go into the collapsible "Details" panel.
+        const detailRows = [];
+        if (facility.operator_name) {
+            detailRows.push(`<div class="detail-row"><strong>Operator:</strong> ${escapeHtml(facility.operator_name)}</div>`);
         }
         if (facility.type) {
-            stats.push(`<span class="stat">${escapeHtml(facility.type)}</span>`);
+            detailRows.push(`<div class="detail-row"><strong>Type:</strong> ${escapeHtml(facility.type)}</div>`);
         }
-        if (facility.operating_period) {
-            stats.push(`<span class="stat">${escapeHtml(facility.operating_period)}</span>`);
+        const statChips = [];
+        if (facility.inspection_count > 0) {
+            statChips.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
+        }
+        if (facility.violation_count > 0) {
+            statChips.push(`<span class="stat stat-violation">${facility.violation_count} violation${facility.violation_count === 1 ? '' : 's'}</span>`);
+        }
+        if (facility.latest_inspection_date) {
+            statChips.push(`<span class="stat">Latest inspection: ${escapeHtml(facility.latest_inspection_date)}</span>`);
+        }
+        if (statChips.length) {
+            detailRows.push(`<div class="detail-row detail-stats">${statChips.join('')}</div>`);
         }
 
         const folderId = findFolderForFacility(displayName);
         const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
+        const hasDetails = detailRows.length > 0;
+        const newsItems = findNewsForFacility(displayName);
+        const hasNews = newsItems.length > 0;
+        const yearLabel = formatOperatingYears(facility);
 
         const toggleButtons = [];
+        if (hasDetails) {
+            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="details">ℹ️ Show details</button>`);
+        }
         if (hasInspections) {
             toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="inspections">📋 Show inspections</button>`);
+        }
+        if (hasNews) {
+            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="news">📰 Show news (${newsItems.length})</button>`);
         }
         if (folderId) {
             toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}">📂 Show documents</button>`);
@@ -854,13 +937,33 @@
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
-                ${facility.address ? `<div class="facility-card-address">${escapeHtml(facility.address)}</div>` : ''}
-                ${facility.operator_name ? `<div class="facility-card-operator">Operator: ${escapeHtml(facility.operator_name)}</div>` : ''}
-                ${stats.length ? `<div class="facility-card-stats">${stats.join('')}</div>` : ''}
+                ${(() => {
+                    const list = Array.isArray(facility.addresses) && facility.addresses.length
+                        ? facility.addresses
+                        : (facility.address ? [facility.address] : []);
+                    if (list.length === 0) {
+                        return '<div class="facility-card-address facility-card-address-missing">Address not on file</div>';
+                    }
+                    if (list.length === 1) {
+                        return `<div class="facility-card-address">${escapeHtml(list[0])}</div>`;
+                    }
+                    return `
+                        <ul class="facility-card-address facility-card-address-list">
+                            ${list.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
+                        </ul>`;
+                })()}
+                ${yearLabel ? `<div class="facility-card-years">${escapeHtml(yearLabel)}</div>` : ''}
+                ${(facility.capacity || facility.census) ? `
+                    <div class="facility-card-capacity">
+                        ${facility.capacity ? `<span><strong>Capacity:</strong> ${escapeHtml(String(facility.capacity))}</span>` : ''}
+                        ${facility.census   ? `<span><strong>Census:</strong> ${escapeHtml(String(facility.census))}</span>`     : ''}
+                    </div>` : ''}
                 ${toggleButtons.length ? `
                     <div class="facility-card-actions">${toggleButtons.join('')}</div>
                     <div class="facility-card-panels">
+                        ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
                         ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}
+                        ${hasNews ? `<div class="facility-panel" data-panel="news" hidden>${renderFacilityNewsList(newsItems)}</div>` : ''}
                         ${folderId ? `<div class="facility-panel" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}" hidden><p class="loading">Loading documents…</p></div>` : ''}
                     </div>
                 ` : ''}
@@ -877,12 +980,20 @@
                 const panel = card.querySelector(`.facility-panel[data-panel="${panelKind}"]`);
                 if (!panel) return;
 
+                const labelMap = {
+                    details:     { show: 'ℹ️ Show details',     hide: 'ℹ️ Hide details' },
+                    inspections: { show: '📋 Show inspections', hide: '📋 Hide inspections' },
+                    docs:        { show: '📂 Show documents',   hide: '📂 Hide documents' },
+                    news:        { show: '📰 Show news',        hide: '📰 Hide news' },
+                };
+                const labels = labelMap[panelKind] || { show: 'Show', hide: 'Hide' };
+
                 if (panel.hidden) {
                     panel.hidden = false;
-                    btn.textContent = panelKind === 'inspections' ? '📋 Hide inspections' : '📂 Hide documents';
+                    btn.textContent = labels.hide;
                 } else {
                     panel.hidden = true;
-                    btn.textContent = panelKind === 'inspections' ? '📋 Show inspections' : '📂 Show documents';
+                    btn.textContent = labels.show;
                     return;
                 }
 
