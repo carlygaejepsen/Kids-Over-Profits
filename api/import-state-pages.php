@@ -413,12 +413,19 @@ function import_entry_to_payload($entry, $state_name) {
 // ----------------------------------------------------------------------------
 if ($cleanup_addresses) {
     try {
-        // Match rows that are clearly broken: unique_name starts with a street number
-        // ("1797 San Jose Ave, ..."), OR unique_name starts with the literal
-        // "Facility (" placeholder string. Excludes borderline cases like
-        // "Lamar House – Sunnyvale, CA" where a real facility name has a location
-        // suffix — those need manual review.
-        $where_pattern = "(unique_name REGEXP '^[0-9]+ ' OR unique_name LIKE 'Facility (%')";
+        // Catch rows whose unique_name is clearly NOT a facility name:
+        //   - Ends with ';' (multi-address strings)
+        //   - Contains a ZIP code pattern (", ST 99999" or ", ST, 99999")
+        //   - Is purely numeric (raw facility_number from a scraper)
+        //   - Starts with the literal "Facility (" placeholder
+        // This deliberately spares names like "4 Healing Hearts" or "180 Degrees Inc."
+        // which start with digits but contain no zip / no semicolon / non-numeric tail.
+        $where_pattern = "("
+            . " unique_name LIKE 'Facility (%'"
+            . " OR unique_name REGEXP '^[0-9]+\$'"
+            . " OR unique_name REGEXP ';\$'"
+            . " OR unique_name REGEXP ', [A-Z]{2}[ ,]+[0-9]{5}'"
+            . ")";
 
         // Inspect both tagged and untagged matches so the response is informative.
         $count_tagged = $pdo->query(
