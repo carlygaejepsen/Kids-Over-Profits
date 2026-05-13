@@ -471,20 +471,90 @@ if ($cleanup_addresses) {
             $deleted = $stmt->rowCount();
         }
 
+        // ALSO scan inspection_facilities for facility_name values that are concatenated
+        // metadata blobs (CCL scraper artifacts). Don't delete these rows — they're linked
+        // to inspection_reports — but truncate the name to the part before "Facility Number:"
+        // (or similar field label), which is typically the real facility name.
+        $insp_table_exists = $pdo->query("SHOW TABLES LIKE 'inspection_facilities'")->fetchColumn();
+
+        $insp_count = 0;
+        $insp_samples = [];
+        $insp_updated = 0;
+
+        if ($insp_table_exists === 'inspection_facilities') {
+            $insp_pattern = "("
+                . " facility_name LIKE '%Facility Number:%'"
+                . " OR facility_name LIKE '%Administrator:%'"
+                . " OR facility_name LIKE '%Facility Type:%'"
+                . " OR facility_name LIKE '%Address:%'"
+                . " OR facility_name REGEXP '^[[:space:]]*[0-9]+[[:space:]]*\$'"
+                . ")";
+
+            $insp_count = (int)$pdo->query(
+                "SELECT COUNT(*) FROM inspection_facilities WHERE $insp_pattern"
+            )->fetchColumn();
+
+            $insp_samples = $pdo->query(
+                "SELECT id, state, facility_name FROM inspection_facilities
+                 WHERE $insp_pattern
+                 ORDER BY id DESC LIMIT 30"
+            )->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($write_mode) {
+                // For each affected row, derive a cleaner name by taking the substring
+                // before the first metadata label, or NULL if we can't recover anything.
+                $rows = $pdo->query(
+                    "SELECT id, facility_name FROM inspection_facilities WHERE $insp_pattern"
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                $upd = $pdo->prepare(
+                    "UPDATE inspection_facilities SET facility_name = ? WHERE id = ?"
+                );
+                foreach ($rows as $r) {
+                    $name = (string)$r['facility_name'];
+                    // Cut at the first metadata label
+                    $cut_positions = [];
+                    foreach (['Facility Number:', 'Administrator:', 'Facility Type:', 'Address:'] as $label) {
+                        $pos = mb_stripos($name, $label);
+                        if ($pos !== false) $cut_positions[] = $pos;
+                    }
+                    $clean = $name;
+                    if (!empty($cut_positions)) {
+                        $clean = trim(mb_substr($name, 0, min($cut_positions)));
+                        // Strip trailing punctuation/commas
+                        $clean = rtrim($clean, " ,;:-");
+                    }
+                    // Purely numeric → leave as-is (can't recover); skip.
+                    if ($clean === '' || preg_match('/^[0-9]+$/', $clean)) {
+                        continue;
+                    }
+                    if ($clean !== $name) {
+                        $upd->execute([$clean, (int)$r['id']]);
+                        $insp_updated++;
+                    }
+                }
+            }
+        }
+
         echo json_encode([
             'success'        => true,
             'mode'           => $write_mode ? 'write' : 'dry_run',
-            'cleanup_target' => 'address-as-name rows in facilities_master',
-            'counts' => [
+            'cleanup_target' => 'address-as-name rows in facilities_master + bad facility_name in inspection_facilities',
+            'facilities_master_counts' => [
                 'tagged_imports'   => (int)$count_tagged,
                 'untagged_imports' => (int)$count_untagged,
                 'total_matches'    => (int)$count_tagged + (int)$count_untagged,
                 'deleted'          => (int)$deleted,
             ],
-            'samples' => $samples,
+            'facilities_master_samples' => $samples,
+            'inspection_facilities_counts' => [
+                'matched' => $insp_count,
+                'updated' => $insp_updated,
+            ],
+            'inspection_facilities_samples' => $insp_samples,
             'note' => $write_mode
-                ? 'Tagged imports were deleted. Add &include_untagged=1 to also remove untagged matches.'
-                : 'Dry-run only. Add &write=1 to delete tagged imports. Add &include_untagged=1 to also remove untagged matches.',
+                ? 'facilities_master tagged rows deleted; inspection_facilities names truncated to remove metadata.'
+                : 'Dry-run only. Add &write=1 to delete tagged facilities_master rows AND truncate dirty inspection_facilities names. Linked inspection_reports stay intact.',
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         exit;
     } catch (PDOException $e) {
