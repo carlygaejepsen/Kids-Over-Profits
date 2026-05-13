@@ -454,8 +454,21 @@ if ($recover_ca_names) {
              ORDER BY id ASC"
         )->fetchAll(PDO::FETCH_ASSOC);
 
+        // Build a second lookup that ignores leading zeros (numeric equality).
+        $name_by_int_number = [];
+        foreach ($name_by_number as $num => $name) {
+            $int_num = ltrim($num, '0');
+            if ($int_num === '') $int_num = '0';
+            if (!isset($name_by_int_number[$int_num]) || mb_strlen($name) > mb_strlen($name_by_int_number[$int_num])) {
+                $name_by_int_number[$int_num] = $name;
+            }
+        }
+
         $matched = [];
         $unmatched = [];
+        $unmatched_no_reports = 0;
+        $unmatched_with_reports = 0;
+        $rep_count_stmt = $pdo->prepare("SELECT COUNT(*) FROM inspection_reports WHERE facility_id = ?");
         $rep_lookup = $pdo->prepare(
             "SELECT categories_json FROM inspection_reports WHERE facility_id = ?"
         );
@@ -479,12 +492,23 @@ if ($recover_ca_names) {
 
         foreach ($candidates as $row) {
             $num = trim((string)$row['facility_name']);
+            $int_num = ltrim($num, '0');
+            if ($int_num === '') $int_num = '0';
 
-            // First try: JSON lookup by facility_number
-            $real_name = $name_by_number[$num] ?? null;
-            $source = $real_name ? 'ccl_json' : null;
+            $real_name = null;
+            $source = null;
 
-            // Second try: look in this facility's own linked inspection_reports.categories_json
+            // Try 1: exact string match in CCL JSON
+            if (isset($name_by_number[$num])) {
+                $real_name = $name_by_number[$num];
+                $source = 'ccl_json_exact';
+            }
+            // Try 2: numeric-equality match in CCL JSON (handles leading-zero differences)
+            if (!$real_name && isset($name_by_int_number[$int_num])) {
+                $real_name = $name_by_int_number[$int_num];
+                $source = 'ccl_json_numeric';
+            }
+            // Try 3: linked inspection_reports
             if (!$real_name) {
                 $real_name = $extract_name_from_reports((int)$row['id']);
                 if ($real_name) $source = 'linked_reports';
@@ -498,9 +522,17 @@ if ($recover_ca_names) {
                     'source' => $source,
                 ];
             } else {
+                $rep_count_stmt->execute([(int)$row['id']]);
+                $linked = (int)$rep_count_stmt->fetchColumn();
+                if ($linked > 0) {
+                    $unmatched_with_reports++;
+                } else {
+                    $unmatched_no_reports++;
+                }
                 $unmatched[] = [
                     'id' => (int)$row['id'],
                     'facility_name' => $num,
+                    'linked_reports' => $linked,
                 ];
             }
         }
@@ -522,6 +554,8 @@ if ($recover_ca_names) {
             'ca_numeric_candidates' => count($candidates),
             'matched_count'         => count($matched),
             'unmatched_count'       => count($unmatched),
+            'unmatched_with_reports'=> $unmatched_with_reports,
+            'unmatched_no_reports'  => $unmatched_no_reports,
             'updated'               => $updated,
             'matched_samples'       => array_slice($matched, 0, 30),
             'unmatched_samples'     => array_slice($unmatched, 0, 30),
