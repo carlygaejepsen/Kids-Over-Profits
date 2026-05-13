@@ -572,6 +572,7 @@ if ($recover_ca_names) {
                         'cat_licensee'      => is_array($cats) ? ($cats['licensee'] ?? null) : null,
                         'cat_report_type'   => is_array($cats) ? ($cats['report_type'] ?? null) : null,
                         'cat_finding_count' => is_array($cats) ? ($cats['finding_count'] ?? null) : null,
+                        'narrative_excerpt' => is_array($cats) ? mb_substr((string)($cats['narrative'] ?? ''), 0, 600) : '',
                     ];
                 }
                 $unmatched_report_samples[] = [
