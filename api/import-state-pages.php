@@ -56,6 +56,10 @@ $recover_ca_names = !empty($_GET['recover_ca_names']);  // Recover CA facility n
 if ($cleanup_addresses && $state_param === '') {
     $state_param = 'all';
 }
+// CA name recovery runs without needing a ?state= param.
+if ($recover_ca_names && $state_param === '') {
+    $state_param = 'california';
+}
 
 if ($state_param === '') {
     echo json_encode([
