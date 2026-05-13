@@ -870,18 +870,20 @@
         if (!period) return '';
 
         const isClosed = ['closed', 'shut down', 'shutdown', 'defunct'].includes(status);
-        const startMatch = period.match(/(\d{4})/);
-        const startYear = startMatch ? startMatch[1] : '';
+        const rangeMatch = period.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
+        const startOnlyMatch = !rangeMatch ? period.match(/(\d{4})/) : null;
 
         if (isClosed) {
-            // Try to find a range "1949-1990" or "1949–1990"; otherwise show the raw period.
-            const rangeMatch = period.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
+            // Closed: show the date range (never "Est.").
             if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+            if (startOnlyMatch) return `${startOnlyMatch[1]}–`;
             return period;
         }
 
-        // Open
-        if (startYear) return `Est. ${startYear}`;
+        // Open: "Est. YYYY". If somehow a range was captured for an open facility,
+        // prefer the range so we don't lose info.
+        if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+        if (startOnlyMatch) return `Est. ${startOnlyMatch[1]}`;
         return period;
     };
 

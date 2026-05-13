@@ -260,6 +260,8 @@ function import_parse_state_page($text, $state_name) {
             $candidate_meta = trim($first);
             if (preg_match('/^\(\s*(\d{4})\s*[-\x{2013}\x{2014}]\s*(\d{4})?\s*\)$/u', $candidate_meta, $m)) {
                 if (empty($pending['est_year'])) $pending['est_year'] = $m[1];
+                if (!empty($m[2]) && empty($pending['end_year'])) $pending['end_year'] = $m[2];
+                $pending['closed'] = true;  // a year RANGE in parens implies the facility ended
                 continue;
             }
             if (preg_match('/^\(\s*closed\s*\)$/i', $candidate_meta)) {
@@ -338,6 +340,7 @@ function import_parse_state_page($text, $state_name) {
         $aka = [];
         $fka = [];
         $est_year = '';
+        $end_year = '';
 
         if (preg_match_all('/\(([^)]+)\)/', $first, $matches)) {
             foreach ($matches[1] as $paren) {
@@ -354,8 +357,12 @@ function import_parse_state_page($text, $state_name) {
                     $fka[] = trim($m[1]);
                 } elseif (preg_match('/^(?:est\.?|established)\s*\.?\s*(\d{4})/i', $p, $m)) {
                     $est_year = $m[1];
-                } elseif (preg_match('/(\d{4})\s*[-\x{2013}]\s*(\d{4})?/u', $p, $m)) {
+                } elseif (preg_match('/(\d{4})\s*[-\x{2013}\x{2014}]\s*(\d{4})?/u', $p, $m)) {
                     $est_year = $m[1];
+                    if (!empty($m[2])) {
+                        $end_year = $m[2];
+                        $closed = true;  // a year range means the facility ended
+                    }
                 }
             }
         }
@@ -367,9 +374,13 @@ function import_parse_state_page($text, $state_name) {
 
         // Same-paragraph address(es), if any
         $addresses = [];
-        if (!empty($lines[1]) && preg_match('/^\((\d{4})\s*[-\x{2013}]\s*(\d{4})?\)/u', $lines[1], $m)) {
+        if (!empty($lines[1]) && preg_match('/^\((\d{4})\s*[-\x{2013}\x{2014}]\s*(\d{4})?\)/u', $lines[1], $m)) {
             // Years-range line, advance
             if (!$est_year) $est_year = $m[1];
+            if (!empty($m[2]) && !$end_year) {
+                $end_year = $m[2];
+                $closed = true;
+            }
             $rest_text = trim(implode(' ', array_slice($lines, 2)));
         }
         if ($rest_text !== '') {
@@ -387,6 +398,7 @@ function import_parse_state_page($text, $state_name) {
             'aka'       => $aka,
             'fka'       => $fka,
             'est_year'  => $est_year,
+            'end_year'  => $end_year,
             'addresses' => $addresses,
             'raw'       => $first,
         ];
@@ -434,8 +446,11 @@ function import_entry_to_payload($entry, $state_name) {
             ],
             'operatingPeriod' => [
                 'status'           => $entry['closed'] ? 'Closed' : 'Open',
-                'yearsOfOperation' => $entry['est_year'] ? $entry['est_year'] . '-' : '',
+                'yearsOfOperation' => $entry['est_year']
+                    ? ($entry['est_year'] . '-' . ($entry['end_year'] ?? ''))
+                    : '',
                 'startYear'        => $entry['est_year'] ?: '',
+                'endYear'          => $entry['end_year'] ?? '',
             ],
         ];
         $facilities[] = $facility;
