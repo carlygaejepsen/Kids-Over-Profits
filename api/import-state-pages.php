@@ -546,6 +546,42 @@ if ($recover_ca_names) {
             }
         }
 
+        // Dump up to 3 reports per unmatched facility so the user can judge
+        // whether they're worth preserving.
+        $unmatched_report_samples = [];
+        if (!empty($_GET['show_unmatched_reports'])) {
+            $rep_dump = $pdo->prepare(
+                "SELECT id, report_date, report_url, summary, categories_json, content_length
+                 FROM inspection_reports WHERE facility_id = ? LIMIT 3"
+            );
+            foreach (array_slice($unmatched, 0, 10) as $u) {
+                $rep_dump->execute([(int)$u['id']]);
+                $reports = $rep_dump->fetchAll(PDO::FETCH_ASSOC);
+                $simplified = [];
+                foreach ($reports as $r) {
+                    $cats = json_decode($r['categories_json'] ?? '', true);
+                    $simplified[] = [
+                        'report_id'      => (int)$r['id'],
+                        'date'           => $r['report_date'],
+                        'report_url'     => $r['report_url'],
+                        'summary'        => mb_substr((string)$r['summary'], 0, 200),
+                        'content_length' => (int)$r['content_length'],
+                        'cat_keys'       => is_array($cats) ? array_keys($cats) : [],
+                        'cat_facility_name' => is_array($cats) ? ($cats['facility_name'] ?? null) : null,
+                        'cat_program_name'  => is_array($cats) ? ($cats['program_name'] ?? null) : null,
+                        'cat_licensee'      => is_array($cats) ? ($cats['licensee'] ?? null) : null,
+                        'cat_report_type'   => is_array($cats) ? ($cats['report_type'] ?? null) : null,
+                        'cat_finding_count' => is_array($cats) ? ($cats['finding_count'] ?? null) : null,
+                    ];
+                }
+                $unmatched_report_samples[] = [
+                    'facility_id' => (int)$u['id'],
+                    'facility_name' => $u['facility_name'],
+                    'reports' => $simplified,
+                ];
+            }
+        }
+
         echo json_encode([
             'success' => true,
             'mode'    => $write_mode ? 'write' : 'dry_run',
@@ -559,9 +595,10 @@ if ($recover_ca_names) {
             'updated'               => $updated,
             'matched_samples'       => array_slice($matched, 0, 30),
             'unmatched_samples'     => array_slice($unmatched, 0, 30),
+            'unmatched_report_samples' => $unmatched_report_samples,
             'note' => $write_mode
                 ? 'Recovered names written to inspection_facilities.'
-                : 'Dry-run only. Add &write=1 to commit the renames.',
+                : 'Dry-run only. Add &write=1 to commit. Add &show_unmatched_reports=1 to inspect what is inside the linked reports for unmatched rows.',
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         exit;
     } catch (PDOException $e) {
