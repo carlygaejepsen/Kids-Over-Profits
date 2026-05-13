@@ -50,6 +50,7 @@ $purge_mode = !empty($_GET['purge']);  // Delete previously-imported rows for th
 $debug_mode = !empty($_GET['debug']);  // Include raw post_content snippet + parser text in response
 $revision_id_override = isset($_GET['revision_id']) ? (int)$_GET['revision_id'] : 0;  // Force a specific revision
 $cleanup_addresses = !empty($_GET['cleanup_addresses']);  // Find/delete rows whose unique_name is an address
+$recover_ca_names = !empty($_GET['recover_ca_names']);  // Recover CA facility names from CCL JSON
 
 // Cleanup mode runs without needing a ?state= param.
 if ($cleanup_addresses && $state_param === '') {
@@ -403,6 +404,100 @@ function import_entry_to_payload($entry, $state_name) {
             ],
         ],
     ];
+}
+
+// ----------------------------------------------------------------------------
+// California name recovery mode — short-circuits the per-state loop.
+// For inspection_facilities rows where state='CA' and facility_name is purely
+// numeric (it's actually the facility_number), look up the real name in the
+// CCL JSON batch files and update the row. Preserves bed_capacity / executive_director
+// / program_category / other unique inspection_facilities columns.
+// ----------------------------------------------------------------------------
+if ($recover_ca_names) {
+    try {
+        // Build facility_number -> real_name map from CCL JSON files.
+        $theme_dir = function_exists('get_stylesheet_directory')
+            ? get_stylesheet_directory()
+            : dirname(__DIR__);
+        $ccl_files = glob($theme_dir . '/js/data/ccl_reports_batch_*.json');
+
+        $name_by_number = [];
+        $files_loaded = 0;
+        foreach ($ccl_files as $file) {
+            $raw = @file_get_contents($file);
+            if ($raw === false) continue;
+            $data = json_decode($raw, true);
+            if (!is_array($data)) continue;
+            $files_loaded++;
+            foreach ($data as $report) {
+                if (!is_array($report)) continue;
+                $num  = trim((string)($report['facility_number'] ?? ''));
+                $name = trim((string)($report['facility_name'] ?? ''));
+                if ($num === '' || $name === '') continue;
+                if (preg_match('/^[0-9]+$/', $name)) continue;  // skip if "name" is just another number
+                // Keep the longest seen name (most descriptive)
+                if (!isset($name_by_number[$num]) || mb_strlen($name) > mb_strlen($name_by_number[$num])) {
+                    $name_by_number[$num] = $name;
+                }
+            }
+        }
+
+        // Find CA rows with numeric facility_name.
+        $candidates = $pdo->query(
+            "SELECT id, facility_name FROM inspection_facilities
+             WHERE state = 'CA'
+               AND facility_name REGEXP '^[[:space:]]*[0-9]+[[:space:]]*\$'
+             ORDER BY id ASC"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $matched = [];
+        $unmatched = [];
+        foreach ($candidates as $row) {
+            $num = trim((string)$row['facility_name']);
+            if (isset($name_by_number[$num])) {
+                $matched[] = [
+                    'id' => (int)$row['id'],
+                    'old_name' => $num,
+                    'new_name' => $name_by_number[$num],
+                ];
+            } else {
+                $unmatched[] = [
+                    'id' => (int)$row['id'],
+                    'facility_name' => $num,
+                ];
+            }
+        }
+
+        $updated = 0;
+        if ($write_mode && !empty($matched)) {
+            $upd = $pdo->prepare("UPDATE inspection_facilities SET facility_name = ? WHERE id = ?");
+            foreach ($matched as $m) {
+                $upd->execute([$m['new_name'], $m['id']]);
+                $updated += $upd->rowCount();
+            }
+        }
+
+        echo json_encode([
+            'success' => true,
+            'mode'    => $write_mode ? 'write' : 'dry_run',
+            'ccl_files_loaded'      => $files_loaded,
+            'lookup_map_size'       => count($name_by_number),
+            'ca_numeric_candidates' => count($candidates),
+            'matched_count'         => count($matched),
+            'unmatched_count'       => count($unmatched),
+            'updated'               => $updated,
+            'matched_samples'       => array_slice($matched, 0, 30),
+            'unmatched_samples'     => array_slice($unmatched, 0, 30),
+            'note' => $write_mode
+                ? 'Recovered names written to inspection_facilities.'
+                : 'Dry-run only. Add &write=1 to commit the renames.',
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        exit;
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Recovery failed: ' . $e->getMessage()]);
+        exit;
+    }
 }
 
 // ----------------------------------------------------------------------------
