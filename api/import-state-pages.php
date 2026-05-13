@@ -481,13 +481,17 @@ if ($cleanup_addresses) {
         $insp_samples = [];
         $insp_updated = 0;
 
+        $insp_deleted_facilities = 0;
+        $insp_deleted_reports = 0;
+        $insp_numeric_count = 0;
+        $insp_numeric_samples = [];
+
         if ($insp_table_exists === 'inspection_facilities') {
             $insp_pattern = "("
                 . " facility_name LIKE '%Facility Number:%'"
                 . " OR facility_name LIKE '%Administrator:%'"
                 . " OR facility_name LIKE '%Facility Type:%'"
                 . " OR facility_name LIKE '%Address:%'"
-                . " OR facility_name REGEXP '^[[:space:]]*[0-9]+[[:space:]]*\$'"
                 . ")";
 
             $insp_count = (int)$pdo->query(
@@ -500,9 +504,57 @@ if ($cleanup_addresses) {
                  ORDER BY id DESC LIMIT 30"
             )->fetchAll(PDO::FETCH_ASSOC);
 
+            // Separate query for purely-numeric facility names. Don't auto-delete —
+            // their linked inspection_reports often contain the real name inside
+            // categories_json (facility_name, program_name, licensee, etc.).
+            $numeric_pattern = "facility_name REGEXP '^[[:space:]]*[0-9]+[[:space:]]*\$'";
+            $insp_numeric_count = (int)$pdo->query(
+                "SELECT COUNT(*) FROM inspection_facilities WHERE $numeric_pattern"
+            )->fetchColumn();
+
+            // For each numeric-named facility, pull one of its linked reports
+            // and try to extract a real name from categories_json.
+            $samples_raw = $pdo->query(
+                "SELECT id, state, facility_name FROM inspection_facilities
+                 WHERE $numeric_pattern
+                 ORDER BY id DESC LIMIT 20"
+            )->fetchAll(PDO::FETCH_ASSOC);
+
+            $insp_numeric_samples = [];
+            $reports_table_exists = $pdo->query("SHOW TABLES LIKE 'inspection_reports'")->fetchColumn();
+
+            foreach ($samples_raw as $row) {
+                $row['linked_reports'] = 0;
+                $row['recoverable_name'] = null;
+                if ($reports_table_exists === 'inspection_reports') {
+                    $cnt_stmt = $pdo->prepare("SELECT COUNT(*) FROM inspection_reports WHERE facility_id = ?");
+                    $cnt_stmt->execute([(int)$row['id']]);
+                    $row['linked_reports'] = (int)$cnt_stmt->fetchColumn();
+
+                    $rep_stmt = $pdo->prepare(
+                        "SELECT categories_json FROM inspection_reports
+                         WHERE facility_id = ? LIMIT 1"
+                    );
+                    $rep_stmt->execute([(int)$row['id']]);
+                    $cat_json = $rep_stmt->fetchColumn();
+                    if ($cat_json) {
+                        $cats = json_decode($cat_json, true);
+                        if (is_array($cats)) {
+                            foreach (['facility_name', 'program_name', 'licensee', 'name'] as $key) {
+                                if (!empty($cats[$key]) && is_string($cats[$key])
+                                    && !preg_match('/^[0-9]+$/', trim($cats[$key]))) {
+                                    $row['recoverable_name'] = trim($cats[$key]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                $insp_numeric_samples[] = $row;
+            }
+
             if ($write_mode) {
-                // For each affected row, derive a cleaner name by taking the substring
-                // before the first metadata label, or NULL if we can't recover anything.
+                // (a) Truncate names for rows that have a real name + metadata trailer.
                 $rows = $pdo->query(
                     "SELECT id, facility_name FROM inspection_facilities WHERE $insp_pattern"
                 )->fetchAll(PDO::FETCH_ASSOC);
@@ -512,7 +564,6 @@ if ($cleanup_addresses) {
                 );
                 foreach ($rows as $r) {
                     $name = (string)$r['facility_name'];
-                    // Cut at the first metadata label
                     $cut_positions = [];
                     foreach (['Facility Number:', 'Administrator:', 'Facility Type:', 'Address:'] as $label) {
                         $pos = mb_stripos($name, $label);
@@ -521,16 +572,68 @@ if ($cleanup_addresses) {
                     $clean = $name;
                     if (!empty($cut_positions)) {
                         $clean = trim(mb_substr($name, 0, min($cut_positions)));
-                        // Strip trailing punctuation/commas
                         $clean = rtrim($clean, " ,;:-");
                     }
-                    // Purely numeric → leave as-is (can't recover); skip.
                     if ($clean === '' || preg_match('/^[0-9]+$/', $clean)) {
                         continue;
                     }
                     if ($clean !== $name) {
                         $upd->execute([$clean, (int)$r['id']]);
                         $insp_updated++;
+                    }
+                }
+
+                // (b) For purely-numeric facility names, try to back-fill the name from
+                // an embedded value in categories_json on any linked inspection_reports.
+                // Reports themselves are NEVER deleted. Only delete the parent row when
+                // explicitly opted in via &delete_unrecoverable_numeric=1 (for facilities
+                // where no recoverable name was found AND there are no reports).
+                $numeric_rows = $pdo->query(
+                    "SELECT id, facility_name FROM inspection_facilities WHERE $numeric_pattern"
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                $delete_unrecoverable = !empty($_GET['delete_unrecoverable_numeric']);
+
+                foreach ($numeric_rows as $r) {
+                    $fid = (int)$r['id'];
+
+                    // Look for a real name in linked reports
+                    $rep_stmt = $pdo->prepare(
+                        "SELECT categories_json FROM inspection_reports WHERE facility_id = ?"
+                    );
+                    $rep_stmt->execute([$fid]);
+                    $recovered = null;
+                    while ($cat_json = $rep_stmt->fetchColumn()) {
+                        $cats = json_decode($cat_json, true);
+                        if (!is_array($cats)) continue;
+                        foreach (['facility_name', 'program_name', 'licensee', 'name'] as $key) {
+                            if (!empty($cats[$key]) && is_string($cats[$key])
+                                && !preg_match('/^[0-9]+$/', trim($cats[$key]))) {
+                                $recovered = trim($cats[$key]);
+                                break 2;
+                            }
+                        }
+                    }
+
+                    if ($recovered) {
+                        $upd_name = $pdo->prepare(
+                            "UPDATE inspection_facilities SET facility_name = ? WHERE id = ?"
+                        );
+                        $upd_name->execute([$recovered, $fid]);
+                        $insp_updated++;
+                    } elseif ($delete_unrecoverable) {
+                        // No name recoverable AND user opted into deletion.
+                        $cnt_stmt = $pdo->prepare("SELECT COUNT(*) FROM inspection_reports WHERE facility_id = ?");
+                        $cnt_stmt->execute([$fid]);
+                        $linked = (int)$cnt_stmt->fetchColumn();
+
+                        $rep_del = $pdo->prepare("DELETE FROM inspection_reports WHERE facility_id = ?");
+                        $rep_del->execute([$fid]);
+                        $insp_deleted_reports += $rep_del->rowCount();
+
+                        $fac_del = $pdo->prepare("DELETE FROM inspection_facilities WHERE id = ?");
+                        $fac_del->execute([$fid]);
+                        $insp_deleted_facilities += $fac_del->rowCount();
                     }
                 }
             }
@@ -547,11 +650,17 @@ if ($cleanup_addresses) {
                 'deleted'          => (int)$deleted,
             ],
             'facilities_master_samples' => $samples,
-            'inspection_facilities_counts' => [
+            'inspection_facilities_metadata_strip' => [
                 'matched' => $insp_count,
                 'updated' => $insp_updated,
+                'samples' => $insp_samples,
             ],
-            'inspection_facilities_samples' => $insp_samples,
+            'inspection_facilities_numeric_delete' => [
+                'matched' => $insp_numeric_count,
+                'deleted_facilities' => $insp_deleted_facilities,
+                'deleted_reports'    => $insp_deleted_reports,
+                'samples' => $insp_numeric_samples,
+            ],
             'note' => $write_mode
                 ? 'facilities_master tagged rows deleted; inspection_facilities names truncated to remove metadata.'
                 : 'Dry-run only. Add &write=1 to delete tagged facilities_master rows AND truncate dirty inspection_facilities names. Linked inspection_reports stay intact.',

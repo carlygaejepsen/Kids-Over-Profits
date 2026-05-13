@@ -1867,6 +1867,33 @@ function kop_state_collect_programs($state_name) {
  * @param string $name
  * @return string Normalized lowercase form, e.g. "adapt deer creek".
  */
+/**
+ * Decide whether a facility name is junk that should be filtered from state-hub display.
+ * Catches purely numeric IDs ("547207220"), CCL metadata concatenations
+ * ("... Facility Number: 397005980 Administrator: ..."), placeholder names
+ * ("Facility (Pomona, CA)"), and pure-address rows.
+ *
+ * @param string $name
+ * @return bool true if the name looks like garbage, not a real facility name.
+ */
+function kop_facility_name_looks_junky($name) {
+    $name = trim((string)$name);
+    if ($name === '') return true;
+    // Purely numeric (raw facility_number)
+    if (preg_match('/^[0-9]+$/', $name)) return true;
+    // Placeholder pattern
+    if (mb_stripos($name, 'Facility (') === 0) return true;
+    // CCL metadata concatenations
+    foreach (array('Facility Number:', 'Administrator:', 'Facility Type:', 'License Number:') as $marker) {
+        if (mb_stripos($name, $marker) !== false) return true;
+    }
+    // Pure address: trailing ", ST 99999" or ", ST" and starts with street number
+    if (preg_match('/^[0-9]+\s/', $name) && preg_match('/,\s*[A-Z]{2}[ ,]+[0-9]{5}/', $name)) return true;
+    // Multi-address (ends with ';')
+    if (preg_match('/;\s*$/', $name)) return true;
+    return false;
+}
+
 function kop_normalize_facility_name($name) {
     $s = strtolower(trim((string)$name));
     if ($s === '') return '';
@@ -2072,10 +2099,15 @@ function kop_state_collect_inspection_summaries($state_name) {
 
             $summaries = array();
             foreach ($facility_rows as $f) {
+                $fname = trim((string)$f['facility_name']);
+                // Filter out junk names so they don't surface on the state hub.
+                // The underlying inspection_facilities row stays — /xx-reports/ pages still see it.
+                if (kop_facility_name_looks_junky($fname)) continue;
+
                 $fid = (int)$f['id'];
                 $stats = $stats_by_facility[$fid] ?? array('count' => 0, 'violations' => 0, 'latest' => '');
                 $summaries[] = array(
-                    'facility_name'          => trim((string)$f['facility_name']),
+                    'facility_name'          => $fname,
                     'inspection_address'     => trim((string)($f['full_address'] ?? '')),
                     'inspection_count'       => (int)$stats['count'],
                     'violation_count'        => (int)$stats['violations'],
