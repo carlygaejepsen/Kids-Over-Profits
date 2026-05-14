@@ -113,6 +113,20 @@
         return '';
     };
 
+    const hasJunkPlaceholderName = facility => {
+        const name = normalizeText(facility && facility.name);
+        const projectName = normalizeText(facility && facility.project_name);
+        const operatorName = normalizeText(facility && facility.operator_name);
+        if (pickBestFacilityLabel(name, projectName, operatorName)) return false;
+        if (Array.isArray(facility && facility.inspections)) {
+            for (const insp of facility.inspections) {
+                const licensee = normalizeText(insp && insp.categories && insp.categories.licensee);
+                if (licensee && !isAddressLikeText(licensee)) return false;
+            }
+        }
+        return true;
+    };
+
     const isLikelyBrokenFacilityRecord = facility => {
         const name = normalizeText(facility && facility.name);
         const projectName = normalizeText(facility && facility.project_name);
@@ -123,7 +137,11 @@
         const addressLikeLabel = isAddressLikeText(name) || isAddressLikeText(projectName);
         const stateOnlyAddress = address && normalizeText(config.stateName).toLowerCase() === address.toLowerCase();
 
-        return !hasInspections && !hasUsableLabel && addressLikeLabel && !operatorName && (!address || stateOnlyAddress);
+        if (!hasInspections && !hasUsableLabel && addressLikeLabel && !operatorName && (!address || stateOnlyAddress)) {
+            return true;
+        }
+        // No salvageable label anywhere — would render as "Facility (…)" placeholder.
+        return hasJunkPlaceholderName(facility);
     };
 
     const normalizeCaliforniaDetailedReport = raw => {

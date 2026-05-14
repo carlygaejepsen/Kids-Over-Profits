@@ -2311,6 +2311,9 @@ function kop_state_collect_inspection_summaries($state_name) {
             $name = trim((string)($facility['facility_name'] ?? $facility['name'] ?? ''));
             $address = trim((string)($facility['facility_address'] ?? $facility['address'] ?? ''));
             if ($name === '') continue;
+            // Same junk filter the DB path applies — drops placeholder names like
+            // "Facility (Pomona, CA)", CCL metadata concatenations, pure addresses, etc.
+            if (kop_facility_name_looks_junky($name)) continue;
 
             $facility_capacity = trim((string)($facility['capacity'] ?? ''));
             $facility_census   = trim((string)($facility['census'] ?? ''));
