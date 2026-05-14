@@ -59,9 +59,10 @@ function kop_env_diagnostic($name) {
 $OPENSTATES_API_KEY = kop_resolve_secret('OPENSTATES_API_KEY');
 $CONGRESS_API_KEY   = kop_resolve_secret('CONGRESS_API_KEY');
 
-$bill_number = $_GET['bill_number'] ?? '';
+$bill_number  = $_GET['bill_number'] ?? '';
 $jurisdiction = $_GET['jurisdiction'] ?? '';
-$level = $_GET['level'] ?? 'state';
+$level        = $_GET['level'] ?? 'state';
+$session      = trim((string)($_GET['session'] ?? ''));
 
 if (empty($bill_number) || empty($jurisdiction)) {
     echo json_encode(['success' => false, 'error' => 'Missing required parameters.']);
@@ -111,9 +112,13 @@ try {
         // --- CONGRESS.GOV API (Federal) ---
         // Format: https://api.congress.gov/v3/bill/{congress}/{billType}/{billNumber}
         // Each Congress spans 2 years starting Jan 3 of an odd year (1st = 1789).
-        $current_year = (int) date('Y');
-        $start_year   = ($current_year % 2 === 0) ? $current_year - 1 : $current_year;
-        $congress     = (int) (($start_year - 1789) / 2) + 1;
+        if ($session !== '' && ctype_digit($session)) {
+            $congress = (int) $session;
+        } else {
+            $current_year = (int) date('Y');
+            $start_year   = ($current_year % 2 === 0) ? $current_year - 1 : $current_year;
+            $congress     = (int) (($start_year - 1789) / 2) + 1;
+        }
 
         $mod100 = $congress % 100;
         $mod10  = $congress % 10;
@@ -250,11 +255,13 @@ try {
             $identifier = strtoupper(trim($bill_number));
         }
 
-        $query = http_build_query([
+        $query_args = [
             'jurisdiction' => $jurisdiction,
             'identifier'   => $identifier,
             'sort'         => 'updated_desc',
-        ]);
+        ];
+        if ($session !== '') $query_args['session'] = $session;
+        $query = http_build_query($query_args);
         // OpenStates v3 wants `include` repeated, not comma-joined.
         $query .= '&include=abstracts&include=other_titles&include=versions&include=sources&include=sponsorships';
 

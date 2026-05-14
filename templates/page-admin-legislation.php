@@ -74,11 +74,13 @@ get_header();
                 </div>
 
                 <div class="form-row two-col">
-                    <label>Bill number
-                        <input type="text" name="bill_number" id="leg-bill-number" placeholder="HB123">
-                    </label>
                     <label>Bill type
-                        <input type="text" name="bill_type" id="leg-bill-type" placeholder="HB / SB / AB">
+                        <select name="bill_type" id="leg-bill-type">
+                            <option value="">— pick jurisdiction first —</option>
+                        </select>
+                    </label>
+                    <label>Bill number
+                        <input type="text" name="bill_number" id="leg-bill-number" placeholder="1190">
                     </label>
                 </div>
 
@@ -119,8 +121,10 @@ get_header();
                 </div>
 
                 <div class="form-row two-col">
-                    <label>Session / year
-                        <input type="text" name="session_year" id="leg-session-year" placeholder="2025-2026">
+                    <label>Session
+                        <select name="session_year" id="leg-session-year">
+                            <option value="">— pick jurisdiction first —</option>
+                        </select>
                     </label>
                     <label>Status
                         <select name="status" id="leg-status">
@@ -243,7 +247,8 @@ get_header();
 window.adminLegislationConfig = {
     apiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/save-legislation.php'); ?>',
     foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>',
-    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-bill-details.php'); ?>'
+    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-bill-details.php'); ?>',
+    metaApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/list-jurisdiction-meta.php'); ?>'
 };
 </script>
 <script src="<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/js/admin-state-content.js'); ?>?v=<?php echo time(); ?>"></script>

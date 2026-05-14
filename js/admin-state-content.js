@@ -314,9 +314,65 @@
             status.textContent = '';
         };
 
+        const populateSelectOptions = (selectId, options, currentValue) => {
+            const sel = document.getElementById(selectId);
+            if (!sel) return;
+            const desired = currentValue !== undefined && currentValue !== null && currentValue !== ''
+                ? String(currentValue)
+                : sel.value;
+            sel.innerHTML = '';
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = '—';
+            sel.appendChild(placeholder);
+            options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt.value;
+                o.textContent = opt.label;
+                sel.appendChild(o);
+            });
+            // If the desired value isn't in the list, append it so existing records still display.
+            if (desired && !Array.from(sel.options).some(o => o.value === desired)) {
+                const extra = document.createElement('option');
+                extra.value = desired;
+                extra.textContent = desired + ' (custom)';
+                sel.appendChild(extra);
+            }
+            sel.value = desired || '';
+        };
+
+        const loadJurisdictionMeta = async (jurisdiction, level, preserveValues = {}) => {
+            const billTypeSel = document.getElementById('leg-bill-type');
+            const sessionSel  = document.getElementById('leg-session-year');
+            if (!jurisdiction) {
+                if (billTypeSel) billTypeSel.innerHTML = '<option value="">— pick jurisdiction first —</option>';
+                if (sessionSel)  sessionSel.innerHTML  = '<option value="">— pick jurisdiction first —</option>';
+                return;
+            }
+            try {
+                const params = new URLSearchParams({ jurisdiction, level: level || 'state' });
+                const res = await fetch(`${config.metaApiUrl}?${params.toString()}`, { credentials: 'same-origin' });
+                const data = await res.json();
+                const billTypes = (data.bill_types || []).map(bt => ({ value: bt, label: bt }));
+                const sessions  = (data.sessions  || []).map(s  => ({ value: s.identifier, label: s.name || s.identifier }));
+                populateSelectOptions('leg-bill-type', billTypes, preserveValues.bill_type);
+                populateSelectOptions('leg-session-year', sessions, preserveValues.session_year);
+            } catch (err) {
+                console.error('Meta fetch failed:', err);
+            }
+        };
+
         const populateForm = record => {
             Object.entries(fieldMap).forEach(([key, id]) => setFieldValue(id, record[key]));
             Object.entries(arrayFieldMap).forEach(([key, id]) => setFieldValue(id, record[key]));
+            // Refresh per-jurisdiction dropdowns so saved session/bill_type render correctly.
+            if (record.jurisdiction) {
+                const level = record.jurisdiction === 'Federal' ? 'federal' : 'state';
+                loadJurisdictionMeta(record.jurisdiction, level, {
+                    bill_type:    record.bill_type,
+                    session_year: record.session_year,
+                });
+            }
         };
 
         const collectPayload = () => {
@@ -392,17 +448,40 @@
             }
         });
 
+        // Refresh per-jurisdiction dropdowns whenever the user changes jurisdiction or level.
+        const jurisdictionSel = document.getElementById('leg-jurisdiction');
+        const levelSel = document.getElementById('leg-level');
+        const refreshMeta = () => {
+            const j = getFieldValue('leg-jurisdiction');
+            let lv = getFieldValue('leg-level');
+            if (j === 'Federal') lv = 'federal';
+            loadJurisdictionMeta(j, lv);
+        };
+        if (jurisdictionSel) jurisdictionSel.addEventListener('change', refreshMeta);
+        if (levelSel) levelSel.addEventListener('change', refreshMeta);
+
         if (fetchBtn) {
             fetchBtn.addEventListener('click', async () => {
-                const billNumber = getFieldValue('leg-bill-number');
+                const rawNumber  = getFieldValue('leg-bill-number').trim();
+                const billType   = getFieldValue('leg-bill-type').trim();
                 const jurisdiction = getFieldValue('leg-jurisdiction');
-                const level = getFieldValue('leg-level');
+                const session    = getFieldValue('leg-session-year');
+                let level        = getFieldValue('leg-level');
+                if (jurisdiction === 'Federal') level = 'federal';
 
-                if (!billNumber || !jurisdiction) {
+                if (!rawNumber || !jurisdiction) {
                     status.textContent = 'Please enter a bill number and jurisdiction first.';
                     status.style.color = '#dc2626';
                     return;
                 }
+
+                // Combine bill type + number if the user gave them separately
+                // (e.g. type "SB" + number "1190" -> "SB 1190"). If they already
+                // typed a prefix into the number field, leave it alone.
+                const hasPrefix = /^[a-zA-Z]/.test(rawNumber);
+                const combinedNumber = (billType && !hasPrefix)
+                    ? `${billType} ${rawNumber}`
+                    : rawNumber;
 
                 fetchBtn.disabled = true;
                 const originalHTML = fetchBtn.innerHTML;
@@ -412,10 +491,11 @@
 
                 try {
                     const params = new URLSearchParams({
-                        bill_number: billNumber,
+                        bill_number: combinedNumber,
                         jurisdiction: jurisdiction,
                         level: level
                     });
+                    if (session) params.set('session', session);
                     const res = await fetch(`${config.fetchApiUrl}?${params.toString()}`, { credentials: 'same-origin' });
                     const data = await res.json();
 
