@@ -185,8 +185,9 @@ try {
             'jurisdiction' => $jurisdiction,
             'identifier'   => $identifier,
             'sort'         => 'updated_desc',
-            'include'      => 'abstracts,other_titles'
         ]);
+        // OpenStates v3 wants `include` repeated, not comma-joined.
+        $query .= '&include=abstracts&include=other_titles';
 
         $url = "https://v3.openstates.org/bills?{$query}";
 
