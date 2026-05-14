@@ -184,21 +184,40 @@ try {
         $query = http_build_query([
             'jurisdiction' => $jurisdiction,
             'identifier'   => $identifier,
+            'sort'         => 'updated_desc',
             'include'      => 'abstracts,other_titles'
         ]);
-        
+
         $url = "https://openstates.org/api/v3/bills?{$query}";
-        
+
         $response = wp_remote_get($url, [
             'headers' => ['X-API-KEY' => $OPENSTATES_API_KEY]
         ]);
-        
-        if (is_wp_error($response)) throw new Exception($response->get_error_message());
-        
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-        $bill = $body['results'][0] ?? null;
 
-        if (!$bill) throw new Exception("State bill not found in " . $jurisdiction);
+        if (is_wp_error($response)) throw new Exception($response->get_error_message());
+
+        $http_code = wp_remote_retrieve_response_code($response);
+        $raw_body  = wp_remote_retrieve_body($response);
+        $body      = json_decode($raw_body, true);
+        $bill      = $body['results'][0] ?? null;
+
+        if (!$bill) {
+            echo json_encode([
+                'success'    => false,
+                'error'      => "State bill not found in {$jurisdiction}",
+                'diagnostic' => [
+                    'queried_url'        => $url,
+                    'identifier_sent'    => $identifier,
+                    'jurisdiction_sent'  => $jurisdiction,
+                    'http_status'        => $http_code,
+                    'openstates_error'   => $body['detail'] ?? null,
+                    'result_count'       => isset($body['results']) ? count($body['results']) : null,
+                    'pagination'         => $body['pagination'] ?? null,
+                    'raw_body_excerpt'   => substr($raw_body, 0, 500),
+                ],
+            ]);
+            exit;
+        }
 
         $result_data = [
             'bill_number'      => $bill['identifier'],
