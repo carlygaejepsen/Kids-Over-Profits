@@ -113,7 +113,7 @@ get_header();
                 </div>
 
                 <div class="form-row">
-                    <button type="button" id="fetchLawsuitBtn" class="primary-btn" style="background: #33A7B5; border: none; width: 100%; margin: 10px 0 25px 0;">✨ Auto-populate details from court records</button>
+                    <button type="button" id="fetchLawsuitBtn" class="primary-btn autofill-btn">✨ Auto-populate details from court records</button>
                 </div>
 
                 <div class="form-row two-col">
