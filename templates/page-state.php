@@ -87,14 +87,30 @@ window.statePageConfig = {
     folderContentUrl: <?php echo wp_json_encode(esc_url_raw(rest_url('kop/v1/folder-content'))); ?>,
     foldersUrl: <?php echo wp_json_encode(esc_url_raw(rest_url('kop/v1/folders'))); ?>,
     newsSubmitUrl: <?php
-        $news_pages = function_exists('get_pages') ? get_pages(array(
-            'meta_key' => '_wp_page_template',
-            'meta_value__in' => array('templates/page-news-processor.php', 'page-news-processor.php'),
-            'number' => 1,
-        )) : array();
-        $news_url = (is_array($news_pages) && !empty($news_pages))
-            ? get_permalink($news_pages[0])
-            : home_url('/news-processor/');
+        $news_url = '';
+        if (class_exists('WP_Query')) {
+            $news_query = new WP_Query(array(
+                'post_type'      => 'page',
+                'posts_per_page' => 1,
+                'no_found_rows'  => true,
+                'fields'         => 'ids',
+                'meta_query'     => array(
+                    array(
+                        'key'     => '_wp_page_template',
+                        'value'   => array('templates/page-news-processor.php', 'page-news-processor.php'),
+                        'compare' => 'IN',
+                    ),
+                ),
+            ));
+            if (!empty($news_query->posts)) {
+                $news_url = get_permalink($news_query->posts[0]);
+            }
+            wp_reset_postdata();
+        }
+        if (empty($news_url)) {
+            $news_page = function_exists('get_page_by_path') ? get_page_by_path('news-processor') : null;
+            $news_url = $news_page ? get_permalink($news_page) : home_url('/news-processor/');
+        }
         echo wp_json_encode($news_url);
     ?>
 };
