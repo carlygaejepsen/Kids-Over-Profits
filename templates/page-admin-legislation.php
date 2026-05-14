@@ -13,7 +13,8 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
     wp_die('Access denied. Admin privileges required.');
 }
 
-$us_states = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','Federal'];
+$us_states = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+$federal_option = 'Federal';
 
 get_header();
 ?>
@@ -29,11 +30,19 @@ get_header();
     <div class="admin-state-content-layout">
         <section class="admin-state-content-list">
             <div class="list-controls">
+                <select id="filterLevel">
+                    <option value="">All levels</option>
+                    <option value="state">State only</option>
+                    <option value="federal">Federal only</option>
+                </select>
                 <select id="filterJurisdiction">
                     <option value="">All jurisdictions</option>
-                    <?php foreach ($us_states as $state): ?>
-                        <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
-                    <?php endforeach; ?>
+                    <option value="<?php echo esc_attr($federal_option); ?>"><?php echo esc_html($federal_option); ?></option>
+                    <optgroup label="US States">
+                        <?php foreach ($us_states as $state): ?>
+                            <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
+                        <?php endforeach; ?>
+                    </optgroup>
                 </select>
                 <select id="filterPublicationStatus">
                     <option value="">All statuses</option>
@@ -55,6 +64,19 @@ get_header();
             <form id="legislationForm" autocomplete="off">
                 <input type="hidden" name="id" id="leg-id" value="">
 
+                <div class="form-row">
+                    <label>Legislation level
+                        <select name="legislation_level" id="leg-level">
+                            <option value="state" selected>State</option>
+                            <option value="federal">Federal</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <button type="button" id="fetchLegislationBtn" class="primary-btn" style="background: #33A7B5; border: none; width: 100%; margin-bottom: 20px;">✨ Auto-populate bill details from government sources</button>
+                </div>
+
                 <div class="form-row two-col">
                     <label>Bill number
                         <input type="text" name="bill_number" id="leg-bill-number" placeholder="HB123">
@@ -74,9 +96,12 @@ get_header();
                     <label>Jurisdiction
                         <select name="jurisdiction" id="leg-jurisdiction">
                             <option value="">--</option>
-                            <?php foreach ($us_states as $state): ?>
-                                <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
-                            <?php endforeach; ?>
+                            <option value="<?php echo esc_attr($federal_option); ?>"><?php echo esc_html($federal_option); ?></option>
+                            <optgroup label="US States">
+                                <?php foreach ($us_states as $state): ?>
+                                    <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
                         </select>
                     </label>
                     <label>Chamber
@@ -217,7 +242,8 @@ get_header();
 <script>
 window.adminLegislationConfig = {
     apiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/save-legislation.php'); ?>',
-    foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>'
+    foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>',
+    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-bill-details.php'); ?>'
 };
 </script>
 <script src="<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/js/admin-state-content.js'); ?>?v=<?php echo time(); ?>"></script>

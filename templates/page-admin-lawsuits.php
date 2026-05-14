@@ -13,7 +13,8 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
     wp_die('Access denied. Admin privileges required.');
 }
 
-$us_states = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','Federal'];
+$us_states = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+$federal_option = 'Federal';
 
 get_header();
 ?>
@@ -31,9 +32,12 @@ get_header();
             <div class="list-controls">
                 <select id="filterJurisdiction">
                     <option value="">All jurisdictions</option>
-                    <?php foreach ($us_states as $state): ?>
-                        <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
-                    <?php endforeach; ?>
+                    <option value="<?php echo esc_attr($federal_option); ?>"><?php echo esc_html($federal_option); ?></option>
+                    <optgroup label="US States">
+                        <?php foreach ($us_states as $state): ?>
+                            <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
+                        <?php endforeach; ?>
+                    </optgroup>
                 </select>
                 <select id="filterPublicationStatus">
                     <option value="">All statuses</option>
@@ -74,17 +78,17 @@ get_header();
                     <label>Jurisdiction
                         <select name="jurisdiction" id="lawsuit-jurisdiction">
                             <option value="">--</option>
-                            <?php foreach ($us_states as $state): ?>
-                                <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
-                            <?php endforeach; ?>
+                            <option value="<?php echo esc_attr($federal_option); ?>"><?php echo esc_html($federal_option); ?></option>
+                            <optgroup label="US States">
+                                <?php foreach ($us_states as $state): ?>
+                                    <option value="<?php echo esc_attr($state); ?>"><?php echo esc_html($state); ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
                         </select>
                     </label>
                     <label>Filing date
                         <input type="date" name="filing_date" id="lawsuit-filing-date">
                     </label>
-                </div>
-
-                <div class="form-row two-col">
                     <label>Status
                         <select name="status" id="lawsuit-status">
                             <option value="unknown">Unknown</option>
