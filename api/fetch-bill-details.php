@@ -170,20 +170,65 @@ try {
             }
         }
 
+        // Fetch summary (latest version's text, HTML stripped).
+        $summary = '';
+        $sum_url = "https://api.congress.gov/v3/bill/{$congress}/{$type}/{$num}/summaries?api_key={$CONGRESS_API_KEY}";
+        $sum_response = wp_remote_get($sum_url);
+        if (!is_wp_error($sum_response)) {
+            $sum_body = json_decode(wp_remote_retrieve_body($sum_response), true);
+            $summaries = $sum_body['summaries'] ?? [];
+            if (!empty($summaries)) {
+                usort($summaries, function($a, $b) {
+                    return strcmp($b['actionDate'] ?? '', $a['actionDate'] ?? '');
+                });
+                $summary = trim(html_entity_decode(strip_tags($summaries[0]['text'] ?? '')));
+            }
+        }
+
+        // Subject tags: policyArea (inline) + legislativeSubjects from /subjects.
+        $subject_tags = [];
+        if (!empty($bill['policyArea']['name'])) {
+            $subject_tags[] = $bill['policyArea']['name'];
+        }
+        $subj_url = "https://api.congress.gov/v3/bill/{$congress}/{$type}/{$num}/subjects?api_key={$CONGRESS_API_KEY}";
+        $subj_response = wp_remote_get($subj_url);
+        if (!is_wp_error($subj_response)) {
+            $subj_body = json_decode(wp_remote_retrieve_body($subj_response), true);
+            foreach ($subj_body['subjects']['legislativeSubjects'] ?? [] as $s) {
+                if (!empty($s['name'])) $subject_tags[] = $s['name'];
+            }
+        }
+        $subject_tags = array_values(array_unique($subject_tags));
+
+        // Sponsors (primary only is returned inline by /bill).
+        $sponsors = [];
+        foreach ($bill['sponsors'] ?? [] as $s) {
+            $name = trim($s['fullName'] ?? '');
+            if ($name !== '') $sponsors[] = $name . ' (primary)';
+        }
+
+        // Map federal chamber to the dropdown's federal_* values.
+        $fed_chamber = (strpos($type, 's') === 0) ? 'federal_senate' : 'federal_house';
+
         $result_data = [
-            'bill_number'      => $bill['type'] . $bill['number'],
-            'bill_type'        => $bill['type'],
-            'bill_title'       => $bill['title'] ?? '',
-            'jurisdiction'     => 'Federal',
-            'chamber'          => (strpos($type, 's') === 0) ? 'senate' : 'house',
-            'session_year'     => $congress_label . ' Congress',
-            'status'           => kop_federal_status_from_action($bill['latestAction']['text'] ?? ''),
-            'introduced_date'  => $bill['introducedDate'] ?? '',
-            'last_action_date' => $bill['latestAction']['actionDate'] ?? '',
-            'last_action_text' => $bill['latestAction']['text'] ?? '',
-            'full_text_url'    => $full_text_url,
-            'official_url'     => "https://www.congress.gov/bill/{$congress_label}-congress/" .
-                                  (($type === 'hr') ? 'house-bill' : 'senate-bill') . "/{$num}"
+            'bill_number'        => $bill['type'] . $bill['number'],
+            'bill_type'          => $bill['type'],
+            'bill_title'         => $bill['title'] ?? '',
+            'jurisdiction'       => 'Federal',
+            'chamber'            => $fed_chamber,
+            'session_year'       => $congress_label . ' Congress',
+            'status'             => kop_federal_status_from_action($bill['latestAction']['text'] ?? ''),
+            'introduced_date'    => $bill['introducedDate'] ?? '',
+            'last_action_date'   => $bill['latestAction']['actionDate'] ?? '',
+            'last_action_text'   => $bill['latestAction']['text'] ?? '',
+            'summary'            => $summary,
+            'sponsors'           => $sponsors,
+            'subject_tags'       => $subject_tags,
+            'full_text_url'      => $full_text_url,
+            'official_url'       => "https://www.congress.gov/bill/{$congress_label}-congress/" .
+                                    (($type === 'hr') ? 'house-bill' : 'senate-bill') . "/{$num}",
+            'position'           => 'unknown',
+            'publication_status' => 'draft',
         ];
 
     } else {
@@ -211,7 +256,7 @@ try {
             'sort'         => 'updated_desc',
         ]);
         // OpenStates v3 wants `include` repeated, not comma-joined.
-        $query .= '&include=abstracts&include=other_titles&include=versions&include=sources';
+        $query .= '&include=abstracts&include=other_titles&include=versions&include=sources&include=sponsorships';
 
         $url = "https://v3.openstates.org/bills?{$query}";
 
@@ -257,19 +302,66 @@ try {
         // fall back to the OpenStates page.
         $official_url = $bill['sources'][0]['url'] ?? ($bill['openstates_url'] ?? '');
 
+        // Map sponsorships -> array of "Name (role)" strings, primaries first.
+        $sponsors = [];
+        if (!empty($bill['sponsorships']) && is_array($bill['sponsorships'])) {
+            usort($bill['sponsorships'], function($a, $b) {
+                return (int)!empty($b['primary']) - (int)!empty($a['primary']);
+            });
+            foreach ($bill['sponsorships'] as $s) {
+                $name = trim($s['name'] ?? '');
+                if ($name === '') continue;
+                $role = strtolower($s['classification'] ?? '');
+                if (!empty($s['primary'])) $role = 'primary';
+                $sponsors[] = $role ? "{$name} ({$role})" : $name;
+            }
+        }
+
+        // Extract the bill_type prefix from the identifier (e.g., "SB" from "SB 1190").
+        $bill_type = '';
+        if (preg_match('/^([A-Za-z]+)/', $bill['identifier'] ?? '', $tm)) {
+            $bill_type = strtoupper($tm[1]);
+        }
+
+        // Chamber: prefer the chamber name (lets us distinguish Assembly from House).
+        $org_class = $bill['from_organization']['classification'] ?? ($bill['org_classification'] ?? '');
+        $org_name  = $bill['from_organization']['name'] ?? '';
+        if ($org_class === 'upper') {
+            $chamber = 'senate';
+        } elseif (stripos($org_name, 'assembly') !== false) {
+            $chamber = 'assembly';
+        } elseif ($org_class === 'lower') {
+            $chamber = 'house';
+        } else {
+            $chamber = 'unknown';
+        }
+
+        // Subject tags from OpenStates' `subject` array (inline, no include needed).
+        $subject_tags = [];
+        if (!empty($bill['subject']) && is_array($bill['subject'])) {
+            foreach ($bill['subject'] as $s) {
+                if (is_string($s) && $s !== '') $subject_tags[] = $s;
+            }
+        }
+
         $result_data = [
-            'bill_number'      => $bill['identifier'],
-            'bill_title'       => $bill['title'],
-            'jurisdiction'     => $jurisdiction,
-            'chamber'          => ($bill['org_classification'] === 'upper') ? 'senate' : 'house',
-            'session_year'     => $bill['session'] ?? '',
-            'status'           => kop_state_status_from_classifications($bill['latest_action_classification'] ?? []),
-            'introduced_date'  => substr($bill['first_action_date'] ?? '', 0, 10),
-            'last_action_date' => substr($bill['latest_action_date'] ?? '', 0, 10),
-            'last_action_text' => $bill['latest_action_description'] ?? '',
-            'summary'          => $bill['abstracts'][0]['abstract'] ?? '',
-            'full_text_url'    => $full_text_url,
-            'official_url'     => $official_url,
+            'bill_number'        => $bill['identifier'],
+            'bill_type'          => $bill_type,
+            'bill_title'         => $bill['title'],
+            'jurisdiction'       => $jurisdiction,
+            'chamber'            => $chamber,
+            'session_year'       => $bill['session'] ?? '',
+            'status'             => kop_state_status_from_classifications($bill['latest_action_classification'] ?? []),
+            'introduced_date'    => substr($bill['first_action_date'] ?? '', 0, 10),
+            'last_action_date'   => substr($bill['latest_action_date'] ?? '', 0, 10),
+            'last_action_text'   => $bill['latest_action_description'] ?? '',
+            'summary'            => $bill['abstracts'][0]['abstract'] ?? '',
+            'sponsors'           => $sponsors,
+            'subject_tags'       => $subject_tags,
+            'full_text_url'      => $full_text_url,
+            'official_url'       => $official_url,
+            'position'           => 'unknown',
+            'publication_status' => 'draft',
         ];
     }
 
