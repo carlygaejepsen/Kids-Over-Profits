@@ -233,6 +233,7 @@
         const reloadBtn = document.getElementById('reloadList');
         const filterJurisdiction = document.getElementById('filterJurisdiction');
         const filterPubStatus = document.getElementById('filterPublicationStatus');
+        const fetchBtn = document.getElementById('fetchLegislationBtn');
 
         const fieldMap = {
             id: 'leg-id',
@@ -344,6 +345,51 @@
                 status.textContent = 'Save failed: ' + (data.error || 'unknown');
             }
         });
+
+        if (fetchBtn) {
+            fetchBtn.addEventListener('click', async () => {
+                const billNumber = getFieldValue('leg-bill-number');
+                const jurisdiction = getFieldValue('leg-jurisdiction');
+                const level = getFieldValue('leg-level');
+
+                if (!billNumber || !jurisdiction) {
+                    status.textContent = 'Please enter a bill number and jurisdiction first.';
+                    status.style.color = '#dc2626';
+                    return;
+                }
+
+                fetchBtn.disabled = true;
+                const originalHTML = fetchBtn.innerHTML;
+                fetchBtn.textContent = '✨ Fetching...';
+                status.textContent = 'Fetching bill details...';
+                status.style.color = '';
+
+                try {
+                    const params = new URLSearchParams({
+                        bill_number: billNumber,
+                        jurisdiction: jurisdiction,
+                        level: level
+                    });
+                    const res = await fetch(`${config.fetchApiUrl}?${params.toString()}`, { credentials: 'same-origin' });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        populateForm(data.data);
+                        status.textContent = 'Bill details populated.';
+                    } else {
+                        status.textContent = 'Fetch failed: ' + (data.error || 'Check bill number and jurisdiction.');
+                        status.style.color = '#dc2626';
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    status.textContent = 'Error connecting to fetch API.';
+                    status.style.color = '#dc2626';
+                } finally {
+                    fetchBtn.disabled = false;
+                    fetchBtn.innerHTML = originalHTML;
+                }
+            });
+        }
 
         resetBtn.addEventListener('click', resetForm);
         newBtn.addEventListener('click', resetForm);
