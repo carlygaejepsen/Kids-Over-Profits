@@ -1116,6 +1116,23 @@
         }
     }
 
+    function applyUrlPrefill() {
+        const params = new URLSearchParams(window.location.search);
+        const stateName = params.get('prefill_state');
+        if (!stateName) return;
+
+        const locationInput = document.querySelector('[name="location"]');
+        if (!locationInput) return;
+
+        const current = (locationInput.value || '').trim();
+        if (!current || !current.toLowerCase().includes(stateName.toLowerCase())) {
+            locationInput.value = stateName;
+            formData.location = stateName;
+            locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+            saveToLocalStorage();
+        }
+    }
+
     // Initialize on load
     function init() {
         loadFromLocalStorage();
@@ -1134,6 +1151,7 @@
         restoreFormState();
         restoreSavedValues();
         restoreCustomInstructions();
+        applyUrlPrefill();
         if (typeof initializeAutocompleteFields === 'function') {
             initializeAutocompleteFields();
         }
