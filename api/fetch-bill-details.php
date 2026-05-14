@@ -188,7 +188,7 @@ try {
             'include'      => 'abstracts,other_titles'
         ]);
 
-        $url = "https://openstates.org/api/v3/bills?{$query}";
+        $url = "https://v3.openstates.org/bills?{$query}";
 
         $response = wp_remote_get($url, [
             'headers' => ['X-API-KEY' => $OPENSTATES_API_KEY]
