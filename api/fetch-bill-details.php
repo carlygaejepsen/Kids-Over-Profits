@@ -147,6 +147,29 @@ try {
 
         if (!$bill) throw new Exception("Federal bill not found.");
 
+        // Fetch bill text URL. Congress.gov returns text versions in reverse
+        // chronological order; take the first and prefer the formatted-text link.
+        $full_text_url = '';
+        $text_url = "https://api.congress.gov/v3/bill/{$congress}/{$type}/{$num}/text?api_key={$CONGRESS_API_KEY}";
+        $text_response = wp_remote_get($text_url);
+        if (!is_wp_error($text_response)) {
+            $text_body = json_decode(wp_remote_retrieve_body($text_response), true);
+            $versions = $text_body['textVersions'] ?? [];
+            if (!empty($versions)) {
+                $latest = $versions[0];
+                $formats = $latest['formats'] ?? [];
+                foreach ($formats as $fmt) {
+                    if (stripos($fmt['type'] ?? '', 'Formatted Text') !== false) {
+                        $full_text_url = $fmt['url'];
+                        break;
+                    }
+                }
+                if ($full_text_url === '' && !empty($formats[0]['url'])) {
+                    $full_text_url = $formats[0]['url'];
+                }
+            }
+        }
+
         $result_data = [
             'bill_number'      => $bill['type'] . $bill['number'],
             'bill_type'        => $bill['type'],
@@ -158,6 +181,7 @@ try {
             'introduced_date'  => $bill['introducedDate'] ?? '',
             'last_action_date' => $bill['latestAction']['actionDate'] ?? '',
             'last_action_text' => $bill['latestAction']['text'] ?? '',
+            'full_text_url'    => $full_text_url,
             'official_url'     => "https://www.congress.gov/bill/{$congress_label}-congress/" .
                                   (($type === 'hr') ? 'house-bill' : 'senate-bill') . "/{$num}"
         ];
