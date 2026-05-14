@@ -73,22 +73,12 @@ get_header();
                     </label>
                 </div>
 
-                <div class="form-row">
-                    <button type="button" id="fetchLegislationBtn" class="primary-btn" style="background: #33A7B5; border: none; width: 100%; margin-bottom: 20px;">✨ Auto-populate bill details from government sources</button>
-                </div>
-
                 <div class="form-row two-col">
                     <label>Bill number
                         <input type="text" name="bill_number" id="leg-bill-number" placeholder="HB123">
                     </label>
                     <label>Bill type
                         <input type="text" name="bill_type" id="leg-bill-type" placeholder="HB / SB / AB">
-                    </label>
-                </div>
-
-                <div class="form-row">
-                    <label>Bill title *
-                        <input type="text" name="bill_title" id="leg-bill-title" required>
                     </label>
                 </div>
 
@@ -115,6 +105,16 @@ get_header();
                             <option value="federal_senate">US Senate</option>
                             <option value="other">Other</option>
                         </select>
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <button type="button" id="fetchLegislationBtn" class="primary-btn" style="background: #33A7B5; border: none; width: 100%; margin-bottom: 20px;">✨ Auto-populate details for the bill entered above</button>
+                </div>
+
+                <div class="form-row">
+                    <label>Bill title *
+                        <input type="text" name="bill_title" id="leg-bill-title" required>
                     </label>
                 </div>
 
