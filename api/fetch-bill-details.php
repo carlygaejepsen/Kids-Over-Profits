@@ -8,7 +8,8 @@
 
 header('Content-Type: application/json');
 
-// Bootstrap WordPress
+require_once __DIR__ . '/config.php';
+
 if (!defined('ABSPATH')) {
     $current = __DIR__;
     for ($i = 0; $i < 6; $i++) {
@@ -20,9 +21,43 @@ if (!defined('ABSPATH')) {
     }
 }
 
-// Retrieve keys from environment variables
-$OPENSTATES_API_KEY = getenv('OPENSTATES_API_KEY') ?: ($_ENV['OPENSTATES_API_KEY'] ?? '');
-$CONGRESS_API_KEY = getenv('CONGRESS_API_KEY') ?: ($_ENV['CONGRESS_API_KEY'] ?? '');
+// Resolve API keys from env / WordPress constants / $_SERVER
+function kop_resolve_secret($name) {
+    $v = getenv($name);
+    if ($v !== false && $v !== '') return $v;
+    if (!empty($_ENV[$name])) return $_ENV[$name];
+    if (!empty($_SERVER[$name])) return $_SERVER[$name];
+    if (defined($name)) {
+        $c = constant($name);
+        if (!empty($c)) return $c;
+    }
+    return '';
+}
+
+// Build a diagnostic report (no secret values) explaining where .env was searched.
+function kop_env_diagnostic($name) {
+    $report = [
+        'requested_key' => $name,
+        'env_file_found_at' => null,
+        'env_file_searched_paths' => [],
+        'wp_constant_defined' => defined($name),
+        'getenv_returned_false' => (getenv($name) === false),
+        'in_dollar_env' => array_key_exists($name, $_ENV),
+        'in_dollar_server' => array_key_exists($name, $_SERVER),
+    ];
+    $current = __DIR__;
+    for ($i = 0; $i < 6; $i++) {
+        $current = dirname($current);
+        $report['env_file_searched_paths'][] = $current . '/.env';
+        if ($report['env_file_found_at'] === null && file_exists($current . '/.env')) {
+            $report['env_file_found_at'] = $current . '/.env';
+        }
+    }
+    return $report;
+}
+
+$OPENSTATES_API_KEY = kop_resolve_secret('OPENSTATES_API_KEY');
+$CONGRESS_API_KEY   = kop_resolve_secret('CONGRESS_API_KEY');
 
 $bill_number = $_GET['bill_number'] ?? '';
 $jurisdiction = $_GET['jurisdiction'] ?? '';
@@ -93,7 +128,14 @@ try {
         $type = strtolower($matches[1] ?? 'hr');
         $num = $matches[2] ?? preg_replace('/\D/', '', $bill_number);
 
-        if (empty($CONGRESS_API_KEY)) throw new Exception("Congress.gov API key is not configured in the environment.");
+        if (empty($CONGRESS_API_KEY)) {
+            echo json_encode([
+                'success' => false,
+                'error'   => 'Congress.gov API key is not configured in the environment.',
+                'diagnostic' => kop_env_diagnostic('CONGRESS_API_KEY'),
+            ]);
+            exit;
+        }
 
         $url = "https://api.congress.gov/v3/bill/{$congress}/{$type}/{$num}?api_key={$CONGRESS_API_KEY}";
 
@@ -122,12 +164,26 @@ try {
 
     } else {
         // --- OPENSTATES API v3 (State) ---
-        if (empty($OPENSTATES_API_KEY)) throw new Exception("OpenStates API key is not configured in the environment.");
+        if (empty($OPENSTATES_API_KEY)) {
+            echo json_encode([
+                'success' => false,
+                'error'   => 'OpenStates API key is not configured in the environment.',
+                'diagnostic' => kop_env_diagnostic('OPENSTATES_API_KEY'),
+            ]);
+            exit;
+        }
 
-        // Search by jurisdiction and identifier
+        // OpenStates v3 expects identifiers like "SB 1130" with a space between
+        // the chamber prefix and the number. Normalize whatever the user typed.
+        if (preg_match('/([a-zA-Z]+)\s*(\d+)/', $bill_number, $idMatch)) {
+            $identifier = strtoupper($idMatch[1]) . ' ' . $idMatch[2];
+        } else {
+            $identifier = strtoupper(trim($bill_number));
+        }
+
         $query = http_build_query([
             'jurisdiction' => $jurisdiction,
-            'identifier'   => strtoupper(str_replace(' ', '', $bill_number)),
+            'identifier'   => $identifier,
             'include'      => 'abstracts,other_titles'
         ]);
         
