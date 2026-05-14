@@ -112,6 +112,10 @@ get_header();
                     </label>
                 </div>
 
+                <div class="form-row">
+                    <button type="button" id="fetchLawsuitBtn" class="primary-btn" style="background: #33A7B5; border: none; width: 100%; margin: 10px 0 25px 0;">✨ Auto-populate details from court records</button>
+                </div>
+
                 <div class="form-row two-col">
                     <label>Plaintiffs (one per line)
                         <textarea name="plaintiffs" id="lawsuit-plaintiffs" rows="3"></textarea>
@@ -199,7 +203,8 @@ get_header();
 <script>
 window.adminLawsuitsConfig = {
     apiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/save-lawsuit.php'); ?>',
-    foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>'
+    foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>',
+    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-lawsuit-details.php'); ?>'
 };
 </script>
 <script src="<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/js/admin-state-content.js'); ?>?v=<?php echo time(); ?>"></script>

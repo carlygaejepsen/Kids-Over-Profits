@@ -102,6 +102,7 @@
         const reloadBtn = document.getElementById('reloadList');
         const filterJurisdiction = document.getElementById('filterJurisdiction');
         const filterPubStatus = document.getElementById('filterPublicationStatus');
+        const fetchLawsuitBtn = document.getElementById('fetchLawsuitBtn');
 
         const fieldMap = {
             id: 'lawsuit-id',
@@ -193,6 +194,51 @@
             populateForm(data.data);
             window.scrollTo({ top: form.offsetTop - 20, behavior: 'smooth' });
         };
+
+        if (fetchLawsuitBtn) {
+            fetchLawsuitBtn.addEventListener('click', async () => {
+                const caseNumber = getFieldValue('lawsuit-case-number');
+                const jurisdiction = getFieldValue('lawsuit-jurisdiction');
+                const court = getFieldValue('lawsuit-court');
+
+                if (!caseNumber || !jurisdiction) {
+                    status.textContent = 'Please enter a case number and jurisdiction first.';
+                    status.style.color = '#dc2626';
+                    return;
+                }
+
+                fetchLawsuitBtn.disabled = true;
+                const originalHTML = fetchLawsuitBtn.innerHTML;
+                fetchLawsuitBtn.textContent = '✨ Fetching...';
+                status.textContent = 'Fetching lawsuit details...';
+                status.style.color = '';
+
+                try {
+                    const params = new URLSearchParams({
+                        case_number: caseNumber,
+                        jurisdiction: jurisdiction,
+                        court: court
+                    });
+                    const res = await fetch(`${config.fetchApiUrl}?${params.toString()}`, { credentials: 'same-origin' });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        populateForm(data.data);
+                        status.textContent = 'Lawsuit details populated.';
+                    } else {
+                        status.textContent = 'Fetch failed: ' + (data.error || 'Check case number and jurisdiction.');
+                        status.style.color = '#dc2626';
+                    }
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    status.textContent = 'Error connecting to fetch API.';
+                    status.style.color = '#dc2626';
+                } finally {
+                    fetchLawsuitBtn.disabled = false;
+                    fetchLawsuitBtn.innerHTML = originalHTML;
+                }
+            });
+        }
 
         form.addEventListener('submit', async e => {
             e.preventDefault();
