@@ -187,7 +187,7 @@ try {
             'sort'         => 'updated_desc',
         ]);
         // OpenStates v3 wants `include` repeated, not comma-joined.
-        $query .= '&include=abstracts&include=other_titles';
+        $query .= '&include=abstracts&include=other_titles&include=versions&include=sources';
 
         $url = "https://v3.openstates.org/bills?{$query}";
 
@@ -220,6 +220,19 @@ try {
             exit;
         }
 
+        // Pull the latest version's first link as the full-text URL.
+        $full_text_url = '';
+        if (!empty($bill['versions']) && is_array($bill['versions'])) {
+            $latest_version = end($bill['versions']);
+            if (!empty($latest_version['links'][0]['url'])) {
+                $full_text_url = $latest_version['links'][0]['url'];
+            }
+        }
+
+        // Prefer the state's own bill page (first source) for `official_url`;
+        // fall back to the OpenStates page.
+        $official_url = $bill['sources'][0]['url'] ?? ($bill['openstates_url'] ?? '');
+
         $result_data = [
             'bill_number'      => $bill['identifier'],
             'bill_title'       => $bill['title'],
@@ -231,7 +244,8 @@ try {
             'last_action_date' => substr($bill['latest_action_date'] ?? '', 0, 10),
             'last_action_text' => $bill['latest_action_description'] ?? '',
             'summary'          => $bill['abstracts'][0]['abstract'] ?? '',
-            'official_url'     => $bill['openstates_url'] ?? ''
+            'full_text_url'    => $full_text_url,
+            'official_url'     => $official_url,
         ];
     }
 
