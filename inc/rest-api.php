@@ -1774,6 +1774,7 @@ function kop_state_inspection_page_map() {
         'Connecticut'=> 'ct-reports',
         'Minnesota'  => 'mn-reports',
         'Montana'    => 'mt-reports',
+        'Nevada'     => 'nv-reports',
         'Oregon'     => 'or-reports',
         'Texas'      => 'tx-reports',
         'Utah'       => 'ut-reports',
@@ -1820,6 +1821,10 @@ function kop_state_inspection_dataset_urls($state_name) {
             break;
         case 'Minnesota':
             $glob_groups = array(array($theme_dir . '/js/data/mn_reports.json'));
+            break;
+        case 'Nevada':
+            // NV data is served live from inspections-read.php; no static JSON files.
+            $glob_groups = array();
             break;
         case 'Oregon':
             $glob_groups = array(array($theme_dir . '/js/data/or_reports*.json'));
