@@ -86,3 +86,52 @@
 .kop-modal .kop-btn {
     min-width: 80px;
 }
+
+/* ============================================
+   PRIVACY POLICY PAGE
+   ============================================ */
+
+.kop-privacy__container {
+    max-width: 780px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 4rem;
+    color: var(--kop-midnight-blue, #000435);
+    line-height: 1.7;
+}
+
+.kop-privacy__container h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+}
+
+.kop-privacy__updated {
+    color: #666;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+}
+
+.kop-privacy__container section {
+    margin-top: 2rem;
+    border-top: 1px solid var(--kop-teal, #33A7B5);
+    padding-top: 1.25rem;
+}
+
+.kop-privacy__container h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.kop-privacy__container h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+}
+
+.kop-privacy__container ul {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.kop-privacy__container a {
+    color: var(--kop-teal, #33A7B5);
+}
