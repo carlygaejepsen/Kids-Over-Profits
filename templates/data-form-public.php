@@ -604,13 +604,13 @@ get_header();
         </div>
 
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
+        <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Facility Editor</strong>
                     <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
                 </div>
-                <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Minimize toolbar">−</button>
+                <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Expand toolbar">▼</button>
             </div>
             <div class="toolbar-content" id="toolbar-content">
                 <div class="toolbar-section">

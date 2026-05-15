@@ -173,6 +173,13 @@
 
         if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
             toolbarToggle.setAttribute('aria-controls', 'toolbar-content');
+
+            // Restore saved preference; HTML already defaults to minimized
+            const saved = localStorage.getItem('kop-toolbar-minimized');
+            if (saved !== null) {
+                const shouldMinimize = saved === 'true';
+                toolbar.classList.toggle('minimized', shouldMinimize);
+            }
             applyToolbarState(toolbar.classList.contains('minimized'), elements);
 
             toolbarToggle.addEventListener('click', (e) => {
@@ -180,6 +187,7 @@
                 console.log('🔘 Toolbar toggle clicked');
                 const freshElements = getElements();
                 const isMinimized = freshElements.toolbar.classList.toggle('minimized');
+                localStorage.setItem('kop-toolbar-minimized', isMinimized);
                 applyToolbarState(isMinimized, freshElements);
             });
 

@@ -144,10 +144,11 @@ body:not(.admin-bar) .fixed-toolbar {
     display: flex;
     gap: 8px;
     align-items: center;
+    align-content: flex-start;
     flex-wrap: wrap;
     justify-content: center;
     position: relative;
-    width: 100%; /* Take full width to manage rows */
+    width: 100%;
     max-width: none;
 }
 
@@ -163,18 +164,14 @@ body:not(.admin-bar) .fixed-toolbar {
     border-radius: 0;
 }
 
-/* Force Facility Nav to 2nd Row Globally */
+/* Force Facility Nav to 2nd Row */
 .fixed-toolbar .toolbar-group.facility-nav-group {
     flex-grow: 1;
     flex-shrink: 0;
-    position: relative;
-    left: auto;
-    transform: none;
-    order: 99; /* Force to bottom */
-    width: 100%; /* Force new line */
+    order: 99;
+    width: 100%;
     min-width: 200px;
     justify-content: center;
-    margin: 8px 0 0 0; /* Spacing from top row */
 }
 
 .fixed-toolbar .toolbar-label {
@@ -291,11 +288,6 @@ body:not(.admin-bar) .fixed-toolbar {
 
     .fixed-toolbar .toolbar-group {
         gap: 4px;
-    }
-    
-    /* Nav group is already forced to bottom by base styles, just tweak spacing */
-    .fixed-toolbar .toolbar-group.facility-nav-group {
-        margin-top: 6px;
     }
 
     .fixed-toolbar .toolbar-label {
