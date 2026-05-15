@@ -93,7 +93,11 @@
             referrerAgency: ['referrerAgency', 'referrer_agency', 'referrerGroup', 'referrer_group'],
             referrerConsultants: ['referrerConsultants', 'referrer_consultants', 'consultants'],
             referrerIndividual: ['referrerIndividual', 'referrer_individual', 'consultant'],
-            isIndependentConsultant: ['isIndependentConsultant', 'is_independent_consultant', 'independent']
+            isIndependentConsultant: ['isIndependentConsultant', 'is_independent_consultant', 'independent'],
+            transporterCompany: ['transporterCompany', 'transporter_company', 'transporterAgency', 'transporter_agency', 'transporterGroup', 'transporter_group'],
+            transporters: ['transporters', 'transporter_individuals', 'transporterIndividuals'],
+            transporterIndividual: ['transporterIndividual', 'transporter_individual'],
+            isIndependentTransporter: ['isIndependentTransporter', 'is_independent_transporter']
         });
 
         // Normalize referrer individual data (legacy support)
@@ -662,6 +666,90 @@
             data.referrerIndividual = data.referrerConsultants[0];
         }
 
+        // ---- Transporter normalization (mirrors referrer logic) ----
+        if (!data.transporterCompany || typeof data.transporterCompany !== 'object') {
+            data.transporterCompany = typeof createDefaultTransporterCompany === 'function' ? createDefaultTransporterCompany() : { name: "", affiliations: [], keyPersonnel: [], serviceAreas: [], vehicleTypes: [], notes: "", fieldNotes: {} };
+        } else {
+            const transporterDefaults = typeof createDefaultTransporterCompany === 'function' ? createDefaultTransporterCompany() : {};
+            data.transporterCompany = Object.assign(transporterDefaults, data.transporterCompany);
+            [
+                'otherNames', 'parentCompanies', 'affiliations', 'keyPersonnel',
+                'serviceAreas', 'vehicleTypes', 'pickupMethods', 'restraintPractices',
+                'licensing', 'knownFacilities', 'knownReferrers', 'lawsuits', 'sourceUrls', 'socialMedia'
+            ].forEach(field => {
+                if (!Array.isArray(data.transporterCompany[field])) {
+                    data.transporterCompany[field] = [];
+                }
+            });
+            if (typeof data.transporterCompany.website === 'string' && data.transporterCompany.website.trim()) {
+                if (!Array.isArray(data.transporterCompany.websites) || data.transporterCompany.websites.length === 0) {
+                    data.transporterCompany.websites = [{ url: data.transporterCompany.website.trim(), displayText: "" }];
+                }
+            }
+            if (!Array.isArray(data.transporterCompany.websites)) {
+                data.transporterCompany.websites = [];
+            }
+            if (data.transporterCompany.websites.length && (!data.transporterCompany.website || typeof data.transporterCompany.website !== 'string')) {
+                data.transporterCompany.website = data.transporterCompany.websites[0]?.url || "";
+            }
+            if (!data.transporterCompany.fieldNotes || typeof data.transporterCompany.fieldNotes !== 'object') {
+                data.transporterCompany.fieldNotes = {};
+            }
+            normalizeFieldNotesEntries(data.transporterCompany.fieldNotes);
+        }
+
+        // Recover legacy transporterIndividual if transporters array is missing
+        if ((!Array.isArray(data.transporters) || data.transporters.length === 0) && data.transporterIndividual && typeof data.transporterIndividual === 'object') {
+            data.transporters = [data.transporterIndividual];
+        }
+
+        if (!Array.isArray(data.transporters) || data.transporters.length === 0) {
+            const defaultTransporter = typeof createDefaultTransporterIndividual === 'function' ? createDefaultTransporterIndividual() : { firstName: "", lastName: "", affiliations: [], pastTTIJobs: [], affiliatedCompanies: [], fieldNotes: {} };
+            data.transporters = [defaultTransporter];
+        } else {
+            data.transporters = data.transporters.map(transporter => {
+                const transporterDefaults = typeof createDefaultTransporterIndividual === 'function' ? createDefaultTransporterIndividual() : {};
+                const merged = Object.assign(transporterDefaults, transporter || {});
+                ['affiliations', 'pastTTIJobs', 'affiliatedCompanies'].forEach(field => {
+                    if (!Array.isArray(merged[field])) merged[field] = [];
+                });
+                if (typeof merged.website === 'string' && merged.website.trim()) {
+                    if (!Array.isArray(merged.websites) || merged.websites.length === 0) {
+                        merged.websites = [{ url: merged.website.trim(), displayText: "" }];
+                    }
+                }
+                if (!Array.isArray(merged.websites)) {
+                    merged.websites = [];
+                }
+                if (merged.websites.length && (!merged.website || typeof merged.website !== 'string')) {
+                    merged.website = merged.websites[0]?.url || "";
+                }
+                if (!merged.fieldNotes || typeof merged.fieldNotes !== 'object') merged.fieldNotes = {};
+                normalizeFieldNotesEntries(merged.fieldNotes);
+                return merged;
+            });
+        }
+
+        if (typeof data.isIndependentTransporter === 'undefined') {
+            data.isIndependentTransporter = false;
+        }
+
+        if (!data.transporterType) {
+            data.transporterType = data.isIndependentTransporter ? 'individual' : 'company';
+        }
+
+        // Keep transporterAgency/Group legacy aliases in sync with transporterCompany
+        if (data.transporterCompany && !data.transporterAgency) {
+            data.transporterAgency = data.transporterCompany;
+        }
+        if (data.transporterCompany && !data.transporterGroup) {
+            data.transporterGroup = data.transporterCompany;
+        }
+
+        if (Array.isArray(data.transporters) && data.transporters.length > 0) {
+            data.transporterIndividual = data.transporters[0];
+        }
+
         if (!data.fieldNotes || typeof data.fieldNotes !== 'object') {
             data.fieldNotes = {};
         }
@@ -670,6 +758,11 @@
         // Build referrer entries from the data
         if (typeof buildReferrerEntries === 'function') {
             data.referrer = buildReferrerEntries(data);
+        }
+
+        // Build transporter entries from the data
+        if (typeof buildTransporterEntries === 'function') {
+            data.transporter = buildTransporterEntries(data);
         }
 
         return data;

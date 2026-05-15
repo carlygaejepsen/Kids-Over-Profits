@@ -39,8 +39,8 @@
             ? viewName.trim().toLowerCase()
             : 'companies';
 
-        if (normalizedView === activeViewLayout && normalizedView !== 'referrers') {
-            // Allow referrers to reapply in case of toggles that alter nested forms.
+        if (normalizedView === activeViewLayout && normalizedView !== 'referrers' && normalizedView !== 'transporters') {
+            // Allow referrers/transporters to reapply in case of toggles that alter nested forms.
             return;
         }
 
@@ -329,6 +329,21 @@
             delete data.referrerType;
         }
 
+        function stripTransporterSubmissionData(data) {
+            if (!data || typeof data !== 'object') {
+                return;
+            }
+
+            delete data.transporter;
+            delete data.transporterCompany;
+            delete data.transporterAgency;
+            delete data.transporterGroup;
+            delete data.transporterIndividual;
+            delete data.transporters;
+            delete data.isIndependentTransporter;
+            delete data.transporterType;
+        }
+
         function cloneSubmissionValue(value) {
             if (typeof value === 'undefined') {
                 return undefined;
@@ -565,6 +580,10 @@
 
             if (activeCategory !== 'referrers') {
                 stripReferrerSubmissionData(dataToSubmit);
+            }
+
+            if (activeCategory !== 'transporters') {
+                stripTransporterSubmissionData(dataToSubmit);
             }
 
             const actualProjectName = (

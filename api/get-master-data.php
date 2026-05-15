@@ -111,6 +111,8 @@ try {
                 $default_category = null;
                 if ($sourceLabel === 'referrers') {
                     $default_category = 'referrers';
+                } elseif ($sourceLabel === 'transporters') {
+                    $default_category = 'transporters';
                 } elseif ($sourceLabel === 'locations') {
                     $default_category = 'locations';
                 } elseif ($sourceLabel === 'facilities') {
@@ -141,19 +143,25 @@ try {
         $processTable($prefix . 'referrers_master', 'referrers');
     }
 
-    // 2. Process Facilities
+    // 2. Process Transporters
+    $processTable('transporters_master', 'transporters');
+    if (!empty($prefix)) {
+        $processTable($prefix . 'transporters_master', 'transporters');
+    }
+
+    // 3. Process Facilities
     $processTable('facilities_master', 'facilities');
     if (!empty($prefix)) {
         $processTable($prefix . 'facilities_master', 'facilities');
     }
 
-    // 3. Process Locations
+    // 4. Process Locations
     $processTable('locations_master', 'locations');
     if (!empty($prefix)) {
         $processTable($prefix . 'locations_master', 'locations');
     }
 
-    // 4. Process Wiki Master
+    // 5. Process Wiki Master
     $processTable('wiki_master', 'wiki');
 
     // 5. Add Wiki Submissions (Published)

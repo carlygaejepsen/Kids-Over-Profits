@@ -543,6 +543,8 @@ function kop_save_project_rest_callback($request) {
         'companies' => 'facilities_master',
         'referrers' => 'referrers_master',
         'referrer' => 'referrers_master',
+        'transporters' => 'transporters_master',
+        'transporter' => 'transporters_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
@@ -622,6 +624,8 @@ function kop_delete_project_rest_callback($request) {
         'companies' => 'facilities_master',
         'referrers' => 'referrers_master',
         'referrer' => 'referrers_master',
+        'transporters' => 'transporters_master',
+        'transporter' => 'transporters_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
@@ -674,6 +678,10 @@ function kop_autocomplete_rest_callback($request) {
         'people' => 'human',
         'staff' => 'human',
         'referrers' => 'referrer',
+        'transporters' => 'transporter',
+        'transportcompany' => 'transporter',
+        'transport_company' => 'transporter',
+        'transportcompanies' => 'transporter',
         'facilitytype' => 'type',
         'facilitytypes' => 'type',
         'types' => 'type',
@@ -705,7 +713,7 @@ function kop_autocomplete_rest_callback($request) {
     }
 
     $allowed_categories = array(
-        'operator', 'facility', 'human', 'referrer', 'type', 'status',
+        'operator', 'facility', 'human', 'referrer', 'transporter', 'type', 'status',
         'gender', 'location', 'licensing', 'membership', 'accreditation',
         'certification', 'investor', 'role', 'operatingperiod'
     );
@@ -722,6 +730,7 @@ function kop_autocomplete_rest_callback($request) {
         'facility' => array('facilities_master', 'referrers_master'),  // referrers may have facilitiesReferred
         'human' => array('facilities_master'),
         'referrer' => array('facilities_master', 'referrers_master'),
+        'transporter' => array('transporters_master', 'facilities_master'),
         'type' => array('facilities_master'),
         'status' => array('facilities_master'),
         'gender' => array('facilities_master'),
@@ -992,6 +1001,9 @@ function kop_collect_values_for_category($category, $data, &$set) {
         case 'referrer':
             kop_collect_referrer_values($data, $set);
             break;
+        case 'transporter':
+            kop_collect_transporter_values($data, $set);
+            break;
         case 'type':
             kop_collect_type_values($data, $set);
             break;
@@ -1196,6 +1208,63 @@ function kop_collect_referrer_values($data, &$set) {
 
     if (!empty($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
         $individual = $data['referrerIndividual'];
+        $full_name = isset($individual['fullName']) ? $individual['fullName'] : null;
+        if (!$full_name) {
+            $first_name = trim(isset($individual['firstName']) ? $individual['firstName'] : '');
+            $last_name = trim(isset($individual['lastName']) ? $individual['lastName'] : '');
+            if ($first_name || $last_name) {
+                $full_name = trim("$first_name $last_name");
+            }
+        }
+        kop_add_autocomplete_value($set, $full_name);
+    }
+}
+
+/**
+ * Collect transporter values from project data.
+ *
+ * Pulls names from the transport company (transporterCompany / transporterAgency)
+ * and individual transporters array, plus any knownTransporters references on
+ * facility records.
+ */
+function kop_collect_transporter_values($data, &$set) {
+    if (!empty($data['facilities']) && is_array($data['facilities'])) {
+        foreach ($data['facilities'] as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $identification = isset($facility['identification']) ? $facility['identification'] : array();
+            if (is_array($identification)) {
+                kop_add_autocomplete_values($set, isset($identification['knownTransporters']) ? $identification['knownTransporters'] : array());
+            }
+        }
+    }
+
+    foreach (array('transporterCompany', 'transporterAgency', 'transporterGroup') as $companyKey) {
+        if (!empty($data[$companyKey]) && is_array($data[$companyKey])) {
+            kop_add_autocomplete_value($set, isset($data[$companyKey]['name']) ? $data[$companyKey]['name'] : null);
+        }
+    }
+
+    if (!empty($data['transporters']) && is_array($data['transporters'])) {
+        foreach ($data['transporters'] as $transporter) {
+            if (!is_array($transporter)) {
+                continue;
+            }
+            $full_name = isset($transporter['fullName']) ? $transporter['fullName'] : null;
+            if (!$full_name) {
+                $first_name = trim(isset($transporter['firstName']) ? $transporter['firstName'] : '');
+                $last_name = trim(isset($transporter['lastName']) ? $transporter['lastName'] : '');
+                if ($first_name || $last_name) {
+                    $full_name = trim("$first_name $last_name");
+                }
+            }
+            kop_add_autocomplete_value($set, $full_name);
+        }
+    }
+
+    if (!empty($data['transporterIndividual']) && is_array($data['transporterIndividual'])) {
+        $individual = $data['transporterIndividual'];
         $full_name = isset($individual['fullName']) ? $individual['fullName'] : null;
         if (!$full_name) {
             $first_name = trim(isset($individual['firstName']) ? $individual['firstName'] : '');

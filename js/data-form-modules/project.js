@@ -28,6 +28,11 @@
             return 'referrers';
         }
 
+        // Fallback for transporters if the name suggests it
+        if (normalizedName.includes('transport') || normalizedName.includes('escort')) {
+            return 'transporters';
+        }
+
         // Default to companies
         return 'companies';
     }
@@ -67,10 +72,15 @@
             referrerAgency: typeof window.createDefaultReferrerGroup === 'function' ? window.createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} },
             referrerConsultants: [typeof window.createDefaultReferrerIndividual === 'function' ? window.createDefaultReferrerIndividual() : { firstName: "", lastName: "", knownReferrals: [], facilitiesReferred: [], affiliations: [], pastTTIJobs: [], schoolDistricts: [], fieldNotes: {} }],
             isIndependentConsultant: false,
+            transporter: [],
+            transporterCompany: typeof window.createDefaultTransporterCompany === 'function' ? window.createDefaultTransporterCompany() : { name: "", affiliations: [], keyPersonnel: [], serviceAreas: [], vehicleTypes: [], notes: "", fieldNotes: {} },
+            transporters: [typeof window.createDefaultTransporterIndividual === 'function' ? window.createDefaultTransporterIndividual() : { firstName: "", lastName: "", affiliations: [], pastTTIJobs: [], affiliatedCompanies: [], fieldNotes: {} }],
+            isIndependentTransporter: false,
             fieldNotes: {}
         };
 
         project.referrer = typeof window.buildReferrerEntries === 'function' ? window.buildReferrerEntries(project) : [];
+        project.transporter = typeof window.buildTransporterEntries === 'function' ? window.buildTransporterEntries(project) : [];
         return project;
     }
 
@@ -88,7 +98,7 @@
     }
 
     function loadProject(projectName) {
-        const { debugLog, showUploadStatus, deepClone, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, updateConsultantsUI, updateLocationFacilitiesOverview, scrollToFormInput } = window;
+        const { debugLog, showUploadStatus, deepClone, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, handleTransporterToggle, updateConsultantsUI, updateTransportersUI, updateLocationFacilitiesOverview, scrollToFormInput } = window;
         const { normalizeProjectData } = window.KOP_DataNormalizer;
 
         debugLog('🔄 loadProject called with:', projectName);
@@ -136,11 +146,13 @@
                     window.formData = createNewProjectData();
                 }
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
+                if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                     window.currentFacilityIndex = 0;
                 }
                 if (projectCategory === 'referrers') window.currentConsultantIndex = 0;
+                if (projectCategory === 'transporters') window.currentTransporterIndex = 0;
 
                 // Sort facilities alphabetically by name on load
                 if (window.formData.facilities && window.formData.facilities.length > 1) {
@@ -154,13 +166,17 @@
                 if (projectNameInput) projectNameInput.value = projectName;
                 const referrerProjectNameInput = document.getElementById('referrer-project-name');
                 if (referrerProjectNameInput && projectCategory === 'referrers') referrerProjectNameInput.value = projectName;
+                const transporterProjectNameInput = document.getElementById('transporter-project-name');
+                if (transporterProjectNameInput && projectCategory === 'transporters') transporterProjectNameInput.value = projectName;
 
                 if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
+                if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
                 if (typeof updateAllUI === 'function') {
                     updateAllUI();
                     updateLabelsForProjectType(projectName);
                 }
                 if (projectCategory === 'referrers' && typeof updateConsultantsUI === 'function') updateConsultantsUI();
+                if (projectCategory === 'transporters' && typeof updateTransportersUI === 'function') updateTransportersUI();
                 if (projectCategory === 'locations' && typeof updateLocationFacilitiesOverview === 'function') updateLocationFacilitiesOverview();
                 captureLoadedProjectBaseline(projectName, deepClone);
 
@@ -177,7 +193,7 @@
     }
 
     function newProject() {
-        const { showUploadStatus, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, deepClone } = window;
+        const { showUploadStatus, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, handleTransporterToggle, deepClone } = window;
         if (!confirm('Start a new blank project? Any unsaved changes will be lost.')) return;
 
         let projectName = prompt('Enter a name for the new project:');
@@ -202,11 +218,19 @@
         if (typeof updateAllUI === 'function') updateAllUI();
         if (typeof updateLabelsForProjectType === 'function') updateLabelsForProjectType();
         if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
+        if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
 
         showUploadStatus(`New project "${projectName}" created`, 'info');
 
         setTimeout(() => {
-            let firstSection = (activeCategory === 'referrers') ? document.getElementById('referrer-agency-section') : document.getElementById('operator-section');
+            let firstSection;
+            if (activeCategory === 'referrers') {
+                firstSection = document.getElementById('referrer-agency-section');
+            } else if (activeCategory === 'transporters') {
+                firstSection = document.getElementById('transporter-company-section');
+            } else {
+                firstSection = document.getElementById('operator-section');
+            }
             if (firstSection) {
                 if (!firstSection.classList.contains('expanded')) {
                     const sectionContent = firstSection.querySelector('.section-content');
@@ -239,7 +263,7 @@
             const currentProjectCategory = window.currentProjectName ? (window.projects?.[window.currentProjectName]?.category || determineProjectCategory(window.currentProjectName)) : null;
             
             if (window.currentProjectName && currentProjectCategory && currentProjectCategory !== newCategory) {
-                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0);
+                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0 || window.formData.transporters?.length > 0);
                 if (hasUnsavedWork) {
                     const choice = confirm(`You have "${window.currentProjectName}" (${currentProjectCategory}) loaded.
 
@@ -269,6 +293,7 @@ Click Cancel to stay on the current tab.`);
             if (activeContent) activeContent.classList.remove('view-hidden', 'd-none');
             
             if (typeof window.handleReferrerToggle === 'function') window.handleReferrerToggle();
+            if (typeof window.handleTransporterToggle === 'function') window.handleTransporterToggle();
             if (typeof window.applyViewLayout === 'function') window.applyViewLayout(newCategory);
             if (typeof window.refreshSavedProjectPanels === 'function') window.refreshSavedProjectPanels();
             if (typeof window.updateLabelsForProjectType === 'function') window.updateLabelsForProjectType();
@@ -342,12 +367,12 @@ Click Cancel to stay on the current tab.`);
         }
         const currentCategory = determineProjectCategory(projectName);
         const newCategory = prompt(`Project "${projectName}" is currently in "${currentCategory}".
-Enter new category (companies, locations, or referrers):`, currentCategory);
+Enter new category (companies, locations, referrers, or transporters):`, currentCategory);
         if (!newCategory || newCategory.trim().toLowerCase() === currentCategory) {
             showUploadStatus('ℹ️ Reclassification cancelled or category not changed.', 'info');
             return;
         }
-        const validCategories = ['companies', 'locations', 'referrers'];
+        const validCategories = ['companies', 'locations', 'referrers', 'transporters'];
         const normalizedCategory = newCategory.trim().toLowerCase();
         if (!validCategories.includes(normalizedCategory)) {
             showUploadStatus(`❌ Invalid category. Please use one of: ${validCategories.join(', ')}.`, 'error');

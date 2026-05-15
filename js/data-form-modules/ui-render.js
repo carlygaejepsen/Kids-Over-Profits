@@ -41,7 +41,8 @@
             const containers = {
                 companies: document.getElementById('company-saved-projects-list'),
                 locations: document.getElementById('location-saved-projects-list'),
-                referrers: document.getElementById('referrer-saved-projects-list')
+                referrers: document.getElementById('referrer-saved-projects-list'),
+                transporters: document.getElementById('transporter-saved-projects-list')
             };
 
             const normalizeDisplayKey = (name, project) => {
@@ -106,7 +107,8 @@
             const projectsByCategory = {
                 companies: [],
                 locations: [],
-                referrers: []
+                referrers: [],
+                transporters: []
             };
 
             Object.entries(allProjects).forEach(([name, project]) => {
@@ -119,12 +121,14 @@
                 if (category === 'company') category = 'companies';
                 if (category === 'location' || category === 'states') category = 'locations';
                 if (category === 'referrer') category = 'referrers';
+                if (category === 'transporter') category = 'transporters';
 
                 // Determine search query for this category
                 let searchQuery = '';
                 if (category === 'companies') searchQuery = searchQueries.company;
                 else if (category === 'locations') searchQuery = searchQueries.location;
                 else if (category === 'referrers') searchQuery = searchQueries.referrer;
+                else if (category === 'transporters') searchQuery = searchQueries.transporter;
 
                 let matchSnippet = null;
 
@@ -841,7 +845,7 @@
             window.currentFacilityIndex = 0;
 
             // Switch to the correct category tab
-            const categoryMap = { locations: 'states', referrers: 'referrers', companies: 'companies' };
+            const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', companies: 'companies' };
             const tabCategory = categoryMap[projectData.category] || projectData.category;
             const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
             if (targetTab && !targetTab.classList.contains('active')) {

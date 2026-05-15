@@ -93,6 +93,15 @@ function kop_infer_submission_category($input, $data, $active_category) {
         return 'referrers';
     }
 
+    if (
+        !empty($data['transporterCompany']['name'])
+        || !empty($data['transporterAgency']['name'])
+        || !empty($data['transporters'][0]['firstName'])
+        || !empty($data['transporters'][0]['lastName'])
+    ) {
+        return 'transporters';
+    }
+
     return 'companies';
 }
 
@@ -109,6 +118,24 @@ function kop_strip_referrer_submission_data(&$data) {
         'referrerIndividual',
         'isIndependentConsultant',
         'referrerType',
+    ] as $field) {
+        unset($data[$field]);
+    }
+}
+
+function kop_strip_transporter_submission_data(&$data) {
+    if (!is_array($data)) {
+        return;
+    }
+
+    foreach ([
+        'transporter',
+        'transporterCompany',
+        'transporterAgency',
+        'transporterGroup',
+        'transporterIndividual',
+        'transporters',
+        'transporterType',
     ] as $field) {
         unset($data[$field]);
     }
@@ -222,6 +249,10 @@ try {
         kop_strip_referrer_submission_data($data);
     }
 
+    if ($effective_category !== 'transporters') {
+        kop_strip_transporter_submission_data($data);
+    }
+
     $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];
     
     if (empty($reason)) {
@@ -252,10 +283,13 @@ try {
     $first_named_facility = kop_get_first_named_facility($facilities);
     $hasFacility = $first_named_facility !== null;
     $hasReferrer = !empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']);
+    $hasTransporter = !empty($data['transporterCompany']['name'])
+        || !empty($data['transporterAgency']['name'])
+        || !empty($data['transporters'][0]['firstName']);
 
-    if (!$hasOperator && !$hasFacility && !$hasReferrer) {
+    if (!$hasOperator && !$hasFacility && !$hasReferrer && !$hasTransporter) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Please provide at least an operator name, facility name, or referrer name']);
+        echo json_encode(['success' => false, 'error' => 'Please provide at least an operator name, facility name, referrer name, or transporter name']);
         exit;
     }
     

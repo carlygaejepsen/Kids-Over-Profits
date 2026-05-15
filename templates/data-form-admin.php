@@ -25,6 +25,7 @@ get_header();
                 <button type="button" class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
                 <button type="button" class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
                 <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
+                <button type="button" class="category-tab" data-category="transporters">🚐 Transporters</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -99,6 +100,33 @@ get_header();
                             <button type="button" id="new-project-btn-referrer" class="kop-btn project-action-btn">New Referrer Project</button>
                             <button type="button" id="export-all-btn-referrer" class="kop-btn project-action-btn">Export Referrers</button>
                             <button type="button" id="generate-report-btn-referrer" class="kop-btn project-action-btn">Generate Referrer Report</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Transporters Content -->
+                <div id="transporters-content" class="category-content view-hidden" data-section-views="transporters">
+                    <div class="content-header">
+                        <h3>🚐 Transporters (Youth Transport Companies)</h3>
+                    </div>
+
+                    <div class="project-management" id="transporter-project-panel-inner">
+                        <h2>Transporter Projects &amp; Data Import</h2>
+                        <div id="transporter-project-status"></div>
+                        <div class="form-group">
+                            <label>Saved Transporter Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="transporter-search-input" class="input-form project-search-input" placeholder="🔍 Search by transporter name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div id="transporter-saved-projects-list" class="saved-projects-list">
+                                <div style="color: #6b7280; font-style: italic;">No saved transporter projects</div>
+                            </div>
+                        </div>
+                        <div class="project-actions">
+                            <button type="button" id="new-project-btn-transporter" class="kop-btn project-action-btn">New Transporter Project</button>
+                            <button type="button" id="export-all-btn-transporter" class="kop-btn project-action-btn">Export Transporters</button>
+                            <button type="button" id="generate-report-btn-transporter" class="kop-btn project-action-btn">Generate Transporter Report</button>
                         </div>
                     </div>
 
@@ -302,8 +330,285 @@ get_header();
 
         </div>
 
+        <!-- Transporter-Specific Sections (shown when Transporters tab is active) -->
+        <div id="transporter-main-wrapper" class="view-hidden" data-section-views="transporters">
+
+            <!-- Transporters Overview (Table of Contents) -->
+            <div class="facility-toc" id="transporters-toc">
+                <div class="toc-header">
+                    <h2 class="toc-title">Transporters Overview</h2>
+                    <button class="toc-toggle" id="transporters-toc-toggle-btn">🔎</button>
+                </div>
+                <div class="toc-content">
+                    <div class="toc-stats" id="transporters-toc-stats">Total: 1 transporter</div>
+                    <div class="facility-list" id="transporters-list"></div>
+                </div>
+            </div>
+
+            <!-- Transport Company Section -->
+            <div class="section expanded" id="transporter-company-section">
+                <div class="section-header">
+                    <h2 class="section-title">Transport Company</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="transporter-company-name" class="input-form" data-autocomplete-category="transporter" placeholder="e.g., Secure Youth Transport, Inc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Other Names / DBAs / Former Names</label>
+                        <div class="array-container" data-path="transporterCompany.otherNames"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Headquarters City</label>
+                            <input type="text" id="transporter-company-city" class="input-form" placeholder="e.g., Las Vegas">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="transporter-company-state" class="input-form" data-autocomplete-category="location" placeholder="e.g., NV">
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" id="transporter-company-country" class="input-form" data-autocomplete-category="country" placeholder="e.g., United States">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" id="transporter-company-address" class="input-form" placeholder="Street address">
+                        </div>
+                        <div class="form-group">
+                            <label>Founded</label>
+                            <input type="text" id="transporter-company-founded" class="input-form" placeholder="e.g., 1998">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <input type="text" id="transporter-company-status" class="input-form" data-autocomplete-category="status" placeholder="Active, Suspended, Defunct, Out of business">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Parent Companies</label>
+                        <div class="array-container" data-path="transporterCompany.parentCompanies"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Websites</label>
+                        <div class="array-container" data-path="transporterCompany.websites"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service Areas (states/regions)</label>
+                        <div class="array-container" data-path="transporterCompany.serviceAreas"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Vehicle Types</label>
+                        <div class="array-container" data-path="transporterCompany.vehicleTypes"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pickup Methods (planned / unannounced / "wake-up" / court-ordered)</label>
+                        <div class="array-container" data-path="transporterCompany.pickupMethods"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Restraint Practices (handcuffs, leg shackles, hobbles, none reported, etc.)</label>
+                        <div class="array-container" data-path="transporterCompany.restraintPractices"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>State Licenses Held</label>
+                        <div class="array-container" data-path="transporterCompany.licensing"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bonded</label>
+                            <input type="text" id="transporter-company-bonded" class="input-form" placeholder="Yes / No / details">
+                        </div>
+                        <div class="form-group">
+                            <label>Insured</label>
+                            <input type="text" id="transporter-company-insured" class="input-form" placeholder="Yes / No / carrier">
+                        </div>
+                        <div class="form-group">
+                            <label>BBB Rating</label>
+                            <input type="text" id="transporter-company-bbb-rating" class="input-form" placeholder="e.g., A+, F">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Industry Affiliations</label>
+                        <div class="array-container" data-path="transporterCompany.affiliations"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Key Personnel (owners, founders, supervisors)</label>
+                        <div class="array-container" data-path="transporterCompany.keyPersonnel"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Known Facilities Transported To</label>
+                        <div class="array-container" data-path="transporterCompany.knownFacilities"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Known Referrers Who Recommend Them</label>
+                        <div class="array-container" data-path="transporterCompany.knownReferrers"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pricing Notes / Typical Cost</label>
+                        <textarea id="transporter-company-pricing-notes" class="input-form" rows="2" placeholder="Pricing model, typical cost range, billing notes..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lawsuits</label>
+                        <div class="array-container" data-path="transporterCompany.lawsuits"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Source URLs</label>
+                        <div class="array-container" data-path="transporterCompany.sourceUrls"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Social Media Links</label>
+                        <div class="array-container" data-path="transporterCompany.socialMedia"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Company Notes</label>
+                        <textarea id="transporter-company-notes" class="input-form" rows="4" placeholder="Add notes about this transport company..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Transporters Section -->
+            <div class="section expanded" id="transporter-individuals-section">
+                <div class="section-header">
+                    <h2 class="section-title">Individual Transporters</h2>
+                    <span class="section-toggle">🔎</span>
+                </div>
+                <div class="section-content">
+                    <div class="facility-nav-controls" style="margin-bottom: 15px;">
+                        <button type="button" id="prev-transporter-btn" class="kop-btn">← Prev</button>
+                        <select id="transporter-dropdown" class="input-form" style="display: inline-block; width: auto; margin: 0 8px;"></select>
+                        <button type="button" id="next-transporter-btn" class="kop-btn">Next →</button>
+                        <button type="button" id="add-transporter-btn" class="kop-btn">+ Add Transporter</button>
+                        <button type="button" id="remove-transporter-btn" class="kop-btn d-none">Remove</button>
+                    </div>
+
+                    <div id="transporter-form-wrapper">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="transporter-firstname" class="transporter-field" data-field="firstName" data-autocomplete-category="human" placeholder="e.g., John">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="transporter-lastname" class="transporter-field" data-field="lastName" data-autocomplete-category="human" placeholder="e.g., Smith">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Role</label>
+                                <input type="text" id="transporter-role" class="transporter-field" data-field="role" data-autocomplete-category="role" placeholder="e.g., Owner, Driver, Supervisor">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <input type="text" id="transporter-status" class="transporter-field" data-field="status" data-autocomplete-category="status" placeholder="Active, Former, Deceased">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credentials / Certifications</label>
+                            <input type="text" id="transporter-credentials" class="transporter-field" data-field="credentials" placeholder="e.g., Licensed PI, EMT-B, none">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="transporter-city" class="transporter-field" data-field="city" placeholder="e.g., Salt Lake City">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" id="transporter-state" class="transporter-field" data-field="state" data-autocomplete-category="location" placeholder="e.g., UT">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="transporter-email" class="transporter-field" data-field="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="transporter-phone" class="transporter-field" data-field="phone" placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Websites</label>
+                            <div class="array-container" data-path="transporterIndividual.websites"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Affiliated Transport Companies (current + past)</label>
+                            <div class="array-container" data-path="transporter.affiliatedCompanies"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Professional Affiliations</label>
+                            <div class="array-container" data-path="transporter.affiliations"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Past TTI Jobs (Role + Employer)</label>
+                            <div class="array-container" data-path="transporter.pastTTIJobs"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lawsuits / Incidents</label>
+                            <input type="text" id="transporter-lawsuits" class="transporter-field" data-field="lawsuits" placeholder="Brief mention; full records link in source URLs">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="transporter-notes" class="transporter-field" data-field="notes" rows="4" placeholder="Add notes about this individual transporter..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transporter Submission Section -->
+            <div class="section expanded" id="transporter-submission-section" data-section-views="transporters" style="border: 2px solid #1e40af; background: #f8fafc;">
+                <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
+                    <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save Transporter Project</h2>
+                </div>
+                <div class="section-content" style="display: block;">
+                    <div class="form-group">
+                        <label for="transporter-project-name">Project Name</label>
+                        <input type="text" id="transporter-project-name" placeholder="Enter transporter project name..." style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="save-master-btn" id="save-transporter-project-btn">
+                            💾 Save Transporter Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations,referrers">
+        <div class="fixed-toolbar" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Admin Editor</strong>
@@ -1131,7 +1436,7 @@ get_header();
         </div>
         
         <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers" style="border: 2px solid #1e40af; background: #f8fafc;">
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
             </div>
@@ -1155,7 +1460,7 @@ get_header();
     </div>
 
     <!-- Advanced User Mode Section -->
-    <div class="section" id="advanced-mode-section" data-section-views="companies,locations,referrers" style="border: 2px solid #6b7280; background: #f9fafb;">
+    <div class="section" id="advanced-mode-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #6b7280; background: #f9fafb;">
         <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
             <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
             <span class="section-toggle">🔎</span>

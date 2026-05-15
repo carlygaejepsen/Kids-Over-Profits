@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
     }
 }
 
-$is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+$is_admin = function_exists('current_user_can') && current_user_can('edit_posts');
 
 function lawsuit_decode_json_fields(array $row): array {
     $jsonFields = [

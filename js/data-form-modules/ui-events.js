@@ -265,11 +265,15 @@
         controlsBar.innerHTML = `<span class="section-control-label">📋 Sections</span><div class="section-control-btns"><button class="btn-section-control" id="expand-all-sections">Expand All</button><button class="btn-section-control" id="collapse-all-sections">Collapse All</button></div>`;
         const facilityWrapper = document.getElementById('facility-main-wrapper');
         const referrerWrapper = document.getElementById('referrer-main-wrapper');
+        const transporterWrapper = document.getElementById('transporter-main-wrapper');
         if (facilityWrapper && facilityWrapper.offsetParent !== null) {
             facilityWrapper.insertBefore(controlsBar.cloneNode(true), facilityWrapper.firstChild);
         }
         if (referrerWrapper) {
             referrerWrapper.insertBefore(controlsBar.cloneNode(true), referrerWrapper.firstChild);
+        }
+        if (transporterWrapper) {
+            transporterWrapper.insertBefore(controlsBar.cloneNode(true), transporterWrapper.firstChild);
         }
         document.addEventListener('click', (e) => {
             if (e.target.id === 'expand-all-sections' || e.target.closest('#expand-all-sections')) {
@@ -299,7 +303,7 @@
     }
 
     function collapseAllSections() {
-        document.querySelectorAll('.section:not(.view-hidden):not(#submission-section):not(#referrer-submission-section):not(#advanced-mode-section)').forEach(section => {
+        document.querySelectorAll('.section:not(.view-hidden):not(#submission-section):not(#referrer-submission-section):not(#transporter-submission-section):not(#advanced-mode-section)').forEach(section => {
             const content = section.querySelector('.section-content');
             const toggle = section.querySelector('.section-toggle');
             if (content) {
@@ -368,6 +372,21 @@
             window.initializeConsultantsTocToggle();
         }
 
+        // Transporter field listeners - delegate to transporter-form.js module
+        if (typeof window.attachTransporterFieldListeners === 'function') {
+            window.attachTransporterFieldListeners();
+        }
+
+        // Transporter navigation - delegate to transporter-form.js module
+        if (typeof window.initializeTransporterNavigation === 'function') {
+            window.initializeTransporterNavigation();
+        }
+
+        // Transporters TOC toggle - delegate to transporter-form.js module
+        if (typeof window.initializeTransportersTocToggle === 'function') {
+            window.initializeTransportersTocToggle();
+        }
+
         // Facility field listeners
         document.querySelectorAll('.facility-field').forEach(field => {
             if (!field.dataset.listenerAttached) {
@@ -430,6 +449,8 @@
                 if (activeTab) {
                     if (activeTab.dataset.category === 'referrers' && typeof window.updateConsultantsUI === 'function') {
                         window.updateConsultantsUI();
+                    } else if (activeTab.dataset.category === 'transporters' && typeof window.updateTransportersUI === 'function') {
+                        window.updateTransportersUI();
                     } else if (activeTab.dataset.category === 'locations' && typeof window.updateLocationFacilitiesOverview === 'function') {
                         window.updateLocationFacilitiesOverview();
                     }
@@ -443,6 +464,8 @@
                 setTimeout(() => {
                     if (tab.dataset.category === 'referrers') {
                         if (typeof window.updateConsultantsUI === 'function') window.updateConsultantsUI();
+                    } else if (tab.dataset.category === 'transporters') {
+                        if (typeof window.updateTransportersUI === 'function') window.updateTransportersUI();
                     } else if (tab.dataset.category === 'locations') {
                         if (typeof window.updateLocationFacilitiesOverview === 'function') window.updateLocationFacilitiesOverview();
                     }

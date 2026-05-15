@@ -700,7 +700,7 @@ function enqueue_data_form_script() {
 
             $normalizer_module_uri,
 
-            array('jquery', 'referrer-form-script'), // Depends on referrer form for create functions
+            array('jquery', 'referrer-form-script', 'transporter-form-script'), // Depends on referrer + transporter forms for create functions
 
             file_exists($normalizer_module_file_path) ? filemtime($normalizer_module_file_path) : time(),
 
@@ -773,6 +773,28 @@ function enqueue_data_form_script() {
             array('jquery', 'utilities-module-script', 'autocomplete-module-script'),
 
             file_exists($referrer_form_path) ? filemtime($referrer_form_path) : time(),
+
+            true
+
+        );
+
+
+
+        // Enqueue transporter form
+
+        $transporter_form_relative = '/js/data-form/transporter-form.js';
+
+        $transporter_form_path = get_stylesheet_directory() . $transporter_form_relative;
+
+        wp_enqueue_script(
+
+            'transporter-form-script',
+
+            get_stylesheet_directory_uri() . $transporter_form_relative,
+
+            array('jquery', 'utilities-module-script', 'autocomplete-module-script'),
+
+            file_exists($transporter_form_path) ? filemtime($transporter_form_path) : time(),
 
             true
 
@@ -1139,7 +1161,7 @@ function enqueue_data_form_script() {
 
 
 
-                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
+                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
 
 
 

@@ -144,6 +144,7 @@ const aggregatedDataCache = {
     facilityNames: null,
     humanNames: null,
     referrers: null,
+    transporters: null,
     facilityTypes: null,
     staffRoles: null,
     certifications: null,
@@ -160,6 +161,7 @@ const CACHE_CATEGORY_MAP = {
     facility: 'facilityNames',
     human: 'humanNames',
     referrer: 'referrers',
+    transporter: 'transporters',
     type: 'facilityTypes',
     role: 'staffRoles',
     certification: 'certifications',
@@ -384,6 +386,54 @@ function getAllReferrers() {
     }
 
     return aggregatedDataCache.referrers;
+}
+
+/**
+ * Get all transporters from projects and custom storage
+ */
+function getAllTransporters() {
+    if (!aggregatedDataCache.transporters) {
+        const projects = window.projects || {};
+        const customTransporters = window.customTransporters || [];
+        const transporters = new Set(customTransporters);
+
+        Object.values(projects).forEach(project => {
+            // Collect from facility projects' knownTransporters fields
+            project.data?.facilities?.forEach(facility => {
+                facility.identification?.knownTransporters?.forEach(ref => {
+                    if (ref && typeof ref === 'string') {
+                        transporters.add(ref);
+                    }
+                });
+            });
+
+            // Collect from transporter projects themselves
+            if (project.category === 'transporters' && project.data) {
+                if (project.data.transporterCompany?.name) {
+                    transporters.add(project.data.transporterCompany.name);
+                }
+                if (project.data.transporterAgency?.name) {
+                    transporters.add(project.data.transporterAgency.name);
+                }
+
+                if (Array.isArray(project.data.transporters)) {
+                    project.data.transporters.forEach(transporter => {
+                        if (transporter) {
+                            const name = transporter.fullName ||
+                                [transporter.firstName, transporter.lastName].filter(Boolean).join(' ');
+                            if (name && name.trim()) {
+                                transporters.add(name.trim());
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        aggregatedDataCache.transporters = Array.from(transporters).filter(t => t && typeof t === 'string' && t.trim()).sort();
+    }
+
+    return aggregatedDataCache.transporters;
 }
 
 /**
@@ -1139,6 +1189,7 @@ function getCategoryFunctions() {
         facility: getAllFacilityNames,
         human: getAllHumanNames,
         referrer: getAllReferrers,
+        transporter: getAllTransporters,
         type: getAllFacilityTypes,
         status: getAllStatuses,
         gender: getAllGenders,
@@ -1201,6 +1252,7 @@ window.KOP_Autocomplete = {
     getAllFacilityNames,
     getAllHumanNames,
     getAllReferrers,
+    getAllTransporters,
     getAllFacilityTypes,
     getAllStaffRoles,
     getAllCertifications,
@@ -1228,6 +1280,7 @@ window.getAllOperators = getAllOperators;
 window.getAllFacilityNames = getAllFacilityNames;
 window.getAllHumanNames = getAllHumanNames;
 window.getAllReferrers = getAllReferrers;
+window.getAllTransporters = getAllTransporters;
 window.getAllFacilityTypes = getAllFacilityTypes;
 window.getAllStaffRoles = getAllStaffRoles;
 window.getAllCertifications = getAllCertifications;

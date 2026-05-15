@@ -196,10 +196,11 @@ function kop_get_facilities_projects_from_database() {
         return new WP_Error('kop_facilities_invalid_connection', __('Facilities database connection is invalid.', 'kadence-child'));
     }
 
-    // All three master tables to query
+    // All master tables to query
     $master_tables = array(
         'facilities_master',
         'referrers_master',
+        'transporters_master',
         'locations_master',
     );
 

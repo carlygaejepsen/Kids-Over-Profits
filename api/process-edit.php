@@ -39,6 +39,29 @@ if (!is_user_logged_in() || !current_user_can('administrator')) {
 require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
+if (!function_exists('kop_ensure_master_table')) {
+    /**
+     * Auto-create a master table on demand if it doesn't exist yet.
+     */
+    function kop_ensure_master_table(PDO $pdo, $tableName) {
+        $stmt = $pdo->prepare('SHOW TABLES LIKE :table');
+        $stmt->execute([':table' => $tableName]);
+        if ($stmt->fetchColumn()) {
+            return;
+        }
+        $quoted = '`' . str_replace('`', '``', $tableName) . '`';
+        $pdo->exec("CREATE TABLE IF NOT EXISTS {$quoted} (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            unique_name VARCHAR(255) NOT NULL,
+            json_data LONGTEXT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_name (unique_name),
+            KEY updated_at (updated_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+}
+
 function kop_resolve_table_name(PDO $pdo, $base, $prefix = '') {
     $candidates = [];
     if (is_string($prefix) && $prefix !== '') {
@@ -196,6 +219,23 @@ function kop_resolve_submission_project_name($master_id, $project_data, $submiss
         }
     }
 
+    $transporter_company_name = $project_data['transporterCompany']['name']
+        ?? $project_data['transporterAgency']['name']
+        ?? '';
+    if (!empty($transporter_company_name)) {
+        $candidates[] = $transporter_company_name;
+    }
+
+    if (!empty($project_data['transporters'][0])) {
+        $transporter_name = kop_consultant_display_name($project_data['transporters'][0]);
+        if ($transporter_name !== '') {
+            if (!empty($transporter_company_name)) {
+                $candidates[] = $transporter_company_name . ' - ' . $transporter_name;
+            }
+            $candidates[] = $transporter_name;
+        }
+    }
+
     foreach ($candidates as $candidate) {
         $sanitized = kop_sanitize_project_identifier($candidate);
         if ($sanitized !== '') {
@@ -309,6 +349,7 @@ try {
     $suggested_edits_table = kop_resolve_table_name($pdo, 'suggested_edits', $wp_prefix);
     $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $wp_prefix);
     $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix);
+    $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $wp_prefix);
     $locations_table = kop_resolve_table_name($pdo, 'locations_master', $wp_prefix);
 
     $pdo->beginTransaction();
@@ -373,14 +414,24 @@ try {
         $isReferrer = !empty($project_data['referrerAgency']['name']) ||
                       !empty($project_data['referrerConsultants'][0]['firstName']) ||
                       !empty($project_data['referrerConsultants'][0]['lastName']);
-        
-        // Determine table: locations first, then referrers, then facilities
+
+        // Check if it's a transporter project
+        $isTransporter = !empty($project_data['transporterCompany']['name']) ||
+                         !empty($project_data['transporterAgency']['name']) ||
+                         !empty($project_data['transporters'][0]['firstName']) ||
+                         !empty($project_data['transporters'][0]['lastName']);
+
+        // Determine table: locations first, then referrers, then transporters, then facilities
         if ($isLocation) {
             $tableName = $locations_table;
             $category = 'locations';
         } elseif ($isReferrer) {
             $tableName = $referrers_table;
             $category = 'referrers';
+        } elseif ($isTransporter) {
+            $tableName = $transporters_table;
+            $category = 'transporters';
+            kop_ensure_master_table($pdo, $tableName);
         } else {
             $tableName = $facilities_table;
             $category = 'companies';

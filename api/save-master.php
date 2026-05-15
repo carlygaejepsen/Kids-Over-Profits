@@ -80,8 +80,33 @@ if (!function_exists('kop_resolve_table_name')) {
 
 $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $prefix);
 $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $prefix);
+$transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $prefix);
 $locations_table = kop_resolve_table_name($pdo, 'locations_master', $prefix);
 $wiki_table = kop_resolve_table_name($pdo, 'wiki_master', $prefix);
+
+if (!function_exists('kop_ensure_master_table')) {
+    /**
+     * Auto-create a master table on demand if it doesn't exist yet.
+     * Used by category branches that may run before the table has been provisioned.
+     */
+    function kop_ensure_master_table(PDO $pdo, $tableName) {
+        $stmt = $pdo->prepare('SHOW TABLES LIKE :table');
+        $stmt->execute([':table' => $tableName]);
+        if ($stmt->fetchColumn()) {
+            return;
+        }
+        $quoted = '`' . str_replace('`', '``', $tableName) . '`';
+        $pdo->exec("CREATE TABLE IF NOT EXISTS {$quoted} (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            unique_name VARCHAR(255) NOT NULL,
+            json_data LONGTEXT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_name (unique_name),
+            KEY updated_at (updated_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+}
 
 // Set defaults for all expected variables to prevent undefined errors
 // These are defined AFTER config.php to prevent WordPress from overwriting them
@@ -890,9 +915,10 @@ if ($action === 'delete') {
             // If not found in locations_master, check facilities_master for legacy entries
         }
         
-        // Try deleting from all three tables (facilities, referrers, and locations)
+        // Try deleting from all four master tables (facilities, referrers, transporters, locations)
         $deletedFromFacilities = false;
         $deletedFromReferrers = false;
+        $deletedFromTransporters = false;
         $deletedFromLocations = false;
 
         $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
@@ -903,12 +929,25 @@ if ($action === 'delete') {
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromReferrers = $stmt->rowCount() > 0;
 
+        // transporters_master may not exist yet (auto-created on first save)
+        try {
+            $stmt = $pdo->prepare("DELETE FROM transporters_master WHERE unique_name = :projectName");
+            $stmt->execute([':projectName' => $projectName]);
+            $deletedFromTransporters = $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // Table doesn't exist yet — that's fine.
+        }
+
         $stmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromLocations = $stmt->rowCount() > 0;
 
-        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromLocations) {
-            $fromTable = $deletedFromReferrers ? 'referrers_master' : ($deletedFromLocations ? 'locations_master' : 'facilities_master');
+        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromTransporters || $deletedFromLocations) {
+            $fromTable = $deletedFromReferrers
+                ? 'referrers_master'
+                : ($deletedFromTransporters
+                    ? 'transporters_master'
+                    : ($deletedFromLocations ? 'locations_master' : 'facilities_master'));
             
             // For non-location projects, also remove this project's entries from all location projects
             $cleanedLocations = [];
@@ -976,6 +1015,9 @@ if ($action === 'save') {
         $tableName = $locations_table;
     } elseif ($category === 'referrers') {
         $tableName = $referrers_table;
+    } elseif ($category === 'transporters') {
+        $tableName = $transporters_table;
+        kop_ensure_master_table($pdo, $tableName);
     } elseif ($category === 'wiki') {
         $tableName = $wiki_table;
     } else {
