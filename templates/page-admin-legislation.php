@@ -110,6 +110,15 @@ get_header();
                     </label>
                 </div>
 
+                <div class="form-row two-col">
+                    <label>Session
+                        <select name="session_year" id="leg-session-year">
+                            <option value="">— pick jurisdiction first —</option>
+                        </select>
+                    </label>
+                    <label>&nbsp;</label>
+                </div>
+
                 <div class="form-row">
                     <button type="button" id="fetchLegislationBtn" class="primary-btn autofill-btn">✨ Auto-populate details from government sources</button>
                 </div>
@@ -121,11 +130,7 @@ get_header();
                 </div>
 
                 <div class="form-row two-col">
-                    <label>Session
-                        <select name="session_year" id="leg-session-year">
-                            <option value="">— pick jurisdiction first —</option>
-                        </select>
-                    </label>
+                    <label>&nbsp;</label>
                     <label>Status
                         <select name="status" id="leg-status">
                             <option value="unknown">Unknown</option>
