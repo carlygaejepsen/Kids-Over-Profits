@@ -2298,6 +2298,878 @@ input[type="url"].array-input {
     transition: all 0.2s ease;
 }
 
+/* ============================================
+   MOBILE OPTIMIZATION - COMPREHENSIVE
+   Improves functionality and UX on mobile devices
+   ============================================ */
+
+/* ============================================
+   MOBILE: BASE CONTAINER & LAYOUT (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+        margin: 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(252, 142, 214, 0.1), 0 4px 16px rgba(178, 225, 2, 0.05);
+    }
+
+    .container::before {
+        display: none;
+    }
+
+    .admin-header {
+        padding: 18px 15px;
+        margin-bottom: 18px;
+        border-radius: 6px;
+    }
+
+    .admin-header h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .admin-header p {
+        font-size: 14px;
+    }
+
+    .admin-warning {
+        padding: 12px 15px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+}
+
+/* ============================================
+   MOBILE: CATEGORY NAVIGATION & TABS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .category-navigation {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+    }
+
+    .category-tabs {
+        gap: 3px;
+        padding: 3px;
+        flex-wrap: wrap;
+        border-radius: 6px;
+    }
+
+    .category-tab {
+        padding: 10px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 5px;
+        flex: 1 1 auto;
+        min-width: 70px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .category-tab:nth-child(n+3) {
+        margin-top: 3px;
+    }
+}
+
+/* ============================================
+   MOBILE: VERY SMALL PHONES (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
+
+    .container {
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .admin-header {
+        padding: 15px 12px;
+        border-radius: 6px;
+    }
+
+    .admin-header h1 {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .admin-header p {
+        font-size: 13px;
+    }
+
+    .category-navigation {
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .category-tabs {
+        gap: 2px;
+        padding: 2px;
+        flex-direction: column;
+    }
+
+    .category-tab {
+        padding: 12px 10px;
+        font-size: 12px;
+        width: 100%;
+        margin-top: 2px;
+    }
+
+    .category-tab:first-child {
+        margin-top: 0;
+    }
+}
+
+/* ============================================
+   MOBILE: BUTTONS & TOUCH TARGETS (max-width: 768px)
+   Ensure minimum 44x44px touch targets on mobile
+   ============================================ */
+@media (max-width: 768px) {
+    .btn,
+    button,
+    .btn-lg,
+    .save-master-btn,
+    .btn-danger,
+    .btn-secondary,
+    .btn-primary,
+    .save-suggestion-btn {
+        min-height: 44px;
+        padding: 10px 16px;
+        font-size: 14px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-sm {
+        min-height: 36px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .btn-inline {
+        min-height: 36px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    /* Plus and remove buttons - make more touchable */
+    .add-plus-btn {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+        flex: 0 0 40px !important;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+
+    .remove-btn {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+        flex: 0 0 40px !important;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn,
+    button,
+    .btn-lg,
+    .save-master-btn,
+    .btn-danger,
+    .btn-secondary,
+    .btn-primary,
+    .save-suggestion-btn {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .btn-inline,
+    .btn-sm {
+        width: auto;
+        margin-bottom: 4px;
+    }
+
+    .btn-inline {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+}
+
+/* ============================================
+   MOBILE: INPUT FIELDS & FORMS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    textarea,
+    select,
+    .input-form,
+    .input-primary,
+    .input-secondary {
+        max-width: 100% !important;
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 16px; /* 16px prevents auto-zoom on iOS */
+        border-radius: 5px;
+        min-height: 40px; /* Touch target */
+    }
+
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    select {
+        min-height: 44px;
+        padding: 10px 12px;
+    }
+
+    /* Override specific field sizing to be responsive */
+    input[data-field*="ageRange.min"],
+    input[data-field*="ageRange.max"],
+    input[data-field*="capacity"],
+    input[data-field*="census"],
+    input[data-field*="Year"] {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+}
+
+/* ============================================
+   MOBILE: ARRAY ITEMS & CONTROLS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .array-item {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .array-input {
+        max-width: 100% !important;
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+
+    .array-input-role,
+    .array-input-name,
+    .array-input-url,
+    .array-input-display-text {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .add-plus-btn,
+    .remove-btn {
+        flex: 0 0 40px;
+        align-self: flex-end;
+    }
+
+    .add-item-btn {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 14px;
+        min-height: 44px;
+        margin-top: 10px;
+    }
+}
+
+/* ============================================
+   MOBILE: SECTIONS & COLLAPSIBLE CONTENT (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .section {
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 2px solid #B2E102;
+    }
+
+    .section-header {
+        padding: 14px 12px;
+        border-radius: 6px 6px 0 0;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .section-title {
+        font-size: 16px;
+        margin: 0;
+        flex: 1;
+        text-align: left;
+    }
+
+    .section-toggle {
+        font-size: 18px;
+        margin-left: 8px;
+        flex-shrink: 0;
+    }
+
+    .section-content {
+        padding: 15px;
+        border-radius: 0 0 6px 6px;
+    }
+
+    .sub-section {
+        margin-bottom: 12px;
+        border-radius: 5px;
+    }
+
+    .sub-section-header {
+        padding: 10px 12px;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .sub-section-title {
+        font-size: 14px;
+    }
+
+    .sub-section-content {
+        padding: 12px;
+    }
+}
+
+/* ============================================
+   MOBILE: FACILITY CONTROLS & NAVIGATION (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .facility-controls {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+    }
+
+    .facility-header {
+        gap: 8px;
+    }
+
+    .controls {
+        gap: 6px;
+        width: 100%;
+    }
+
+    #prev-facility-btn,
+    #next-facility-btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 13px;
+        min-height: 40px;
+    }
+
+    .facility-loader-panel {
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 6px;
+    }
+
+    .facility-loader-panel h2 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .quick-facilities-list {
+        max-height: 200px;
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 6px;
+    }
+}
+
+/* ============================================
+   MOBILE: FACILITY & CONSULTANT LISTS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .facility-toc,
+    #consultants-toc {
+        margin-bottom: 18px;
+        border-radius: 6px;
+    }
+
+    .toc-header {
+        padding: 12px 15px;
+        border-radius: 6px 6px 0 0;
+    }
+
+    .toc-title {
+        font-size: 16px;
+    }
+
+    .toc-toggle {
+        padding: 6px 10px;
+        font-size: 14px;
+        min-height: 36px;
+    }
+
+    .toc-content {
+        padding: 12px;
+    }
+
+    .toc-stats {
+        font-size: 13px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+    }
+
+    .facility-list,
+    .facility-item,
+    .consultant-item {
+        border-radius: 5px;
+    }
+
+    .facility-item,
+    .consultant-item {
+        gap: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+        min-height: 44px;
+        align-items: center;
+    }
+
+    .facility-item-number,
+    .consultant-item-number {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .facility-item-name,
+    .consultant-item-name {
+        font-size: 14px;
+    }
+
+    .facility-item-details,
+    .consultant-item-details {
+        font-size: 12px;
+    }
+
+    .facility-badges {
+        flex-direction: row;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .facility-ownership-badge,
+    .facility-source-badge,
+    .consultant-independent-badge,
+    .profit-status-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}
+
+/* ============================================
+   MOBILE: CARDS & CONTENT CONTAINERS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .location-card,
+    .referrer-card,
+    .location-project-management,
+    .project-management {
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+    }
+
+    .content-header h3 {
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+
+    .content-header p {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .content-header .input-primary {
+        max-width: 100%;
+        height: 40px;
+    }
+
+    .content-header .btn-inline {
+        height: 40px;
+        padding: 0 12px;
+    }
+
+    .project-management h2 {
+        font-size: 16px;
+        margin: 0 0 12px 0;
+    }
+
+    .quick-loader-heading {
+        font-size: 18px;
+    }
+}
+
+/* ============================================
+   MOBILE: MODALS & OVERLAYS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .kop-modal,
+    .modal,
+    .organizer-modal {
+        position: fixed !important;
+        inset: 10px !important;
+        border-radius: 8px !important;
+        padding: 0 !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        z-index: 9999 !important;
+    }
+
+    .kop-modal > div,
+    .modal-content,
+    .organizer-modal-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 8px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .kop-modal-header,
+    .organizer-modal-header,
+    .modal-header {
+        padding: 15px 12px;
+        font-size: 16px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .kop-modal-body,
+    .organizer-modal-body,
+    .modal-body {
+        padding: 15px 12px;
+        overflow-y: auto;
+        max-height: calc(90vh - 150px);
+    }
+
+    .modal-footer {
+        padding: 12px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .modal-footer .btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 10px 12px;
+    }
+
+    @media (max-width: 480px) {
+        .modal-footer .btn {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+    }
+}
+
+/* ============================================
+   MOBILE: PROJECT ACTION BUTTONS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .project-actions {
+        gap: 6px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+    }
+
+    .project-action-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+        border-radius: 5px;
+        flex: 1 1 calc(50% - 3px);
+        min-width: 0;
+        min-height: 40px;
+    }
+
+    @media (max-width: 480px) {
+        .project-action-btn {
+            flex: 1 1 100%;
+            width: 100%;
+        }
+    }
+}
+
+/* ============================================
+   MOBILE: AUTOCOMPLETE DROPDOWNS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .autocomplete-wrapper {
+        max-width: 100%;
+        width: 100%;
+        flex: 1;
+    }
+
+    .autocomplete-wrapper input {
+        max-width: 100%;
+        width: 100%;
+        font-size: 16px;
+        min-height: 40px;
+    }
+
+    .autocomplete-dropdown {
+        position: fixed;
+        top: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        max-height: 50vh;
+        border-radius: 12px 12px 0 0;
+        z-index: 10001;
+        border-top: 2px solid #33A7B5;
+        border-bottom: none;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .autocomplete-item {
+        padding: 12px 15px;
+        font-size: 14px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item.active {
+        padding-left: 12px;
+    }
+}
+
+/* ============================================
+   MOBILE: TYPOGRAPHY & SPACING (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-row,
+    .form-row-3 {
+        gap: 12px;
+        margin-bottom: 15px;
+        flex-direction: column;
+    }
+
+    .form-row > .form-group,
+    .form-row-3 > .form-group {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .checkbox-group {
+        margin-bottom: 10px;
+        padding: 8px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    .checkbox-group label {
+        font-size: 14px;
+    }
+
+    #project-status,
+    #project-status-location,
+    #referrer-project-status,
+    #upload-status {
+        max-width: 100%;
+        padding: 10px 12px;
+        margin: 12px 0;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .form-row,
+    .form-row-3 {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .section-title {
+        font-size: 14px;
+    }
+
+    .section-toggle {
+        font-size: 16px;
+    }
+
+    .toc-title {
+        font-size: 15px;
+    }
+
+    .facility-item-name,
+    .consultant-item-name {
+        font-size: 13px;
+    }
+}
+
+/* ============================================
+   MOBILE: TOOLBAR ADJUSTMENTS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .fixed-toolbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 998;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .toolbar-header {
+        padding: 12px 15px;
+        background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+        border-radius: 12px 12px 0 0;
+    }
+
+    .toolbar-title {
+        font-size: 15px;
+    }
+
+    .toolbar-toggle {
+        padding: 6px 10px;
+        font-size: 16px;
+        min-height: 36px;
+    }
+
+    .toolbar-content {
+        padding: 12px 15px;
+        max-height: calc(50vh - 50px);
+        overflow-y: auto;
+    }
+
+    .toolbar-section {
+        margin-bottom: 12px;
+    }
+
+    body {
+        padding-bottom: 60px; /* Add space for fixed toolbar */
+    }
+
+    .container {
+        margin-bottom: 60px;
+    }
+}
+
+/* ============================================
+   MOBILE: CHECKBOX & TOGGLE BUTTONS (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+    .toggle-btn-span {
+        padding: 10px 14px;
+        font-size: 12px;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .toggle-btn-label {
+        flex: 1;
+    }
+
+    .toggle-btn-label input[type="radio"] {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* ============================================
+   MOBILE: PREVENT COMMON ISSUES
+   ============================================ */
+@media (max-width: 768px) {
+    /* Prevent horizontal scroll */
+    * {
+        max-width: 100vw;
+    }
+
+    /* Better font sizing on mobile */
+    body {
+        font-size: 14px;
+    }
+
+    /* Improve line height for readability */
+    p, label, span, div {
+        line-height: 1.5;
+    }
+
+    /* Better focus states for accessibility */
+    input:focus,
+    button:focus,
+    select:focus,
+    textarea:focus {
+        outline: 3px solid #B2E102;
+        outline-offset: 2px;
+    }
+
+    /* Prevent text selection on button long-press */
+    button,
+    .btn,
+    .project-action-btn {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    /* Smooth scrolling for better feel */
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
 .copy-btn:hover {
     background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
@@ -3615,92 +4487,180 @@ body.page-template-page-data .header-wrapper {
     }
 }
 
- 
- / *   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
-       K O P   B U T T O N   &   M O D A L   S T Y L E S  
-       A d d e d   t o   s u p p o r t   c o n s i s t e n t   t o g g l e s   a n d   m o d a l s  
-       = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =   * /  
-  
- . k o p - b t n   {  
-         d i s p l a y :   i n l i n e - f l e x ;  
-         a l i g n - i t e m s :   c e n t e r ;  
-         j u s t i f y - c o n t e n t :   c e n t e r ;  
-         p a d d i n g :   8 p x   1 4 p x ;  
-         f o n t - s i z e :   1 3 p x ;  
-         f o n t - w e i g h t :   6 0 0 ;  
-         b o r d e r :   1 p x   s o l i d   # d 1 d 5 d b ;  
-         b o r d e r - r a d i u s :   6 p x ;  
-         c u r s o r :   p o i n t e r ;  
-         b a c k g r o u n d :   # f f f f f f ;  
-         c o l o r :   # 3 7 4 1 5 1 ;  
-         t r a n s i t i o n :   a l l   0 . 2 s   e a s e ;  
-         b o x - s h a d o w :   0   1 p x   2 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 0 5 ) ;  
-         l i n e - h e i g h t :   1 . 4 ;  
- }  
-  
- . k o p - b t n : h o v e r   {  
-         b a c k g r o u n d :   # f 3 f 4 f 6 ;  
-         b o r d e r - c o l o r :   # 9 c a 3 a f ;  
-         t r a n s f o r m :   t r a n s l a t e Y ( - 1 p x ) ;  
-         b o x - s h a d o w :   0   2 p x   4 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 1 ) ;  
- }  
-  
- . k o p - b t n : a c t i v e   {  
-         t r a n s f o r m :   t r a n s l a t e Y ( 0 ) ;  
-         b o x - s h a d o w :   0   1 p x   2 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 0 5 ) ;  
- }  
-  
- / *   M o d a l   S t y l e s   * /  
- . k o p - m o d a l   {  
-         d i s p l a y :   n o n e ;  
-         p o s i t i o n :   f i x e d ;  
-         i n s e t :   0 ;  
-         b a c k g r o u n d :   r g b a ( 0 ,   0 ,   0 ,   0 . 5 ) ;  
-         z - i n d e x :   9 9 9 9 ;  
-         a l i g n - i t e m s :   c e n t e r ;  
-         j u s t i f y - c o n t e n t :   c e n t e r ;  
-         p a d d i n g :   2 0 p x ;  
-         o p a c i t y :   0 ;  
-         t r a n s i t i o n :   o p a c i t y   0 . 2 s   e a s e ;  
- }  
-  
- . k o p - m o d a l [ a r i a - h i d d e n = " f a l s e " ]   {  
-         d i s p l a y :   f l e x ;  
-         o p a c i t y :   1 ;  
- }  
-  
- . k o p - m o d a l   >   d i v   {  
-         b a c k g r o u n d :   # f f f f f f ;  
-         b o r d e r - r a d i u s :   1 0 p x ;  
-         m a x - w i d t h :   4 5 0 p x ;  
-         w i d t h :   1 0 0 % ;  
-         b o x - s h a d o w :   0   1 0 p x   2 5 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 2 ) ;  
-         p a d d i n g :   2 4 p x ;  
-         p o s i t i o n :   r e l a t i v e ;  
-         t r a n s f o r m :   s c a l e ( 0 . 9 5 ) ;  
-         t r a n s i t i o n :   t r a n s f o r m   0 . 2 s   e a s e ;  
- }  
-  
- . k o p - m o d a l [ a r i a - h i d d e n = " f a l s e " ]   >   d i v   {  
-         t r a n s f o r m :   s c a l e ( 1 ) ;  
- }  
-  
- . k o p - m o d a l   h 3   {  
-         m a r g i n - t o p :   0 ;  
-         m a r g i n - b o t t o m :   1 2 p x ;  
-         f o n t - s i z e :   1 8 p x ;  
-         c o l o r :   # 0 f 1 7 2 a ;  
-         f o n t - w e i g h t :   7 0 0 ;  
- }  
-  
- . k o p - m o d a l   p   {  
-         m a r g i n :   0   0   2 0 p x ;  
-         c o l o r :   # 3 3 4 1 5 5 ;  
-         l i n e - h e i g h t :   1 . 5 ;  
-         f o n t - s i z e :   1 4 p x ;  
- }  
-  
- . k o p - m o d a l   . k o p - b t n   {  
-         m i n - w i d t h :   8 0 p x ;  
- }  
+
+ 
+ / *   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+ 
+       K O P   B U T T O N   &   M O D A L   S T Y L E S 
+ 
+       A d d e d   t o   s u p p o r t   c o n s i s t e n t   t o g g l e s   a n d   m o d a l s 
+ 
+       = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =   * / 
+ 
+ 
+ 
+ . k o p - b t n   { 
+ 
+         d i s p l a y :   i n l i n e - f l e x ; 
+ 
+         a l i g n - i t e m s :   c e n t e r ; 
+ 
+         j u s t i f y - c o n t e n t :   c e n t e r ; 
+ 
+         p a d d i n g :   8 p x   1 4 p x ; 
+ 
+         f o n t - s i z e :   1 3 p x ; 
+ 
+         f o n t - w e i g h t :   6 0 0 ; 
+ 
+         b o r d e r :   1 p x   s o l i d   # d 1 d 5 d b ; 
+ 
+         b o r d e r - r a d i u s :   6 p x ; 
+ 
+         c u r s o r :   p o i n t e r ; 
+ 
+         b a c k g r o u n d :   # f f f f f f ; 
+ 
+         c o l o r :   # 3 7 4 1 5 1 ; 
+ 
+         t r a n s i t i o n :   a l l   0 . 2 s   e a s e ; 
+ 
+         b o x - s h a d o w :   0   1 p x   2 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 0 5 ) ; 
+ 
+         l i n e - h e i g h t :   1 . 4 ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - b t n : h o v e r   { 
+ 
+         b a c k g r o u n d :   # f 3 f 4 f 6 ; 
+ 
+         b o r d e r - c o l o r :   # 9 c a 3 a f ; 
+ 
+         t r a n s f o r m :   t r a n s l a t e Y ( - 1 p x ) ; 
+ 
+         b o x - s h a d o w :   0   2 p x   4 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 1 ) ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - b t n : a c t i v e   { 
+ 
+         t r a n s f o r m :   t r a n s l a t e Y ( 0 ) ; 
+ 
+         b o x - s h a d o w :   0   1 p x   2 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 0 5 ) ; 
+ 
+ } 
+ 
+ 
+ 
+ / *   M o d a l   S t y l e s   * / 
+ 
+ . k o p - m o d a l   { 
+ 
+         d i s p l a y :   n o n e ; 
+ 
+         p o s i t i o n :   f i x e d ; 
+ 
+         i n s e t :   0 ; 
+ 
+         b a c k g r o u n d :   r g b a ( 0 ,   0 ,   0 ,   0 . 5 ) ; 
+ 
+         z - i n d e x :   9 9 9 9 ; 
+ 
+         a l i g n - i t e m s :   c e n t e r ; 
+ 
+         j u s t i f y - c o n t e n t :   c e n t e r ; 
+ 
+         p a d d i n g :   2 0 p x ; 
+ 
+         o p a c i t y :   0 ; 
+ 
+         t r a n s i t i o n :   o p a c i t y   0 . 2 s   e a s e ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l [ a r i a - h i d d e n = " f a l s e " ]   { 
+ 
+         d i s p l a y :   f l e x ; 
+ 
+         o p a c i t y :   1 ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l   >   d i v   { 
+ 
+         b a c k g r o u n d :   # f f f f f f ; 
+ 
+         b o r d e r - r a d i u s :   1 0 p x ; 
+ 
+         m a x - w i d t h :   4 5 0 p x ; 
+ 
+         w i d t h :   1 0 0 % ; 
+ 
+         b o x - s h a d o w :   0   1 0 p x   2 5 p x   r g b a ( 0 ,   0 ,   0 ,   0 . 2 ) ; 
+ 
+         p a d d i n g :   2 4 p x ; 
+ 
+         p o s i t i o n :   r e l a t i v e ; 
+ 
+         t r a n s f o r m :   s c a l e ( 0 . 9 5 ) ; 
+ 
+         t r a n s i t i o n :   t r a n s f o r m   0 . 2 s   e a s e ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l [ a r i a - h i d d e n = " f a l s e " ]   >   d i v   { 
+ 
+         t r a n s f o r m :   s c a l e ( 1 ) ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l   h 3   { 
+ 
+         m a r g i n - t o p :   0 ; 
+ 
+         m a r g i n - b o t t o m :   1 2 p x ; 
+ 
+         f o n t - s i z e :   1 8 p x ; 
+ 
+         c o l o r :   # 0 f 1 7 2 a ; 
+ 
+         f o n t - w e i g h t :   7 0 0 ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l   p   { 
+ 
+         m a r g i n :   0   0   2 0 p x ; 
+ 
+         c o l o r :   # 3 3 4 1 5 5 ; 
+ 
+         l i n e - h e i g h t :   1 . 5 ; 
+ 
+         f o n t - s i z e :   1 4 p x ; 
+ 
+ } 
+ 
+ 
+ 
+ . k o p - m o d a l   . k o p - b t n   { 
+ 
+         m i n - w i d t h :   8 0 p x ; 
+ 
+ } 
+ 
  
