@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
     }
 }
 
-$is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+$is_admin = function_exists('current_user_can') && current_user_can('edit_posts');
 
 function legislation_decode_json_fields(array $row): array {
     $jsonFields = ['sponsors', 'subject_tags', 'facilities_affected', 'tags'];
@@ -114,7 +114,7 @@ try {
 
     if (!$is_admin) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Admin privileges required']);
+        echo json_encode(['success' => false, 'error' => 'Contributor privileges or higher required']);
         exit;
     }
 
