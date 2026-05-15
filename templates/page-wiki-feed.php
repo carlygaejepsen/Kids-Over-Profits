@@ -11,6 +11,9 @@ function kop_enqueue_wiki_feed_assets() {
     
     // Add marked.js for markdown rendering (local file)
     wp_enqueue_script('marked-js', get_stylesheet_directory_uri() . '/js/marked.min.js', array(), '15.0.0', true);
+    // DOMPurify sanitizes marked.js output before it's inserted into the DOM (defends against
+    // stored XSS in submitted markdown like <img src=x onerror=...>).
+    wp_enqueue_script('dompurify-js', get_stylesheet_directory_uri() . '/js/purify.min.js', array(), '3.1.6', true);
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_feed_assets');
 
@@ -133,8 +136,8 @@ get_header();
                             </button>
                             
                             <div class="markdown-content" style="display: none;">
-                                <!-- Hidden raw content -->
-                                <script type="text/template" class="raw-markdown"><?php echo $markdown; ?></script>
+                                <!-- Hidden raw content (escaped; JS decodes entities before parsing) -->
+                                <script type="text/template" class="raw-markdown"><?php echo esc_html($markdown); ?></script>
                                 <!-- Rendered container -->
                                 <div class="rendered-markdown"></div>
                             </div>
@@ -161,47 +164,46 @@ function toggleMarkdown(btn) {
     if (content.style.display === 'none') {
         // Render if not already done
         if (!rendered.innerHTML && raw.trim()) {
-            // Check if marked is available
-            console.log('Marked status:', typeof marked);
-            
+            // Decode HTML entities in raw content (php echo escapes them) — done outside the
+            // try so it's available in the catch fallback.
+            const txt = document.createElement('textarea');
+            txt.innerHTML = raw;
+            let decodedRaw = txt.value;
+            // Ensure headers have spaces after # (Reddit/legacy might be lenient, marked is strict)
+            decodedRaw = decodedRaw.replace(/(^|\n)(#{1,6})([^\s#])/g, '$1$2 $3');
+
             try {
                 if (typeof marked !== 'undefined') {
-                    // Handle different marked versions (some use marked.parse, others just marked)
                     const parseFn = typeof marked.parse === 'function' ? marked.parse : marked;
-                    
-                    // Simple configuration
                     if (typeof marked.setOptions === 'function') {
-                        marked.setOptions({
-                            gfm: true,
-                            breaks: true
-                        });
+                        marked.setOptions({ gfm: true, breaks: true });
                     }
-                    
-                    // Decode HTML entities in raw content before parsing (php echo escapes them)
-                    const txt = document.createElement('textarea');
-                    txt.innerHTML = raw;
-                    let decodedRaw = txt.value;
-
-                    // Fix: Ensure headers have spaces after # (Reddit/legacy might be lenient, marked is strict)
-                    // Converts "#Header" to "# Header"
-                    decodedRaw = decodedRaw.replace(/(^|\n)(#{1,6})([^\s#])/g, '$1$2 $3');
-
-                    rendered.innerHTML = parseFn(decodedRaw);
+                    const rawHtml = parseFn(decodedRaw);
+                    if (typeof DOMPurify !== 'undefined') {
+                        rendered.innerHTML = DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true } });
+                    } else {
+                        // DOMPurify missing: refuse to render HTML (any payload would execute).
+                        throw new Error('DOMPurify sanitizer not loaded');
+                    }
                 } else {
                     throw new Error('marked library not found');
                 }
             } catch (e) {
                 console.error('Markdown rendering failed:', e);
-                // Fallback to raw text but formatted nicely
-                rendered.innerHTML = '<div style="white-space: pre-wrap; font-family: sans-serif; color: #333;">' + raw + '</div>';
-                
-                // Add a warning note
+                // Fallback: show as plain pre-wrapped text via textContent — never innerHTML.
+                rendered.textContent = '';
                 const warning = document.createElement('div');
                 warning.style.color = 'red';
                 warning.style.fontSize = '0.8em';
                 warning.style.marginBottom = '10px';
                 warning.textContent = 'Rendering failed (showing raw text): ' + e.message;
-                rendered.prepend(warning);
+                rendered.appendChild(warning);
+                const pre = document.createElement('div');
+                pre.style.whiteSpace = 'pre-wrap';
+                pre.style.fontFamily = 'sans-serif';
+                pre.style.color = '#333';
+                pre.textContent = decodedRaw || raw;
+                rendered.appendChild(pre);
             }
         }
         

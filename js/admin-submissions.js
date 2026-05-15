@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const config = window.adminSubmissionsConfig || {};
     const API_BASE = config.apiBase || '/wp-content/themes/child/api';
     const MANAGE_API = config.manageApi || `${API_BASE}/manage-submissions.php`;
+    const SCAN_API = config.scanApi || `${API_BASE}/scan-submission-urls.php`;
 
     // Initialize
     loadStats();
@@ -448,9 +449,21 @@ document.addEventListener('DOMContentLoaded', () => {
             modalProgramType.textContent = submission.publication_name || '-';
 
             if (infoRows[5]) infoRows[5].querySelector('.info-label').textContent = 'URL:';
-            modalYearsActive.innerHTML = submission.article_url
-                ? `<a href="${submission.article_url}" target="_blank" rel="noopener noreferrer">${submission.article_url}</a>`
-                : '-';
+            modalYearsActive.textContent = '';
+            const safeArticleUrl = safeUrl(submission.article_url);
+            if (safeArticleUrl) {
+                const a = document.createElement('a');
+                a.href = safeArticleUrl;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.textContent = safeArticleUrl;
+                modalYearsActive.appendChild(a);
+            } else if (submission.article_url) {
+                // Non-http(s) URL: show the raw text but don't make it clickable.
+                modalYearsActive.textContent = submission.article_url;
+            } else {
+                modalYearsActive.textContent = '-';
+            }
 
             // Check for duplicate URLs
             const duplicates = getDuplicatesForUrl(submission.article_url);
@@ -545,6 +558,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear action status
         actionStatus.innerHTML = '';
 
+        // Kick off Cloudmersive URL safety check (async; results render when ready).
+        runUrlScan(currentType, submission.id);
+
         // Show modal
         submissionModal.style.display = 'flex';
 
@@ -617,11 +633,122 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Run Cloudmersive URL threat scan for this submission and render results.
+     * The endpoint requires admin auth; on 403 the section is hidden.
+     */
+    async function runUrlScan(submissionType, submissionId) {
+        const section = document.getElementById('urlSafetySection');
+        const status = document.getElementById('urlSafetyStatus');
+        const list = document.getElementById('urlSafetyList');
+        if (!section || !status || !list) return;
+
+        section.style.display = 'block';
+        status.textContent = 'Scanning URLs…';
+        status.className = 'url-safety-status scanning';
+        list.innerHTML = '';
+
+        const scanType = submissionType === 'data' ? 'data' : submissionType;
+        const requestedId = submissionId;
+
+        try {
+            const response = await fetch(SCAN_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ type: scanType, id: requestedId })
+            });
+
+            // The modal may have closed or switched submissions while we were waiting —
+            // bail out so we don't paint stale results onto a different submission.
+            if (!currentSubmission || currentSubmission.id !== requestedId) return;
+
+            if (response.status === 403) {
+                section.style.display = 'none';
+                return;
+            }
+
+            const result = await response.json();
+            if (!result.success) {
+                status.textContent = 'URL scan failed: ' + (result.error || 'Unknown error');
+                status.className = 'url-safety-status error';
+                return;
+            }
+
+            if (!result.results || result.results.length === 0) {
+                status.textContent = 'No URLs found in this submission.';
+                status.className = 'url-safety-status empty';
+                return;
+            }
+
+            if (result.flagged > 0) {
+                status.textContent = `⚠ ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
+                status.className = 'url-safety-status flagged';
+            } else {
+                status.textContent = `✓ All ${result.scanned} URL(s) clean.`;
+                status.className = 'url-safety-status clean';
+            }
+
+            list.innerHTML = '';
+            result.results.forEach(r => {
+                const li = document.createElement('li');
+                li.className = 'url-safety-item ' + (
+                    r.clean === true ? 'clean'
+                    : r.clean === false ? 'flagged'
+                    : 'unknown'
+                );
+
+                const icon = document.createElement('span');
+                icon.className = 'url-safety-icon';
+                icon.textContent = r.clean === true ? '✓' : r.clean === false ? '⚠' : '?';
+                li.appendChild(icon);
+
+                const safe = safeUrl(r.url);
+                if (safe) {
+                    const a = document.createElement('a');
+                    a.href = safe;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.textContent = safe;
+                    li.appendChild(a);
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = r.url;
+                    li.appendChild(span);
+                }
+
+                if (r.clean === false && r.threats && Object.keys(r.threats).length > 0) {
+                    const threatList = Object.entries(r.threats)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join('; ');
+                    const t = document.createElement('div');
+                    t.className = 'url-safety-threats';
+                    t.textContent = threatList;
+                    li.appendChild(t);
+                } else if (r.error) {
+                    const e = document.createElement('div');
+                    e.className = 'url-safety-error';
+                    e.textContent = 'Could not scan: ' + r.error;
+                    li.appendChild(e);
+                }
+
+                list.appendChild(li);
+            });
+        } catch (err) {
+            console.error('URL scan failed:', err);
+            if (!currentSubmission || currentSubmission.id !== requestedId) return;
+            status.textContent = 'URL scan request failed: ' + err.message;
+            status.className = 'url-safety-status error';
+        }
+    }
+
+    /**
      * Close modal
      */
     function closeModal() {
         submissionModal.style.display = 'none';
         currentSubmission = null;
+        const safetySection = document.getElementById('urlSafetySection');
+        if (safetySection) safetySection.style.display = 'none';
     }
 
     /**
@@ -944,6 +1071,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /**
+     * Return the URL only if it parses and uses http(s); otherwise null.
+     * Defends against javascript: / data: schemes and attribute-breakout payloads
+     * before we interpolate a submitter-supplied URL into an href.
+     */
+    function safeUrl(url) {
+        if (!url || typeof url !== 'string') return null;
+        try {
+            const parsed = new URL(url);
+            return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : null;
+        } catch (e) {
+            return null;
+        }
     }
 
     /**

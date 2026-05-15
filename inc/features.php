@@ -43,8 +43,9 @@ class AnonymousDocPortal {
         add_shortcode('anonymous_doc_portal', array($this, 'render_portal'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
-        // Securely load API key from a constant.
-        $this->cloudmersive_api_key = defined('CLOUDMERSIVE_API_KEY') ? CLOUDMERSIVE_API_KEY : '';
+        // Securely load API key: prefer a PHP constant (wp-config.php),
+        // fall back to environment / .env so the key can live in .env alongside other secrets.
+        $this->cloudmersive_api_key = $this->load_cloudmersive_api_key();
         
         // Create secure upload directory
         $this->setup_upload_directory();
@@ -67,8 +68,51 @@ class AnonymousDocPortal {
     }
     
     /**
+     * Resolve the Cloudmersive API key from (in order): PHP constant,
+     * environment variable, then a .env file walked up from the theme directory.
+     */
+    private function load_cloudmersive_api_key() {
+        if (defined('CLOUDMERSIVE_API_KEY') && CLOUDMERSIVE_API_KEY !== '') {
+            return CLOUDMERSIVE_API_KEY;
+        }
+
+        $from_env = getenv('CLOUDMERSIVE_API_KEY');
+        if ($from_env === false && isset($_ENV['CLOUDMERSIVE_API_KEY'])) {
+            $from_env = $_ENV['CLOUDMERSIVE_API_KEY'];
+        }
+        if (is_string($from_env) && $from_env !== '') {
+            return $from_env;
+        }
+
+        $dir = dirname(__DIR__);
+        for ($i = 0; $i < 6; $i++) {
+            $candidate = $dir . '/.env';
+            if (is_readable($candidate)) {
+                foreach (file($candidate, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+                    $line = trim($line);
+                    if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+                    list($k, $v) = explode('=', $line, 2);
+                    if (trim($k) !== 'CLOUDMERSIVE_API_KEY') continue;
+                    $v = trim($v);
+                    if ((substr($v, 0, 1) === '"' && substr($v, -1) === '"') ||
+                        (substr($v, 0, 1) === "'" && substr($v, -1) === "'")) {
+                        $v = substr($v, 1, -1);
+                    }
+                    return $v;
+                }
+                break;
+            }
+            $parent = dirname($dir);
+            if ($parent === $dir) break;
+            $dir = $parent;
+        }
+
+        return '';
+    }
+
+    /**
      * Scan file with Cloudmersive API for viruses and threats
-     * 
+     *
      * @param string $file_path Path to the file to scan
      * @return array Result with 'clean' boolean and 'message' string
      */
@@ -301,6 +345,173 @@ function kop_initialize_anonymous_doc_portal() {
     new AnonymousDocPortal();
 }
 add_action('after_setup_theme', 'kop_initialize_anonymous_doc_portal');
+
+// =================================================================
+// URL THREAT SCANNER (CLOUDMERSIVE)
+// =================================================================
+
+/**
+ * Scans URLs from public submissions against Cloudmersive's threat-detection API
+ * to flag phishing / malicious links before an admin clicks them in the review modal.
+ * Results are cached in the url_scan_cache table for KOP_Url_Scanner::CACHE_TTL seconds.
+ */
+class KOP_Url_Scanner {
+    const CACHE_TTL = 2592000; // 30 days
+    const ENDPOINT = 'https://api.cloudmersive.com/virus/scan/website';
+
+    public static function load_api_key() {
+        if (defined('CLOUDMERSIVE_API_KEY') && CLOUDMERSIVE_API_KEY !== '') {
+            return CLOUDMERSIVE_API_KEY;
+        }
+        $from_env = getenv('CLOUDMERSIVE_API_KEY');
+        if ($from_env === false && isset($_ENV['CLOUDMERSIVE_API_KEY'])) {
+            $from_env = $_ENV['CLOUDMERSIVE_API_KEY'];
+        }
+        if (is_string($from_env) && $from_env !== '') {
+            return $from_env;
+        }
+        $dir = dirname(__DIR__);
+        for ($i = 0; $i < 6; $i++) {
+            $candidate = $dir . '/.env';
+            if (is_readable($candidate)) {
+                foreach (file($candidate, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+                    $line = trim($line);
+                    if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+                    list($k, $v) = explode('=', $line, 2);
+                    if (trim($k) !== 'CLOUDMERSIVE_API_KEY') continue;
+                    $v = trim($v);
+                    if ((substr($v, 0, 1) === '"' && substr($v, -1) === '"') ||
+                        (substr($v, 0, 1) === "'" && substr($v, -1) === "'")) {
+                        $v = substr($v, 1, -1);
+                    }
+                    return $v;
+                }
+                break;
+            }
+            $parent = dirname($dir);
+            if ($parent === $dir) break;
+            $dir = $parent;
+        }
+        return '';
+    }
+
+    /**
+     * Scan a single URL. Returns:
+     *   ['url' => $url, 'clean' => bool|null, 'threats' => array, 'cached' => bool, 'error' => string|null]
+     * `clean` is null when the scan couldn't run (no key, network error, bad URL).
+     */
+    public static function scan_url($url, $pdo) {
+        $url = is_string($url) ? trim($url) : '';
+        if ($url === '') {
+            return self::result($url, null, [], false, 'empty_url');
+        }
+
+        // Only scan http(s) URLs; other schemes shouldn't reach Cloudmersive.
+        $parts = parse_url($url);
+        if (!$parts || empty($parts['scheme']) || empty($parts['host'])) {
+            return self::result($url, null, [], false, 'invalid_url');
+        }
+        $scheme = strtolower($parts['scheme']);
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return self::result($url, null, [], false, 'unsupported_scheme');
+        }
+
+        $url_hash = hash('sha256', $url);
+        $cached = self::read_cache($pdo, $url_hash);
+        if ($cached !== null) {
+            return self::result($url, (bool) $cached['is_clean'], $cached['threats'], true, null);
+        }
+
+        $key = self::load_api_key();
+        if ($key === '') {
+            return self::result($url, null, [], false, 'no_api_key');
+        }
+
+        $response = wp_remote_post(self::ENDPOINT, [
+            'headers' => [
+                'Apikey' => $key,
+                'Content-Type' => 'application/json',
+            ],
+            'body' => wp_json_encode(['Url' => $url]),
+            'timeout' => 15,
+        ]);
+
+        if (is_wp_error($response)) {
+            error_log('Cloudmersive URL scan transport error: ' . $response->get_error_message());
+            return self::result($url, null, [], false, 'transport_error');
+        }
+
+        $status = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        $decoded = json_decode($body, true);
+
+        if ($status !== 200 || !is_array($decoded)) {
+            error_log("Cloudmersive URL scan returned status {$status}: {$body}");
+            return self::result($url, null, [], false, 'api_error_' . $status);
+        }
+
+        // Cloudmersive returns CleanResult: true/false plus optional threat categories.
+        $is_clean = isset($decoded['CleanResult']) ? (bool) $decoded['CleanResult'] : true;
+        $threats = [];
+        foreach (['WebsiteThreatType', 'ContainsExecutable', 'ContainsInvalidFile',
+                  'ContainsScript', 'ContainsPasswordProtectedFile', 'ContainsRestrictedFileFormat',
+                  'ContainsMacros', 'ContainsXmlExternalEntities', 'ContainsInsecureDeserialization',
+                  'ContainsHtml'] as $field) {
+            if (!empty($decoded[$field]) && $decoded[$field] !== 'None') {
+                $threats[$field] = $decoded[$field];
+            }
+        }
+
+        self::write_cache($pdo, $url, $url_hash, $is_clean, $threats);
+        return self::result($url, $is_clean, $threats, false, null);
+    }
+
+    private static function result($url, $clean, $threats, $cached, $error) {
+        return [
+            'url' => $url,
+            'clean' => $clean,
+            'threats' => $threats,
+            'cached' => $cached,
+            'error' => $error,
+        ];
+    }
+
+    private static function read_cache($pdo, $url_hash) {
+        try {
+            $stmt = $pdo->prepare(
+                "SELECT is_clean, threats_json, UNIX_TIMESTAMP(scanned_at) AS scanned_ts
+                 FROM url_scan_cache WHERE url_hash = ?"
+            );
+            $stmt->execute([$url_hash]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return null;
+            if ((time() - (int) $row['scanned_ts']) > self::CACHE_TTL) return null;
+            return [
+                'is_clean' => $row['is_clean'],
+                'threats' => json_decode($row['threats_json'] ?: '[]', true) ?: [],
+            ];
+        } catch (PDOException $e) {
+            error_log('url_scan_cache read failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private static function write_cache($pdo, $url, $url_hash, $is_clean, $threats) {
+        try {
+            $stmt = $pdo->prepare(
+                "INSERT INTO url_scan_cache (url_hash, url, is_clean, threats_json, scanned_at)
+                 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+                 ON DUPLICATE KEY UPDATE
+                   is_clean = VALUES(is_clean),
+                   threats_json = VALUES(threats_json),
+                   scanned_at = VALUES(scanned_at)"
+            );
+            $stmt->execute([$url_hash, $url, $is_clean ? 1 : 0, wp_json_encode($threats)]);
+        } catch (PDOException $e) {
+            error_log('url_scan_cache write failed: ' . $e->getMessage());
+        }
+    }
+}
 
 /**
  * Shortcode: Display full document library with all folders

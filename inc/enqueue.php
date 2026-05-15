@@ -58,7 +58,8 @@ function kop_enqueue_admin_submissions() {
             'adminSubmissionsConfig',
             array(
                 'apiBase' => get_stylesheet_directory_uri() . '/api',
-                'manageApi' => get_stylesheet_directory_uri() . '/api/manage-submissions.php'
+                'manageApi' => get_stylesheet_directory_uri() . '/api/manage-submissions.php',
+                'scanApi' => get_stylesheet_directory_uri() . '/api/scan-submission-urls.php'
             )
         );
     }

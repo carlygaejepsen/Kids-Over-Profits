@@ -125,6 +125,13 @@ get_header();
                         </div>
                     </div>
 
+                    <!-- URL Safety (Cloudmersive) -->
+                    <div class="url-safety-section" id="urlSafetySection" style="display: none;">
+                        <h3>🔒 URL Safety Check</h3>
+                        <div id="urlSafetyStatus" class="url-safety-status">Scanning…</div>
+                        <ul id="urlSafetyList" class="url-safety-list"></ul>
+                    </div>
+
                     <!-- Side-by-Side Markdown Editor -->
                     <div id="markdownEditorSection" class="markdown-editor-section">
                         <div class="markdown-editor-header">

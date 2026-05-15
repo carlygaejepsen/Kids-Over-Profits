@@ -154,6 +154,25 @@ SQL;
     $pdo->exec($createSavedValuesTableSQL);
     $tables_created['saved_form_values'] = 'Saved autocomplete values for form fields';
 
+    // ============================================
+    // Create url_scan_cache table (Cloudmersive URL threat scan results)
+    // ============================================
+    $createUrlScanCacheSQL = <<<SQL
+CREATE TABLE IF NOT EXISTS `url_scan_cache` (
+  `url_hash` char(64) NOT NULL COMMENT 'SHA-256 of the URL',
+  `url` varchar(2048) NOT NULL COMMENT 'The URL that was scanned',
+  `is_clean` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 if Cloudmersive returned CleanResult=true',
+  `threats_json` text COMMENT 'JSON map of threat categories returned by Cloudmersive',
+  `scanned_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`url_hash`),
+  KEY `is_clean` (`is_clean`),
+  KEY `scanned_at` (`scanned_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Cached Cloudmersive URL threat scan results'
+SQL;
+
+    $pdo->exec($createUrlScanCacheSQL);
+    $tables_created['url_scan_cache'] = 'Cloudmersive URL threat scan cache';
+
     $result = [
         'success' => true,
         'message' => 'Submissions database initialization complete',
