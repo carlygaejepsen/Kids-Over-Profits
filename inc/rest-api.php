@@ -1862,7 +1862,19 @@ function kop_state_inspection_dataset_urls($state_name) {
 }
 
 /**
- * Build the programs list for a state by filtering facilities_master.
+ * Build the programs list for a state.
+ *
+ * Sources, in priority order:
+ *   1. locations_master row keyed by the uppercase state name — the canonical
+ *      state aggregate. Every facility there belongs to the state by definition,
+ *      so no per-facility state-match is needed.
+ *   2. facilities_master — operator/company projects that happen to contain a
+ *      facility located in this state. Filtered by address.state /
+ *      locationDetails.state / free-text location string.
+ *
+ * Duplicate facilities (same name appearing in both sources) are deduped by
+ * normalized facility name; the locations_master copy wins because it is the
+ * richer aggregate.
  */
 function kop_state_collect_programs($state_name) {
     global $wpdb;
@@ -1872,61 +1884,102 @@ function kop_state_collect_programs($state_name) {
     $state_lower = strtolower($state_name);
     $abbrev_lower = strtolower($abbrev);
 
-    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master", ARRAY_A);
-    if (!is_array($rows)) return array();
+    $append_program = static function (&$programs, &$seen_names, $project_name, $facility, $data, $state_name) {
+        if (!is_array($facility)) return;
 
-    $programs = array();
-    foreach ($rows as $row) {
-        $data = kop_normalize_project_payload($row['json_data']);
-        if (!is_array($data) || empty($data['facilities']) || !is_array($data['facilities'])) {
-            continue;
+        $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
+        $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
+        $identification = isset($facility['identification']) && is_array($facility['identification']) ? $facility['identification'] : array();
+
+        $facility_name = $identification['name'] ?? $identification['currentName'] ?? '';
+        $dedup_key = kop_normalize_facility_name($facility_name);
+        if ($dedup_key !== '' && isset($seen_names[$dedup_key])) {
+            return;
+        }
+        if ($dedup_key !== '') {
+            $seen_names[$dedup_key] = true;
         }
 
-        foreach ($data['facilities'] as $facility) {
-            if (!is_array($facility)) continue;
+        $facility_state = trim((string)($address['state'] ?? ''));
+        $locdet_state = trim((string)($location_details['state'] ?? ''));
 
-            $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
-            $facility_state = trim((string)($address['state'] ?? ''));
-            $facility_state_lower = strtolower($facility_state);
+        $programs[] = array(
+            'project_name'     => $project_name,
+            'facility_name'    => $facility_name,
+            'operator_name'    => isset($data['operator']['name']) ? $data['operator']['name'] : '',
+            'city'             => $address['city'] ?? ($location_details['city'] ?? ''),
+            'state'            => $facility_state ?: ($locdet_state ?: $state_name),
+            'street'           => $address['street'] ?? '',
+            'zip'              => $address['zip'] ?? '',
+            'type'             => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
+            'status'           => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',
+            'operating_period' => isset($facility['operatingPeriod']['yearsOfOperation']) ? $facility['operatingPeriod']['yearsOfOperation'] : '',
+        );
+    };
 
-            $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
-            $locdet_state = trim((string)($location_details['state'] ?? ''));
-            $locdet_state_lower = strtolower($locdet_state);
+    $programs = array();
+    $seen_names = array();
 
-            $location_string = strtolower((string)($facility['location'] ?? ''));
-
-            // Match priority:
-            //   1. address.state or locationDetails.state equals the state name or 2-letter abbrev
-            //   2. location field contains the FULL state name (not the abbrev — "or" would
-            //      match "California" / "Florida" as a substring)
-            //   3. location field contains the abbrev wrapped in word boundaries (", OR ", " OR$")
-            $matched = false;
-            if ($state_lower !== '' && ($facility_state_lower === $state_lower || $locdet_state_lower === $state_lower)) {
-                $matched = true;
-            } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower || $locdet_state_lower === $abbrev_lower)) {
-                $matched = true;
-            } elseif ($state_lower !== '' && strpos($location_string, $state_lower) !== false) {
-                $matched = true;
-            } elseif ($abbrev_lower !== '' && preg_match('/\b' . preg_quote($abbrev_lower, '/') . '\b/', $location_string)) {
-                $matched = true;
+    // Source 1: locations_master.<STATE> — canonical state aggregate. Take all
+    // its facilities verbatim, no state filter required.
+    $loc_table = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", 'locations_master'));
+    if ($loc_table === 'locations_master') {
+        $loc_row = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT unique_name, json_data FROM locations_master WHERE UPPER(unique_name) = %s LIMIT 1",
+                strtoupper($state_name)
+            ),
+            ARRAY_A
+        );
+        if ($loc_row && !empty($loc_row['json_data'])) {
+            $loc_data = kop_normalize_project_payload($loc_row['json_data']);
+            if (is_array($loc_data) && !empty($loc_data['facilities']) && is_array($loc_data['facilities'])) {
+                foreach ($loc_data['facilities'] as $facility) {
+                    $append_program($programs, $seen_names, $loc_row['unique_name'], $facility, $loc_data, $state_name);
+                }
             }
-            if (!$matched) continue;
+        }
+    }
 
-            $identification = isset($facility['identification']) && is_array($facility['identification'])
-                ? $facility['identification'] : array();
+    // Source 2: facilities_master — operator/company projects with facilities in this state.
+    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master", ARRAY_A);
+    if (is_array($rows)) {
+        foreach ($rows as $row) {
+            $data = kop_normalize_project_payload($row['json_data']);
+            if (!is_array($data) || empty($data['facilities']) || !is_array($data['facilities'])) {
+                continue;
+            }
 
-            $programs[] = array(
-                'project_name'   => $row['unique_name'],
-                'facility_name'  => $identification['name'] ?? $identification['currentName'] ?? '',
-                'operator_name'  => isset($data['operator']['name']) ? $data['operator']['name'] : '',
-                'city'           => $address['city'] ?? ($location_details['city'] ?? ''),
-                'state'          => $facility_state ?: ($locdet_state ?: $state_name),
-                'street'         => $address['street'] ?? '',
-                'zip'            => $address['zip'] ?? '',
-                'type'           => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
-                'status'         => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',
-                'operating_period' => isset($facility['operatingPeriod']['yearsOfOperation']) ? $facility['operatingPeriod']['yearsOfOperation'] : '',
-            );
+            foreach ($data['facilities'] as $facility) {
+                if (!is_array($facility)) continue;
+
+                $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
+                $facility_state_lower = strtolower(trim((string)($address['state'] ?? '')));
+
+                $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
+                $locdet_state_lower = strtolower(trim((string)($location_details['state'] ?? '')));
+
+                $location_string = strtolower((string)($facility['location'] ?? ''));
+
+                // Match priority:
+                //   1. address.state or locationDetails.state equals the state name or 2-letter abbrev
+                //   2. location field contains the FULL state name (not the abbrev — "or" would
+                //      match "California" / "Florida" as a substring)
+                //   3. location field contains the abbrev wrapped in word boundaries (", OR ", " OR$")
+                $matched = false;
+                if ($state_lower !== '' && ($facility_state_lower === $state_lower || $locdet_state_lower === $state_lower)) {
+                    $matched = true;
+                } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower || $locdet_state_lower === $abbrev_lower)) {
+                    $matched = true;
+                } elseif ($state_lower !== '' && strpos($location_string, $state_lower) !== false) {
+                    $matched = true;
+                } elseif ($abbrev_lower !== '' && preg_match('/\b' . preg_quote($abbrev_lower, '/') . '\b/', $location_string)) {
+                    $matched = true;
+                }
+                if (!$matched) continue;
+
+                $append_program($programs, $seen_names, $row['unique_name'], $facility, $data, $state_name);
+            }
         }
     }
 
