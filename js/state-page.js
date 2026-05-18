@@ -367,6 +367,12 @@
         }
     };
 
+    // Detects names that look like URL slugs (all lowercase, no spaces, no punctuation).
+    const isSlugLikeName = value => {
+        const text = normalizeText(value);
+        return text.length >= 10 && /^[a-z0-9]+$/.test(text);
+    };
+
     const consolidateFacilitiesForDisplay = facilities => {
         const list = Array.isArray(facilities) ? facilities.map(f => ({ ...f, inspections: [...(f.inspections || [])] })) : [];
         if (!list.length) return [];
@@ -419,7 +425,49 @@
             }
         });
 
-        return named;
+        // Second pass: merge slug-like named records (e.g. "collierjuveniledetentioncenter")
+        // into their proper-named counterparts by slug-key containment.
+        const properNamed = [];
+        const slugNamed = [];
+        named.forEach(facility => {
+            const label = pickBestFacilityLabel(facility.name, facility.project_name, facility.operator_name);
+            (isSlugLikeName(label) ? slugNamed : properNamed).push(facility);
+        });
+
+        if (slugNamed.length) {
+            // Build a lookup: strip-all-non-alphanum key -> facility for proper-named records.
+            const properBySlugKey = new Map();
+            properNamed.forEach(facility => {
+                const label = pickBestFacilityLabel(facility.name, facility.project_name, facility.operator_name);
+                const key = normalizeFolderText(label);
+                if (key && !properBySlugKey.has(key)) properBySlugKey.set(key, facility);
+            });
+
+            slugNamed.forEach(facility => {
+                const label = pickBestFacilityLabel(facility.name, facility.project_name, facility.operator_name);
+                const slugKey = normalizeFolderText(label);
+                let target = properBySlugKey.get(slugKey) || null;
+
+                if (!target && slugKey) {
+                    for (const [properKey, properFacility] of properBySlugKey.entries()) {
+                        const shorter = slugKey.length < properKey.length ? slugKey : properKey;
+                        const longer  = slugKey.length < properKey.length ? properKey : slugKey;
+                        if (shorter.length >= 12 && longer.includes(shorter)) {
+                            target = properFacility;
+                            break;
+                        }
+                    }
+                }
+
+                if (target) {
+                    mergeFacilityRecords(target, facility);
+                } else {
+                    properNamed.push(facility);
+                }
+            });
+        }
+
+        return properNamed;
     };
 
     const getFacilityDisplayName = facility => {
