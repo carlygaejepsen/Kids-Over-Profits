@@ -4099,6 +4099,20 @@ body.page-template-page-data .header-wrapper {
     display: none !important;
 }
 
+/* Hide Kadence page title hero on data form pages - toolbar replaces the header */
+body.page-template-page-data .entry-hero,
+body.page-template-page-data .entry-hero-container-inner,
+body.page-template-page-data .page-title,
+body.page-template-page-data #main .entry-header,
+body.page-template-page-data article > .entry-header,
+body.page-template-page-admin-data .entry-hero,
+body.page-template-page-admin-data .entry-hero-container-inner,
+body.page-template-page-admin-data .page-title,
+body.page-template-page-admin-data #main .entry-header,
+body.page-template-page-admin-data article > .entry-header {
+    display: none !important;
+}
+
 /* Modal Styles */
 .organizer-modal {
     display: none;

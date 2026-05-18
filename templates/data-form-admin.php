@@ -607,7 +607,7 @@ get_header();
         </div>
 
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
+        <div class="fixed-toolbar minimized" id="fixed-toolbar">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Admin Editor</strong>
