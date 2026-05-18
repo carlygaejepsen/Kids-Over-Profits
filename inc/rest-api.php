@@ -1889,17 +1889,21 @@ function kop_state_collect_programs($state_name) {
             $facility_state = trim((string)($address['state'] ?? ''));
             $facility_state_lower = strtolower($facility_state);
 
+            $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
+            $locdet_state = trim((string)($location_details['state'] ?? ''));
+            $locdet_state_lower = strtolower($locdet_state);
+
             $location_string = strtolower((string)($facility['location'] ?? ''));
 
             // Match priority:
-            //   1. address.state field exactly equals the state name or its 2-letter abbrev
+            //   1. address.state or locationDetails.state equals the state name or 2-letter abbrev
             //   2. location field contains the FULL state name (not the abbrev — "or" would
             //      match "California" / "Florida" as a substring)
             //   3. location field contains the abbrev wrapped in word boundaries (", OR ", " OR$")
             $matched = false;
-            if ($state_lower !== '' && ($facility_state_lower === $state_lower)) {
+            if ($state_lower !== '' && ($facility_state_lower === $state_lower || $locdet_state_lower === $state_lower)) {
                 $matched = true;
-            } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower)) {
+            } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower || $locdet_state_lower === $abbrev_lower)) {
                 $matched = true;
             } elseif ($state_lower !== '' && strpos($location_string, $state_lower) !== false) {
                 $matched = true;
@@ -1915,8 +1919,8 @@ function kop_state_collect_programs($state_name) {
                 'project_name'   => $row['unique_name'],
                 'facility_name'  => $identification['name'] ?? $identification['currentName'] ?? '',
                 'operator_name'  => isset($data['operator']['name']) ? $data['operator']['name'] : '',
-                'city'           => $address['city'] ?? '',
-                'state'          => $facility_state ?: $state_name,
+                'city'           => $address['city'] ?? ($location_details['city'] ?? ''),
+                'state'          => $facility_state ?: ($locdet_state ?: $state_name),
                 'street'         => $address['street'] ?? '',
                 'zip'            => $address['zip'] ?? '',
                 'type'           => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',

@@ -1,0 +1,375 @@
+{
+  "projects": {
+    "CALIFORNIA": {
+      "name": "CALIFORNIA",
+      "category": "locations",
+      "currentFacilityIndex": 0,
+      "data": {
+        "operator": {
+          "name": "CALIFORNIA",
+          "type": "Location Aggregate"
+        },
+        "facilities": [
+          {
+            "identification": {
+              "name": "Paradigm Treatment Centers",
+              "currentName": "",
+              "currentOperator": "",
+              "otherNames": []
+            },
+            "location": "Malibu, CA; San Rafael, CA; Austin, TX",
+            "address": "",
+            "pastOperators": [],
+            "operatingPeriod": {
+              "startYear": 2011,
+              "endYear": null,
+              "status": "Open",
+              "yearsOfOperation": "",
+              "notes": []
+            },
+            "staff": {
+              "administrator": [],
+              "notableStaff": []
+            },
+            "profileLinks": [],
+            "facilityDetails": {
+              "type": "",
+              "capacity": null,
+              "currentCensus": null,
+              "ageRange": {
+                "min": null,
+                "max": null
+              },
+              "gender": ""
+            },
+            "accreditations": {
+              "current": [],
+              "past": []
+            },
+            "memberships": [],
+            "certifications": [],
+            "licensing": [],
+            "resources": {
+              "hasNews": false,
+              "hasPressReleases": false,
+              "hasInspections": false,
+              "hasStateReports": false,
+              "hasRegulatoryFilings": false,
+              "hasLawsuits": false,
+              "hasSettlements": false,
+              "hasViolations": false,
+              "hasResearch": false,
+              "hasFinancial": false,
+              "hasOther": false,
+              "customResources": [],
+              "notes": []
+            },
+            "notes": [],
+            "sourceProject": "Altior",
+            "sourceOperator": "Altior Healthcare"
+          },
+          {
+            "identification": {
+              "name": "Newport Academy Child and Pre-Teen RTP",
+              "currentName": "",
+              "currentOperator": "",
+              "otherNames": []
+            },
+            "location": "Southern California",
+            "address": "",
+            "pastOperators": [],
+            "operatingPeriod": {
+              "startYear": null,
+              "endYear": null,
+              "status": "Unknown",
+              "yearsOfOperation": "",
+              "notes": []
+            },
+            "staff": {
+              "administrator": [],
+              "notableStaff": []
+            },
+            "profileLinks": [],
+            "facilityDetails": {
+              "type": "",
+              "capacity": null,
+              "currentCensus": null,
+              "ageRange": {
+                "min": null,
+                "max": null
+              },
+              "gender": ""
+            },
+            "accreditations": {
+              "current": [],
+              "past": []
+            },
+            "memberships": [],
+            "certifications": [],
+            "licensing": [],
+            "resources": {
+              "hasNews": false,
+              "hasPressReleases": false,
+              "hasInspections": false,
+              "hasStateReports": false,
+              "hasRegulatoryFilings": false,
+              "hasLawsuits": false,
+              "hasSettlements": false,
+              "hasViolations": false,
+              "hasResearch": false,
+              "hasFinancial": false,
+              "hasOther": false,
+              "customResources": [],
+              "notes": []
+            },
+            "notes": [],
+            "sourceProject": "Newport",
+            "sourceOperator": "Newport Healthcare"
+          },
+          {
+            "identification": {
+              "name": "Casa by the Sea",
+              "currentName": "",
+              "currentOperator": "",
+              "otherNames": []
+            },
+            "location": "Ensenada, Baja California, Mexico",
+            "address": "",
+            "pastOperators": [],
+            "operatingPeriod": {
+              "startYear": 1998,
+              "endYear": 2004,
+              "status": "Closed",
+              "yearsOfOperation": "",
+              "notes": []
+            },
+            "staff": {
+              "administrator": [],
+              "notableStaff": []
+            },
+            "profileLinks": [
+              "https://web.archive.org/web/20000309114029/http://www.vpp.com/teenhelp/casa.html"
+            ],
+            "facilityDetails": {
+              "type": "Residential Treatment Facility",
+              "capacity": null,
+              "currentCensus": null,
+              "ageRange": {
+                "min": null,
+                "max": null
+              },
+              "gender": "coed"
+            },
+            "accreditations": {
+              "current": [],
+              "past": []
+            },
+            "memberships": [],
+            "certifications": [],
+            "licensing": [],
+            "resources": {
+              "hasNews": true,
+              "hasPressReleases": false,
+              "hasInspections": false,
+              "hasStateReports": false,
+              "hasRegulatoryFilings": false,
+              "hasLawsuits": false,
+              "hasSettlements": false,
+              "hasViolations": false,
+              "hasResearch": false,
+              "hasFinancial": false,
+              "hasOther": false,
+              "customResources": [],
+              "notes": [],
+              "hasParent": true,
+              "hasWebsite": true
+            },
+            "notes": [],
+            "sourceProject": "WWASPS",
+            "sourceOperator": "World Wide Association of Specialty Programs and Schools (WWASPS)"
+          },
+          {
+            "identification": {
+              "name": "High Impact",
+              "currentName": "",
+              "currentOperator": "",
+              "otherNames": []
+            },
+            "location": "Tecate, Baja California, Mexico",
+            "address": "",
+            "pastOperators": [],
+            "operatingPeriod": {
+              "startYear": null,
+              "endYear": null,
+              "status": "Closed",
+              "yearsOfOperation": "",
+              "notes": []
+            },
+            "staff": {
+              "administrator": [],
+              "notableStaff": []
+            },
+            "profileLinks": [],
+            "facilityDetails": {
+              "type": "",
+              "capacity": null,
+              "currentCensus": null,
+              "ageRange": {
+                "min": null,
+                "max": null
+              },
+              "gender": ""
+            },
+            "accreditations": {
+              "current": [],
+              "past": []
+            },
+            "memberships": [],
+            "certifications": [],
+            "licensing": [],
+            "resources": {
+              "hasNews": false,
+              "hasPressReleases": false,
+              "hasInspections": false,
+              "hasStateReports": false,
+              "hasRegulatoryFilings": false,
+              "hasLawsuits": false,
+              "hasSettlements": false,
+              "hasViolations": false,
+              "hasResearch": false,
+              "hasFinancial": false,
+              "hasOther": false,
+              "customResources": [],
+              "notes": [],
+              "hasWebsite": true
+            },
+            "notes": [],
+            "sourceProject": "WWASPS",
+            "sourceOperator": "World Wide Association of Specialty Programs and Schools (WWASPS)"
+          },
+          {
+            "identification": {
+              "name": "Ettie Lee Homes - Diamond L. Ranch",
+              "currentName": "Ettie Lee Homes - Diamond L. Ranch",
+              "otherNames": [],
+              "previousNames": []
+            },
+            "address": {
+              "street": "",
+              "city": "",
+              "state": "California",
+              "zip": ""
+            },
+            "facilityDetails": {
+              "type": ""
+            },
+            "operatingPeriod": {
+              "status": "Open",
+              "yearsOfOperation": "",
+              "startYear": "",
+              "endYear": ""
+            },
+            "sourceProject": "Ettie Lee Homes - Diamond L. Ranch"
+          },
+          {
+            "identification": {
+              "name": "Open Line - The Oaks",
+              "currentName": "Open Line - The Oaks",
+              "otherNames": [],
+              "previousNames": []
+            },
+            "address": {
+              "street": "4678 Alta Mesa Dr",
+              "city": "Redding",
+              "state": "CA",
+              "zip": "96002"
+            },
+            "facilityDetails": {
+              "type": ""
+            },
+            "operatingPeriod": {
+              "status": "Open",
+              "yearsOfOperation": "",
+              "startYear": "",
+              "endYear": ""
+            },
+            "sourceProject": "Open Line - The Oaks"
+          },
+          {
+            "identification": {
+              "name": "Open Line - Woodcliff",
+              "currentName": "Open Line - Woodcliff",
+              "otherNames": [],
+              "previousNames": []
+            },
+            "address": {
+              "street": "389 Woodcliff Dr",
+              "city": "Redding",
+              "state": "CA",
+              "zip": "96003"
+            },
+            "facilityDetails": {
+              "type": ""
+            },
+            "operatingPeriod": {
+              "status": "Open",
+              "yearsOfOperation": "",
+              "startYear": "",
+              "endYear": ""
+            },
+            "sourceProject": "Open Line - Woodcliff"
+          },
+          {
+            "identification": {
+              "name": "Victor Treatment Center - Romberger House",
+              "currentName": "Victor Treatment Center - Romberger House",
+              "otherNames": [],
+              "previousNames": []
+            },
+            "address": {
+              "street": "",
+              "city": "",
+              "state": "California",
+              "zip": ""
+            },
+            "facilityDetails": {
+              "type": ""
+            },
+            "operatingPeriod": {
+              "status": "Open",
+              "yearsOfOperation": "",
+              "startYear": "",
+              "endYear": ""
+            },
+            "sourceProject": "Victor Treatment Center - Romberger House"
+          },
+          {
+            "identification": {
+              "name": "Vista Del Mar Child and Family Services STRTP",
+              "currentName": "Vista Del Mar Child and Family Services STRTP",
+              "otherNames": [],
+              "previousNames": []
+            },
+            "address": {
+              "street": "3321 Edith St",
+              "city": "Los Angeles",
+              "state": "CA",
+              "zip": "90006"
+            },
+            "facilityDetails": {
+              "type": ""
+            },
+            "operatingPeriod": {
+              "status": "Open",
+              "yearsOfOperation": "",
+              "startYear": "",
+              "endYear": ""
+            },
+            "sourceProject": "Vista Del Mar Child and Family Services STRTP"
+          }
+        ],
+        "referrerConsultants": []
+      }
+    }
+  }
+}
