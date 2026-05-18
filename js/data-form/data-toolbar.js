@@ -174,7 +174,7 @@
             }
             if (!_toolbarResizeObserver) {
                 _toolbarResizeObserver = new ResizeObserver(() => {
-                    document.body.style.paddingTop = toolbar.offsetHeight + 'px';
+                    document.body.style.paddingTop = toolbar.getBoundingClientRect().bottom + 'px';
                 });
                 _toolbarResizeObserver.observe(toolbar);
             }
