@@ -123,7 +123,7 @@ body:not(.admin-bar) .fixed-toolbar {
     padding: 8px 16px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
-    overflow-x: hidden; /* No scrolling needed with wrap */
+    overflow: hidden; /* Clip when minimized so max-height: 0 actually collapses */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,6 +134,7 @@ body:not(.admin-bar) .fixed-toolbar {
 /* MINIMIZED STATE */
 .fixed-toolbar.minimized .toolbar-content {
     max-height: 0;
+    min-height: 0; /* Override flex item's default min-height: auto so max-height wins */
     padding: 0 16px;
     opacity: 0;
     pointer-events: none;
@@ -150,6 +151,7 @@ body:not(.admin-bar) .fixed-toolbar {
     position: relative;
     width: 100%;
     max-width: none;
+    min-height: 0; /* Override flex default min-height: auto so the section sizes to its wrapped rows, not min-content stacked */
 }
 
 .fixed-toolbar .toolbar-group {

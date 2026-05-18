@@ -5,6 +5,8 @@
         }
     };
 
+    let _toolbarResizeObserver = null;
+
     const getRemoveButton = () =>
         document.getElementById('remove-facility-btn-toolbar') ||
         document.getElementById('delete-facility-btn-toolbar'); // Legacy ID in template
@@ -136,6 +138,9 @@
             });
 
             dropdown.value = currentIndex;
+            if (dropdown.value === '' || dropdown.selectedIndex === -1) {
+                dropdown.selectedIndex = 0;
+            }
         } else {
             dropdown.classList.remove('toolbar-dropdown-no-project');
             dropdown.innerHTML = '<option>No facilities in project</option>';
@@ -167,6 +172,12 @@
             if (toolbarContent) {
                 toolbarContent.setAttribute('aria-hidden', toolbar.classList.contains('minimized') ? 'true' : 'false');
             }
+            if (!_toolbarResizeObserver) {
+                _toolbarResizeObserver = new ResizeObserver(() => {
+                    document.body.style.paddingTop = toolbar.offsetHeight + 'px';
+                });
+                _toolbarResizeObserver.observe(toolbar);
+            }
         } else {
             console.error('❌ Toolbar element not found!');
         }
@@ -186,6 +197,7 @@
                 e.preventDefault();
                 console.log('🔘 Toolbar toggle clicked');
                 const freshElements = getElements();
+                if (!freshElements.toolbar) return;
                 const isMinimized = freshElements.toolbar.classList.toggle('minimized');
                 localStorage.setItem('kop-toolbar-minimized', isMinimized);
                 applyToolbarState(isMinimized, freshElements);
@@ -205,8 +217,8 @@
         }
 
         if (prevBtn && !prevBtn.dataset.listenerAttached) {
-            prevBtn.addEventListener('click', () => { // UI-only, can be passive
-                const dropdownEl = elements.dropdown;
+            prevBtn.addEventListener('click', () => {
+                const dropdownEl = getElements().dropdown;
                 if (dropdownEl && dropdownEl.selectedIndex > 0) {
                     dropdownEl.selectedIndex -= 1;
                     dropdownEl.dispatchEvent(new Event('change'));
@@ -216,8 +228,8 @@
         }
 
         if (nextBtn && !nextBtn.dataset.listenerAttached) {
-            nextBtn.addEventListener('click', () => { // UI-only, can be passive
-                const dropdownEl = elements.dropdown;
+            nextBtn.addEventListener('click', () => {
+                const dropdownEl = getElements().dropdown;
                 if (dropdownEl && dropdownEl.selectedIndex < dropdownEl.options.length - 1) {
                     dropdownEl.selectedIndex += 1;
                     dropdownEl.dispatchEvent(new Event('change'));
