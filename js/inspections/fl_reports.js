@@ -78,8 +78,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function looksLikeSlug(name) {
+        // All-lowercase alphanumeric with no spaces — an internal program code, not a real name.
+        return /^[a-z0-9]+$/.test(safeString(name));
+    }
+
+    function preferBetterName(a, b) {
+        // Return whichever name looks more like a real facility name.
+        if (looksLikeSlug(a) && !looksLikeSlug(b)) return b;
+        if (!looksLikeSlug(a) && looksLikeSlug(b)) return a;
+        return a.length >= b.length ? a : b;
+    }
+
+    function mergeDuplicateFacilities(facilities) {
+        // Merge facilities that share the same program_name (same internal DJJ/AHCA code).
+        // Also handles the case where one entry's name IS the other's program_name slug,
+        // which happens when DJJ reports reference a code that isn't in the facility directory.
+        const byProgramName = new Map();
+        const result = [];
+
+        for (const f of facilities) {
+            const key = safeString(f.program_name);
+            if (!key) { result.push(f); continue; }
+
+            if (!byProgramName.has(key)) {
+                byProgramName.set(key, f);
+                result.push(f);
+            } else {
+                const existing = byProgramName.get(key);
+                existing.name = preferBetterName(existing.name, f.name);
+                if (!existing.address && f.address) existing.address = f.address;
+                if (!existing.phone && f.phone) existing.phone = f.phone;
+                if (!existing.executive_director && f.executive_director) existing.executive_director = f.executive_director;
+                if (!existing.bed_capacity && f.bed_capacity) existing.bed_capacity = f.bed_capacity;
+
+                const seenIds = new Set(existing.reports.map(r => r.report_id));
+                for (const r of f.reports) {
+                    if (!seenIds.has(r.report_id)) existing.reports.push(r);
+                }
+                existing.reports.sort((a, b) => parseDate(b.report_date) - parseDate(a.report_date));
+            }
+        }
+
+        return result;
+    }
+
     function convertApiDataToFacilities(apiFacilities) {
-        return apiFacilities.map(facility => {
+        const raw = apiFacilities.map(facility => {
             const info = facility.facility_info || {};
             const programName = safeString(info.program_name);
             const firstCats = (facility.reports && facility.reports[0] && facility.reports[0].categories) || {};
@@ -101,6 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 reports,
             };
         });
+
+        return mergeDuplicateFacilities(raw);
     }
 
     function convertReport(report, facilitySource) {
