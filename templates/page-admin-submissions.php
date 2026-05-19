@@ -1,14 +1,13 @@
 <?php
 /**
- * Template Name: Admin - Wiki Submissions Review
+ * Template Name: Admin - Submissions Review
  *
- * Admin interface for reviewing, approving, and managing wiki submissions
+ * Admin interface for reviewing, approving, and managing wiki, news, and data form submissions
  */
 
-// Check if user is admin (you can customize this check based on your auth system)
-// if (!current_user_can('manage_options')) {
-//     wp_die('Access denied');
-// }
+if (!current_user_can('manage_options')) {
+    wp_die('Access denied');
+}
 
 get_header();
 ?>
@@ -16,7 +15,7 @@ get_header();
 <div class="admin-submissions-page">
     <div class="admin-submissions-container">
         <header class="admin-header">
-            <h1>Wiki Submissions Review</h1>
+            <h1>Submissions Review</h1>
             <div class="admin-stats" id="adminStats">
                 <div class="stat-card">
                     <span class="stat-label">Pending</span>
