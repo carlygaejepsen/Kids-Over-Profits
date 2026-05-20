@@ -262,6 +262,17 @@ body:not(.admin-bar) .fixed-toolbar {
 
 /* Mobile screens <= 768px */
 @media (max-width: 768px) {
+    /* data-form.css has a bottom-sheet pattern for .fixed-toolbar (bottom:0, max-height:50vh)
+       that conflicts with this top-fixed design. Neutralize it here since toolbar.css
+       loads after data-form.css and wins at equal specificity by source order. */
+    .fixed-toolbar {
+        bottom: auto;
+        max-height: none;
+        overflow-y: visible;
+        border-radius: 0;
+        z-index: 9999;
+    }
+
     .fixed-toolbar .toolbar-header {
         padding: 4px 8px;
         min-height: 32px;
