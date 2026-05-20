@@ -58,6 +58,12 @@ const MAX_SEEN_URLS        = 50000;
 const PER_FACILITY_CAP     = 15;    // RSS items considered per facility
 const REQUEST_TIMEOUT_MS   = 30000;
 const AI_TIMEOUT_MS        = 90000;
+// An alias appearing in this many deduped facility entries is considered
+// "generic" (e.g., "Juvenile Detention Center"). Matches on generic aliases
+// require positive state-signal confirmation downstream, not just
+// absence-of-mismatch — otherwise unrelated facilities sharing the name
+// constantly produce false positives.
+const GENERIC_ALIAS_MIN_FACILITIES = 3;
 const USER_AGENT = 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.org)';
 
 // Statuses to skip when building the facility list
@@ -119,6 +125,42 @@ function normalizeName(s) {
         .replace(/[^a-z0-9]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+}
+
+// Words/phrases that, when trailing, can be stripped to produce a useful
+// shorter variant alias. e.g. "Tennyson Center for Children" → "Tennyson Center".
+const TRAILING_DROP_WORDS = new Set([
+    'children', 'child', 'youth', 'youths', 'teens', 'teen', 'adolescents',
+    'adolescent', 'boys', 'girls', 'kids', 'minors', 'juveniles', 'inc',
+    'llc', 'lp', 'corp', 'corporation', 'company', 'co'
+]);
+const TRAILING_CONNECTORS = new Set(['for', 'of', 'the', 'and', 'a', 'an']);
+
+/**
+ * Generate shorter-prefix variants of a facility name so the matcher catches
+ * common abbreviated forms in news headlines. For "Tennyson Center for Children"
+ * produces ["Tennyson Center"]. Won't produce variants shorter than 2 words.
+ */
+function generateAliasVariants(name) {
+    const out = [];
+    let words = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (words.length < 3) return out;
+
+    // Iteratively strip trailing drop-words and connectors
+    let changed = true;
+    while (changed && words.length > 2) {
+        changed = false;
+        const last = words[words.length - 1].toLowerCase().replace(/[^a-z0-9]+$/, '');
+        if (TRAILING_DROP_WORDS.has(last) || TRAILING_CONNECTORS.has(last)) {
+            words = words.slice(0, -1);
+            changed = true;
+        }
+    }
+    const variant = words.join(' ');
+    if (variant && variant.split(/\s+/).length >= 2 && variant.length >= 6 && variant !== name) {
+        out.push(variant);
+    }
+    return out;
 }
 
 function dayOfYearUTC() {
@@ -197,6 +239,22 @@ function hostOf(url) {
     catch { return ''; }
 }
 
+/**
+ * Extract the underlying article host from a URL. For web.archive.org Wayback
+ * URLs (e.g. https://web.archive.org/web/19961227/http://www.cedu.com/), this
+ * returns 'cedu.com' instead of 'web.archive.org' — so the host can be matched
+ * against the facility-owned-website set.
+ */
+function articleHostOf(url) {
+    const h = hostOf(url);
+    if (h !== 'web.archive.org') return h;
+    // Wayback path format: /web/<timestamp>/<original-url>
+    try {
+        const inner = new URL(url).pathname.replace(/^\/web\/[^/]+\//, '');
+        return hostOf(inner.startsWith('http') ? inner : 'http://' + inner);
+    } catch { return h; }
+}
+
 // ============================================================
 // State
 // ============================================================
@@ -233,7 +291,7 @@ function persistRejected(newEntries) {
 
 function buildBlacklistMatcher() {
     const bl = loadJson(BLACKLIST_FILE, {});
-    const all = []
+    const allDomains = []
         .concat(Array.isArray(bl.spamDomains) ? bl.spamDomains : [])
         .concat(Array.isArray(bl.pressReleaseWires) ? bl.pressReleaseWires : [])
         .concat(Array.isArray(bl.industryPromoDomains) ? bl.industryPromoDomains : []);
@@ -241,17 +299,20 @@ function buildBlacklistMatcher() {
         (Array.isArray(bl.allowlistOverrides) ? bl.allowlistOverrides : [])
             .map(d => String(d).toLowerCase().trim())
     );
+    const pathPatterns = (Array.isArray(bl.urlPathPatterns) ? bl.urlPathPatterns : [])
+        .map(p => String(p || '').toLowerCase().trim())
+        .filter(Boolean);
 
     const exact = new Set();
     const suffixes = [];
-    for (const raw of all) {
+    for (const raw of allDomains) {
         const d = String(raw || '').toLowerCase().trim();
         if (!d) continue;
         if (d.startsWith('*.')) suffixes.push(d.slice(2));
         else exact.add(d);
     }
 
-    return function isBlacklisted(host) {
+    function hostBlocked(host) {
         if (!host) return false;
         const h = host.toLowerCase().replace(/^www\./, '');
         if (allowOverrides.has(h)) return false;
@@ -261,7 +322,21 @@ function buildBlacklistMatcher() {
             if (h === sfx || h.endsWith('.' + sfx)) return true;
         }
         return false;
-    };
+    }
+
+    function pathBlocked(url) {
+        if (!url || !pathPatterns.length) return false;
+        try {
+            const u = new URL(url);
+            const p = u.pathname.toLowerCase();
+            for (const pat of pathPatterns) {
+                if (p.includes(pat)) return pat;
+            }
+        } catch { /* ignore */ }
+        return false;
+    }
+
+    return { hostBlocked, pathBlocked };
 }
 
 // ============================================================
@@ -291,14 +366,18 @@ function parseLocation(loc) {
 }
 
 /**
- * Walk every project in /facilities and build a deduplicated flat list of
- * facility + operator entries suitable for discovery queries.
+ * Walk every project in /facilities and build:
+ *   - facilities: deduplicated flat list of facility + operator entries
+ *   - ownHosts:   Set of hostnames that belong to facilities/operators (their
+ *                 own websites, profile links, etc.) — used to reject
+ *                 candidates that link to a facility's own marketing page
+ *                 instead of independent reporting.
  *
  * Dedupes by (normalizedName + state). Merges aliases on collision so the
  * same physical facility appearing in both a companies project and a
  * locations aggregate doesn't get queried twice.
  *
- * Each returned item:
+ * Each facility item:
  *   { queryName, aliases[], city, state, bucket, operator, status }
  *   - queryName: the primary name to use in Google News quoted search
  *   - aliases:   all known names for matching candidate titles/snippets
@@ -308,6 +387,16 @@ function parseLocation(loc) {
 function buildFacilityIndex(apiResponse) {
     const projects = (apiResponse && apiResponse.projects) || {};
     const byKey = new Map();
+    const ownHosts = new Set();
+
+    function collectHosts(urls) {
+        if (!Array.isArray(urls)) return;
+        for (const u of urls) {
+            if (typeof u !== 'string' || !u.trim()) continue;
+            const h = articleHostOf(u.trim());
+            if (h) ownHosts.add(h);
+        }
+    }
 
     function addEntry(entry) {
         if (!entry.queryName || entry.queryName.length < 4) return;
@@ -336,12 +425,21 @@ function buildFacilityIndex(apiResponse) {
         const operatorIsDefunct = EXCLUDED_OPERATOR_STATUSES.has(operatorStatus);
         const operatorName = operator.name || project.name || '';
 
+        // Collect operator-owned hosts (websites, etc.) regardless of status —
+        // even a defunct operator's old site shouldn't be submitted as news.
+        collectHosts(operator.websites);
+
         // --- Per-facility entries (includes those from locations_master aggregates) ---
         const facilities = Array.isArray(data.facilities) ? data.facilities : [];
         for (const f of facilities) {
             const ident = f.identification || {};
             const period = f.operatingPeriod || {};
             const status = String(period.status || '').toLowerCase().trim();
+
+            // Collect profile links for ALL facilities (even closed) — closed
+            // facilities' old websites still aren't news sources.
+            collectHosts(f.profileLinks);
+            if (f.sourceOperator) collectHosts(f.sourceOperator.websites);
 
             if (EXCLUDED_FACILITY_STATUSES.has(status)) continue;
             if (operatorIsDefunct) continue;
@@ -357,6 +455,11 @@ function buildFacilityIndex(apiResponse) {
                         if (typeof n === 'string' && n.trim()) aliases.push(n.trim());
                     }
                 }
+            }
+            // Add shorter-prefix variants (e.g. "Tennyson Center for Children" → "Tennyson Center")
+            const originalAliases = aliases.slice();
+            for (const a of originalAliases) {
+                for (const v of generateAliasVariants(a)) aliases.push(v);
             }
 
             const { city, state } = parseLocation(f.location);
@@ -385,6 +488,10 @@ function buildFacilityIndex(apiResponse) {
                     if (typeof n === 'string' && n.trim()) aliases.push(n.trim());
                 }
             }
+            const opOriginalAliases = aliases.slice();
+            for (const a of opOriginalAliases) {
+                for (const v of generateAliasVariants(a)) aliases.push(v);
+            }
             addEntry({
                 queryName: operatorName,
                 aliases,
@@ -397,7 +504,27 @@ function buildFacilityIndex(apiResponse) {
         }
     }
 
-    return Array.from(byKey.values());
+    const facilities = Array.from(byKey.values());
+
+    // Identify generic aliases — names shared across N+ deduped entries (e.g.,
+    // "Juvenile Detention Center"). These get stricter state-validation in
+    // evaluateCandidate so generic name collisions don't slip through.
+    const aliasCounts = new Map();
+    for (const fac of facilities) {
+        const seen = new Set();
+        for (const alias of fac.aliases) {
+            const k = normalizeName(alias);
+            if (!k || k.length < 5 || seen.has(k)) continue;
+            seen.add(k);
+            aliasCounts.set(k, (aliasCounts.get(k) || 0) + 1);
+        }
+    }
+    const genericAliases = new Set();
+    for (const [k, n] of aliasCounts) {
+        if (n >= GENERIC_ALIAS_MIN_FACILITIES) genericAliases.add(k);
+    }
+
+    return { facilities, ownHosts, genericAliases };
 }
 
 // ============================================================
@@ -605,18 +732,34 @@ function countAbuseKeywords(text) {
  *   reject (no score) if blacklist hit or HARD_BLOCKED host
  *   reject (no score) if facility match but state CONTRADICTS facility's state
  */
-function evaluateCandidate(candidate, facilityIndex, isBlacklisted) {
+function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts, genericAliases) {
     const text = `${candidate.title} ${candidate.description}`;
     const reasons = [];
     let score = 0;
 
-    // Blacklist / hard-blocked
+    // Blacklist / hard-blocked. For Google News candidates the host check uses
+    // sourceUrl (the publisher), not link (the news.google.com redirect).
     const candHost = hostOf(candidate.sourceUrl || candidate.link);
     if (!candHost) {
         return { accept: false, reason: 'invalid-url', meta: { link: candidate.link } };
     }
-    if (isBlacklisted(candHost)) {
-        return { accept: false, reason: 'blacklist', meta: { host: candHost } };
+    if (blacklist.hostBlocked(candHost)) {
+        return { accept: false, reason: 'blacklist-host', meta: { host: candHost } };
+    }
+    // Reject candidates that link to a facility's own website / marketing page.
+    // For Reddit body links we have the raw URL; for Google News we check the
+    // publisher (sourceUrl) and won't catch a facility hosting on a wire here,
+    // but those are exceedingly rare.
+    const articleHost = articleHostOf(candidate.link);
+    if (articleHost && facilityOwnHosts.has(articleHost)) {
+        return { accept: false, reason: 'facility-own-website', meta: { host: articleHost } };
+    }
+    // Path-pattern blacklist (e.g., wire-syndicated paths). For Google News
+    // this only catches direct hits — the canonical-URL check happens again
+    // after URL resolution.
+    const pathHit = blacklist.pathBlocked(candidate.link);
+    if (pathHit) {
+        return { accept: false, reason: 'blacklist-path', meta: { pattern: pathHit, link: candidate.link } };
     }
 
     // Facility match
@@ -625,6 +768,25 @@ function evaluateCandidate(candidate, facilityIndex, isBlacklisted) {
 
     if (match) {
         const fac = match.facility;
+
+        // Inferred facility-own-website check: if the candidate's host (SLD,
+        // i.e. host without the public TLD) is a substring of the matched
+        // facility's normalized name or vice versa, treat as the facility's
+        // own site. Catches cases the API's profileLinks data doesn't cover.
+        const candArticleHost = articleHostOf(candidate.link);
+        if (candArticleHost) {
+            const sld = candArticleHost.split('.').slice(0, -1).join('.').replace(/[^a-z0-9]/g, '');
+            const normName = normalizeName(match.matchedAlias).replace(/\s+/g, '');
+            if (sld && normName && sld.length >= 6 &&
+                (normName.includes(sld) || sld.includes(normName))) {
+                return {
+                    accept: false,
+                    reason: 'facility-own-website-inferred',
+                    meta: { host: candArticleHost, matchedAlias: match.matchedAlias, facility: fac.queryName }
+                };
+            }
+        }
+
         score += 2;
         reasons.push(`facility:${match.matchedAlias}`);
 
@@ -642,6 +804,22 @@ function evaluateCandidate(candidate, facilityIndex, isBlacklisted) {
                 return {
                     accept: false,
                     reason: 'state-mismatch',
+                    meta: {
+                        matchedAlias: match.matchedAlias,
+                        facility: fac.queryName,
+                        expectedState: fac.state,
+                        detectedStates: Array.from(signals)
+                    }
+                };
+            }
+            // Generic alias (shared by N+ facilities) requires POSITIVE state
+            // confirmation, not just absence of mismatch. Without it, names
+            // like "Juvenile Detention Center" would match unrelated facilities
+            // in articles that don't happen to mention any state.
+            if (genericAliases && genericAliases.has(normalizeName(match.matchedAlias)) && !signals.has(fac.state)) {
+                return {
+                    accept: false,
+                    reason: 'generic-alias-unconfirmed',
                     meta: {
                         matchedAlias: match.matchedAlias,
                         facility: fac.queryName,
@@ -681,6 +859,53 @@ function evaluateCandidate(candidate, facilityIndex, isBlacklisted) {
         reason: 'low-score',
         meta: { score, reasons, threshold: SCORE_THRESHOLD, host: candHost }
     };
+}
+
+// ============================================================
+// Google News URL resolution
+// ============================================================
+
+/**
+ * Resolve a news.google.com redirect URL to its canonical publisher URL.
+ *
+ * Google News RSS items have links like
+ *   https://news.google.com/rss/articles/CBMi...?oc=5
+ * which redirect (via 302 → consent → article) to the actual article URL.
+ * Resolving them up front gives us:
+ *   - accurate dedup (same article won't be submitted under two redirect tokens)
+ *   - clean URL in the submission record
+ *   - ability to run path-pattern blacklist on the real URL
+ *
+ * On error or no-redirect, returns the original URL unchanged.
+ */
+async function resolveGoogleNewsUrl(url) {
+    if (!url || !url.startsWith('https://news.google.com/')) return url;
+    try {
+        // Use GET with redirect: 'follow' — HEAD is unreliable on some Google
+        // redirects. The response body is discarded; we only need response.url.
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 15000);
+        try {
+            const res = await fetch(url, {
+                method: 'GET',
+                redirect: 'follow',
+                signal: controller.signal,
+                headers: { 'User-Agent': USER_AGENT }
+            });
+            // Drain a small amount of the body so the connection can close
+            // cleanly (don't read large response bodies into memory).
+            try { await res.body?.cancel(); } catch { /* ignore */ }
+            const finalUrl = res.url || url;
+            if (finalUrl && finalUrl !== url && !finalUrl.startsWith('https://news.google.com/')) {
+                return finalUrl;
+            }
+        } finally {
+            clearTimeout(timer);
+        }
+    } catch (err) {
+        warn(`    URL resolution failed for ${url.slice(0, 80)}: ${err.message}`);
+    }
+    return url;
 }
 
 // ============================================================
@@ -757,7 +982,7 @@ async function main() {
 
     const state = loadState();
     const seen = new Set(state.seenUrls);
-    const isBlacklisted = buildBlacklistMatcher();
+    const blacklist = buildBlacklistMatcher();
 
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
@@ -766,8 +991,10 @@ async function main() {
         if (!res.ok) throw new Error(`Facilities API HTTP ${res.status}`);
         return res.json();
     })();
-    const facilityIndex = buildFacilityIndex(facJson);
+    const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson);
     log(`  built facility index: ${facilityIndex.length} unique active entries`);
+    log(`  facility-owned hosts: ${facilityOwnHosts.size} (skipped as candidates)`);
+    log(`  generic aliases:      ${genericAliases.size} (require positive state-signal match)`);
 
     // -- Today's shard (1/N of the active list) --
     const today = dayOfYearUTC();
@@ -810,7 +1037,7 @@ async function main() {
         if (seen.has(h) || dedupeSeen.has(h)) continue;
         dedupeSeen.add(h);
 
-        const result = evaluateCandidate(c, facilityIndex, isBlacklisted);
+        const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases);
         if (result.accept) {
             queue.push({ candidate: c, evalResult: result, urlHash: h });
         } else {
@@ -844,11 +1071,64 @@ async function main() {
     }
 
     // -- Submit --
-    let submitted = 0, submitErrors = 0;
+    // Each accepted candidate goes through:
+    //   1. Resolve Google News redirect → canonical URL
+    //   2. Re-check dedup, host blacklist, path blacklist, facility-own-website
+    //      on the canonical URL (Google News hid the real URL from earlier checks)
+    //   3. AI process → submit
+    let submitted = 0, submitErrors = 0, postResolveRejected = 0;
+    const postResolveLog = [];
+
     for (const q of queue) {
         if (submitted >= SUBMIT_LIMIT) break;
-        // Mark seen *before* attempting so we don't retry a flaky URL every run
+
+        // Resolve if it's a Google News redirect (no-op otherwise)
+        const originalLink = q.candidate.link;
+        const resolvedLink = await resolveGoogleNewsUrl(originalLink);
+
+        if (resolvedLink !== originalLink) {
+            // Re-dedup against the canonical URL — same article may appear under
+            // multiple Google News redirect tokens.
+            const newHash = hashUrl(resolvedLink);
+            if (seen.has(newHash)) {
+                seen.add(q.urlHash);  // also record the redirect token as seen
+                postResolveRejected++;
+                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'duplicate-after-resolution' });
+                continue;
+            }
+
+            // Re-check blacklists on the canonical URL
+            const newHost = articleHostOf(resolvedLink);
+            if (newHost && blacklist.hostBlocked(newHost)) {
+                seen.add(q.urlHash);
+                postResolveRejected++;
+                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-host-post-resolve', host: newHost });
+                continue;
+            }
+            if (newHost && facilityOwnHosts.has(newHost)) {
+                seen.add(q.urlHash);
+                postResolveRejected++;
+                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'facility-own-website-post-resolve', host: newHost });
+                continue;
+            }
+            const pathHit = blacklist.pathBlocked(resolvedLink);
+            if (pathHit) {
+                seen.add(q.urlHash);
+                postResolveRejected++;
+                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-path-post-resolve', pattern: pathHit });
+                continue;
+            }
+
+            // Update candidate with canonical URL for submission
+            q.candidate.link = resolvedLink;
+            // Also mark the canonical URL as seen so a future run won't re-submit it
+            seen.add(newHash);
+        }
+
+        // Mark the original/canonical link as seen before attempting submission,
+        // so a flaky URL isn't retried every run.
         seen.add(q.urlHash);
+
         await sleep(AI_REQUEST_DELAY_MS);
         const r = await submitCandidate(q.candidate, q.evalResult);
         if (r.ok) {
@@ -857,6 +1137,11 @@ async function main() {
         } else {
             submitErrors++;
         }
+    }
+
+    if (postResolveLog.length) {
+        state.stats.rejected += postResolveLog.length;
+        persistRejected(postResolveLog);
     }
 
     state.seenUrls = Array.from(seen);
@@ -869,7 +1154,8 @@ async function main() {
     log(`  accepted by filter:  ${queue.length}`);
     log(`  submitted (ok):      ${submitted}`);
     log(`  submitted (errors):  ${submitErrors}`);
-    log(`  rejected (logged):   ${rejected.length}`);
+    log(`  rejected (pre-fetch):  ${rejected.length}`);
+    log(`  rejected (post-resolve): ${postResolveRejected}`);
     log(`  cumulative stats:    ${JSON.stringify(state.stats)}`);
 
     if (submitErrors > 0 && submitted === 0) process.exitCode = 1;

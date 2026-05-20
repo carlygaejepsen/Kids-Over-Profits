@@ -126,6 +126,12 @@ get_header();
         <form id="wikiForm">
             <fieldset>
                 <legend>Basic Information</legend>
+                <label for="entryType">Entry Type:</label>
+                <select id="entryType" name="entryType">
+                    <option value="facility">Individual Facility / Program</option>
+                    <option value="organization">Parent Organization</option>
+                </select>
+
                 <label for="programName">Program Name:</label>
                 <input type="text" id="programName" name="programName" data-autocomplete-category="facility" placeholder="e.g., Turn-About Ranch">
 

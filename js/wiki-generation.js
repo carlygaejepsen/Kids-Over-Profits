@@ -8,6 +8,38 @@
  * @param {object} formData - Object containing all form field values and arrays
  * @returns {string} - Generated markdown text
  */
+function isOrganizationFormData(formData = {}) {
+    if ((formData.entryType || '').toLowerCase() === 'organization') {
+        return true;
+    }
+
+    if (formData.isOrganizationEntry) {
+        return true;
+    }
+
+    const programType = String(formData.programType || '').trim().toLowerCase();
+    const programName = String(formData.programName || '').trim();
+    const hasProgramsTable = Array.isArray(formData.relatedPrograms) && formData.relatedPrograms.length > 0;
+    const hasOrgOnlyFields = !!String(formData.headquarters || formData.parentCompany || '').trim();
+    const hasFacilitySignals = !!(
+        formData.cityState ||
+        formData.mainAddress ||
+        formData.ageRange ||
+        formData.capacity ||
+        formData.avgStay ||
+        formData.tuition ||
+        formData.natsapMember ||
+        (Array.isArray(formData.selectedDiagnoses) && formData.selectedDiagnoses.length > 0)
+    );
+    const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care| services)?|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/i.test(programName);
+    const typeLooksLikeOrganization = /organization|association|company|corporation|group|operator|network|membership/i.test(programType);
+
+    return typeLooksLikeOrganization
+        || hasOrgOnlyFields
+        || (hasProgramsTable && !hasFacilitySignals)
+        || (nameLooksLikeOrganization && !hasFacilitySignals);
+}
+
 function generateWikiMarkdown(formData) {
     const programName = formData.programName || '[Program Name]';
 
@@ -108,6 +140,20 @@ function generateWikiMarkdown(formData) {
                lower.startsWith('no media coverage for ') ||
                lower.startsWith('additional information about ');
     };
+
+    if (isOrganizationFormData(formData)) {
+        return generateOrganizationWikiMarkdown(formData, {
+            programName,
+            createLink,
+            joinWithAnd,
+            ensureSentence,
+            ensureBoldNameSpacing,
+            stripRedundantRoleIntro,
+            normalizeForComparison,
+            addRoleArticle,
+            isEffectivelyEmpty
+        });
+    }
 
     // --- Build History Section ---
     let historySection = '';
@@ -581,6 +627,311 @@ ${relatedMediaSection}
     return sanitizedOutput.trim();
 }
 
+function generateOrganizationWikiMarkdown(formData, helpers) {
+    const {
+        programName,
+        createLink,
+        joinWithAnd,
+        ensureSentence,
+        ensureBoldNameSpacing,
+        stripRedundantRoleIntro,
+        normalizeForComparison,
+        addRoleArticle,
+        isEffectivelyEmpty
+    } = helpers;
+
+    const headquartersText = formData.headquarters || formData.cityState || '';
+    const organizationType = formData.programType || 'Parent Organization';
+
+    let historySection = '';
+    if (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes)) {
+        historySection = formData.historyNotes.trim();
+    } else {
+        const historySentences = [];
+        const descriptorParts = [];
+
+        descriptorParts.push(formData.programType ? `a ${escapeMarkdown(formData.programType)}` : 'a parent organization');
+
+        if (formData.yearFounded) {
+            descriptorParts.push(`founded in ${escapeMarkdown(formData.yearFounded)}`);
+        }
+
+        if (headquartersText) {
+            descriptorParts.push(`headquartered in ${createLink(headquartersText, formData.addressLink)}`);
+        }
+
+        historySentences.push(`${escapeMarkdown(programName)} is ${joinWithAnd(descriptorParts)}.`);
+
+        if (formData.ownerName) {
+            historySentences.push(`The organization is owned or operated by ${createLink(formData.ownerName, formData.ownerLink)}.`);
+        }
+
+        if (formData.parentCompany) {
+            historySentences.push(`Its parent company is ${createLink(formData.parentCompany, formData.parentCompanyLink)}.`);
+        }
+
+        if (!headquartersText && formData.mainAddress) {
+            historySentences.push(`The main office is located at ${createLink(formData.mainAddress, formData.addressLink)}.`);
+        }
+
+        if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
+            historySentences.push(`Programs associated with ${escapeMarkdown(programName)} are listed below.`);
+        }
+
+        if (formData.ownershipChanges && formData.ownershipChanges.length > 0) {
+            formData.ownershipChanges.forEach(change => {
+                const prevText = change.previousLink
+                    ? `[${escapeMarkdown(change.previous)}](${change.previousLink})`
+                    : escapeMarkdown(change.previous);
+                const newText = change.newOwnerLink
+                    ? `[${escapeMarkdown(change.newOwner)}](${change.newOwnerLink})`
+                    : escapeMarkdown(change.newOwner);
+
+                if (change.previous && change.newOwner) {
+                    historySentences.push(`In ${escapeMarkdown(change.year)}, the organization changed ownership from ${prevText} to ${newText}.`);
+                } else if (change.newOwner) {
+                    historySentences.push(`In ${escapeMarkdown(change.year)}, the organization was acquired by ${newText}.`);
+                } else if (change.previous) {
+                    historySentences.push(`In ${escapeMarkdown(change.year)}, ${prevText} divested from the organization.`);
+                }
+            });
+        }
+
+        if (formData.rebrand) {
+            const rebrandLink = formData.rebrandLink
+                ? `[${escapeMarkdown(formData.rebrand)}](${formData.rebrandLink})`
+                : escapeMarkdown(formData.rebrand);
+            historySentences.push(`It is believed to be a rebrand or spin-off of ${rebrandLink}.`);
+        }
+
+        if (formData.affiliations && formData.affiliations.length > 0) {
+            const affList = formData.affiliations.map((aff) =>
+                aff.link ? `[${escapeMarkdown(aff.name)}](${aff.link})` : escapeMarkdown(aff.name)
+            );
+            historySentences.push(`The organization is affiliated with ${joinWithAnd(affList)}.`);
+        }
+
+        historySection = historySentences.filter(Boolean).length > 0
+            ? historySentences.filter(Boolean).join('\n\n')
+            : getPlaceholder('History and Background Information', programName);
+    }
+
+    let staffSection;
+    if (formData.staffMembers && formData.staffMembers.length > 0) {
+        const sortedStaff = [...formData.staffMembers].sort((a, b) => {
+            const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
+            const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
+            if (aIsFormer && !bIsFormer) return 1;
+            if (!aIsFormer && bIsFormer) return -1;
+            return 0;
+        });
+
+        staffSection = sortedStaff.map((s) => {
+            const safeStaffName = escapeMarkdown((s.name || '').trim());
+            let roleText = escapeMarkdown(s.role);
+
+            const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
+            const isFormerStaff = s.isFormer || roleHasFormer;
+
+            if (isFormerStaff) {
+                roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
+            }
+
+            if (!s.role) {
+                const bio = ensureSentence(s.bio || '');
+                return `**${safeStaffName}** ${bio}`.trim();
+            }
+
+            const articleRole = addRoleArticle(roleText);
+            const verb = isFormerStaff ? 'was' : 'is';
+            const descriptor = articleRole;
+            const roleSentence = ensureSentence(`**${safeStaffName}** ${verb} ${descriptor}`);
+
+            let previousSentence = '';
+            if (s.previousRoles && s.previousRoles.length) {
+                const formattedRoles = s.previousRoles.map((pr) => {
+                    if (typeof pr === 'string') return escapeMarkdown(pr);
+                    if (pr.role && pr.employer) return `as ${escapeMarkdown(pr.role)} at ${escapeMarkdown(pr.employer)}`;
+                    if (pr.role) return `as ${escapeMarkdown(pr.role)}`;
+                    if (pr.employer) return `at ${escapeMarkdown(pr.employer)}`;
+                    return '';
+                }).filter(Boolean);
+
+                if (formattedRoles.length > 0) {
+                    previousSentence = ensureSentence(`Previously worked ${joinWithAnd(formattedRoles)}`);
+                }
+            }
+
+            const bioSentence = ensureSentence(stripRedundantRoleIntro(s.bio || '', roleText));
+            if (previousSentence && bioSentence) {
+                const normalizedPrevious = normalizeForComparison(previousSentence).replace(/^previously worked\s+/, '');
+                const normalizedBio = normalizeForComparison(bioSentence);
+                if (normalizedPrevious && normalizedBio.includes(normalizedPrevious)) {
+                    previousSentence = '';
+                }
+            }
+
+            return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
+        }).join('\n\n');
+
+        staffSection = ensureBoldNameSpacing(staffSection);
+    } else {
+        staffSection = getPlaceholder('Founders and Notable Staff', programName);
+    }
+
+    let programsSection = '';
+    if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
+        const tableHeader = '|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened/Status**|';
+        const tableSep = '|---|---|---|---|---|';
+        const tableRows = formData.relatedPrograms
+            .filter((prog) => prog && prog.name)
+            .map((prog) => {
+                const nameLink = prog.link
+                    ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})`
+                    : `**${escapeMarkdown(prog.name)}**`;
+                const healLink = prog.healLink
+                    ? `[HEAL](${sanitizeUrl(prog.healLink)})`
+                    : (escapeMarkdown(prog.healInfo || '-') || '-');
+                return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
+            });
+
+        programsSection = `## **Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
+    } else {
+        programsSection = `## **Related Programs**\n\n${getPlaceholder('Related Programs', programName)}\n\n***\n\n`;
+    }
+
+    let abuseSection = '';
+    if (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc)) {
+        abuseSection = formData.lawsuitsMisc.trim();
+    } else {
+        const abuseParts = [];
+
+        if (formData.mainComplaints) {
+            abuseParts.push(`Reported complaints involving ${escapeMarkdown(programName)} include ${escapeMarkdown(formData.mainComplaints)}.`);
+        }
+
+        if ((formData.selectedAllegations && formData.selectedAllegations.length > 0) || formData.customAllegations) {
+            const allAllegations = [...(formData.selectedAllegations || [])];
+            if (formData.customAllegations) {
+                const customItems = formData.customAllegations.split(',').map((a) => a.trim()).filter(Boolean);
+                allAllegations.push(...customItems);
+            }
+
+            if (allAllegations.length > 0) {
+                abuseParts.push(`Reported allegations involving this organization or its programs include ${allAllegations.join(', ')}.`);
+            }
+        }
+
+        if (formData.lawsuits && formData.lawsuits.length > 0) {
+            const outcomeLabels = {
+                settled: 'was settled',
+                dismissed: 'was dismissed',
+                plaintiff: 'was decided in favor of the plaintiff',
+                defendant: 'was decided in favor of the defendant',
+                ongoing: 'is still ongoing'
+            };
+
+            const lawsuitDescriptions = formData.lawsuits.map((lawsuit) => {
+                const defendant = lawsuit.defendant || programName;
+                let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
+                if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
+                sentence += ` alleging ${escapeMarkdown(lawsuit.claims || lawsuit.allegations || lawsuit.description)}.`;
+
+                if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
+                    sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
+                    if (lawsuit.amount) {
+                        sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
+                    }
+                    sentence += '.';
+                } else if (lawsuit.amount) {
+                    sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
+                }
+
+                return sentence;
+            }).join('\n\n');
+
+            abuseParts.push(lawsuitDescriptions);
+        }
+
+        abuseSection = abuseParts.length > 0
+            ? abuseParts.join('\n\n')
+            : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
+    }
+
+    let mediaSection;
+    if (formData.mediaInfo && !isEffectivelyEmpty(formData.mediaInfo)) {
+        mediaSection = formData.mediaInfo.trim();
+    } else if (formData.newsArticles && formData.newsArticles.length > 0) {
+        const newsList = formData.newsArticles.map((a) => {
+            let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
+            if (sourceDate) sourceDate = ` (${sourceDate})`;
+            const safeUrl = sanitizeUrl(a.url);
+            const linkText = safeUrl ? `[${escapeMarkdown(a.title)}](${safeUrl})` : escapeMarkdown(a.title);
+            return `- ${linkText}${sourceDate}`;
+        }).join('\n');
+        mediaSection = newsList;
+    } else {
+        mediaSection = getPlaceholder('Media Coverage', programName);
+    }
+
+    let relatedMediaSection;
+    if (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc)) {
+        relatedMediaSection = formData.relatedMediaMisc.trim();
+    } else if (formData.relatedMedia && formData.relatedMedia.length > 0) {
+        relatedMediaSection = formData.relatedMedia.map((m) => {
+            const safeUrl = sanitizeUrl(m.url);
+            const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
+            return `- ${linkText}`;
+        }).join('\n\n');
+    } else {
+        relatedMediaSection = getPlaceholder('Related Media', programName);
+    }
+
+    const headerLine = formData.yearsActive
+        ? `# **${escapeMarkdown(programName)}**(${formData.yearsActive})`
+        : `# **${escapeMarkdown(programName)}**`;
+
+    const output = `
+${headerLine}
+*${escapeMarkdown(organizationType)}*
+
+***
+
+## **History and Background Information**
+
+${historySection}
+
+***
+
+## **Founders and Notable Staff**
+
+${staffSection}
+
+***
+
+${programsSection}## **Abuse/Neglect Allegations and Lawsuits**
+
+${abuseSection}
+
+***
+
+## **In the Media**
+
+${mediaSection}
+
+***
+
+## **Related Media**
+
+${relatedMediaSection}
+    `;
+
+    const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
+    const sanitizedOutput = output.replace(footerPattern, '');
+
+    return sanitizedOutput.trim();
+}
+
 // --- Helper Functions ---
 
 function getPlaceholder(category, programName) {
@@ -614,6 +965,10 @@ function getPlaceholder(category, programName) {
         {
             match: ['related media'],
             text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact u/Signal-Strain9810.`
+        },
+        {
+            match: ['related programs', 'affiliated programs'],
+            text: `Programs associated with ${name} have not been added yet. If you have reliable information about operated, affiliated, or successor programs to share, please contact u/Signal-Strain9810.`
         }
     ];
 

@@ -210,11 +210,15 @@ function parseWikiMarkdown(markdown) {
     // Initialize data structure
     const parsedData = {
         // Basic info
+        entryType: '',
         programName: '',
         yearsActive: '',
         cityState: '',
         programType: '',
         yearFounded: '',
+        headquarters: '',
+        parentCompany: '',
+        parentCompanyLink: '',
         ownerName: '',
         ownerLink: '',
         ageRange: '',
@@ -958,6 +962,20 @@ function parseWikiMarkdown(markdown) {
             parsedData.yearFounded = yearFoundedMatch[1].trim();
         }
 
+        const headquartersPatterns = [
+            /(?:headquarters|main office)\s+(?:is|are)\s+(?:located|based)\s+(?:at|in)\s+(.+?)(?:\.|$)/i,
+            /(?:company|organization|group|association)\s+(?:is|was)\s+based\s+in\s+(.+?)(?:\.|$)/i,
+            /headquartered\s+in\s+(.+?)(?:\.|$)/i
+        ];
+
+        for (const pattern of headquartersPatterns) {
+            const match = normalizedHistory.match(pattern);
+            if (match) {
+                parsedData.headquarters = match[1].trim().replace(/\s+/g, ' ');
+                break;
+            }
+        }
+
         // Owner
         const ownerPatternsWithLinks = [
             /is\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center|behavior))/i,
@@ -976,6 +994,17 @@ function parseWikiMarkdown(markdown) {
                 parsedData.ownerLink = sanitizeUrl(match[2]);
                 ownerCaptured = true;
                 break;
+            }
+        }
+
+        const parentCompanyWithLinkMatch = normalizedHistory.match(/(?:subsidiary of|parent company (?:is|was)|division of)\s+\[([^\]]+)\]\(([^)]+)\)/i);
+        if (parentCompanyWithLinkMatch) {
+            parsedData.parentCompany = parentCompanyWithLinkMatch[1].trim();
+            parsedData.parentCompanyLink = sanitizeUrl(parentCompanyWithLinkMatch[2]);
+        } else {
+            const parentCompanyTextMatch = normalizedHistory.match(/(?:subsidiary of|parent company (?:is|was)|division of)\s+([^.\n]+)/i);
+            if (parentCompanyTextMatch) {
+                parsedData.parentCompany = parentCompanyTextMatch[1].trim();
             }
         }
 
@@ -2198,6 +2227,29 @@ function parseWikiMarkdown(markdown) {
     }
 
     console.log('Parsing complete:', parsedData);
+    if (!parsedData.entryType) {
+        const programNameLower = parsedData.programName.toLowerCase();
+        const programTypeLower = parsedData.programType.toLowerCase();
+        const hasProgramsTable = parsedData.relatedPrograms.length > 0;
+        const hasOrgOnlyFields = !!(parsedData.headquarters || parsedData.parentCompany || parsedData.parentCompanyLink);
+        const hasFacilitySignals = !!(
+            parsedData.cityState ||
+            parsedData.mainAddress ||
+            parsedData.ageRange ||
+            parsedData.capacity ||
+            parsedData.avgStay ||
+            parsedData.tuition ||
+            parsedData.natsapMember ||
+            parsedData.selectedDiagnoses.length > 0
+        );
+        const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care| services)?|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/.test(programNameLower);
+        const typeLooksLikeOrganization = /organization|association|company|corporation|group|operator|network|membership/.test(programTypeLower);
+
+        parsedData.entryType = (typeLooksLikeOrganization || hasOrgOnlyFields || (hasProgramsTable && !hasFacilitySignals) || (nameLooksLikeOrganization && !hasFacilitySignals))
+            ? 'organization'
+            : 'facility';
+    }
+
     return parsedData;
 }
 

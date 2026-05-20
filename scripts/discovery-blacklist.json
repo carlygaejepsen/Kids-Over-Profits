@@ -43,6 +43,19 @@
   ],
   "industryPromoDomains": [],
   "_industryPromoComment": "Add TTI-industry-friendly outlets here to reject them. Currently empty; populate as you spot patterns in the rejected log.",
+  "urlPathPatterns": [
+    "/globenewswire/",
+    "/prnewswire/",
+    "/businesswire/",
+    "/einnews/",
+    "/tmt-newswire/",
+    "/accesswire/",
+    "/issuewire/",
+    "/press-release/",
+    "/press-releases/",
+    "/pressrelease/"
+  ],
+  "_urlPathPatternsComment": "URL path substrings that indicate wire-syndicated content even when the host itself isn't a wire (e.g., manilatimes.net republishes globenewswire). Match is case-insensitive substring on the URL path. Applied after Google News URLs are resolved to canonical.",
   "allowlistOverrides": [],
   "_allowlistComment": "Domains here are NEVER rejected even if matched by a wildcard above. Use sparingly — e.g., if *.msn.com is blacklisted but a specific msn.com path you trust appears."
 }

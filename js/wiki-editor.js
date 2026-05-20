@@ -221,9 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function clearFormToEmpty(programName) {
+    function clearFormToEmpty(programName, options = {}) {
+        const entryType = options.entryType === 'organization' ? 'organization' : 'facility';
+
         // Basic fields to clear
-        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink'];
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
         clearInputs(fieldIds);
 
         // Reset arrays and lists
@@ -248,11 +250,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[name="diagnoses"]').forEach(cb => cb.checked = false);
         document.querySelectorAll('input[name="allegations"]').forEach(cb => cb.checked = false);
 
+        const entryTypeField = document.getElementById('entryType');
+        if (entryTypeField) {
+            entryTypeField.value = entryType;
+        }
+
         // Set program name if provided, otherwise leave blank
         if (programName) {
             const pn = document.getElementById('programName');
             if (pn) pn.value = programName;
         }
+
+        window.unparsedContentFromImport = '';
+        detectAndToggleOrganizationMode();
     }
 
 
@@ -485,13 +495,124 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const inferEntryTypeFromData = (data = {}) => {
+        const explicitEntryType = String(data.entryType || '').trim().toLowerCase();
+        if (explicitEntryType === 'organization') return 'organization';
+        if (explicitEntryType === 'facility') return 'facility';
+
+        const programType = String(data.programType || '').trim().toLowerCase();
+        const programName = String(data.programName || '').trim();
+        const hasProgramsTable = Array.isArray(data.relatedPrograms) && data.relatedPrograms.length > 0;
+        const hasOrgOnlyFields = !!String(data.headquarters || data.parentCompany || data.parentCompanyLink || '').trim();
+        const hasFacilitySignals = !!(
+            String(data.cityState || '').trim() ||
+            String(data.mainAddress || '').trim() ||
+            String(data.ageRange || '').trim() ||
+            String(data.capacity || '').trim() ||
+            String(data.avgStay || '').trim() ||
+            String(data.tuition || '').trim() ||
+            String(data.natsapMember || '').trim() ||
+            (Array.isArray(data.selectedDiagnoses) && data.selectedDiagnoses.length > 0)
+        );
+        const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care| services)?|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/i.test(programName);
+        const typeLooksLikeOrganization = /organization|association|company|corporation|group|operator|network|membership/i.test(programType);
+
+        return (typeLooksLikeOrganization || hasOrgOnlyFields || (hasProgramsTable && !hasFacilitySignals) || (nameLooksLikeOrganization && !hasFacilitySignals))
+            ? 'organization'
+            : 'facility';
+    };
+
+    const setEntryTypeValue = (entryType) => {
+        const entryTypeField = document.getElementById('entryType');
+        if (!entryTypeField) return;
+        entryTypeField.value = entryType === 'organization' ? 'organization' : 'facility';
+    };
+
+    const applyStoredEntryMetadata = (storedData = {}) => {
+        if (!storedData || typeof storedData !== 'object') {
+            return;
+        }
+
+        setFieldValue('headquarters', storedData.headquarters);
+        setFieldValue('parentCompany', storedData.parentCompany);
+        setFieldValue('parentCompanyLink', storedData.parentCompanyLink);
+
+        const inferredEntryType = inferEntryTypeFromData(storedData);
+        if (storedData.entryType || inferredEntryType === 'organization') {
+            setEntryTypeValue(storedData.entryType || inferredEntryType);
+        }
+
+        detectAndToggleOrganizationMode();
+    };
+
+    function collectCurrentFormData() {
+        const vals = {};
+        const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
+        inputs.forEach(input => {
+            if (input.id && !input.closest('.form-adder')) {
+                vals[input.id] = input.value.trim();
+            }
+        });
+
+        const selectedDiagnoses = [];
+        document.querySelectorAll('input[name="diagnoses"]:checked').forEach(cb => {
+            selectedDiagnoses.push(cb.value);
+        });
+
+        const selectedAllegations = [];
+        document.querySelectorAll('input[name="allegations"]:checked').forEach(cb => {
+            selectedAllegations.push(cb.value);
+        });
+
+        const entryType = vals.entryType || inferEntryTypeFromData({
+            ...vals,
+            relatedPrograms,
+            headquarters: vals.headquarters,
+            parentCompany: vals.parentCompany
+        });
+
+        return {
+            ...vals,
+            entryType,
+            isOrganizationEntry: entryType === 'organization' || isOrganizationEntry,
+            staffMembers,
+            punishments,
+            lawsuits,
+            newsArticles,
+            testimonies,
+            relatedMedia,
+            campuses,
+            ownershipChanges,
+            rules,
+            allegations,
+            therapies,
+            programLevels,
+            affiliations,
+            relatedPrograms,
+            selectedDiagnoses,
+            selectedAllegations
+        };
+    }
+
+    const getOrganizationValueForSubmission = (formData = {}) => {
+        if ((formData.entryType || '').toLowerCase() === 'organization') {
+            return formData.parentCompany || formData.ownerName || '';
+        }
+
+        return formData.parentCompany || formData.ownerName || '';
+    };
+
     function populateFormFromParsedData(parsedData = {}, overrides = {}) {
         const data = { ...parsedData, ...overrides };
+        setFieldValue('entryType', data.entryType || inferEntryTypeFromData(data));
         setFieldValue('programName', data.programName);
         setFieldValue('yearsActive', data.yearsActive);
         setFieldValue('cityState', data.cityState);
         setFieldValue('programType', data.programType);
         setFieldValue('yearFounded', data.yearFounded);
+        setFieldValue('headquarters', data.headquarters);
+        setFieldValue('parentCompany', data.parentCompany);
+        setFieldValue('parentCompanyLink', data.parentCompanyLink);
         setFieldValue('ageRange', data.ageRange);
         setFieldValue('capacity', data.capacity);
         setFieldValue('ownerName', data.ownerName);
@@ -504,11 +625,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('addressLink', data.addressLink);
         setFieldValue('accreditingBody', data.accreditingBody);
         setFieldValue('accreditingBodyLink', data.accreditingBodyLink);
-        setFieldValue('historyNotes', data.historyNotes);
+        setFieldValue('historyNotes', data.historyNotes || data.historyMisc);
         setFieldValue('levelSystemDesc', data.levelSystemDesc);
         setFieldValue('structureMisc', data.structureMisc);
         setFieldValue('punishmentsMisc', data.punishmentsMisc);
         setFieldValue('lawsuitsMisc', data.lawsuitsMisc);
+        setFieldValue('mainComplaints', data.mainComplaints);
         setFieldValue('mediaInfo', data.mediaInfo);
         setFieldValue('testimoniesMisc', data.testimoniesMisc);
         setFieldValue('relatedMediaMisc', data.relatedMediaMisc);
@@ -641,13 +763,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 finalizeEntryLoad(programName || entry.url, { source: 'index' });
             }
 
-            // Explicitly enable organization mode since we know this is an org index page
-            isOrganizationEntry = true;
-            const pageContainer = document.querySelector('.wiki-editor-page');
-            if (pageContainer) {
-                pageContainer.classList.add('organization-mode');
-                updateOrganizationFacilitiesList();
-            }
+            setEntryTypeValue('organization');
+            detectAndToggleOrganizationMode();
+            updateMarkdownFromForm();
         } catch (error) {
             console.error('Wiki Editor: failed to load organization entry:', error);
             alert(`Failed to load ${entry.name || 'organization'} index page: ${error.message || 'Entry not found'}`);
@@ -1183,7 +1301,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Organization Mode Detection ---
-    // Add event listeners to programType and programName fields to detect organization mode changes
+    // Add event listeners to entry type and core fields to detect organization mode changes
+    const entryTypeField = document.getElementById('entryType');
     const programTypeField = document.getElementById('programType');
     const programNameField = document.getElementById('programName');
 
@@ -1192,18 +1311,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageContainer = document.querySelector('.wiki-editor-page');
         if (!pageContainer) return;
 
-        // Detect if this is an organization entry
-        // Organizations typically:
-        // 1. Have no program type (or explicitly say "Organization")
-        // 2. Are known corporate entities (Acadia Healthcare, Universal Health Services, etc.)
+        const explicitEntryType = entryTypeField?.value?.trim().toLowerCase() || '';
         const programType = programTypeField?.value?.trim() || '';
         const programName = programNameField?.value?.trim() || '';
+        const inferredEntryType = inferEntryTypeFromData({
+            entryType: explicitEntryType,
+            programType,
+            programName,
+            cityState: document.getElementById('cityState')?.value?.trim() || '',
+            mainAddress: document.getElementById('mainAddress')?.value?.trim() || '',
+            headquarters: document.getElementById('headquarters')?.value?.trim() || '',
+            parentCompany: document.getElementById('parentCompany')?.value?.trim() || '',
+            relatedPrograms
+        });
 
-        // Check if this looks like an organization
-        const isOrgByType = programType === '' || programType.toLowerCase() === 'organization';
-        const isKnownOrg = /healthcare|health services|educational consultants|inc\.|corp\.|corporation|group/i.test(programName);
-
-        isOrganizationEntry = isOrgByType && (isKnownOrg || programType.toLowerCase() === 'organization');
+        isOrganizationEntry = explicitEntryType
+            ? explicitEntryType === 'organization'
+            : inferredEntryType === 'organization';
 
         // Toggle the organization-mode class
         if (isOrganizationEntry) {
@@ -1276,15 +1400,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        if (openPrograms.length === 0 && closedPrograms.length === 0) {
-            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
-            return;
-        }
-
         const renderList = (programs) =>
             '<ul style="list-style:none; padding:0; margin:0 0 12px;">' +
             programs.map(f => `<li style="padding:6px 8px; margin:4px 0; background:#fff; border-left:4px solid #33A7B5; border-radius:3px;"><strong style="color:#000080;">${escapeHtml(f.name)}</strong></li>`).join('') +
             '</ul>';
+
+        if (openPrograms.length === 0 && closedPrograms.length === 0) {
+            const fallbackPrograms = extractTableLinks(markdown);
+            if (fallbackPrograms.length === 0) {
+                facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
+                return;
+            }
+
+            facilitiesList.innerHTML = `<h4 style="margin:0 0 6px; color:#000435;">Programs (${fallbackPrograms.length})</h4>${renderList(fallbackPrograms)}`;
+            return;
+        }
 
         let html = '';
         if (openPrograms.length > 0) {
@@ -1314,6 +1444,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (entryTypeField) {
+        entryTypeField.addEventListener('input', () => {
+            detectAndToggleOrganizationMode();
+        });
+        entryTypeField.addEventListener('change', () => {
+            detectAndToggleOrganizationMode();
+            updateMarkdownFromForm();
+        });
+    }
+
     // --- MODE TOGGLE & GENERATION LOGIC ---
     const modeFormBtn = document.getElementById('modeFormBtn');
     const modeMarkdownBtn = document.getElementById('modeMarkdownBtn');
@@ -1328,37 +1468,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return '';
         }
 
-        // Collect all form field values
-        const vals = {};
-        const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
-        inputs.forEach(input => {
-            if (input.id && !input.closest('.form-adder')) {
-                vals[input.id] = input.value.trim();
-            }
-        });
-
-        // Collect selected diagnoses from checkboxes
-        const selectedDiagnoses = [];
-        document.querySelectorAll('input[name="diagnoses"]:checked').forEach(cb => {
-            selectedDiagnoses.push(cb.value);
-        });
-
-        // Collect selected allegations from checkboxes
-        const selectedAllegations = [];
-        document.querySelectorAll('input[name="allegations"]:checked').forEach(cb => {
-            selectedAllegations.push(cb.value);
-        });
-
-        const programName = vals.programName || '[Program Name]';
-
-        // Build form data object to pass to generation function
-        const formData = {
-            ...vals,
-            staffMembers, punishments, lawsuits, newsArticles, testimonies,
-            relatedMedia, campuses, ownershipChanges, rules, allegations,
-            therapies, programLevels, affiliations, relatedPrograms,
-            selectedDiagnoses, selectedAllegations
-        };
+        const formData = collectCurrentFormData();
+        const programName = formData.programName || '[Program Name]';
 
         // Generate the wiki markdown
         let output = generateWikiMarkdown(formData);
@@ -1660,11 +1771,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const parsedData = parseWikiMarkdown(markdown);
 
         // Populate basic form fields
+        setValue('entryType', inferEntryTypeFromData(parsedData));
         setValue('programName', parsedData.programName);
         setValue('yearsActive', parsedData.yearsActive);
         setValue('cityState', parsedData.cityState);
         setValue('programType', parsedData.programType);
         setValue('yearFounded', parsedData.yearFounded);
+        setValue('headquarters', parsedData.headquarters);
+        setValue('parentCompany', parsedData.parentCompany);
+        setValue('parentCompanyLink', parsedData.parentCompanyLink);
         setValue('ownerName', parsedData.ownerName);
         setValue('ownerLink', parsedData.ownerLink);
         setValue('ageRange', parsedData.ageRange);
@@ -1713,6 +1828,8 @@ document.addEventListener('DOMContentLoaded', () => {
         allegations = parsedData.allegations || [];
         therapies = parsedData.therapies || [];
         programLevels = parsedData.programLevels || [];
+        affiliations = parsedData.affiliations || [];
+        relatedPrograms = parsedData.relatedPrograms || [];
 
         // Render lists
         renderStaffList();
@@ -1774,6 +1891,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        if (affiliations.length > 0) {
+            renderList(affiliations, 'affiliationListOutput', item => {
+                const linkPart = item.link ? ` (<a href="${escapeHtml(item.link)}" target="_blank">Link</a>)` : '';
+                return `<strong>${escapeHtml(item.name)}</strong>${linkPart}`;
+            });
+        }
+
+        if (relatedPrograms.length > 0) {
+            renderList(relatedPrograms, 'relatedProgramsListOutput', item => {
+                const healPart = item.healLink ? ` <a href="${escapeHtml(item.healLink)}" target="_blank">[HEAL]</a>` : '';
+                return `<strong>${escapeHtml(item.name)}</strong> (${escapeHtml(item.yearsActive || '?')}) - ${escapeHtml(item.location || '?')}${healPart}`;
+            });
+        }
+
         // Set diagnosis checkboxes from parsed data
         if (parsedData.selectedDiagnoses && parsedData.selectedDiagnoses.length > 0) {
             // First uncheck all diagnosis checkboxes
@@ -1820,8 +1951,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`✓ Set custom allegations: ${parsedData.customAllegations}`);
         }
 
+        detectAndToggleOrganizationMode();
         console.log('✓ Import complete!');
         console.log('Parsed data:', parsedData);
+        return parsedData;
     }
 
     // --- UTILITY FUNCTIONS ---
@@ -1890,45 +2023,12 @@ document.addEventListener('DOMContentLoaded', () => {
             submitStatus.innerHTML = '<span class="loading">⏳ Submitting...</span>';
             confirmSubmitBtn.disabled = true;
 
-            // Collect all form data
-            const formData = {
-                programName: programName,
-                yearsActive: document.getElementById('yearsActive')?.value || '',
-                cityState: document.getElementById('cityState')?.value || '',
-                programType: document.getElementById('programType')?.value || '',
-                yearFounded: document.getElementById('yearFounded')?.value || '',
-                ageRange: document.getElementById('ageRange')?.value || '',
-                capacity: document.getElementById('capacity')?.value || '',
-                ownerName: document.getElementById('ownerName')?.value || '',
-                ownerLink: document.getElementById('ownerLink')?.value || '',
-                avgStay: document.getElementById('avgStay')?.value || '',
-                tuition: document.getElementById('tuition')?.value || '',
-                natsapMember: document.getElementById('natsapMember')?.value || '',
-                natsapYear: document.getElementById('natsapYear')?.value || '',
-                diagnosesList: document.getElementById('diagnosesList')?.value || '',
-                mainAddress: document.getElementById('mainAddress')?.value || '',
-                addressLink: document.getElementById('addressLink')?.value || '',
-                accreditingBody: document.getElementById('accreditingBody')?.value || '',
-                accreditingBodyLink: document.getElementById('accreditingBodyLink')?.value || '',
-                mainComplaints: document.getElementById('mainComplaints')?.value || '',
-                mediaInfo: document.getElementById('mediaInfo')?.value || '',
-                // Arrays
-                staffMembers: staffMembers,
-                punishments: punishments,
-                lawsuits: lawsuits,
-                newsArticles: newsArticles,
-                testimonies: testimonies,
-                relatedMedia: relatedMedia,
-                campuses: campuses,
-                ownershipChanges: ownershipChanges,
-                rules: rules,
-                allegations: allegations,
-                therapies: therapies,
-                // Generated output
+            const formData = collectCurrentFormData();
+            const submissionPayload = {
+                ...formData,
+                organization: getOrganizationValueForSubmission(formData),
                 generatedMarkdown: outputCode,
-                // Original imported markdown
                 originalMarkdown: importedMarkdown,
-                // Submission metadata
                 submittedBy: document.getElementById('submitterEmail')?.value || '',
                 submissionNotes: document.getElementById('submissionNotes')?.value || ''
             };
@@ -1939,7 +2039,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(submissionPayload)
                 });
 
                 const result = await response.json();
@@ -2045,12 +2145,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Prepare submission data
+                    const parsedEntryType = inferEntryTypeFromData(parsedData);
                     const submissionData = {
                         programName: parsedData.programName,
+                        entryType: parsedEntryType,
                         yearsActive: parsedData.yearsActive || '',
                         cityState: parsedData.cityState || '',
                         programType: parsedData.programType || '',
                         yearFounded: parsedData.yearFounded || '',
+                        headquarters: parsedData.headquarters || '',
+                        parentCompany: parsedData.parentCompany || '',
+                        parentCompanyLink: parsedData.parentCompanyLink || '',
                         ageRange: parsedData.ageRange || '',
                         capacity: parsedData.capacity || '',
                         ownerName: parsedData.ownerName || '',
@@ -2059,10 +2164,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         tuition: parsedData.tuition || '',
                         natsapMember: parsedData.natsapMember || '',
                         natsapYear: parsedData.natsapYear || '',
+                        historyNotes: parsedData.historyMisc || '',
+                        levelSystemDesc: parsedData.levelSystemDesc || '',
+                        structureMisc: parsedData.structureMisc || '',
+                        punishmentsMisc: parsedData.punishmentsMisc || '',
+                        lawsuitsMisc: parsedData.lawsuitsMisc || '',
                         mainAddress: parsedData.mainAddress || '',
                         addressLink: parsedData.addressLink || '',
                         accreditingBody: parsedData.accreditingBody || '',
                         accreditingBodyLink: parsedData.accreditingBodyLink || '',
+                        mainComplaints: parsedData.mainComplaints || '',
+                        mediaInfo: parsedData.mediaInfo || '',
+                        testimoniesMisc: parsedData.testimoniesMisc || '',
+                        relatedMediaMisc: parsedData.relatedMediaMisc || '',
+                        rebrand: parsedData.rebrand || '',
+                        rebrandLink: parsedData.rebrandLink || '',
                         staffMembers: parsedData.staffMembers || [],
                         punishments: parsedData.punishments || [],
                         lawsuits: parsedData.lawsuits || [],
@@ -2074,10 +2190,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         rules: parsedData.rules || [],
                         allegations: parsedData.allegations || [],
                         therapies: parsedData.therapies || [],
+                        programLevels: parsedData.programLevels || [],
+                        affiliations: parsedData.affiliations || [],
+                        relatedPrograms: parsedData.relatedPrograms || [],
                         selectedDiagnoses: parsedData.selectedDiagnoses || [],
                         customDiagnoses: parsedData.customDiagnoses || '',
                         selectedAllegations: parsedData.selectedAllegations || [],
                         customAllegations: parsedData.customAllegations || '',
+                        organization: getOrganizationValueForSubmission({
+                            ...parsedData,
+                            entryType: parsedEntryType
+                        }),
                         originalMarkdown: content,
                         generatedMarkdown: content, // Store original as generated for now
                         submittedBy: 'bulk-upload',
@@ -2501,7 +2624,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (emptySlugSet && orgSlug && emptySlugSet.has(orgSlug.toLowerCase())) {
                         console.log('Organization index is empty for', orgName, orgSlug);
                         showEmptyBanner(orgName);
-                        clearFormToEmpty(orgName);
+                        clearFormToEmpty(orgName, { entryType: 'organization' });
                         importedMarkdown = '';
                         updateMarkdownFromForm();
                         // Hide browser but do not auto-scroll to the form; scroll banner into view instead
@@ -2625,7 +2748,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      }
                      try {
                          showEmptyBanner(orgName);
-                         clearFormToEmpty(orgName);
+                         clearFormToEmpty(orgName, { entryType: 'organization' });
                          importedMarkdown = '';
                          updateMarkdownFromForm();
                          finalizeEntryLoad(orgName, { noScroll: true, source: 'index' });
@@ -2797,6 +2920,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadEntryIntoForm(entryId) {
         // Reset to facility mode by default; org mode set explicitly if needed after load
         isOrganizationEntry = false;
+        setEntryTypeValue('facility');
         const _pageContainer = document.querySelector('.wiki-editor-page');
         if (_pageContainer) _pageContainer.classList.remove('organization-mode');
 
@@ -2816,7 +2940,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (emptySlugSet && slug && emptySlugSet.has(slug.toLowerCase())) {
                     console.log('Detected empty wiki slug for', slug);
                     showEmptyBanner(candidateName || '');
-                    clearFormToEmpty(candidateName || '');
+                    clearFormToEmpty(candidateName || '', {
+                        entryType: inferEntryTypeFromData({
+                            ...(entry.json_data || {}),
+                            programName: candidateName,
+                            programType: entry.program_type || '',
+                            cityState: entry.city_state || ''
+                        })
+                    });
                     importedMarkdown = '';
                     updateMarkdownFromForm();
                     finalizeEntryLoad(candidateName || entry.program_name, { source: 'index' });
@@ -2832,6 +2963,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.generated_markdown && entry.generated_markdown.trim()) {
                 console.log('Loading entry via markdown re-parse (applying latest parser rules)...');
                 parseAndPopulate(entry.generated_markdown);
+                applyStoredEntryMetadata(entry.json_data || {});
                 
                 // Ensure critical DB fields override the parse if they are empty/different?
                 // Actually, trust the parse, but ensure Program Name matches DB if parse failed to find it.
