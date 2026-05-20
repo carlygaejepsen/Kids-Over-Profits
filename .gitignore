@@ -48,3 +48,7 @@ tmpclaude-*
 .tmp/
 scripts/.mn-browser-profile/
 scripts/mn_progress.json
+
+# Article discovery — local seen-URL cache (persisted via GH Actions cache in CI)
+scripts/.discovery-state.json
+scripts/.discovery-rejected.log

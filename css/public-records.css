@@ -1,0 +1,321 @@
+/* Shared styles for public record pages: Lawsuits, Legislation, Volunteer */
+
+.kop-records-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2em 1.5em 4em;
+    color: var(--kop-text-primary);
+}
+
+/* ── Page header ─────────────────────────────────────── */
+
+.kop-records-header {
+    margin-bottom: 2em;
+    padding-bottom: 1.25em;
+    border-bottom: 2px solid var(--kop-border-primary);
+}
+
+.kop-records-header h1 {
+    font-size: 2em;
+    color: var(--kop-midnight-blue);
+    margin-bottom: 0.25em;
+}
+
+.kop-records-header p {
+    color: #555;
+    font-size: 1.05em;
+    margin: 0;
+}
+
+/* ── Filter bar ──────────────────────────────────────── */
+
+.kop-records-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-bottom: 1.75em;
+    align-items: center;
+}
+
+.kop-filter-select {
+    padding: 0.45em 0.8em;
+    border: 1.5px solid var(--kop-border-secondary);
+    border-radius: 4px;
+    font-size: 0.92em;
+    background: var(--kop-bg-secondary);
+    color: var(--kop-text-primary);
+    cursor: pointer;
+}
+
+.kop-filter-select:focus {
+    outline: none;
+    border-color: var(--kop-teal);
+}
+
+.kop-filter-clear {
+    padding: 0.45em 1em;
+    background: transparent;
+    border: 1.5px solid var(--kop-border-secondary);
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: #666;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.kop-filter-clear:hover {
+    border-color: var(--kop-teal);
+    color: var(--kop-teal);
+}
+
+.kop-filter-count {
+    font-size: 0.88em;
+    color: #888;
+    margin-left: auto;
+}
+
+/* ── Card grid ───────────────────────────────────────── */
+
+.kop-records-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25em;
+}
+
+.kop-record-card {
+    background: var(--kop-bg-secondary);
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 8px;
+    padding: 1.2em 1.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.kop-record-card:hover {
+    border-color: var(--kop-teal);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.kop-record-card[hidden] { display: none; }
+
+/* ── Card header ─────────────────────────────────────── */
+
+.kop-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.4em;
+    justify-content: space-between;
+}
+
+.kop-card-title {
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--kop-midnight-blue);
+    margin: 0;
+    flex: 1 1 60%;
+    line-height: 1.35;
+}
+
+.kop-card-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.kop-card-title a:hover {
+    color: var(--kop-teal);
+    text-decoration: underline;
+}
+
+/* ── Badges ──────────────────────────────────────────── */
+
+.kop-badge {
+    display: inline-block;
+    font-size: 0.74em;
+    font-weight: 700;
+    padding: 0.15em 0.55em;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Lawsuit status badges */
+.kop-badge-filed       { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
+.kop-badge-in_progress { background: var(--kop-soft-pastel-yellow); color: #6b5000; }
+.kop-badge-settled     { background: var(--kop-mint-green); color: #004a30; }
+.kop-badge-dismissed   { background: #e0e0e0; color: #555; }
+.kop-badge-ruling      { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.kop-badge-appeal      { background: var(--kop-orange); color: #fff; }
+.kop-badge-closed      { background: #ccc; color: #444; }
+.kop-badge-unknown     { background: #eee; color: #888; }
+
+/* Legislation status badges */
+.kop-badge-introduced     { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
+.kop-badge-in_committee   { background: var(--kop-soft-pastel-yellow); color: #6b5000; }
+.kop-badge-passed_house,
+.kop-badge-passed_senate  { background: var(--kop-mint-green); color: #004a30; }
+.kop-badge-signed,
+.kop-badge-enacted        { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.kop-badge-vetoed,
+.kop-badge-dead           { background: var(--kop-coral-pink); color: #5a0010; }
+
+/* Volunteer status badges */
+.kop-badge-open      { background: var(--kop-mint-green); color: #004a30; }
+.kop-badge-filled    { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
+.kop-badge-completed { background: #e0e0e0; color: #555; }
+
+/* Position badges (legislation) */
+.kop-badge-support  { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.kop-badge-oppose   { background: var(--kop-coral-pink); color: #5a0010; }
+.kop-badge-watch    { background: var(--kop-orange); color: #fff; }
+.kop-badge-neutral  { background: #e0e0e0; color: #555; }
+
+/* Type badges */
+.kop-badge-type {
+    background: var(--kop-bg-accent);
+    color: var(--kop-text-secondary);
+    border: 1px solid var(--kop-border-secondary);
+}
+
+/* Jurisdiction chip */
+.kop-badge-jurisdiction {
+    background: var(--kop-midnight-blue);
+    color: #fff;
+}
+
+/* ── Card meta row ───────────────────────────────────── */
+
+.kop-card-meta {
+    font-size: 0.83em;
+    color: #777;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em 0.8em;
+}
+
+/* ── Tag chips ───────────────────────────────────────── */
+
+.kop-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+    margin-top: 0.1em;
+}
+
+.kop-tag {
+    font-size: 0.76em;
+    padding: 0.1em 0.5em;
+    background: var(--kop-bg-accent);
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 3px;
+    color: var(--kop-text-secondary);
+}
+
+/* ── Summary (expandable) ────────────────────────────── */
+
+.kop-card-summary-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.88em;
+    color: var(--kop-teal);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    margin-top: 0.25em;
+}
+
+.kop-card-summary-toggle:hover { color: var(--kop-navy-blue); }
+
+.kop-card-summary {
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #444;
+    margin-top: 0.4em;
+    padding-top: 0.4em;
+    border-top: 1px solid var(--kop-border-secondary);
+}
+
+/* ── Links row ───────────────────────────────────────── */
+
+.kop-card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: auto;
+    padding-top: 0.5em;
+    border-top: 1px solid var(--kop-border-secondary);
+}
+
+.kop-card-link {
+    font-size: 0.82em;
+    color: var(--kop-teal);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.kop-card-link:hover { color: var(--kop-navy-blue); text-decoration: underline; }
+
+/* ── Signup / CTA button ─────────────────────────────── */
+
+.kop-card-cta {
+    display: inline-block;
+    margin-top: auto;
+    padding: 0.5em 1.1em;
+    background: var(--kop-teal);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.15s;
+    align-self: flex-start;
+}
+
+.kop-card-cta:hover { background: var(--kop-navy-blue); color: #fff; }
+
+.kop-card-cta-email {
+    background: transparent;
+    color: var(--kop-teal);
+    border: 1.5px solid var(--kop-teal);
+    padding: 0.45em 1em;
+}
+
+.kop-card-cta-email:hover { background: var(--kop-teal); color: #fff; }
+
+/* ── Empty state ─────────────────────────────────────── */
+
+.kop-records-empty {
+    background: var(--kop-bg-accent);
+    border: 1px solid var(--kop-border-primary);
+    border-radius: 6px;
+    padding: 2em;
+    text-align: center;
+    color: var(--kop-text-secondary);
+    font-size: 1em;
+    grid-column: 1 / -1;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+@media (max-width: 640px) {
+    .kop-records-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kop-records-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .kop-filter-count { margin-left: 0; }
+}

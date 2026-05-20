@@ -1,0 +1,80 @@
+name: Article Discovery
+
+# Daily run that pulls candidate articles from Google News + Reddit for active
+# TTI facilities, scores them, and submits surviving URLs through the AI
+# processor into the news_submissions review queue on kidsoverprofits.org.
+#
+# The seen-URL cache (scripts/.discovery-state.json) is persisted via the
+# actions/cache action so dedup survives across runs without polluting git
+# history. The rejected log (scripts/discovery-rejected.json) IS committed
+# back so you can review it for filter-tuning.
+
+on:
+  schedule:
+    # 06:30 UTC daily (≈ 1:30am Central / 11:30pm Pacific)
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no submissions)'
+        type: boolean
+        default: false
+      max_facilities:
+        description: 'Cap facilities queried (blank = full shard)'
+        type: string
+        default: ''
+
+permissions:
+  contents: write   # required to commit back the rejected log + state
+
+concurrency:
+  group: discover-articles
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore discovery state cache
+        id: cache-state
+        uses: actions/cache@v4
+        with:
+          path: scripts/.discovery-state.json
+          # New key per day so we always write back today's state; restore-keys
+          # falls back to the most recent prior day's cache.
+          key: discovery-state-${{ github.run_id }}
+          restore-keys: |
+            discovery-state-
+
+      - name: Run discovery
+        env:
+          NEWS_API_BASE: https://kidsoverprofits.org
+          AI_PROVIDER: groq
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ -n "${{ inputs.max_facilities }}" ]; then ARGS="$ARGS --max-facilities ${{ inputs.max_facilities }}"; fi
+          node scripts/discover-articles.js $ARGS
+
+      - name: Commit rejected log (if changed)
+        if: inputs.dry_run != true
+        run: |
+          git config user.name  "kop-discovery-bot"
+          git config user.email "noreply@kidsoverprofits.org"
+          if ! git diff --quiet scripts/discovery-rejected.json 2>/dev/null; then
+            git add scripts/discovery-rejected.json
+            git commit -m "chore(discovery): update rejected log [skip ci]"
+            git push
+          else
+            echo "No changes to discovery-rejected.json"
+          fi

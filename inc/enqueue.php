@@ -46,6 +46,19 @@ function kadence_child_enqueue_styles() {
             wp_enqueue_style('kop-search-results', get_stylesheet_directory_uri() . '/css/search-results.css', array('kop-colors'), filemtime($sr_css));
         }
     }
+
+    // Public record pages: Lawsuits, Legislation, Volunteer
+    $record_templates = [
+        'templates/page-lawsuits.php',
+        'templates/page-legislation.php',
+        'templates/page-volunteers.php',
+    ];
+    if (is_page_template($record_templates)) {
+        $pr_css = get_stylesheet_directory() . '/css/public-records.css';
+        if (file_exists($pr_css)) {
+            wp_enqueue_style('kop-public-records', get_stylesheet_directory_uri() . '/css/public-records.css', array('kop-colors'), filemtime($pr_css));
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 

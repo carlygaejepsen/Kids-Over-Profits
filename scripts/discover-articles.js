@@ -2,46 +2,67 @@
 /**
  * Article Discovery
  *
- * Polls Google News RSS and Reddit r/troubledteens for new articles about
- * known TTI facilities, runs a cheap keyword filter, then feeds the surviving
- * candidates through the existing AI processor + submission queue.
+ * Pulls candidate articles from Google News RSS (per active facility) and
+ * r/troubledteens (new posts), pre-filters them with a state-aware scoring
+ * pass, then feeds surviving URLs through the existing AI processor into
+ * the news_submissions review queue.
+ *
+ * Facility data comes live from the WP REST API — NOT from any local JSON
+ * snapshot, since the JSON snapshots are out of date.
  *
  * Usage:
  *   node scripts/discover-articles.js              # full run
  *   node scripts/discover-articles.js --dry-run    # discover + score, skip submission
  *   node scripts/discover-articles.js --limit 5    # cap candidates submitted this run
+ *   node scripts/discover-articles.js --max-facilities 3   # smoke test
  *
  * Environment:
- *   NEWS_API_BASE          (default: https://kidsoverprofits.com)
+ *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
  *   AI_PROVIDER            (default: groq)
- *   FACILITIES_PER_RUN     (default: 60 — rotates through programs-array.json)
+ *   SHARD_COUNT            (default: 7 — facilities split into N daily shards)
  */
+
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const ROOT = path.join(__dirname, '..');
-const PROGRAMS_FILE = path.join(ROOT, 'js', 'data', 'reddit-wiki', 'programs-array.json');
-const STATE_FILE = path.join(__dirname, '.discovery-state.json');
-const REJECT_LOG = path.join(__dirname, '.discovery-rejected.log');
+// ============================================================
+// Paths & config
+// ============================================================
+
+const STATE_FILE     = path.join(__dirname, '.discovery-state.json');
+const REJECTED_FILE  = path.join(__dirname, 'discovery-rejected.json');
+const BLACKLIST_FILE = path.join(__dirname, 'discovery-blacklist.json');
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 const LIMIT_ARG = args.indexOf('--limit');
 const SUBMIT_LIMIT = LIMIT_ARG > -1 ? parseInt(args[LIMIT_ARG + 1], 10) : Infinity;
+const MAX_FAC_ARG = args.indexOf('--max-facilities');
+const MAX_FACILITIES = MAX_FAC_ARG > -1 ? parseInt(args[MAX_FAC_ARG + 1], 10) : null;
 
-const API_BASE = (process.env.NEWS_API_BASE || 'https://kidsoverprofits.com').replace(/\/$/, '');
+const API_BASE = (process.env.NEWS_API_BASE || 'https://kidsoverprofits.org').replace(/\/$/, '');
+const FACILITIES_URL = `${API_BASE}/wp-json/kop/v1/facilities`;
 const AI_ENDPOINT = `${API_BASE}/wp-content/themes/child/api/process-news-ai.php`;
 const SUBMIT_ENDPOINT = `${API_BASE}/wp-content/themes/child/api/save-news-submission.php`;
-const AI_PROVIDER = process.env.AI_PROVIDER || 'groq';
-const FACILITIES_PER_RUN = parseInt(process.env.FACILITIES_PER_RUN || '60', 10);
 
-const SCORE_THRESHOLD = 3;
-const REQUEST_DELAY_MS = 1500;
-const AI_REQUEST_DELAY_MS = 4000;
-const USER_AGENT = 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.com)';
-const MAX_SEEN_URLS = 50000;
+const AI_PROVIDER = process.env.AI_PROVIDER || 'groq';
+const SHARD_COUNT = parseInt(process.env.SHARD_COUNT || '7', 10);
+
+const SCORE_THRESHOLD     = 3;
+const RSS_REQUEST_DELAY_MS = 1500;
+const AI_REQUEST_DELAY_MS  = 4000;
+const MAX_SEEN_URLS        = 50000;
+const PER_FACILITY_CAP     = 15;    // RSS items considered per facility
+const REQUEST_TIMEOUT_MS   = 30000;
+const AI_TIMEOUT_MS        = 90000;
+const USER_AGENT = 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.org)';
+
+// Statuses to skip when building the facility list
+const EXCLUDED_FACILITY_STATUSES = new Set(['closed', 'transferred', 'adults only']);
+const EXCLUDED_OPERATOR_STATUSES = new Set(['defunct']);
 
 const ABUSE_KEYWORDS = [
     'abuse', 'abused', 'abusing', 'arrest', 'arrested', 'indict', 'indicted', 'indictment',
@@ -50,62 +71,118 @@ const ABUSE_KEYWORDS = [
     'pleads guilty', 'guilty plea', 'convicted', 'conviction', 'sentenced', 'sentencing',
     'allegation', 'allegations', 'alleged', 'misconduct', 'death', 'died', 'killed',
     'restraint', 'seclusion', 'neglect', 'assault', 'molest', 'molestation',
-    'survivor', 'whistleblower', 'class action', 'settlement', 'fined', 'fine',
+    'survivor', 'whistleblower', 'class action', 'settlement', 'fined',
     'license revoked', 'license suspended', 'shuttered', 'felony', 'felonies'
 ];
 
-const DOMAIN_BLOCKLIST = new Set([
+// Used to build Google News queries and to extract state signals downstream
+const STATE_NAMES = {
+    AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+    CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+    HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+    KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+    MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+    MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+    NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+    OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+    SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+    VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+    DC: 'District of Columbia'
+};
+
+// Hard-blocked URL hosts (social networks etc.) on top of the JSON blacklist —
+// these are too generic to want in the blacklist file and don't host news.
+const HARD_BLOCKED_HOSTS = new Set([
     'twitter.com', 'x.com', 'facebook.com', 'instagram.com',
-    'tiktok.com', 'youtube.com', 'youtu.be', 'reddit.com',
-    'pinterest.com', 'quora.com', 'medium.com'
+    'tiktok.com', 'youtube.com', 'youtu.be', 'pinterest.com',
+    'quora.com', 'reddit.com', 'redd.it', 'i.redd.it', 'v.redd.it',
+    'preview.redd.it', 'i.imgur.com', 'imgur.com',
+    // Chat / messaging / link shorteners — not articles
+    'discord.gg', 'discord.com', 't.me', 'telegram.me',
+    'bit.ly', 'tinyurl.com', 'ow.ly', 'buff.ly', 'goo.gl',
+    // GoFundMe and similar — fundraising, not reporting
+    'gofundme.com'
 ]);
 
 // ============================================================
-// State
+// Tiny helpers
 // ============================================================
 
-function loadState() {
+const log  = (...a) => console.log(...a);
+const warn = (...a) => console.warn(...a);
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function normalizeName(s) {
+    return String(s || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function dayOfYearUTC() {
+    const now = new Date();
+    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    return Math.floor((today - start) / 86400000);
+}
+
+async function fetchWithTimeout(url, opts = {}) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), opts.timeoutMs || REQUEST_TIMEOUT_MS);
     try {
-        const raw = fs.readFileSync(STATE_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed.seenUrls)) parsed.seenUrls = [];
-        if (typeof parsed.facilityCursor !== 'number') parsed.facilityCursor = 0;
-        if (!parsed.stats) parsed.stats = { discovered: 0, submitted: 0, rejected: 0 };
-        return parsed;
-    } catch {
-        return {
-            version: 1,
-            lastRun: null,
-            facilityCursor: 0,
-            seenUrls: [],
-            stats: { discovered: 0, submitted: 0, rejected: 0 }
-        };
+        return await fetch(url, {
+            ...opts,
+            signal: controller.signal,
+            headers: { 'User-Agent': USER_AGENT, ...(opts.headers || {}) },
+            redirect: 'follow'
+        });
+    } finally {
+        clearTimeout(timer);
     }
 }
 
-function saveState(state) {
-    if (state.seenUrls.length > MAX_SEEN_URLS) {
-        state.seenUrls = state.seenUrls.slice(-MAX_SEEN_URLS);
-    }
-    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+async function fetchText(url, opts = {}) {
+    const res = await fetchWithTimeout(url, opts);
+    if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+    return res.text();
 }
 
-function appendReject(entry) {
-    fs.appendFileSync(REJECT_LOG, JSON.stringify(entry) + '\n');
+async function postJson(url, body, opts = {}) {
+    const res = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        timeoutMs: opts.timeoutMs
+    });
+    const text = await res.text();
+    let parsed;
+    try { parsed = JSON.parse(text); } catch { parsed = { rawText: text }; }
+    return { status: res.status, ok: res.ok, body: parsed };
+}
+
+function loadJson(file, fallback) {
+    try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
+    catch { return fallback; }
+}
+
+function saveJson(file, data) {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 }
 
 // ============================================================
-// URL helpers
+// URL helpers (preserved from prior version — these were solid)
 // ============================================================
 
 function normalizeUrl(url) {
     try {
         const u = new URL(url);
         u.hash = '';
-        // Strip common tracking params
         ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
          'fbclid', 'gclid', 'mc_cid', 'mc_eid'].forEach(p => u.searchParams.delete(p));
-        return (u.host.replace(/^www\./, '') + u.pathname + (u.search || '')).toLowerCase().replace(/\/$/, '');
+        return (u.host.replace(/^www\./, '') + u.pathname + (u.search || ''))
+            .toLowerCase().replace(/\/$/, '');
     } catch {
         return url.toLowerCase();
     }
@@ -115,225 +192,531 @@ function hashUrl(url) {
     return crypto.createHash('sha256').update(normalizeUrl(url)).digest('hex').slice(0, 16);
 }
 
-function domainOf(url) {
-    try {
-        return new URL(url).host.replace(/^www\./, '').toLowerCase();
-    } catch {
-        return '';
+function hostOf(url) {
+    try { return new URL(url).host.replace(/^www\./, '').toLowerCase(); }
+    catch { return ''; }
+}
+
+// ============================================================
+// State
+// ============================================================
+
+function loadState() {
+    const s = loadJson(STATE_FILE, null);
+    if (s) {
+        if (!Array.isArray(s.seenUrls)) s.seenUrls = [];
+        if (!s.stats) s.stats = { discovered: 0, submitted: 0, rejected: 0 };
+        return s;
     }
+    return { version: 2, lastRun: null, seenUrls: [], stats: { discovered: 0, submitted: 0, rejected: 0 } };
+}
+
+function saveState(state) {
+    if (state.seenUrls.length > MAX_SEEN_URLS) {
+        state.seenUrls = state.seenUrls.slice(-MAX_SEEN_URLS);
+    }
+    saveJson(STATE_FILE, state);
+}
+
+function persistRejected(newEntries) {
+    const existing = loadJson(REJECTED_FILE, { entries: [] });
+    const merged = newEntries
+        .map(r => ({ ts: new Date().toISOString(), ...r }))
+        .concat(existing.entries || [])
+        .slice(0, 500);   // keep only most recent 500
+    saveJson(REJECTED_FILE, { lastUpdated: new Date().toISOString(), entries: merged });
 }
 
 // ============================================================
-// HTTP
+// Blacklist
 // ============================================================
 
-async function fetchText(url, opts = {}) {
-    const res = await fetch(url, {
-        headers: { 'User-Agent': USER_AGENT, ...(opts.headers || {}) },
-        redirect: 'follow'
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-    return res.text();
-}
+function buildBlacklistMatcher() {
+    const bl = loadJson(BLACKLIST_FILE, {});
+    const all = []
+        .concat(Array.isArray(bl.spamDomains) ? bl.spamDomains : [])
+        .concat(Array.isArray(bl.pressReleaseWires) ? bl.pressReleaseWires : [])
+        .concat(Array.isArray(bl.industryPromoDomains) ? bl.industryPromoDomains : []);
+    const allowOverrides = new Set(
+        (Array.isArray(bl.allowlistOverrides) ? bl.allowlistOverrides : [])
+            .map(d => String(d).toLowerCase().trim())
+    );
 
-async function postJson(url, body) {
-    const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'User-Agent': USER_AGENT },
-        body: JSON.stringify(body)
-    });
-    const text = await res.text();
-    let parsed;
-    try { parsed = JSON.parse(text); } catch { parsed = { rawText: text }; }
-    return { status: res.status, ok: res.ok, body: parsed };
-}
+    const exact = new Set();
+    const suffixes = [];
+    for (const raw of all) {
+        const d = String(raw || '').toLowerCase().trim();
+        if (!d) continue;
+        if (d.startsWith('*.')) suffixes.push(d.slice(2));
+        else exact.add(d);
+    }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return function isBlacklisted(host) {
+        if (!host) return false;
+        const h = host.toLowerCase().replace(/^www\./, '');
+        if (allowOverrides.has(h)) return false;
+        if (HARD_BLOCKED_HOSTS.has(h)) return true;
+        if (exact.has(h)) return true;
+        for (const sfx of suffixes) {
+            if (h === sfx || h.endsWith('.' + sfx)) return true;
+        }
+        return false;
+    };
 }
 
 // ============================================================
-// RSS parsing (no external deps — XML is regular enough here)
+// Facility index (built fresh from API each run)
+// ============================================================
+
+function parseLocation(loc) {
+    if (typeof loc !== 'string') return { city: '', state: '' };
+    const trimmed = loc.trim();
+    if (!trimmed) return { city: '', state: '' };
+
+    const parts = trimmed.split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length < 2) return { city: trimmed, state: '' };
+
+    const city = parts[0];
+    const tail = parts[parts.length - 1];
+
+    if (/^[A-Z]{2}$/.test(tail) && STATE_NAMES[tail]) {
+        return { city, state: tail };
+    }
+    for (const [abbr, full] of Object.entries(STATE_NAMES)) {
+        if (tail.toLowerCase() === full.toLowerCase()) {
+            return { city, state: abbr };
+        }
+    }
+    return { city, state: '' };
+}
+
+/**
+ * Walk every project in /facilities and build a deduplicated flat list of
+ * facility + operator entries suitable for discovery queries.
+ *
+ * Dedupes by (normalizedName + state). Merges aliases on collision so the
+ * same physical facility appearing in both a companies project and a
+ * locations aggregate doesn't get queried twice.
+ *
+ * Each returned item:
+ *   { queryName, aliases[], city, state, bucket, operator, status }
+ *   - queryName: the primary name to use in Google News quoted search
+ *   - aliases:   all known names for matching candidate titles/snippets
+ *   - bucket:    'facility' or 'operator'
+ *   - state:     '' for operators (cross-state) and for unknown locations
+ */
+function buildFacilityIndex(apiResponse) {
+    const projects = (apiResponse && apiResponse.projects) || {};
+    const byKey = new Map();
+
+    function addEntry(entry) {
+        if (!entry.queryName || entry.queryName.length < 4) return;
+        const key = normalizeName(entry.queryName) + '|' + (entry.state || '');
+        const existing = byKey.get(key);
+        if (existing) {
+            // Merge aliases
+            const seen = new Set(existing.aliases.map(a => normalizeName(a)));
+            for (const alias of entry.aliases) {
+                const k = normalizeName(alias);
+                if (k && !seen.has(k)) {
+                    existing.aliases.push(alias);
+                    seen.add(k);
+                }
+            }
+            if (!existing.city && entry.city) existing.city = entry.city;
+            return;
+        }
+        byKey.set(key, entry);
+    }
+
+    for (const project of Object.values(projects)) {
+        const data = project.data || {};
+        const operator = data.operator || {};
+        const operatorStatus = String(operator.status || '').toLowerCase().trim();
+        const operatorIsDefunct = EXCLUDED_OPERATOR_STATUSES.has(operatorStatus);
+        const operatorName = operator.name || project.name || '';
+
+        // --- Per-facility entries (includes those from locations_master aggregates) ---
+        const facilities = Array.isArray(data.facilities) ? data.facilities : [];
+        for (const f of facilities) {
+            const ident = f.identification || {};
+            const period = f.operatingPeriod || {};
+            const status = String(period.status || '').toLowerCase().trim();
+
+            if (EXCLUDED_FACILITY_STATUSES.has(status)) continue;
+            if (operatorIsDefunct) continue;
+
+            const primaryName = (ident.currentName && ident.currentName.trim()) || ident.name || '';
+            if (!primaryName) continue;
+
+            const aliases = [primaryName];
+            if (ident.name && ident.name !== primaryName) aliases.push(ident.name);
+            for (const list of [ident.otherNames, ident.pastNames]) {
+                if (Array.isArray(list)) {
+                    for (const n of list) {
+                        if (typeof n === 'string' && n.trim()) aliases.push(n.trim());
+                    }
+                }
+            }
+
+            const { city, state } = parseLocation(f.location);
+
+            addEntry({
+                queryName: primaryName,
+                aliases,
+                city,
+                state,
+                bucket: 'facility',
+                operator: operatorName || (f.sourceOperator && f.sourceOperator.name) || '',
+                status: period.status || ''
+            });
+        }
+
+        // --- Operator-level entry (companies category only) ---
+        if (project.category === 'companies' && operatorName && !operatorIsDefunct) {
+            const aliases = [operatorName];
+            if (Array.isArray(operator.otherNames)) {
+                for (const n of operator.otherNames) {
+                    if (typeof n === 'string' && n.trim()) aliases.push(n.trim());
+                }
+            }
+            if (Array.isArray(operator.parentCompanies)) {
+                for (const n of operator.parentCompanies) {
+                    if (typeof n === 'string' && n.trim()) aliases.push(n.trim());
+                }
+            }
+            addEntry({
+                queryName: operatorName,
+                aliases,
+                city: '',
+                state: '',    // operators span states — skip state-match validation
+                bucket: 'operator',
+                operator: operatorName,
+                status: operator.status || ''
+            });
+        }
+    }
+
+    return Array.from(byKey.values());
+}
+
+// ============================================================
+// RSS / Reddit fetchers
 // ============================================================
 
 function decodeEntities(s) {
-    return s
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&apos;/g, "'")
+    return String(s || '')
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
         .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
         .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)));
 }
 
 function stripCdata(s) {
-    const m = /^<!\[CDATA\[([\s\S]*)\]\]>$/.exec(s.trim());
-    return m ? m[1] : s;
+    return String(s || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
 }
 
 function tagContent(xml, tag) {
-    const m = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i').exec(xml);
+    const m = new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i').exec(xml);
     return m ? decodeEntities(stripCdata(m[1])).trim() : '';
 }
 
 function parseRssItems(xml) {
     const items = [];
-    const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/gi;
+    const itemRegex = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
     let m;
     while ((m = itemRegex.exec(xml)) !== null) {
         const block = m[1];
+
+        // <source url="...">Publication</source>
+        let sourceUrl = '', sourceName = '';
+        const sMatch = block.match(/<source\b([^>]*)>([\s\S]*?)<\/source>/i);
+        if (sMatch) {
+            const ua = sMatch[1].match(/\burl="([^"]+)"/i);
+            sourceUrl = ua ? ua[1].trim() : '';
+            sourceName = decodeEntities(stripCdata(sMatch[2])).trim();
+        }
+
         items.push({
             title: tagContent(block, 'title'),
             link: tagContent(block, 'link'),
             pubDate: tagContent(block, 'pubDate'),
-            description: tagContent(block, 'description'),
-            source: tagContent(block, 'source')
+            description: tagContent(block, 'description').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
+            sourceUrl,
+            sourceName
         });
     }
     return items;
 }
 
-// ============================================================
-// Sources
-// ============================================================
+function googleNewsUrl(facility) {
+    const nameToken = `"${facility.queryName}"`;
+    const stateToken = (facility.state && STATE_NAMES[facility.state]) ? `"${STATE_NAMES[facility.state]}"` : '';
+    const query = [nameToken, stateToken,
+        '(abuse OR lawsuit OR arrested OR indicted OR investigation OR closure OR raid OR allegations OR survivor)'
+    ].filter(Boolean).join(' ');
+    const params = new URLSearchParams({ q: query, hl: 'en-US', gl: 'US', ceid: 'US:en' });
+    return `https://news.google.com/rss/search?${params.toString()}`;
+}
 
-async function fetchGoogleNews(facilityName) {
-    const query = `"${facilityName}" (abuse OR lawsuit OR arrested OR investigation OR closure OR indicted)`;
-    const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+async function fetchGoogleNewsForFacility(facility) {
     try {
-        const xml = await fetchText(url);
-        return parseRssItems(xml).map(item => ({
+        const xml = await fetchText(googleNewsUrl(facility));
+        return parseRssItems(xml).slice(0, PER_FACILITY_CAP).map(item => ({
             ...item,
             origin: 'google-news',
-            originQuery: facilityName
+            facilityQuery: facility.queryName,
+            facilityState: facility.state,
+            facilityCity: facility.city
         }));
     } catch (err) {
-        console.warn(`  ! Google News failed for "${facilityName}": ${err.message}`);
+        warn(`  ! Google News failed for "${facility.queryName}": ${err.message}`);
         return [];
     }
 }
 
-async function fetchRedditPosts() {
-    const url = `https://www.reddit.com/r/troubledteens/new.json?limit=100`;
+async function fetchRedditCandidates() {
+    const url = 'https://www.reddit.com/r/troubledteens/new.json?limit=100';
     try {
-        const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
+        const res = await fetchWithTimeout(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        const posts = (data.data && data.data.children) || [];
-        const items = [];
+        const json = await res.json();
+        const posts = (json.data && json.data.children) || [];
+        const out = [];
+
         for (const p of posts) {
-            const post = p.data;
-            // Link posts: post.url points to the external article
+            const post = p.data || {};
+            const title = post.title || '';
+            const permalink = post.permalink ? `https://www.reddit.com${post.permalink}` : '';
+            const created = post.created_utc ? new Date(post.created_utc * 1000).toUTCString() : '';
+
+            // Link posts
             if (post.url && !post.is_self) {
-                const d = domainOf(post.url);
-                if (d && !DOMAIN_BLOCKLIST.has(d) && !d.endsWith('reddit.com') && !d.endsWith('redd.it')) {
-                    items.push({
-                        title: post.title || '',
-                        link: post.url,
+                const h = hostOf(post.url);
+                if (h && !HARD_BLOCKED_HOSTS.has(h)) {
+                    out.push({
+                        title, link: post.url, pubDate: created,
                         description: (post.selftext || '').slice(0, 500),
-                        pubDate: new Date(post.created_utc * 1000).toUTCString(),
-                        origin: 'reddit',
-                        originQuery: `r/troubledteens post ${post.id}`
+                        sourceUrl: '', sourceName: '',
+                        origin: 'reddit-link',
+                        facilityQuery: null, facilityState: '', facilityCity: '',
+                        redditPermalink: permalink
                     });
                 }
             }
-            // Self posts: scrape external URLs out of the body
-            if (post.is_self && post.selftext) {
-                const urls = post.selftext.match(/https?:\/\/[^\s)\]]+/g) || [];
-                for (const u of urls) {
-                    const cleaned = u.replace(/[.,;:!?]+$/, '');
-                    const d = domainOf(cleaned);
-                    if (!d || DOMAIN_BLOCKLIST.has(d) || d.endsWith('reddit.com') || d.endsWith('redd.it')) continue;
-                    items.push({
-                        title: post.title || '',
-                        link: cleaned,
-                        description: (post.selftext || '').slice(0, 500),
-                        pubDate: new Date(post.created_utc * 1000).toUTCString(),
-                        origin: 'reddit-body',
-                        originQuery: `r/troubledteens post ${post.id}`
+
+            // External URLs in body — stop at whitespace, brackets, quotes, and
+            // markdown delimiters (*, _, `, [, ])
+            if (post.selftext) {
+                const urls = post.selftext.match(/https?:\/\/[^\s()<>"'\[\]*_`]+/g) || [];
+                const dedup = new Set();
+                for (const raw of urls) {
+                    const u = raw.replace(/[.,;:!?*_`)\]]+$/, '');
+                    const h = hostOf(u);
+                    if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) continue;
+                    dedup.add(u);
+                    out.push({
+                        title, link: u, pubDate: created,
+                        description: post.selftext.slice(0, 500),
+                        sourceUrl: '', sourceName: '',
+                        origin: 'reddit-selftext',
+                        facilityQuery: null, facilityState: '', facilityCity: '',
+                        redditPermalink: permalink
                     });
                 }
             }
         }
-        return items;
+        return out;
     } catch (err) {
-        console.warn(`  ! Reddit fetch failed: ${err.message}`);
+        warn(`  ! Reddit fetch failed: ${err.message}`);
         return [];
     }
 }
 
 // ============================================================
-// Scoring
+// Scoring + state-match validation
 // ============================================================
 
-function scoreCandidate(candidate, facilityIndex) {
-    const haystack = `${candidate.title} ${candidate.description}`.toLowerCase();
-    let score = 0;
+/**
+ * Match candidate text against the facility index. Returns the longest
+ * matched alias (favors specificity) or null. Uses simple
+ * non-alphanumeric-boundary checks to avoid substring false positives.
+ */
+function matchFacility(text, facilityIndex) {
+    const hay = ' ' + text.toLowerCase() + ' ';
+    let best = null;
+
+    for (const fac of facilityIndex) {
+        for (const alias of fac.aliases) {
+            const needle = alias.toLowerCase().trim();
+            if (needle.length < 5) continue;     // too-short = noise
+            const padded = ` ${needle} `;
+            if (hay.includes(padded) ||
+                hay.includes(' ' + needle + ',') ||
+                hay.includes(' ' + needle + '.') ||
+                hay.includes(' ' + needle + "'") ||
+                hay.includes(' ' + needle + ':')) {
+                if (!best || alias.length > best.matchedAlias.length) {
+                    best = { facility: fac, matchedAlias: alias };
+                }
+            }
+        }
+    }
+    return best;
+}
+
+function extractStateSignals(text) {
+    const found = new Set();
+    if (!text) return found;
+    const padded = ' ' + text + ' ';
+    // Full state names (word-boundary, case-insensitive)
+    for (const [abbr, full] of Object.entries(STATE_NAMES)) {
+        const re = new RegExp(`\\b${full}\\b`, 'i');
+        if (re.test(padded)) found.add(abbr);
+    }
+    // Two-letter abbreviations as standalone tokens, e.g. ", UT " or " (UT)"
+    for (const abbr of Object.keys(STATE_NAMES)) {
+        const re = new RegExp(`(?:[\\s,(])${abbr}(?:[\\s,.)])`);
+        if (re.test(padded)) found.add(abbr);
+    }
+    return found;
+}
+
+function countAbuseKeywords(text) {
+    const hay = text.toLowerCase();
+    let n = 0;
+    for (const kw of ABUSE_KEYWORDS) {
+        if (hay.includes(kw)) n++;
+    }
+    return n;
+}
+
+/**
+ * Decide whether a candidate clears the filter. Returns:
+ *   { accept: true,  score, reasons[], match }            — submit
+ *   { accept: false, reason, meta }                       — log + drop
+ *
+ * Scoring rules (all additive unless noted):
+ *   +3   abuse keyword in title
+ *   +1   abuse keyword in description (only if not already in title)
+ *   +2   facility alias matched
+ *   +2   matched facility's city appears in text (city-level boost)
+ *   +1   reddit-link origin (someone thought it worth sharing)
+ *   reject (no score) if blacklist hit or HARD_BLOCKED host
+ *   reject (no score) if facility match but state CONTRADICTS facility's state
+ */
+function evaluateCandidate(candidate, facilityIndex, isBlacklisted) {
+    const text = `${candidate.title} ${candidate.description}`;
     const reasons = [];
+    let score = 0;
 
-    // Abuse keyword in title
-    const titleLower = candidate.title.toLowerCase();
-    const titleKeywords = ABUSE_KEYWORDS.filter(k => titleLower.includes(k));
-    if (titleKeywords.length > 0) {
-        score += 3;
-        reasons.push(`title-kw:${titleKeywords[0]}`);
+    // Blacklist / hard-blocked
+    const candHost = hostOf(candidate.sourceUrl || candidate.link);
+    if (!candHost) {
+        return { accept: false, reason: 'invalid-url', meta: { link: candidate.link } };
+    }
+    if (isBlacklisted(candHost)) {
+        return { accept: false, reason: 'blacklist', meta: { host: candHost } };
     }
 
-    // Abuse keyword in body/snippet
-    const descKeywords = ABUSE_KEYWORDS.filter(k => candidate.description.toLowerCase().includes(k));
-    if (descKeywords.length > 0 && titleKeywords.length === 0) {
-        score += 1;
-        reasons.push(`desc-kw:${descKeywords[0]}`);
-    }
+    // Facility match
+    const match = matchFacility(text, facilityIndex);
+    let cityMatched = false;
 
-    // Known facility name appears anywhere
-    const matchedFacility = facilityIndex.find(f => haystack.includes(f));
-    if (matchedFacility) {
+    if (match) {
+        const fac = match.facility;
         score += 2;
-        reasons.push(`facility:${matchedFacility}`);
+        reasons.push(`facility:${match.matchedAlias}`);
+
+        // City match boost
+        if (fac.city && text.toLowerCase().includes(fac.city.toLowerCase())) {
+            score += 2;
+            cityMatched = true;
+            reasons.push(`city:${fac.city}`);
+        }
+
+        // State-match validation (skip for operators and entries without a known state)
+        if (!cityMatched && fac.state && fac.bucket !== 'operator') {
+            const signals = extractStateSignals(text);
+            if (signals.size > 0 && !signals.has(fac.state)) {
+                return {
+                    accept: false,
+                    reason: 'state-mismatch',
+                    meta: {
+                        matchedAlias: match.matchedAlias,
+                        facility: fac.queryName,
+                        expectedState: fac.state,
+                        detectedStates: Array.from(signals)
+                    }
+                };
+            }
+        }
     }
 
-    // Reddit link posts are inherently signal-rich (user thought it worth sharing)
-    if (candidate.origin === 'reddit') {
+    // Abuse keyword scoring (title weighted higher than description)
+    const titleLower = candidate.title.toLowerCase();
+    const titleHit = ABUSE_KEYWORDS.find(k => titleLower.includes(k));
+    if (titleHit) {
+        score += 3;
+        reasons.push(`title-kw:${titleHit}`);
+    } else {
+        const descHit = ABUSE_KEYWORDS.find(k => candidate.description.toLowerCase().includes(k));
+        if (descHit) {
+            score += 1;
+            reasons.push(`desc-kw:${descHit}`);
+        }
+    }
+
+    // Reddit link-post boost
+    if (candidate.origin === 'reddit-link') {
         score += 1;
         reasons.push('reddit-link-post');
     }
 
-    // Blocklisted domain — hard reject regardless
-    const d = domainOf(candidate.link);
-    if (DOMAIN_BLOCKLIST.has(d)) {
-        score = -100;
-        reasons.push(`blocked-domain:${d}`);
+    if (score >= SCORE_THRESHOLD) {
+        return { accept: true, score, reasons, match: match ? { alias: match.matchedAlias, facility: match.facility.queryName, state: match.facility.state, city: match.facility.city, bucket: match.facility.bucket } : null };
     }
-
-    return { score, reasons };
+    return {
+        accept: false,
+        reason: 'low-score',
+        meta: { score, reasons, threshold: SCORE_THRESHOLD, host: candHost }
+    };
 }
 
 // ============================================================
 // Submission
 // ============================================================
 
-async function submitCandidate(candidate, scoreResult) {
-    console.log(`  → AI processing: ${candidate.link.slice(0, 80)}`);
+async function submitCandidate(candidate, evalResult) {
+    log(`  → AI processing: ${candidate.link.slice(0, 90)}`);
     const aiRes = await postJson(AI_ENDPOINT, {
         url: candidate.link,
         provider: AI_PROVIDER,
         customInstructions: ''
-    });
+    }, { timeoutMs: AI_TIMEOUT_MS });
 
     if (!aiRes.ok || !aiRes.body || !aiRes.body.success) {
         const err = (aiRes.body && (aiRes.body.error || aiRes.body.rawText)) || `HTTP ${aiRes.status}`;
-        console.warn(`    AI processing failed: ${String(err).slice(0, 200)}`);
-        return { ok: false, reason: 'ai-failed', error: err };
+        warn(`    AI failed: ${String(err).slice(0, 200)}`);
+        return { ok: false, stage: 'ai', error: String(err).slice(0, 500) };
     }
 
     const data = aiRes.body.data || {};
+
+    const discoveryNote = [
+        `auto-discovery via ${candidate.origin}`,
+        `score=${evalResult.score}`,
+        `reasons=${evalResult.reasons.join(',')}`,
+        evalResult.match ? `match=${JSON.stringify(evalResult.match)}` : '',
+        candidate.facilityQuery ? `query=${candidate.facilityQuery}` : '',
+        candidate.redditPermalink ? `reddit=${candidate.redditPermalink}` : ''
+    ].filter(Boolean).join(' | ');
+
     const submission = {
         title: data.title || candidate.title || '(untitled)',
         alternateTitle: data.alternateTitle || '',
         author: data.author || '',
-        publicationName: data.publicationName || '',
+        publicationName: data.publicationName || candidate.sourceName || '',
         publicationDate: data.publicationDate || '',
         url: candidate.link,
         location: data.location || '',
@@ -348,17 +731,16 @@ async function submitCandidate(candidate, scoreResult) {
         ...(data.typeSpecificData || {}),
         status: 'submitted',
         submittedBy: 'auto-discovery',
-        submissionNotes: `[auto-discovery] source=${candidate.origin} query="${candidate.originQuery}" score=${scoreResult.score} reasons=${scoreResult.reasons.join(',')}`
+        submissionNotes: discoveryNote
     };
 
     const subRes = await postJson(SUBMIT_ENDPOINT, submission);
     if (!subRes.ok || !subRes.body || !subRes.body.success) {
         const err = (subRes.body && (subRes.body.error || subRes.body.rawText)) || `HTTP ${subRes.status}`;
-        console.warn(`    Submission failed: ${String(err).slice(0, 200)}`);
-        return { ok: false, reason: 'submit-failed', error: err };
+        warn(`    Submit failed: ${String(err).slice(0, 200)}`);
+        return { ok: false, stage: 'submit', error: String(err).slice(0, 500) };
     }
-
-    console.log(`    ✓ submission id=${subRes.body.id}`);
+    log(`    ✓ submission id=${subRes.body.id}`);
     return { ok: true, id: subRes.body.id };
 }
 
@@ -367,100 +749,113 @@ async function submitCandidate(candidate, scoreResult) {
 // ============================================================
 
 async function main() {
-    console.log(`Discovery starting (${new Date().toISOString()})`);
-    console.log(`  API base: ${API_BASE}`);
-    console.log(`  Dry run:  ${DRY_RUN}`);
-    if (Number.isFinite(SUBMIT_LIMIT)) console.log(`  Submit limit: ${SUBMIT_LIMIT}`);
-
-    const programsRaw = JSON.parse(fs.readFileSync(PROGRAMS_FILE, 'utf8'));
-    const programs = programsRaw.programs || [];
-    console.log(`  Loaded ${programs.length} facilities`);
+    log(`Discovery starting (${new Date().toISOString()})`);
+    log(`  API base:  ${API_BASE}`);
+    log(`  Dry run:   ${DRY_RUN}`);
+    if (Number.isFinite(SUBMIT_LIMIT)) log(`  Submit limit: ${SUBMIT_LIMIT}`);
+    if (MAX_FACILITIES) log(`  Max facilities: ${MAX_FACILITIES}`);
 
     const state = loadState();
     const seen = new Set(state.seenUrls);
+    const isBlacklisted = buildBlacklistMatcher();
 
-    // Lowercase facility name index for substring matching
-    const facilityIndex = programs
-        .map(p => (p.normalizedName || p.name || '').toLowerCase().trim())
-        .filter(n => n.length >= 5); // ignore very short names (false-positive risk)
+    // -- Fetch facility data live from API --
+    log('\nFetching facilities from API...');
+    const facJson = await (async () => {
+        const res = await fetchWithTimeout(FACILITIES_URL, { timeoutMs: 60000 });
+        if (!res.ok) throw new Error(`Facilities API HTTP ${res.status}`);
+        return res.json();
+    })();
+    const facilityIndex = buildFacilityIndex(facJson);
+    log(`  built facility index: ${facilityIndex.length} unique active entries`);
 
-    // Rotating slice of facilities to query Google News for this run
-    const cursor = state.facilityCursor % programs.length;
-    const slice = [];
-    for (let i = 0; i < FACILITIES_PER_RUN && i < programs.length; i++) {
-        slice.push(programs[(cursor + i) % programs.length]);
-    }
-    state.facilityCursor = (cursor + FACILITIES_PER_RUN) % programs.length;
-    console.log(`  Querying Google News for facilities ${cursor}..${cursor + slice.length - 1}`);
+    // -- Today's shard (1/N of the active list) --
+    const today = dayOfYearUTC();
+    const shardIndex = today % SHARD_COUNT;
+    const todaysShard = facilityIndex.filter((_, i) => i % SHARD_COUNT === shardIndex);
+    const slice = MAX_FACILITIES ? todaysShard.slice(0, MAX_FACILITIES) : todaysShard;
+    log(`  today = shard ${shardIndex}/${SHARD_COUNT} → ${slice.length} facilities to query` +
+        (MAX_FACILITIES ? ` (capped from ${todaysShard.length})` : ''));
 
     const candidates = [];
 
-    // Reddit pass (one fetch, lots of posts)
-    console.log(`Polling Reddit...`);
-    const redditItems = await fetchRedditPosts();
-    console.log(`  ${redditItems.length} reddit items`);
+    // -- Reddit pass --
+    log('\nPolling Reddit...');
+    const redditItems = await fetchRedditCandidates();
+    log(`  ${redditItems.length} reddit items`);
     candidates.push(...redditItems);
 
-    // Google News pass (one fetch per facility, with delay)
-    for (const program of slice) {
-        const name = (program.name || '').trim();
-        if (!name) continue;
-        await sleep(REQUEST_DELAY_MS);
-        const items = await fetchGoogleNews(name);
-        if (items.length > 0) console.log(`  [${name}] ${items.length} items`);
+    // -- Google News per facility (with politeness delay) --
+    log('\nQuerying Google News per facility...');
+    for (let i = 0; i < slice.length; i++) {
+        const fac = slice[i];
+        await sleep(RSS_REQUEST_DELAY_MS);
+        const items = await fetchGoogleNewsForFacility(fac);
+        if (items.length > 0) log(`  [${fac.queryName}${fac.state ? ' / ' + fac.state : ''}] ${items.length} items`);
         candidates.push(...items);
+        if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${slice.length} (running total: ${candidates.length})`);
     }
 
-    console.log(`Total raw candidates: ${candidates.length}`);
+    log(`\nTotal raw candidates: ${candidates.length}`);
     state.stats.discovered += candidates.length;
 
-    // Dedupe + score
+    // -- Dedupe + filter --
     const queue = [];
+    const rejected = [];
     const dedupeSeen = new Set();
+
     for (const c of candidates) {
         if (!c.link || !c.link.startsWith('http')) continue;
         const h = hashUrl(c.link);
         if (seen.has(h) || dedupeSeen.has(h)) continue;
         dedupeSeen.add(h);
-        const result = scoreCandidate(c, facilityIndex);
-        if (result.score >= SCORE_THRESHOLD) {
-            queue.push({ candidate: c, score: result });
+
+        const result = evaluateCandidate(c, facilityIndex, isBlacklisted);
+        if (result.accept) {
+            queue.push({ candidate: c, evalResult: result, urlHash: h });
         } else {
             state.stats.rejected += 1;
-            appendReject({
-                ts: new Date().toISOString(),
+            rejected.push({
                 link: c.link,
                 title: c.title,
                 origin: c.origin,
-                score: result.score,
-                reasons: result.reasons
+                host: hostOf(c.sourceUrl || c.link),
+                facilityQuery: c.facilityQuery || null,
+                reason: result.reason,
+                meta: result.meta || null
             });
         }
     }
-    console.log(`After filter: ${queue.length} candidates above threshold (${SCORE_THRESHOLD})`);
+    log(`After filter: ${queue.length} accepted, ${rejected.length} rejected (threshold ${SCORE_THRESHOLD})`);
+
+    // -- Persist rejected log right away (useful even if submit phase aborts) --
+    if (rejected.length) persistRejected(rejected);
 
     if (DRY_RUN) {
-        console.log('\n--- DRY RUN — would submit ---');
-        for (const q of queue.slice(0, 20)) {
-            console.log(`  [score ${q.score.score}] ${q.candidate.link}`);
-            console.log(`     title: ${q.candidate.title.slice(0, 100)}`);
-            console.log(`     reasons: ${q.score.reasons.join(', ')}`);
+        log('\n--- DRY RUN — would submit (showing up to 30) ---');
+        for (const q of queue.slice(0, 30)) {
+            log(`  [score ${q.evalResult.score}] ${q.candidate.link}`);
+            log(`     title:   ${q.candidate.title.slice(0, 100)}`);
+            log(`     reasons: ${q.evalResult.reasons.join(', ')}`);
+            if (q.evalResult.match) log(`     match:   ${JSON.stringify(q.evalResult.match)}`);
         }
-        // Don't update state in dry-run (so we can re-test against the same data)
+        log(`\nDry run done. Would attempt ${Math.min(queue.length, SUBMIT_LIMIT)} submissions.`);
         return;
     }
 
-    // Submit (mark seen even on failure so we don't retry junk forever)
-    let submittedCount = 0;
+    // -- Submit --
+    let submitted = 0, submitErrors = 0;
     for (const q of queue) {
-        if (submittedCount >= SUBMIT_LIMIT) break;
-        const h = hashUrl(q.candidate.link);
-        seen.add(h);
+        if (submitted >= SUBMIT_LIMIT) break;
+        // Mark seen *before* attempting so we don't retry a flaky URL every run
+        seen.add(q.urlHash);
         await sleep(AI_REQUEST_DELAY_MS);
-        const result = await submitCandidate(q.candidate, q.score);
-        if (result.ok) {
-            submittedCount += 1;
+        const r = await submitCandidate(q.candidate, q.evalResult);
+        if (r.ok) {
+            submitted++;
             state.stats.submitted += 1;
+        } else {
+            submitErrors++;
         }
     }
 
@@ -468,8 +863,16 @@ async function main() {
     state.lastRun = new Date().toISOString();
     saveState(state);
 
-    console.log(`\nDone. Submitted ${submittedCount} new articles to review queue.`);
-    console.log(`Cumulative stats:`, state.stats);
+    log(`\n--- Done ---`);
+    log(`  facilities queried:  ${slice.length}`);
+    log(`  candidates found:    ${candidates.length}`);
+    log(`  accepted by filter:  ${queue.length}`);
+    log(`  submitted (ok):      ${submitted}`);
+    log(`  submitted (errors):  ${submitErrors}`);
+    log(`  rejected (logged):   ${rejected.length}`);
+    log(`  cumulative stats:    ${JSON.stringify(state.stats)}`);
+
+    if (submitErrors > 0 && submitted === 0) process.exitCode = 1;
 }
 
 main().catch(err => {
