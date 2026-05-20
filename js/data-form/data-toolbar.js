@@ -174,7 +174,7 @@
             }
             if (!_toolbarResizeObserver) {
                 _toolbarResizeObserver = new ResizeObserver(() => {
-                    document.body.style.setProperty('padding-top', toolbar.getBoundingClientRect().bottom + 'px', 'important');
+                    document.body.style.setProperty('padding-top', toolbar.getBoundingClientRect().height + 'px', 'important');
                 });
                 _toolbarResizeObserver.observe(toolbar);
             }

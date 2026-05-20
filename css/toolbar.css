@@ -123,12 +123,13 @@ body:not(.admin-bar) .fixed-toolbar {
     padding: 8px 16px;
     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     max-height: 1000px;
-    overflow: hidden; /* Clip when minimized so max-height: 0 actually collapses */
+    min-height: 0; /* Prevent flex min-height:auto from inflating to min-content size */
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    flex-wrap: wrap; /* Allow wrapping for 2 rows */
+    flex-wrap: wrap;
 }
 
 /* MINIMIZED STATE */
