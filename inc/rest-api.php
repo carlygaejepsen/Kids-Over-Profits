@@ -1695,6 +1695,67 @@ function kop_search_in_data($data, $query) {
     return $search($data);
 }
 
+function kop_search_staff($data, $query) {
+    if (!$data || !$query) return null;
+    $q = strtolower($query);
+    $keys = array('staff', 'keyStaff', 'founders', 'executives', 'keyExecutives', 'ceo', 'director');
+    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
+        if ($depth > 4) return null;
+        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                if (in_array($k, $keys, true) || is_int($k)) {
+                    $m = $search($v, $depth + 1);
+                    if ($m) return $m;
+                }
+            }
+        }
+        return null;
+    };
+    return $search($data);
+}
+
+function kop_search_location($data, $query) {
+    if (!$data || !$query) return null;
+    $q = strtolower($query);
+    $keys = array('location', 'city', 'state', 'address', 'headquarters', 'hq_location',
+                  'locationCity', 'locationState', 'fullAddress', 'cityState');
+    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
+        if ($depth > 4) return null;
+        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                if (in_array($k, $keys, true)) {
+                    $m = $search($v, $depth + 1);
+                    if ($m) return $m;
+                }
+            }
+        }
+        return null;
+    };
+    return $search($data);
+}
+
+function kop_search_program_type($data, $query) {
+    if (!$data || !$query) return null;
+    $q = strtolower($query);
+    $keys = array('type', 'programType', 'facilityType', 'program_type', 'facility_type', 'category');
+    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
+        if ($depth > 4) return null;
+        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                if (in_array($k, $keys, true)) {
+                    $m = $search($v, $depth + 1);
+                    if ($m) return $m;
+                }
+            }
+        }
+        return null;
+    };
+    return $search($data);
+}
+
 /**
  * Get the REST API endpoint URL that provides facilities data.
  *

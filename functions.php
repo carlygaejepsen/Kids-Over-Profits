@@ -32,3 +32,6 @@ require_once get_stylesheet_directory() . '/inc/admin.php';
 
 // Features & Classes (Anonymous Portal, etc.)
 require_once get_stylesheet_directory() . '/inc/features.php';
+
+// Homepage Sidebar Widgets
+require_once get_stylesheet_directory() . '/inc/widgets.php';

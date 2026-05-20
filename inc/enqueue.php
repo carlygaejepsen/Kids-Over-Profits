@@ -30,6 +30,22 @@ function kadence_child_enqueue_styles() {
             filemtime($colors_path)
         );
     }
+
+    // Homepage widget styles (loaded whenever the homepage sidebar has active widgets)
+    if (is_active_sidebar('kop-homepage-sidebar')) {
+        $hp_css = get_stylesheet_directory() . '/css/homepage.css';
+        if (file_exists($hp_css)) {
+            wp_enqueue_style('kop-homepage', get_stylesheet_directory_uri() . '/css/homepage.css', array('kop-colors'), filemtime($hp_css));
+        }
+    }
+
+    // Search results page styles
+    if (is_search()) {
+        $sr_css = get_stylesheet_directory() . '/css/search-results.css';
+        if (file_exists($sr_css)) {
+            wp_enqueue_style('kop-search-results', get_stylesheet_directory_uri() . '/css/search-results.css', array('kop-colors'), filemtime($sr_css));
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'kadence_child_enqueue_styles');
 
