@@ -37,7 +37,15 @@
       "Bash(node --check:*)",
       "Bash(GIT_INDEX_FILE=/c/Temp/kop-index git add css/wiki-editor.css js/wiki-editor.js)",
       "Bash(git clone:*)",
-      "Bash(git -C /c/Users/daniu/OneDrive/Documents/GitHub/Kids-Over-Profits status)"
+      "Bash(git -C /c/Users/daniu/OneDrive/Documents/GitHub/Kids-Over-Profits status)",
+      "Bash(curl -sSL -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\" -o C:/Temp/gn-resolve.html -w \"final-url: %{url_effective}\\\\nhttp: %{http_code}\\\\nsize: %{size_download}\\\\n\" \"https://news.google.com/rss/articles/CBMirAFBVV95cUxNeXJ5U0ZXM01xcFY1V1FyMmtOdWtXb2lsQ2NrS3dMcjZvNUJpTGM5b0tIYjZiYlN0ZmFxMHRlX241b3hxdmNXMlV5SEJPbVp1TTNKSVZnYXBsazFjNEJGNWwyM2w0d2xZcG8zbjdnLWh4a1Yzb21UejBFZ2xXS0RVdU1sdWNFLTd0Umx5V004RGdwVUlwRF9Fdmc1UEM2Vl9OWXdJelRQdW9OMnY2?oc=5\" --max-time 30)",
+      "Bash(node --eval \"const token='CBMirAFBVV95cUxNeXJ5U0ZXM01xcFY1V1FyMmtOdWtXb2lsQ2NrS3dMcjZvNUJpTGM5b0tIYjZiYlN0ZmFxMHRlX241b3hxdmNXMlV5SEJPbVp1TTNKSVZnYXBsazFjNEJGNWwyM2w0d2xZcG8zbjdnLWh4a1Yzb21UejBFZ2xXS0RVdU1sdWNFLTd0Umx5V004RGdwVUlwRF9Fdmc1UEM2Vl9OWXdJelRQdW9OMnY2'; const tail=token.slice\\(4\\); const buf=Buffer.from\\(tail,'base64'\\); const txt=buf.toString\\('latin1'\\).replace\\(/[^\\\\x20-\\\\x7e]+/g,' '\\).trim\\(\\); console.log\\('extract:', txt.slice\\(0,300\\)\\); const urls=txt.match\\(/https?:[^ ]+/g\\)||[]; urls.forEach\\(u=>console.log\\('URL:',u\\)\\);\")",
+      "Bash(node C:/Temp/gn-decoder-test.js)",
+      "Bash(curl -sS \"https://archive.org/wayback/available?url=https%3A%2F%2Fwww.nytimes.com%2F2024%2F03%2F12%2Fus%2Ftroubled-teen-industry-paris-hilton.html\" -m 15)",
+      "Bash(python -m json.tool)",
+      "Bash(curl -sS \"https://archive.org/wayback/available?url=https%3A%2F%2Fwww.citizen-times.com%2Fstory%2Fnews%2Flocal%2F2025%2F12%2F05%2Fasheville-academy-lawsuits-settlement%2F87601666007%2F\" -m 15)",
+      "Bash(curl -sS \"https://archive.org/wayback/available?url=https%3A%2F%2Fwww.nytimes.com%2F\" -m 15)",
+      "Bash(php C:/Temp/test-paywall.php)"
     ],
     "deny": [],
     "ask": [],

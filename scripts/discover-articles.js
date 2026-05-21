@@ -58,6 +58,11 @@ const MAX_SEEN_URLS        = 50000;
 const PER_FACILITY_CAP     = 15;    // RSS items considered per facility
 const REQUEST_TIMEOUT_MS   = 30000;
 const AI_TIMEOUT_MS        = 90000;
+// Google News RSS sorts by relevance, not date — old articles routinely
+// surface for popular query terms. Skip GN items whose pubDate is older
+// than this cutoff. Reddit items are NOT filtered (a freshly-shared old
+// article is still signal worth surfacing).
+const MAX_ARTICLE_AGE_DAYS = 30;
 // An alias appearing in this many deduped facility entries is considered
 // "generic" (e.g., "Juvenile Detention Center"). Matches on generic aliases
 // require positive state-signal confirmation downstream, not just
@@ -589,7 +594,13 @@ function googleNewsUrl(facility) {
 async function fetchGoogleNewsForFacility(facility) {
     try {
         const xml = await fetchText(googleNewsUrl(facility));
-        return parseRssItems(xml).slice(0, PER_FACILITY_CAP).map(item => ({
+        const cutoffMs = Date.now() - MAX_ARTICLE_AGE_DAYS * 86400000;
+        const fresh = parseRssItems(xml).filter(item => {
+            if (!item.pubDate) return true;     // keep if unparseable — better than dropping
+            const t = Date.parse(item.pubDate);
+            return !isFinite(t) || t >= cutoffMs;
+        });
+        return fresh.slice(0, PER_FACILITY_CAP).map(item => ({
             ...item,
             origin: 'google-news',
             facilityQuery: facility.queryName,
@@ -878,34 +889,91 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
  *
  * On error or no-redirect, returns the original URL unchanged.
  */
+/**
+ * Resolve a Google News redirect URL via the batchexecute decoder API.
+ *
+ * Modern GN URLs (CBMi tokens) cannot be resolved by HTTP redirect-following —
+ * the redirect happens in JavaScript after page load. This function calls
+ * Google's undocumented `garturlreq` endpoint (used by the GN web app itself)
+ * to map a token to its canonical publisher URL.
+ *
+ * Process:
+ *   1. Fetch /articles/<token> HTML → extract data-n-a-sg + data-n-a-ts
+ *   2. POST those + the token to /_/DotsSplashUi/data/batchexecute
+ *   3. Parse the canonical URL out of the response
+ *
+ * Returns the resolved URL, or the original GN URL if any step fails.
+ * Callers MUST check whether the result still starts with news.google.com/
+ * and reject the candidate if so — submitting an unresolved GN URL produces
+ * empty AI extractions and useless review-queue rows.
+ */
 async function resolveGoogleNewsUrl(url) {
     if (!url || !url.startsWith('https://news.google.com/')) return url;
+
+    const tokenMatch = url.match(/\/(?:rss\/)?articles\/([^/?#]+)/);
+    if (!tokenMatch) return url;
+    const token = tokenMatch[1];
+
     try {
-        // Use GET with redirect: 'follow' — HEAD is unreliable on some Google
-        // redirects. The response body is discarded; we only need response.url.
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 15000);
-        try {
-            const res = await fetch(url, {
-                method: 'GET',
-                redirect: 'follow',
-                signal: controller.signal,
-                headers: { 'User-Agent': USER_AGENT }
-            });
-            // Drain a small amount of the body so the connection can close
-            // cleanly (don't read large response bodies into memory).
-            try { await res.body?.cancel(); } catch { /* ignore */ }
-            const finalUrl = res.url || url;
-            if (finalUrl && finalUrl !== url && !finalUrl.startsWith('https://news.google.com/')) {
-                return finalUrl;
-            }
-        } finally {
-            clearTimeout(timer);
+        // Step 1 — fetch article page to harvest signature
+        const pageRes = await fetchWithTimeout(`https://news.google.com/articles/${token}`, { timeoutMs: 20000 });
+        if (!pageRes.ok) {
+            warn(`    GN resolve: page HTTP ${pageRes.status} for ${token.slice(0, 30)}…`);
+            return url;
         }
+        const html = await pageRes.text();
+        const sg = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
+        const ts = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
+        if (!sg || !ts) {
+            warn(`    GN resolve: missing signature for ${token.slice(0, 30)}…`);
+            return url;
+        }
+
+        // Step 2 — POST to batchexecute. The f.req payload format is reverse-
+        // engineered from GN's own client; the inner protobuf-like array is
+        // a `garturlreq` request type.
+        const fReq = JSON.stringify([[['Fbv4je',
+            JSON.stringify(['garturlreq', [
+                ['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1],
+                'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0
+            ], token, Number(ts), sg]),
+            null, '1']]]);
+        const body = `f.req=${encodeURIComponent(fReq)}`;
+
+        const beRes = await fetchWithTimeout(
+            'https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je&rt=c',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+                body,
+                timeoutMs: 20000
+            }
+        );
+        if (!beRes.ok) {
+            warn(`    GN resolve: batchexecute HTTP ${beRes.status}`);
+            return url;
+        }
+        const text = await beRes.text();
+
+        // Step 3 — extract URL. Response is XSSI-prefixed; the canonical URL
+        // appears as the second element of an inner JSON-encoded array, e.g.
+        //   "[\"garturlres\",\"https://example.com/article\",1]"
+        // Match the first http(s) URL inside that escaped-JSON blob, stopping
+        // at the next escaped quote.
+        const urlMatch = text.match(/garturlres\\",\\"(https?:\/\/(?:[^\\"]|\\\\)+)\\",/);
+        if (!urlMatch) {
+            warn(`    GN resolve: no URL in batchexecute response (${text.slice(0, 100)}…)`);
+            return url;
+        }
+        const resolved = urlMatch[1].replace(/\\\\/g, '\\').replace(/\\"/g, '"');
+        if (resolved.startsWith('https://news.google.com/')) {
+            return url;   // resolution returned another GN URL — give up
+        }
+        return resolved;
     } catch (err) {
-        warn(`    URL resolution failed for ${url.slice(0, 80)}: ${err.message}`);
+        warn(`    GN resolve failed for ${url.slice(0, 80)}: ${err.message}`);
+        return url;
     }
-    return url;
 }
 
 // ============================================================
@@ -1059,14 +1127,21 @@ async function main() {
     if (rejected.length) persistRejected(rejected);
 
     if (DRY_RUN) {
-        log('\n--- DRY RUN — would submit (showing up to 30) ---');
+        log('\n--- DRY RUN — resolving + would-submit (showing up to 30) ---');
+        let resolveUnresolved = 0;
         for (const q of queue.slice(0, 30)) {
-            log(`  [score ${q.evalResult.score}] ${q.candidate.link}`);
+            const orig = q.candidate.link;
+            const resolved = await resolveGoogleNewsUrl(orig);
+            const unresolved = resolved.startsWith('https://news.google.com/');
+            if (unresolved) resolveUnresolved++;
+            log(`  [score ${q.evalResult.score}] ${unresolved ? '✗ UNRESOLVED' : '✓'} ${resolved}`);
+            if (resolved !== orig && !unresolved) log(`     was:     ${orig.slice(0, 80)}…`);
             log(`     title:   ${q.candidate.title.slice(0, 100)}`);
             log(`     reasons: ${q.evalResult.reasons.join(', ')}`);
             if (q.evalResult.match) log(`     match:   ${JSON.stringify(q.evalResult.match)}`);
         }
         log(`\nDry run done. Would attempt ${Math.min(queue.length, SUBMIT_LIMIT)} submissions.`);
+        if (resolveUnresolved > 0) log(`  ${resolveUnresolved} Google News URL(s) could not be resolved — would be rejected.`);
         return;
     }
 
@@ -1085,6 +1160,21 @@ async function main() {
         // Resolve if it's a Google News redirect (no-op otherwise)
         const originalLink = q.candidate.link;
         const resolvedLink = await resolveGoogleNewsUrl(originalLink);
+
+        // Hard reject if we couldn't resolve a Google News URL. Submitting
+        // these produces empty AI extractions (the GN consent page has no
+        // article body), so we'd rather lose the candidate than pollute the
+        // review queue with untitled garbage rows.
+        if (resolvedLink.startsWith('https://news.google.com/')) {
+            seen.add(q.urlHash);
+            postResolveRejected++;
+            postResolveLog.push({
+                link: originalLink,
+                reason: 'gn-resolution-failed',
+                facilityQuery: q.candidate.facilityQuery || null
+            });
+            continue;
+        }
 
         if (resolvedLink !== originalLink) {
             // Re-dedup against the canonical URL — same article may appear under
