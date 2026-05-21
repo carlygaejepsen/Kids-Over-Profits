@@ -242,6 +242,77 @@
             });
         }
 
+        // ----- Complaint upload + Gemini extraction --------------------------
+        // The button is a UI hook; the actual file picker is the hidden
+        // <input type="file">. We unify the flow here so the user just clicks
+        // one button and the file picker opens.
+        if (extractLawsuitBtn && complaintFileInput && config.extractApiUrl) {
+            extractLawsuitBtn.addEventListener('click', () => {
+                if (extractLawsuitBtn.disabled) return;
+                complaintFileInput.value = '';  // reset so re-uploading the same file fires `change`
+                complaintFileInput.click();
+            });
+
+            complaintFileInput.addEventListener('change', async () => {
+                const file = complaintFileInput.files && complaintFileInput.files[0];
+                if (!file) return;
+
+                // Pull the currently-selected FileBird folder so the API can
+                // file the uploaded complaint into the right place.
+                const folderId = getFieldValue('lawsuit-filebird-folder');
+
+                extractLawsuitBtn.disabled = true;
+                const originalHTML = extractLawsuitBtn.innerHTML;
+                extractLawsuitBtn.textContent = '📄 Uploading & extracting...';
+                status.textContent = `Uploading "${file.name}" and extracting fields…`;
+                status.style.color = '';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('complaint', file);
+                    if (folderId) formData.append('filebird_folder_id', folderId);
+
+                    const res = await fetch(config.extractApiUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        // Merge document_urls with whatever the user already had
+                        // in that textarea — uploads are additive to existing
+                        // sources, never destructive.
+                        const existingDocs = linesToArray(getFieldValue('lawsuit-docs'));
+                        const extractedDocs = Array.isArray(data.data.document_urls)
+                            ? data.data.document_urls
+                            : [];
+                        data.data.document_urls = Array.from(new Set([...existingDocs, ...extractedDocs]));
+
+                        populateForm(data.data);
+                        status.textContent = 'Extracted. Review the populated fields and save.';
+                        status.style.color = '';
+                    } else {
+                        // Extraction failed but the attachment may still have
+                        // been saved — surface the URL so the admin can grab it.
+                        let msg = 'Extraction failed: ' + (data.error || 'unknown error');
+                        if (data.attachment && data.attachment.url) {
+                            msg += ` (file saved: ${data.attachment.url})`;
+                        }
+                        status.textContent = msg;
+                        status.style.color = '#dc2626';
+                    }
+                } catch (err) {
+                    console.error('Extract error:', err);
+                    status.textContent = 'Error connecting to extract API.';
+                    status.style.color = '#dc2626';
+                } finally {
+                    extractLawsuitBtn.disabled = false;
+                    extractLawsuitBtn.innerHTML = originalHTML;
+                }
+            });
+        }
+
         form.addEventListener('submit', async e => {
             e.preventDefault();
             status.textContent = 'Saving...';
