@@ -202,14 +202,17 @@ function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
     $link_table = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'news_facility_links'));
     if ($link_table !== 'news_facility_links') return;
 
-    // Build a case-insensitive name -> facility_id map from facilities_master projects.
+    // Build a case-insensitive name -> facility_id map from EVERY facilities_master
+    // row, including __facility_ref identity rows that were skipped earlier.
+    // Promoted rows are what most nested facility entries match against.
     $name_to_id = array();
-    foreach ($projects as $project) {
-        if (!isset($project['source_table']) || $project['source_table'] !== 'facilities_master') continue;
-        if (empty($project['id'])) continue;
-        $key = strtolower(trim((string)($project['name'] ?? $project['label'] ?? '')));
-        if ($key !== '' && !isset($name_to_id[$key])) {
-            $name_to_id[$key] = (int)$project['id'];
+    $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
+    if (is_array($name_rows)) {
+        foreach ($name_rows as $r) {
+            $k = strtolower(trim((string)$r['unique_name']));
+            if ($k !== '' && !isset($name_to_id[$k])) {
+                $name_to_id[$k] = (int)$r['id'];
+            }
         }
     }
 
@@ -443,6 +446,14 @@ function kop_get_facilities_projects_from_database() {
             }
 
             $decoded = kop_unwrap_project_payload($decoded);
+
+            // Skip hidden identity rows created by promote-facilities-to-rows.php.
+            // These exist solely to give nested facilities a stable id for
+            // foreign-key relationships (e.g., news_facility_links). They aren't
+            // standalone projects and shouldn't appear in the directory.
+            if (!empty($decoded['__facility_ref'])) {
+                continue;
+            }
 
             // Detect format: NEW format has data.facilities/data.operator, OLD format has facilities/operator at root
             $is_new_format = (isset($decoded['data']['facilities']) && is_array($decoded['data']['facilities'])) ||

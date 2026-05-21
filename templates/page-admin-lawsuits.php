@@ -112,8 +112,13 @@ get_header();
                     </label>
                 </div>
 
-                <div class="form-row">
-                    <button type="button" id="fetchLawsuitBtn" class="primary-btn autofill-btn">✨ Auto-populate details from court records</button>
+                <div class="form-row autofill-row">
+                    <button type="button" id="fetchLawsuitBtn" class="primary-btn autofill-btn">✨ Auto-populate from CourtListener (federal)</button>
+                    <label class="upload-complaint-label">
+                        <input type="file" id="lawsuit-complaint-file" accept=".pdf,.doc,.docx,.txt,application/pdf" hidden>
+                        <button type="button" id="extractLawsuitBtn" class="primary-btn autofill-btn">📄 Upload complaint &amp; auto-extract</button>
+                        <span class="upload-complaint-hint">PDF/DOCX/TXT, up to 20MB · saved to media library</span>
+                    </label>
                 </div>
 
                 <div class="form-row two-col">
@@ -204,7 +209,8 @@ get_header();
 window.adminLawsuitsConfig = {
     apiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/save-lawsuit.php'); ?>',
     foldersUrl: '<?php echo esc_url_raw(rest_url('kop/v1/folders')); ?>',
-    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-lawsuit-details.php'); ?>'
+    fetchApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/fetch-lawsuit-details.php'); ?>',
+    extractApiUrl: '<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/api/extract-lawsuit-from-document.php'); ?>'
 };
 </script>
 <script src="<?php echo esc_url_raw(get_stylesheet_directory_uri() . '/js/admin-state-content.js'); ?>?v=<?php echo time(); ?>"></script>

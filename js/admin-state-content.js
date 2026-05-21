@@ -103,6 +103,8 @@
         const filterJurisdiction = document.getElementById('filterJurisdiction');
         const filterPubStatus = document.getElementById('filterPublicationStatus');
         const fetchLawsuitBtn = document.getElementById('fetchLawsuitBtn');
+        const extractLawsuitBtn = document.getElementById('extractLawsuitBtn');
+        const complaintFileInput = document.getElementById('lawsuit-complaint-file');
 
         const fieldMap = {
             id: 'lawsuit-id',

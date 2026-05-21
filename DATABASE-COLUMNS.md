@@ -11,6 +11,10 @@ Quick reference for all database tables and their columns.
 **Primary Key:** `id`
 **Unique Keys:** `unique_name`
 
+**Row kinds:**
+- **Project rows** - operator/company/standalone-facility projects. These power the TTI Program Index directory.
+- **`__facility_ref` rows** - identity-only rows created by `api/promote-facilities-to-rows.php` so nested facilities inside other projects can have a stable `facility_id` for foreign-key references (e.g., `news_facility_links`). Identified by `json_data.__facility_ref === true`. These are skipped by `kop_get_facilities_projects_from_database()` and don't appear in the public directory.
+
 ---
 
 ### suggested_edits
