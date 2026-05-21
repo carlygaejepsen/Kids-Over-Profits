@@ -51,6 +51,7 @@ if (!$request) {
 // Use PDO connection from config.php
 // Load this BEFORE extracting variables to avoid WordPress variable conflicts
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/facility-promotion.php';
 
 // Prefer the WordPress table prefix when available, but fall back to unprefixed tables.
 $prefix = '';
@@ -1040,6 +1041,19 @@ if ($action === 'save') {
         exit;
     }
 
+    // Auto-promote nested facilities: ensure every entry in $data['facilities']
+    // has a facility_id, creating __facility_ref rows for any that don't yet.
+    // Mutates $data in place so updateLocationProjectsFromSave() (called later)
+    // gets the same stamped entries when it clones into state buckets.
+    $autoPromotedCount = 0;
+    if (is_array($data) && $category !== 'wiki') {
+        try {
+            $autoPromotedCount = kop_ensure_facility_ids_in_data($pdo, $data);
+        } catch (Exception $e) {
+            error_log('Facility auto-promotion failed for project "' . $projectName . '": ' . $e->getMessage());
+        }
+    }
+
     // Create the complete project structure with metadata
     $projectStructure = [
         'name' => $projectName,
@@ -1124,11 +1138,15 @@ if ($action === 'save') {
         if (!empty($locationUpdates)) {
             $message .= ". Location projects updated: " . implode(', ', $locationUpdates);
         }
-        
+        if ($autoPromotedCount > 0) {
+            $message .= ". Promoted $autoPromotedCount new facility row(s) to facilities_master.";
+        }
+
         echo json_encode([
             'success' => true,
             'message' => $message,
-            'locationProjectsUpdated' => $locationUpdates
+            'locationProjectsUpdated' => $locationUpdates,
+            'autoPromotedFacilities' => $autoPromotedCount
         ]);
     } catch (PDOException $e) {
         echo json_encode([
