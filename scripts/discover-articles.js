@@ -980,7 +980,10 @@ async function resolveGoogleNewsUrl(url) {
 // Submission
 // ============================================================
 
-async function submitCandidate(candidate, evalResult) {
+async function submitCandidate(candidate, evalResult, options = {}) {
+    const submittedBy = options.submittedBy || 'auto-discovery';
+    const noteLabel   = options.noteLabel   || 'auto-discovery';
+
     log(`  → AI processing: ${candidate.link.slice(0, 90)}`);
     const aiRes = await postJson(AI_ENDPOINT, {
         url: candidate.link,
@@ -997,7 +1000,7 @@ async function submitCandidate(candidate, evalResult) {
     const data = aiRes.body.data || {};
 
     const discoveryNote = [
-        `auto-discovery via ${candidate.origin}`,
+        `${noteLabel} via ${candidate.origin}`,
         `score=${evalResult.score}`,
         `reasons=${evalResult.reasons.join(',')}`,
         evalResult.match ? `match=${JSON.stringify(evalResult.match)}` : '',
@@ -1023,7 +1026,7 @@ async function submitCandidate(candidate, evalResult) {
         needsAlternateTitle: !!data.alternateTitle,
         ...(data.typeSpecificData || {}),
         status: 'submitted',
-        submittedBy: 'auto-discovery',
+        submittedBy: submittedBy,
         submissionNotes: discoveryNote
     };
 
@@ -1251,7 +1254,49 @@ async function main() {
     if (submitErrors > 0 && submitted === 0) process.exitCode = 1;
 }
 
-main().catch(err => {
-    console.error('Discovery failed:', err);
-    process.exit(1);
-});
+// Only auto-run when invoked as a CLI. When required as a module (e.g. by
+// backfill-articles.js), expose the helpers so they can be reused without
+// duplicating logic.
+if (require.main === module) {
+    main().catch(err => {
+        console.error('Discovery failed:', err);
+        process.exit(1);
+    });
+}
+
+module.exports = {
+    // Constants / config
+    USER_AGENT,
+    STATE_NAMES,
+    SCORE_THRESHOLD,
+    AI_REQUEST_DELAY_MS,
+    SUBMIT_ENDPOINT,
+    AI_ENDPOINT,
+    AI_PROVIDER,
+    AI_TIMEOUT_MS,
+    // Helpers
+    sleep,
+    log,
+    warn,
+    normalizeName,
+    fetchWithTimeout,
+    fetchText,
+    postJson,
+    loadJson,
+    saveJson,
+    normalizeUrl,
+    hashUrl,
+    hostOf,
+    articleHostOf,
+    // Core building blocks
+    buildBlacklistMatcher,
+    buildFacilityIndex,
+    fetchRedditCandidates,
+    evaluateCandidate,
+    resolveGoogleNewsUrl,
+    submitCandidate,
+    // State files / paths
+    loadState,
+    saveState,
+    persistRejected
+};

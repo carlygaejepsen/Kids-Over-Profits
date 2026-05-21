@@ -74,13 +74,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $params = [];
 
     if ($status) {
+        // suggested_edits uses 'pending' for unreviewed rows (schema enum
+        // ('pending','approved','rejected')); wiki/news tables use 'submitted'.
+        // Translate the admin UI's canonical "Pending Review" value so the
+        // same filter works across all three types.
+        if ($type === 'data' && $status === 'submitted') {
+            $status = 'pending';
+        }
         $where[] = "status = :status";
         $params[':status'] = $status;
     }
 
     if ($search) {
         if ($type === 'data') {
-            $where[] = "(unique_name LIKE :search)";
+            // suggested_edits stores the facility identifier in master_id (a
+            // sanitized program-name string, not a numeric FK)
+            $where[] = "(master_id LIKE :search)";
             $params[':search'] = "%$search%";
         } elseif ($type === 'news') {
             $where[] = "(article_title LIKE :search1 OR publication_name LIKE :search2 OR author LIKE :search3)";
@@ -102,8 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $total = (int)$countStmt->fetchColumn();
 
     if ($type === 'data') {
-        $sql = "SELECT id, unique_name as program_name, status,
-                       submitted_by, created_at, json_data, submission_reason as submission_notes
+        // suggested_edits real columns: id, master_id, edited_json_data,
+        // reason, submitter_ip, status, created_at. Alias to the names the
+        // admin JS expects so news/wiki/data rendering can share the
+        // submission shape downstream.
+        $sql = "SELECT id, master_id as program_name, status,
+                       submitter_ip as submitted_by, created_at,
+                       edited_json_data as json_data,
+                       reason as submission_notes
                 FROM $table $whereClause
                 ORDER BY created_at DESC
                 LIMIT {$limit} OFFSET {$offset}";

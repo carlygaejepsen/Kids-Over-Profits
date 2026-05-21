@@ -66,6 +66,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentOriginalMarkdown = '';
     let duplicateUrlMap = new Map(); // Map of normalized URLs to array of submission IDs
 
+    // Inline-expansion state. The submissionModal element gets physically
+    // moved into the active card when View Details is clicked; we cache its
+    // original parent so we can put it back on collapse / re-render.
+    const modalOriginalParent = submissionModal.parentNode;
+    const modalOriginalNextSibling = submissionModal.nextSibling;
+    let expandedCardId = null;
+
+    /**
+     * Move the submission modal back to its original DOM location and reset
+     * any expanded-card visual state. Does NOT change modal visibility — the
+     * caller decides whether to hide (closeModal) or leave it shown so a
+     * subsequent viewSubmission can re-place it in a new card.
+     *
+     * Must be called before submissionsList.innerHTML='' so the modal isn't
+     * destroyed along with the card that contains it.
+     */
+    function detachModal() {
+        if (expandedCardId !== null) {
+            const card = submissionsList.querySelector(`.submission-card[data-id="${expandedCardId}"]`);
+            if (card) {
+                card.classList.remove('expanded');
+                const btn = card.querySelector('.btn-view');
+                if (btn) btn.textContent = 'View Details';
+            }
+        }
+        if (submissionModal.parentNode !== modalOriginalParent) {
+            if (modalOriginalNextSibling && modalOriginalNextSibling.parentNode === modalOriginalParent) {
+                modalOriginalParent.insertBefore(submissionModal, modalOriginalNextSibling);
+            } else {
+                modalOriginalParent.appendChild(submissionModal);
+            }
+        }
+        expandedCardId = null;
+    }
+
     // API endpoints
     // Use localized config if available, otherwise fallback to default (though default might be wrong if theme folder differs)
     const config = window.adminSubmissionsConfig || {};
@@ -256,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (search) params.set('search', search);
 
         loadingMessage.style.display = 'block';
+        detachModal();              // restore modal to original parent before wiping list
         submissionsList.innerHTML = '';
         noSubmissions.style.display = 'none';
 
@@ -296,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Render submissions list
      */
     function renderSubmissions(submissions) {
+        detachModal();              // see comment in loadSubmissions — must precede wiping list
         submissionsList.innerHTML = '';
         const currentType = typeFilter ? typeFilter.value : 'wiki';
 
@@ -376,10 +413,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * View submission details
+     * View submission details — inline expansion. Clicking on the
+     * already-expanded card collapses it; clicking another card collapses
+     * the current one first, then expands the new one. The detail panel
+     * (#submissionModal) is physically moved into the active card.
      */
     async function viewSubmission(id) {
         console.log('viewSubmission called with id:', id);
+        // Toggle: clicking the already-open card collapses it
+        if (expandedCardId !== null && String(expandedCardId) === String(id)) {
+            closeModal();
+            return;
+        }
+        // Collapse any other open card before opening the new one
+        // (don't hide the modal — we'll move it into the new card)
+        if (expandedCardId !== null) detachModal();
         try {
             const currentType = typeFilter ? typeFilter.value : 'wiki';
             const detailParams = new URLSearchParams({
@@ -561,11 +609,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Kick off Cloudmersive URL safety check (async; results render when ready).
         runUrlScan(currentType, submission.id);
 
-        // Show modal
-        submissionModal.style.display = 'flex';
-
-        // Scroll to make the modal visible (since it's position: static, not an overlay)
-        submissionModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // -- Relocate the detail panel into the active card (inline expansion) --
+        // Falls back to the original "panel at bottom" placement if the card
+        // can't be found — most commonly during the brief race window after
+        // an approve/reject when the list is being re-fetched. In that case
+        // we scrollIntoView so the user can still see the result.
+        const card = submissionsList.querySelector(`.submission-card[data-id="${submission.id}"]`);
+        if (card) {
+            card.appendChild(submissionModal);
+            card.classList.add('expanded');
+            const btn = card.querySelector('.btn-view');
+            if (btn) btn.textContent = 'Hide Details';
+            expandedCardId = submission.id;
+            submissionModal.style.display = 'flex';
+        } else {
+            submissionModal.style.display = 'flex';
+            submissionModal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     /**
@@ -577,6 +637,13 @@ document.addEventListener('DOMContentLoaded', () => {
         rejectBtn.disabled = false;
         publishBtn.disabled = false;
         deleteBtn.disabled = false;
+
+        // Publish is a wiki/news concept (approved → live on wiki). The
+        // suggested_edits enum for data submissions only allows
+        // ('pending','approved','rejected'), so hide the button entirely
+        // for data — approve already applies the edit.
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        publishBtn.style.display = currentType === 'data' ? 'none' : '';
 
         // Disable based on current status
         if (status === 'approved') {
@@ -745,6 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Close modal
      */
     function closeModal() {
+        detachModal();                  // returns modal to original parent + resets card state
         submissionModal.style.display = 'none';
         currentSubmission = null;
         const safetySection = document.getElementById('urlSafetySection');

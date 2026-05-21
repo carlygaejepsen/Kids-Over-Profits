@@ -982,3 +982,35 @@
 .url-safety-item.flagged .url-safety-threats {
     color: #7f1d1d;
 }
+
+
+/* ============================================================
+   Inline card expansion — when #submissionModal is moved into
+   an active card by admin-submissions.js viewSubmission()
+   ============================================================ */
+.submission-card.expanded {
+    /* Disable lift-on-hover so the open detail panel doesn't jitter */
+    transform: none !important;
+}
+
+.submission-card.expanded:hover {
+    transform: none;
+}
+
+.submission-card.expanded .submission-modal {
+    margin-top: 16px;
+}
+
+/* Inside a card, the detail panel already has a card around it — drop
+   the inner shadow/radius so it blends rather than nests. */
+.submission-card.expanded .submission-modal-content {
+    box-shadow: none;
+    border-radius: 12px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.submission-card.expanded .btn-view {
+    background: var(--kop-coral-pink, #FE8088);
+    color: var(--kop-midnight, #000435);
+}

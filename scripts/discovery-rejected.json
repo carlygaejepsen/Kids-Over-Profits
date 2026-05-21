@@ -1,6 +1,734 @@
 {
-  "lastUpdated": "2026-05-21T18:24:43.473Z",
+  "lastUpdated": "2026-05-21T19:05:44.015Z",
   "entries": [
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2020/10/12/why-we-are-raising-money/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2020/09/20/provo-canyon-schools/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/06/23/violence-often-instigated/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2020/08/30/inside-utahs-troubled/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.facebook.com/hashtag/breakingcodesilence",
+      "title": "Petition by Paris Hilton to shut down Provo Canyon School",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.facebook.com/hashtag/iseeyousurvivor",
+      "title": "Petition by Paris Hilton to shut down Provo Canyon School",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.canva.com/design/DAE",
+      "title": "Jillian Orr (BYU Student Who Came Out at Graduation) TTI Connections",
+      "origin": "reddit-search-selftext",
+      "host": "canva.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:abuse"
+        ],
+        "threshold": 3,
+        "host": "canva.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.pulitzer.org/winners/salt-lake-tribune-staff",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "pulitzer.org",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "pulitzer.org"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/06/23/heres-look-s-violent/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/10/01/police-say-staffer-this/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/05/17/violence-sex-abuse/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/07/10/after-riot-increasing/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.sltrib.com/news/2019/06/27/staffer-school-troubled/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://coastalharbor.com",
+      "title": "Emotionally/verbally abusive mother trying to send me away",
+      "origin": "reddit-search-selftext",
+      "host": "coastalharbor.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "coastalharbor.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.ksl.com/article/51310450/man-on-probation-after-hitting-student-at-provo-residential-treatment-center",
+      "title": "Man on probation after hitting student at Provo residential treatment center (PCS) ⚖️",
+      "origin": "reddit-search",
+      "host": "ksl.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ksl.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.facebook.com/106603474708597/posts/160310252671252/?d=n",
+      "title": "Language matters in the TTI (by Thought Reform Thursdays)",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.msn.com/en-us/video/news/paris-hilton-holds-rally-in-protest-of-alleged-abuse-at-provo-canyon-school/vi-BB19T0B9?fbclid=IwAR3wFfoAp9oO-naqrIAWsfCYtukyv0iei7WQFt71djXns-pL7jYO56Y8Wkk",
+      "title": "Paris Hilton holds rally in protest of alleged abuse at Provo Canyon School",
+      "origin": "reddit-search",
+      "host": "msn.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.eonline.com/news/1185281/paris-hiltons-documentary-bombshells-abuse-family-secrets-and-more-revelations",
+      "title": "Paris Hilton was in a program??",
+      "origin": "reddit-search-selftext",
+      "host": "eonline.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:abuse"
+        ],
+        "threshold": 3,
+        "host": "eonline.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://maps.app.goo.gl/VGEiZeUobc5CQNwXA?g_st=ac",
+      "title": "Second Nature Google reviews page backup and needing new reviews!",
+      "origin": "reddit-search",
+      "host": "maps.app.goo.gl",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "maps.app.goo.gl"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.facebook.com/share/ntejZNFnDpvVxUAA/?mibextid=WC7FNe",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://link.chtbl.com/nioYTEXP",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "link.chtbl.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "link.chtbl.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://podcasts.apple.com/us/podcast/crime-stories-with-nancy-grace/id1193068130?i=1000509850663",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "podcasts.apple.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://podcasts.apple.com/us/podcast/crime-stories-with-nancy-grace/id1193068130?i=1000586311199",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "podcasts.apple.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.foxnews.com/media/paris-hilton-utah-boarding-school-abuse-victims",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "foxnews.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "foxnews.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:44.015Z",
+      "link": "https://www.abc4.com/news/springville-treatment-center-cited/",
+      "title": "Springville teen treatment center cited after staff harms teen — and it’s not the first time (Provo Canyon School)",
+      "origin": "reddit-search",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2020/10/12/why-we-are-raising-money/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2020/09/20/provo-canyon-schools/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/06/23/violence-often-instigated/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2020/08/30/inside-utahs-troubled/",
+      "title": "The Salt Lake Tribune is raising money to get reports on Utah's troubled teen treatment centers",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.facebook.com/hashtag/breakingcodesilence",
+      "title": "Petition by Paris Hilton to shut down Provo Canyon School",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.facebook.com/hashtag/iseeyousurvivor",
+      "title": "Petition by Paris Hilton to shut down Provo Canyon School",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.canva.com/design/DAE",
+      "title": "Jillian Orr (BYU Student Who Came Out at Graduation) TTI Connections",
+      "origin": "reddit-search-selftext",
+      "host": "canva.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:abuse"
+        ],
+        "threshold": 3,
+        "host": "canva.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.pulitzer.org/winners/salt-lake-tribune-staff",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "pulitzer.org",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "pulitzer.org"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/06/23/heres-look-s-violent/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/10/01/police-say-staffer-this/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/05/17/violence-sex-abuse/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/07/10/after-riot-increasing/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.sltrib.com/news/2019/06/27/staffer-school-troubled/",
+      "title": "Journalist looking for anyone who can share their experiences of being in a Utah facility",
+      "origin": "reddit-search-selftext",
+      "host": "sltrib.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sltrib.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://coastalharbor.com",
+      "title": "Emotionally/verbally abusive mother trying to send me away",
+      "origin": "reddit-search-selftext",
+      "host": "coastalharbor.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "coastalharbor.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.ksl.com/article/51310450/man-on-probation-after-hitting-student-at-provo-residential-treatment-center",
+      "title": "Man on probation after hitting student at Provo residential treatment center (PCS) ⚖️",
+      "origin": "reddit-search",
+      "host": "ksl.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ksl.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.facebook.com/106603474708597/posts/160310252671252/?d=n",
+      "title": "Language matters in the TTI (by Thought Reform Thursdays)",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.msn.com/en-us/video/news/paris-hilton-holds-rally-in-protest-of-alleged-abuse-at-provo-canyon-school/vi-BB19T0B9?fbclid=IwAR3wFfoAp9oO-naqrIAWsfCYtukyv0iei7WQFt71djXns-pL7jYO56Y8Wkk",
+      "title": "Paris Hilton holds rally in protest of alleged abuse at Provo Canyon School",
+      "origin": "reddit-search",
+      "host": "msn.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.eonline.com/news/1185281/paris-hiltons-documentary-bombshells-abuse-family-secrets-and-more-revelations",
+      "title": "Paris Hilton was in a program??",
+      "origin": "reddit-search-selftext",
+      "host": "eonline.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:abuse"
+        ],
+        "threshold": 3,
+        "host": "eonline.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://maps.app.goo.gl/VGEiZeUobc5CQNwXA?g_st=ac",
+      "title": "Second Nature Google reviews page backup and needing new reviews!",
+      "origin": "reddit-search",
+      "host": "maps.app.goo.gl",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "maps.app.goo.gl"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.facebook.com/share/ntejZNFnDpvVxUAA/?mibextid=WC7FNe",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "facebook.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://link.chtbl.com/nioYTEXP",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "link.chtbl.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "link.chtbl.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://podcasts.apple.com/us/podcast/crime-stories-with-nancy-grace/id1193068130?i=1000509850663",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "podcasts.apple.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://podcasts.apple.com/us/podcast/crime-stories-with-nancy-grace/id1193068130?i=1000586311199",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "podcasts.apple.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.foxnews.com/media/paris-hilton-utah-boarding-school-abuse-victims",
+      "title": "Nancy Grace interviews Unsilenced for the 2nd time.",
+      "origin": "reddit-search-selftext",
+      "host": "foxnews.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "foxnews.com"
+      }
+    },
+    {
+      "ts": "2026-05-21T19:05:07.607Z",
+      "link": "https://www.abc4.com/news/springville-treatment-center-cited/",
+      "title": "Springville teen treatment center cited after staff harms teen — and it’s not the first time (Provo Canyon School)",
+      "origin": "reddit-search",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
     {
       "ts": "2026-05-21T18:24:43.473Z",
       "link": "https://www.legislature.mi.gov/documents/2025-2026/billanalysis/House/pdf/2026-HLA-5514-CHS4KN2M.pdf",
