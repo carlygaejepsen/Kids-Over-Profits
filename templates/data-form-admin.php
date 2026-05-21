@@ -1434,6 +1434,33 @@ get_header();
             </div>
         </div>
         
+        <!-- Linked News Articles Section -->
+        <div class="section" id="linked-news-section" data-section-views="companies,locations">
+            <div class="section-header">
+                <h2 class="section-title">📰 Linked News Articles</h2>
+                <span class="section-toggle">🔎</span>
+            </div>
+            <div class="section-content">
+                <p style="margin: 0 0 15px; color: #4b5563; font-size: 14px;">
+                    Articles tied to this project via <code>news_facility_links</code>. Links are scoped to the saved
+                    <code>facilities_master</code> row identified by the project name above.
+                </p>
+                <div id="linked-news-status" style="margin-bottom: 15px; color: #6b7280; font-size: 13px;">
+                    Save the project first to enable news linking.
+                </div>
+                <div id="linked-news-list" style="margin-bottom: 15px;"></div>
+                <div id="linked-news-add" style="display: none;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600;">Add an article</label>
+                    <div style="display: flex; gap: 8px; align-items: flex-start;">
+                        <div style="flex: 1; position: relative;">
+                            <input type="text" id="linked-news-search-input" class="input-form" placeholder="Search articles by title or publication..." autocomplete="off" style="width: 100%;">
+                            <div id="linked-news-suggestions" style="position: absolute; top: 100%; left: 0; right: 0; max-height: 280px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-top: none; z-index: 50; display: none; box-shadow: 0 2px 6px rgba(0,0,0,0.08);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Submission Section -->
         <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">

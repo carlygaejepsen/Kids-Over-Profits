@@ -17,6 +17,7 @@ get_header();
 global $wpdb; // Use global WPDB or the custom connection if preferred, but existing code uses PDO in API.
 // Let's use the same PDO logic as the API for consistency with the JSON data structure.
 require_once get_stylesheet_directory() . '/api/config.php';
+require_once get_stylesheet_directory() . '/api/news-mentions.php';
 
 // Pagination settings
 $per_page = 50;
@@ -246,7 +247,7 @@ try {
             }
 
             // Auto-generate tags from facilities
-            $itemFacilities = json_decode($item['facilities_mentioned'] ?? '[]', true) ?: [];
+            $itemFacilities = kop_facility_mention_names($item['facilities_mentioned'] ?? '[]');
             $itemTags = array_merge($itemTags, $itemFacilities);
 
             // Filter out excluded tags and normalize to title case
@@ -302,7 +303,7 @@ try {
                 // Get all facilities from all submissions for comparison
                 $allFacilities = [];
                 foreach ($submissions as $item) {
-                    $itemFacilities = json_decode($item['facilities_mentioned'] ?? '[]', true) ?: [];
+                    $itemFacilities = kop_facility_mention_names($item['facilities_mentioned'] ?? '[]');
                     $allFacilities = array_merge($allFacilities, $itemFacilities);
                 }
 
@@ -480,7 +481,7 @@ try {
         <div class="news-feed-grid">
             <?php foreach ($submissions as $item):
                 // Decode JSON fields
-                $facilities = json_decode($item['facilities_mentioned'], true) ?: [];
+                $facilities = kop_facility_mention_names($item['facilities_mentioned'] ?? '[]');
                 $staff = json_decode($item['staff_mentioned'], true) ?: [];
                 $warnings = json_decode($item['content_warnings'], true) ?: [];
                 $tags = json_decode($item['tags'] ?? '[]', true) ?: [];

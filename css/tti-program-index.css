@@ -555,6 +555,37 @@ details.operator-section[open] .facility-card {
     color: #0d4450 !important;
 }
 
+.facility-news-section .facility-news-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.facility-news-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.facility-news-item:last-child {
+    border-bottom: none;
+}
+
+.facility-news-title {
+    font-weight: 600;
+    color: #000080;
+    text-decoration: none;
+}
+
+.facility-news-title:hover {
+    text-decoration: underline;
+}
+
+.facility-news-meta {
+    font-size: 0.82em;
+    color: #555;
+    margin-top: 2px;
+}
+
 .facility-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

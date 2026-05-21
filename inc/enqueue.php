@@ -682,6 +682,30 @@ function enqueue_data_form_script() {
         );
     }
 
+    // Admin-only: Linked News Articles panel for the facility editor.
+    if ($is_admin_template) {
+        $admin_news_links_js = get_stylesheet_directory() . '/js/admin-news-links.js';
+        if (file_exists($admin_news_links_js)) {
+            wp_enqueue_script(
+                'kop-admin-news-links',
+                get_stylesheet_directory_uri() . '/js/admin-news-links.js',
+                array(),
+                filemtime($admin_news_links_js),
+                true
+            );
+            wp_localize_script(
+                'kop-admin-news-links',
+                'KOP_AdminNewsLinks',
+                array(
+                    'facilitySearchUrl' => get_stylesheet_directory_uri() . '/api/facility-search.php',
+                    'newsSearchUrl'     => get_stylesheet_directory_uri() . '/api/news-search.php',
+                    'linkUrl'           => get_stylesheet_directory_uri() . '/api/link-news-to-facility.php',
+                    'unlinkUrl'         => get_stylesheet_directory_uri() . '/api/unlink-news-from-facility.php',
+                )
+            );
+        }
+    }
+
     // Enqueue the toolbar stylesheet
     $toolbar_css = get_stylesheet_directory() . '/css/toolbar.css';
     if (file_exists($toolbar_css)) {
@@ -1338,6 +1362,7 @@ function enqueue_news_processor_scripts() {
                 'submissionUrl' => $theme_uri . '/api/save-news-submission.php',
                 'savedValuesUrl' => $theme_uri . '/api/saved-values.php',
                 'duplicateCheckUrl' => $theme_uri . '/api/check-news-duplicate.php',
+                'facilitySearchUrl' => $theme_uri . '/api/facility-search.php',
                 'nonce' => wp_create_nonce('news_processor_nonce')
             )
         );

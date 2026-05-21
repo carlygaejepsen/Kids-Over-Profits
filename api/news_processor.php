@@ -139,8 +139,13 @@ get_header();
 
                     <div class="news-form-group">
                         <label>Facilities/Companies Mentioned</label>
-                        <div id="facilities-container" class="news-dynamic-fields"></div>
-                        <button type="button" class="news-btn news-btn-add" data-add-field="facilities">+ Add Facility</button>
+                        <p class="news-help-text" style="margin: 0 0 8px; font-size: 0.85em; color: #666;">
+                            Search by name. Select from suggestions to link the article to the facility in our database. Unmatched names are saved as plain text and can be linked later.
+                        </p>
+                        <div id="facilities-picker" class="news-facility-picker">
+                            <div id="facilities-container" class="news-dynamic-fields"></div>
+                            <button type="button" id="facilities-add-btn" class="news-btn news-btn-add">+ Add Facility</button>
+                        </div>
                     </div>
 
                     <div class="news-grid-2">
@@ -264,7 +269,8 @@ window.KOP_NewsProcessor_Settings = {
     apiUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/process-news-ai.php',
     submissionUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/save-news-submission.php',
     savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php',
-    duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-news-duplicate.php'
+    duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-news-duplicate.php',
+    facilitySearchUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/facility-search.php'
 };
 
 // Configure autocomplete API endpoint for news processor

@@ -173,6 +173,25 @@ SQL;
     $pdo->exec($createUrlScanCacheSQL);
     $tables_created['url_scan_cache'] = 'Cloudmersive URL threat scan cache';
 
+    // ============================================
+    // Create news_facility_links table (news <-> facilities join)
+    // ============================================
+    $createNewsFacilityLinksSQL = <<<SQL
+CREATE TABLE IF NOT EXISTS `news_facility_links` (
+  `news_id` int(11) NOT NULL COMMENT 'FK -> news_submissions.id',
+  `facility_id` int(11) NOT NULL COMMENT 'FK -> facilities_master.id',
+  `link_type` enum('mentioned','primary','related') NOT NULL DEFAULT 'mentioned' COMMENT 'How the article relates to the facility',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` varchar(255) DEFAULT NULL COMMENT 'User who created the link',
+  PRIMARY KEY (`news_id`, `facility_id`),
+  KEY `by_facility` (`facility_id`, `news_id`),
+  KEY `link_type` (`link_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Structured links between news articles and facilities'
+SQL;
+
+    $pdo->exec($createNewsFacilityLinksSQL);
+    $tables_created['news_facility_links'] = 'Structured links between news articles and facilities';
+
     $result = [
         'success' => true,
         'message' => 'Submissions database initialization complete',

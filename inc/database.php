@@ -182,6 +182,131 @@ function kop_discover_facilities_master_table($connection, $prefix = '') {
  *
  * @return array|WP_Error Array of projects on success, WP_Error on failure.
  */
+/**
+ * Bulk-fetch linked news for projects in the given array.
+ *
+ * Each project that has a facilities_master id gets a `linked_news[]` field.
+ * Additionally, nested facility entries inside data.facilities[] get their own
+ * `facility_id` stamped (by case-insensitive name match against facilities_master)
+ * and a `linked_news[]` attached - so the program-index cards can show
+ * per-nested-facility article links.
+ *
+ * Articles with status NOT in ('approved','published') are skipped so the
+ * public REST endpoint doesn't leak drafts or rejected items.
+ */
+function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
+    if (!($db_connection instanceof wpdb)) return;
+
+    // Verify the link table exists before querying (graceful fallback for envs
+    // that haven't run init-submissions-db.php yet).
+    $link_table = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'news_facility_links'));
+    if ($link_table !== 'news_facility_links') return;
+
+    // Build a case-insensitive name -> facility_id map from facilities_master projects.
+    $name_to_id = array();
+    foreach ($projects as $project) {
+        if (!isset($project['source_table']) || $project['source_table'] !== 'facilities_master') continue;
+        if (empty($project['id'])) continue;
+        $key = strtolower(trim((string)($project['name'] ?? $project['label'] ?? '')));
+        if ($key !== '' && !isset($name_to_id[$key])) {
+            $name_to_id[$key] = (int)$project['id'];
+        }
+    }
+
+    // Collect every facility_id that we want news for:
+    //   - top-level project ids (facilities_master rows themselves)
+    //   - nested facility entries, by name match against $name_to_id
+    $facility_ids = array();
+
+    foreach ($projects as $key => &$project) {
+        if (!empty($project['id']) && (($project['source_table'] ?? '') === 'facilities_master')) {
+            $facility_ids[(int)$project['id']] = true;
+        }
+        if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
+            foreach ($project['data']['facilities'] as $i => $nested) {
+                if (!is_array($nested)) continue;
+                $fid = null;
+                if (!empty($nested['facility_id'])) {
+                    $fid = (int)$nested['facility_id'];
+                } else {
+                    $candidate_names = array();
+                    if (!empty($nested['identification']['name'])) $candidate_names[] = $nested['identification']['name'];
+                    if (!empty($nested['identification']['currentName'])) $candidate_names[] = $nested['identification']['currentName'];
+                    if (!empty($nested['name'])) $candidate_names[] = $nested['name'];
+                    foreach ($candidate_names as $cn) {
+                        $cn_key = strtolower(trim((string)$cn));
+                        if ($cn_key !== '' && isset($name_to_id[$cn_key])) {
+                            $fid = $name_to_id[$cn_key];
+                            // Stamp it back onto the nested entry for downstream consumers.
+                            $project['data']['facilities'][$i]['facility_id'] = $fid;
+                            break;
+                        }
+                    }
+                }
+                if ($fid !== null && $fid > 0) {
+                    $facility_ids[$fid] = true;
+                }
+            }
+        }
+    }
+    unset($project);
+
+    if (empty($facility_ids)) return;
+
+    $ids = array_keys($facility_ids);
+    $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+
+    $sql = "SELECT l.facility_id, l.link_type,
+                   n.id AS news_id, n.article_title, n.alternate_title,
+                   n.publication_name, n.publication_date, n.article_url,
+                   n.article_type, n.summary, n.status
+            FROM news_facility_links l
+            JOIN news_submissions n ON n.id = l.news_id
+            WHERE l.facility_id IN ($placeholders)
+              AND n.status IN ('approved','published')
+            ORDER BY n.publication_date DESC, n.id DESC";
+
+    $rows = $db_connection->get_results($db_connection->prepare($sql, $ids), ARRAY_A);
+    if (!is_array($rows)) return;
+
+    $by_facility = array();
+    foreach ($rows as $r) {
+        $fid = (int)$r['facility_id'];
+        if (!isset($by_facility[$fid])) $by_facility[$fid] = array();
+        $by_facility[$fid][] = array(
+            'id'                => (int)$r['news_id'],
+            'article_title'     => $r['article_title'],
+            'display_title'     => !empty($r['alternate_title']) ? $r['alternate_title'] : $r['article_title'],
+            'publication_name'  => $r['publication_name'],
+            'publication_date'  => $r['publication_date'],
+            'article_url'       => $r['article_url'],
+            'article_type'      => $r['article_type'],
+            'summary'           => $r['summary'],
+            'link_type'         => $r['link_type'],
+        );
+    }
+
+    // Attach to top-level projects.
+    foreach ($projects as &$project) {
+        if (!empty($project['id']) && (($project['source_table'] ?? '') === 'facilities_master')) {
+            $project['linked_news'] = isset($by_facility[(int)$project['id']])
+                ? $by_facility[(int)$project['id']]
+                : array();
+        }
+        // Attach to nested facility entries.
+        if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
+            foreach ($project['data']['facilities'] as $i => $nested) {
+                if (!is_array($nested) || empty($nested['facility_id'])) continue;
+                $fid = (int)$nested['facility_id'];
+                if (isset($by_facility[$fid])) {
+                    $project['data']['facilities'][$i]['linked_news'] = $by_facility[$fid];
+                }
+            }
+        }
+    }
+    unset($project);
+}
+
 function kop_get_facilities_projects_from_database() {
     $connection = kop_get_facilities_database_connection();
 
@@ -276,6 +401,12 @@ function kop_get_facilities_projects_from_database() {
         $select_parts[] = '`' . $identifier_column . '` AS project_identifier';
         $select_parts[] = '`' . $json_column . '` AS project_payload';
 
+        // Pull the auto-increment primary key when present so REST consumers can
+        // join against news_facility_links / facility_sites by stable id.
+        if (in_array('id', $available_columns, true)) {
+            $select_parts[] = '`id` AS project_id';
+        }
+
         if ($updated_column !== null && $updated_column !== '') {
             $select_parts[] = '`' . $updated_column . '` AS project_updated';
         }
@@ -325,9 +456,13 @@ function kop_get_facilities_projects_from_database() {
                 $default_category = 'locations';
             }
 
+            $project_id = isset($row['project_id']) && $row['project_id'] !== null ? (int)$row['project_id'] : null;
+
             if ($is_new_format) {
                 // NEW format: data is already nested correctly, pass through as-is
                 $projects[$unique_name] = array(
+                    'id' => $project_id,
+                    'source_table' => $table_base,
                     'name' => isset($decoded['name']) ? sanitize_text_field($decoded['name']) : $unique_name,
                     'label' => sanitize_text_field($unique_name_raw),
                     'data' => $decoded['data'],
@@ -338,6 +473,8 @@ function kop_get_facilities_projects_from_database() {
             } else {
                 // OLD format: facilities/operator at root, wrap in 'data'
                 $projects[$unique_name] = array(
+                    'id' => $project_id,
+                    'source_table' => $table_base,
                     'name' => $unique_name,
                     'label' => sanitize_text_field($unique_name_raw),
                     'data' => $decoded,
@@ -348,6 +485,11 @@ function kop_get_facilities_projects_from_database() {
             }
         }
     }
+
+    // Attach linked news per project (only for facilities_master rows). One bulk
+    // query joins news_facility_links + news_submissions, then we group by
+    // facility_id and stamp linked_news[] onto each project.
+    kop_attach_linked_news_to_projects($db_connection, $projects);
 
     if (empty($projects)) {
         return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));

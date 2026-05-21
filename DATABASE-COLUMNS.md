@@ -70,6 +70,17 @@ Quick reference for all database tables and their columns.
 
 ---
 
+### news_facility_links
+**Columns:** `news_id`, `facility_id`, `link_type`, `created_at`, `created_by`
+
+**Purpose:** Structured join between news_submissions and facilities_master
+**Primary Key:** (`news_id`, `facility_id`) - composite
+**Indexes:** `by_facility` (facility_id, news_id), `link_type`
+**Link Types:** `mentioned`, `primary`, `related`
+**Notes:** Coexists with `news_submissions.facilities_mentioned` (the free-text JSON array of names). The links table is the structured FK relationship; the JSON array remains for legacy display/search.
+
+---
+
 ### saved_form_values
 **Columns:** `id`, `form_type`, `category`, `value`, `use_count`, `created_at`, `updated_at`
 

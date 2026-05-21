@@ -22,12 +22,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/news-mentions.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(dirname(dirname(dirname(__DIR__)))) . '/');
     if (file_exists(ABSPATH . 'wp-config.php')) {
         require_once ABSPATH . 'wp-config.php';
+    }
+}
+
+/**
+ * Sync news_facility_links rows for a given news submission based on the
+ * normalized facilities_mentioned list.
+ *
+ *   - Deletes any existing links whose facility_id is no longer in the list.
+ *   - Inserts new links for facility_ids that aren't already linked.
+ *
+ * Mentions without a facility_id (free-text entries the user hasn't picked
+ * a facility for yet) are ignored - they remain in facilities_mentioned only.
+ */
+function kop_sync_news_facility_links(PDO $pdo, int $newsId, array $normalizedMentions, ?string $createdBy = null): void {
+    $desiredIds = [];
+    foreach ($normalizedMentions as $m) {
+        if (!empty($m['facility_id'])) {
+            $desiredIds[(int)$m['facility_id']] = true;
+        }
+    }
+    $desiredIds = array_keys($desiredIds);
+
+    if (empty($desiredIds)) {
+        $stmt = $pdo->prepare("DELETE FROM news_facility_links WHERE news_id = ?");
+        $stmt->execute([$newsId]);
+    } else {
+        $placeholders = implode(',', array_fill(0, count($desiredIds), '?'));
+        $stmt = $pdo->prepare(
+            "DELETE FROM news_facility_links WHERE news_id = ? AND facility_id NOT IN ($placeholders)"
+        );
+        $stmt->execute(array_merge([$newsId], $desiredIds));
+
+        $ins = $pdo->prepare(
+            "INSERT IGNORE INTO news_facility_links (news_id, facility_id, link_type, created_by)
+             VALUES (?, ?, 'mentioned', ?)"
+        );
+        foreach ($desiredIds as $fid) {
+            $ins->execute([$newsId, $fid, $createdBy]);
+        }
     }
 }
 
@@ -49,7 +89,7 @@ try {
             
             if ($submission) {
                 $submission['json_data'] = json_decode($submission['json_data'], true);
-                $submission['facilities_mentioned'] = json_decode($submission['facilities_mentioned'], true);
+                $submission['facilities_mentioned'] = kop_normalize_facility_mentions($submission['facilities_mentioned']);
                 $submission['staff_mentioned'] = json_decode($submission['staff_mentioned'], true);
                 $submission['survivors_mentioned'] = json_decode($submission['survivors_mentioned'], true);
                 $submission['content_warnings'] = json_decode($submission['content_warnings'], true);
@@ -145,11 +185,13 @@ try {
         $tags = array_filter(array_map('trim', explode("\n", $tags)));
     }
 
-    // Handle arrays - could be string or array
-    $facilities = $data['facilities'] ?? [];
+    // Handle arrays - could be string (newline-separated), array of strings,
+    // or array of {name, facility_id} objects. Normalize to the object shape.
+    $facilities = $data['facilities'] ?? $data['facilities_mentioned'] ?? [];
     if (is_string($facilities)) {
         $facilities = array_filter(array_map('trim', explode("\n", $facilities)));
     }
+    $facilities = kop_normalize_facility_mentions($facilities);
     
     $staff = $data['staff'] ?? [];
     if (is_string($staff)) {
@@ -247,11 +289,19 @@ try {
         ]);
         
         if ($stmt->rowCount() === 0) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Submission not found']);
-            exit;
+            // No rows changed could mean "not found" OR "no actual field changed".
+            // Verify the row exists; only 404 when truly missing.
+            $check = $pdo->prepare("SELECT 1 FROM news_submissions WHERE id = ?");
+            $check->execute([$submissionId]);
+            if (!$check->fetchColumn()) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Submission not found']);
+                exit;
+            }
         }
-        
+
+        kop_sync_news_facility_links($pdo, (int)$submissionId, $facilities, $submittedBy ?: null);
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission updated successfully',
@@ -289,12 +339,14 @@ try {
             $submissionNotes
         ]);
         
-        $newId = $pdo->lastInsertId();
-        
+        $newId = (int)$pdo->lastInsertId();
+
+        kop_sync_news_facility_links($pdo, $newId, $facilities, $submittedBy ?: null);
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission saved successfully',
-            'id' => (int)$newId
+            'id' => $newId
         ]);
     }
     

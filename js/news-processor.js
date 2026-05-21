@@ -5,7 +5,7 @@
     const formData = {
         title: '', author: '', publicationDate: '', publicationName: '', url: '',
         location: '', tags: '',
-        facilities: '', staff: '', survivors: '', contentWarnings: [],
+        facilities: [], staff: '', survivors: '', contentWarnings: [],
         summary: '', alternateTitle: '', needsAlternateTitle: false,
         articleType: '', plaintiffs: '', defendants: '', legalRep: '',
         dateFiled: '', jurisdiction: '', pressReleases: '', relatedCoverage: '',
@@ -95,13 +95,49 @@
             if (stored) {
                 Object.assign(formData, JSON.parse(stored));
             }
-            
+
+            // facilities used to be a newline-joined string; migrate any legacy
+            // stored shape (string OR array of strings) into the new object array.
+            formData.facilities = normalizeFacilitiesValue(formData.facilities);
+
             if (storedValues) {
                 Object.assign(savedValues, JSON.parse(storedValues));
             }
         } catch (e) {
             console.error('Failed to load from localStorage:', e);
         }
+    }
+
+    // Coerces any prior shape of `facilities` (newline string, array of strings,
+    // array of {name, facility_id}) into the canonical [{name, facility_id}] array.
+    function normalizeFacilitiesValue(value) {
+        if (value == null) return [];
+        let items = value;
+        if (typeof items === 'string') {
+            items = items.split('\n').map(s => s.trim()).filter(Boolean);
+        }
+        if (!Array.isArray(items)) return [];
+        const out = [];
+        const seen = new Set();
+        for (const item of items) {
+            let name = '';
+            let fid = null;
+            if (typeof item === 'string') {
+                name = item.trim();
+            } else if (item && typeof item === 'object') {
+                name = String(item.name || '').trim();
+                if (item.facility_id != null && item.facility_id !== '') {
+                    const n = parseInt(item.facility_id, 10);
+                    if (Number.isFinite(n) && n > 0) fid = n;
+                }
+            }
+            if (!name) continue;
+            const key = name.toLowerCase();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            out.push({ name, facility_id: fid });
+        }
+        return out;
     }
 
     function clearLocalStorage() {
@@ -427,9 +463,14 @@
                 const category = e.target.dataset.save;
                 const field = e.target.dataset.field;
                 const value = formData[field];
-                
-                if (value && value.trim()) {
-                    if (field === 'facilities' || field === 'staff') {
+
+                if (field === 'facilities') {
+                    // facilities is an array of {name, facility_id}; save each name.
+                    (Array.isArray(value) ? value : []).forEach(f => {
+                        if (f && f.name) saveValue(category, f.name.trim());
+                    });
+                } else if (value && typeof value === 'string' && value.trim()) {
+                    if (field === 'staff') {
                         const lines = value.split('\n').filter(l => l.trim());
                         lines.forEach(line => saveValue(category, line.trim()));
                     } else {
@@ -520,7 +561,9 @@
                 url: formData.url,
                 location: formData.location,
                 tags: filterGenericTags((formData.tags || '').split('\n').filter(t => t.trim())),
-                facilities: formData.facilities.split('\n').filter(f => f.trim()),
+                facilities: (Array.isArray(formData.facilities) ? formData.facilities : [])
+                    .map(f => (f && f.name) ? f.name : '')
+                    .filter(Boolean),
                 staff: formData.staff.split('\n').filter(s => s.trim()),
                 survivors: formData.survivors.split('\n').filter(s => s.trim())
             },
@@ -745,8 +788,9 @@
 
     // --- DYNAMIC FIELDS (facilities, staff, survivors) ---
     function setupDynamicFields() {
+        // Note: facilities is handled by setupFacilityPicker() instead, since it
+        // needs a typeahead/picker UX rather than free-text inputs.
         const fields = {
-            facilities: { container: 'facilities-container', category: 'facility', placeholder: 'Facility name' },
             staff: { container: 'staff-container', category: 'human', placeholder: 'Staff member name' },
             survivors: { container: 'survivors-container', category: 'human', placeholder: 'Survivor or Victim name' },
             tags: { container: 'tags-container', category: 'tag', placeholder: 'Tag/Keyword' }
@@ -867,6 +911,269 @@
         }
     }
 
+    // --- FACILITY PICKER ---
+    // Replaces the legacy free-text "facilities" dynamic-field UI with a typeahead
+    // that resolves each entry to a facilities_master row when possible.
+    //
+    // Storage: formData.facilities is an array of { name, facility_id|null }.
+    // Each row in the DOM owns one entry; the picker syncs DOM -> formData.
+    function setupFacilityPicker() {
+        const container = document.getElementById('facilities-container');
+        const addBtn = document.getElementById('facilities-add-btn');
+        if (!container || !addBtn) return;
+
+        const searchUrl = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.facilitySearchUrl)
+            ? window.KOP_NewsProcessor_Settings.facilitySearchUrl
+            : '/wp-content/themes/child/api/facility-search.php';
+
+        function syncFromDom() {
+            const rows = container.querySelectorAll('.facility-row');
+            const items = [];
+            rows.forEach(row => {
+                const name = (row.dataset.name || '').trim();
+                if (!name) return;
+                const fid = row.dataset.facilityId ? parseInt(row.dataset.facilityId, 10) : null;
+                items.push({ name, facility_id: Number.isFinite(fid) && fid > 0 ? fid : null });
+            });
+            formData.facilities = items;
+            saveToLocalStorage();
+        }
+
+        function buildDisplayRow(entry) {
+            const row = document.createElement('div');
+            row.className = 'facility-row';
+            row.dataset.name = entry.name;
+            if (entry.facility_id) row.dataset.facilityId = String(entry.facility_id);
+
+            const display = document.createElement('div');
+            display.className = 'facility-row-display';
+            display.style.display = 'flex';
+            display.style.alignItems = 'center';
+            display.style.gap = '8px';
+            display.style.padding = '6px 10px';
+            display.style.background = entry.facility_id ? '#e8f4f6' : '#fff3cd';
+            display.style.border = '1px solid ' + (entry.facility_id ? '#33A7B5' : '#EF9034');
+            display.style.borderRadius = '4px';
+            display.style.marginBottom = '4px';
+
+            const nameEl = document.createElement('span');
+            nameEl.className = 'facility-row-name';
+            nameEl.style.fontWeight = '500';
+            nameEl.textContent = entry.name;
+
+            const metaEl = document.createElement('span');
+            metaEl.className = 'facility-row-meta';
+            metaEl.style.fontSize = '0.85em';
+            metaEl.style.color = '#666';
+            if (entry.facility_id) {
+                metaEl.textContent = entry.state ? `· ${entry.state}` : '· linked';
+            } else {
+                metaEl.textContent = '· unlinked (will be saved as text)';
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'news-btn news-btn-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'Remove';
+            removeBtn.style.marginLeft = 'auto';
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                syncFromDom();
+            });
+
+            display.appendChild(nameEl);
+            display.appendChild(metaEl);
+            display.appendChild(removeBtn);
+            row.appendChild(display);
+            return row;
+        }
+
+        function buildEditingRow(initialName) {
+            const row = document.createElement('div');
+            row.className = 'facility-row facility-row-editing';
+            row.style.position = 'relative';
+            row.style.marginBottom = '4px';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'news-input';
+            input.placeholder = 'Search facilities (start typing a name)';
+            input.value = initialName || '';
+            input.autocomplete = 'off';
+            input.style.width = 'calc(100% - 40px)';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'news-btn news-btn-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'Cancel';
+            removeBtn.style.marginLeft = '8px';
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                syncFromDom();
+            });
+
+            const suggestions = document.createElement('div');
+            suggestions.className = 'facility-suggestions';
+            suggestions.style.position = 'absolute';
+            suggestions.style.zIndex = '50';
+            suggestions.style.background = '#fff';
+            suggestions.style.border = '1px solid #ccc';
+            suggestions.style.borderTop = 'none';
+            suggestions.style.maxHeight = '240px';
+            suggestions.style.overflowY = 'auto';
+            suggestions.style.width = 'calc(100% - 40px)';
+            suggestions.style.display = 'none';
+            suggestions.style.boxShadow = '0 2px 4px rgba(0,0,0,0.08)';
+
+            const inputWrap = document.createElement('div');
+            inputWrap.style.display = 'flex';
+            inputWrap.style.alignItems = 'flex-start';
+            inputWrap.appendChild(input);
+            inputWrap.appendChild(removeBtn);
+            row.appendChild(inputWrap);
+            row.appendChild(suggestions);
+
+            let lastQuery = '';
+            let abortCtl = null;
+            let debounceTimer = null;
+
+            function commitUnlinked() {
+                const name = input.value.trim();
+                if (!name) {
+                    row.remove();
+                    syncFromDom();
+                    return;
+                }
+                row.replaceWith(buildDisplayRow({ name, facility_id: null }));
+                syncFromDom();
+            }
+
+            function commitLinked(match) {
+                row.replaceWith(buildDisplayRow({
+                    name: match.unique_name,
+                    facility_id: match.id,
+                    state: match.state
+                }));
+                syncFromDom();
+            }
+
+            async function runSearch() {
+                const q = input.value.trim();
+                if (q.length < 2) {
+                    suggestions.innerHTML = '';
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                if (q === lastQuery) return;
+                lastQuery = q;
+                if (abortCtl) abortCtl.abort();
+                abortCtl = new AbortController();
+                try {
+                    const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}&limit=12`, {
+                        signal: abortCtl.signal
+                    });
+                    const json = await res.json();
+                    if (!json || !json.success) throw new Error('search failed');
+                    renderSuggestions(json.data || [], q);
+                } catch (e) {
+                    if (e.name !== 'AbortError') console.warn('facility search failed', e);
+                }
+            }
+
+            function renderSuggestions(items, q) {
+                suggestions.innerHTML = '';
+                if (!items.length) {
+                    const empty = document.createElement('div');
+                    empty.style.padding = '8px 10px';
+                    empty.style.color = '#666';
+                    empty.style.fontStyle = 'italic';
+                    empty.textContent = 'No facility matches "' + q + '". Press Enter to save as plain text.';
+                    suggestions.appendChild(empty);
+                    suggestions.style.display = 'block';
+                    return;
+                }
+                items.forEach(item => {
+                    const opt = document.createElement('div');
+                    opt.className = 'facility-suggestion';
+                    opt.style.padding = '8px 10px';
+                    opt.style.cursor = 'pointer';
+                    opt.style.borderBottom = '1px solid #eee';
+                    opt.addEventListener('mouseenter', () => { opt.style.background = '#f2eedf'; });
+                    opt.addEventListener('mouseleave', () => { opt.style.background = ''; });
+
+                    const nameSpan = document.createElement('div');
+                    nameSpan.textContent = item.unique_name;
+                    nameSpan.style.fontWeight = '500';
+                    opt.appendChild(nameSpan);
+
+                    const loc = [item.city, item.state].filter(Boolean).join(', ');
+                    if (loc) {
+                        const locSpan = document.createElement('div');
+                        locSpan.textContent = loc;
+                        locSpan.style.fontSize = '0.85em';
+                        locSpan.style.color = '#666';
+                        opt.appendChild(locSpan);
+                    }
+
+                    opt.addEventListener('mousedown', e => {
+                        // mousedown (not click) so it fires before input blur cancels.
+                        e.preventDefault();
+                        commitLinked(item);
+                    });
+                    suggestions.appendChild(opt);
+                });
+                suggestions.style.display = 'block';
+            }
+
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(runSearch, 200);
+            });
+
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    commitUnlinked();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    row.remove();
+                    syncFromDom();
+                }
+            });
+
+            input.addEventListener('blur', () => {
+                // Delay so a mousedown-handled suggestion click can win first.
+                setTimeout(() => {
+                    if (!document.body.contains(row)) return;
+                    commitUnlinked();
+                }, 150);
+            });
+
+            setTimeout(() => input.focus(), 0);
+            return row;
+        }
+
+        addBtn.addEventListener('click', () => {
+            container.appendChild(buildEditingRow(''));
+        });
+
+        // Render any pre-existing entries (e.g., restored from localStorage or
+        // populated by AI extraction).
+        function renderInitial() {
+            container.innerHTML = '';
+            const items = Array.isArray(formData.facilities) ? formData.facilities : [];
+            items.forEach(entry => {
+                if (entry && entry.name) container.appendChild(buildDisplayRow(entry));
+            });
+        }
+        renderInitial();
+
+        // Expose a refresh hook so AI ingestion / template loaders can trigger a re-render.
+        window.refreshFacilityPicker = renderInitial;
+    }
+
     // --- AI PROCESSING ---
     function setupAIToggle() {
         const toggle = document.getElementById('ai-enabled');
@@ -966,7 +1273,12 @@
                     const filteredTags = filterGenericTags(data.tags);
                     formData.tags = filteredTags.join('\n');
                 }
-                if (data.facilities) formData.facilities = data.facilities.join('\n');
+                if (data.facilities) {
+                    formData.facilities = normalizeFacilitiesValue(data.facilities);
+                    if (typeof window.refreshFacilityPicker === 'function') {
+                        window.refreshFacilityPicker();
+                    }
+                }
                 if (data.staff) formData.staff = data.staff.join('\n');
                 if (data.survivors) formData.survivors = data.survivors.join('\n');
                 if (data.summary) formData.summary = data.summary;
@@ -1146,6 +1458,7 @@
         setupClearButton();
         setupTemplates();
         setupDynamicFields();
+        setupFacilityPicker();
         setupAIToggle();
         setupDatabaseSubmission();
         restoreFormState();

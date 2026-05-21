@@ -895,7 +895,10 @@
             const mentions = Array.isArray(n.facilities_mentioned) ? n.facilities_mentioned : [];
             for (const m of mentions) {
                 if (!m) continue;
-                const mKey = normalizeFolderText(m);
+                // facilities_mentioned entries may be strings (legacy) or objects
+                // shaped {name, facility_id}. Pull the name out either way.
+                const name = typeof m === 'string' ? m : (m && m.name ? m.name : '');
+                const mKey = normalizeFolderText(name);
                 if (!mKey) continue;
                 if (mKey === targetKey) return true;
                 // Loose prefix match for variant phrasing.

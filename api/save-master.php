@@ -374,6 +374,27 @@ function parseCityState($location) {
 }
 
 /**
+ * Resolve a facilities_master.id by its unique_name. Returns null if not found.
+ * Uses a per-request static cache so repeated lookups during a single save
+ * don't re-query the database.
+ */
+function kop_resolve_facility_id_by_name($pdo, $name) {
+    static $cache = [];
+    $key = is_string($name) ? strtolower(trim($name)) : '';
+    if ($key === '') return null;
+    if (array_key_exists($key, $cache)) return $cache[$key];
+    try {
+        $stmt = $pdo->prepare("SELECT id FROM facilities_master WHERE LOWER(unique_name) = ? LIMIT 1");
+        $stmt->execute([$key]);
+        $id = $stmt->fetchColumn();
+        $cache[$key] = ($id !== false && $id !== null) ? (int)$id : null;
+    } catch (PDOException $e) {
+        $cache[$key] = null;
+    }
+    return $cache[$key];
+}
+
+/**
  * Normalize a state value - convert abbreviation to full name if needed
  */
 function normalizeStateName($state) {
@@ -638,12 +659,28 @@ function extractOperatorState($operator) {
  */
 function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $sourceCategory) {
     global $US_STATE_NAMES, $COUNTRY_NAMES;
-    
+
     $updatedLocations = [];
     $locationBuckets = [];
-    
+
     // Get the source project's operator info to attach to cloned facilities
     $sourceOperator = isset($data['operator']) ? $data['operator'] : null;
+
+    // Resolve the source project's facilities_master.id so nested clones can
+    // be back-linked to their parent operator row.
+    $sourceProjectId = kop_resolve_facility_id_by_name($pdo, $sourceProjectName);
+
+    // Local helper: extract a facility's display name (preferring identification.name)
+    $facilityName = function($facility) {
+        if (!is_array($facility)) return '';
+        if (!empty($facility['identification']) && is_array($facility['identification'])) {
+            $n = trim((string)($facility['identification']['name'] ?? ''));
+            if ($n !== '') return $n;
+            $n = trim((string)($facility['identification']['currentName'] ?? ''));
+            if ($n !== '') return $n;
+        }
+        return trim((string)($facility['name'] ?? ''));
+    };
     
     // Initialize buckets for facilities and referrers by location (state or country)
     $initBucket = function($location) use (&$locationBuckets) {
@@ -665,6 +702,15 @@ function updateLocationProjectsFromSave($pdo, $sourceProjectName, $data, $source
                 $clone = $facility;
                 $clone['sourceProject'] = $sourceProjectName;
                 $clone['sourceCategory'] = $sourceCategory;
+                if ($sourceProjectId !== null) {
+                    $clone['sourceProjectId'] = $sourceProjectId;
+                }
+                // Stamp the matching facilities_master.id when this nested facility
+                // also exists as a top-level row, so the two records share an ID.
+                $resolvedFacilityId = kop_resolve_facility_id_by_name($pdo, $facilityName($facility));
+                if ($resolvedFacilityId !== null) {
+                    $clone['facility_id'] = $resolvedFacilityId;
+                }
                 // Include source operator info so facility knows its parent company
                 if ($sourceOperator) {
                     $clone['sourceOperator'] = $sourceOperator;

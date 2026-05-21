@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once get_stylesheet_directory() . '/api/news-mentions.php';
+
 /**
  * Register REST API routes for facilities data.
  */
@@ -2854,7 +2856,7 @@ function kop_state_collect_news($state_name) {
 
     return array_map(static function ($row) {
         $row['tags'] = json_decode($row['tags'] ?? '[]', true) ?: array();
-        $row['facilities_mentioned'] = json_decode($row['facilities_mentioned'] ?? '[]', true) ?: array();
+        $row['facilities_mentioned'] = kop_normalize_facility_mentions($row['facilities_mentioned'] ?? '[]');
         $row['content_warnings'] = json_decode($row['content_warnings'] ?? '[]', true) ?: array();
         $row['display_title'] = !empty($row['alternate_title']) ? $row['alternate_title'] : $row['article_title'];
         return $row;

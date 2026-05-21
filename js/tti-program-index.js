@@ -1405,6 +1405,38 @@ function displayFacilities(facilitiesData, containerId) {
                 )
                 : '';
 
+            // News section: server attaches linked_news[] to each nested facility
+            // entry whose name matches a facilities_master row (see
+            // kop_attach_linked_news_to_projects in inc/database.php).
+            const linkedNews = Array.isArray(facility.linked_news) ? facility.linked_news : [];
+            let newsSectionHtml = '';
+            if (linkedNews.length > 0) {
+                const formatDate = value => {
+                    if (!value) return '';
+                    const ts = Date.parse(value);
+                    if (isNaN(ts)) return value;
+                    return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                };
+                const itemsHtml = linkedNews.map(n => {
+                    const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
+                    const titleHtml = n.article_url
+                        ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                        : `<span class="facility-news-title">${title}</span>`;
+                    const metaParts = [];
+                    if (n.publication_name) metaParts.push(escapeHtml(n.publication_name));
+                    if (n.publication_date) metaParts.push(escapeHtml(formatDate(n.publication_date)));
+                    const metaHtml = metaParts.length
+                        ? `<div class="facility-news-meta">${metaParts.join(' &middot; ')}</div>`
+                        : '';
+                    return `<li class="facility-news-item">${titleHtml}${metaHtml}</li>`;
+                }).join('');
+                newsSectionHtml = renderDetailSection(
+                    `News (${linkedNews.length})`,
+                    `<ul class="facility-news-list">${itemsHtml}</ul>`,
+                    'facility-news-section'
+                );
+            }
+
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
 
@@ -1432,6 +1464,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <div class="facility-extra-content">
                                 ${factsHtml}
                                 ${notesHtml}
+                                ${newsSectionHtml}
                                 ${resourcesSectionHtml}
                                 ${documentsSectionHtml}
                                 ${additionalDetailsHtml}
