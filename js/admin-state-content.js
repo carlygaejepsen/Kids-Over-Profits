@@ -205,10 +205,35 @@
         const pasteJsonCancel = document.getElementById('pasteJsonCancelBtn');
         const pasteJsonStatus = document.getElementById('pasteJsonStatus');
 
+        const EMPTY_LAWSUIT_JSON = JSON.stringify({
+            case_name: "",
+            case_number: "",
+            court: "",
+            jurisdiction: "",
+            filing_date: "",
+            status: "",
+            outcome: "",
+            settlement_amount: "",
+            summary: "",
+            plaintiffs: [],
+            defendants: [],
+            facilities_mentioned: [],
+            staff_mentioned: [],
+            organizations_mentioned: [],
+            claims: [],
+            source_urls: [],
+            document_urls: [],
+            tags: []
+        }, null, 2);
+
         if (pasteJsonBtn && pasteJsonPanel) {
             pasteJsonBtn.addEventListener('click', () => {
                 pasteJsonPanel.hidden = !pasteJsonPanel.hidden;
-                if (!pasteJsonPanel.hidden) pasteJsonInput.focus();
+                if (!pasteJsonPanel.hidden) {
+                    if (!pasteJsonInput.value.trim()) pasteJsonInput.value = EMPTY_LAWSUIT_JSON;
+                    pasteJsonInput.focus();
+                    pasteJsonInput.select();
+                }
             });
 
             pasteJsonCancel.addEventListener('click', () => {
