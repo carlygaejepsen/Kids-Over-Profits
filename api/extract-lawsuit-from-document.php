@@ -91,14 +91,9 @@ if ($groq_key === '') {
     exit;
 }
 
-// --- save the file to the media library ------------------------------------
-// We commit the upload BEFORE extracting so the source document is preserved
-// even if extraction fails (the admin can still fill the form by hand with
-// the document accessible in the FileBird folder).
+// --- move file to uploads dir (not yet registered as an attachment) ---------
 $upload = wp_handle_upload($_FILES['complaint'], [
     'test_form' => false,
-    // Lawsuits accept PDFs and the common Office formats; the validator
-    // returns an error if the type is outside this whitelist.
     'mimes' => [
         'pdf'  => 'application/pdf',
         'doc'  => 'application/msword',
@@ -116,71 +111,36 @@ $file_path = $upload['file'];
 $file_url  = $upload['url'];
 $file_type = $upload['type'];
 
-$attachment_id = wp_insert_attachment([
-    'post_mime_type' => $file_type,
-    'post_title'     => preg_replace('/\.[^.]+$/', '', basename($file_path)),
-    'post_content'   => '',
-    'post_status'    => 'inherit',
-], $file_path);
-
-if (is_wp_error($attachment_id) || !$attachment_id) {
-    echo json_encode(['success' => false, 'error' => 'Failed to register attachment in media library.']);
-    exit;
-}
-
-wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $file_path));
-
-// Move into FileBird folder if requested. FileBird Pro exposes a REST endpoint
-// for this; if it fails (no API key, plugin missing, version mismatch) we
-// just log and continue — the file is still in the media library.
-if ($folder_id > 0) {
-    $fb_key = kop_resolve_secret('FILEBIRD_API_KEY');
-    if ($fb_key !== '') {
-        $resp = wp_remote_post(home_url('/wp-json/filebird/public/v1/folder/set-folder'), [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'X-Api-Key'    => $fb_key,
-            ],
-            'body'    => json_encode(['folder_id' => $folder_id, 'ids' => [$attachment_id]]),
-            'timeout' => 15,
-        ]);
-        if (is_wp_error($resp)) {
-            error_log('FileBird set-folder failed: ' . $resp->get_error_message());
-        }
-    }
-}
-
 // --- extract text from document ---------------------------------------------
-// Groq doesn't accept binary files, so we extract text server-side first.
-// Legal complaints are always digitally-created PDFs so text extraction works
-// reliably without OCR.
 $doc_text = kop_extract_document_text($file_path, $file_type);
 if (trim($doc_text) === '') {
-    echo json_encode([
-        'success' => false,
-        'error'   => 'Could not extract text from the uploaded document. Make sure it is a digital (not scanned) PDF.',
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
+    @unlink($file_path);
+    echo json_encode(['success' => false, 'error' => 'Could not extract text from the uploaded document. Make sure it is a digital (not scanned) PDF.']);
     exit;
 }
 
-// Documents under ~20K chars fit easily in a single 70B call (best quality).
-// Longer documents are split into 60K-char chunks and processed with the 8B
-// instant model (much higher free-tier TPM), then merged.
+// Sanitize to valid UTF-8 — raw PDF extraction picks up binary garbage from
+// font tables that causes json_encode() to silently return false, sending an
+// empty body to Groq ("unexpected end of JSON input").
+$doc_text = str_replace("\0", '', $doc_text);
+$doc_text = iconv('UTF-8', 'UTF-8//IGNORE', $doc_text) ?: $doc_text;
+$doc_text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $doc_text);
+
+// --- call Groq ---------------------------------------------------------------
 const KOP_GROQ_SINGLE_LIMIT = 20000;
 const KOP_GROQ_CHUNK_SIZE   = 60000;
 const KOP_GROQ_OVERLAP      = 500;
-const KOP_GROQ_MAX_CHUNKS   = 6;     // safety cap: 6 × 60K = 360K chars
+const KOP_GROQ_MAX_CHUNKS   = 6;
 
 if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     $result = kop_groq_call($groq_key, 'llama-3.3-70b-versatile', $doc_text);
     if (!$result['ok']) {
-        echo json_encode(['success' => false, 'error' => $result['error'], 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
+        @unlink($file_path);
+        echo json_encode(['success' => false, 'error' => $result['error']]);
         exit;
     }
     $raw_extracted = $result['data'];
 } else {
-    // Split into overlapping chunks
     $chunks = [];
     $offset = 0;
     $len    = strlen($doc_text);
@@ -192,7 +152,7 @@ if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     $chunk_results = [];
     $chunk_errors  = [];
     foreach ($chunks as $i => $chunk) {
-        if ($i > 0) sleep(2);  // brief pause — llama-3.1-8b-instant has high TPM but respect the API
+        if ($i > 0) sleep(2);
         $result = kop_groq_call($groq_key, 'llama-3.1-8b-instant', $chunk, $i + 1, count($chunks));
         if ($result['ok']) {
             $chunk_results[] = $result['data'];
@@ -203,10 +163,37 @@ if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     }
 
     if (empty($chunk_results)) {
-        echo json_encode(['success' => false, 'error' => 'All Groq chunk requests failed. First error: ' . ($chunk_errors[0] ?? 'unknown'), 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
+        @unlink($file_path);
+        echo json_encode(['success' => false, 'error' => 'All Groq chunk requests failed. First error: ' . ($chunk_errors[0] ?? 'unknown')]);
         exit;
     }
     $raw_extracted = kop_merge_chunk_extractions($chunk_results);
+}
+
+// --- extraction succeeded — now register the file in the media library ------
+$attachment_id = wp_insert_attachment([
+    'post_mime_type' => $file_type,
+    'post_title'     => preg_replace('/\.[^.]+$/', '', basename($file_path)),
+    'post_content'   => '',
+    'post_status'    => 'inherit',
+], $file_path);
+
+if (!is_wp_error($attachment_id) && $attachment_id) {
+    wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $file_path));
+
+    if ($folder_id > 0) {
+        $fb_key = kop_resolve_secret('FILEBIRD_API_KEY');
+        if ($fb_key !== '') {
+            $resp = wp_remote_post(home_url('/wp-json/filebird/public/v1/folder/set-folder'), [
+                'headers' => ['Content-Type' => 'application/json', 'X-Api-Key' => $fb_key],
+                'body'    => json_encode(['folder_id' => $folder_id, 'ids' => [$attachment_id]]),
+                'timeout' => 15,
+            ]);
+            if (is_wp_error($resp)) {
+                error_log('FileBird set-folder failed: ' . $resp->get_error_message());
+            }
+        }
+    }
 }
 
 // --- normalize & merge attachment URL into document_urls -------------------
@@ -249,6 +236,10 @@ function kop_groq_call(string $key, string $model, string $text, int $chunk_num 
         'temperature' => 0.1,
         'max_tokens'  => 4096,
     ]);
+
+    if ($body === false) {
+        return ['ok' => false, 'data' => null, 'error' => 'json_encode failed: ' . json_last_error_msg()];
+    }
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
