@@ -197,6 +197,65 @@
             window.scrollTo({ top: form.offsetTop - 20, behavior: 'smooth' });
         };
 
+        // ----- Paste raw JSON from external AI --------------------------------
+        const pasteJsonBtn    = document.getElementById('pasteJsonBtn');
+        const pasteJsonPanel  = document.getElementById('pasteJsonPanel');
+        const pasteJsonInput  = document.getElementById('pasteJsonInput');
+        const pasteJsonApply  = document.getElementById('pasteJsonApplyBtn');
+        const pasteJsonCancel = document.getElementById('pasteJsonCancelBtn');
+        const pasteJsonStatus = document.getElementById('pasteJsonStatus');
+
+        if (pasteJsonBtn && pasteJsonPanel) {
+            pasteJsonBtn.addEventListener('click', () => {
+                pasteJsonPanel.hidden = !pasteJsonPanel.hidden;
+                if (!pasteJsonPanel.hidden) pasteJsonInput.focus();
+            });
+
+            pasteJsonCancel.addEventListener('click', () => {
+                pasteJsonPanel.hidden = true;
+                pasteJsonInput.value = '';
+                pasteJsonStatus.textContent = '';
+            });
+
+            pasteJsonApply.addEventListener('click', () => {
+                pasteJsonStatus.textContent = '';
+                pasteJsonStatus.style.color = '';
+                let raw = pasteJsonInput.value.trim();
+
+                // Strip markdown fences in case the AI wrapped it in ```json … ```
+                raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+
+                let parsed;
+                try {
+                    parsed = JSON.parse(raw);
+                } catch (e) {
+                    pasteJsonStatus.textContent = 'Invalid JSON: ' + e.message;
+                    pasteJsonStatus.style.color = '#dc2626';
+                    return;
+                }
+
+                // Coerce array fields that the AI might have returned as strings
+                const arrayFields = ['plaintiffs','defendants','facilities_mentioned',
+                    'staff_mentioned','organizations_mentioned','claims',
+                    'source_urls','document_urls','tags'];
+                arrayFields.forEach(k => {
+                    if (parsed[k] && typeof parsed[k] === 'string') {
+                        parsed[k] = parsed[k].split(/\n|,\s*/).map(s => s.trim()).filter(Boolean);
+                    }
+                });
+
+                // Merge document_urls additively
+                const existingDocs = linesToArray(getFieldValue('lawsuit-docs'));
+                const newDocs = Array.isArray(parsed.document_urls) ? parsed.document_urls : [];
+                parsed.document_urls = Array.from(new Set([...existingDocs, ...newDocs]));
+
+                populateForm(parsed);
+                pasteJsonStatus.textContent = 'Applied. Review fields and save.';
+                pasteJsonPanel.hidden = true;
+                pasteJsonInput.value = '';
+            });
+        }
+
         if (fetchLawsuitBtn) {
             fetchLawsuitBtn.addEventListener('click', async () => {
                 const caseNumber = getFieldValue('lawsuit-case-number');
@@ -257,55 +316,84 @@
                 const file = complaintFileInput.files && complaintFileInput.files[0];
                 if (!file) return;
 
-                // Pull the currently-selected FileBird folder so the API can
-                // file the uploaded complaint into the right place.
                 const folderId = getFieldValue('lawsuit-filebird-folder');
 
                 extractLawsuitBtn.disabled = true;
                 const originalHTML = extractLawsuitBtn.innerHTML;
-                extractLawsuitBtn.textContent = '📄 Uploading & extracting...';
-                status.textContent = `Uploading "${file.name}" and extracting fields… (long documents may take several minutes)`;
                 status.style.color = '';
 
-                try {
-                    const formData = new FormData();
-                    formData.append('complaint', file);
-                    if (folderId) formData.append('filebird_folder_id', folderId);
+                const postJson = body => fetch(config.extractApiUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                    signal: AbortSignal.timeout(90 * 1000)
+                });
 
-                    const res = await fetch(config.extractApiUrl, {
+                try {
+                    // Step 1: upload file and get job_id + total_chunks
+                    extractLawsuitBtn.textContent = '📄 Uploading…';
+                    status.textContent = `Uploading "${file.name}"…`;
+
+                    const uploadForm = new FormData();
+                    uploadForm.append('action', 'upload');
+                    uploadForm.append('complaint', file);
+                    if (folderId) uploadForm.append('filebird_folder_id', folderId);
+
+                    const uploadRes = await fetch(config.extractApiUrl, {
                         method: 'POST',
                         credentials: 'same-origin',
-                        body: formData,
-                        signal: AbortSignal.timeout(15 * 60 * 1000)  // 15 min — chunked extraction is slow on free tier
+                        body: uploadForm,
+                        signal: AbortSignal.timeout(90 * 1000)
                     });
-                    const data = await res.json();
-
-                    if (data.success) {
-                        // Merge document_urls with whatever the user already had
-                        // in that textarea — uploads are additive to existing
-                        // sources, never destructive.
-                        const existingDocs = linesToArray(getFieldValue('lawsuit-docs'));
-                        const extractedDocs = Array.isArray(data.data.document_urls)
-                            ? data.data.document_urls
-                            : [];
-                        data.data.document_urls = Array.from(new Set([...existingDocs, ...extractedDocs]));
-
-                        populateForm(data.data);
-                        status.textContent = 'Extracted. Review the populated fields and save.';
-                        status.style.color = '';
-                    } else {
-                        // Extraction failed but the attachment may still have
-                        // been saved — surface the URL so the admin can grab it.
-                        let msg = 'Extraction failed: ' + (data.error || 'unknown error');
-                        if (data.attachment && data.attachment.url) {
-                            msg += ` (file saved: ${data.attachment.url})`;
-                        }
-                        status.textContent = msg;
-                        status.style.color = '#dc2626';
+                    const uploadData = await uploadRes.json();
+                    if (!uploadData.success) {
+                        throw new Error(uploadData.error || 'Upload failed');
                     }
+
+                    const { job_id, total_chunks } = uploadData;
+
+                    // Step 2: process each chunk, waiting 65s between requests to
+                    // stay within Groq's 6,000 token-per-minute free-tier limit.
+                    for (let i = 0; i < total_chunks; i++) {
+                        if (i > 0) {
+                            // Wait 65s so we don't exceed the per-minute token quota.
+                            extractLawsuitBtn.textContent = `📄 Waiting… (${i}/${total_chunks})`;
+                            status.textContent = `Chunk ${i} of ${total_chunks} done. Waiting 65s before next chunk…`;
+                            await new Promise(resolve => setTimeout(resolve, 65000));
+                        }
+
+                        extractLawsuitBtn.textContent = `📄 Chunk ${i + 1}/${total_chunks}…`;
+                        status.textContent = `Processing chunk ${i + 1} of ${total_chunks}…`;
+
+                        const chunkData = await postJson({ action: 'chunk', job_id, chunk_index: i });
+                        const chunk = await chunkData.json();
+                        if (!chunk.success) {
+                            throw new Error(chunk.error || `Chunk ${i + 1} failed`);
+                        }
+                    }
+
+                    // Step 3: merge all chunk results and register the attachment
+                    extractLawsuitBtn.textContent = '📄 Finalizing…';
+                    status.textContent = 'Merging extraction results…';
+
+                    const finalRes = await postJson({ action: 'finalize', job_id });
+                    const finalData = await finalRes.json();
+                    if (!finalData.success) {
+                        throw new Error(finalData.error || 'Finalize failed');
+                    }
+
+                    // Merge document_urls additively — never overwrite what the admin already has.
+                    const existingDocs = linesToArray(getFieldValue('lawsuit-docs'));
+                    const extractedDocs = Array.isArray(finalData.data.document_urls)
+                        ? finalData.data.document_urls : [];
+                    finalData.data.document_urls = Array.from(new Set([...existingDocs, ...extractedDocs]));
+
+                    populateForm(finalData.data);
+                    status.textContent = 'Extracted. Review the populated fields and save.';
                 } catch (err) {
                     console.error('Extract error:', err);
-                    status.textContent = 'Error connecting to extract API.';
+                    status.textContent = 'Extraction failed: ' + err.message;
                     status.style.color = '#dc2626';
                 } finally {
                     extractLawsuitBtn.disabled = false;
