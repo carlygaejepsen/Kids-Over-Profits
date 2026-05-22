@@ -4,7 +4,7 @@
  *
  * Accepts a complaint PDF (or other supported document), saves it to the
  * WordPress media library, optionally moves it into a FileBird folder, then
- * sends it to Gemini 2.0 for structured extraction. The returned JSON matches
+ * sends it to Groq for structured extraction. The returned JSON matches
  * the lawsuit form schema so the admin UI can populate the form directly.
  *
  * POST multipart/form-data
@@ -15,6 +15,8 @@
  */
 
 header('Content-Type: application/json');
+
+set_time_limit(0);  // chunked extraction can take well over 30s on shared hosting
 
 // --- bootstrap ---------------------------------------------------------------
 require_once __DIR__ . '/config.php';
@@ -188,16 +190,20 @@ if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     }
 
     $chunk_results = [];
+    $chunk_errors  = [];
     foreach ($chunks as $i => $chunk) {
         if ($i > 0) sleep(2);  // brief pause — llama-3.1-8b-instant has high TPM but respect the API
         $result = kop_groq_call($groq_key, 'llama-3.1-8b-instant', $chunk, $i + 1, count($chunks));
         if ($result['ok']) {
             $chunk_results[] = $result['data'];
+        } else {
+            $chunk_errors[] = 'Chunk ' . ($i + 1) . ': ' . $result['error'];
+            error_log('Groq chunk ' . ($i + 1) . ' failed: ' . $result['error']);
         }
     }
 
     if (empty($chunk_results)) {
-        echo json_encode(['success' => false, 'error' => 'All Groq chunk requests failed.', 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
+        echo json_encode(['success' => false, 'error' => 'All Groq chunk requests failed. First error: ' . ($chunk_errors[0] ?? 'unknown'), 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
         exit;
     }
     $raw_extracted = kop_merge_chunk_extractions($chunk_results);
