@@ -127,10 +127,11 @@ $doc_text = iconv('UTF-8', 'UTF-8//IGNORE', $doc_text) ?: $doc_text;
 $doc_text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $doc_text);
 
 // --- call Groq ---------------------------------------------------------------
-const KOP_GROQ_SINGLE_LIMIT = 20000;
-const KOP_GROQ_CHUNK_SIZE   = 60000;
-const KOP_GROQ_OVERLAP      = 500;
-const KOP_GROQ_MAX_CHUNKS   = 6;
+const KOP_GROQ_SINGLE_LIMIT = 12000;  // ~3K tokens, fits in 6K TPM alongside prompt+output
+const KOP_GROQ_CHUNK_SIZE   = 12000;
+const KOP_GROQ_OVERLAP      = 300;
+const KOP_GROQ_MAX_CHUNKS   = 10;    // up to ~120K chars total; longer docs get truncated
+const KOP_GROQ_CHUNK_SLEEP  = 65;    // seconds between chunks — stays within 6K TPM/min
 
 if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     $result = kop_groq_call($groq_key, 'llama-3.3-70b-versatile', $doc_text);
@@ -152,7 +153,7 @@ if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
     $chunk_results = [];
     $chunk_errors  = [];
     foreach ($chunks as $i => $chunk) {
-        if ($i > 0) sleep(2);
+        if ($i > 0) sleep(KOP_GROQ_CHUNK_SLEEP);
         $result = kop_groq_call($groq_key, 'llama-3.1-8b-instant', $chunk, $i + 1, count($chunks));
         if ($result['ok']) {
             $chunk_results[] = $result['data'];

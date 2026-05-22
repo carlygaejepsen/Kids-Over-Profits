@@ -264,7 +264,7 @@
                 extractLawsuitBtn.disabled = true;
                 const originalHTML = extractLawsuitBtn.innerHTML;
                 extractLawsuitBtn.textContent = '📄 Uploading & extracting...';
-                status.textContent = `Uploading "${file.name}" and extracting fields…`;
+                status.textContent = `Uploading "${file.name}" and extracting fields… (long documents may take several minutes)`;
                 status.style.color = '';
 
                 try {
@@ -275,7 +275,8 @@
                     const res = await fetch(config.extractApiUrl, {
                         method: 'POST',
                         credentials: 'same-origin',
-                        body: formData
+                        body: formData,
+                        signal: AbortSignal.timeout(15 * 60 * 1000)  // 15 min — chunked extraction is slow on free tier
                     });
                     const data = await res.json();
 
