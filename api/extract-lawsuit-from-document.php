@@ -79,12 +79,12 @@ $folder_id = isset($_POST['filebird_folder_id']) && $_POST['filebird_folder_id']
     ? (int)$_POST['filebird_folder_id']
     : 0;
 
-// --- gemini config check (do early so we don't save a file we can't use) ----
-$gemini_key = kop_resolve_secret('GEMINI_API_KEY');
-if ($gemini_key === '') {
+// --- groq config check (do early so we don't save a file we can't use) ------
+$groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
+if ($groq_key === '') {
     echo json_encode([
         'success' => false,
-        'error'   => 'Gemini API key is not configured. Add GEMINI_API_KEY to your .env file. Get a free key at https://aistudio.google.com/app/apikey',
+        'error'   => 'Groq API key is not configured. Add GROQ_API_KEY to your .env file. Free key at https://console.groq.com/keys',
     ]);
     exit;
 }
@@ -148,138 +148,67 @@ if ($folder_id > 0) {
     }
 }
 
-// --- extract via Gemini -----------------------------------------------------
-// Gemini accepts PDF/DOCX/TXT inline as base64. For files >20MB the docs
-// recommend the Files API instead, but most complaints are well under that.
-$max_inline_bytes = 20 * 1024 * 1024;
-$file_bytes = @file_get_contents($file_path);
-$file_size  = strlen($file_bytes ?: '');
-
-if ($file_bytes === false || $file_size === 0) {
+// --- extract text from document ---------------------------------------------
+// Groq doesn't accept binary files, so we extract text server-side first.
+// Legal complaints are always digitally-created PDFs so text extraction works
+// reliably without OCR.
+$doc_text = kop_extract_document_text($file_path, $file_type);
+if (trim($doc_text) === '') {
     echo json_encode([
         'success' => false,
-        'error'   => 'Could not read uploaded file for extraction.',
+        'error'   => 'Could not extract text from the uploaded document. Make sure it is a digital (not scanned) PDF.',
         'attachment' => ['id' => $attachment_id, 'url' => $file_url],
     ]);
     exit;
 }
 
-if ($file_size > $max_inline_bytes) {
-    echo json_encode([
-        'success' => false,
-        'error'   => 'File is larger than 20MB. The document was saved to the media library, but extraction was skipped — please fill the form manually.',
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
-}
+// Documents under ~20K chars fit easily in a single 70B call (best quality).
+// Longer documents are split into 60K-char chunks and processed with the 8B
+// instant model (much higher free-tier TPM), then merged.
+const KOP_GROQ_SINGLE_LIMIT = 20000;
+const KOP_GROQ_CHUNK_SIZE   = 60000;
+const KOP_GROQ_OVERLAP      = 500;
+const KOP_GROQ_MAX_CHUNKS   = 6;     // safety cap: 6 × 60K = 360K chars
 
-$prompt = kop_lawsuit_extraction_prompt();
+if (strlen($doc_text) <= KOP_GROQ_SINGLE_LIMIT) {
+    $result = kop_groq_call($groq_key, 'llama-3.3-70b-versatile', $doc_text);
+    if (!$result['ok']) {
+        echo json_encode(['success' => false, 'error' => $result['error'], 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
+        exit;
+    }
+    $raw_extracted = $result['data'];
+} else {
+    // Split into overlapping chunks
+    $chunks = [];
+    $offset = 0;
+    $len    = strlen($doc_text);
+    while ($offset < $len && count($chunks) < KOP_GROQ_MAX_CHUNKS) {
+        $chunks[] = substr($doc_text, $offset, KOP_GROQ_CHUNK_SIZE);
+        $offset  += KOP_GROQ_CHUNK_SIZE - KOP_GROQ_OVERLAP;
+    }
 
-$request_body = [
-    'contents' => [[
-        'parts' => [
-            ['inlineData' => [
-                'mimeType' => $file_type,
-                'data'     => base64_encode($file_bytes),
-            ]],
-            ['text' => $prompt],
-        ],
-    ]],
-    'generationConfig' => [
-        'temperature'        => 0.1,
-        'maxOutputTokens'    => 4096,
-        'responseMimeType'   => 'application/json',
-    ],
-    // Loosen the default safety thresholds — complaints describe abuse, which
-    // routinely trips BLOCK_MEDIUM_AND_ABOVE. BLOCK_ONLY_HIGH is the safest
-    // we can set without disabling the filter entirely.
-    'safetySettings' => [
-        ['category' => 'HARM_CATEGORY_HARASSMENT',        'threshold' => 'BLOCK_ONLY_HIGH'],
-        ['category' => 'HARM_CATEGORY_HATE_SPEECH',       'threshold' => 'BLOCK_ONLY_HIGH'],
-        ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_ONLY_HIGH'],
-        ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_ONLY_HIGH'],
-    ],
-];
+    $chunk_results = [];
+    foreach ($chunks as $i => $chunk) {
+        if ($i > 0) sleep(2);  // brief pause — llama-3.1-8b-instant has high TPM but respect the API
+        $result = kop_groq_call($groq_key, 'llama-3.1-8b-instant', $chunk, $i + 1, count($chunks));
+        if ($result['ok']) {
+            $chunk_results[] = $result['data'];
+        }
+    }
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={$gemini_key}");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request_body));
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curl_err  = curl_error($ch);
-curl_close($ch);
-
-if ($curl_err) {
-    echo json_encode([
-        'success' => false,
-        'error'   => "Network error talking to Gemini: {$curl_err}",
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
-}
-
-$decoded = json_decode($response, true);
-
-if ($http_code !== 200) {
-    $api_err = $decoded['error']['message'] ?? "Gemini returned HTTP {$http_code}";
-    echo json_encode([
-        'success' => false,
-        'error'   => "Gemini API error: {$api_err}",
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
-}
-
-// Detect content-filter blocks before trying to read .text.
-if (!empty($decoded['promptFeedback']['blockReason'])) {
-    echo json_encode([
-        'success' => false,
-        'error'   => "Gemini blocked the document for safety reasons ({$decoded['promptFeedback']['blockReason']}). The file was saved — please fill the form manually.",
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
-}
-
-$generated_text = $decoded['candidates'][0]['content']['parts'][0]['text'] ?? '';
-if ($generated_text === '') {
-    echo json_encode([
-        'success' => false,
-        'error'   => 'Gemini returned an empty response.',
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
-}
-
-// Strip markdown fences if the model wrapped the JSON anyway (responseMimeType
-// usually prevents this, but Gemini occasionally regresses).
-$generated_text = preg_replace('/^```json\s*/', '', trim($generated_text));
-$generated_text = preg_replace('/```\s*$/', '', $generated_text);
-
-$extracted = json_decode($generated_text, true);
-if (!is_array($extracted)) {
-    echo json_encode([
-        'success' => false,
-        'error'   => 'Could not parse Gemini response as JSON.',
-        'raw'     => substr($generated_text, 0, 500),
-        'attachment' => ['id' => $attachment_id, 'url' => $file_url],
-    ]);
-    exit;
+    if (empty($chunk_results)) {
+        echo json_encode(['success' => false, 'error' => 'All Groq chunk requests failed.', 'attachment' => ['id' => $attachment_id, 'url' => $file_url]]);
+        exit;
+    }
+    $raw_extracted = kop_merge_chunk_extractions($chunk_results);
 }
 
 // --- normalize & merge attachment URL into document_urls -------------------
-$extracted = kop_normalize_lawsuit_extraction($extracted);
+$extracted = kop_normalize_lawsuit_extraction($raw_extracted);
 $extracted['document_urls'] = array_values(array_unique(array_merge(
     $extracted['document_urls'] ?? [],
     [$file_url]
 )));
-// We don't have confidence the LLM correctly identified federal vs state, so
-// leave jurisdiction blank for the admin to confirm if Gemini didn't fill it.
 $extracted['publication_status'] = 'draft';
 
 echo json_encode([
@@ -288,6 +217,209 @@ echo json_encode([
     'attachment' => ['id' => $attachment_id, 'url' => $file_url],
 ]);
 exit;
+
+
+/**
+ * Make one Groq chat-completions request and return the parsed extraction.
+ *
+ * @param string $key       Groq API key
+ * @param string $model     e.g. 'llama-3.3-70b-versatile' or 'llama-3.1-8b-instant'
+ * @param string $text      Document text to extract from
+ * @param int    $chunk_num 1-based chunk index (used in the prompt context hint)
+ * @param int    $total     Total number of chunks
+ * @return array ['ok' => bool, 'data' => array|null, 'error' => string]
+ */
+function kop_groq_call(string $key, string $model, string $text, int $chunk_num = 1, int $total = 1): array {
+    $prompt  = kop_lawsuit_extraction_prompt();
+    $context = ($total > 1)
+        ? "NOTE: This is chunk {$chunk_num} of {$total} of a longer document. Extract whatever fields you can find in this portion.\n\n"
+        : '';
+
+    $body = json_encode([
+        'model'    => $model,
+        'messages' => [
+            ['role' => 'user', 'content' => "{$context}DOCUMENT TEXT:\n{$text}\n\n{$prompt}"],
+        ],
+        'temperature' => 0.1,
+        'max_tokens'  => 4096,
+    ]);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $key,
+    ]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+
+    $response  = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_err  = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_err) {
+        return ['ok' => false, 'data' => null, 'error' => "Network error: {$curl_err}"];
+    }
+
+    $decoded = json_decode($response, true);
+
+    if ($http_code !== 200) {
+        $msg = $decoded['error']['message'] ?? "HTTP {$http_code}";
+        if ($http_code === 429) $msg = 'Groq rate limit exceeded — please wait a moment and try again.';
+        if ($http_code === 401) $msg = 'Groq API key is invalid. Check GROQ_API_KEY in your .env file.';
+        return ['ok' => false, 'data' => null, 'error' => "Groq API error: {$msg}"];
+    }
+
+    $raw_text = $decoded['choices'][0]['message']['content'] ?? '';
+    if ($raw_text === '') {
+        return ['ok' => false, 'data' => null, 'error' => 'Groq returned an empty response.'];
+    }
+
+    // Strip any markdown fences Llama may have added
+    $raw_text = preg_replace('/^```json\s*/i', '', trim($raw_text));
+    $raw_text = preg_replace('/```\s*$/', '', $raw_text);
+
+    $parsed = json_decode($raw_text, true);
+    if (!is_array($parsed)) {
+        return ['ok' => false, 'data' => null, 'error' => 'Could not parse Groq response as JSON. Preview: ' . substr($raw_text, 0, 200)];
+    }
+
+    return ['ok' => true, 'data' => $parsed, 'error' => ''];
+}
+
+/**
+ * Merge per-chunk extraction results into one record.
+ *
+ * For scalar fields the first non-empty value wins — case metadata is usually
+ * on the first pages. For array fields we union all values and deduplicate.
+ */
+function kop_merge_chunk_extractions(array $chunks): array {
+    $string_fields = ['case_name', 'case_number', 'court', 'jurisdiction', 'filing_date', 'outcome', 'settlement_amount', 'summary'];
+    $array_fields  = ['plaintiffs', 'defendants', 'facilities_mentioned', 'staff_mentioned', 'organizations_mentioned', 'claims', 'tags', 'source_urls', 'document_urls'];
+
+    $merged = [];
+
+    foreach ($string_fields as $f) {
+        foreach ($chunks as $chunk) {
+            $v = trim((string)($chunk[$f] ?? ''));
+            if ($v !== '') { $merged[$f] = $v; break; }
+        }
+    }
+
+    foreach ($array_fields as $f) {
+        $all = [];
+        foreach ($chunks as $chunk) {
+            $v = $chunk[$f] ?? [];
+            if (is_array($v)) {
+                foreach ($v as $item) {
+                    if (is_string($item) && trim($item) !== '') $all[] = trim($item);
+                }
+            }
+        }
+        $merged[$f] = array_values(array_unique($all));
+    }
+
+    return $merged;
+}
+
+
+/**
+ * Dispatch to the right text extractor based on MIME type.
+ */
+function kop_extract_document_text(string $path, string $mime_type): string {
+    if ($mime_type === 'text/plain') {
+        return (string)@file_get_contents($path);
+    }
+    if ($mime_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        return kop_extract_docx_text($path);
+    }
+    return kop_extract_pdf_text($path);
+}
+
+/**
+ * Extract text from a PDF.
+ *
+ * Tries pdftotext (poppler-utils) via exec first — available on many cPanel
+ * hosts. Falls back to a pure-PHP regex pass that reads BT…ET content streams;
+ * this works reliably for digitally-created PDFs (which all e-filed court
+ * documents are) but not for scanned images.
+ */
+function kop_extract_pdf_text(string $path): string {
+    // pdftotext path: try which, then common locations
+    $candidates = ['pdftotext', '/usr/bin/pdftotext', '/usr/local/bin/pdftotext'];
+    foreach ($candidates as $bin) {
+        $which = trim((string)@shell_exec('which ' . escapeshellarg($bin) . ' 2>/dev/null'));
+        $exe   = ($which !== '') ? $which : $bin;
+        if (@is_executable($exe)) {
+            $out = @shell_exec(escapeshellarg($exe) . ' -enc UTF-8 -nopgbrk ' . escapeshellarg($path) . ' - 2>/dev/null');
+            if ($out !== null && strlen(trim($out)) > 50) {
+                return $out;
+            }
+            break;
+        }
+    }
+
+    // Pure-PHP fallback
+    $raw = @file_get_contents($path);
+    if (!$raw) return '';
+
+    // Decompress any FlateDecode streams so we can read the content operators
+    if (function_exists('gzuncompress')) {
+        $raw = preg_replace_callback('/stream\r?\n(.*?)\r?\nendstream/s', static function ($m) {
+            $d = @gzuncompress($m[1]);
+            return 'stream' . "\n" . ($d !== false ? $d : $m[1]) . "\nendstream";
+        }, $raw);
+    }
+
+    $text = '';
+    // Match every BT…ET text block
+    if (preg_match_all('/BT\s*(.*?)\s*ET/s', $raw, $blocks, PREG_SET_ORDER)) {
+        foreach ($blocks as $block) {
+            $b = $block[1];
+            // (string) Tj
+            preg_match_all('/\(([^)\\\\]*(?:\\\\.[^)\\\\]*)*)\)\s*Tj/s', $b, $tj, PREG_SET_ORDER);
+            foreach ($tj as $m) {
+                $text .= kop_pdf_unescape($m[1]) . ' ';
+            }
+            // [(string) kern (string)…] TJ
+            preg_match_all('/\[([^\]]*)\]\s*TJ/s', $b, $TJ, PREG_SET_ORDER);
+            foreach ($TJ as $m) {
+                preg_match_all('/\(([^)\\\\]*(?:\\\\.[^)\\\\]*)*)\)/', $m[1], $ss, PREG_SET_ORDER);
+                foreach ($ss as $s) {
+                    $text .= kop_pdf_unescape($s[1]);
+                }
+                $text .= ' ';
+            }
+        }
+    }
+    return trim(preg_replace('/[ \t]{2,}/', ' ', $text));
+}
+
+function kop_pdf_unescape(string $s): string {
+    return str_replace(
+        ['\\n', '\\r', '\\t', '\\(', '\\)', '\\\\'],
+        ["\n",  "\r",  "\t",  '(',   ')',   '\\'],
+        $s
+    );
+}
+
+/**
+ * Extract text from a DOCX by unzipping and stripping word/document.xml.
+ */
+function kop_extract_docx_text(string $path): string {
+    if (!class_exists('ZipArchive')) return '';
+    $zip = new ZipArchive();
+    if ($zip->open($path) !== true) return '';
+    $xml = $zip->getFromName('word/document.xml');
+    $zip->close();
+    if (!$xml) return '';
+    $xml = str_replace(['</w:p>', '<w:br/>', '</w:r>'], ["\n", ' ', ' '], $xml);
+    return trim(strip_tags($xml));
+}
 
 
 /**
